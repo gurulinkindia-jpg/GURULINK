@@ -34,7 +34,11 @@ color:#0d47a1;
 
 /* MAIN BUTTON */
 .main-btn{
-display:block;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:10px;
+
 width:90%;
 max-width:380px;
 margin:15px auto;
@@ -44,7 +48,6 @@ border-radius:12px;
 font-size:16px;
 cursor:pointer;
 color:white;
-background:#1b5e20;
 transition:0.2s;
 }
 
@@ -57,7 +60,14 @@ transform:scale(1.03);
 .institute{background:#283593;}
 .find{background:#0d47a1;}
 
-/* HIDDEN BOX */
+/* ICON */
+.icon{
+width:22px;
+height:22px;
+border-radius:50%;
+}
+
+/* BOX */
 .box{
 display:none;
 background:white;
@@ -85,6 +95,18 @@ font-size:15px;
 .creative{background:#6a1b9a;}
 .skill{background:#e65100;}
 
+/* BACK BUTTON */
+.back-btn{
+width:100%;
+padding:10px;
+margin-top:10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:#444;
+color:white;
+}
+
 </style>
 </head>
 
@@ -99,8 +121,9 @@ font-size:15px;
 
 <h2>Choose Action</h2>
 
-<!-- 1. TEACHER -->
-<button class="main-btn teacher" onclick="toggleBox('teacherBox')">
+<!-- 1 TEACHER -->
+<button class="main-btn teacher" onclick="openBox('teacherBox')">
+<img class="icon" src="https://i.imgur.com/your-teacher-icon.png">
 Register as Teacher
 </button>
 
@@ -121,10 +144,15 @@ onclick="location.href='teacher-register.html?type=teacher&category=skill'">
 Skill Teacher
 </button>
 
+<button class="back-btn" onclick="goBack()">
+⬅ Back
+</button>
+
 </div>
 
-<!-- 2. INSTITUTION -->
-<button class="main-btn institute" onclick="toggleBox('instBox')">
+<!-- 2 INSTITUTE -->
+<button class="main-btn institute" onclick="openBox('instBox')">
+<img class="icon" src="https://i.imgur.com/your-institute-icon.png">
 Register as Institution
 </button>
 
@@ -145,10 +173,15 @@ onclick="location.href='institution-register.html?type=institution&category=skil
 Skill Institute
 </button>
 
+<button class="back-btn" onclick="goBack()">
+⬅ Back
+</button>
+
 </div>
 
-<!-- 3. FIND TEACHER -->
-<button class="main-btn find" onclick="toggleBox('findBox')">
+<!-- 3 FIND -->
+<button class="main-btn find" onclick="openBox('findBox')">
+<img class="icon" src="https://i.imgur.com/your-search-icon.png">
 Find Teacher
 </button>
 
@@ -169,21 +202,34 @@ onclick="location.href='profile.html?category=skill'">
 Skill Teachers
 </button>
 
+<button class="back-btn" onclick="goBack()">
+⬅ Back
+</button>
+
 </div>
 
 </div>
 
 <script>
 
-function toggleBox(id){
+function openBox(id){
 
-let box = document.getElementById(id);
+// hide all boxes first
+document.querySelectorAll(".box").forEach(b=>{
+b.style.display="none";
+});
 
-if(box.style.display === "block"){
-box.style.display = "none";
-}else{
-box.style.display = "block";
+// show selected
+document.getElementById(id).style.display="block";
+
 }
+
+function goBack(){
+
+// hide all
+document.querySelectorAll(".box").forEach(b=>{
+b.style.display="none";
+});
 
 }
 
