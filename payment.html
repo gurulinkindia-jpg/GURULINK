@@ -111,7 +111,7 @@ throw new Error("Upload failed");
 let params = new URLSearchParams(window.location.search);
 let type = params.get("type"); // teacher / institute
 
-let amount = (type === "institute") ? 200 : 100;
+let amount = (type === "institute") ? 2 : 1;
 
 /* SHOW AMOUNT */
 document.getElementById("amountText").innerText =
