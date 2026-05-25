@@ -72,16 +72,8 @@ border:1px solid #ccc;
 }
 
 .modeBox{
-padding:10px;
+padding:15px;
 border:1px solid #ddd;
-border-radius:10px;
-}
-
-.modeFee{
-display:none;
-padding:10px;
-background:#f7f7f7;
-margin-top:10px;
 border-radius:10px;
 }
 
@@ -94,6 +86,15 @@ margin:10px 0;
 
 .row input[type=checkbox]{
 width:auto;
+transform:scale(1.2);
+}
+
+.modeFee{
+display:none;
+padding:10px;
+background:#f7f7f7;
+border-radius:10px;
+margin-bottom:10px;
 }
 
 </style>
@@ -102,26 +103,19 @@ width:auto;
 <body>
 
 <header>
-
 <h1>Academic Teacher Registration</h1>
 <p>Registration Fee ₹100</p>
-
 </header>
 
 <div class="container">
 
 <form id="form">
 
-<input id="name"
-placeholder="Full Name"
-required>
+<input id="name" placeholder="Full Name" required>
 
-<input id="phone"
-placeholder="Phone Number"
-required>
+<input id="phone" placeholder="Phone Number" required>
 
-<input
-type="email"
+<input type="email"
 id="email"
 placeholder="Email">
 
@@ -149,8 +143,8 @@ Select Subject
 <option>Biology</option>
 <option>SST</option>
 <option>English</option>
-<option>Assamese</option>
 <option>Hindi</option>
+<option>Assamese</option>
 
 <option value="other">
 Other
@@ -160,8 +154,8 @@ Other
 
 <input
 id="otherSubject"
-style="display:none"
-placeholder="Enter Subject">
+placeholder="Write Subject"
+style="display:none">
 
 <input
 id="class"
@@ -169,7 +163,7 @@ placeholder="Class Example: Class 9-10">
 
 <input
 id="location"
-placeholder="Preferred Teaching Area Example: Beltola">
+placeholder="Preferred Teaching Area">
 
 <h3>Teaching Modes</h3>
 
@@ -179,15 +173,15 @@ placeholder="Preferred Teaching Area Example: Beltola">
 
 <input
 type="checkbox"
+value="Home Tuition"
+id="homeCheck"
 onchange="toggleFee('home')">
 
-Home Tuition
+<label>Home Tuition</label>
 
 </div>
 
-<div
-id="home"
-class="modeFee">
+<div id="home" class="modeFee">
 
 <input
 id="homeFee"
@@ -196,19 +190,20 @@ placeholder="Enter Home Tuition Fee">
 </div>
 
 
+
 <div class="row">
 
 <input
 type="checkbox"
+value="Group Tuition"
+id="groupCheck"
 onchange="toggleFee('group')">
 
-Group Tuition
+<label>Group Tuition</label>
 
 </div>
 
-<div
-id="group"
-class="modeFee">
+<div id="group" class="modeFee">
 
 <input
 id="groupFee"
@@ -217,19 +212,20 @@ placeholder="Enter Group Tuition Fee">
 </div>
 
 
+
 <div class="row">
 
 <input
 type="checkbox"
-onchange="toggleFee('onlineIndividual')">
+value="Online Individual"
+id="individualCheck"
+onchange="toggleFee('individual')">
 
-Online Individual
+<label>Online Individual</label>
 
 </div>
 
-<div
-id="onlineIndividual"
-class="modeFee">
+<div id="individual" class="modeFee">
 
 <input
 id="onlineIndividualFee"
@@ -238,19 +234,20 @@ placeholder="Enter Online Individual Fee">
 </div>
 
 
+
 <div class="row">
 
 <input
 type="checkbox"
-onchange="toggleFee('onlineGroup')">
+value="Online Group"
+id="onlineCheck"
+onchange="toggleFee('online')">
 
-Online Group
+<label>Online Group</label>
 
 </div>
 
-<div
-id="onlineGroup"
-class="modeFee">
+<div id="online" class="modeFee">
 
 <input
 id="onlineGroupFee"
@@ -260,7 +257,8 @@ placeholder="Enter Online Group Fee">
 
 </div>
 
-<label><b>Profile Photo</b></label>
+
+<h3>Profile Photo</h3>
 
 <input
 type="file"
@@ -268,11 +266,11 @@ id="photo"
 accept="image/*">
 
 <div
-id="photoPreview"
-class="preview"></div>
+class="preview"
+id="photoPreview"></div>
 
 
-<label><b>Gallery Photos (Maximum 5)</b></label>
+<h3>Gallery Photos (Max 5)</h3>
 
 <input
 type="file"
@@ -281,13 +279,14 @@ multiple
 accept="image/*">
 
 <div
-id="galleryPreview"
-class="preview"></div>
+class="preview"
+id="galleryPreview"></div>
 
 
 <textarea
 id="description"
 placeholder="About Teacher"></textarea>
+
 
 <button type="submit">
 
@@ -299,23 +298,27 @@ Continue To Payment
 
 </div>
 
+
 <script type="module">
 
-import {
+import{
 initializeApp
 }
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-import {
+import{
 getDatabase,
 ref,
 push
 }
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
 
 const firebaseConfig={
 
-apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+apiKey:"AIzaSyBK0mU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"gurulink-59cc7",
@@ -329,6 +332,7 @@ const app=initializeApp(firebaseConfig);
 const db=getDatabase(app);
 
 const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
+
 
 async function upload(file){
 
@@ -353,6 +357,7 @@ return data.data.url;
 
 }
 
+
 subject.onchange=()=>{
 
 otherSubject.style.display=
@@ -364,6 +369,8 @@ subject.value==="other"
 
 };
 
+
+
 photo.onchange=function(){
 
 photoPreview.innerHTML="";
@@ -373,13 +380,16 @@ if(this.files[0]){
 let img=document.createElement("img");
 
 img.src=
-URL.createObjectURL(this.files[0]);
+URL.createObjectURL(
+this.files[0]
+);
 
 photoPreview.appendChild(img);
 
 }
 
 };
+
 
 gallery.onchange=function(){
 
@@ -388,7 +398,9 @@ galleryPreview.innerHTML="";
 if(this.files.length>5){
 
 alert("Maximum 5 photos");
+
 this.value="";
+
 return;
 
 }
@@ -407,20 +419,25 @@ galleryPreview.appendChild(img);
 
 };
 
+
+
 form.addEventListener(
 "submit",
 async(e)=>{
 
 e.preventDefault();
 
-let photoUrl="";
+try{
+
+let profileUrl="";
 
 if(photo.files[0]){
 
-photoUrl=
+profileUrl=
 await upload(photo.files[0]);
 
 }
+
 
 let galleryUrls=[];
 
@@ -431,6 +448,22 @@ await upload(file)
 );
 
 }
+
+
+let teachingModes=[];
+
+document
+.querySelectorAll(
+'input[type="checkbox"]:checked'
+)
+.forEach(c=>{
+
+teachingModes.push(
+c.value
+);
+
+});
+
 
 await push(
 ref(db,"teachers"),
@@ -454,31 +487,43 @@ class:class.value,
 
 location:location.value,
 
-fees:{
+teachingModes:teachingModes,
 
-home:homeFee.value,
-group:groupFee.value,
-onlineIndividual:onlineIndividualFee.value,
-onlineGroup:onlineGroupFee.value
+homeFee:homeFee.value,
+groupFee:groupFee.value,
+onlineIndividualFee:onlineIndividualFee.value,
+onlineGroupFee:onlineGroupFee.value,
 
-},
-
-photo:photoUrl,
+photo:profileUrl,
 gallery:galleryUrls,
+
 description:description.value,
 
-status:"pending",
-category:"academic"
+category:"academic",
+status:"pending"
 
-}
-);
+});
+
 
 window.location.href=
-"payment.html?type=teacher&amount=100";
+"payment.html?type=teacher&category=academic";
+
+
+}
+catch(err){
+
+console.log(err);
+
+alert(
+"Error while submitting"
+);
+
+}
 
 });
 
 </script>
+
 
 <script>
 
