@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <title>Payment - GURULINK</title>
 
 <style>
@@ -8,17 +9,29 @@ body{
 font-family:Arial;
 text-align:center;
 padding:20px;
+background:#f2f2f2;
+}
+
+.card{
+background:white;
+padding:20px;
+max-width:400px;
+margin:auto;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,.2);
 }
 
 img{
-width:250px;
-margin:20px;
+width:220px;
+margin:15px;
 }
 
 input{
 width:90%;
 padding:10px;
-margin:10px;
+margin:10px 0;
+border:1px solid #ccc;
+border-radius:6px;
 }
 
 button{
@@ -27,55 +40,122 @@ width:90%;
 background:green;
 color:white;
 border:none;
+border-radius:6px;
+cursor:pointer;
 }
 </style>
-
 </head>
 
 <body>
 
-<h1>GURULINK</h1>
+<div class="card">
 
-<h2>Registration Fee ₹100</h2>
+<h2>GURULINK Payment</h2>
 
-<p>Scan and Pay</p>
+<p id="amountText">Loading...</p>
 
-<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=9706380357@ucobank&pn=G10 Group&am=100&cu=INR">
+<img id="qr">
 
-<p>UPI: 9706380357@ucobank</p>
+<p><b>UPI:</b> 9706380357@ucobank</p>
 
-<input
-id="utr"
-placeholder="Enter UTR / Transaction ID">
+<input type="text" id="utr" placeholder="Enter Transaction ID">
 
-<button onclick="submitPayment()">
+<input type="file" id="screenshot" accept="image/*">
 
-Submit Payment
+<button onclick="submitPayment()">Submit Payment</button>
 
-</button>
+</div>
 
-<script>
+<script type="module">
 
-function submitPayment(){
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-let utr=
-document.getElementById(
-"utr"
-).value;
+/* FIREBASE */
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.firebasestorage.app",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
 
-if(!utr){
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-alert(
-"Enter transaction ID"
+/* IMGBB */
+async function uploadToImgBB(file){
+
+const apiKey = "31f729ff855eb2e42c00ee508a8647ea";
+
+const formData = new FormData();
+formData.append("image", file);
+
+const res = await fetch(
+`https://api.imgbb.com/1/upload?key=${apiKey}`,
+{ method:"POST", body:formData }
 );
 
-return;
+const data = await res.json();
+
+if(data.success){
+return data.data.url;
+}
+throw new Error("Upload failed");
 
 }
 
-alert(
-"Payment submitted for admin verification"
-);
+/* GET TYPE FROM URL */
+let params = new URLSearchParams(window.location.search);
+let type = params.get("type"); // teacher / institute
+
+let amount = (type === "institute") ? 200 : 100;
+
+/* SHOW AMOUNT */
+document.getElementById("amountText").innerText =
+"Registration Fee ₹" + amount;
+
+/* QR GENERATE */
+let upi = `upi://pay?pa=9706380357@ucobank&pn=GURULINK&am=${amount}&cu=INR`;
+
+document.getElementById("qr").src =
+"https://api.qrserver.com/v1/create-qr-code/?size=220x220&data="
++ encodeURIComponent(upi);
+
+/* SUBMIT */
+window.submitPayment = async function(){
+
+let utr = document.getElementById("utr").value;
+let file = document.getElementById("screenshot").files[0];
+
+if(!utr){
+alert("Enter Transaction ID");
+return;
+}
+
+if(!file){
+alert("Upload payment screenshot");
+return;
+}
+
+let screenshotURL = await uploadToImgBB(file);
+
+push(ref(db,"payments"), {
+
+type,
+amount,
+utr,
+screenshot:screenshotURL,
+status:"pending",
+time:Date.now()
+
+});
+
+alert("Payment submitted for admin verification");
+
+window.location.href = "index.html";
 
 }
 
