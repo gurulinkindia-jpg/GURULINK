@@ -2,15 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
 
-<title>Teacher Registration - GURULINK</title>
+<title>Teacher Registration</title>
 
 <style>
 
 body{
 margin:0;
-font-family:Arial,sans-serif;
+font-family:Arial;
 background:#eef2f7;
 }
 
@@ -31,9 +32,7 @@ border-radius:15px;
 box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 
-input,
-select,
-textarea{
+input,select,textarea{
 width:100%;
 padding:12px;
 margin:10px 0;
@@ -56,18 +55,13 @@ background:#1b5e20;
 color:white;
 font-size:16px;
 cursor:pointer;
-margin-top:15px;
-}
-
-button:hover{
-opacity:.9;
+margin-top:20px;
 }
 
 .preview{
 display:flex;
 flex-wrap:wrap;
 gap:10px;
-margin:10px 0;
 }
 
 .preview img{
@@ -78,30 +72,27 @@ object-fit:cover;
 border:1px solid #ccc;
 }
 
-.note{
-font-size:12px;
-color:#666;
-}
-
 .modeBox{
-padding:12px;
-border:1px solid #ccc;
-border-radius:8px;
+padding:10px;
+border:1px solid #ddd;
+border-radius:10px;
 margin-top:10px;
 }
 
-.modeBox label{
+.modeFee{
+display:none;
+padding:10px;
+margin-top:10px;
+background:#f7f7f7;
+border-radius:10px;
+}
+
+label{
 display:block;
 margin:8px 0;
 }
 
-h4{
-color:#0d47a1;
-margin-top:20px;
-}
-
 </style>
-
 </head>
 
 <body>
@@ -109,7 +100,6 @@ margin-top:20px;
 <header>
 
 <h1>Teacher Registration</h1>
-<p id="categoryTitle"></p>
 
 </header>
 
@@ -117,151 +107,130 @@ margin-top:20px;
 
 <form id="teacherForm">
 
-<input
-type="text"
-id="name"
+<input id="name"
 placeholder="Full Name"
 required>
 
-<input
-type="tel"
-id="phone"
+<input id="phone"
 placeholder="Phone Number"
 required>
 
-<input
-type="email"
-id="email"
-placeholder="Email Address">
+<input id="email"
+placeholder="Email">
 
-<input
-type="url"
-id="website"
-placeholder="Website / Social Link">
+<input id="website"
+placeholder="Website">
 
-<input
-type="text"
-id="qualification"
+<input id="qualification"
 placeholder="Qualification">
 
-<input
-type="text"
-id="experience"
+<input id="experience"
 placeholder="Experience">
 
-
-<!-- Academic -->
-
-<div id="academicFields">
-
-<input
-type="text"
-id="subject"
+<input id="subject"
 placeholder="Subject">
 
-<input
-type="text"
-id="class"
-placeholder="Class Example: Class 9-10">
+<input id="class"
+placeholder="Class">
 
-</div>
+<input id="location"
+placeholder="Preferred Teaching Area">
 
-
-<!-- Creative -->
-
-<div
-id="creativeFields"
-style="display:none">
-
-<select id="creativeType">
-
-<option>Music</option>
-<option>Dance</option>
-<option>Drawing</option>
-<option>Photography</option>
-
-</select>
-
-</div>
-
-
-<!-- Skill -->
-
-<div
-id="skillFields"
-style="display:none">
-
-<select id="skillType">
-
-<option>Coding</option>
-<option>Spoken English</option>
-<option>Computer</option>
-<option>Digital Marketing</option>
-
-</select>
-
-</div>
-
-
-<input
-type="text"
-id="location"
-placeholder="Preferred Teaching Area Example: Beltola">
-
-
-<h4>Teaching Mode</h4>
+<h3>Teaching Modes</h3>
 
 <div class="modeBox">
 
 <label>
+
 <input
 type="checkbox"
-name="mode"
-value="Home Tuition">
+value="Home Tuition"
+onchange="toggleFee('home')">
+
 Home Tuition
+
 </label>
 
-<label>
-<input
-type="checkbox"
-name="mode"
-value="Group Tuition">
-Group Tuition
-</label>
+<div
+id="home"
+class="modeFee">
 
-<label>
 <input
-type="checkbox"
-name="mode"
-value="Online Individual">
-Online Individual
-</label>
-
-<label>
-<input
-type="checkbox"
-name="mode"
-value="Online Group">
-Online Group
-</label>
+id="homeFee"
+placeholder="Enter Home Tuition Fee Example ₹500-1000">
 
 </div>
 
 
-<input
-type="text"
-id="feeRange"
-placeholder="Fee Example: ₹500-1000 per class or ₹1000-2000 monthly">
-
+<label>
 
 <input
-type="number"
-id="fee"
-placeholder="Enter Your Fee Amount">
+type="checkbox"
+value="Group Tuition"
+onchange="toggleFee('group')">
+
+Group Tuition
+
+</label>
+
+<div
+id="group"
+class="modeFee">
+
+<input
+id="groupFee"
+placeholder="Enter Group Tuition Fee">
+
+</div>
 
 
+<label>
 
-<label><b>Profile Photo</b></label>
+<input
+type="checkbox"
+value="Online Individual"
+onchange="toggleFee('onlineIndividual')">
+
+Online Individual
+
+</label>
+
+<div
+id="onlineIndividual"
+class="modeFee">
+
+<input
+id="onlineIndividualFee"
+placeholder="Enter Online Individual Fee">
+
+</div>
+
+
+<label>
+
+<input
+type="checkbox"
+value="Online Group"
+onchange="toggleFee('onlineGroup')">
+
+Online Group
+
+</label>
+
+<div
+id="onlineGroup"
+class="modeFee">
+
+<input
+id="onlineGroupFee"
+placeholder="Enter Online Group Fee">
+
+</div>
+
+</div>
+
+
+<label>Profile Photo</label>
 
 <input
 type="file"
@@ -272,13 +241,8 @@ accept="image/*">
 id="photoPreview"
 class="preview"></div>
 
-<p
-id="photoStatus"
-style="color:green"></p>
 
-
-
-<label><b>Gallery Photos (Maximum 5)</b></label>
+<label>Gallery Photos (Max 5)</label>
 
 <input
 type="file"
@@ -290,15 +254,10 @@ accept="image/*">
 id="galleryPreview"
 class="preview"></div>
 
-<p
-id="galleryStatus"
-style="color:green"></p>
-
 
 <textarea
 id="description"
-placeholder="About Teacher"></textarea>
-
+placeholder="Description"></textarea>
 
 <button type="submit">
 
@@ -316,15 +275,16 @@ Continue To Payment
 import {
 initializeApp
 }
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
 getDatabase,
 ref,
 push
 }
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 
 const firebaseConfig={
@@ -333,85 +293,25 @@ apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"gurulink-59cc7",
-storageBucket:"gurulink-59cc7.firebasestorage.app",
+storageBucket:"gurulink-59cc7.appspot.com",
 messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
 
+const app=initializeApp(firebaseConfig);
 
-const app=
-initializeApp(
-firebaseConfig
-);
-
-const db=
-getDatabase(
-app
-);
+const db=getDatabase(app);
 
 
-/* CATEGORY */
-
-const params=
-new URLSearchParams(
-window.location.search
-);
-
-const category=
-params.get("category")
-||"academic";
-
-
-document.getElementById(
-"categoryTitle"
-).innerText=
-"Category: "+
-category.toUpperCase();
-
-
-if(category==="creative"){
-
-document.getElementById(
-"academicFields"
-).style.display="none";
-
-document.getElementById(
-"creativeFields"
-).style.display="block";
-
-}
-
-
-if(category==="skill"){
-
-document.getElementById(
-"academicFields"
-).style.display="none";
-
-document.getElementById(
-"skillFields"
-).style.display="block";
-
-}
-
-
-
-/* IMGBB */
-
-const API_KEY=
-"31f729ff855eb2e42c00ee508a8647ea";
+const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
 
 
 async function upload(file){
 
-let fd=
-new FormData();
+let fd=new FormData();
 
-fd.append(
-"image",
-file
-);
+fd.append("image",file);
 
 let res=
 await fetch(
@@ -430,80 +330,34 @@ return data.data.url;
 }
 
 
-
 /* PROFILE PREVIEW */
 
-document
-.getElementById(
-"photo"
-)
-.addEventListener(
-"change",
-function(){
+photo.onchange=function(){
 
-let file=
-this.files[0];
-
-let preview=
-document.getElementById(
-"photoPreview"
-);
-
-preview.innerHTML="";
-
-if(file){
+photoPreview.innerHTML="";
 
 let img=
-document.createElement(
-"img"
-);
+document.createElement("img");
 
 img.src=
 URL.createObjectURL(
-file
+this.files[0]
 );
 
-preview.appendChild(
-img
-);
-
-document.getElementById(
-"photoStatus"
-).innerHTML=
-"✓ Profile photo selected";
+photoPreview.appendChild(img);
 
 }
 
-}
-);
 
+/* GALLERY */
 
+gallery.onchange=function(){
 
-/* GALLERY PREVIEW */
-
-document
-.getElementById(
-"gallery"
-)
-.addEventListener(
-"change",
-function(){
-
-let preview=
-document.getElementById(
-"galleryPreview"
-);
-
-preview.innerHTML="";
-
+galleryPreview.innerHTML="";
 
 if(this.files.length>5){
 
-alert(
-"Maximum 5 photos allowed"
-);
-
-this.value="";
+alert("Maximum 5");
 
 return;
 
@@ -512,168 +366,134 @@ return;
 for(let file of this.files){
 
 let img=
-document.createElement(
-"img"
-);
+document.createElement("img");
 
 img.src=
-URL.createObjectURL(
-file
-);
+URL.createObjectURL(file);
 
-preview.appendChild(
-img
-);
+galleryPreview.appendChild(img);
 
 }
 
-document.getElementById(
-"galleryStatus"
-).innerHTML=
-"✓ "+
-this.files.length+
-" photos selected";
-
 }
-);
 
 
 
 /* SUBMIT */
 
-document
-.getElementById(
-"teacherForm"
-)
-.addEventListener(
+teacherForm.addEventListener(
 "submit",
-async function(e){
+async(e)=>{
 
 e.preventDefault();
 
-let profileURL="";
+let profile="";
 
-let galleryURLs=[];
+if(photo.files[0]){
 
-
-
-if(
-document.getElementById(
-"photo"
-).files[0]
-){
-
-profileURL=
+profile=
 await upload(
-document.getElementById(
-"photo"
-).files[0]
+photo.files[0]
 );
 
 }
 
+let galleryUrls=[];
 
+for(let file of gallery.files){
 
-for(let file of
-document.getElementById(
-"gallery"
-).files){
-
-let url=
-await upload(
-file
-);
-
-galleryURLs.push(
-url
+galleryUrls.push(
+await upload(file)
 );
 
 }
-
-
-
-let modes=
-[...document.querySelectorAll(
-'input[name="mode"]:checked'
-)]
-.map(
-x=>x.value
-);
-
 
 
 let data={
 
-name:name.value,
-phone:phone.value,
-email:email.value,
-website:website.value,
-qualification:qualification.value,
-experience:experience.value,
-location:location.value,
+name:
+document.getElementById("name").value,
 
-teachingMode:modes,
+phone:
+document.getElementById("phone").value,
 
-feeRange:feeRange.value,
-fee:fee.value,
+email:
+document.getElementById("email").value,
 
-description:description.value,
+website:
+document.getElementById("website").value,
 
-photo:profileURL,
+qualification:
+document.getElementById("qualification").value,
 
-gallery:galleryURLs,
+experience:
+document.getElementById("experience").value,
 
-category:category,
+subject:
+document.getElementById("subject").value,
 
-type:"teacher",
+class:
+document.getElementById("class").value,
+
+location:
+document.getElementById("location").value,
+
+description:
+document.getElementById("description").value,
+
+photo:profile,
+
+gallery:galleryUrls,
+
+fees:{
+
+home:
+homeFee.value,
+
+group:
+groupFee.value,
+
+onlineIndividual:
+onlineIndividualFee.value,
+
+onlineGroup:
+onlineGroupFee.value
+
+},
 
 status:"pending"
 
 };
 
 
-
-if(category==="academic"){
-
-data.subject=
-subject.value;
-
-data.class=
-class.value;
-
-}
-
-
-if(category==="creative"){
-
-data.skillType=
-creativeType.value;
-
-}
-
-
-if(category==="skill"){
-
-data.skillType=
-skillType.value;
-
-}
-
-
-
 await push(
-ref(
-db,
-"teachers"
-),
+ref(db,"teachers"),
 data
 );
-
 
 window.location.href=
 "payment.html?type=teacher";
 
 });
+
+</script>
+
+
+<script>
+
+function toggleFee(id){
+
+let box=
+document.getElementById(id);
+
+box.style.display=
+box.style.display==="block"
+?
+"none"
+:
+"block";
+
+}
 
 </script>
 
