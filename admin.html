@@ -1,29 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>GURULINK Admin Panel</title>
+<title>GURULINK Admin Dashboard</title>
 
 <style>
-
 body{
 font-family:Arial;
-padding:20px;
-background:#f2f2f2;
+margin:0;
+background:#f2f6fb;
 }
 
-h1{
+header{
+background:#0d47a1;
+color:white;
+padding:15px;
 text-align:center;
-color:#0d47a1;
+}
+
+.dashboard{
+display:flex;
+justify-content:space-around;
+padding:15px;
+flex-wrap:wrap;
+}
+
+.cardBox{
+background:white;
+padding:15px;
+margin:10px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,.1);
+width:200px;
+text-align:center;
 }
 
 .section{
-margin-top:30px;
+padding:20px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin-bottom:10px;
 }
 
 .card{
 background:white;
 padding:15px;
-margin-bottom:10px;
+margin:10px 0;
 border-radius:10px;
 box-shadow:0 0 5px rgba(0,0,0,.2);
 }
@@ -32,22 +56,51 @@ button{
 padding:8px 10px;
 margin:5px;
 border:none;
-cursor:pointer;
 border-radius:5px;
+cursor:pointer;
 color:white;
 }
 
 .approve{background:green;}
 .delete{background:red;}
 .edit{background:orange;}
+.verify{background:#1976d2;}
+
+.badge{
+background:green;
+color:white;
+padding:3px 8px;
+border-radius:5px;
+font-size:12px;
+}
 
 </style>
-
 </head>
 
 <body>
 
-<h1>GURULINK Admin Panel</h1>
+<header>
+<h1>GURULINK ADMIN DASHBOARD</h1>
+</header>
+
+<!-- DASHBOARD -->
+<div class="dashboard">
+<div class="cardBox" id="totalTeachers">Teachers: 0</div>
+<div class="cardBox" id="totalInst">Institutions: 0</div>
+<div class="cardBox" id="pendingPayments">Pending Payments: 0</div>
+<div class="cardBox" id="earnings">Earnings: ₹0</div>
+</div>
+
+<!-- SEARCH -->
+<div class="section">
+<input type="text" id="search" placeholder="Search teachers or institutions...">
+</div>
+
+<!-- PAYMENTS -->
+<div class="section">
+<h2>Payment Verification</h2>
+<div id="paymentList"></div>
+</div>
 
 <!-- TEACHERS -->
 <div class="section">
@@ -64,13 +117,8 @@ color:white;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
 import {
-getDatabase,
-ref,
-onValue,
-update,
-remove
+getDatabase, ref, onValue, update, remove
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -86,83 +134,176 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* ========== TEACHERS ========== */
+/* ===== DATA ===== */
+let teachersData = {};
+let instData = {};
+let paymentData = {};
 
-onValue(ref(db,"teachers"), snapshot => {
+/* ===== DASHBOARD ===== */
+function updateStats(){
+document.getElementById("totalTeachers").innerText =
+"Teachers: " + Object.keys(teachersData).length;
 
+document.getElementById("totalInst").innerText =
+"Institutions: " + Object.keys(instData).length;
+
+let pending = 0;
+let earnings = 0;
+
+Object.values(paymentData).forEach(p=>{
+if(p.status === "pending") pending++;
+if(p.status === "approved") earnings += Number(p.amount || 0);
+});
+
+document.getElementById("pendingPayments").innerText =
+"Pending Payments: " + pending;
+
+document.getElementById("earnings").innerText =
+"Earnings: ₹" + earnings;
+}
+
+/* ===== TEACHERS ===== */
+onValue(ref(db,"teachers"), snap=>{
+teachersData = snap.val() || {};
+renderTeachers();
+updateStats();
+});
+
+function renderTeachers(){
 let html = "";
 
-snapshot.forEach(child => {
+Object.entries(teachersData).forEach(([id,t])=>{
 
-let t = child.val();
+let badge = t.status==="approved" ? "<span class='badge'>Verified</span>" : "";
 
 html += `
 <div class="card">
-
-<h3>${t.name}</h3>
+<h3>${t.name} ${badge}</h3>
 <p>${t.subject} | ${t.class}</p>
 <p>${t.location}</p>
-<p>Status: ${t.status}</p>
 
-<button class="approve" onclick="approveTeacher('${child.key}')">Approve</button>
-<button class="delete" onclick="deleteTeacher('${child.key}')">Delete</button>
-
+<button class="approve" onclick="approveTeacher('${id}')">Approve</button>
+<button class="edit" onclick="editItem('teachers','${id}')">Edit</button>
+<button class="delete" onclick="deleteTeacher('${id}')">Delete</button>
 </div>
 `;
-
 });
 
 document.getElementById("teacherList").innerHTML = html;
+}
 
+/* ===== INSTITUTIONS ===== */
+onValue(ref(db,"institutions"), snap=>{
+instData = snap.val() || {};
+renderInst();
+updateStats();
 });
 
-/* ========== INSTITUTIONS ========== */
-
-onValue(ref(db,"institutions"), snapshot => {
-
+function renderInst(){
 let html = "";
 
-snapshot.forEach(child => {
+Object.entries(instData).forEach(([id,i])=>{
 
-let i = child.val();
+let badge = i.status==="approved" ? "<span class='badge'>Verified</span>" : "";
 
 html += `
 <div class="card">
-
-<h3>${i.name}</h3>
+<h3>${i.name} ${badge}</h3>
 <p>${i.address}</p>
 <p>${i.courses}</p>
-<p>Status: ${i.status}</p>
 
-<button class="approve" onclick="approveInst('${child.key}')">Approve</button>
-<button class="delete" onclick="deleteInst('${child.key}')">Delete</button>
-
+<button class="approve" onclick="approveInst('${id}')">Approve</button>
+<button class="edit" onclick="editItem('institutions','${id}')">Edit</button>
+<button class="delete" onclick="deleteInst('${id}')">Delete</button>
 </div>
 `;
-
 });
 
 document.getElementById("instList").innerHTML = html;
+}
 
+/* ===== PAYMENTS ===== */
+onValue(ref(db,"payments"), snap=>{
+paymentData = snap.val() || {};
+renderPayments();
+updateStats();
 });
 
-/* ========== FUNCTIONS ========== */
+function renderPayments(){
+let html = "";
 
-window.approveTeacher = function(id){
-update(ref(db,"teachers/"+id), {status:"approved"});
-};
+Object.entries(paymentData).forEach(([id,p])=>{
 
-window.deleteTeacher = function(id){
+html += `
+<div class="card">
+<p>User: ${p.name}</p>
+<p>Type: ${p.type}</p>
+<p>Amount: ₹${p.amount}</p>
+<p>UTR: ${p.utr}</p>
+
+<img src="${p.screenshot}" width="120">
+
+<button class="verify" onclick="approvePayment('${id}','${p.type}','${p.userId}')">
+Verify Payment
+</button>
+</div>
+`;
+});
+
+document.getElementById("paymentList").innerHTML = html;
+}
+
+/* ===== FUNCTIONS ===== */
+window.approveTeacher = id =>
+update(ref(db,"teachers/"+id),{status:"approved"});
+
+window.deleteTeacher = id =>
 remove(ref(db,"teachers/"+id));
-};
 
-window.approveInst = function(id){
-update(ref(db,"institutions/"+id), {status:"approved"});
-};
+window.approveInst = id =>
+update(ref(db,"institutions/"+id),{status:"approved"});
 
-window.deleteInst = function(id){
+window.deleteInst = id =>
 remove(ref(db,"institutions/"+id));
+
+window.approvePayment = (id,type,userId)=>{
+update(ref(db,"payments/"+id),{status:"approved"});
+
+/* auto verify user */
+update(ref(db,type+"/"+userId),{status:"approved"});
 };
+
+/* ===== SEARCH ===== */
+document.getElementById("search").addEventListener("input",function(e){
+let val = e.target.value.toLowerCase();
+
+let filteredT = Object.entries(teachersData)
+.filter(([id,t])=>t.name.toLowerCase().includes(val));
+
+let filteredI = Object.entries(instData)
+.filter(([id,i])=>i.name.toLowerCase().includes(val));
+
+renderFiltered(filteredT, filteredI);
+});
+
+function renderFiltered(t,i){
+
+document.getElementById("teacherList").innerHTML =
+t.map(([id,t])=>`
+<div class="card">
+<h3>${t.name}</h3>
+<p>${t.subject}</p>
+</div>
+`).join("");
+
+document.getElementById("instList").innerHTML =
+i.map(([id,i])=>`
+<div class="card">
+<h3>${i.name}</h3>
+<p>${i.courses}</p>
+</div>
+`).join("");
+}
 
 </script>
 
