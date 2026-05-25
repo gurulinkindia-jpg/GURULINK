@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Institution Registration - GURULINK</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#f2f2f2;
+}
+
+header{
+background:#0d47a1;
+color:white;
+padding:15px;
+text-align:center;
+}
+
+.container{
+width:90%;
+max-width:600px;
+margin:20px auto;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,.2);
+}
+
+input,textarea{
+width:100%;
+padding:10px;
+margin:10px 0;
+border:1px solid #ccc;
+border-radius:6px;
+}
+
+button{
+width:100%;
+padding:12px;
+background:green;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+opacity:0.9;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>GURULINK</h1>
+<p>Institution Registration</p>
+</header>
+
+<div class="container">
+
+<form id="instForm">
+
+<label>Institution Name</label>
+<input type="text" id="name" required>
+
+<label>Address</label>
+<textarea id="address" required></textarea>
+
+<label>Courses Offered</label>
+<input type="text" id="courses" placeholder="JEE, NEET, Class 10 etc">
+
+<label>Contact Number</label>
+<input type="tel" id="phone" required>
+
+<label>Institution Logo (imgbb link)</label>
+<input type="text" id="photo" placeholder="Paste image link">
+
+<button type="submit">Register Institution</button>
+
+</form>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.firebasestorage.app",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+document.getElementById("instForm")
+.addEventListener("submit", function(e){
+
+e.preventDefault();
+
+const data = {
+
+name:document.getElementById("name").value,
+address:document.getElementById("address").value,
+courses:document.getElementById("courses").value,
+phone:document.getElementById("phone").value,
+photo:document.getElementById("photo").value,
+status:"pending"
+
+};
+
+push(ref(db,"institutions"), data);
+
+alert("Institution Registered Successfully");
+
+window.location.href = "index.html";
+
+});
+
+</script>
+
+</body>
+</html>
