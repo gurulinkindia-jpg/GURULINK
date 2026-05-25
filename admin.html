@@ -1,11 +1,130 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin Panel</title>
+<title>GURULINK Admin Panel</title>
+
+<style>
+
+body{
+font-family:Arial;
+padding:20px;
+background:#f2f2f2;
+}
+
+.card{
+background:white;
+padding:15px;
+margin-bottom:10px;
+border-radius:10px;
+box-shadow:0 0 5px rgba(0,0,0,.2);
+}
+
+button{
+padding:10px;
+background:green;
+color:white;
+border:none;
+cursor:pointer;
+}
+
+</style>
+
 </head>
+
 <body>
 
 <h1>GURULINK Admin Panel</h1>
+
+<div id="teacherList"></div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+onValue,
+update
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.firebasestorage.app",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
+};
+
+const app=initializeApp(firebaseConfig);
+
+const db=getDatabase(app);
+
+onValue(
+ref(db,"teachers"),
+(snapshot)=>{
+
+let html="";
+
+snapshot.forEach((child)=>{
+
+let teacher=child.val();
+
+if(teacher.status==="pending"){
+
+html +=`
+
+<div class="card">
+
+<h3>${teacher.name}</h3>
+
+<p>${teacher.subject}</p>
+
+<p>${teacher.location}</p>
+
+<button onclick="approveTeacher('${child.key}')">
+
+Approve
+
+</button>
+
+</div>
+
+`;
+
+}
+
+});
+
+document.getElementById(
+"teacherList"
+).innerHTML=html;
+
+});
+
+window.approveTeacher=
+function(id){
+
+update(
+ref(db,"teachers/"+id),
+{
+status:"approved"
+}
+);
+
+alert(
+"Teacher Approved"
+);
+
+}
+
+</script>
 
 </body>
 </html>
