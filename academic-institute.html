@@ -276,9 +276,10 @@ push
 from
 "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
+
 const firebaseConfig={
 
-apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+apiKey:"AIzaSyBK0mU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"gurulink-59cc7",
@@ -292,6 +293,23 @@ const app=initializeApp(firebaseConfig);
 const db=getDatabase(app);
 
 const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
+
+
+/* ELEMENTS */
+
+const form=document.getElementById("form");
+
+const subject=document.getElementById("subject");
+const otherSubject=document.getElementById("otherSubject");
+
+const logo=document.getElementById("logo");
+const logoPreview=document.getElementById("logoPreview");
+
+const gallery=document.getElementById("gallery");
+const galleryPreview=document.getElementById("galleryPreview");
+
+
+/* IMAGE UPLOAD */
 
 async function upload(file){
 
@@ -313,7 +331,12 @@ return data.data.url;
 
 }
 
-subject.onchange=()=>{
+
+/* SUBJECT OTHER */
+
+subject.addEventListener(
+"change",
+()=>{
 
 otherSubject.style.display=
 subject.value==="other"
@@ -322,15 +345,22 @@ subject.value==="other"
 :
 "none";
 
-};
+}
+);
 
-logo.onchange=function(){
+
+/* LOGO PREVIEW */
+
+logo.addEventListener(
+"change",
+function(){
 
 logoPreview.innerHTML="";
 
-if(this.files[0]){
+if(this.files.length>0){
 
-let img=document.createElement("img");
+let img=
+document.createElement("img");
 
 img.src=
 URL.createObjectURL(
@@ -341,15 +371,25 @@ logoPreview.appendChild(img);
 
 }
 
-};
+}
+);
 
-gallery.onchange=function(){
+
+/* GALLERY PREVIEW */
+
+gallery.addEventListener(
+"change",
+function(){
 
 galleryPreview.innerHTML="";
 
 if(this.files.length>5){
 
-alert("Maximum 5 photos");
+alert(
+"Maximum 5 photos allowed"
+);
+
+this.value="";
 
 return;
 
@@ -358,7 +398,8 @@ return;
 Array.from(this.files)
 .forEach(file=>{
 
-let img=document.createElement("img");
+let img=
+document.createElement("img");
 
 img.src=
 URL.createObjectURL(file);
@@ -367,13 +408,20 @@ galleryPreview.appendChild(img);
 
 });
 
-};
+}
+);
+
+
+/* SUBMIT */
 
 form.addEventListener(
 "submit",
-async(e)=>{
+async function(e){
 
 e.preventDefault();
+
+try{
+
 
 let logoUrl="";
 
@@ -386,26 +434,61 @@ logo.files[0]
 
 }
 
+
+/* GALLERY */
+
 let galleryUrls=[];
 
 for(let file of gallery.files){
 
-galleryUrls.push(
-await upload(file)
-);
+let url=
+await upload(file);
+
+galleryUrls.push(url);
 
 }
+
+
+/* MODES */
+
+let modes=[];
+
+document
+.querySelectorAll(
+'input[type="checkbox"]:checked'
+)
+.forEach(c=>{
+
+modes.push(
+c.parentElement.innerText.trim()
+);
+
+});
+
+
+/* SAVE */
 
 await push(
 ref(db,"institutions"),
 {
 
-name:name.value,
-phone:phone.value,
-email:email.value,
-website:website.value,
-address:address.value,
-area:area.value,
+name:
+document.getElementById("name").value,
+
+phone:
+document.getElementById("phone").value,
+
+email:
+document.getElementById("email").value,
+
+website:
+document.getElementById("website").value,
+
+address:
+document.getElementById("address").value,
+
+area:
+document.getElementById("area").value,
 
 subject:
 subject.value==="other"
@@ -414,25 +497,64 @@ otherSubject.value
 :
 subject.value,
 
-class:class.value,
+class:
+document.getElementById("class").value,
 
-logo:logoUrl,
+modes:modes,
 
-gallery:galleryUrls,
+offlineFee:
+document.getElementById("offlineFee").value,
 
-description:description.value,
+homeFee:
+document.getElementById("homeFee").value,
 
-status:"pending",
+onlineFee:
+document.getElementById("onlineFee").value,
 
-category:"academic"
+logo:
+logoUrl,
+
+gallery:
+galleryUrls,
+
+description:
+document.getElementById("description").value,
+
+category:"academic",
+
+status:"pending"
 
 }
+
 );
 
-window.location.href=
-"payment.html?type=institution&amount=200";
 
-});
+alert(
+"Institution registered successfully"
+);
+
+
+/* OPEN PAYMENT */
+
+window.location.href=
+"payment.html?type=institution&category=academic";
+
+
+}
+catch(error){
+
+console.log(error);
+
+alert(
+"Error:\n"+
+error.message
+);
+
+}
+
+}
+
+);
 
 </script>
 
