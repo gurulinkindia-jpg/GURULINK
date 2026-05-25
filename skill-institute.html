@@ -49,8 +49,8 @@ button{
 width:100%;
 padding:14px;
 background:#e65100;
-border:none;
 color:white;
+border:none;
 border-radius:10px;
 font-size:16px;
 cursor:pointer;
@@ -60,7 +60,7 @@ cursor:pointer;
 display:flex;
 flex-wrap:wrap;
 gap:10px;
-margin:10px 0;
+margin-top:10px;
 }
 
 .preview img{
@@ -72,17 +72,8 @@ border:1px solid #ddd;
 }
 
 .modeBox{
-padding:10px;
+padding:15px;
 border:1px solid #ddd;
-border-radius:10px;
-margin-top:10px;
-}
-
-.modeFee{
-display:none;
-padding:10px;
-background:#f7f7f7;
-margin-top:10px;
 border-radius:10px;
 }
 
@@ -93,8 +84,17 @@ gap:10px;
 margin:10px 0;
 }
 
-.row input[type=checkbox]{
+.row input{
 width:auto;
+transform:scale(1.2);
+}
+
+.modeFee{
+display:none;
+padding:10px;
+background:#f4f4f4;
+border-radius:10px;
+margin-bottom:10px;
 }
 
 </style>
@@ -124,8 +124,8 @@ placeholder="Contact Number"
 required>
 
 <input
-id="email"
 type="email"
+id="email"
 placeholder="Email">
 
 <input
@@ -138,7 +138,8 @@ placeholder="Address">
 
 <input
 id="area"
-placeholder="Preferred Service Area Example: Beltola">
+placeholder="Preferred Service Area">
+
 
 
 <select id="skill">
@@ -167,8 +168,8 @@ Other
 
 <input
 id="otherSkill"
-style="display:none"
-placeholder="Enter Skill Category">
+placeholder="Write Skill Category"
+style="display:none">
 
 
 <h3>Teaching Modes</h3>
@@ -179,15 +180,15 @@ placeholder="Enter Skill Category">
 
 <input
 type="checkbox"
+value="Offline Classroom"
 onchange="toggleFee('offline')">
 
-Offline Classroom
+<label>Offline Classroom</label>
 
 </div>
 
-<div
-class="modeFee"
-id="offline">
+<div id="offline"
+class="modeFee">
 
 <input
 id="offlineFee"
@@ -196,19 +197,20 @@ placeholder="Enter Offline Fee">
 </div>
 
 
+
 <div class="row">
 
 <input
 type="checkbox"
+value="Online"
 onchange="toggleFee('online')">
 
-Online
+<label>Online</label>
 
 </div>
 
-<div
-class="modeFee"
-id="online">
+<div id="online"
+class="modeFee">
 
 <input
 id="onlineFee"
@@ -217,19 +219,20 @@ placeholder="Enter Online Fee">
 </div>
 
 
+
 <div class="row">
 
 <input
 type="checkbox"
+value="Hybrid"
 onchange="toggleFee('hybrid')">
 
-Hybrid
+<label>Hybrid</label>
 
 </div>
 
-<div
-class="modeFee"
-id="hybrid">
+<div id="hybrid"
+class="modeFee">
 
 <input
 id="hybridFee"
@@ -240,9 +243,8 @@ placeholder="Enter Hybrid Fee">
 </div>
 
 
-<label>
-<b>Institution Logo</b>
-</label>
+
+<h3>Institution Logo</h3>
 
 <input
 type="file"
@@ -254,9 +256,8 @@ id="logoPreview"
 class="preview"></div>
 
 
-<label>
-<b>Gallery Photos (Maximum 5)</b>
-</label>
+
+<h3>Gallery Photos (Max 5)</h3>
 
 <input
 type="file"
@@ -285,21 +286,20 @@ Continue To Payment
 </div>
 
 
+
 <script type="module">
 
 import {
 initializeApp
 }
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
 getDatabase,
 ref,
 push
 }
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 
 const firebaseConfig={
@@ -314,16 +314,9 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
 
-const app=
-initializeApp(
-firebaseConfig
-);
+const app=initializeApp(firebaseConfig);
 
-const db=
-getDatabase(
-app
-);
-
+const db=getDatabase(app);
 
 const API_KEY=
 "31f729ff855eb2e42c00ee508a8647ea";
@@ -331,16 +324,14 @@ const API_KEY=
 
 async function upload(file){
 
-let fd=
-new FormData();
+let fd=new FormData();
 
 fd.append(
 "image",
 file
 );
 
-let res=
-await fetch(
+let res=await fetch(
 `https://api.imgbb.com/1/upload?key=${API_KEY}`,
 {
 method:"POST",
@@ -348,13 +339,15 @@ body:fd
 }
 );
 
-let data=
-await res.json();
+let data=await res.json();
 
 return data.data.url;
 
 }
 
+
+
+/* Skill Selection */
 
 skill.onchange=()=>{
 
@@ -368,28 +361,29 @@ skill.value==="other"
 };
 
 
+
+/* Logo Preview */
+
 logo.onchange=function(){
 
 logoPreview.innerHTML="";
 
 if(this.files[0]){
 
-let img=
-document.createElement("img");
+let img=document.createElement("img");
 
 img.src=
-URL.createObjectURL(
-this.files[0]
-);
+URL.createObjectURL(this.files[0]);
 
-logoPreview.appendChild(
-img
-);
+logoPreview.appendChild(img);
 
 }
 
 };
 
+
+
+/* Gallery Preview */
 
 gallery.onchange=function(){
 
@@ -397,11 +391,10 @@ galleryPreview.innerHTML="";
 
 if(this.files.length>5){
 
-alert(
-"Maximum 5 photos"
-);
+alert("Maximum 5 photos");
 
 this.value="";
+
 return;
 
 }
@@ -409,23 +402,17 @@ return;
 Array.from(this.files)
 .forEach(file=>{
 
-let img=
-document.createElement(
-"img"
-);
+let img=document.createElement("img");
 
 img.src=
-URL.createObjectURL(
-file
-);
+URL.createObjectURL(file);
 
-galleryPreview.appendChild(
-img
-);
+galleryPreview.appendChild(img);
 
 });
 
 };
+
 
 
 form.addEventListener(
@@ -433,6 +420,8 @@ form.addEventListener(
 async(e)=>{
 
 e.preventDefault();
+
+try{
 
 let logoUrl="";
 
@@ -445,6 +434,7 @@ logo.files[0]
 
 }
 
+
 let galleryUrls=[];
 
 for(let file of gallery.files){
@@ -454,6 +444,23 @@ await upload(file)
 );
 
 }
+
+
+
+let teachingModes=[];
+
+document
+.querySelectorAll(
+'input[type="checkbox"]:checked'
+)
+.forEach(c=>{
+
+teachingModes.push(
+c.value
+);
+
+});
+
 
 
 await push(
@@ -477,22 +484,38 @@ otherSkill.value
 :
 skill.value,
 
+teachingModes,
+
+offlineFee:offlineFee.value,
+onlineFee:onlineFee.value,
+hybridFee:hybridFee.value,
+
 logo:logoUrl,
 
 gallery:galleryUrls,
 
-description:
-description.value,
+description:description.value,
 
-status:"pending",
+category:"skill",
 
-category:"skill"
+status:"pending"
 
-}
-);
+});
+
 
 window.location.href=
-"payment.html?type=institution&amount=200";
+"payment.html?type=institution&category=skill";
+
+}
+catch(error){
+
+console.log(error);
+
+alert(
+"Submission error"
+);
+
+}
 
 });
 
