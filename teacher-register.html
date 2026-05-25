@@ -56,14 +56,24 @@ font-size:16px;
 cursor:pointer;
 }
 
-button:hover{
-opacity:.9;
+.preview{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin:10px 0;
+}
+
+.preview img{
+width:80px;
+height:80px;
+border-radius:10px;
+object-fit:cover;
+border:1px solid #ccc;
 }
 
 .note{
 font-size:12px;
 color:#666;
-margin-bottom:10px;
 }
 
 </style>
@@ -72,8 +82,10 @@ margin-bottom:10px;
 <body>
 
 <header>
+
 <h1>Teacher Registration</h1>
 <p id="categoryTitle"></p>
+
 </header>
 
 <div class="container">
@@ -106,6 +118,7 @@ placeholder="Qualification">
 id="experience"
 placeholder="Experience">
 
+
 <!-- ACADEMIC -->
 
 <div id="academicFields">
@@ -116,14 +129,15 @@ placeholder="Subject">
 
 <input type="text"
 id="class"
-placeholder="Class (Example: Class 9-10)">
+placeholder="Class Example: Class 9-10">
 
 </div>
+
 
 <!-- CREATIVE -->
 
 <div id="creativeFields"
-style="display:none;">
+style="display:none">
 
 <select id="creativeType">
 
@@ -136,10 +150,11 @@ style="display:none;">
 
 </div>
 
+
 <!-- SKILL -->
 
 <div id="skillFields"
-style="display:none;">
+style="display:none">
 
 <select id="skillType">
 
@@ -152,13 +167,59 @@ style="display:none;">
 
 </div>
 
+
 <input type="text"
 id="location"
-placeholder="Preferred Teaching Area (Example: Beltola)">
+placeholder="Preferred Teaching Area Example: Beltola">
 
-<input type="number"
+
+<!-- TUITION TYPE -->
+
+<label>Teaching Mode</label>
+
+<select id="tuitionType">
+
+<option value="">Select</option>
+
+<option>Home Tuition</option>
+
+<option>Group Tuition</option>
+
+<option>Online Individual</option>
+
+<option>Online Group</option>
+
+</select>
+
+
+<!-- RANGE -->
+
+<label>Fee Range Example</label>
+
+<select id="feeRange">
+
+<option>Select Range</option>
+
+<option>Home Tuition : ₹500–1000 per class</option>
+
+<option>Group Tuition : ₹1000–2000 monthly</option>
+
+<option>Group Tuition : ₹10000–20000 yearly</option>
+
+<option>Online Individual : ₹400–900 per class</option>
+
+<option>Online Group : ₹1000–2000 monthly</option>
+
+<option>Online Group : ₹10000–20000 yearly</option>
+
+</select>
+
+
+<input
+type="number"
 id="fee"
-placeholder="Monthly Fee">
+placeholder="Enter Your Fee Amount">
+
 
 <label>Profile Photo</label>
 
@@ -167,7 +228,11 @@ type="file"
 id="photo"
 accept="image/*">
 
-<label>Gallery Photos (Maximum 5)</label>
+<div id="photoPreview"
+class="preview"></div>
+
+
+<label>Gallery Photos (Max 5)</label>
 
 <input
 type="file"
@@ -175,13 +240,14 @@ id="gallery"
 multiple
 accept="image/*">
 
-<div class="note">
-Maximum 5 photos
-</div>
+<div id="galleryPreview"
+class="preview"></div>
+
 
 <textarea
 id="description"
-placeholder="About Teacher / Description"></textarea>
+placeholder="About Teacher"></textarea>
+
 
 <button type="submit">
 
@@ -192,6 +258,7 @@ Continue To Payment
 </form>
 
 </div>
+
 
 <script type="module">
 
@@ -206,7 +273,6 @@ ref,
 push
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
 
 const firebaseConfig={
 
@@ -224,8 +290,9 @@ const app=initializeApp(firebaseConfig);
 
 const db=getDatabase(app);
 
+const API_KEY=
+"31f729ff855eb2e42c00ee508a8647ea";
 
-/* CATEGORY */
 
 const params=
 new URLSearchParams(
@@ -233,53 +300,95 @@ window.location.search
 );
 
 const category=
-params.get("category") || "academic";
+params.get("category") ||
+"academic";
+
 
 document.getElementById(
 "categoryTitle"
 ).innerText=
-"Category: "+
+"Category : "+
 category.toUpperCase();
+
 
 
 if(category==="creative"){
 
-document.getElementById(
-"academicFields"
-).style.display="none";
-
-document.getElementById(
-"creativeFields"
-).style.display="block";
+academicFields.style.display="none";
+creativeFields.style.display="block";
 
 }
-
 
 if(category==="skill"){
 
-document.getElementById(
-"academicFields"
-).style.display="none";
-
-document.getElementById(
-"skillFields"
-).style.display="block";
+academicFields.style.display="none";
+skillFields.style.display="block";
 
 }
 
 
-/* IMGBB */
 
-const API_KEY=
-"31f729ff855eb2e42c00ee508a8647ea";
+/* PREVIEW PROFILE */
+
+photo.onchange=function(){
+
+photoPreview.innerHTML="";
+
+let file=this.files[0];
+
+if(file){
+
+let img=document.createElement("img");
+
+img.src=
+URL.createObjectURL(file);
+
+photoPreview.appendChild(img);
+
+}
+
+};
+
+
+
+/* GALLERY PREVIEW */
+
+gallery.onchange=function(){
+
+galleryPreview.innerHTML="";
+
+if(this.files.length>5){
+
+alert("Maximum 5 photos");
+
+this.value="";
+
+return;
+
+}
+
+for(let file of this.files){
+
+let img=
+document.createElement("img");
+
+img.src=
+URL.createObjectURL(file);
+
+galleryPreview.appendChild(img);
+
+}
+
+};
+
 
 
 async function upload(file){
 
-let formData=
+let fd=
 new FormData();
 
-formData.append(
+fd.append(
 "image",
 file
 );
@@ -289,7 +398,7 @@ await fetch(
 `https://api.imgbb.com/1/upload?key=${API_KEY}`,
 {
 method:"POST",
-body:formData
+body:fd
 }
 );
 
@@ -301,125 +410,83 @@ return data.data.url;
 }
 
 
-/* SUBMIT */
 
-document.getElementById(
-"teacherForm"
-)
-.addEventListener(
+teacherForm.addEventListener(
 "submit",
 async function(e){
 
 e.preventDefault();
 
-
 let photoURL="";
 
-let gallery=[];
+let galleryURLs=[];
 
 
-/* profile photo */
+/* upload profile */
 
-let photo=
-document.getElementById(
-"photo"
-).files[0];
-
-if(photo){
+if(photo.files[0]){
 
 photoURL=
-await upload(photo);
-
-}
-
-
-/* gallery */
-
-let galleryFiles=
-document.getElementById(
-"gallery"
-).files;
-
-if(galleryFiles.length>5){
-
-alert(
-"Maximum 5 photos"
+await upload(
+photo.files[0]
 );
 
-return;
-
 }
 
-for(let file of galleryFiles){
+
+/* upload gallery */
+
+for(let file of gallery.files){
 
 let url=
 await upload(file);
 
-gallery.push(url);
+galleryURLs.push(url);
 
 }
 
 
-/* DATA */
 
 let data={
 
-name:
-document.getElementById("name").value,
+name:name.value,
+phone:phone.value,
+email:email.value,
+website:website.value,
+qualification:qualification.value,
+experience:experience.value,
 
-phone:
-document.getElementById("phone").value,
+location:location.value,
 
-email:
-document.getElementById("email").value,
+tuitionType:tuitionType.value,
 
-website:
-document.getElementById("website").value,
+feeRange:feeRange.value,
 
-qualification:
-document.getElementById("qualification").value,
+fee:fee.value,
 
-experience:
-document.getElementById("experience").value,
+description:description.value,
 
-location:
-document.getElementById("location").value,
+photo:photoURL,
 
-fee:
-document.getElementById("fee").value,
+gallery:galleryURLs,
 
-description:
-document.getElementById("description").value,
+category:category,
 
-photo:
-photoURL,
+type:"teacher",
 
-gallery:
-gallery,
-
-category:
-category,
-
-type:
-"teacher",
-
-status:
-"pending"
+status:"pending"
 
 };
+
 
 
 if(category==="academic"){
 
 data.subject=
-document.getElementById(
-"subject"
-).value;
+subject.value;
 
 data.class=
-document.getElementById(
-"class"
-).value;
+class.value;
 
 }
 
@@ -427,9 +494,7 @@ document.getElementById(
 if(category==="creative"){
 
 data.skillType=
-document.getElementById(
-"creativeType"
-).value;
+creativeType.value;
 
 }
 
@@ -437,9 +502,7 @@ document.getElementById(
 if(category==="skill"){
 
 data.skillType=
-document.getElementById(
-"skillType"
-).value;
+skillType.value;
 
 }
 
@@ -448,6 +511,7 @@ await push(
 ref(db,"teachers"),
 data
 );
+
 
 window.location.href=
 "payment.html?type=teacher";
