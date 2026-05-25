@@ -3,14 +3,20 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
 
-<title>Find Teacher - GURULINK</title>
+<title>Find Teachers - GURULINK</title>
 
 <style>
 
-body{
+*{
 margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
 font-family:Arial,sans-serif;
 background:#eef2f7;
 }
@@ -18,253 +24,616 @@ background:#eef2f7;
 header{
 background:#0d47a1;
 color:white;
-text-align:center;
 padding:18px;
+text-align:center;
+box-shadow:0 3px 10px rgba(0,0,0,.2);
 }
 
 .container{
 width:95%;
-max-width:1100px;
+max-width:1300px;
 margin:auto;
 padding:20px;
 }
 
-/* FILTERS */
+
+/* FILTER */
+
 .filters{
 background:white;
 padding:15px;
-border-radius:10px;
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-gap:10px;
+border-radius:15px;
 margin-bottom:20px;
-box-shadow:0 0 10px rgba(0,0,0,.1);
+
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(160px,1fr));
+
+gap:10px;
+
+box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 
 .filters input,
 .filters select{
-padding:10px;
+
+padding:12px;
+border-radius:10px;
 border:1px solid #ccc;
-border-radius:8px;
+
 }
+
 
 /* GRID */
+
 .grid{
+
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:15px;
+
+grid-template-columns:
+repeat(auto-fit,minmax(320px,1fr));
+
+gap:20px;
+
 }
 
+
 /* CARD */
+
 .card{
+
 background:white;
-padding:15px;
-border-radius:12px;
-box-shadow:0 0 10px rgba(0,0,0,.1);
-transition:0.2s;
+border-radius:15px;
+padding:18px;
+
+box-shadow:
+0 5px 15px rgba(0,0,0,.1);
+
+transition:.3s;
+
 }
 
 .card:hover{
-transform:scale(1.02);
+
+transform:translateY(-5px);
+
+}
+
+
+.top{
+
+display:flex;
+align-items:center;
+gap:15px;
+
+margin-bottom:10px;
+
 }
 
 .photo{
+
 width:90px;
 height:90px;
+
 border-radius:50%;
+
 object-fit:cover;
-margin-bottom:10px;
+
+border:3px solid #0d47a1;
+
 }
 
+
 .badge{
+
 display:inline-block;
-padding:4px 8px;
-background:#e0e0e0;
-border-radius:5px;
+
+padding:5px 10px;
+
+background:#e3f2fd;
+
+border-radius:20px;
+
 font-size:12px;
-margin:2px 2px 2px 0;
+
+margin:3px;
+
+}
+
+
+.verify{
+
+background:#1b5e20;
+color:white;
+
+}
+
+
+.gallery{
+
+display:flex;
+gap:6px;
+overflow:auto;
+margin-top:10px;
+
+}
+
+.gallery img{
+
+width:70px;
+height:70px;
+
+border-radius:8px;
+
+object-fit:cover;
+
 }
 
 .empty{
-text-align:center;
-padding:20px;
+
 background:white;
+
+padding:20px;
+
+border-radius:15px;
+
+text-align:center;
+
+}
+
+.desc{
+
+margin-top:10px;
+
+font-size:14px;
+
+color:#444;
+
+line-height:1.5;
+
+}
+
+.mode{
+
+margin-top:8px;
+
+padding:8px;
+
+background:#f4f4f4;
+
 border-radius:10px;
+
+font-size:13px;
+
 }
 
 </style>
-
 </head>
 
 <body>
 
 <header>
+
 <h1>GURULINK</h1>
+
 <p>Find Verified Teachers</p>
+
 </header>
+
 
 <div class="container">
 
-<!-- FILTERS -->
 <div class="filters">
 
-<input type="text" id="search" placeholder="Search name/location">
+<input
+type="text"
+id="search"
+placeholder="Search name/location">
 
-<select id="filterCategory">
-<option value="">All Categories</option>
+<select id="category">
+
+<option value="">All Category</option>
 <option value="academic">Academic</option>
 <option value="creative">Creative</option>
 <option value="skill">Skill</option>
+
 </select>
 
-<select id="filterClass">
-<option value="">All Classes</option>
-<option>Class 1-5</option>
-<option>Class 6-8</option>
-<option>Class 9-10</option>
-<option>Class 11-12</option>
-<option>JEE</option>
-<option>NEET</option>
-</select>
 
-<select id="filterSubject">
-<option value="">All Subjects/Skill</option>
+<select id="subject">
+
+<option value="">All Subject/Skills</option>
+
 <option>Mathematics</option>
 <option>Physics</option>
 <option>Chemistry</option>
 <option>Biology</option>
 <option>English</option>
-<option>Coding</option>
+
 <option>Music</option>
 <option>Dance</option>
 <option>Drawing</option>
+<option>Singing</option>
+
+<option>Computer</option>
+<option>Embroidery</option>
+<option>Cake Making</option>
+<option>Hand Craft</option>
+
 </select>
 
-<select id="filterMode">
-<option value="">All Modes</option>
+
+<select id="mode">
+
+<option value="">Teaching Mode</option>
+
 <option>Home Tuition</option>
-<option>Online</option>
-<option>Tuition Centre</option>
+<option>Group Tuition</option>
+<option>Online Individual</option>
+<option>Online Group</option>
+
 </select>
 
-<input type="number" id="maxFee" placeholder="Max Fee">
 
 </div>
 
-<!-- TEACHERS -->
-<div id="teacherGrid" class="grid"></div>
+<div id="teacherGrid"
+class="grid"></div>
 
 </div>
+
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import{
+initializeApp
+}
 
-const firebaseConfig = {
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+
+import{
+
+getDatabase,
+ref,
+onValue
+
+}
+
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+
+
+const firebaseConfig={
+
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+
 authDomain:"gurulink-59cc7.firebaseapp.com",
+
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
 projectId:"gurulink-59cc7",
-storageBucket:"gurulink-59cc7.firebasestorage.app",
+
+storageBucket:"gurulink-59cc7.appspot.com",
+
 messagingSenderId:"112148672399",
+
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
 
-let allTeachers = [];
+const app=
+initializeApp(firebaseConfig);
+
+const db=
+getDatabase(app);
+
+
+let allTeachers=[];
+
+
 
 function renderTeachers(){
 
-let search = document.getElementById("search").value.toLowerCase();
-let category = document.getElementById("filterCategory").value;
-let cls = document.getElementById("filterClass").value;
-let subject = document.getElementById("filterSubject").value;
-let mode = document.getElementById("filterMode").value;
-let maxFee = document.getElementById("maxFee").value;
+let search=
+document.getElementById("search")
+.value
+.toLowerCase();
 
-let filtered = allTeachers.filter(t => {
+let category=
+document.getElementById("category")
+.value;
 
-if(t.status !== "approved") return false;
+let subject=
+document.getElementById("subject")
+.value;
 
-if(category && t.category !== category) return false;
+let mode=
+document.getElementById("mode")
+.value;
 
-if(search &&
+
+
+let filtered=
+allTeachers.filter(t=>{
+
+
+if(
+t.status!="approved"
+)
+return false;
+
+
+if(
+category &&
+t.category!=category
+)
+return false;
+
+
+if(
+search &&
 !t.name?.toLowerCase().includes(search) &&
 !t.location?.toLowerCase().includes(search)
-) return false;
+)
+return false;
 
-if(cls && t.class !== cls) return false;
 
-if(subject){
-let value = t.subject || t.skillType || "";
-if(value !== subject) return false;
-}
 
-if(mode && t.mode !== mode) return false;
+let teacherSubject=
+t.subject ||
+t.skillType ||
+"";
 
-if(maxFee && Number(t.fee) > Number(maxFee)) return false;
+
+if(
+subject &&
+teacherSubject!=subject
+)
+return false;
+
+
+
+if(
+mode &&
+!(
+t.teachingModes?.includes(mode)
+)
+)
+return false;
+
+
 
 return true;
+
 });
 
-let html = "";
 
-if(filtered.length === 0){
-document.getElementById("teacherGrid").innerHTML =
-`<div class="empty">No teachers found</div>`;
+let html="";
+
+
+if(filtered.length===0){
+
+document.getElementById(
+"teacherGrid"
+).innerHTML=
+
+`<div class='empty'>
+No teachers found
+</div>`;
+
 return;
+
 }
 
-filtered.forEach(t => {
 
-let subjectShow = t.subject || t.skillType || "-";
 
-html += `
+filtered.forEach(t=>{
+
+
+let gallery="";
+
+if(t.gallery){
+
+t.gallery.forEach(img=>{
+
+gallery+=
+`<img src="${img}">`;
+
+});
+
+}
+
+
+let modeText="";
+
+if(t.teachingModes){
+
+t.teachingModes.forEach(m=>{
+
+modeText+=
+`<div>${m}</div>`;
+
+});
+
+}
+
+
+
+html+=`
+
 <div class="card">
 
-<img class="photo" src="${t.photo || 'https://via.placeholder.com/100'}">
+<div class="top">
 
-<h3>${t.name}</h3>
+<img
+class="photo"
+src="${t.photo||'https://via.placeholder.com/100'}">
 
-<div class="badge">${t.category}</div>
-<div class="badge">${subjectShow}</div>
-<div class="badge">${t.class || "N/A"}</div>
-<div class="badge">${t.mode}</div>
+<div>
 
-<p><b>Location:</b> ${t.location}</p>
-<p><b>Fee:</b> ₹${t.fee}</p>
+<h3>
 
-<p><b>Qualification:</b> ${t.qualification || "N/A"}</p>
-<p><b>Experience:</b> ${t.experience || "N/A"}</p>
+${t.name}
+
+</h3>
+
+<div class="badge">
+
+${t.category}
 
 </div>
-`;
-});
 
-document.getElementById("teacherGrid").innerHTML = html;
+<div class="badge">
+
+${teacherSubject}
+
+</div>
+
+${
+t.status=="approved"
+
+?
+
+`<div class="badge verify">
+✓ Verified
+</div>`
+
+:
+
+""
+
 }
 
-/* LOAD DATA */
-onValue(ref(db,"teachers"), snapshot => {
+</div>
 
-allTeachers = [];
+</div>
 
-snapshot.forEach(child => {
-allTeachers.push(child.val());
+
+<p>
+
+<b>Area:</b>
+
+${t.location||"-"}
+
+</p>
+
+
+<p>
+
+<b>Qualification:</b>
+
+${t.qualification||"-"}
+
+</p>
+
+
+<p>
+
+<b>Experience:</b>
+
+${t.experience||"-"}
+
+</p>
+
+
+<div class="mode">
+
+<b>Teaching Mode:</b>
+
+${modeText}
+
+</div>
+
+
+<div class="mode">
+
+<b>Fees:</b>
+
+₹${t.homeFee||"-"} Home<br>
+
+₹${t.groupFee||"-"} Group<br>
+
+₹${t.onlineIndividualFee||"-"} Online Individual<br>
+
+₹${t.onlineGroupFee||"-"} Online Group
+
+</div>
+
+
+<div class="desc">
+
+${t.description||""}
+
+</div>
+
+
+<div class="gallery">
+
+${gallery}
+
+</div>
+
+
+</div>
+
+`;
+
 });
+
+
+document.getElementById(
+"teacherGrid"
+).innerHTML=
+html;
+
+}
+
+
+
+/* LOAD TEACHERS */
+
+onValue(
+ref(db,"teachers"),
+(snapshot)=>{
+
+allTeachers=[];
+
+
+snapshot.forEach(child=>{
+
+allTeachers.push(
+child.val()
+);
+
+});
+
 
 renderTeachers();
 
 });
 
-/* LIVE FILTERS */
-document.querySelectorAll("input,select")
-.forEach(el => {
-el.addEventListener("input", renderTeachers);
-el.addEventListener("change", renderTeachers);
+
+
+document
+.querySelectorAll(
+"input,select"
+)
+.forEach(el=>{
+
+el.addEventListener(
+"input",
+renderTeachers
+);
+
+el.addEventListener(
+"change",
+renderTeachers
+);
+
 });
 
 </script>
