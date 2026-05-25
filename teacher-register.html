@@ -155,14 +155,26 @@ authDomain: "gurulink-59cc7.firebaseapp.com",
 projectId: "gurulink-59cc7",
 storageBucket: "gurulink-59cc7.firebasestorage.app",
 messagingSenderId: "112148672399",
-appId: "1:112148672399:web:f5fe5cd6e5c5ef4382e5fa",
-measurementId: "G-33YVC03NBE"
+appId: "1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
 
 const app = initializeApp(firebaseConfig);
 
 console.log("Firebase Connected Successfully");
+
+document.getElementById("teacherForm")
+.addEventListener(
+"submit",
+function(e){
+
+e.preventDefault();
+
+alert(
+"Registration captured. Payment page coming next."
+);
+
+});
 
 </script>
 
