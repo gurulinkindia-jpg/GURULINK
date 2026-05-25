@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>GURULINK Admin Panel</title>
+<title>GURULINK Admin</title>
 
 <style>
 body{
 font-family:Arial;
-background:#f2f2f2;
 margin:0;
+background:#f2f2f2;
 }
 
 header{
@@ -25,13 +25,13 @@ padding:20px;
 }
 
 .section{
-margin-top:25px;
+margin-bottom:30px;
 }
 
 .card{
 background:white;
 padding:15px;
-margin-bottom:10px;
+margin:10px 0;
 border-radius:10px;
 box-shadow:0 0 10px rgba(0,0,0,.1);
 }
@@ -40,17 +40,17 @@ button{
 padding:8px 10px;
 margin:5px;
 border:none;
-cursor:pointer;
 border-radius:5px;
 color:white;
+cursor:pointer;
 }
 
 .approve{background:green;}
-.reject{background:red;}
+.delete{background:red;}
 
 img{
-width:120px;
-border-radius:6px;
+width:80px;
+border-radius:8px;
 }
 </style>
 </head>
@@ -63,22 +63,19 @@ border-radius:6px;
 
 <div class="container">
 
-<!-- PAYMENTS -->
-<div class="section">
-<h2>Payment Verification</h2>
-<div id="payments"></div>
-</div>
-
-<!-- TEACHERS -->
 <div class="section">
 <h2>Teachers</h2>
 <div id="teachers"></div>
 </div>
 
-<!-- INSTITUTIONS -->
 <div class="section">
 <h2>Institutions</h2>
 <div id="institutions"></div>
+</div>
+
+<div class="section">
+<h2>Payments</h2>
+<div id="payments"></div>
 </div>
 
 </div>
@@ -107,61 +104,98 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* ================= PAYMENTS ================= */
+/* SAFE GET */
+const safe = (v) => v ? v : "N/A";
 
-onValue(ref(db,"payments"), (snap)=>{
+/* TEACHERS */
+onValue(ref(db,"teachers"), snap => {
 
-let html="";
+let html = "";
 
-snap.forEach(child=>{
-
-let p = child.val();
+snap.forEach(c => {
+let t = c.val();
 
 html += `
 <div class="card">
+<h3>${safe(t.name)}</h3>
+<p>${safe(t.category)} | ${safe(t.subject || t.skillType)}</p>
+<p>${safe(t.location)}</p>
+<p>Status: ${safe(t.status)}</p>
 
-<h3>Type: ${p.type}</h3>
-<p>Category: ${p.category}</p>
-<p>Amount: ₹${p.amount}</p>
-<p>UTR: ${p.utr}</p>
+<button class="approve" onclick="approveTeacher('${c.key}')">Approve</button>
+<button class="delete" onclick="deleteTeacher('${c.key}')">Delete</button>
+</div>
+`;
+});
+
+document.getElementById("teachers").innerHTML = html;
+});
+
+/* INSTITUTIONS */
+onValue(ref(db,"institutions"), snap => {
+
+let html = "";
+
+snap.forEach(c => {
+let i = c.val();
+
+html += `
+<div class="card">
+<h3>${safe(i.name)}</h3>
+<p>${safe(i.category)}</p>
+<p>${safe(i.address)}</p>
+<p>Status: ${safe(i.status)}</p>
+
+<button class="approve" onclick="approveInst('${c.key}')">Approve</button>
+<button class="delete" onclick="deleteInst('${c.key}')">Delete</button>
+</div>
+`;
+});
+
+document.getElementById("institutions").innerHTML = html;
+});
+
+/* PAYMENTS */
+onValue(ref(db,"payments"), snap => {
+
+let html = "";
+
+snap.forEach(c => {
+let p = c.val();
+
+html += `
+<div class="card">
+<p>Type: ${safe(p.type)}</p>
+<p>Amount: ₹${safe(p.amount)}</p>
+<p>UTR: ${safe(p.utr)}</p>
+<p>Status: ${safe(p.status)}</p>
 
 ${p.screenshot ? `<img src="${p.screenshot}">` : ""}
-
-<p>Status: ${p.status || "pending"}</p>
-
-<button class="approve" onclick="approvePayment('${child.key}','${p.type}')">Approve</button>
-<button class="reject" onclick="rejectPayment('${child.key}')">Reject</button>
-
 </div>
 `;
 });
 
 document.getElementById("payments").innerHTML = html;
-
 });
 
-/* ================= TEACHERS ================= */
+/* ACTIONS */
+window.approveTeacher = (id) => {
+update(ref(db,"teachers/"+id), {status:"approved"});
+};
 
-onValue(ref(db,"teachers"), (snap)=>{
+window.deleteTeacher = (id) => {
+remove(ref(db,"teachers/"+id));
+};
 
-let html="";
+window.approveInst = (id) => {
+update(ref(db,"institutions/"+id), {status:"approved"});
+};
 
-snap.forEach(child=>{
+window.deleteInst = (id) => {
+remove(ref(db,"institutions/"+id));
+};
 
-let t = child.val();
+</script>
 
-html += `
-<div class="card">
-
-<h3>${t.name}</h3>
-<p>${t.category}</p>
-<p>${t.subject || t.skillType || "-"}</p>
-<p>Status: ${t.status}</p>
-
-<button class="approve" onclick="approveTeacher('${child.key}')">Approve</button>
-
-</div>
-`;
-});
-
-document.get
+</body>
+</html>
