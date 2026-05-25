@@ -22,23 +22,19 @@ padding:18px;
 text-align:center;
 }
 
-/* HERO */
+/* MAIN AREA */
 .hero{
 text-align:center;
 padding:40px 15px;
 }
 
-.hero h2{
+h2{
 color:#0d47a1;
 }
 
-/* MAIN BUTTON */
+/* MAIN BUTTONS */
 .main-btn{
-display:flex;
-align-items:center;
-justify-content:center;
-gap:10px;
-
+display:block;
 width:90%;
 max-width:380px;
 margin:15px auto;
@@ -51,61 +47,81 @@ color:white;
 transition:0.2s;
 }
 
-.main-btn:hover{
-transform:scale(1.03);
-}
-
-/* COLORS */
 .teacher{background:#1b5e20;}
 .institute{background:#283593;}
 .find{background:#0d47a1;}
 
-/* ICON */
-.icon{
-width:22px;
-height:22px;
-border-radius:50%;
+.main-btn:hover{
+transform:scale(1.03);
 }
 
 /* BOX */
 .box{
 display:none;
-background:white;
 width:90%;
 max-width:380px;
 margin:10px auto;
 padding:15px;
+background:white;
 border-radius:12px;
 box-shadow:0 0 10px rgba(0,0,0,.1);
 }
 
-/* SUB BUTTONS */
-.sub-btn{
-width:100%;
-padding:12px;
-margin:8px 0;
-border:none;
-border-radius:8px;
-cursor:pointer;
-color:white;
-font-size:15px;
-}
-
-.academic{background:#1b5e20;}
-.creative{background:#6a1b9a;}
-.skill{background:#e65100;}
-
 /* BACK BUTTON */
-.back-btn{
+.back{
 width:100%;
 padding:10px;
 margin-top:10px;
 border:none;
 border-radius:8px;
-cursor:pointer;
 background:#444;
 color:white;
+cursor:pointer;
 }
+
+/* SUB BUTTON WRAPPER */
+.item{
+display:flex;
+align-items:center;
+gap:10px;
+margin:10px 0;
+}
+
+/* ROUND OUTSIDE ICON (O STYLE) */
+.circle{
+width:38px;
+height:38px;
+border-radius:50%;
+border:2px solid #0d47a1;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+background:white;
+}
+
+/* ICON IMAGE */
+.circle img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+/* SUB BUTTON */
+.sub-btn{
+flex:1;
+padding:12px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+color:white;
+font-size:15px;
+text-align:left;
+}
+
+.academic{background:#1b5e20;}
+.creative{background:#6a1b9a;}
+.skill{background:#e65100;}
 
 </style>
 </head>
@@ -121,114 +137,158 @@ color:white;
 
 <h2>Choose Action</h2>
 
-<!-- 1 TEACHER -->
-<button class="main-btn teacher" onclick="openBox('teacherBox')">
-<img class="icon" src="https://i.imgur.com/your-teacher-icon.png">
+<!-- MAIN BUTTONS -->
+<button class="main-btn teacher" onclick="openOnly('teacherBox')">
 Register as Teacher
 </button>
 
+<button class="main-btn institute" onclick="openOnly('instBox')">
+Register as Institution
+</button>
+
+<button class="main-btn find" onclick="openOnly('findBox')">
+Find Teacher
+</button>
+
+<!-- TEACHER BOX -->
 <div class="box" id="teacherBox">
 
+<div class="item">
+<div class="circle">
+<img src="https://via.placeholder.com/40">
+</div>
 <button class="sub-btn academic"
 onclick="location.href='teacher-register.html?type=teacher&category=academic'">
 Academic Teacher
 </button>
+</div>
 
+<div class="item">
+<div class="circle">
+<img src="https://via.placeholder.com/40">
+</div>
 <button class="sub-btn creative"
 onclick="location.href='teacher-register.html?type=teacher&category=creative'">
 Creative Teacher
 </button>
+</div>
 
+<div class="item">
+<div class="circle">
+<img src="https://via.placeholder.com/40">
+</div>
 <button class="sub-btn skill"
 onclick="location.href='teacher-register.html?type=teacher&category=skill'">
 Skill Teacher
 </button>
-
-<button class="back-btn" onclick="goBack()">
-⬅ Back
-</button>
-
 </div>
 
-<!-- 2 INSTITUTE -->
-<button class="main-btn institute" onclick="openBox('instBox')">
-<img class="icon" src="https://i.imgur.com/your-institute-icon.png">
-Register as Institution
-</button>
+<button class="back" onclick="goBack()">⬅ Back</button>
+</div>
 
+<!-- INSTITUTION BOX -->
 <div class="box" id="instBox">
 
+<div class="item">
+<div class="circle">
+<img src="https://via.placeholder.com/40">
+</div>
 <button class="sub-btn academic"
 onclick="location.href='institution-register.html?type=institution&category=academic'">
 Academic Institute
 </button>
+</div>
 
+<div class="item">
+<div class="circle">
+<img src="https://via.placeholder.com/40">
+</div>
 <button class="sub-btn creative"
 onclick="location.href='institution-register.html?type=institution&category=creative'">
 Creative Institute
 </button>
+</div>
 
+<div class="item">
+<div class="circle">
+<img src="https://via.placeholder.com/40">
+</div>
 <button class="sub-btn skill"
 onclick="location.href='institution-register.html?type=institution&category=skill'">
 Skill Institute
 </button>
-
-<button class="back-btn" onclick="goBack()">
-⬅ Back
-</button>
-
 </div>
 
-<!-- 3 FIND -->
-<button class="main-btn find" onclick="openBox('findBox')">
-<img class="icon" src="https://i.imgur.com/your-search-icon.png">
-Find Teacher
-</button>
+<button class="back" onclick="goBack()">⬅ Back</button>
+</div>
 
+<!-- FIND BOX -->
 <div class="box" id="findBox">
 
+<div class="item">
+<div class="circle">
+<img src="https://via.placeholder.com/40">
+</div>
 <button class="sub-btn academic"
 onclick="location.href='profile.html?category=academic'">
 Academic Teachers
 </button>
+</div>
 
+<div class="item">
+<div class="circle">
+<img src="https://via.placeholder.com/40">
+</div>
 <button class="sub-btn creative"
 onclick="location.href='profile.html?category=creative'">
 Creative Teachers
 </button>
+</div>
 
+<div class="item">
+<div class="circle">
+<img src="https://via.placeholder.com/40">
+</div>
 <button class="sub-btn skill"
 onclick="location.href='profile.html?category=skill'">
 Skill Teachers
 </button>
+</div>
 
-<button class="back-btn" onclick="goBack()">
-⬅ Back
-</button>
-
+<button class="back" onclick="goBack()">⬅ Back</button>
 </div>
 
 </div>
 
 <script>
 
-function openBox(id){
+function openOnly(id){
 
-// hide all boxes first
+// hide all boxes
 document.querySelectorAll(".box").forEach(b=>{
 b.style.display="none";
 });
 
-// show selected
+// show only selected
 document.getElementById(id).style.display="block";
+
+// hide main buttons
+document.querySelectorAll(".main-btn").forEach(b=>{
+b.style.display="none";
+});
 
 }
 
 function goBack(){
 
-// hide all
+// hide all boxes
 document.querySelectorAll(".box").forEach(b=>{
 b.style.display="none";
+});
+
+// show main buttons again
+document.querySelectorAll(".main-btn").forEach(b=>{
+b.style.display="block";
 });
 
 }
