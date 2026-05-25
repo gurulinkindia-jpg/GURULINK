@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Teacher Registration - GURULINK</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f2f2f2;
+}
+
+header{
+background:#0d47a1;
+color:white;
+padding:15px;
+text-align:center;
+}
+
+.container{
+width:90%;
+max-width:600px;
+margin:20px auto;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,.2);
+}
+
+input,select,textarea{
+width:100%;
+padding:10px;
+margin-top:8px;
+margin-bottom:15px;
+border:1px solid #ccc;
+border-radius:5px;
+box-sizing:border-box;
+}
+
+button{
+width:100%;
+padding:12px;
+border:none;
+background:green;
+color:white;
+font-size:16px;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+opacity:.9;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<h1>GURULINK</h1>
+<p>Powered by G10 Group</p>
+
+</header>
+
+<div class="container">
+
+<h2>Teacher Registration</h2>
+
+<form id="teacherForm">
+
+<label>Full Name</label>
+<input type="text" id="name" required>
+
+<label>Phone Number</label>
+<input type="tel" id="phone" required>
+
+<label>Qualification</label>
+<input type="text" id="qualification">
+
+<label>Experience</label>
+<input type="text" id="experience">
+
+<label>Subject</label>
+
+<select id="subject">
+
+<option>Mathematics</option>
+<option>Physics</option>
+<option>Chemistry</option>
+<option>Biology</option>
+<option>English</option>
+
+</select>
+
+<label>Classes</label>
+
+<select id="class">
+
+<option>Class 1-5</option>
+<option>Class 6-8</option>
+<option>Class 9-10</option>
+<option>Class 11-12</option>
+<option>JEE</option>
+<option>NEET</option>
+
+</select>
+
+<label>Location</label>
+<input type="text"
+id="location"
+placeholder="Example: Beltola, Guwahati">
+
+<label>Monthly Fees</label>
+<input type="number" id="fee">
+
+<label>Profile Photo</label>
+<input type="file"
+id="photo"
+accept="image/*">
+
+<label>Teaching Method</label>
+
+<select id="mode">
+
+<option>Home Tuition</option>
+<option>Online</option>
+<option>Tuition Centre</option>
+
+</select>
+
+<button type="submit">
+
+Continue To Payment
+
+</button>
+
+</form>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain: "gurulink-59cc7.firebaseapp.com",
+projectId: "gurulink-59cc7",
+storageBucket: "gurulink-59cc7.firebasestorage.app",
+messagingSenderId: "112148672399",
+appId: "1:112148672399:web:f5fe5cd6e5c5ef4382e5fa",
+measurementId: "G-33YVC03NBE"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+console.log("Firebase Connected Successfully");
+
+</script>
+
+</body>
+</html>
+
+</body>
+</html>
