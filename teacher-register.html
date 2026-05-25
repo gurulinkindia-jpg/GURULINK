@@ -148,31 +148,82 @@ Continue To Payment
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-const firebaseConfig = {
+import {
+getDatabase,
+ref,
+push
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-apiKey: "AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-authDomain: "gurulink-59cc7.firebaseapp.com",
-projectId: "gurulink-59cc7",
-storageBucket: "gurulink-59cc7.firebasestorage.app",
-messagingSenderId: "112148672399",
-appId: "1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+const firebaseConfig={
+
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.firebasestorage.app",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
 
-const app = initializeApp(firebaseConfig);
+const app=initializeApp(firebaseConfig);
 
-console.log("Firebase Connected Successfully");
+const db=getDatabase(app);
 
-document.getElementById("teacherForm")
-.addEventListener(
+document.getElementById(
+"teacherForm"
+).addEventListener(
 "submit",
 function(e){
 
 e.preventDefault();
 
-alert(
-"Registration captured. Payment page coming next."
+push(
+ref(db,"teachers"),
+{
+
+name:
+document.getElementById("name").value,
+
+phone:
+document.getElementById("phone").value,
+
+qualification:
+document.getElementById("qualification").value,
+
+experience:
+document.getElementById("experience").value,
+
+subject:
+document.getElementById("subject").value,
+
+class:
+document.getElementById("class").value,
+
+location:
+document.getElementById("location").value,
+
+fee:
+document.getElementById("fee").value,
+
+mode:
+document.getElementById("mode").value,
+
+status:"pending"
+
+}
+
 );
+
+alert(
+"Teacher registration saved successfully"
+);
+
+document.getElementById(
+"teacherForm"
+).reset();
 
 });
 
