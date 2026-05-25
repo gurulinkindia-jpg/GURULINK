@@ -7,12 +7,14 @@
 <title>GURULINK</title>
 
 <style>
+
 body{
 margin:0;
 font-family:Arial;
 background:linear-gradient(135deg,#e3f2fd,#f2f2f2);
 }
 
+/* HEADER */
 header{
 background:#0d47a1;
 color:white;
@@ -20,44 +22,84 @@ padding:18px;
 text-align:center;
 }
 
+/* HERO */
 .hero{
 text-align:center;
-padding:60px 20px;
+padding:50px 20px;
 }
 
-.btn{
-display:inline-block;
-padding:14px 18px;
-margin:10px;
+.hero h2{
+color:#0d47a1;
+}
+
+/* MAIN BUTTONS */
+.main-btn{
+display:block;
+width:90%;
+max-width:350px;
+margin:15px auto;
+padding:15px;
 border:none;
-border-radius:10px;
+border-radius:12px;
+font-size:16px;
 cursor:pointer;
 color:white;
-font-size:15px;
+background:#1b5e20;
+transition:0.2s;
 }
 
-.academic{background:#1b5e20;}
-.creative{background:#6a1b9a;}
-.skill{background:#e65100;}
-
-.institute{background:#283593;}
-
-.cardBox{
-display:flex;
-justify-content:center;
-flex-wrap:wrap;
-gap:15px;
-margin-top:30px;
+.main-btn:hover{
+transform:scale(1.03);
 }
 
-.card{
+/* FIND BUTTON */
+.find{
+background:#0d47a1;
+}
+
+/* DROPDOWN BOX */
+.dropdown-box{
+display:none;
 background:white;
+width:90%;
+max-width:350px;
+margin:10px auto;
 padding:15px;
-width:250px;
 border-radius:10px;
-box-shadow:0 5px 10px rgba(0,0,0,.1);
-text-align:center;
+box-shadow:0 0 10px rgba(0,0,0,.1);
 }
+
+select{
+width:100%;
+padding:10px;
+margin:8px 0;
+border:1px solid #ccc;
+border-radius:8px;
+}
+
+.small-btn{
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+color:white;
+background:#6a1b9a;
+}
+
+/* FIND SECTION */
+.find-box{
+display:none;
+background:white;
+width:90%;
+max-width:350px;
+margin:10px auto;
+padding:15px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+
 </style>
 </head>
 
@@ -70,43 +112,94 @@ text-align:center;
 
 <div class="hero">
 
-<h2>Choose Category</h2>
+<h2>Welcome to GURULINK</h2>
 
-<h3>Teachers</h3>
-
-<button class="btn academic" onclick="location.href='teacher-register.html?category=academic&type=teacher'">
-Academic Teacher
+<!-- MAIN BUTTON 1 -->
+<button class="main-btn" onclick="toggleRegister()">
+Register as Teacher / Institution
 </button>
 
-<button class="btn creative" onclick="location.href='teacher-register.html?category=creative&type=teacher'">
-Creative Teacher
-</button>
+<!-- REGISTER DROPDOWN -->
+<div class="dropdown-box" id="registerBox">
 
-<button class="btn skill" onclick="location.href='teacher-register.html?category=skill&type=teacher'">
-Skill Teacher
-</button>
+<h3>Select Type</h3>
 
-<h3>Institutions</h3>
+<select id="userType">
+<option value="teacher">Teacher</option>
+<option value="institution">Institution</option>
+</select>
 
-<button class="btn academic" onclick="location.href='institution-register.html?category=academic&type=institution'">
-Academic Institute
-</button>
+<h3>Select Category</h3>
 
-<button class="btn creative" onclick="location.href='institution-register.html?category=creative&type=institution'">
-Creative Institute
-</button>
+<select id="category">
+<option value="academic">Academic</option>
+<option value="creative">Creative</option>
+<option value="skill">Skill</option>
+</select>
 
-<button class="btn skill" onclick="location.href='institution-register.html?category=skill&type=institution'">
-Skill Institute
+<button class="small-btn" onclick="goRegister()">
+Continue
 </button>
 
 </div>
 
-<div class="cardBox">
-<div class="card">Academic Learning</div>
-<div class="card">Creative Arts</div>
-<div class="card">Skill Development</div>
+<!-- MAIN BUTTON 2 -->
+<button class="main-btn find" onclick="toggleFind()">
+Find Teacher (Student / Parent)
+</button>
+
+<!-- FIND BOX -->
+<div class="find-box" id="findBox">
+
+<p>Select category to search teachers</p>
+
+<select id="findCategory">
+<option value="academic">Academic</option>
+<option value="creative">Creative</option>
+<option value="skill">Skill</option>
+</select>
+
+<button class="small-btn" onclick="goFind()">
+Search Teachers
+</button>
+
 </div>
+
+</div>
+
+<script>
+
+function toggleRegister(){
+document.getElementById("registerBox").style.display =
+(document.getElementById("registerBox").style.display==="block") ? "none":"block";
+}
+
+function toggleFind(){
+document.getElementById("findBox").style.display =
+(document.getElementById("findBox").style.display==="block") ? "none":"block";
+}
+
+function goRegister(){
+
+let type = document.getElementById("userType").value;
+let category = document.getElementById("category").value;
+
+if(type==="teacher"){
+location.href = `teacher-register.html?type=teacher&category=${category}`;
+}else{
+location.href = `institution-register.html?type=institution&category=${category}`;
+}
+
+}
+
+function goFind(){
+
+let category = document.getElementById("findCategory").value;
+location.href = `profile.html?category=${category}`;
+
+}
+
+</script>
 
 </body>
 </html>
