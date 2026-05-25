@@ -23,7 +23,7 @@ text-align:center;
 
 .container{
 width:90%;
-max-width:750px;
+max-width:800px;
 margin:20px auto;
 background:white;
 padding:25px;
@@ -48,27 +48,26 @@ resize:none;
 button{
 width:100%;
 padding:14px;
-border:none;
-border-radius:10px;
 background:#6a1b9a;
 color:white;
+border:none;
+border-radius:10px;
 font-size:16px;
 cursor:pointer;
-margin-top:20px;
 }
 
 .preview{
 display:flex;
-flex-wrap:wrap;
 gap:10px;
+flex-wrap:wrap;
 margin-top:10px;
 }
 
 .preview img{
-width:80px;
-height:80px;
-object-fit:cover;
+width:90px;
+height:90px;
 border-radius:10px;
+object-fit:cover;
 border:1px solid #ddd;
 }
 
@@ -78,24 +77,24 @@ padding:15px;
 border-radius:10px;
 }
 
-.modeItem{
-margin-bottom:15px;
+.modeFee{
+display:none;
+padding:10px;
+background:#f4f4f4;
+border-radius:10px;
+margin-bottom:10px;
 }
 
-.modeItem label{
+.row{
 display:flex;
 align-items:center;
 gap:10px;
-font-weight:bold;
+margin:10px 0;
 }
 
-.modeItem input[type="checkbox"]{
+.row input{
 width:auto;
-}
-
-.modeFee{
-display:none;
-margin-top:10px;
+transform:scale(1.2);
 }
 
 </style>
@@ -104,9 +103,8 @@ margin-top:10px;
 <body>
 
 <header>
-
 <h1>Creative Teacher Registration</h1>
-
+<p>Registration Fee ₹100</p>
 </header>
 
 <div class="container">
@@ -117,20 +115,25 @@ margin-top:10px;
 
 <input id="phone" placeholder="Phone Number" required>
 
-<input id="email" type="email" placeholder="Email">
+<input type="email"
+id="email"
+placeholder="Email">
 
-<input id="website" placeholder="Website / Social Link">
+<input id="website"
+placeholder="Website / Social Link">
 
-<input id="qualification" placeholder="Qualification">
+<input id="qualification"
+placeholder="Qualification">
 
-<input id="experience" placeholder="Experience">
+<input id="experience"
+placeholder="Experience">
 
-
-<h3>Creative Subject</h3>
 
 <select id="subject">
 
-<option value="">Select Creative Subject</option>
+<option value="">
+Select Creative Subject
+</option>
 
 <option>Music</option>
 <option>Dance</option>
@@ -149,111 +152,93 @@ Other
 
 </select>
 
+
 <input
 id="customSubject"
-placeholder="Write Subject Name"
-style="display:none"
->
+placeholder="Write Subject"
+style="display:none">
 
 
 <input
 id="location"
-placeholder="Preferred Teaching Area Example: Beltola"
->
+placeholder="Preferred Teaching Area">
+
 
 
 <h3>Teaching Modes</h3>
 
 <div class="modeBox">
 
-<div class="modeItem">
-
-<label>
-
+<div class="row">
 <input type="checkbox"
-onchange="toggleFee('homeFeeBox')">
+value="Home Tuition"
+id="homeCheck"
+onchange="toggleFee('home')">
 
-Home Tuition
+<label>Home Tuition</label>
+</div>
 
-</label>
+<div id="home" class="modeFee">
+<input id="homeFee"
+placeholder="Enter Home Fee">
+</div>
 
-<div id="homeFeeBox" class="modeFee">
+
+
+<div class="row">
+<input type="checkbox"
+value="Group Tuition"
+id="groupCheck"
+onchange="toggleFee('group')">
+
+<label>Group Tuition</label>
+</div>
+
+<div id="group"
+class="modeFee">
+
+<input id="groupFee"
+placeholder="Enter Group Fee">
+
+</div>
+
+
+
+<div class="row">
+<input type="checkbox"
+value="Online Individual"
+id="individualCheck"
+onchange="toggleFee('individual')">
+
+<label>Online Individual</label>
+</div>
+
+<div id="individual"
+class="modeFee">
 
 <input
-id="homeFee"
-placeholder="Enter Home Tuition Fee"
->
+id="onlineIndividualFee"
+placeholder="Enter Online Fee">
 
 </div>
 
-</div>
 
 
-<div class="modeItem">
-
-<label>
-
+<div class="row">
 <input type="checkbox"
-onchange="toggleFee('groupFeeBox')">
+value="Online Group"
+id="onlineCheck"
+onchange="toggleFee('online')">
 
-Group Tuition
-
-</label>
-
-<div id="groupFeeBox" class="modeFee">
-
-<input
-id="groupFee"
-placeholder="Enter Group Tuition Fee"
->
-
+<label>Online Group</label>
 </div>
 
-</div>
-
-
-<div class="modeItem">
-
-<label>
-
-<input type="checkbox"
-onchange="toggleFee('onlineFeeBox')">
-
-Online Individual
-
-</label>
-
-<div id="onlineFeeBox" class="modeFee">
-
-<input
-id="onlineFee"
-placeholder="Enter Online Fee"
->
-
-</div>
-
-</div>
-
-
-<div class="modeItem">
-
-<label>
-
-<input type="checkbox"
-onchange="toggleFee('onlineGroupFeeBox')">
-
-Online Group
-
-</label>
-
-<div id="onlineGroupFeeBox" class="modeFee">
+<div id="online"
+class="modeFee">
 
 <input
 id="onlineGroupFee"
-placeholder="Enter Online Group Fee"
->
-
-</div>
+placeholder="Enter Online Group Fee">
 
 </div>
 
@@ -265,13 +250,10 @@ placeholder="Enter Online Group Fee"
 <input
 type="file"
 id="photo"
-accept="image/*"
->
+accept="image/*">
 
-<div
-id="photoPreview"
-class="preview">
-</div>
+<div id="photoPreview"
+class="preview"></div>
 
 
 <h3>Gallery (Max 5)</h3>
@@ -280,19 +262,16 @@ class="preview">
 type="file"
 id="gallery"
 multiple
-accept="image/*"
->
+accept="image/*">
 
-<div
-id="galleryPreview"
-class="preview">
-</div>
+<div id="galleryPreview"
+class="preview"></div>
 
 
 <textarea
 id="description"
-placeholder="About Teacher">
-</textarea>
+placeholder="About Teacher"></textarea>
+
 
 <button type="submit">
 
@@ -303,6 +282,8 @@ Continue To Payment
 </form>
 
 </div>
+
+
 
 <script type="module">
 
@@ -331,11 +312,13 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
 
+
 const app=initializeApp(firebaseConfig);
 
 const db=getDatabase(app);
 
 const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
+
 
 
 async function upload(file){
@@ -349,8 +332,7 @@ let res=await fetch(
 {
 method:"POST",
 body:fd
-}
-);
+});
 
 let data=await res.json();
 
@@ -359,25 +341,23 @@ return data.data.url;
 }
 
 
-/* Other subject */
+/* SUBJECT */
 
-subject.onchange=function(){
+subject.onchange=()=>{
 
 customSubject.style.display=
-this.value==="other"
+subject.value==="other"
 ?
 "block"
 :
 "none";
 
-}
+};
 
 
-/* Photo Preview */
+/* PHOTO PREVIEW */
 
-photo.addEventListener(
-"change",
-function(){
+photo.onchange=function(){
 
 photoPreview.innerHTML="";
 
@@ -386,23 +366,19 @@ if(this.files[0]){
 let img=document.createElement("img");
 
 img.src=
-URL.createObjectURL(
-this.files[0]
-);
+URL.createObjectURL(this.files[0]);
 
 photoPreview.appendChild(img);
 
 }
 
-}
-);
+};
 
 
-/* Gallery Preview */
 
-gallery.addEventListener(
-"change",
-function(){
+/* GALLERY PREVIEW */
+
+gallery.onchange=function(){
 
 galleryPreview.innerHTML="";
 
@@ -416,10 +392,10 @@ return;
 
 }
 
-[...this.files].forEach(file=>{
+Array.from(this.files)
+.forEach(file=>{
 
-let img=
-document.createElement("img");
+let img=document.createElement("img");
 
 img.src=
 URL.createObjectURL(file);
@@ -428,8 +404,7 @@ galleryPreview.appendChild(img);
 
 });
 
-}
-);
+};
 
 
 
@@ -439,16 +414,17 @@ async(e)=>{
 
 e.preventDefault();
 
-let profile="";
+try{
+
+let photoUrl="";
 
 if(photo.files[0]){
 
-profile=
-await upload(
-photo.files[0]
-);
+photoUrl=
+await upload(photo.files[0]);
 
 }
+
 
 let galleryUrls=[];
 
@@ -461,15 +437,24 @@ await upload(file)
 }
 
 
-let subjectName=
-subject.value==="other"
-?
-customSubject.value
-:
-subject.value;
+let teachingModes=[];
+
+document
+.querySelectorAll(
+'input[type="checkbox"]:checked'
+)
+.forEach(c=>{
+
+teachingModes.push(
+c.value
+);
+
+});
 
 
-let data={
+await push(
+ref(db,"teachers"),
+{
 
 name:name.value,
 phone:phone.value,
@@ -478,41 +463,45 @@ website:website.value,
 qualification:qualification.value,
 experience:experience.value,
 
-subject:subjectName,
+subject:
+subject.value==="other"
+?
+customSubject.value
+:
+subject.value,
 
 location:location.value,
 
-description:description.value,
+teachingModes,
 
-fees:{
+homeFee:homeFee.value,
+groupFee:groupFee.value,
+onlineIndividualFee:onlineIndividualFee.value,
+onlineGroupFee:onlineGroupFee.value,
 
-home:homeFee.value,
-group:groupFee.value,
-online:onlineFee.value,
-onlineGroup:onlineGroupFee.value
-
-},
-
-photo:profile,
-
+photo:photoUrl,
 gallery:galleryUrls,
 
+description:description.value,
+
 category:"creative",
-
-type:"teacher",
-
 status:"pending"
 
-};
-
-
-await push(
-ref(db,"teachers"),
-data
-);
+});
 
 window.location.href=
-"payment.html?type=teacher";
+"payment.html?type=teacher&category=creative";
+
+}
+catch(error){
+
+console.log(error);
+
+alert(
+"Submission error"
+);
+
+}
 
 });
 
