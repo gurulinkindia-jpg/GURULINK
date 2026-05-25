@@ -11,46 +11,74 @@
 body{
 margin:0;
 font-family:Arial;
-background:#f2f2f2;
+background:#eef2f7;
 }
 
 header{
 background:#0d47a1;
 color:white;
-padding:15px;
+padding:18px;
 text-align:center;
+box-shadow:0 2px 10px rgba(0,0,0,.2);
 }
 
 .container{
 width:90%;
-max-width:600px;
-margin:20px auto;
+max-width:650px;
+margin:25px auto;
 background:white;
-padding:20px;
-border-radius:10px;
-box-shadow:0 0 10px rgba(0,0,0,.2);
+padding:25px;
+border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+h2{
+text-align:center;
+color:#0d47a1;
+margin-bottom:20px;
+}
+
+label{
+font-weight:bold;
+font-size:14px;
 }
 
 input,textarea{
 width:100%;
-padding:10px;
-margin:10px 0;
+padding:12px;
+margin:10px 0 18px;
 border:1px solid #ccc;
-border-radius:6px;
+border-radius:8px;
+outline:none;
+transition:0.2s;
+}
+
+input:focus,textarea:focus{
+border-color:#0d47a1;
+box-shadow:0 0 5px rgba(13,71,161,.2);
 }
 
 button{
 width:100%;
-padding:12px;
-background:green;
+padding:14px;
+background:linear-gradient(135deg,#1b5e20,#43a047);
 color:white;
 border:none;
-border-radius:6px;
+border-radius:10px;
 cursor:pointer;
+font-size:16px;
+transition:0.3s;
 }
 
 button:hover{
-opacity:0.9;
+transform:scale(1.02);
+}
+
+.note{
+font-size:12px;
+color:#666;
+margin-top:-10px;
+margin-bottom:10px;
 }
 
 </style>
@@ -64,6 +92,8 @@ opacity:0.9;
 </header>
 
 <div class="container">
+
+<h2>Register Your Institution</h2>
 
 <form id="instForm">
 
@@ -79,8 +109,9 @@ opacity:0.9;
 <label>Contact Number</label>
 <input type="tel" id="phone" required>
 
-<label>Institution Logo (imgbb link)</label>
-<input type="text" id="photo" placeholder="Paste image link">
+<label>Institution Logo</label>
+<input type="file" id="logo" accept="image/*">
+<div class="note">Upload logo (auto upload to imgbb)</div>
 
 <button type="submit">Register Institution</button>
 
@@ -93,6 +124,7 @@ opacity:0.9;
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
+/* FIREBASE */
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
@@ -106,10 +138,45 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+/* IMGBB UPLOAD */
+async function uploadToImgBB(file){
+
+const apiKey = "31f729ff855eb2e42c00ee508a8647ea";
+
+const formData = new FormData();
+formData.append("image", file);
+
+const res = await fetch(
+`https://api.imgbb.com/1/upload?key=${apiKey}`,
+{
+method:"POST",
+body:formData
+}
+);
+
+const data = await res.json();
+
+if(data.success){
+return data.data.url;
+}else{
+throw new Error("Image upload failed");
+}
+
+}
+
+/* SUBMIT */
 document.getElementById("instForm")
-.addEventListener("submit", function(e){
+.addEventListener("submit", async function(e){
 
 e.preventDefault();
+
+/* LOGO UPLOAD */
+let logoFile = document.getElementById("logo").files[0];
+let logoURL = "";
+
+if(logoFile){
+logoURL = await uploadToImgBB(logoFile);
+}
 
 const data = {
 
@@ -117,16 +184,17 @@ name:document.getElementById("name").value,
 address:document.getElementById("address").value,
 courses:document.getElementById("courses").value,
 phone:document.getElementById("phone").value,
-photo:document.getElementById("photo").value,
-status:"pending"
+
+logo:logoURL,
+status:"pending",
+paymentStatus:"unpaid"
 
 };
 
 push(ref(db,"institutions"), data);
 
-alert("Institution Registered Successfully");
-
-window.location.href = "index.html";
+/* REDIRECT TO PAYMENT PAGE */
+window.location.href = "payment.html";
 
 });
 
