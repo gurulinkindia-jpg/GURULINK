@@ -20,8 +20,6 @@ background:linear-gradient(135deg,#e3f2fd,#f8f9fa);
 min-height:100vh;
 }
 
-/* HEADER */
-
 header{
 background:#0d47a1;
 color:white;
@@ -40,8 +38,6 @@ font-size:14px;
 opacity:.9;
 }
 
-/* HERO */
-
 .hero{
 padding:30px 15px;
 text-align:center;
@@ -51,8 +47,6 @@ text-align:center;
 color:#0d47a1;
 margin-bottom:25px;
 }
-
-/* BUTTON AREA */
 
 #mainButtons{
 transition:.4s;
@@ -64,8 +58,6 @@ width:90%;
 max-width:420px;
 margin:30px auto;
 }
-
-/* LARGE ROUND ICON */
 
 .icon{
 position:absolute;
@@ -87,8 +79,6 @@ width:100%;
 height:100%;
 object-fit:cover;
 }
-
-/* MAIN BUTTON */
 
 .main-btn{
 width:100%;
@@ -119,8 +109,6 @@ background:linear-gradient(135deg,#283593,#5c6bc0);
 background:linear-gradient(135deg,#0d47a1,#42a5f5);
 }
 
-/* BOX */
-
 .box{
 display:none;
 width:90%;
@@ -131,8 +119,6 @@ background:white;
 border-radius:15px;
 box-shadow:0 5px 15px rgba(0,0,0,.15);
 }
-
-/* SUB BUTTONS */
 
 .sub-wrap{
 position:relative;
@@ -184,8 +170,6 @@ background:#8e24aa;
 background:#ef6c00;
 }
 
-/* BACK BUTTON */
-
 .back{
 width:100%;
 padding:12px;
@@ -198,19 +182,19 @@ cursor:pointer;
 font-size:15px;
 }
 
-.back:hover{
-opacity:.9;
-}
-
 </style>
+
 </head>
 
 <body>
 
 <header>
+
 <h1>GURULINK</h1>
 <p>Powered by G10 Group</p>
+
 </header>
+
 
 <div class="hero">
 
@@ -218,7 +202,8 @@ opacity:.9;
 
 <div id="mainButtons">
 
-<!-- TEACHER -->
+
+<!-- Teacher -->
 
 <div class="button-wrap">
 
@@ -235,7 +220,9 @@ Register as Teacher
 
 </div>
 
-<!-- INSTITUTION -->
+
+
+<!-- Institution -->
 
 <div class="button-wrap">
 
@@ -252,7 +239,9 @@ Register as Institution
 
 </div>
 
-<!-- FIND -->
+
+
+<!-- Find -->
 
 <div class="button-wrap">
 
@@ -272,132 +261,128 @@ Find Teacher
 </div>
 
 
-<!-- TEACHER BOX -->
+
+<!-- Teacher Category -->
 
 <div class="box" id="teacherBox">
 
 <h3>Teacher Categories</h3>
 
 <div class="sub-wrap">
-
 <div class="sub-icon">
 <img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
 </div>
 
 <button class="sub-btn academic"
-onclick="location.href='teacher-register.html?category=academic'">
+onclick="location.href='academic-teacher.html'">
 
 Academic Teacher
 
 </button>
-
 </div>
 
-<div class="sub-wrap">
 
+<div class="sub-wrap">
 <div class="sub-icon">
 <img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
 </div>
 
 <button class="sub-btn creative"
-onclick="location.href='teacher-register.html?category=creative'">
+onclick="location.href='creative-teacher.html'">
 
 Creative Teacher
 
 </button>
-
 </div>
 
-<div class="sub-wrap">
 
+<div class="sub-wrap">
 <div class="sub-icon">
 <img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
 </div>
 
 <button class="sub-btn skill"
-onclick="location.href='teacher-register.html?category=skill'">
+onclick="location.href='skill-teacher.html'">
 
 Skill Teacher
 
 </button>
-
 </div>
 
 <button class="back" onclick="goBack()">
+
 ← Back
+
 </button>
 
 </div>
 
 
 
-<!-- INSTITUTION BOX -->
+<!-- Institution Category -->
 
 <div class="box" id="instBox">
 
 <h3>Institution Categories</h3>
 
 <div class="sub-wrap">
-
 <div class="sub-icon">
 <img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
 </div>
 
 <button class="sub-btn academic"
-onclick="location.href='institution-register.html?category=academic'">
+onclick="location.href='academic-institute.html'">
 
 Academic Institution
 
 </button>
-
 </div>
 
-<div class="sub-wrap">
 
+<div class="sub-wrap">
 <div class="sub-icon">
 <img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
 </div>
 
 <button class="sub-btn creative"
-onclick="location.href='institution-register.html?category=creative'">
+onclick="location.href='creative-institute.html'">
 
 Creative Institution
 
 </button>
-
 </div>
 
-<div class="sub-wrap">
 
+<div class="sub-wrap">
 <div class="sub-icon">
 <img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
 </div>
 
 <button class="sub-btn skill"
-onclick="location.href='institution-register.html?category=skill'">
+onclick="location.href='skill-institute.html'">
 
 Skill Institution
 
 </button>
-
 </div>
 
 <button class="back" onclick="goBack()">
+
 ← Back
+
 </button>
 
 </div>
 
 
 
-<!-- FIND BOX -->
+<!-- Find Category -->
 
 <div class="box" id="findBox">
 
 <h3>Find Teachers</h3>
 
 <div class="sub-wrap">
-
 <div class="sub-icon">
 <img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
 </div>
@@ -408,11 +393,10 @@ onclick="location.href='profile.html?category=academic'">
 Academic Teachers
 
 </button>
-
 </div>
 
-<div class="sub-wrap">
 
+<div class="sub-wrap">
 <div class="sub-icon">
 <img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
 </div>
@@ -423,11 +407,10 @@ onclick="location.href='profile.html?category=creative'">
 Creative Teachers
 
 </button>
-
 </div>
 
-<div class="sub-wrap">
 
+<div class="sub-wrap">
 <div class="sub-icon">
 <img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
 </div>
@@ -438,42 +421,54 @@ onclick="location.href='profile.html?category=skill'">
 Skill Teachers
 
 </button>
-
 </div>
 
 <button class="back" onclick="goBack()">
+
 ← Back
+
 </button>
 
 </div>
 
 </div>
 
+
 <script>
 
 function showBox(id){
 
-document.getElementById("mainButtons").style.display="none";
+document.getElementById(
+"mainButtons"
+).style.display="none";
 
-document.querySelectorAll(".box")
-.forEach(box=>{
+document.querySelectorAll(
+".box"
+).forEach(box=>{
+
 box.style.display="none";
+
 });
 
-document.getElementById(id)
-.style.display="block";
+document.getElementById(
+id
+).style.display="block";
 
 }
 
 function goBack(){
 
-document.querySelectorAll(".box")
-.forEach(box=>{
+document.querySelectorAll(
+".box"
+).forEach(box=>{
+
 box.style.display="none";
+
 });
 
-document.getElementById("mainButtons")
-.style.display="block";
+document.getElementById(
+"mainButtons"
+).style.display="block";
 
 }
 
