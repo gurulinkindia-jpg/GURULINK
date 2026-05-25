@@ -12,51 +12,87 @@
 body{
 margin:0;
 font-family:Arial,sans-serif;
-background:#f2f2f2;
+background:#eef2f7;
 }
 
 header{
 background:#0d47a1;
 color:white;
 text-align:center;
-padding:15px;
+padding:18px;
 }
 
 .container{
-width:90%;
-max-width:1000px;
+width:95%;
+max-width:1100px;
 margin:auto;
 padding:20px;
 }
 
-.card{
-
+/* FILTER BOX */
+.filters{
 background:white;
 padding:15px;
-margin-bottom:15px;
 border-radius:10px;
-box-shadow:0 0 10px rgba(0,0,0,.15);
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+gap:10px;
+margin-bottom:20px;
+box-shadow:0 0 10px rgba(0,0,0,.1);
+}
 
+.filters input,
+.filters select{
+padding:10px;
+border:1px solid #ccc;
+border-radius:8px;
+}
+
+/* CARDS */
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:15px;
+}
+
+.card{
+background:white;
+padding:15px;
+border-radius:12px;
+box-shadow:0 0 10px rgba(0,0,0,.1);
+transition:0.2s;
+}
+
+.card:hover{
+transform:scale(1.02);
 }
 
 .photo{
-
-width:100px;
-height:100px;
+width:90px;
+height:90px;
 border-radius:50%;
 object-fit:cover;
-display:block;
 margin-bottom:10px;
+}
 
+h3{
+margin:5px 0;
+}
+
+.badge{
+display:inline-block;
+padding:4px 8px;
+background:#e0e0e0;
+border-radius:5px;
+font-size:12px;
+margin:2px 0;
 }
 
 .empty{
-
-background:white;
-padding:20px;
 text-align:center;
+padding:20px;
+background:white;
 border-radius:10px;
-
 }
 
 </style>
@@ -66,43 +102,58 @@ border-radius:10px;
 <body>
 
 <header>
-
 <h1>GURULINK</h1>
-
-<p>Find Teachers & Tuition Centres</p>
-
+<p>Find Verified Teachers</p>
 </header>
 
 <div class="container">
 
-<h2>Available Teachers</h2>
+<!-- FILTERS -->
+<div class="filters">
 
-<div id="teachers">
+<input type="text" id="search" placeholder="Search name/location">
 
-<div class="empty">
+<select id="filterClass">
+<option value="">All Classes</option>
+<option>Class 1-5</option>
+<option>Class 6-8</option>
+<option>Class 9-10</option>
+<option>Class 11-12</option>
+<option>JEE</option>
+<option>NEET</option>
+</select>
 
-Loading teachers...
+<select id="filterSubject">
+<option value="">All Subjects</option>
+<option>Mathematics</option>
+<option>Physics</option>
+<option>Chemistry</option>
+<option>Biology</option>
+<option>English</option>
+</select>
+
+<select id="filterMode">
+<option value="">All Modes</option>
+<option>Home Tuition</option>
+<option>Online</option>
+<option>Tuition Centre</option>
+</select>
+
+<input type="number" id="maxFee" placeholder="Max Fee">
 
 </div>
 
-</div>
+<!-- TEACHERS -->
+<div id="teacherGrid" class="grid"></div>
 
 </div>
 
 <script type="module">
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-import {
-getDatabase,
-ref,
-onValue
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-const firebaseConfig={
-
+const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -110,95 +161,90 @@ projectId:"gurulink-59cc7",
 storageBucket:"gurulink-59cc7.firebasestorage.app",
 messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
 };
 
-const app=initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-const db=getDatabase(app);
+let allTeachers = [];
 
-const teacherContainer=
-document.getElementById("teachers");
+function renderTeachers(){
 
-onValue(
-ref(db,"teachers"),
-(snapshot)=>{
+let search = document.getElementById("search").value.toLowerCase();
+let cls = document.getElementById("filterClass").value;
+let subject = document.getElementById("filterSubject").value;
+let mode = document.getElementById("filterMode").value;
+let maxFee = document.getElementById("maxFee").value;
 
-let html="";
+let html = "";
 
-if(!snapshot.exists()){
+let filtered = allTeachers.filter(t => {
 
-html=`
+if(t.status !== "approved") return false;
 
-<div class="empty">
+if(search &&
+!t.name.toLowerCase().includes(search) &&
+!t.location.toLowerCase().includes(search)
+) return false;
 
-No teachers available
+if(cls && t.class !== cls) return false;
+if(subject && t.subject !== subject) return false;
+if(mode && t.mode !== mode) return false;
+if(maxFee && Number(t.fee) > Number(maxFee)) return false;
 
-</div>
-
-`;
-
-teacherContainer.innerHTML=html;
-
-return;
-
-}
-
-snapshot.forEach((child)=>{
-
-let teacher=child.val();
-
-if(teacher.status==="approved"){
-
-html +=`
-
-<div class="card">
-
-<img
-class="photo"
-src="${teacher.photo || 'https://via.placeholder.com/100'}">
-
-<h3>${teacher.name}</h3>
-
-<p><b>Subject:</b>
-${teacher.subject}</p>
-
-<p><b>Class:</b>
-${teacher.class}</p>
-
-<p><b>Location:</b>
-${teacher.location}</p>
-
-<p><b>Fee:</b>
-₹${teacher.fee}</p>
-
-<p><b>Mode:</b>
-${teacher.mode}</p>
-
-</div>
-
-`;
-
-}
+return true;
 
 });
 
-if(html===""){
+if(filtered.length === 0){
+document.getElementById("teacherGrid").innerHTML =
+`<div class="empty">No teachers found</div>`;
+return;
+}
 
-html=`
+filtered.forEach(t => {
 
-<div class="empty">
+html += `
+<div class="card">
 
-No approved teachers found
+<img class="photo" src="${t.photo || 'https://via.placeholder.com/100'}">
+
+<h3>${t.name}</h3>
+
+<div class="badge">${t.subject}</div>
+<div class="badge">${t.class}</div>
+<div class="badge">${t.mode}</div>
+
+<p><b>Location:</b> ${t.location}</p>
+<p><b>Fee:</b> ₹${t.fee}</p>
+<p><b>Experience:</b> ${t.experience}</p>
 
 </div>
-
 `;
+
+});
+
+document.getElementById("teacherGrid").innerHTML = html;
 
 }
 
-teacherContainer.innerHTML=html;
+onValue(ref(db,"teachers"), snapshot => {
 
+allTeachers = [];
+
+snapshot.forEach(child => {
+allTeachers.push(child.val());
+});
+
+renderTeachers();
+
+});
+
+/* live filters */
+document.querySelectorAll("input,select")
+.forEach(el => {
+el.addEventListener("input", renderTeachers);
+el.addEventListener("change", renderTeachers);
 });
 
 </script>
