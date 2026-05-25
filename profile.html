@@ -1,11 +1,207 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Teacher Profile</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Find Teacher - GURULINK</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f2f2f2;
+}
+
+header{
+background:#0d47a1;
+color:white;
+text-align:center;
+padding:15px;
+}
+
+.container{
+width:90%;
+max-width:1000px;
+margin:auto;
+padding:20px;
+}
+
+.card{
+
+background:white;
+padding:15px;
+margin-bottom:15px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,.15);
+
+}
+
+.photo{
+
+width:100px;
+height:100px;
+border-radius:50%;
+object-fit:cover;
+display:block;
+margin-bottom:10px;
+
+}
+
+.empty{
+
+background:white;
+padding:20px;
+text-align:center;
+border-radius:10px;
+
+}
+
+</style>
+
 </head>
+
 <body>
 
-<h1>Teacher Profile</h1>
+<header>
+
+<h1>GURULINK</h1>
+
+<p>Find Teachers & Tuition Centres</p>
+
+</header>
+
+<div class="container">
+
+<h2>Available Teachers</h2>
+
+<div id="teachers">
+
+<div class="empty">
+
+Loading teachers...
+
+</div>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+onValue
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.firebasestorage.app",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
+};
+
+const app=initializeApp(firebaseConfig);
+
+const db=getDatabase(app);
+
+const teacherContainer=
+document.getElementById("teachers");
+
+onValue(
+ref(db,"teachers"),
+(snapshot)=>{
+
+let html="";
+
+if(!snapshot.exists()){
+
+html=`
+
+<div class="empty">
+
+No teachers available
+
+</div>
+
+`;
+
+teacherContainer.innerHTML=html;
+
+return;
+
+}
+
+snapshot.forEach((child)=>{
+
+let teacher=child.val();
+
+if(teacher.status==="approved"){
+
+html +=`
+
+<div class="card">
+
+<img
+class="photo"
+src="${teacher.photo || 'https://via.placeholder.com/100'}">
+
+<h3>${teacher.name}</h3>
+
+<p><b>Subject:</b>
+${teacher.subject}</p>
+
+<p><b>Class:</b>
+${teacher.class}</p>
+
+<p><b>Location:</b>
+${teacher.location}</p>
+
+<p><b>Fee:</b>
+₹${teacher.fee}</p>
+
+<p><b>Mode:</b>
+${teacher.mode}</p>
+
+</div>
+
+`;
+
+}
+
+});
+
+if(html===""){
+
+html=`
+
+<div class="empty">
+
+No approved teachers found
+
+</div>
+
+`;
+
+}
+
+teacherContainer.innerHTML=html;
+
+});
+
+</script>
 
 </body>
 </html>
