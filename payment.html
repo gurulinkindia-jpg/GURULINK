@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Payment - GURULINK</title>
+
+<style>
+body{
+font-family:Arial;
+text-align:center;
+padding:20px;
+}
+
+img{
+width:250px;
+margin:20px;
+}
+
+input{
+width:90%;
+padding:10px;
+margin:10px;
+}
+
+button{
+padding:12px;
+width:90%;
+background:green;
+color:white;
+border:none;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>GURULINK</h1>
+
+<h2>Registration Fee ₹100</h2>
+
+<p>Scan and Pay</p>
+
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=9706380357@ucobank&pn=G10 Group&am=100&cu=INR">
+
+<p>UPI: 9706380357@ucobank</p>
+
+<input
+id="utr"
+placeholder="Enter UTR / Transaction ID">
+
+<button onclick="submitPayment()">
+
+Submit Payment
+
+</button>
+
+<script>
+
+function submitPayment(){
+
+let utr=
+document.getElementById(
+"utr"
+).value;
+
+if(!utr){
+
+alert(
+"Enter transaction ID"
+);
+
+return;
+
+}
+
+alert(
+"Payment submitted for admin verification"
+);
+
+}
+
+</script>
+
+</body>
+</html>
