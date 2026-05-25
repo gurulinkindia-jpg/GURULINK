@@ -2,118 +2,93 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>Institution Registration - GURULINK</title>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial;
-background:#eef2f7;
+background:#f2f2f2;
 }
 
 header{
 background:#0d47a1;
 color:white;
-padding:18px;
+padding:15px;
 text-align:center;
-box-shadow:0 2px 10px rgba(0,0,0,.2);
 }
 
 .container{
 width:90%;
-max-width:650px;
-margin:25px auto;
+max-width:600px;
+margin:20px auto;
 background:white;
-padding:25px;
-border-radius:12px;
-box-shadow:0 5px 15px rgba(0,0,0,.1);
+padding:20px;
+border-radius:10px;
 }
 
-h2{
-text-align:center;
-color:#0d47a1;
-margin-bottom:20px;
-}
-
-label{
-font-weight:bold;
-font-size:14px;
-}
-
-input,textarea{
+input,select,textarea{
 width:100%;
-padding:12px;
-margin:10px 0 18px;
+padding:10px;
+margin:10px 0;
 border:1px solid #ccc;
-border-radius:8px;
-outline:none;
-transition:0.2s;
-}
-
-input:focus,textarea:focus{
-border-color:#0d47a1;
-box-shadow:0 0 5px rgba(13,71,161,.2);
+border-radius:6px;
 }
 
 button{
 width:100%;
-padding:14px;
-background:linear-gradient(135deg,#1b5e20,#43a047);
+padding:12px;
+background:green;
 color:white;
 border:none;
-border-radius:10px;
 cursor:pointer;
-font-size:16px;
-transition:0.3s;
 }
-
-button:hover{
-transform:scale(1.02);
-}
-
-.note{
-font-size:12px;
-color:#666;
-margin-top:-10px;
-margin-bottom:10px;
-}
-
 </style>
+
 </head>
 
 <body>
 
 <header>
-<h1>GURULINK</h1>
-<p>Institution Registration</p>
+<h1>Institution Registration</h1>
+<p id="categoryTitle"></p>
 </header>
 
 <div class="container">
 
-<h2>Register Your Institution</h2>
-
 <form id="instForm">
 
-<label>Institution Name</label>
-<input type="text" id="name" required>
+<input type="text" id="name" placeholder="Institution Name" required>
+<textarea id="address" placeholder="Address" required></textarea>
 
-<label>Address</label>
-<textarea id="address" required></textarea>
+<input type="text" id="phone" placeholder="Contact Number" required>
 
-<label>Courses Offered</label>
-<input type="text" id="courses" placeholder="JEE, NEET, Class 10 etc">
+/* COMMON CATEGORY FIELD */
+<select id="categoryField">
+<option value="">Select Type</option>
+</select>
 
-<label>Contact Number</label>
-<input type="tel" id="phone" required>
+<!-- ACADEMIC -->
+<div id="academicFields">
+<input type="text" id="courses" placeholder="Courses (JEE, NEET, Class 10)">
+</div>
 
-<label>Institution Logo</label>
-<input type="file" id="logo" accept="image/*">
-<div class="note">Upload logo (auto upload to imgbb)</div>
+<!-- CREATIVE -->
+<div id="creativeFields" style="display:none;">
+<input type="text" id="creativeCourses" placeholder="Creative Courses (Music, Dance, Art)">
+</div>
 
-<button type="submit">Register Institution</button>
+<!-- SKILL -->
+<div id="skillFields" style="display:none;">
+<input type="text" id="skillCourses" placeholder="Skill Courses (Coding, English, Digital Marketing)">
+</div>
+
+<label>Logo (ImgBB link or URL)</label>
+<input type="text" id="logo" placeholder="Paste image link">
+
+<button type="submit">Continue to Payment</button>
 
 </form>
 
@@ -124,7 +99,6 @@ margin-bottom:10px;
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-/* FIREBASE */
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
@@ -138,63 +112,66 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* IMGBB UPLOAD */
-async function uploadToImgBB(file){
+/* GET CATEGORY */
+const params = new URLSearchParams(window.location.search);
+const category = params.get("category") || "academic";
 
-const apiKey = "31f729ff855eb2e42c00ee508a8647ea";
+document.getElementById("categoryTitle").innerText =
+"Category: " + category.toUpperCase();
 
-const formData = new FormData();
-formData.append("image", file);
-
-const res = await fetch(
-`https://api.imgbb.com/1/upload?key=${apiKey}`,
-{
-method:"POST",
-body:formData
-}
-);
-
-const data = await res.json();
-
-if(data.success){
-return data.data.url;
-}else{
-throw new Error("Image upload failed");
+/* SHOW CATEGORY UI */
+if(category === "academic"){
+document.getElementById("academicFields").style.display="block";
+document.getElementById("creativeFields").style.display="none";
+document.getElementById("skillFields").style.display="none";
 }
 
+if(category === "creative"){
+document.getElementById("academicFields").style.display="none";
+document.getElementById("creativeFields").style.display="block";
+document.getElementById("skillFields").style.display="none";
+}
+
+if(category === "skill"){
+document.getElementById("academicFields").style.display="none";
+document.getElementById("creativeFields").style.display="none";
+document.getElementById("skillFields").style.display="block";
 }
 
 /* SUBMIT */
-document.getElementById("instForm")
-.addEventListener("submit", async function(e){
-
+document.getElementById("instForm").addEventListener("submit", async function(e){
 e.preventDefault();
 
-/* LOGO UPLOAD */
-let logoFile = document.getElementById("logo").files[0];
-let logoURL = "";
-
-if(logoFile){
-logoURL = await uploadToImgBB(logoFile);
-}
-
-const data = {
-
+let data = {
 name:document.getElementById("name").value,
 address:document.getElementById("address").value,
-courses:document.getElementById("courses").value,
 phone:document.getElementById("phone").value,
+logo:document.getElementById("logo").value,
 
-logo:logoURL,
-status:"pending",
-paymentStatus:"unpaid"
-
+category:category,
+type:"institution",
+status:"pending"
 };
 
+/* CATEGORY DATA */
+if(category === "academic"){
+data.courses = document.getElementById("courses").value;
+}
+
+if(category === "creative"){
+data.courses = document.getElementById("creativeCourses").value;
+}
+
+if(category === "skill"){
+data.courses = document.getElementById("skillCourses").value;
+}
+
+/* SAVE */
 push(ref(db,"institutions"), data);
 
-/* REDIRECT TO PAYMENT PAGE */
-window.location.href = "payment.html?type=institute";
+/* PAYMENT */
+window.location.href =
+"payment.html?type=institution&category=" + category;
 
 });
 
