@@ -7,42 +7,65 @@
 <title>Teacher Registration - GURULINK</title>
 
 <style>
+
 body{
 margin:0;
 font-family:Arial;
-background:#f2f2f2;
+background:#eef2f7;
 }
 
 header{
 background:#0d47a1;
 color:white;
-padding:15px;
+padding:18px;
 text-align:center;
 }
 
 .container{
 width:90%;
-max-width:600px;
+max-width:700px;
 margin:20px auto;
 background:white;
-padding:20px;
-border-radius:10px;
+padding:25px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 
-input,select{
+input,select,textarea{
 width:100%;
-padding:10px;
+padding:12px;
 margin:10px 0;
+border:1px solid #ccc;
+border-radius:8px;
+box-sizing:border-box;
+}
+
+textarea{
+height:100px;
+resize:none;
 }
 
 button{
 width:100%;
-padding:12px;
-background:green;
-color:white;
+padding:14px;
 border:none;
+border-radius:10px;
+background:#1b5e20;
+color:white;
+font-size:16px;
 cursor:pointer;
 }
+
+button:hover{
+opacity:.9;
+}
+
+.note{
+font-size:12px;
+color:#666;
+margin-bottom:10px;
+}
+
 </style>
 </head>
 
@@ -57,43 +80,114 @@ cursor:pointer;
 
 <form id="teacherForm">
 
-<input type="text" id="name" placeholder="Full Name" required>
-<input type="tel" id="phone" placeholder="Phone Number" required>
+<input type="text"
+id="name"
+placeholder="Full Name"
+required>
 
-<input type="text" id="qualification" placeholder="Qualification">
+<input type="tel"
+id="phone"
+placeholder="Phone Number"
+required>
 
-<input type="text" id="experience" placeholder="Experience">
+<input type="email"
+id="email"
+placeholder="Email Address">
 
-<!-- COMMON FIELD -->
+<input type="url"
+id="website"
+placeholder="Website / Social Link">
+
+<input type="text"
+id="qualification"
+placeholder="Qualification">
+
+<input type="text"
+id="experience"
+placeholder="Experience">
+
+<!-- ACADEMIC -->
+
 <div id="academicFields">
-<input type="text" id="subject" placeholder="Subject">
-<input type="text" id="class" placeholder="Class (e.g. 9-10)">
+
+<input type="text"
+id="subject"
+placeholder="Subject">
+
+<input type="text"
+id="class"
+placeholder="Class (Example: Class 9-10)">
+
 </div>
 
 <!-- CREATIVE -->
-<div id="creativeFields" style="display:none;">
+
+<div id="creativeFields"
+style="display:none;">
+
 <select id="creativeType">
+
 <option>Music</option>
 <option>Dance</option>
 <option>Drawing</option>
 <option>Photography</option>
+
 </select>
+
 </div>
 
 <!-- SKILL -->
-<div id="skillFields" style="display:none;">
+
+<div id="skillFields"
+style="display:none;">
+
 <select id="skillType">
+
 <option>Coding</option>
 <option>Spoken English</option>
 <option>Computer</option>
 <option>Digital Marketing</option>
+
 </select>
+
 </div>
 
-<input type="text" id="location" placeholder="Location">
-<input type="number" id="fee" placeholder="Monthly Fee">
+<input type="text"
+id="location"
+placeholder="Preferred Teaching Area (Example: Beltola)">
 
-<button type="submit">Continue to Payment</button>
+<input type="number"
+id="fee"
+placeholder="Monthly Fee">
+
+<label>Profile Photo</label>
+
+<input
+type="file"
+id="photo"
+accept="image/*">
+
+<label>Gallery Photos (Maximum 5)</label>
+
+<input
+type="file"
+id="gallery"
+multiple
+accept="image/*">
+
+<div class="note">
+Maximum 5 photos
+</div>
+
+<textarea
+id="description"
+placeholder="About Teacher / Description"></textarea>
+
+<button type="submit">
+
+Continue To Payment
+
+</button>
 
 </form>
 
@@ -101,10 +195,21 @@ cursor:pointer;
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import {
+initializeApp
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-const firebaseConfig = {
+import {
+getDatabase,
+ref,
+push
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+
+const firebaseConfig={
+
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -112,66 +217,240 @@ projectId:"gurulink-59cc7",
 storageBucket:"gurulink-59cc7.firebasestorage.app",
 messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const app=initializeApp(firebaseConfig);
 
-/* GET CATEGORY FROM URL */
-const params = new URLSearchParams(window.location.search);
-const category = params.get("category") || "academic";
+const db=getDatabase(app);
 
-document.getElementById("categoryTitle").innerText =
-"Category: " + category.toUpperCase();
 
-/* SHOW/HIDE FIELDS */
-if(category === "creative"){
-document.getElementById("academicFields").style.display="none";
-document.getElementById("creativeFields").style.display="block";
+/* CATEGORY */
+
+const params=
+new URLSearchParams(
+window.location.search
+);
+
+const category=
+params.get("category") || "academic";
+
+document.getElementById(
+"categoryTitle"
+).innerText=
+"Category: "+
+category.toUpperCase();
+
+
+if(category==="creative"){
+
+document.getElementById(
+"academicFields"
+).style.display="none";
+
+document.getElementById(
+"creativeFields"
+).style.display="block";
+
 }
 
-if(category === "skill"){
-document.getElementById("academicFields").style.display="none";
-document.getElementById("skillFields").style.display="block";
+
+if(category==="skill"){
+
+document.getElementById(
+"academicFields"
+).style.display="none";
+
+document.getElementById(
+"skillFields"
+).style.display="block";
+
 }
+
+
+/* IMGBB */
+
+const API_KEY=
+"31f729ff855eb2e42c00ee508a8647ea";
+
+
+async function upload(file){
+
+let formData=
+new FormData();
+
+formData.append(
+"image",
+file
+);
+
+let res=
+await fetch(
+`https://api.imgbb.com/1/upload?key=${API_KEY}`,
+{
+method:"POST",
+body:formData
+}
+);
+
+let data=
+await res.json();
+
+return data.data.url;
+
+}
+
 
 /* SUBMIT */
-document.getElementById("teacherForm").addEventListener("submit", async function(e){
+
+document.getElementById(
+"teacherForm"
+)
+.addEventListener(
+"submit",
+async function(e){
+
 e.preventDefault();
 
-let data = {
-name:document.getElementById("name").value,
-phone:document.getElementById("phone").value,
-qualification:document.getElementById("qualification").value,
-experience:document.getElementById("experience").value,
-location:document.getElementById("location").value,
-fee:document.getElementById("fee").value,
 
-category:category,
-type:"teacher",
-status:"pending"
+let photoURL="";
+
+let gallery=[];
+
+
+/* profile photo */
+
+let photo=
+document.getElementById(
+"photo"
+).files[0];
+
+if(photo){
+
+photoURL=
+await upload(photo);
+
+}
+
+
+/* gallery */
+
+let galleryFiles=
+document.getElementById(
+"gallery"
+).files;
+
+if(galleryFiles.length>5){
+
+alert(
+"Maximum 5 photos"
+);
+
+return;
+
+}
+
+for(let file of galleryFiles){
+
+let url=
+await upload(file);
+
+gallery.push(url);
+
+}
+
+
+/* DATA */
+
+let data={
+
+name:
+document.getElementById("name").value,
+
+phone:
+document.getElementById("phone").value,
+
+email:
+document.getElementById("email").value,
+
+website:
+document.getElementById("website").value,
+
+qualification:
+document.getElementById("qualification").value,
+
+experience:
+document.getElementById("experience").value,
+
+location:
+document.getElementById("location").value,
+
+fee:
+document.getElementById("fee").value,
+
+description:
+document.getElementById("description").value,
+
+photo:
+photoURL,
+
+gallery:
+gallery,
+
+category:
+category,
+
+type:
+"teacher",
+
+status:
+"pending"
+
 };
 
-/* CATEGORY SPECIFIC */
-if(category === "academic"){
-data.subject = document.getElementById("subject").value;
-data.class = document.getElementById("class").value;
+
+if(category==="academic"){
+
+data.subject=
+document.getElementById(
+"subject"
+).value;
+
+data.class=
+document.getElementById(
+"class"
+).value;
+
 }
 
-if(category === "creative"){
-data.skillType = document.getElementById("creativeType").value;
+
+if(category==="creative"){
+
+data.skillType=
+document.getElementById(
+"creativeType"
+).value;
+
 }
 
-if(category === "skill"){
-data.skillType = document.getElementById("skillType").value;
+
+if(category==="skill"){
+
+data.skillType=
+document.getElementById(
+"skillType"
+).value;
+
 }
 
-/* SAVE */
-push(ref(db,"teachers"), data);
 
-/* PAYMENT REDIRECT */
-window.location.href =
-"payment.html?type=teacher&category=" + category;
+await push(
+ref(db,"teachers"),
+data
+);
+
+window.location.href=
+"payment.html?type=teacher";
 
 });
 
