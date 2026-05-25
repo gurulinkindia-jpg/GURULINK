@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Teacher Registration - GURULINK</title>
 
 <style>
@@ -30,7 +32,7 @@ border-radius:10px;
 box-shadow:0 0 10px rgba(0,0,0,.2);
 }
 
-input,select,textarea{
+input,select{
 width:100%;
 padding:10px;
 margin-top:8px;
@@ -56,6 +58,7 @@ opacity:.9;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -88,38 +91,41 @@ opacity:.9;
 <label>Subject</label>
 
 <select id="subject">
-
 <option>Mathematics</option>
 <option>Physics</option>
 <option>Chemistry</option>
 <option>Biology</option>
 <option>English</option>
-
 </select>
 
 <label>Classes</label>
 
 <select id="class">
-
 <option>Class 1-5</option>
 <option>Class 6-8</option>
 <option>Class 9-10</option>
 <option>Class 11-12</option>
 <option>JEE</option>
 <option>NEET</option>
-
 </select>
 
 <label>Location</label>
-<input type="text"
+
+<input
+type="text"
 id="location"
 placeholder="Example: Beltola, Guwahati">
 
 <label>Monthly Fees</label>
-<input type="number" id="fee">
+
+<input
+type="number"
+id="fee">
 
 <label>Profile Photo</label>
-<input type="file"
+
+<input
+type="file"
 id="photo"
 accept="image/*">
 
@@ -155,12 +161,11 @@ push
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-const firebaseConfig={
+const firebaseConfig = {
 
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-
 projectId:"gurulink-59cc7",
 storageBucket:"gurulink-59cc7.firebasestorage.app",
 messagingSenderId:"112148672399",
@@ -168,64 +173,63 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
 
-const app=initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-const db=getDatabase(app);
+const db = getDatabase(app);
 
-document.getElementById(
-"teacherForm"
-).addEventListener(
+document
+.getElementById("teacherForm")
+.addEventListener(
 "submit",
 function(e){
 
 e.preventDefault();
 
-push(
-ref(db,"teachers"),
-{
+const teacherData = {
 
-name:
-document.getElementById("name").value,
-
-phone:
-document.getElementById("phone").value,
-
-qualification:
-document.getElementById("qualification").value,
-
-experience:
-document.getElementById("experience").value,
-
-subject:
-document.getElementById("subject").value,
-
-class:
-document.getElementById("class").value,
-
-location:
-document.getElementById("location").value,
-
-fee:
-document.getElementById("fee").value,
-
-mode:
-document.getElementById("mode").value,
+name:document.getElementById("name").value,
+phone:document.getElementById("phone").value,
+qualification:document.getElementById("qualification").value,
+experience:document.getElementById("experience").value,
+subject:document.getElementById("subject").value,
+class:document.getElementById("class").value,
+location:document.getElementById("location").value,
+fee:document.getElementById("fee").value,
+mode:document.getElementById("mode").value,
 
 status:"pending"
 
-}
+};
 
+push(
+ref(db,"teachers"),
+teacherData
+)
+
+.then(()=>{
+
+alert(
+"Registration saved successfully"
 );
 
-window.location.href=
+window.location.href =
 "payment.html";
+
+})
+
+.catch((error)=>{
+
+console.log(error);
+
+alert(
+"Database error: "+error.message
+);
+
+});
 
 });
 
 </script>
-
-</body>
-</html>
 
 </body>
 </html>
