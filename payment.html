@@ -179,18 +179,12 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
 
+const app=initializeApp(firebaseConfig);
 
-const app=
-initializeApp(firebaseConfig);
-
-const db=
-getDatabase(app);
-
-
+const db=getDatabase(app);
 
 const API_KEY=
 "31f729ff855eb2e42c00ee508a8647ea";
-
 
 
 /* GET URL PARAMETERS */
@@ -207,30 +201,43 @@ const category=
 params.get("category") || "";
 
 
+/* AUTO AMOUNT */
 
-/* AMOUNT */
+let amount=1;
 
-let amount=
-type==="institution"
-?
-2
-:
-1;
+if(type==="institution"){
 
+amount=2;
+
+}
 
 
-feeText.innerHTML=
+/* SHOW FEE */
+
+document.getElementById(
+"feeText"
+).innerHTML=
+
 `Registration Fee ₹${amount}`;
 
 
+/* AUTO QR GENERATE */
 
-/* QR */
+const upiID=
+"9706380357@ucobank";
 
-qr.src=
+const payName=
+"GURULINK";
 
-`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=9706380357@ucobank&pn=G10Group&am=${amount}&cu=INR`;
+const upiLink=
 
+`upi://pay?pa=${upiID}&pn=${payName}&am=${amount}&cu=INR`;
 
+document.getElementById(
+"qr"
+).src=
+
+`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiLink)}`;
 
 
 /* IMAGE PREVIEW */
@@ -263,11 +270,11 @@ img
 );
 
 
-
-
-/* IMGBB */
+/* IMAGE UPLOAD */
 
 async function uploadImage(file){
+
+try{
 
 let fd=
 new FormData();
@@ -289,37 +296,53 @@ body:fd
 let data=
 await response.json();
 
+if(!data.success){
+
+throw new Error(
+"Upload failed"
+);
+
+}
+
 return data.data.url;
+
+}
+catch(err){
+
+console.log(err);
+
+return "";
+
+}
 
 }
 
 
 
+/* PAYMENT SUBMIT */
 
 window.submitPayment=
 async function(){
 
 let utr=
-document.getElementById(
-"utr"
-).value.trim();
+utr.value.trim();
 
 if(!utr){
 
 alert(
-"Please enter transaction ID"
+"Please enter Transaction ID"
 );
 
 return;
 
 }
 
-
 payBtn.disabled=true;
 
 payBtn.innerHTML=
-"Uploading...";
+"Submitting...";
 
+try{
 
 let imageURL="";
 
@@ -336,8 +359,7 @@ screenshot.files[0]
 }
 
 
-
-/* SAVE */
+/* SAVE PAYMENT */
 
 await push(
 ref(db,"payments"),
@@ -356,24 +378,42 @@ screenshot:imageURL,
 status:"pending",
 
 date:
-new Date().toLocaleString()
+new Date().toLocaleString(),
+
+createdAt:
+Date.now()
 
 }
 
 );
 
 
-
 alert(
 
-"Payment submitted successfully!\n\nYour profile will be visible after admin approval.\n\nFor help call: 9706380357"
+"Payment submitted successfully"
 
 );
 
 
-
 window.location.href=
 "index.html";
+
+
+}
+catch(err){
+
+console.log(err);
+
+alert(
+"Error submitting payment"
+);
+
+payBtn.disabled=false;
+
+payBtn.innerHTML=
+"Submit Payment";
+
+}
 
 }
 
