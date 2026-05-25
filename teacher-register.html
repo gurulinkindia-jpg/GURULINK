@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>Teacher Registration</title>
+<title>Teacher Registration - GURULINK</title>
 
 <style>
 
@@ -23,7 +22,7 @@ text-align:center;
 
 .container{
 width:90%;
-max-width:750px;
+max-width:800px;
 margin:20px auto;
 background:white;
 padding:25px;
@@ -31,9 +30,7 @@ border-radius:15px;
 box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 
-input,
-select,
-textarea{
+input,select,textarea{
 width:100%;
 padding:12px;
 margin:10px 0;
@@ -59,10 +56,6 @@ cursor:pointer;
 margin-top:20px;
 }
 
-button:hover{
-opacity:.9;
-}
-
 .preview{
 display:flex;
 flex-wrap:wrap;
@@ -73,8 +66,8 @@ margin:10px 0;
 .preview img{
 width:80px;
 height:80px;
-border-radius:10px;
 object-fit:cover;
+border-radius:10px;
 border:1px solid #ccc;
 }
 
@@ -82,46 +75,33 @@ border:1px solid #ccc;
 padding:15px;
 border:1px solid #ddd;
 border-radius:10px;
-margin-top:10px;
 }
 
 .modeLabel{
 display:flex;
 align-items:center;
 gap:10px;
-font-size:15px;
 margin:10px 0;
-cursor:pointer;
 }
 
-.modeLabel input[type="checkbox"]{
-width:18px;
-height:18px;
+.modeLabel input{
+width:auto;
 margin:0;
 }
 
 .modeFee{
 display:none;
 padding:10px;
-margin:10px 0;
 background:#f7f7f7;
 border-radius:10px;
-}
-
-.note{
-font-size:12px;
-color:#666;
-}
-
-h3{
-color:#0d47a1;
+margin-bottom:10px;
 }
 
 .loading{
 display:none;
+text-align:center;
 color:green;
 font-weight:bold;
-text-align:center;
 margin-top:10px;
 }
 
@@ -134,7 +114,10 @@ margin-top:10px;
 
 <h1>Teacher Registration</h1>
 
+<p id="categoryTitle"></p>
+
 </header>
+
 
 <div class="container">
 
@@ -153,7 +136,7 @@ required>
 <input
 id="email"
 type="email"
-placeholder="Email">
+placeholder="Email Address">
 
 <input
 id="website"
@@ -167,17 +150,33 @@ placeholder="Qualification">
 id="experience"
 placeholder="Experience">
 
+
+
+<!-- CATEGORY -->
+
+<select id="subjectSelect"></select>
+
 <input
-id="subject"
-placeholder="Subject">
+id="customSubject"
+placeholder="Write Subject"
+style="display:none">
+
+
+
+<div id="classBox">
 
 <input
 id="class"
 placeholder="Class Example: Class 9-10">
 
+</div>
+
+
+
 <input
 id="location"
 placeholder="Preferred Teaching Area Example: Beltola">
+
 
 
 <h3>Teaching Modes</h3>
@@ -190,20 +189,17 @@ placeholder="Preferred Teaching Area Example: Beltola">
 type="checkbox"
 onchange="toggleFee('home')">
 
-<span>Home Tuition</span>
+Home Tuition
 
 </label>
 
-<div
-id="home"
-class="modeFee">
+<div id="home" class="modeFee">
 
 <input
 id="homeFee"
-placeholder="Enter Home Tuition Fee Example ₹500-1000">
+placeholder="Enter Home Tuition Fee">
 
 </div>
-
 
 
 <label class="modeLabel">
@@ -212,13 +208,11 @@ placeholder="Enter Home Tuition Fee Example ₹500-1000">
 type="checkbox"
 onchange="toggleFee('group')">
 
-<span>Group Tuition</span>
+Group Tuition
 
 </label>
 
-<div
-id="group"
-class="modeFee">
+<div id="group" class="modeFee">
 
 <input
 id="groupFee"
@@ -227,20 +221,17 @@ placeholder="Enter Group Tuition Fee">
 </div>
 
 
-
 <label class="modeLabel">
 
 <input
 type="checkbox"
 onchange="toggleFee('onlineIndividual')">
 
-<span>Online Individual</span>
+Online Individual
 
 </label>
 
-<div
-id="onlineIndividual"
-class="modeFee">
+<div id="onlineIndividual" class="modeFee">
 
 <input
 id="onlineIndividualFee"
@@ -249,20 +240,17 @@ placeholder="Enter Online Individual Fee">
 </div>
 
 
-
 <label class="modeLabel">
 
 <input
 type="checkbox"
 onchange="toggleFee('onlineGroup')">
 
-<span>Online Group</span>
+Online Group
 
 </label>
 
-<div
-id="onlineGroup"
-class="modeFee">
+<div id="onlineGroup" class="modeFee">
 
 <input
 id="onlineGroupFee"
@@ -273,7 +261,8 @@ placeholder="Enter Online Group Fee">
 </div>
 
 
-<label><b>Profile Photo</b></label>
+
+<label>Profile Photo</label>
 
 <input
 type="file"
@@ -285,7 +274,8 @@ id="photoPreview"
 class="preview"></div>
 
 
-<label><b>Gallery Photos (Maximum 5)</b></label>
+
+<label>Gallery Photos (Max 5)</label>
 
 <input
 type="file"
@@ -293,30 +283,27 @@ id="gallery"
 multiple
 accept="image/*">
 
-<p class="note">
-Maximum 5 photos
-</p>
-
 <div
 id="galleryPreview"
 class="preview"></div>
+
 
 
 <textarea
 id="description"
 placeholder="About Teacher"></textarea>
 
-<div
-class="loading"
-id="loading">
 
-Uploading Images Please Wait...
+<div
+id="loading"
+class="loading">
+
+Uploading Please Wait...
 
 </div>
 
 
-<button
-type="submit">
+<button type="submit">
 
 Continue To Payment
 
@@ -333,17 +320,14 @@ Continue To Payment
 import {
 initializeApp
 }
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
 getDatabase,
 ref,
 push
 }
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 
 const firebaseConfig={
@@ -358,11 +342,8 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
 
-
 const app=
-initializeApp(
-firebaseConfig
-);
+initializeApp(firebaseConfig);
 
 const db=
 getDatabase(app);
@@ -371,6 +352,122 @@ getDatabase(app);
 
 const API_KEY=
 "31f729ff855eb2e42c00ee508a8647ea";
+
+
+
+const params=
+new URLSearchParams(
+window.location.search
+);
+
+const category=
+params.get("category")
+||"academic";
+
+
+document.getElementById(
+"categoryTitle"
+).innerText=
+category.toUpperCase();
+
+
+
+let subjects=[];
+
+
+if(category==="academic"){
+
+subjects=[
+"Physics",
+"Chemistry",
+"Mathematics",
+"Biology",
+"SST",
+"English",
+"Hindi",
+"Assamese",
+"Other"
+];
+
+}
+else if(category==="creative"){
+
+subjects=[
+"Art",
+"Dance",
+"Singing",
+"Guitar",
+"Piano",
+"Drawing",
+"Photography",
+"Other"
+];
+
+document.getElementById(
+"classBox"
+).style.display=
+"none";
+
+}
+else{
+
+subjects=[
+"Computer",
+"Hand Craft",
+"Embroidery",
+"Cake Making",
+"Coding",
+"Spoken English",
+"Digital Marketing",
+"Other"
+];
+
+document.getElementById(
+"classBox"
+).style.display=
+"none";
+
+}
+
+
+let subjectSelect=
+document.getElementById(
+"subjectSelect"
+);
+
+subjects.forEach(x=>{
+
+let op=
+document.createElement(
+"option"
+);
+
+op.text=x;
+op.value=x;
+
+subjectSelect.add(op);
+
+});
+
+
+subjectSelect.onchange=
+function(){
+
+document.getElementById(
+"customSubject"
+).style.display=
+
+this.value==="Other"
+
+?
+
+"block"
+
+:
+
+"none";
+
+};
 
 
 
@@ -402,11 +499,18 @@ return data.data.url;
 
 
 
-/* PROFILE PREVIEW */
+/* profile preview */
 
-photo.onchange=function(){
+document
+.getElementById("photo")
+.onchange=function(){
 
-photoPreview.innerHTML="";
+let preview=
+document.getElementById(
+"photoPreview"
+);
+
+preview.innerHTML="";
 
 if(this.files[0]){
 
@@ -420,26 +524,36 @@ URL.createObjectURL(
 this.files[0]
 );
 
-photoPreview.appendChild(
+preview.appendChild(
 img
 );
 
 }
 
-}
+};
 
 
 
-/* GALLERY PREVIEW */
+/* gallery preview */
 
-gallery.onchange=function(){
+document
+.getElementById(
+"gallery"
+)
+.onchange=function(){
 
-galleryPreview.innerHTML="";
+let preview=
+document.getElementById(
+"galleryPreview"
+);
+
+preview.innerHTML="";
+
 
 if(this.files.length>5){
 
 alert(
-"Maximum 5 photos allowed"
+"Maximum 5 photos"
 );
 
 this.value="";
@@ -447,6 +561,7 @@ this.value="";
 return;
 
 }
+
 
 [...this.files]
 .forEach(file=>{
@@ -461,17 +576,15 @@ URL.createObjectURL(
 file
 );
 
-galleryPreview.appendChild(
+preview.appendChild(
 img
 );
 
 });
 
-}
+};
 
 
-
-/* SUBMIT */
 
 teacherForm
 .addEventListener(
@@ -486,11 +599,11 @@ loading.style.display=
 
 try{
 
-let profileURL="";
+let profile="";
 
 if(photo.files[0]){
 
-profileURL=
+profile=
 await upload(
 photo.files[0]
 );
@@ -498,11 +611,10 @@ photo.files[0]
 }
 
 
-/* upload all gallery */
-
 let galleryUrls=[];
 
-if(gallery.files.length>0){
+
+if(gallery.files.length){
 
 galleryUrls=
 await Promise.all(
@@ -517,72 +629,65 @@ upload(file)
 }
 
 
+let subject=
+subjectSelect.value;
+
+if(subject==="Other"){
+
+subject=
+customSubject.value;
+
+}
+
 
 let data={
 
-name:
-name.value,
+name:name.value,
 
-phone:
-phone.value,
+phone:phone.value,
 
-email:
-email.value,
+email:email.value,
 
-website:
-website.value,
+website:website.value,
 
-qualification:
-qualification.value,
+qualification:qualification.value,
 
-experience:
-experience.value,
+experience:experience.value,
 
-subject:
-subject.value,
+subject:subject,
 
-class:
-class.value,
+class:class.value,
 
-location:
-location.value,
+location:location.value,
 
-description:
-description.value,
+description:description.value,
 
-photo:
-profileURL,
+photo:profile,
 
-gallery:
-galleryUrls,
+gallery:galleryUrls,
+
+category:category,
 
 fees:{
 
-home:
-homeFee.value,
+home:homeFee.value,
 
-group:
-groupFee.value,
+group:groupFee.value,
 
-onlineIndividual:
-onlineIndividualFee.value,
+onlineIndividual:onlineIndividualFee.value,
 
-onlineGroup:
-onlineGroupFee.value
+onlineGroup:onlineGroupFee.value
 
 },
 
-status:
-"pending"
+status:"pending"
 
 };
 
 
+
 await push(
-ref(
-db,
-"teachers"
-),
+ref(db,"teachers"),
 data
 );
 
@@ -590,8 +695,9 @@ data
 window.location.href=
 "payment.html?type=teacher";
 
+}
 
-}catch(err){
+catch(err){
 
 alert(
 "Upload Failed"
@@ -607,6 +713,7 @@ loading.style.display=
 });
 
 </script>
+
 
 
 <script>
