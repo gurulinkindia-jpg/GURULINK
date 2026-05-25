@@ -1,199 +1,707 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
 
 <title>GURULINK Admin</title>
 
 <style>
-body{
-font-family:Arial;
+
+*{
 margin:0;
-background:#f2f2f2;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Arial,sans-serif;
+background:#eef2f7;
 }
 
 header{
 background:#0d47a1;
 color:white;
-padding:15px;
+padding:20px;
 text-align:center;
+box-shadow:0 3px 10px rgba(0,0,0,.2);
 }
 
 .container{
+width:95%;
+max-width:1400px;
+margin:auto;
 padding:20px;
 }
 
+.analytics{
+
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+
+gap:15px;
+margin-bottom:20px;
+
+}
+
+.box{
+
+background:white;
+padding:20px;
+border-radius:15px;
+text-align:center;
+
+box-shadow:
+0 5px 15px rgba(0,0,0,.1);
+
+}
+
+.box h2{
+color:#0d47a1;
+margin-bottom:8px;
+}
+
 .section{
-margin-bottom:30px;
+
+margin-top:30px;
+
+}
+
+.search{
+
+width:100%;
+padding:12px;
+
+border:none;
+border-radius:10px;
+
+margin-bottom:15px;
 }
 
 .card{
+
 background:white;
 padding:15px;
-margin:10px 0;
-border-radius:10px;
-box-shadow:0 0 10px rgba(0,0,0,.1);
+
+margin:15px 0;
+
+border-radius:15px;
+
+box-shadow:
+0 5px 15px rgba(0,0,0,.1);
+
+}
+
+.top{
+
+display:flex;
+align-items:center;
+gap:15px;
+margin-bottom:10px;
+
+}
+
+.photo{
+
+width:70px;
+height:70px;
+
+border-radius:50%;
+
+object-fit:cover;
+
+border:2px solid #0d47a1;
+
+}
+
+.badge{
+
+display:inline-block;
+padding:5px 10px;
+border-radius:20px;
+
+font-size:12px;
+margin:3px;
+
+background:#eee;
+}
+
+.verify{
+
+background:green;
+color:white;
+
+}
+
+.pending{
+
+background:orange;
+color:white;
+
 }
 
 button{
-padding:8px 10px;
+
+padding:10px 14px;
 margin:5px;
+
 border:none;
-border-radius:5px;
-color:white;
-cursor:pointer;
-}
-
-.approve{background:green;}
-.delete{background:red;}
-
-img{
-width:80px;
 border-radius:8px;
+
+cursor:pointer;
+color:white;
+
 }
+
+.approve{
+
+background:green;
+
+}
+
+.delete{
+
+background:red;
+
+}
+
+.payment{
+
+background:#0d47a1;
+
+}
+
+img.pay{
+
+width:100px;
+border-radius:10px;
+margin-top:10px;
+}
+
+.gallery{
+
+display:flex;
+gap:6px;
+overflow:auto;
+margin-top:10px;
+}
+
+.gallery img{
+
+width:60px;
+height:60px;
+
+border-radius:8px;
+
+object-fit:cover;
+
+}
+
 </style>
+
 </head>
 
 <body>
 
 <header>
+
 <h1>GURULINK ADMIN PANEL</h1>
+
 </header>
 
 <div class="container">
 
+<div class="analytics">
+
+<div class="box">
+
+<h2 id="teacherCount">
+0
+</h2>
+
+Teachers
+
+</div>
+
+<div class="box">
+
+<h2 id="institutionCount">
+0
+</h2>
+
+Institutions
+
+</div>
+
+<div class="box">
+
+<h2 id="paymentCount">
+0
+</h2>
+
+Payments
+
+</div>
+
+<div class="box">
+
+<h2 id="earnings">
+₹0
+</h2>
+
+Total Earnings
+
+</div>
+
+</div>
+
+
+<input
+id="search"
+class="search"
+placeholder="Search Teacher / Institution">
+
+
 <div class="section">
+
 <h2>Teachers</h2>
+
 <div id="teachers"></div>
+
 </div>
 
+
 <div class="section">
+
 <h2>Institutions</h2>
+
 <div id="institutions"></div>
+
 </div>
+
 
 <div class="section">
+
 <h2>Payments</h2>
+
 <div id="payments"></div>
+
 </div>
 
 </div>
+
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import {
+import{
+
+initializeApp
+
+}
+
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+
+import{
+
 getDatabase,
 ref,
 onValue,
 update,
 remove
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-const firebaseConfig = {
+}
+
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+
+const firebaseConfig={
+
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+
 authDomain:"gurulink-59cc7.firebaseapp.com",
+
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
 projectId:"gurulink-59cc7",
-storageBucket:"gurulink-59cc7.firebasestorage.app",
+
+storageBucket:"gurulink-59cc7.appspot.com",
+
 messagingSenderId:"112148672399",
+
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const app=
+initializeApp(firebaseConfig);
 
-/* SAFE GET */
-const safe = (v) => v ? v : "N/A";
+const db=
+getDatabase(app);
+
+
+let totalTeacher=0;
+let totalInst=0;
+let totalPayment=0;
+let totalEarning=0;
+
+
 
 /* TEACHERS */
-onValue(ref(db,"teachers"), snap => {
 
-let html = "";
+onValue(
+ref(db,"teachers"),
+snap=>{
 
-snap.forEach(c => {
-let t = c.val();
+let html="";
 
-html += `
+totalTeacher=0;
+
+snap.forEach(c=>{
+
+totalTeacher++;
+
+let t=c.val();
+
+let gallery="";
+
+if(t.gallery){
+
+t.gallery.forEach(img=>{
+
+gallery+=
+`<img src="${img}">`;
+
+});
+
+}
+
+
+html+=`
+
 <div class="card">
-<h3>${safe(t.name)}</h3>
-<p>${safe(t.category)} | ${safe(t.subject || t.skillType)}</p>
-<p>${safe(t.location)}</p>
-<p>Status: ${safe(t.status)}</p>
 
-<button class="approve" onclick="approveTeacher('${c.key}')">Approve</button>
-<button class="delete" onclick="deleteTeacher('${c.key}')">Delete</button>
+<div class="top">
+
+<img
+class="photo"
+src="${t.photo||'https://via.placeholder.com/100'}">
+
+<div>
+
+<h3>
+
+${t.name||"-"}
+
+</h3>
+
+<div class="badge">
+
+${t.category||"-"}
+
 </div>
+
+
+${
+t.status=="approved"
+
+?
+
+`<span class="badge verify">
+✓ Verified
+</span>`
+
+:
+
+`<span class="badge pending">
+Pending
+</span>`
+
+}
+
+</div>
+
+</div>
+
+
+<p>
+Subject:
+${t.subject||t.skillType||"-"}
+</p>
+
+<p>
+Phone:
+${t.phone||"-"}
+</p>
+
+<p>
+Location:
+${t.location||"-"}
+</p>
+
+<p>
+Qualification:
+${t.qualification||"-"}
+</p>
+
+<div class="gallery">
+
+${gallery}
+
+</div>
+
+<button
+class="approve"
+onclick="approveTeacher('${c.key}')">
+
+Approve
+
+</button>
+
+
+<button
+class="delete"
+onclick="deleteTeacher('${c.key}')">
+
+Delete
+
+</button>
+
+</div>
+
 `;
+
 });
 
-document.getElementById("teachers").innerHTML = html;
+
+teachers.innerHTML=html;
+
+teacherCount.innerHTML=
+totalTeacher;
+
 });
+
+
 
 /* INSTITUTIONS */
-onValue(ref(db,"institutions"), snap => {
 
-let html = "";
+onValue(
+ref(db,"institutions"),
+snap=>{
 
-snap.forEach(c => {
-let i = c.val();
+let html="";
 
-html += `
+totalInst=0;
+
+snap.forEach(c=>{
+
+totalInst++;
+
+let t=c.val();
+
+html+=`
+
 <div class="card">
-<h3>${safe(i.name)}</h3>
-<p>${safe(i.category)}</p>
-<p>${safe(i.address)}</p>
-<p>Status: ${safe(i.status)}</p>
 
-<button class="approve" onclick="approveInst('${c.key}')">Approve</button>
-<button class="delete" onclick="deleteInst('${c.key}')">Delete</button>
+<h3>
+
+${t.name||"-"}
+
+</h3>
+
+<p>
+
+${t.category||"-"}
+
+</p>
+
+<p>
+
+${t.address||"-"}
+
+</p>
+
+<p>
+
+${t.phone||"-"}
+
+</p>
+
+<button
+class="approve"
+onclick="approveInst('${c.key}')">
+
+Approve
+
+</button>
+
+<button
+class="delete"
+onclick="deleteInst('${c.key}')">
+
+Delete
+
+</button>
+
 </div>
+
 `;
+
 });
 
-document.getElementById("institutions").innerHTML = html;
+institutions.innerHTML=
+html;
+
+institutionCount.innerHTML=
+totalInst;
+
 });
+
+
 
 /* PAYMENTS */
-onValue(ref(db,"payments"), snap => {
 
-let html = "";
+onValue(
+ref(db,"payments"),
+snap=>{
 
-snap.forEach(c => {
-let p = c.val();
+let html="";
 
-html += `
+totalPayment=0;
+totalEarning=0;
+
+snap.forEach(c=>{
+
+totalPayment++;
+
+let p=c.val();
+
+totalEarning+=
+Number(
+p.amount||0
+);
+
+
+html+=`
+
 <div class="card">
-<p>Type: ${safe(p.type)}</p>
-<p>Amount: ₹${safe(p.amount)}</p>
-<p>UTR: ${safe(p.utr)}</p>
-<p>Status: ${safe(p.status)}</p>
 
-${p.screenshot ? `<img src="${p.screenshot}">` : ""}
+<p>
+Type:
+${p.type}
+</p>
+
+<p>
+Amount:
+₹${p.amount}
+</p>
+
+<p>
+UTR:
+${p.utr}
+</p>
+
+<p>
+Status:
+${p.status}
+</p>
+
+${
+p.screenshot
+
+?
+
+`<img class="pay"
+src="${p.screenshot}">`
+
+:
+
+""
+
+}
+
 </div>
+
 `;
+
 });
 
-document.getElementById("payments").innerHTML = html;
+payments.innerHTML=
+html;
+
+paymentCount.innerHTML=
+totalPayment;
+
+earnings.innerHTML=
+"₹"+totalEarning;
+
 });
+
+
 
 /* ACTIONS */
-window.approveTeacher = (id) => {
-update(ref(db,"teachers/"+id), {status:"approved"});
-};
 
-window.deleteTeacher = (id) => {
-remove(ref(db,"teachers/"+id));
-};
+window.approveTeacher=
+(id)=>{
 
-window.approveInst = (id) => {
-update(ref(db,"institutions/"+id), {status:"approved"});
-};
+update(
+ref(
+db,
+"teachers/"+id
+),
+{
+status:"approved"
+}
+);
 
-window.deleteInst = (id) => {
-remove(ref(db,"institutions/"+id));
-};
+}
+
+
+window.deleteTeacher=
+(id)=>{
+
+remove(
+ref(
+db,
+"teachers/"+id
+)
+);
+
+}
+
+
+window.approveInst=
+(id)=>{
+
+update(
+ref(
+db,
+"institutions/"+id
+),
+{
+status:"approved"
+}
+);
+
+}
+
+
+window.deleteInst=
+(id)=>{
+
+remove(
+ref(
+db,
+"institutions/"+id
+)
+);
+
+}
 
 </script>
 
