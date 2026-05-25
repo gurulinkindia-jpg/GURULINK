@@ -11,6 +11,15 @@ padding:20px;
 background:#f2f2f2;
 }
 
+h1{
+text-align:center;
+color:#0d47a1;
+}
+
+.section{
+margin-top:30px;
+}
+
 .card{
 background:white;
 padding:15px;
@@ -20,12 +29,17 @@ box-shadow:0 0 5px rgba(0,0,0,.2);
 }
 
 button{
-padding:10px;
-background:green;
-color:white;
+padding:8px 10px;
+margin:5px;
 border:none;
 cursor:pointer;
+border-radius:5px;
+color:white;
 }
+
+.approve{background:green;}
+.delete{background:red;}
+.edit{background:orange;}
 
 </style>
 
@@ -35,23 +49,31 @@ cursor:pointer;
 
 <h1>GURULINK Admin Panel</h1>
 
+<!-- TEACHERS -->
+<div class="section">
+<h2>Teachers</h2>
 <div id="teacherList"></div>
+</div>
+
+<!-- INSTITUTIONS -->
+<div class="section">
+<h2>Institutions</h2>
+<div id="instList"></div>
+</div>
 
 <script type="module">
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
 getDatabase,
 ref,
 onValue,
-update
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+update,
+remove
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-const firebaseConfig={
-
+const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -59,70 +81,88 @@ projectId:"gurulink-59cc7",
 storageBucket:"gurulink-59cc7.firebasestorage.app",
 messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
 };
 
-const app=initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-const db=getDatabase(app);
+/* ========== TEACHERS ========== */
 
-onValue(
-ref(db,"teachers"),
-(snapshot)=>{
+onValue(ref(db,"teachers"), snapshot => {
 
-let html="";
+let html = "";
 
-snapshot.forEach((child)=>{
+snapshot.forEach(child => {
 
-let teacher=child.val();
+let t = child.val();
 
-if(teacher.status==="pending"){
-
-html +=`
-
+html += `
 <div class="card">
 
-<h3>${teacher.name}</h3>
+<h3>${t.name}</h3>
+<p>${t.subject} | ${t.class}</p>
+<p>${t.location}</p>
+<p>Status: ${t.status}</p>
 
-<p>${teacher.subject}</p>
-
-<p>${teacher.location}</p>
-
-<button onclick="approveTeacher('${child.key}')">
-
-Approve
-
-</button>
+<button class="approve" onclick="approveTeacher('${child.key}')">Approve</button>
+<button class="delete" onclick="deleteTeacher('${child.key}')">Delete</button>
 
 </div>
-
 `;
 
-}
+});
+
+document.getElementById("teacherList").innerHTML = html;
 
 });
 
-document.getElementById(
-"teacherList"
-).innerHTML=html;
+/* ========== INSTITUTIONS ========== */
+
+onValue(ref(db,"institutions"), snapshot => {
+
+let html = "";
+
+snapshot.forEach(child => {
+
+let i = child.val();
+
+html += `
+<div class="card">
+
+<h3>${i.name}</h3>
+<p>${i.address}</p>
+<p>${i.courses}</p>
+<p>Status: ${i.status}</p>
+
+<button class="approve" onclick="approveInst('${child.key}')">Approve</button>
+<button class="delete" onclick="deleteInst('${child.key}')">Delete</button>
+
+</div>
+`;
 
 });
 
-window.approveTeacher=
-function(id){
+document.getElementById("instList").innerHTML = html;
 
-update(
-ref(db,"teachers/"+id),
-{
-status:"approved"
-}
-);
+});
 
-alert(
-"Teacher Approved"
-);
+/* ========== FUNCTIONS ========== */
 
-}
+window.approveTeacher = function(id){
+update(ref(db,"teachers/"+id), {status:"approved"});
+};
+
+window.deleteTeacher = function(id){
+remove(ref(db,"teachers/"+id));
+};
+
+window.approveInst = function(id){
+update(ref(db,"institutions/"+id), {status:"approved"});
+};
+
+window.deleteInst = function(id){
+remove(ref(db,"institutions/"+id));
+};
 
 </script>
 
