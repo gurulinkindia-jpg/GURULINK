@@ -29,7 +29,7 @@ margin:auto;
 padding:20px;
 }
 
-/* FILTER BOX */
+/* FILTERS */
 .filters{
 background:white;
 padding:15px;
@@ -48,13 +48,14 @@ border:1px solid #ccc;
 border-radius:8px;
 }
 
-/* CARDS */
+/* GRID */
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
 gap:15px;
 }
 
+/* CARD */
 .card{
 background:white;
 padding:15px;
@@ -75,17 +76,13 @@ object-fit:cover;
 margin-bottom:10px;
 }
 
-h3{
-margin:5px 0;
-}
-
 .badge{
 display:inline-block;
 padding:4px 8px;
 background:#e0e0e0;
 border-radius:5px;
 font-size:12px;
-margin:2px 0;
+margin:2px 2px 2px 0;
 }
 
 .empty{
@@ -113,6 +110,13 @@ border-radius:10px;
 
 <input type="text" id="search" placeholder="Search name/location">
 
+<select id="filterCategory">
+<option value="">All Categories</option>
+<option value="academic">Academic</option>
+<option value="creative">Creative</option>
+<option value="skill">Skill</option>
+</select>
+
 <select id="filterClass">
 <option value="">All Classes</option>
 <option>Class 1-5</option>
@@ -124,12 +128,16 @@ border-radius:10px;
 </select>
 
 <select id="filterSubject">
-<option value="">All Subjects</option>
+<option value="">All Subjects/Skill</option>
 <option>Mathematics</option>
 <option>Physics</option>
 <option>Chemistry</option>
 <option>Biology</option>
 <option>English</option>
+<option>Coding</option>
+<option>Music</option>
+<option>Dance</option>
+<option>Drawing</option>
 </select>
 
 <select id="filterMode">
@@ -171,30 +179,38 @@ let allTeachers = [];
 function renderTeachers(){
 
 let search = document.getElementById("search").value.toLowerCase();
+let category = document.getElementById("filterCategory").value;
 let cls = document.getElementById("filterClass").value;
 let subject = document.getElementById("filterSubject").value;
 let mode = document.getElementById("filterMode").value;
 let maxFee = document.getElementById("maxFee").value;
 
-let html = "";
-
 let filtered = allTeachers.filter(t => {
 
 if(t.status !== "approved") return false;
 
+if(category && t.category !== category) return false;
+
 if(search &&
-!t.name.toLowerCase().includes(search) &&
-!t.location.toLowerCase().includes(search)
+!t.name?.toLowerCase().includes(search) &&
+!t.location?.toLowerCase().includes(search)
 ) return false;
 
 if(cls && t.class !== cls) return false;
-if(subject && t.subject !== subject) return false;
+
+if(subject){
+let value = t.subject || t.skillType || "";
+if(value !== subject) return false;
+}
+
 if(mode && t.mode !== mode) return false;
+
 if(maxFee && Number(t.fee) > Number(maxFee)) return false;
 
 return true;
-
 });
+
+let html = "";
 
 if(filtered.length === 0){
 document.getElementById("teacherGrid").innerHTML =
@@ -204,6 +220,8 @@ return;
 
 filtered.forEach(t => {
 
+let subjectShow = t.subject || t.skillType || "-";
+
 html += `
 <div class="card">
 
@@ -211,25 +229,25 @@ html += `
 
 <h3>${t.name}</h3>
 
-<div class="badge">${t.subject}</div>
-<div class="badge">${t.class}</div>
+<div class="badge">${t.category}</div>
+<div class="badge">${subjectShow}</div>
+<div class="badge">${t.class || "N/A"}</div>
 <div class="badge">${t.mode}</div>
 
 <p><b>Location:</b> ${t.location}</p>
 <p><b>Fee:</b> ₹${t.fee}</p>
 
-<p><b>Qualification:</b> ${t.qualification}</p>
-<p><b>Experience:</b> ${t.experience}</p>
+<p><b>Qualification:</b> ${t.qualification || "N/A"}</p>
+<p><b>Experience:</b> ${t.experience || "N/A"}</p>
 
 </div>
 `;
-
 });
 
 document.getElementById("teacherGrid").innerHTML = html;
-
 }
 
+/* LOAD DATA */
 onValue(ref(db,"teachers"), snapshot => {
 
 allTeachers = [];
@@ -242,7 +260,7 @@ renderTeachers();
 
 });
 
-/* live filters */
+/* LIVE FILTERS */
 document.querySelectorAll("input,select")
 .forEach(el => {
 el.addEventListener("input", renderTeachers);
