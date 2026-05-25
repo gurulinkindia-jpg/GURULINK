@@ -355,28 +355,24 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
 
-const app=
-initializeApp(firebaseConfig);
 
-const db=
-getDatabase(app);
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
 
-const API_KEY=
-"31f729ff855eb2e42c00ee508a8647ea";
+const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
 
+
+/* Image Upload */
 
 async function upload(file){
 
-let fd=
-new FormData();
+try{
 
-fd.append(
-"image",
-file
-);
+let fd=new FormData();
 
-let res=
-await fetch(
+fd.append("image",file);
+
+let res=await fetch(
 `https://api.imgbb.com/1/upload?key=${API_KEY}`,
 {
 method:"POST",
@@ -384,44 +380,60 @@ body:fd
 }
 );
 
-let data=
-await res.json();
+let data=await res.json();
+
+if(!data.success){
+
+throw new Error("Image upload failed");
+
+}
 
 return data.data.url;
 
 }
+catch(err){
+
+console.log(err);
+
+return "";
+
+}
+
+}
 
 
-/* Other Subject */
+/* Subject */
 
-subject.onchange=function(){
+subject.addEventListener(
+"change",
+()=>{
 
 customSubject.style.display=
-this.value==="other"
+subject.value==="other"
 ?
 "block"
 :
 "none";
 
 }
+);
 
 
 /* Profile Preview */
 
 photo.addEventListener(
 "change",
-function(){
+()=>{
 
 photoPreview.innerHTML="";
 
-if(this.files[0]){
+if(photo.files[0]){
 
-let img=
-document.createElement("img");
+let img=document.createElement("img");
 
 img.src=
 URL.createObjectURL(
-this.files[0]
+photo.files[0]
 );
 
 photoPreview.appendChild(img);
@@ -436,27 +448,28 @@ photoPreview.appendChild(img);
 
 gallery.addEventListener(
 "change",
-function(){
+()=>{
 
 galleryPreview.innerHTML="";
 
-if(this.files.length>5){
+if(gallery.files.length>5){
 
 alert(
-"Maximum 5 photos"
+"Maximum 5 photos allowed"
 );
 
-this.value="";
+gallery.value="";
 
 return;
 
 }
 
-[...this.files]
+Array.from(
+gallery.files
+)
 .forEach(file=>{
 
-let img=
-document.createElement("img");
+let img=document.createElement("img");
 
 img.src=
 URL.createObjectURL(file);
@@ -469,7 +482,7 @@ galleryPreview.appendChild(img);
 );
 
 
-/* Submit */
+/* Submit Form */
 
 teacherForm.addEventListener(
 "submit",
@@ -477,27 +490,52 @@ async(e)=>{
 
 e.preventDefault();
 
-let profile="";
+try{
+
+const btn=
+teacherForm.querySelector(
+"button"
+);
+
+btn.disabled=true;
+
+btn.innerHTML=
+"Submitting...";
+
+
+/* Upload Profile */
+
+let profileUrl="";
 
 if(photo.files[0]){
 
-profile=
+profileUrl=
 await upload(
 photo.files[0]
 );
 
 }
 
+
+/* Upload Gallery */
+
 let galleryUrls=[];
 
 for(let file of gallery.files){
 
-galleryUrls.push(
-await upload(file)
-);
+let url=
+await upload(file);
+
+if(url){
+
+galleryUrls.push(url);
 
 }
 
+}
+
+
+/* Subject Name */
 
 let subjectName=
 
@@ -505,57 +543,154 @@ subject.value==="other"
 
 ?
 
-customSubject.value
+customSubject.value.trim()
 
 :
 
 subject.value;
 
 
-let data={
+/* Teaching Modes */
 
-name:name.value,
-phone:phone.value,
-email:email.value,
-website:website.value,
-qualification:qualification.value,
-experience:experience.value,
+let teachingModes=[];
+
+if(document.querySelector(
+'input[onchange="toggleFee(\'homeFeeBox\')"]:checked'
+)){
+
+teachingModes.push(
+"Home Tuition"
+);
+
+}
+
+if(document.querySelector(
+'input[onchange="toggleFee(\'groupFeeBox\')"]:checked'
+)){
+
+teachingModes.push(
+"Group Tuition"
+);
+
+}
+
+if(document.querySelector(
+'input[onchange="toggleFee(\'onlineFeeBox\')"]:checked'
+)){
+
+teachingModes.push(
+"Online Individual"
+);
+
+}
+
+if(document.querySelector(
+'input[onchange="toggleFee(\'onlineGroupFeeBox\')"]:checked'
+)){
+
+teachingModes.push(
+"Online Group"
+);
+}
+
+
+/* Save */
+
+await push(
+ref(db,"teachers"),
+{
+
+name:name.value.trim(),
+
+phone:phone.value.trim(),
+
+email:email.value.trim(),
+
+website:website.value.trim(),
+
+qualification:
+qualification.value.trim(),
+
+experience:
+experience.value.trim(),
 
 subject:subjectName,
 
-location:location.value,
+location:
+location.value.trim(),
 
-description:description.value,
+teachingModes:
+teachingModes,
 
-fees:{
+homeFee:
+homeFee.value,
 
-home:homeFee.value,
-group:groupFee.value,
-online:onlineFee.value,
-onlineGroup:onlineGroupFee.value
+groupFee:
+groupFee.value,
 
-},
+onlineIndividualFee:
+onlineFee.value,
 
-photo:profile,
+onlineGroupFee:
+onlineGroupFee.value,
 
-gallery:galleryUrls,
+description:
+description.value.trim(),
+
+photo:
+profileUrl,
+
+gallery:
+galleryUrls,
 
 category:"skill",
 
 type:"teacher",
 
-status:"pending"
+status:"pending",
 
-};
+createdAt:
+Date.now()
 
-
-await push(
-ref(db,"teachers"),
-data
+}
 );
 
+
+alert(
+"Registration successful"
+);
+
+
+/* Payment Redirect */
+
 window.location.href=
-"payment.html?type=teacher";
+"payment.html?type=teacher&category=skill&amount=100";
+
+
+}
+catch(err){
+
+console.log(err);
+
+alert(
+"Error: "+err.message
+);
+
+}
+
+finally{
+
+const btn=
+teacherForm.querySelector(
+"button"
+);
+
+btn.disabled=false;
+
+btn.innerHTML=
+"Continue To Payment";
+
+}
 
 });
 
