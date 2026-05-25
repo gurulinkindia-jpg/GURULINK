@@ -3,8 +3,7 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>Find Teachers - GURULINK</title>
 
@@ -36,9 +35,6 @@ margin:auto;
 padding:20px;
 }
 
-
-/* FILTER */
-
 .filters{
 background:white;
 padding:15px;
@@ -63,9 +59,6 @@ border:1px solid #ccc;
 
 }
 
-
-/* GRID */
-
 .grid{
 
 display:grid;
@@ -76,9 +69,6 @@ repeat(auto-fit,minmax(320px,1fr));
 gap:20px;
 
 }
-
-
-/* CARD */
 
 .card{
 
@@ -98,7 +88,6 @@ transition:.3s;
 transform:translateY(-5px);
 
 }
-
 
 .top{
 
@@ -123,7 +112,6 @@ border:3px solid #0d47a1;
 
 }
 
-
 .badge{
 
 display:inline-block;
@@ -140,7 +128,6 @@ margin:3px;
 
 }
 
-
 .verify{
 
 background:#1b5e20;
@@ -148,12 +135,11 @@ color:white;
 
 }
 
-
 .gallery{
 
 display:flex;
 gap:6px;
-overflow:auto;
+overflow-x:auto;
 margin-top:10px;
 
 }
@@ -172,11 +158,8 @@ object-fit:cover;
 .empty{
 
 background:white;
-
 padding:20px;
-
 border-radius:15px;
-
 text-align:center;
 
 }
@@ -184,11 +167,8 @@ text-align:center;
 .desc{
 
 margin-top:10px;
-
 font-size:14px;
-
 color:#444;
-
 line-height:1.5;
 
 }
@@ -196,18 +176,15 @@ line-height:1.5;
 .mode{
 
 margin-top:8px;
-
 padding:8px;
-
 background:#f4f4f4;
-
 border-radius:10px;
-
 font-size:13px;
 
 }
 
 </style>
+
 </head>
 
 <body>
@@ -274,13 +251,16 @@ placeholder="Search name/location">
 
 </select>
 
+</div>
+
+<div
+id="teacherGrid"
+class="grid">
 
 </div>
 
-<div id="teacherGrid"
-class="grid"></div>
-
 </div>
+
 
 
 <script type="module">
@@ -288,27 +268,21 @@ class="grid"></div>
 import{
 initializeApp
 }
-
 from
 "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-
 import{
-
 getDatabase,
 ref,
 onValue
-
 }
-
 from
 "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 
-
 const firebaseConfig={
 
-apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+apiKey:"AIzaSyBK0mU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 
 authDomain:"gurulink-59cc7.firebaseapp.com",
 
@@ -331,7 +305,6 @@ initializeApp(firebaseConfig);
 const db=
 getDatabase(app);
 
-
 let allTeachers=[];
 
 
@@ -339,21 +312,16 @@ let allTeachers=[];
 function renderTeachers(){
 
 let search=
-document.getElementById("search")
-.value
-.toLowerCase();
+searchInput();
 
 let category=
-document.getElementById("category")
-.value;
+document.getElementById("category").value;
 
 let subject=
-document.getElementById("subject")
-.value;
+document.getElementById("subject").value;
 
 let mode=
-document.getElementById("mode")
-.value;
+document.getElementById("mode").value;
 
 
 
@@ -361,47 +329,57 @@ let filtered=
 allTeachers.filter(t=>{
 
 
-if(
-t.status!="approved"
-)
+if(t.status!=="approved")
 return false;
 
 
 if(
 category &&
-t.category!=category
+t.category!==category
 )
 return false;
 
 
+
 if(
 search &&
-!t.name?.toLowerCase().includes(search) &&
-!t.location?.toLowerCase().includes(search)
+!(
+t.name?.toLowerCase().includes(search)
+||
+t.location?.toLowerCase().includes(search)
+)
 )
 return false;
 
 
 
 let teacherSubject=
+
 t.subject ||
 t.skillType ||
+t.creativeType ||
 "";
+
 
 
 if(
 subject &&
-teacherSubject!=subject
+teacherSubject!==subject
 )
 return false;
 
 
 
+let modes=
+
+t.teachingModes ||
+t.teachingMode ||
+[];
+
+
 if(
 mode &&
-!(
-t.teachingModes?.includes(mode)
-)
+!modes.includes(mode)
 )
 return false;
 
@@ -410,6 +388,7 @@ return false;
 return true;
 
 });
+
 
 
 let html="";
@@ -421,9 +400,11 @@ document.getElementById(
 "teacherGrid"
 ).innerHTML=
 
-`<div class='empty'>
+`
+<div class="empty">
 No teachers found
-</div>`;
+</div>
+`;
 
 return;
 
@@ -434,32 +415,51 @@ return;
 filtered.forEach(t=>{
 
 
-let gallery="";
+let teacherSubject=
 
-if(t.gallery){
+t.subject ||
+t.skillType ||
+t.creativeType ||
+"-";
+
+
+let galleryHTML="";
+
+
+if(
+Array.isArray(t.gallery)
+){
 
 t.gallery.forEach(img=>{
 
-gallery+=
-`<img src="${img}">`;
+galleryHTML+=
+`
+<img src="${img}">
+`;
 
 });
 
 }
 
 
-let modeText="";
 
-if(t.teachingModes){
+let modeHTML="";
 
-t.teachingModes.forEach(m=>{
+let modes=
 
-modeText+=
-`<div>${m}</div>`;
+t.teachingModes ||
+t.teachingMode ||
+[];
+
+
+modes.forEach(m=>{
+
+modeHTML+=
+`
+<div>✓ ${m}</div>
+`;
 
 });
-
-}
 
 
 
@@ -471,19 +471,15 @@ html+=`
 
 <img
 class="photo"
-src="${t.photo||'https://via.placeholder.com/100'}">
+src="${t.photo || 'https://via.placeholder.com/100'}">
 
 <div>
 
-<h3>
-
-${t.name}
-
-</h3>
+<h3>${t.name||"-"}</h3>
 
 <div class="badge">
 
-${t.category}
+${t.category||"-"}
 
 </div>
 
@@ -493,20 +489,11 @@ ${teacherSubject}
 
 </div>
 
-${
-t.status=="approved"
+<div class="badge verify">
 
-?
-
-`<div class="badge verify">
 ✓ Verified
-</div>`
 
-:
-
-""
-
-}
+</div>
 
 </div>
 
@@ -540,28 +527,31 @@ ${t.experience||"-"}
 </p>
 
 
+
 <div class="mode">
 
-<b>Teaching Mode:</b>
+<b>Teaching Modes:</b>
 
-${modeText}
+${modeHTML||"-"}
 
 </div>
 
 
+
 <div class="mode">
 
-<b>Fees:</b>
+<b>Fees:</b><br>
 
-₹${t.homeFee||"-"} Home<br>
+Home: ₹${t.homeFee||"-"}<br>
 
-₹${t.groupFee||"-"} Group<br>
+Group: ₹${t.groupFee||"-"}<br>
 
-₹${t.onlineIndividualFee||"-"} Online Individual<br>
+Online Individual: ₹${t.onlineIndividualFee||"-"}<br>
 
-₹${t.onlineGroupFee||"-"} Online Group
+Online Group: ₹${t.onlineGroupFee||"-"}
 
 </div>
+
 
 
 <div class="desc">
@@ -571,9 +561,10 @@ ${t.description||""}
 </div>
 
 
+
 <div class="gallery">
 
-${gallery}
+${galleryHTML}
 
 </div>
 
@@ -594,7 +585,16 @@ html;
 
 
 
-/* LOAD TEACHERS */
+function searchInput(){
+
+return document
+.getElementById("search")
+.value
+.toLowerCase();
+
+}
+
+
 
 onValue(
 ref(db,"teachers"),
@@ -605,9 +605,12 @@ allTeachers=[];
 
 snapshot.forEach(child=>{
 
-allTeachers.push(
-child.val()
-);
+allTeachers.push({
+
+id:child.key,
+...child.val()
+
+});
 
 });
 
