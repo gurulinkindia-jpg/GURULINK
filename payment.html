@@ -1,46 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Payment - GURULINK</title>
 
 <style>
 body{
 font-family:Arial;
-text-align:center;
-padding:20px;
 background:#f2f2f2;
+margin:0;
+text-align:center;
 }
 
-.card{
+.container{
+max-width:500px;
+margin:20px auto;
 background:white;
 padding:20px;
-max-width:400px;
-margin:auto;
 border-radius:10px;
 box-shadow:0 0 10px rgba(0,0,0,.2);
 }
 
 img{
-width:220px;
-margin:15px;
+width:250px;
+margin:15px 0;
 }
 
-input{
+input,button{
 width:90%;
-padding:10px;
+padding:12px;
 margin:10px 0;
-border:1px solid #ccc;
-border-radius:6px;
 }
 
 button{
-padding:12px;
-width:90%;
 background:green;
 color:white;
 border:none;
-border-radius:6px;
 cursor:pointer;
 }
 </style>
@@ -48,21 +45,28 @@ cursor:pointer;
 
 <body>
 
-<div class="card">
+<div class="container">
 
 <h2>GURULINK Payment</h2>
 
-<p id="amountText">Loading...</p>
+<p id="msg"></p>
 
-<img id="qr">
+<img id="qr" src="">
 
 <p><b>UPI:</b> 9706380357@ucobank</p>
 
-<input type="text" id="utr" placeholder="Enter Transaction ID">
-
 <input type="file" id="screenshot" accept="image/*">
+<input type="text" id="utr" placeholder="Enter UTR / Transaction ID">
 
 <button onclick="submitPayment()">Submit Payment</button>
+
+<p style="color:green;font-weight:bold;margin-top:10px;">
+After approval your profile will be visible publicly.
+</p>
+
+<p style="color:#555;font-size:13px;">
+For help contact: 9706380357
+</p>
 
 </div>
 
@@ -71,7 +75,6 @@ cursor:pointer;
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-/* FIREBASE */
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
@@ -85,44 +88,37 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* IMGBB */
-async function uploadToImgBB(file){
+/* GET TYPE */
+const params = new URLSearchParams(window.location.search);
+const type = params.get("type");
+const category = params.get("category");
+
+/* SET AMOUNT */
+let amount = (type === "institution") ? 200 : 100;
+
+document.getElementById("msg").innerText =
+`Registration Fee ₹${amount}`;
+
+/* QR */
+document.getElementById("qr").src =
+`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi://pay?pa=9706380357@ucobank&pn=G10Group&am=${amount}&cu=INR`;
+
+/* IMGBB UPLOAD */
+async function uploadImg(file){
 
 const apiKey = "31f729ff855eb2e42c00ee508a8647ea";
 
-const formData = new FormData();
-formData.append("image", file);
+let form = new FormData();
+form.append("image", file);
 
-const res = await fetch(
-`https://api.imgbb.com/1/upload?key=${apiKey}`,
-{ method:"POST", body:formData }
-);
+let res = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+method:"POST",
+body:form
+});
 
-const data = await res.json();
-
-if(data.success){
+let data = await res.json();
 return data.data.url;
 }
-throw new Error("Upload failed");
-
-}
-
-/* GET TYPE FROM URL */
-let params = new URLSearchParams(window.location.search);
-let type = params.get("type"); // teacher / institute
-
-let amount = (type === "institute") ? 2 : 1;
-
-/* SHOW AMOUNT */
-document.getElementById("amountText").innerText =
-"Registration Fee ₹" + amount;
-
-/* QR GENERATE */
-let upi = `upi://pay?pa=9706380357@ucobank&pn=GURULINK&am=${amount}&cu=INR`;
-
-document.getElementById("qr").src =
-"https://api.qrserver.com/v1/create-qr-code/?size=220x220&data="
-+ encodeURIComponent(upi);
 
 /* SUBMIT */
 window.submitPayment = async function(){
@@ -131,33 +127,33 @@ let utr = document.getElementById("utr").value;
 let file = document.getElementById("screenshot").files[0];
 
 if(!utr){
-alert("Enter Transaction ID");
+alert("Enter UTR");
 return;
 }
 
-if(!file){
-alert("Upload payment screenshot");
-return;
+let imgURL = "";
+
+if(file){
+imgURL = await uploadImg(file);
 }
 
-let screenshotURL = await uploadToImgBB(file);
-
-push(ref(db,"payments"), {
-
-type,
-amount,
-utr,
-screenshot:screenshotURL,
-status:"pending",
-time:Date.now()
-
+/* SAVE PAYMENT */
+push(ref(db,"payments"),{
+type:type,
+category:category,
+amount:amount,
+utr:utr,
+screenshot:imgURL,
+status:"pending"
 });
 
-alert("Payment submitted for admin verification");
+alert(
+"Payment Successful Submitted!\n\nYour profile will be visible after admin approval.\nFor help: 9706380357"
+);
 
 window.location.href = "index.html";
 
-}
+};
 
 </script>
 
