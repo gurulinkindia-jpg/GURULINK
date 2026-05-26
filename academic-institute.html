@@ -305,7 +305,7 @@ from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import {
 getDatabase,
 ref,
-get
+push
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
@@ -322,146 +322,210 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
 
-const app=
-initializeApp(firebaseConfig);
+const app=initializeApp(firebaseConfig);
 
-const db=
-getDatabase(app);
+const db=getDatabase(app);
+
+const API_KEY=
+"31f729ff855eb2e42c00ee508a8647ea";
 
 
-async function loadPayments(){
+const form=document.getElementById("form");
+
+const subject=
+document.getElementById("subject");
+
+const otherSubject=
+document.getElementById("otherSubject");
+
+
+async function upload(file){
+
+let fd=new FormData();
+
+fd.append("image",file);
+
+let res=await fetch(
+`https://api.imgbb.com/1/upload?key=${API_KEY}`,
+{
+method:"POST",
+body:fd
+}
+);
+
+let data=await res.json();
+
+return data.data.url;
+
+}
+
+
+subject.addEventListener(
+"change",
+()=>{
+
+otherSubject.style.display=
+
+subject.value==="other"
+
+?
+
+"block"
+
+:
+
+"none";
+
+}
+);
+
+
+form.addEventListener(
+"submit",
+async(e)=>{
+
+e.preventDefault();
 
 try{
 
-const paymentsRef=
-ref(
-db,
-"payments"
+const submitBtn=
+document.querySelector(
+'button[type="submit"]'
 );
 
-const snapshot=
-await get(paymentsRef);
+submitBtn.disabled=true;
+submitBtn.innerText="Processing...";
 
-const container=
+
+let logoUrl="";
+
+const logo=
+document.getElementById("logo");
+
+if(logo.files[0]){
+
+logoUrl=
+await upload(
+logo.files[0]
+);
+
+}
+
+
+let galleryUrls=[];
+
+const gallery=
 document.getElementById(
-"paymentList"
+"gallery"
 );
 
-container.innerHTML="";
+for(let file of gallery.files){
 
-
-if(!snapshot.exists()){
-
-container.innerHTML=
-"<h3>No Payments Found</h3>";
-
-return;
+galleryUrls.push(
+await upload(file)
+);
 
 }
 
 
-const payments=
-snapshot.val();
+let teachingModes=[];
+
+document
+.querySelectorAll(
+'input[type="checkbox"]:checked'
+)
+.forEach(c=>{
+
+teachingModes.push(
+c.value
+);
+
+});
 
 
-for(let paymentId in payments){
+let newRef=
 
-const payment=
-payments[paymentId];
+await push(
 
-
-let institutionName=
-"NOT FOUND";
-
-let categoryName=
-"NOT FOUND";
-
-
-if(payment.institutionId){
-
-const institutionRef=
 ref(
 db,
-"institutions/"+payment.institutionId
+"institutions"
+),
+
+{
+
+name:
+document.getElementById("name").value,
+
+phone:
+document.getElementById("phone").value,
+
+email:
+document.getElementById("email").value,
+
+website:
+document.getElementById("website").value,
+
+address:
+document.getElementById("address").value,
+
+area:
+document.getElementById("area").value,
+
+class:
+document.getElementById("class").value,
+
+subject:
+
+subject.value==="other"
+
+?
+
+otherSubject.value
+
+:
+
+subject.value,
+
+teachingModes,
+
+offlineFee:
+document.getElementById("offlineFee").value,
+
+onlineFee:
+document.getElementById("onlineFee").value,
+
+hybridFee:
+document.getElementById("hybridFee").value,
+
+logo:
+logoUrl,
+
+gallery:
+galleryUrls,
+
+description:
+document.getElementById("description").value,
+
+category:"academic",
+
+status:"pending"
+
+}
+
 );
 
-const institutionSnap=
-await get(
-institutionRef
+
+const institutionId=
+newRef.key;
+
+localStorage.setItem(
+"institutionId",
+institutionId
 );
 
-if(
-institutionSnap.exists()
-){
-
-const institution=
-institutionSnap.val();
-
-
-institutionName=
-
-institution.name ||
-"NOT FOUND";
-
-
-categoryName=
-
-institution.skill ||
-
-institution.subject ||
-
-"NOT FOUND";
-
-}
-
-}
-
-
-container.innerHTML+=`
-
-<div style="
-background:white;
-padding:15px;
-margin-bottom:15px;
-border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,.1);
-">
-
-<b>Name:</b>
-${institutionName}
-
-<br><br>
-
-<b>Subject / Skill:</b>
-${categoryName}
-
-<br><br>
-
-<b>Type:</b>
-${payment.type || "-"}
-
-<br><br>
-
-<b>Amount:</b>
-₹${payment.amount || 0}
-
-<br><br>
-
-<b>Status:</b>
-${payment.status || "-"}
-
-<br><br>
-
-<b>Date:</b>
-${new Date(
-payment.date || Date.now()
-).toLocaleString()}
-
-</div>
-
-`;
-
-}
+window.location.href=
+"payment.html?type=institution&id="+institutionId;
 
 }
 catch(error){
@@ -475,16 +539,28 @@ error.message
 
 }
 
-}
-
-
-loadPayments();
+});
 
 </script>
 
 
+<script>
 
-<div id="paymentList"></div>
+function toggleFee(id){
+
+let box=
+document.getElementById(id);
+
+box.style.display=
+box.style.display==="block"
+?
+"none"
+:
+"block";
+
+}
+
+</script>
 
 </body>
 </html>
