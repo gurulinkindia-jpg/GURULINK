@@ -496,6 +496,8 @@ earnings.innerHTML=
 
 /* BUTTON FUNCTIONS */
 
+/* BUTTON FUNCTIONS */
+
 window.approveTeacher=(id)=>{
 
 update(
@@ -503,9 +505,20 @@ ref(db,"teachers/"+id),
 {
 status:"approved"
 }
-);
+)
+.then(()=>{
 
-}
+alert("Teacher approved");
+
+})
+.catch(err=>{
+
+alert(err.message);
+
+});
+
+};
+
 
 window.deleteTeacher=(id)=>{
 
@@ -513,18 +526,24 @@ if(confirm("Delete teacher?")){
 
 remove(
 ref(db,"teachers/"+id)
-);
+)
+.then(()=>{
+
+alert("Teacher deleted");
+
+});
 
 }
 
-}
+};
+
 
 window.editTeacher=(id)=>{
 
 window.location=
 "edit.html?id="+id+"&type=teacher";
 
-}
+};
 
 
 window.approveInst=(id)=>{
@@ -534,9 +553,20 @@ ref(db,"institutions/"+id),
 {
 status:"approved"
 }
-);
+)
+.then(()=>{
 
-}
+alert("Institution approved");
+
+})
+.catch(err=>{
+
+alert(err.message);
+
+});
+
+};
+
 
 window.deleteInst=(id)=>{
 
@@ -544,34 +574,56 @@ if(confirm("Delete institution?")){
 
 remove(
 ref(db,"institutions/"+id)
-);
+)
+.then(()=>{
+
+alert("Institution deleted");
+
+});
 
 }
 
-}
+};
+
 
 window.editInst=(id)=>{
 
 window.location=
 "edit.html?id="+id+"&type=institution";
 
-}
-window.deletePayment = (id) => {
+};
 
-if (!id) {
+
+window.deletePayment=(id)=>{
+
+if(!id){
+
 alert("Payment ID missing");
 return;
+
 }
 
-if (confirm("Delete this payment?")) {
+if(confirm("Delete this payment?")){
 
-remove(ref(db, "payments/" + id))
-.then(() => {
-alert("Payment deleted successfully");
+remove(
+ref(db,"payments/"+id)
+)
+.then(()=>{
+
+alert(
+"Payment deleted successfully"
+);
+
 })
-.catch(err => {
-alert("Delete failed: " + err.message);
+.catch(err=>{
+
+alert(
+"Delete failed: "+
+err.message
+);
+
 console.log(err);
+
 });
 
 }
