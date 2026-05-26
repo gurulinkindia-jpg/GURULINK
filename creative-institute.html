@@ -264,209 +264,22 @@ Continue To Payment
 </div>
 
 
-<script type="module">
-
-import {
-initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
-import {
-getDatabase,
-ref,
-push
-}
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 
-const firebaseConfig={
 
-apiKey:"AIzaSyBK0mU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-authDomain:"gurulink-59cc7.firebaseapp.com",
-databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"gurulink-59cc7",
-storageBucket:"gurulink-59cc7.appspot.com",
-messagingSenderId:"112148672399",
-appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
-};
-
-
-const app=
-initializeApp(firebaseConfig);
-
-const db=
-getDatabase(app);
-
-const API_KEY=
-"31f729ff855eb2e42c00ee508a8647ea";
-
-
-/* ELEMENTS */
-
-const form=
-document.getElementById("form");
-
-const creative=
-document.getElementById("creative");
-
-const otherCreative=
-document.getElementById("otherCreative");
-
-const logo=
-document.getElementById("logo");
-
-const logoPreview=
-document.getElementById("logoPreview");
-
-const gallery=
-document.getElementById("gallery");
-
-const galleryPreview=
-document.getElementById("galleryPreview");
-
-
-/* IMAGE UPLOAD */
-
-async function upload(file){
-
-let fd=
-new FormData();
-
-fd.append(
-"image",
-file
-);
-
-let res=
-await fetch(
-`https://api.imgbb.com/1/upload?key=${API_KEY}`,
-{
-method:"POST",
-body:fd
-}
-);
-
-let data=
-await res.json();
-
-return data.data.url;
-
-}
-
-
-/* CREATIVE OTHER */
-
-creative.addEventListener(
-"change",
-()=>{
-
-otherCreative.style.display=
-
-creative.value==="other"
-
-?
-
-"block"
-
-:
-
-"none";
-
-}
-);
-
-
-/* LOGO PREVIEW */
-
-logo.addEventListener(
-"change",
-function(){
-
-logoPreview.innerHTML="";
-
-if(this.files.length>0){
-
-let img=
-document.createElement(
-"img"
-);
-
-img.src=
-URL.createObjectURL(
-this.files[0]
-);
-
-logoPreview.appendChild(
-img
-);
-
-}
-
-}
-);
-
-
-/* GALLERY PREVIEW */
-
-gallery.addEventListener(
-"change",
-function(){
-
-galleryPreview.innerHTML="";
-
-if(this.files.length>5){
-
-alert(
-"Maximum 5 photos allowed"
-);
-
-this.value="";
-
-return;
-
-}
-
-Array.from(this.files)
-.forEach(file=>{
-
-let img=
-document.createElement(
-"img"
-);
-
-img.src=
-URL.createObjectURL(
-file
-);
-
-galleryPreview.appendChild(
-img
-);
-
-});
-
-}
-);
 
 
 <script type="module">
 
-import {
-initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { 
+initializeApp 
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-import {
+import { 
 getDatabase,
 ref,
 push
-}
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 
 const firebaseConfig={
@@ -487,14 +300,17 @@ const db=getDatabase(app);
 const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
 
 
+/* ELEMENTS */
+
 const form=document.getElementById("form");
 const creative=document.getElementById("creative");
 const otherCreative=document.getElementById("otherCreative");
-const logo=document.getElementById("logo");
-const logoPreview=document.getElementById("logoPreview");
-const gallery=document.getElementById("gallery");
-const galleryPreview=document.getElementById("galleryPreview");
 
+const logo=document.getElementById("logo");
+const gallery=document.getElementById("gallery");
+
+
+/* IMAGE UPLOAD */
 
 async function upload(file){
 
@@ -507,7 +323,8 @@ let res=await fetch(
 {
 method:"POST",
 body:fd
-});
+}
+);
 
 let data=await res.json();
 
@@ -518,7 +335,9 @@ return data.data.url;
 
 /* OTHER CATEGORY */
 
-creative.addEventListener("change",()=>{
+creative.addEventListener(
+"change",
+()=>{
 
 otherCreative.style.display=
 creative.value==="other"
@@ -527,69 +346,21 @@ creative.value==="other"
 :
 "none";
 
-});
-
-
-/* LOGO PREVIEW */
-
-logo.addEventListener("change",function(){
-
-logoPreview.innerHTML="";
-
-if(this.files[0]){
-
-let img=document.createElement("img");
-
-img.src=
-URL.createObjectURL(this.files[0]);
-
-logoPreview.appendChild(img);
-
 }
-
-});
-
-
-/* GALLERY */
-
-gallery.addEventListener("change",function(){
-
-galleryPreview.innerHTML="";
-
-if(this.files.length>5){
-
-alert("Maximum 5 photos");
-
-this.value="";
-
-return;
-
-}
-
-Array.from(this.files)
-.forEach(file=>{
-
-let img=document.createElement("img");
-
-img.src=
-URL.createObjectURL(file);
-
-galleryPreview.appendChild(img);
-
-});
-
-});
+);
 
 
 /* SUBMIT */
 
 form.addEventListener(
 "submit",
-async function(e){
+async(e)=>{
 
 e.preventDefault();
 
 try{
+
+/* LOGO */
 
 let logoUrl="";
 
@@ -609,10 +380,9 @@ let galleryUrls=[];
 
 for(let file of gallery.files){
 
-let url=
-await upload(file);
-
-galleryUrls.push(url);
+galleryUrls.push(
+await upload(file)
+);
 
 }
 
@@ -627,26 +397,38 @@ document
 )
 .forEach(c=>{
 
-modes.push(
-c.parentElement.innerText.trim()
-);
+let txt=
+c.parentElement.innerText.trim();
+
+modes.push(txt);
 
 });
 
 
-/* SAVE */
+/* SAVE FIREBASE */
 
 let newRef=
 await push(
 ref(db,"institutions"),
 {
 
-name:name.value,
-phone:phone.value,
-email:email.value,
-website:website.value,
-address:address.value,
-area:area.value,
+name:
+document.getElementById("name").value,
+
+phone:
+document.getElementById("phone").value,
+
+email:
+document.getElementById("email").value,
+
+website:
+document.getElementById("website").value,
+
+address:
+document.getElementById("address").value,
+
+area:
+document.getElementById("area").value,
 
 creative:
 creative.value==="other"
@@ -658,20 +440,20 @@ creative.value,
 modes:modes,
 
 offlineFee:
-offlineFee.value||"",
+document.getElementById("offlineFee").value || "",
 
 onlineFee:
-onlineFee.value||"",
+document.getElementById("onlineFee").value || "",
 
 hybridFee:
-hybridFee.value||"",
+document.getElementById("hybridFee").value || "",
 
 logo:logoUrl,
 
 gallery:galleryUrls,
 
 description:
-description.value,
+document.getElementById("description").value,
 
 category:"creative",
 
@@ -684,7 +466,8 @@ status:"pending"
 
 /* SAVE ID */
 
-const institutionId=newRef.key;
+const institutionId=
+newRef.key;
 
 localStorage.setItem(
 "institutionId",
@@ -692,7 +475,7 @@ institutionId
 );
 
 
-/* PAYMENT PAGE */
+/* GO PAYMENT PAGE */
 
 window.location.href=
 "payment.html?type=institution&id="+institutionId;
@@ -703,12 +486,15 @@ catch(error){
 console.log(error);
 
 alert(
-"Error:\n"+error.message
+"Error:\n"+
+error.message
 );
 
 }
 
-});
+}
+
+);
 
 </script>
 
