@@ -111,32 +111,108 @@ border-radius:10px;
 <option>NEET</option>
 </select>
 
+
+
+
 <h3>Modes</h3>
 
-<label><input type="checkbox" value="Offline Classroom"> Offline Classroom</label>
-<div id="offline" class="modeFee">
-<input id="offlineFee" placeholder="Offline Fee">
+<div class="modeBox">
+
+<div class="row">
+<input type="checkbox"
+onchange="toggleFee('offline')">
+
+Offline Classroom
 </div>
 
-<label><input type="checkbox" value="Home Tuition"> Home Tuition</label>
-<div id="home" class="modeFee">
-<input id="homeFee" placeholder="Home Fee">
+<div class="modeFee"
+id="offline">
+
+<input
+id="offlineFee"
+placeholder="Enter Fee">
+
 </div>
 
-<label><input type="checkbox" value="Online"> Online</label>
-<div id="online" class="modeFee">
-<input id="onlineFee" placeholder="Online Fee">
+
+<div class="row">
+
+<input
+type="checkbox"
+onchange="toggleFee('online')">
+
+Online
 </div>
 
-<h3>Logo</h3>
-<input type="file" id="logo">
+<div class="modeFee"
+id="online">
 
-<h3>Gallery</h3>
-<input type="file" id="gallery" multiple>
+<input
+id="onlineFee"
+placeholder="Enter Fee">
 
-<textarea id="description" placeholder="About Institution"></textarea>
+</div>
 
-<button type="submit">Continue To Payment</button>
+
+<div class="row">
+
+<input
+type="checkbox"
+onchange="toggleFee('hybrid')">
+
+Hybrid
+</div>
+
+<div class="modeFee"
+id="hybrid">
+
+<input
+id="hybridFee"
+placeholder="Enter Fee">
+
+</div>
+
+</div>
+
+
+<label>
+<b>Institution Logo</b>
+</label>
+
+<input
+type="file"
+id="logo"
+accept="image/*">
+
+<div
+id="logoPreview"
+class="preview"></div>
+
+
+<label>
+<b>Gallery Photos (Max 5)</b>
+</label>
+
+<input
+type="file"
+id="gallery"
+multiple
+accept="image/*">
+
+<div
+id="galleryPreview"
+class="preview"></div>
+
+
+<textarea
+id="description"
+placeholder="About Institution"></textarea>
+
+<button type="submit">
+
+Continue To Payment
+
+</button>
 
 </form>
 
