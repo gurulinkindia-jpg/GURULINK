@@ -67,7 +67,14 @@ const db = getDatabase(app);
 const params = new URLSearchParams(window.location.search);
 
 const type = params.get("type") || "teacher";
-const id = localStorage.getItem("teacherId");
+let id = params.get("id");
+
+if (!id) {
+  id =
+    type === "institution"
+      ? localStorage.getItem("institutionId")
+      : localStorage.getItem("teacherId");
+}
 
 
 console.log("TYPE:", type);
