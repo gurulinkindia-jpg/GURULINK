@@ -253,118 +253,350 @@ Continue To Payment
 
 </div>
 
+
+
+
+
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-const firebaseConfig = {
-apiKey: "AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-authDomain: "gurulink-59cc7.firebaseapp.com",
-databaseURL: "https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId: "gurulink-59cc7",
-storageBucket: "gurulink-59cc7.appspot.com",
-messagingSenderId: "112148672399",
-appId: "1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+import {
+getDatabase,
+ref,
+push
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+
+const firebaseConfig={
+
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const app=initializeApp(firebaseConfig);
 
-const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
+const db=getDatabase(app);
 
-/* ELEMENTS */
-const form = document.getElementById("form");
-const name = document.getElementById("name");
-const phone = document.getElementById("phone");
-const email = document.getElementById("email");
-const website = document.getElementById("website");
-const address = document.getElementById("address");
-const area = document.getElementById("area");
-const subject = document.getElementById("subject");
-const otherSubject = document.getElementById("otherSubject");
-const classInput = document.getElementById("class");
-const description = document.getElementById("description");
-const logo = document.getElementById("logo");
-const gallery = document.getElementById("gallery");
+const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
 
-/* UPLOAD */
+
+const form=document.getElementById("form");
+
+const logo=document.getElementById("logo");
+
+const gallery=document.getElementById("gallery");
+
+const logoPreview=
+document.getElementById("logoPreview");
+
+const galleryPreview=
+document.getElementById("galleryPreview");
+
+const subject=
+document.getElementById("subject");
+
+const otherSubject=
+document.getElementById("otherSubject");
+
+
+/* IMAGE UPLOAD */
+
 async function upload(file){
-let fd = new FormData();
-fd.append("image", file);
 
-let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`,{
+let fd=new FormData();
+
+fd.append(
+"image",
+file
+);
+
+let res=await fetch(
+`https://api.imgbb.com/1/upload?key=${API_KEY}`,
+{
 method:"POST",
 body:fd
-});
+}
+);
 
-let data = await res.json();
+let data=
+await res.json();
+
 return data.data.url;
+
 }
 
+
 /* SUBJECT */
-subject.addEventListener("change",()=>{
-otherSubject.style.display =
-subject.value==="other" ? "block" : "none";
+
+subject.addEventListener(
+"change",
+()=>{
+
+otherSubject.style.display=
+
+subject.value==="other"
+
+?
+
+"block"
+
+:
+
+"none";
+
+}
+);
+
+
+/* LOGO PREVIEW */
+
+logo.addEventListener(
+"change",
+()=>{
+
+logoPreview.innerHTML="";
+
+if(logo.files[0]){
+
+let img=
+document.createElement("img");
+
+img.src=
+URL.createObjectURL(
+logo.files[0]
+);
+
+logoPreview.appendChild(img);
+
+}
+
+}
+);
+
+
+/* GALLERY PREVIEW */
+
+gallery.addEventListener(
+"change",
+()=>{
+
+galleryPreview.innerHTML="";
+
+if(gallery.files.length>5){
+
+alert(
+"Maximum 5 photos allowed"
+);
+
+gallery.value="";
+
+return;
+
+}
+
+Array.from(
+gallery.files
+)
+.forEach(file=>{
+
+let img=
+document.createElement("img");
+
+img.src=
+URL.createObjectURL(file);
+
+galleryPreview.appendChild(img);
+
 });
 
+}
+);
+
+
 /* SUBMIT */
-form.addEventListener("submit", async (e)=>{
+
+form.addEventListener(
+"submit",
+async(e)=>{
+
 e.preventDefault();
 
 try{
 
-let logoUrl = logo.files[0] ? await upload(logo.files[0]) : "";
+let logoUrl="";
 
-let galleryUrls = [];
-for(let f of gallery.files){
-galleryUrls.push(await upload(f));
+if(logo.files[0]){
+
+logoUrl=
+await upload(
+logo.files[0]
+);
+
 }
 
-let modes = [];
-document.querySelectorAll('input[type="checkbox"]:checked')
-.forEach(c=>modes.push(c.value));
 
-let newRef = await push(ref(db,"institutions"),{
+let galleryUrls=[];
 
-name: name.value,
-phone: phone.value,
-email: email.value,
-website: website.value,
-address: address.value,
-area: area.value,
+for(let file of gallery.files){
 
-subject: subject.value==="other" ? otherSubject.value : subject.value,
-class: classInput.value,
+galleryUrls.push(
+await upload(file)
+);
 
-modes: modes,
+}
 
-offlineFee: document.getElementById("offlineFee").value || "",
-homeFee: document.getElementById("homeFee").value || "",
-onlineFee: document.getElementById("onlineFee").value || "",
 
-logo: logoUrl,
-gallery: galleryUrls,
+/* MODES */
 
-description: description.value,
-category: "academic",
-status: "pending"
+let modes=[];
+
+document
+.querySelectorAll(
+'input[type="checkbox"]:checked'
+)
+.forEach(c=>{
+
+modes.push(
+c.value
+);
 
 });
 
-/* IMPORTANT FIX */
-const id = newRef.key;
-localStorage.setItem("institutionId", id);
 
-window.location.href =
-"payment.html?type=institution&id=" + id;
+let newRef=
 
-}catch(err){
-alert("Error: " + err.message);
+await push(
+ref(
+db,
+"institutions"
+),
+{
+
+name:name.value,
+
+phone:phone.value,
+
+email:email.value,
+
+website:website.value,
+
+address:address.value,
+
+area:area.value,
+
+subject:
+
+subject.value==="other"
+
+?
+
+otherSubject.value
+
+:
+
+subject.value,
+
+class:
+document.getElementById(
+"class"
+).value,
+
+modes:modes,
+
+offlineFee:
+offlineFee.value || "",
+
+onlineFee:
+onlineFee.value || "",
+
+hybridFee:
+hybridFee.value || "",
+
+logo:
+logoUrl,
+
+gallery:
+galleryUrls,
+
+description:
+description.value,
+
+category:
+"academic",
+
+status:
+"pending"
+
+}
+);
+
+
+const id=
+newRef.key;
+
+localStorage.setItem(
+"institutionId",
+id
+);
+
+
+window.location.href=
+
+"payment.html?type=institution&id="+id;
+
+
+}
+catch(err){
+
 console.log(err);
+
+alert(
+"Error : "+
+err.message
+);
+
 }
 
 });
+
+</script>
+
+
+
+<script>
+
+/* SHOW/HIDE FEES */
+
+function toggleFee(id){
+
+let box=
+
+document.getElementById(
+id
+);
+
+box.style.display=
+
+box.style.display==="block"
+
+?
+
+"none"
+
+:
+
+"block";
+
+}
 
 </script>
 
