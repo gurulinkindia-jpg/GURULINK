@@ -14,7 +14,7 @@ background:#eef2f7;
 }
 
 header{
-background:#0d47a1;
+background:#e65100;
 color:white;
 padding:18px;
 text-align:center;
@@ -47,7 +47,7 @@ resize:none;
 button{
 width:100%;
 padding:14px;
-background:#1b5e20;
+background:#e65100;
 color:white;
 border:none;
 border-radius:10px;
@@ -57,17 +57,44 @@ cursor:pointer;
 
 .preview{
 display:flex;
-gap:10px;
 flex-wrap:wrap;
+gap:10px;
+margin-top:10px;
 }
 
 .preview img{
 width:90px;
 height:90px;
+border-radius:10px;
 object-fit:cover;
+border:1px solid #ddd;
+}
+
+.modeBox{
+padding:15px;
+border:1px solid #ddd;
 border-radius:10px;
 }
-.modeFee{display:none;padding:10px;background:#f7f7f7;border-radius:8px;}
+
+.row{
+display:flex;
+align-items:center;
+gap:10px;
+margin:10px 0;
+}
+
+.row input{
+width:auto;
+transform:scale(1.2);
+}
+
+.modeFee{
+display:none;
+padding:10px;
+background:#f4f4f4;
+border-radius:10px;
+margin-bottom:10px;
+}
 </style>
 </head>
 
