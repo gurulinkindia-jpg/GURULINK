@@ -236,19 +236,26 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
 const app=initializeApp(firebaseConfig);
+
 const db=getDatabase(app);
+
+let teacherTotal=0;
+let institutionTotal=0;
+let paymentTotal=0;
+let earningTotal=0;
 
 
 /* TEACHERS */
 
 onValue(ref(db,"teachers"),snap=>{
 
-let total=0;
+teacherTotal=0;
+
 let html="";
 
 snap.forEach(c=>{
 
-total++;
+teacherTotal++;
 
 let t=c.val();
 
@@ -271,7 +278,7 @@ html+=`
 <div class="top">
 
 <img class="photo"
-src="${t.photo||'https://via.placeholder.com/100'}">
+src="${t.photo || 'https://via.placeholder.com/100'}">
 
 <div>
 
@@ -279,7 +286,7 @@ src="${t.photo||'https://via.placeholder.com/100'}">
 
 <span class="badge ${t.status=="approved"?"verify":"pending"}">
 
-${t.status||"pending"}
+${t.status}
 
 </span>
 
@@ -287,42 +294,60 @@ ${t.status||"pending"}
 
 </div>
 
+<p><b>Category:</b> ${t.category||"-"}</p>
 <p><b>Subject:</b> ${t.subject||"-"}</p>
+<p><b>Class:</b> ${t.class||"-"}</p>
+
 <p><b>Phone:</b> ${t.phone||"-"}</p>
 
+<p><b>Email:</b> ${t.email||"-"}</p>
+
+<p><b>Website:</b> ${t.website||"-"}</p>
+
+<p><b>Qualification:</b> ${t.qualification||"-"}</p>
+
+<p><b>Experience:</b> ${t.experience||"-"}</p>
+
+<p><b>Location:</b> ${t.location||"-"}</p>
+
+<p><b>Home Fee:</b> ₹${t.homeFee||t.fees?.home||0}</p>
+
+<p><b>Group Fee:</b> ₹${t.groupFee||t.fees?.group||0}</p>
+
+<p><b>Online Fee:</b> ₹${t.onlineIndividualFee||t.fees?.online||0}</p>
+
+<p><b>Online Group:</b> ₹${t.onlineGroupFee||t.fees?.onlineGroup||0}</p>
+
+<p><b>Description:</b>
+${t.description||"-"}
+</p>
+
 <div class="gallery">
-
 ${gallery}
-
 </div>
 
-${
-t.status!="approved"
-
+${t.status!="approved"
 ?
-
-`<button class="approve teacherApprove"
-data-id="${c.key}">
+`<button
+class="approve"
+onclick="approveTeacher('${c.key}')">
 Approve
 </button>`
-
 :
-
 `<button disabled>
 Approved
 </button>`
-
 }
 
 <button
-class="edit teacherEdit"
-data-id="${c.key}">
+class="edit"
+onclick="editTeacher('${c.key}')">
 Edit
 </button>
 
 <button
-class="delete teacherDelete"
-data-id="${c.key}">
+class="delete"
+onclick="deleteTeacher('${c.key}')">
 Delete
 </button>
 
@@ -333,8 +358,7 @@ Delete
 });
 
 teachers.innerHTML=html;
-
-teacherCount.innerHTML=total;
+teacherCount.innerHTML=teacherTotal;
 
 });
 
@@ -343,12 +367,13 @@ teacherCount.innerHTML=total;
 
 onValue(ref(db,"institutions"),snap=>{
 
-let total=0;
+institutionTotal=0;
+
 let html="";
 
 snap.forEach(c=>{
 
-total++;
+institutionTotal++;
 
 let t=c.val();
 
@@ -370,47 +395,52 @@ html+=`
 
 <h3>${t.name||"-"}</h3>
 
+<p><b>Category:</b> ${t.category||"-"}</p>
+
+<p><b>Phone:</b> ${t.phone||"-"}</p>
+
+<p><b>Email:</b> ${t.email||"-"}</p>
+
+<p><b>Website:</b> ${t.website||"-"}</p>
+
+<p><b>Address:</b> ${t.address||"-"}</p>
+
+<p><b>Area:</b> ${t.area||"-"}</p>
+
 <p><b>Subject:</b>
-${t.subject||"-"}
+${t.subject||t.creative||t.skill||"-"}
 </p>
 
-<p><b>Phone:</b>
-${t.phone||"-"}
+<p><b>Description:</b>
+${t.description||"-"}
 </p>
 
 <div class="gallery">
-
 ${gallery}
-
 </div>
 
-${
-t.status!="approved"
-
+${t.status!="approved"
 ?
-
-`<button class="approve instApprove"
-data-id="${c.key}">
+`<button
+class="approve"
+onclick="approveInst('${c.key}')">
 Approve
 </button>`
-
 :
-
 `<button disabled>
 Approved
 </button>`
-
 }
 
 <button
-class="edit instEdit"
-data-id="${c.key}">
+class="edit"
+onclick="editInst('${c.key}')">
 Edit
 </button>
 
 <button
-class="delete instDelete"
-data-id="${c.key}">
+class="delete"
+onclick="deleteInst('${c.key}')">
 Delete
 </button>
 
@@ -422,7 +452,8 @@ Delete
 
 institutions.innerHTML=html;
 
-institutionCount.innerHTML=total;
+institutionCount.innerHTML=
+institutionTotal;
 
 });
 
@@ -431,204 +462,187 @@ institutionCount.innerHTML=total;
 
 onValue(ref(db,"payments"),snap=>{
 
-let total=0;
-let earningsTotal=0;
+paymentTotal=0;
+earningTotal=0;
+
 let html="";
 
 snap.forEach(c=>{
 
-total++;
+paymentTotal++;
 
 let p=c.val();
 
-earningsTotal+=Number(
+earningTotal+=Number(
 p.amount||0
 );
 
 html+=`
-
 <div class="card">
 
-<p>
-<b>Name:</b>
-${p.name||"Unknown"}
-</p>
+<p><b>Name:</b> ${p.name || "Unknown"}</p>
 
-<p>
-<b>Amount:</b>
-₹${p.amount||0}
-</p>
+<p><b>Type:</b> ${p.type||"-"}</p>
+<p><b>Amount:</b> ₹${p.amount||0}</p>
+<p><b>Status:</b> ${p.status||"-"}</p>
+<p><b>Date:</b> ${p.date||"-"}</p>
 
-<button
-class="delete paymentDelete"
-data-id="${c.key}">
+<button class="delete"
+onclick="deletePayment('${c.key}')">
 Delete Payment
 </button>
 
 </div>
-
 `;
 
 });
 
 payments.innerHTML=html;
 
-paymentCount.innerHTML=total;
+paymentCount.innerHTML=
+paymentTotal;
 
 earnings.innerHTML=
-"₹"+earningsTotal;
+"₹"+earningTotal;
 
 });
 
 
-/* BUTTON EVENTS */
+/* BUTTON FUNCTIONS */
 
-document.addEventListener(
-"click",
-async(e)=>{
+/* BUTTON FUNCTIONS */
 
+window.approveTeacher=(id)=>{
 
-if(
-e.target.classList.contains(
-"teacherApprove"
-)
-){
-
-await update(
-ref(
-db,
-"teachers/"+e.target.dataset.id
-),
+update(
+ref(db,"teachers/"+id),
 {
 status:"approved"
 }
-);
-
-alert(
-"Teacher Approved"
-);
-
-}
-
-
-if(
-e.target.classList.contains(
-"instApprove"
 )
-){
+.then(()=>{
 
-await update(
-ref(
-db,
-"institutions/"+e.target.dataset.id
-),
-{
-status:"approved"
-}
-);
+alert("Teacher approved");
 
-alert(
-"Institution Approved"
-);
+})
+.catch(err=>{
 
-}
-
-
-if(
-e.target.classList.contains(
-"teacherDelete"
-)
-){
-
-if(confirm(
-"Delete Teacher?"
-)){
-
-remove(
-ref(
-db,
-"teachers/"+e.target.dataset.id
-)
-);
-
-}
-
-}
-
-
-if(
-e.target.classList.contains(
-"instDelete"
-)
-){
-
-if(confirm(
-"Delete Institution?"
-)){
-
-remove(
-ref(
-db,
-"institutions/"+e.target.dataset.id
-)
-);
-
-}
-
-}
-
-
-if(
-e.target.classList.contains(
-"paymentDelete"
-)
-){
-
-if(confirm(
-"Delete Payment?"
-)){
-
-remove(
-ref(
-db,
-"payments/"+e.target.dataset.id
-)
-);
-
-}
-
-}
-
-
-if(
-e.target.classList.contains(
-"teacherEdit"
-)
-){
-
-window.location=
-"edit.html?id="+
-e.target.dataset.id+
-"&type=teacher";
-
-}
-
-
-if(
-e.target.classList.contains(
-"instEdit"
-)
-){
-
-window.location=
-"edit.html?id="+
-e.target.dataset.id+
-"&type=institution";
-
-}
+alert(err.message);
 
 });
 
+};
+
+
+window.deleteTeacher=(id)=>{
+
+if(confirm("Delete teacher?")){
+
+remove(
+ref(db,"teachers/"+id)
+)
+.then(()=>{
+
+alert("Teacher deleted");
+
+});
+
+}
+
+};
+
+
+window.editTeacher=(id)=>{
+
+window.location=
+"edit.html?id="+id+"&type=teacher";
+
+};
+
+
+window.approveInst=(id)=>{
+
+update(
+ref(db,"institutions/"+id),
+{
+status:"approved"
+}
+)
+.then(()=>{
+
+alert("Institution approved");
+
+})
+.catch(err=>{
+
+alert(err.message);
+
+});
+
+};
+
+
+window.deleteInst=(id)=>{
+
+if(confirm("Delete institution?")){
+
+remove(
+ref(db,"institutions/"+id)
+)
+.then(()=>{
+
+alert("Institution deleted");
+
+});
+
+}
+
+};
+
+
+window.editInst=(id)=>{
+
+window.location=
+"edit.html?id="+id+"&type=institution";
+
+};
+
+
+window.deletePayment=(id)=>{
+
+if(!id){
+
+alert("Payment ID missing");
+return;
+
+}
+
+if(confirm("Delete this payment?")){
+
+remove(
+ref(db,"payments/"+id)
+)
+.then(()=>{
+
+alert(
+"Payment deleted successfully"
+);
+
+})
+.catch(err=>{
+
+alert(
+"Delete failed: "+
+err.message
+);
+
+console.log(err);
+
+});
+
+}
+
+};
 </script>
 
 </body>
