@@ -339,6 +339,101 @@ const otherSubject=
 document.getElementById("otherSubject");
 
 
+
+
+
+
+
+
+const logo=
+document.getElementById("logo");
+
+const logoPreview=
+document.getElementById("logoPreview");
+
+const gallery=
+document.getElementById("gallery");
+
+const galleryPreview=
+document.getElementById("galleryPreview");
+
+
+// Logo preview
+
+logo.addEventListener(
+"change",
+function(){
+
+logoPreview.innerHTML="";
+
+if(this.files[0]){
+
+let img=
+document.createElement("img");
+
+img.src=
+URL.createObjectURL(
+this.files[0]
+);
+
+logoPreview.appendChild(
+img
+);
+
+}
+
+}
+);
+
+
+// Gallery preview
+
+gallery.addEventListener(
+"change",
+function(){
+
+galleryPreview.innerHTML="";
+
+if(this.files.length>5){
+
+alert(
+"Maximum 5 photos allowed"
+);
+
+this.value="";
+
+return;
+
+}
+
+Array.from(
+this.files
+).forEach(file=>{
+
+let img=
+document.createElement("img");
+
+img.src=
+URL.createObjectURL(
+file
+);
+
+galleryPreview.appendChild(
+img
+);
+
+});
+
+}
+);
+
+
+
+
+
+
+
+
 async function upload(file){
 
 let fd=new FormData();
@@ -544,23 +639,7 @@ error.message
 </script>
 
 
-<script>
 
-function toggleFee(id){
-
-let box=
-document.getElementById(id);
-
-box.style.display=
-box.style.display==="block"
-?
-"none"
-:
-"block";
-
-}
-
-</script>
 
 </body>
 </html>
