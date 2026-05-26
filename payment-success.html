@@ -67,9 +67,10 @@ const db = getDatabase(app);
 const params = new URLSearchParams(window.location.search);
 
 const type = params.get("type") || "teacher";
-const id = params.get("id");
+const id = sessionStorage.getItem("teacherId");
+
 console.log("TYPE:", type);
-console.log("ID:", id);
+console.log("FINAL ID:", id);
 
 
 /* AMOUNT */
