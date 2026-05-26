@@ -79,6 +79,7 @@ const type=
 params.get("type")
 ||
 "teacher";
+const id = params.get("id");
 
 
 let amount;
@@ -92,9 +93,8 @@ if(type==="teacher"){
 
 amount=1;
 
-paymentLink=
-
-"https://rzp.io/rzp/gurulink?redirect=true&redirect_url=https://gurulink.onrender.com/payment-success.html?type=teacher";
+paymentLink =
+"https://rzp.io/rzp/gurulink?redirect=true&redirect_url=https://gurulink.onrender.com/payment-success.html?type=teacher&id=" + id;
 
 }
 
@@ -105,9 +105,8 @@ if(type==="institution"){
 
 amount=2;
 
-paymentLink=
-
-"https://rzp.io/rzp/gurulink-I?redirect=true&redirect_url=https://gurulink.onrender.com/payment-success.html?type=institution";
+paymentLink =
+"https://rzp.io/rzp/gurulink-I?redirect=true&redirect_url=https://gurulink.onrender.com/payment-success.html?type=institution&id=" + id;
 
 }
 
