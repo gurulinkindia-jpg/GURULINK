@@ -313,28 +313,63 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
 
-const app=initializeApp(firebaseConfig);
+const app=
+initializeApp(firebaseConfig);
 
-const db=getDatabase(app);
+const db=
+getDatabase(app);
 
-const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
+const API_KEY=
+"31f729ff855eb2e42c00ee508a8647ea";
 
 
+/* ELEMENTS */
+
+const form=
+document.getElementById("teacherForm");
+
+const subject=
+document.getElementById("subject");
+
+const customSubject=
+document.getElementById("customSubject");
+
+const photo=
+document.getElementById("photo");
+
+const photoPreview=
+document.getElementById("photoPreview");
+
+const gallery=
+document.getElementById("gallery");
+
+const galleryPreview=
+document.getElementById("galleryPreview");
+
+
+/* IMAGE UPLOAD */
 
 async function upload(file){
 
-let fd=new FormData();
+let fd=
+new FormData();
 
-fd.append("image",file);
+fd.append(
+"image",
+file
+);
 
-let res=await fetch(
+let res=
+await fetch(
 `https://api.imgbb.com/1/upload?key=${API_KEY}`,
 {
 method:"POST",
 body:fd
-});
+}
+);
 
-let data=await res.json();
+let data=
+await res.json();
 
 return data.data.url;
 
@@ -343,7 +378,9 @@ return data.data.url;
 
 /* SUBJECT */
 
-subject.onchange=()=>{
+subject.addEventListener(
+"change",
+()=>{
 
 customSubject.style.display=
 subject.value==="other"
@@ -352,39 +389,49 @@ subject.value==="other"
 :
 "none";
 
-};
+}
+);
 
 
 /* PHOTO PREVIEW */
 
-photo.onchange=function(){
+photo.addEventListener(
+"change",
+function(){
 
 photoPreview.innerHTML="";
 
 if(this.files[0]){
 
-let img=document.createElement("img");
+let img=
+document.createElement("img");
 
 img.src=
-URL.createObjectURL(this.files[0]);
+URL.createObjectURL(
+this.files[0]
+);
 
 photoPreview.appendChild(img);
 
 }
 
-};
-
+}
+);
 
 
 /* GALLERY PREVIEW */
 
-gallery.onchange=function(){
+gallery.addEventListener(
+"change",
+function(){
 
 galleryPreview.innerHTML="";
 
 if(this.files.length>5){
 
-alert("Maximum 5 photos");
+alert(
+"Maximum 5 photos"
+);
 
 this.value="";
 
@@ -395,7 +442,8 @@ return;
 Array.from(this.files)
 .forEach(file=>{
 
-let img=document.createElement("img");
+let img=
+document.createElement("img");
 
 img.src=
 URL.createObjectURL(file);
@@ -404,11 +452,13 @@ galleryPreview.appendChild(img);
 
 });
 
-};
+}
+);
 
 
+/* SUBMIT */
 
-teacherForm.addEventListener(
+form.addEventListener(
 "submit",
 async(e)=>{
 
@@ -416,15 +466,22 @@ e.preventDefault();
 
 try{
 
+
+/* PHOTO */
+
 let photoUrl="";
 
 if(photo.files[0]){
 
 photoUrl=
-await upload(photo.files[0]);
+await upload(
+photo.files[0]
+);
 
 }
 
+
+/* GALLERY */
 
 let galleryUrls=[];
 
@@ -436,6 +493,8 @@ await upload(file)
 
 }
 
+
+/* TEACHING MODES */
 
 let teachingModes=[];
 
@@ -452,16 +511,30 @@ c.value
 });
 
 
+/* SAVE FIREBASE */
+
+let newRef=
 await push(
 ref(db,"teachers"),
 {
 
-name:name.value,
-phone:phone.value,
-email:email.value,
-website:website.value,
-qualification:qualification.value,
-experience:experience.value,
+name:
+document.getElementById("name").value,
+
+phone:
+document.getElementById("phone").value,
+
+email:
+document.getElementById("email").value,
+
+website:
+document.getElementById("website").value,
+
+qualification:
+document.getElementById("qualification").value,
+
+experience:
+document.getElementById("experience").value,
 
 subject:
 subject.value==="other"
@@ -470,27 +543,56 @@ customSubject.value
 :
 subject.value,
 
-location:location.value,
+location:
+document.getElementById("location").value,
 
 teachingModes,
 
-homeFee:homeFee.value,
-groupFee:groupFee.value,
-onlineIndividualFee:onlineIndividualFee.value,
-onlineGroupFee:onlineGroupFee.value,
+homeFee:
+document.getElementById("homeFee").value || "",
 
-photo:photoUrl,
-gallery:galleryUrls,
+groupFee:
+document.getElementById("groupFee").value || "",
 
-description:description.value,
+onlineIndividualFee:
+document.getElementById("onlineIndividualFee").value || "",
+
+onlineGroupFee:
+document.getElementById("onlineGroupFee").value || "",
+
+photo:
+photoUrl,
+
+gallery:
+galleryUrls,
+
+description:
+document.getElementById("description").value,
 
 category:"creative",
+
 status:"pending"
 
-});
+}
+
+);
+
+
+/* SAVE ID */
+
+const teacherId=
+newRef.key;
+
+localStorage.setItem(
+"teacherId",
+teacherId
+);
+
+
+/* REDIRECT PAYMENT */
 
 window.location.href=
-"payment.html?type=teacher&category=creative";
+"payment.html?type=teacher&id="+teacherId;
 
 }
 catch(error){
@@ -498,7 +600,8 @@ catch(error){
 console.log(error);
 
 alert(
-"Submission error"
+"Submission error:\n"+
+error.message
 );
 
 }
