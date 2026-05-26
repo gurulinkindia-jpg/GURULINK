@@ -266,7 +266,9 @@ Continue To Payment
 
 <script type="module">
 
-import { initializeApp }
+import {
+initializeApp
+}
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
@@ -293,26 +295,32 @@ const app=initializeApp(firebaseConfig);
 
 const db=getDatabase(app);
 
-const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
+const API_KEY=
+"31f729ff855eb2e42c00ee508a8647ea";
 
 
-const form=document.getElementById("form");
+/* ELEMENTS */
 
-const logo=document.getElementById("logo");
+const form=
+document.getElementById("form");
 
-const gallery=document.getElementById("gallery");
+const skill=
+document.getElementById("skill");
+
+const otherSkill=
+document.getElementById("otherSkill");
+
+const logo=
+document.getElementById("logo");
 
 const logoPreview=
 document.getElementById("logoPreview");
 
+const gallery=
+document.getElementById("gallery");
+
 const galleryPreview=
 document.getElementById("galleryPreview");
-
-const subject=
-document.getElementById("subject");
-
-const otherSubject=
-document.getElementById("otherSubject");
 
 
 /* IMAGE UPLOAD */
@@ -334,30 +342,24 @@ body:fd
 }
 );
 
-let data=
-await res.json();
+let data=await res.json();
 
 return data.data.url;
 
 }
 
 
-/* SUBJECT */
+/* SKILL OTHER */
 
-subject.addEventListener(
+skill.addEventListener(
 "change",
 ()=>{
 
-otherSubject.style.display=
-
-subject.value==="other"
-
+otherSkill.style.display=
+skill.value==="other"
 ?
-
 "block"
-
 :
-
 "none";
 
 }
@@ -368,19 +370,16 @@ subject.value==="other"
 
 logo.addEventListener(
 "change",
-()=>{
+function(){
 
 logoPreview.innerHTML="";
 
-if(logo.files[0]){
+if(this.files[0]){
 
-let img=
-document.createElement("img");
+let img=document.createElement("img");
 
 img.src=
-URL.createObjectURL(
-logo.files[0]
-);
+URL.createObjectURL(this.files[0]);
 
 logoPreview.appendChild(img);
 
@@ -394,29 +393,24 @@ logoPreview.appendChild(img);
 
 gallery.addEventListener(
 "change",
-()=>{
+function(){
 
 galleryPreview.innerHTML="";
 
-if(gallery.files.length>5){
+if(this.files.length>5){
 
-alert(
-"Maximum 5 photos allowed"
-);
+alert("Maximum 5 photos");
 
-gallery.value="";
+this.value="";
 
 return;
 
 }
 
-Array.from(
-gallery.files
-)
+Array.from(this.files)
 .forEach(file=>{
 
-let img=
-document.createElement("img");
+let img=document.createElement("img");
 
 img.src=
 URL.createObjectURL(file);
@@ -439,6 +433,8 @@ e.preventDefault();
 
 try{
 
+/* LOGO */
+
 let logoUrl="";
 
 if(logo.files[0]){
@@ -450,6 +446,8 @@ logo.files[0]
 
 }
 
+
+/* GALLERY */
 
 let galleryUrls=[];
 
@@ -464,7 +462,7 @@ await upload(file)
 
 /* MODES */
 
-let modes=[];
+let teachingModes=[];
 
 document
 .querySelectorAll(
@@ -472,15 +470,16 @@ document
 )
 .forEach(c=>{
 
-modes.push(
+teachingModes.push(
 c.value
 );
 
 });
 
 
-let newRef=
+/* SAVE FIREBASE */
 
+let newRef=
 await push(
 ref(
 db,
@@ -488,45 +487,41 @@ db,
 ),
 {
 
-name:name.value,
+name:
+document.getElementById("name").value,
 
-phone:phone.value,
+phone:
+document.getElementById("phone").value,
 
-email:email.value,
+email:
+document.getElementById("email").value,
 
-website:website.value,
+website:
+document.getElementById("website").value,
 
-address:address.value,
+address:
+document.getElementById("address").value,
 
-area:area.value,
+area:
+document.getElementById("area").value,
 
-subject:
-
-subject.value==="other"
-
+skill:
+skill.value==="other"
 ?
-
-otherSubject.value
-
+otherSkill.value
 :
+skill.value,
 
-subject.value,
-
-class:
-document.getElementById(
-"class"
-).value,
-
-modes:modes,
+teachingModes,
 
 offlineFee:
-offlineFee.value || "",
+document.getElementById("offlineFee").value || "",
 
 onlineFee:
-onlineFee.value || "",
+document.getElementById("onlineFee").value || "",
 
 hybridFee:
-hybridFee.value || "",
+document.getElementById("hybridFee").value || "",
 
 logo:
 logoUrl,
@@ -535,40 +530,41 @@ gallery:
 galleryUrls,
 
 description:
-description.value,
+document.getElementById("description").value,
 
-category:
-"academic",
+category:"skill",
 
-status:
-"pending"
+status:"pending"
 
 }
+
 );
 
 
-const id=
+/* SAVE ID */
+
+const institutionId=
 newRef.key;
 
 localStorage.setItem(
 "institutionId",
-id
+institutionId
 );
 
 
+/* REDIRECT PAYMENT */
+
 window.location.href=
-
-"payment.html?type=institution&id="+id;
-
+"payment.html?type=institution&id="+institutionId;
 
 }
-catch(err){
+catch(error){
 
-console.log(err);
+console.log(error);
 
 alert(
-"Error : "+
-err.message
+"Submission error:\n"+
+error.message
 );
 
 }
@@ -578,29 +574,18 @@ err.message
 </script>
 
 
-
 <script>
-
-/* SHOW/HIDE FEES */
 
 function toggleFee(id){
 
 let box=
-
-document.getElementById(
-id
-);
+document.getElementById(id);
 
 box.style.display=
-
 box.style.display==="block"
-
 ?
-
 "none"
-
 :
-
 "block";
 
 }
