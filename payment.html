@@ -70,63 +70,42 @@ Continue To Payment
 
 <script>
 
-const params=
-new URLSearchParams(
-window.location.search
-);
+const params = new URLSearchParams(window.location.search);
 
-const type=
-params.get("type")
-||
-"teacher";
+const type = params.get("type") || "teacher";
 const id = params.get("id");
 
+let amount = 1;
+let paymentLink = "";
 
-let amount;
+if (type === "teacher") {
 
-let paymentLink;
+  amount = 1;
 
+  paymentLink =
+    "https://rzp.io/rzp/gurulink?redirect=true&redirect_url=" +
+    encodeURIComponent(
+      "https://gurulink.onrender.com/payment-success.html?type=teacher&id=" + id
+    );
 
-/* Teacher */
+} else if (type === "institution") {
 
-if(type==="teacher"){
+  amount = 2;
 
-amount=1;
+  paymentLink =
+    "https://rzp.io/rzp/gurulink-I?redirect=true&redirect_url=" +
+    encodeURIComponent(
+      "https://gurulink.onrender.com/payment-success.html?type=institution&id=" + id
+    );
+}
 
-paymentLink =
-"https://rzp.io/rzp/gurulink?redirect=true&redirect_url=" +
-encodeURIComponent(
-"https://gurulink.onrender.com/payment-success.html?type=teacher&id=" + id
-)
+/* SHOW AMOUNT */
+document.getElementById("feeText").innerHTML =
+  `Registration Fee ₹${amount}`;
 
-
-/* Institution */
-
-if(type==="institution"){
-
-amount=2;
-
-paymentLink =
-"https://rzp.io/rzp/gurulink-I?redirect=true&redirect_url=" +
-encodeURIComponent(
-"https://gurulink.onrender.com/payment-success.html?type=institution&id=" + id
-)
-
-
-document.getElementById(
-"feeText"
-).innerHTML=
-
-`Registration Fee ₹${amount}`;
-
-
-document.getElementById(
-"payBtn"
-).onclick=()=>{
-
-window.location.href=
-paymentLink;
-
+/* BUTTON CLICK */
+document.getElementById("payBtn").onclick = () => {
+  window.location.href = paymentLink;
 };
 
 </script>
