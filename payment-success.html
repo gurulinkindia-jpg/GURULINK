@@ -68,6 +68,8 @@ const params = new URLSearchParams(window.location.search);
 
 const type = params.get("type") || "teacher";
 const id = params.get("id");
+console.log("TYPE:", type);
+console.log("ID:", id);
 
 
 /* AMOUNT */
@@ -83,15 +85,19 @@ let user = null;
 if (id) {
 
 const path = type === "teacher"
-? "teachers/" + id
-: "institutions/" + id;
+? `teachers/${id}`
+: `institutions/${id}`;
 
-const snap = await get(child(ref(db), path));
+const snap = await get(ref(db, path));
 
 if (snap.exists()) {
 user = snap.val();
+} else {
+console.log("NO USER FOUND IN DB:", path);
 }
 
+} else {
+console.log("ID IS MISSING IN URL");
 }
 
 
