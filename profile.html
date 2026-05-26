@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Find Teachers - GURULINK</title>
+<title>GURULINK</title>
 
 <style>
 
@@ -13,49 +12,110 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
+font-family:Arial,sans-serif;
 }
 
 body{
-font-family:Arial,sans-serif;
-background:#eef2f7;
+min-height:100vh;
+background:linear-gradient(
+135deg,
+#0d47a1,
+#4a148c,
+#00695c
+);
+padding-bottom:50px;
 }
 
 header{
-background:#0d47a1;
-color:white;
-padding:18px;
+
+padding:30px;
 text-align:center;
-box-shadow:0 3px 10px rgba(0,0,0,.2);
+color:white;
+
+backdrop-filter:blur(15px);
+
+background:rgba(255,255,255,.1);
+
+border-bottom:1px solid rgba(255,255,255,.2);
+
+}
+
+header h1{
+
+font-size:35px;
+margin-bottom:10px;
+
+}
+
+header p{
+
+opacity:.9;
+
 }
 
 .container{
+
 width:95%;
-max-width:1300px;
+max-width:1400px;
 margin:auto;
 padding:20px;
+
 }
 
 .filters{
-background:white;
-padding:15px;
-border-radius:15px;
-margin-bottom:20px;
 
 display:grid;
+
 grid-template-columns:
-repeat(auto-fit,minmax(160px,1fr));
+repeat(auto-fit,minmax(200px,1fr));
 
-gap:10px;
+gap:15px;
 
-box-shadow:0 5px 15px rgba(0,0,0,.1);
+padding:20px;
+
+background:
+rgba(255,255,255,.15);
+
+backdrop-filter:blur(20px);
+
+border-radius:25px;
+
+border:
+1px solid rgba(255,255,255,.2);
+
+margin-bottom:30px;
+
 }
 
 .filters input,
 .filters select{
 
-padding:12px;
-border-radius:10px;
-border:1px solid #ccc;
+padding:14px;
+
+border:none;
+
+outline:none;
+
+border-radius:12px;
+
+background:
+rgba(255,255,255,.2);
+
+color:white;
+
+backdrop-filter:blur(20px);
+
+}
+
+.filters input::placeholder{
+
+color:white;
+
+}
+
+.filters option{
+
+color:black;
 
 }
 
@@ -64,38 +124,51 @@ border:1px solid #ccc;
 display:grid;
 
 grid-template-columns:
-repeat(auto-fit,minmax(320px,1fr));
+repeat(auto-fit,minmax(350px,1fr));
 
-gap:20px;
+gap:25px;
 
 }
 
 .card{
 
-background:white;
-border-radius:15px;
-padding:18px;
+padding:20px;
 
-box-shadow:
-0 5px 15px rgba(0,0,0,.1);
+border-radius:25px;
 
-transition:.3s;
+background:
+rgba(255,255,255,.12);
+
+backdrop-filter:blur(20px);
+
+border:
+1px solid rgba(255,255,255,.2);
+
+color:white;
+
+transition:.4s;
+
+overflow:hidden;
 
 }
 
 .card:hover{
 
-transform:translateY(-5px);
+transform:
+translateY(-8px)
+scale(1.02);
 
 }
 
 .top{
 
 display:flex;
-align-items:center;
+
 gap:15px;
 
-margin-bottom:10px;
+align-items:center;
+
+margin-bottom:15px;
 
 }
 
@@ -108,7 +181,14 @@ border-radius:50%;
 
 object-fit:cover;
 
-border:3px solid #0d47a1;
+border:
+3px solid rgba(255,255,255,.5);
+
+}
+
+.badges{
+
+margin-top:5px;
 
 }
 
@@ -116,9 +196,7 @@ border:3px solid #0d47a1;
 
 display:inline-block;
 
-padding:5px 10px;
-
-background:#e3f2fd;
+padding:6px 12px;
 
 border-radius:20px;
 
@@ -126,21 +204,49 @@ font-size:12px;
 
 margin:3px;
 
+background:
+rgba(255,255,255,.2);
+
 }
 
 .verify{
 
-background:#1b5e20;
-color:white;
+background:#00c853;
+
+}
+
+.details{
+
+margin-top:15px;
+
+line-height:1.8;
+
+font-size:14px;
+
+}
+
+.mode{
+
+margin-top:12px;
+
+padding:12px;
+
+border-radius:12px;
+
+background:
+rgba(255,255,255,.1);
 
 }
 
 .gallery{
 
 display:flex;
-gap:6px;
-overflow-x:auto;
-margin-top:10px;
+
+gap:8px;
+
+overflow:auto;
+
+margin-top:15px;
 
 }
 
@@ -149,7 +255,7 @@ margin-top:10px;
 width:70px;
 height:70px;
 
-border-radius:8px;
+border-radius:10px;
 
 object-fit:cover;
 
@@ -157,34 +263,22 @@ object-fit:cover;
 
 .empty{
 
-background:white;
-padding:20px;
-border-radius:15px;
 text-align:center;
 
-}
+padding:50px;
 
-.desc{
+font-size:20px;
 
-margin-top:10px;
-font-size:14px;
-color:#444;
-line-height:1.5;
+color:white;
 
-}
+background:
+rgba(255,255,255,.1);
 
-.mode{
-
-margin-top:8px;
-padding:8px;
-background:#f4f4f4;
-border-radius:10px;
-font-size:13px;
+border-radius:20px;
 
 }
 
 </style>
-
 </head>
 
 <body>
@@ -193,61 +287,73 @@ font-size:13px;
 
 <h1>GURULINK</h1>
 
-<p>Find Verified Teachers</p>
+<p>
+Find Verified Teachers & Institutions
+</p>
 
 </header>
-
 
 <div class="container">
 
 <div class="filters">
 
 <input
-type="text"
 id="search"
 placeholder="Search name/location">
 
 <select id="category">
 
-<option value="">All Category</option>
-<option value="academic">Academic</option>
-<option value="creative">Creative</option>
-<option value="skill">Skill</option>
+<option value="">
+All Categories
+</option>
+
+<option value="academic">
+Academic
+</option>
+
+<option value="creative">
+Creative
+</option>
+
+<option value="skill">
+Skill
+</option>
 
 </select>
-
 
 <select id="subject">
 
-<option value="">All Subject/Skills</option>
+<option value="">
+All Subjects
+</option>
 
-<option>Mathematics</option>
-<option>Physics</option>
-<option>Chemistry</option>
-<option>Biology</option>
-<option>English</option>
+<option>
+Mathematics
+</option>
 
-<option>Music</option>
-<option>Dance</option>
-<option>Drawing</option>
-<option>Singing</option>
+<option>
+Physics
+</option>
 
-<option>Computer</option>
-<option>Embroidery</option>
-<option>Cake Making</option>
-<option>Hand Craft</option>
+<option>
+Chemistry
+</option>
 
-</select>
+<option>
+Biology
+</option>
 
+<option>
+English
+</option>
 
-<select id="mode">
+<option>
+Music
+</option>
 
-<option value="">Teaching Mode</option>
-
-<option>Home Tuition</option>
-<option>Group Tuition</option>
-<option>Online Individual</option>
-<option>Online Group</option>
+<option>
+Computer
+</option>
 
 </select>
 
@@ -260,9 +366,6 @@ class="grid">
 </div>
 
 </div>
-
-
-
 <script type="module">
 
 import{
@@ -274,30 +377,22 @@ from
 import{
 getDatabase,
 ref,
-onValue
+get
 }
 from
 "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-
 const firebaseConfig={
 
-apiKey:"AIzaSyBK0mU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
-
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-
 projectId:"gurulink-59cc7",
-
 storageBucket:"gurulink-59cc7.appspot.com",
-
 messagingSenderId:"112148672399",
-
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
-
 
 const app=
 initializeApp(firebaseConfig);
@@ -305,104 +400,121 @@ initializeApp(firebaseConfig);
 const db=
 getDatabase(app);
 
-let allTeachers=[];
+let all=[];
 
+async function loadData(){
 
+let teacherSnap=
+await get(
+ref(db,"teachers")
+);
 
-function renderTeachers(){
+let instSnap=
+await get(
+ref(db,"institutions")
+);
+
+all=[];
+
+if(teacherSnap.exists()){
+
+teacherSnap.forEach(c=>{
+
+all.push({
+
+id:c.key,
+type:"teacher",
+...c.val()
+
+});
+
+});
+
+}
+
+if(instSnap.exists()){
+
+instSnap.forEach(c=>{
+
+all.push({
+
+id:c.key,
+type:"institution",
+...c.val()
+
+});
+
+});
+
+}
+
+render();
+
+}
+
+function render(){
 
 let search=
-searchInput();
+document
+.getElementById("search")
+.value
+.toLowerCase();
 
 let category=
-document.getElementById("category").value;
+document
+.getElementById("category")
+.value;
 
 let subject=
-document.getElementById("subject").value;
+document
+.getElementById("subject")
+.value;
 
-let mode=
-document.getElementById("mode").value;
-
-
+let html="";
 
 let filtered=
-allTeachers.filter(t=>{
+all.filter(t=>{
 
-
-if(t.status!=="approved")
+if(t.status!="approved")
 return false;
 
-
-if(
-category &&
-t.category!==category
-)
-return false;
-
-
+let sub=
+t.subject||
+t.skill||
+t.creative||
+"";
 
 if(
 search &&
 !(
-t.name?.toLowerCase().includes(search)
-||
-t.location?.toLowerCase().includes(search)
+t.name?.toLowerCase()
+.includes(search)
 )
 )
 return false;
 
-
-
-let teacherSubject=
-
-t.subject ||
-t.skillType ||
-t.creativeType ||
-"";
-
-
+if(
+category &&
+t.category!=category
+)
+return false;
 
 if(
 subject &&
-teacherSubject!==subject
+sub!=subject
 )
 return false;
-
-
-
-let modes=
-
-t.teachingModes ||
-t.teachingMode ||
-[];
-
-
-if(
-mode &&
-!modes.includes(mode)
-)
-return false;
-
-
 
 return true;
 
 });
 
+if(!filtered.length){
 
-
-let html="";
-
-
-if(filtered.length===0){
-
-document.getElementById(
-"teacherGrid"
-).innerHTML=
-
+teacherGrid.innerHTML=
 `
 <div class="empty">
-No teachers found
+No Results Found
 </div>
 `;
 
@@ -410,58 +522,20 @@ return;
 
 }
 
-
-
 filtered.forEach(t=>{
 
+let gallery="";
 
-let teacherSubject=
-
-t.subject ||
-t.skillType ||
-t.creativeType ||
-"-";
-
-
-let galleryHTML="";
-
-
-if(
-Array.isArray(t.gallery)
-){
+if(Array.isArray(t.gallery)){
 
 t.gallery.forEach(img=>{
 
-galleryHTML+=
-`
-<img src="${img}">
-`;
+gallery+=
+`<img src="${img}">`;
 
 });
 
 }
-
-
-
-let modeHTML="";
-
-let modes=
-
-t.teachingModes ||
-t.teachingMode ||
-[];
-
-
-modes.forEach(m=>{
-
-modeHTML+=
-`
-<div>✓ ${m}</div>
-`;
-
-});
-
-
 
 html+=`
 
@@ -471,103 +545,77 @@ html+=`
 
 <img
 class="photo"
-src="${t.photo || 'https://via.placeholder.com/100'}">
+src="${
+t.photo||
+t.logo||
+'https://via.placeholder.com/100'
+}">
 
 <div>
 
-<h3>${t.name||"-"}</h3>
+<h2>
+${t.name||"-"}
+</h2>
 
-<div class="badge">
+<div class="badges">
 
+<span class="badge">
 ${t.category||"-"}
+</span>
 
-</div>
+<span class="badge">
+${t.subject||
+t.skill||
+"-"}
+</span>
 
-<div class="badge">
-
-${teacherSubject}
-
-</div>
-
-<div class="badge verify">
+<span class=
+"badge verify">
 
 ✓ Verified
 
-</div>
+</span>
 
 </div>
 
 </div>
 
+</div>
 
-<p>
+<div class="details">
 
-<b>Area:</b>
+<div>
+📍
+${t.location||
+t.area||
+"-"}
+</div>
 
-${t.location||"-"}
+<div>
+🎓
+${t.qualification||
+"Institution"}
+</div>
 
-</p>
+<div>
+⭐
+${t.experience||
+"-"}
+</div>
 
-
-<p>
-
-<b>Qualification:</b>
-
-${t.qualification||"-"}
-
-</p>
-
-
-<p>
-
-<b>Experience:</b>
-
-${t.experience||"-"}
-
-</p>
-
-
+</div>
 
 <div class="mode">
-
-<b>Teaching Modes:</b>
-
-${modeHTML||"-"}
-
-</div>
-
-
-
-<div class="mode">
-
-<b>Fees:</b><br>
-
-Home: ₹${t.homeFee||"-"}<br>
-
-Group: ₹${t.groupFee||"-"}<br>
-
-Online Individual: ₹${t.onlineIndividualFee||"-"}<br>
-
-Online Group: ₹${t.onlineGroupFee||"-"}
-
-</div>
-
-
-
-<div class="desc">
 
 ${t.description||""}
 
 </div>
 
-
-
 <div class="gallery">
 
-${galleryHTML}
+${gallery}
 
 </div>
-
 
 </div>
 
@@ -575,51 +623,10 @@ ${galleryHTML}
 
 });
 
-
-document.getElementById(
-"teacherGrid"
-).innerHTML=
+teacherGrid.innerHTML=
 html;
 
 }
-
-
-
-function searchInput(){
-
-return document
-.getElementById("search")
-.value
-.toLowerCase();
-
-}
-
-
-
-onValue(
-ref(db,"teachers"),
-(snapshot)=>{
-
-allTeachers=[];
-
-
-snapshot.forEach(child=>{
-
-allTeachers.push({
-
-id:child.key,
-...child.val()
-
-});
-
-});
-
-
-renderTeachers();
-
-});
-
-
 
 document
 .querySelectorAll(
@@ -629,15 +636,12 @@ document
 
 el.addEventListener(
 "input",
-renderTeachers
-);
-
-el.addEventListener(
-"change",
-renderTeachers
+render
 );
 
 });
+
+loadData();
 
 </script>
 
