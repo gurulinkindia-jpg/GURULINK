@@ -547,8 +547,12 @@ alert(
 
 /* OPEN PAYMENT PAGE */
 
+const teacherId = newRef.key;
+
+localStorage.setItem("teacherId", teacherId);
+
 window.location.href =
-"payment.html?type=teacher&id=" + newRef.key;
+"payment.html?type=teacher";
 
 }
 catch(error){
