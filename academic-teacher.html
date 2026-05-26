@@ -505,41 +505,72 @@ item.value
 
 /* SAVE FIREBASE */
 
-let newRef = await push(
+await push(
 ref(db,"teachers"),
 {
 
-name: document.getElementById("name").value,
-phone: document.getElementById("phone").value,
-email: document.getElementById("email").value,
-website: document.getElementById("website").value,
-qualification: document.getElementById("qualification").value,
-experience: document.getElementById("experience").value,
+name:
+document.getElementById("name").value,
+
+phone:
+document.getElementById("phone").value,
+
+email:
+document.getElementById("email").value,
+
+website:
+document.getElementById("website").value,
+
+qualification:
+document.getElementById("qualification").value,
+
+experience:
+document.getElementById("experience").value,
 
 subject:
-subject.value === "other"
-? otherSubject.value
-: subject.value,
+subject.value==="other"
+?
+otherSubject.value
+:
+subject.value,
 
-class: document.getElementById("class").value,
-location: document.getElementById("location").value,
+class:
+document.getElementById("class").value,
 
-teachingModes: teachingModes,
+location:
+document.getElementById("location").value,
 
-homeFee: document.getElementById("homeFee").value,
-groupFee: document.getElementById("groupFee").value,
-onlineIndividualFee: document.getElementById("onlineIndividualFee").value,
-onlineGroupFee: document.getElementById("onlineGroupFee").value,
+teachingModes:
 
-photo: profileUrl,
-gallery: galleryUrls,
+teachingModes,
 
-description: document.getElementById("description").value,
+homeFee:
+document.getElementById("homeFee").value,
 
-category: "academic",
-status: "pending"
+groupFee:
+document.getElementById("groupFee").value,
+
+onlineIndividualFee:
+document.getElementById("onlineIndividualFee").value,
+
+onlineGroupFee:
+document.getElementById("onlineGroupFee").value,
+
+photo:
+profileUrl,
+
+gallery:
+galleryUrls,
+
+description:
+document.getElementById("description").value,
+
+category:"academic",
+
+status:"pending"
 
 }
+
 );
 
 
@@ -551,7 +582,7 @@ alert(
 /* OPEN PAYMENT PAGE */
 
 window.location.href =
-"payment-success.html?type=teacher&id=" + newRef.key + "&category=academic";
+"https://gurulink.onrender.com/payment.html?type=teacher&category=academic";
 
 }
 catch(error){
