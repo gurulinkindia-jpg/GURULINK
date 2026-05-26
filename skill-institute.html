@@ -322,6 +322,32 @@ const API_KEY=
 "31f729ff855eb2e42c00ee508a8647ea";
 
 
+/* ELEMENTS */
+
+const form=
+document.getElementById("form");
+
+const skill=
+document.getElementById("skill");
+
+const otherSkill=
+document.getElementById("otherSkill");
+
+const logo=
+document.getElementById("logo");
+
+const logoPreview=
+document.getElementById("logoPreview");
+
+const gallery=
+document.getElementById("gallery");
+
+const galleryPreview=
+document.getElementById("galleryPreview");
+
+
+/* IMAGE UPLOAD */
+
 async function upload(file){
 
 let fd=new FormData();
@@ -346,10 +372,11 @@ return data.data.url;
 }
 
 
+/* SKILL OTHER */
 
-/* Skill Selection */
-
-skill.onchange=()=>{
+skill.addEventListener(
+"change",
+()=>{
 
 otherSkill.style.display=
 skill.value==="other"
@@ -358,13 +385,15 @@ skill.value==="other"
 :
 "none";
 
-};
+}
+);
 
 
+/* LOGO PREVIEW */
 
-/* Logo Preview */
-
-logo.onchange=function(){
+logo.addEventListener(
+"change",
+function(){
 
 logoPreview.innerHTML="";
 
@@ -379,13 +408,15 @@ logoPreview.appendChild(img);
 
 }
 
-};
+}
+);
 
 
+/* GALLERY PREVIEW */
 
-/* Gallery Preview */
-
-gallery.onchange=function(){
+gallery.addEventListener(
+"change",
+function(){
 
 galleryPreview.innerHTML="";
 
@@ -411,9 +442,11 @@ galleryPreview.appendChild(img);
 
 });
 
-};
+}
+);
 
 
+/* SUBMIT */
 
 form.addEventListener(
 "submit",
@@ -422,6 +455,8 @@ async(e)=>{
 e.preventDefault();
 
 try{
+
+/* LOGO */
 
 let logoUrl="";
 
@@ -435,6 +470,8 @@ logo.files[0]
 }
 
 
+/* GALLERY */
+
 let galleryUrls=[];
 
 for(let file of gallery.files){
@@ -446,6 +483,7 @@ await upload(file)
 }
 
 
+/* MODES */
 
 let teachingModes=[];
 
@@ -462,7 +500,9 @@ c.value
 });
 
 
+/* SAVE FIREBASE */
 
+let newRef=
 await push(
 ref(
 db,
@@ -470,12 +510,23 @@ db,
 ),
 {
 
-name:name.value,
-phone:phone.value,
-email:email.value,
-website:website.value,
-address:address.value,
-area:area.value,
+name:
+document.getElementById("name").value,
+
+phone:
+document.getElementById("phone").value,
+
+email:
+document.getElementById("email").value,
+
+website:
+document.getElementById("website").value,
+
+address:
+document.getElementById("address").value,
+
+area:
+document.getElementById("area").value,
 
 skill:
 skill.value==="other"
@@ -486,25 +537,48 @@ skill.value,
 
 teachingModes,
 
-offlineFee:offlineFee.value,
-onlineFee:onlineFee.value,
-hybridFee:hybridFee.value,
+offlineFee:
+document.getElementById("offlineFee").value || "",
 
-logo:logoUrl,
+onlineFee:
+document.getElementById("onlineFee").value || "",
 
-gallery:galleryUrls,
+hybridFee:
+document.getElementById("hybridFee").value || "",
 
-description:description.value,
+logo:
+logoUrl,
+
+gallery:
+galleryUrls,
+
+description:
+document.getElementById("description").value,
 
 category:"skill",
 
 status:"pending"
 
-});
+}
 
+);
+
+
+/* SAVE ID */
+
+const institutionId=
+newRef.key;
+
+localStorage.setItem(
+"institutionId",
+institutionId
+);
+
+
+/* REDIRECT PAYMENT */
 
 window.location.href=
-"payment.html?type=institution&category=skill";
+"payment.html?type=institution&id="+institutionId;
 
 }
 catch(error){
@@ -512,7 +586,8 @@ catch(error){
 console.log(error);
 
 alert(
-"Submission error"
+"Submission error:\n"+
+error.message
 );
 
 }
