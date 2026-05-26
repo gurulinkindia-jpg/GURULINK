@@ -108,7 +108,7 @@ await push(ref(db, "payments"), {
 type,
 id,
 
-// 🔴 THIS IS THE FIX (USER DATA)
+// ✅ IMPORTANT FIX
 name: user?.name || "-",
 email: user?.email || "-",
 phone: user?.phone || "-",
@@ -116,12 +116,10 @@ class: user?.class || "-",
 website: user?.website || "-",
 address: user?.address || "-",
 
-// FEES (optional)
 homeFee: user?.homeFee || "",
 groupFee: user?.groupFee || "",
 onlineFee: user?.onlineIndividualFee || "",
 
-// PAYMENT INFO
 amount,
 status: "paid",
 date: new Date().toLocaleString(),
