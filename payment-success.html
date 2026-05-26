@@ -5,7 +5,6 @@
 <title>Payment Success</title>
 
 <style>
-
 body{
 font-family:Arial,sans-serif;
 background:#eef2f7;
@@ -24,120 +23,120 @@ text-align:center;
 box-shadow:0 5px 15px rgba(0,0,0,.15);
 width:350px;
 }
-
 </style>
-
 </head>
 
 <body>
 
 <div class="box">
-
-<h2>Payment Successful</h2>
-
-<p id="msg">
-
-Saving payment details...
-
-</p>
-
+<h2>Payment Processing...</h2>
+<p id="msg">Saving payment details...</p>
 </div>
 
 <script type="module">
 
 import {
 initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
 getDatabase,
 ref,
-push
-}
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+push,
+get,
+child
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 
-const firebaseConfig={
-
-apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-authDomain:"gurulink-59cc7.firebaseapp.com",
-databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"gurulink-59cc7",
-storageBucket:"gurulink-59cc7.appspot.com",
-messagingSenderId:"112148672399",
-appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
+/* FIREBASE */
+const firebaseConfig = {
+apiKey: "AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain: "gurulink-59cc7.firebaseapp.com",
+databaseURL: "https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId: "gurulink-59cc7",
+storageBucket: "gurulink-59cc7.appspot.com",
+messagingSenderId: "112148672399",
+appId: "1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
-const app=
-initializeApp(firebaseConfig);
-
-const db=
-getDatabase(app);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 
-try{
+/* URL PARAMS */
+const params = new URLSearchParams(window.location.search);
 
-const params=
-new URLSearchParams(
-window.location.search
-);
-
-const type=
-params.get("type") || "teacher";
+const type = params.get("type") || "teacher";
+const id = params.get("id");
 
 
-const amount=
-type==="institution"
-?
-2
-:
-1;
+/* AMOUNT */
+const amount = type === "institution" ? 2 : 1;
 
 
-await push(
-ref(db,"payments"),
-{
+/* MAIN */
+try {
 
-type:type,
+let user = null;
 
-amount:amount,
+/* FETCH USER DATA */
+if (id) {
 
-status:"paid",
+const path = type === "teacher"
+? "teachers/" + id
+: "institutions/" + id;
 
-date:new Date().toLocaleString(),
+const snap = await get(child(ref(db), path));
 
-createdAt:Date.now()
+if (snap.exists()) {
+user = snap.val();
+}
+
+}
+
+
+/* SAVE PAYMENT */
+await push(ref(db, "payments"), {
+
+type,
+id,
+
+/* USER INFO */
+name: user?.name || "",
+email: user?.email || "",
+phone: user?.phone || "",
+website: user?.website || "",
+address: user?.address || "",
+class: user?.class || "",
+
+/* FEES */
+homeFee: user?.homeFee || "",
+groupFee: user?.groupFee || "",
+onlineFee: user?.onlineIndividualFee || "",
+
+/* PAYMENT INFO */
+amount,
+status: "paid",
+date: new Date().toLocaleString(),
+createdAt: Date.now()
 
 });
 
-document.getElementById(
-"msg"
-).innerHTML=
 
-"Payment details saved successfully";
+document.getElementById("msg").innerHTML =
+"Payment successful! Redirecting...";
 
-
-setTimeout(()=>{
-
-window.location.href=
-"index.html";
-
-},2000);
+setTimeout(() => {
+window.location.href = "index.html";
+}, 2000);
 
 }
-catch(err){
-
-document.getElementById(
-"msg"
-).innerHTML=
-
-"Error saving payment";
+catch (err) {
 
 console.log(err);
+
+document.getElementById("msg").innerHTML =
+"Payment saved with error. Please contact support.";
 
 }
 
