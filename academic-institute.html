@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
 <title>Academic Institution Registration</title>
 
 <style>
+
 body{
 margin:0;
 font-family:Arial,sans-serif;
@@ -65,8 +65,8 @@ margin-top:10px;
 .preview img{
 width:90px;
 height:90px;
-border-radius:10px;
 object-fit:cover;
+border-radius:10px;
 border:1px solid #ddd;
 }
 
@@ -87,12 +87,6 @@ margin:10px 0;
 width:18px;
 height:18px;
 margin:0;
-cursor:pointer;
-}
-
-.row label{
-margin:0;
-cursor:pointer;
 }
 
 .modeFee{
@@ -102,6 +96,7 @@ background:#f4f4f4;
 border-radius:10px;
 margin-bottom:10px;
 }
+
 </style>
 </head>
 
@@ -117,13 +112,19 @@ margin-bottom:10px;
 <form id="form">
 
 <input id="name" placeholder="Institution Name" required>
+
 <input id="phone" placeholder="Contact Number" required>
+
 <input id="email" placeholder="Email">
-<input id="website" placeholder="Website / Social Link">
+
+<input id="website" placeholder="Website">
+
 <input id="address" placeholder="Address">
+
 <input id="area" placeholder="Area">
 
 <select id="subject">
+
 <option value="">Select Subject</option>
 <option>Physics</option>
 <option>Chemistry</option>
@@ -131,35 +132,43 @@ margin-bottom:10px;
 <option>Biology</option>
 <option>JEE</option>
 <option>NEET</option>
-<option value="other">Other</option>
+
+<option value="other">
+Other
+</option>
+
 </select>
 
-<input id="otherSubject" placeholder="Enter Subject" style="display:none">
+<input
+id="otherSubject"
+placeholder="Enter Subject"
+style="display:none"
+>
 
 <select id="class">
+
 <option>Class 1-5</option>
 <option>Class 6-8</option>
 <option>Class 9-10</option>
 <option>Class 11-12</option>
 <option>JEE</option>
 <option>NEET</option>
+
 </select>
 
 
-
-
+<h3>Teaching Modes</h3>
 
 <div class="modeBox">
 
 <div class="row">
-
-<input
-type="checkbox"
-value="Offline Classroom"
+<input type="checkbox"
+value="Offline"
 onchange="toggleFee('offline')">
 
-<label>Offline Classroom</label>
-
+<label>
+Offline Classroom
+</label>
 </div>
 
 <div id="offline"
@@ -167,10 +176,9 @@ class="modeFee">
 
 <input
 id="offlineFee"
-placeholder="Enter Offline Fee">
+placeholder="Enter Fee">
 
 </div>
-
 
 
 <div class="row">
@@ -180,7 +188,9 @@ type="checkbox"
 value="Online"
 onchange="toggleFee('online')">
 
-<label>Online</label>
+<label>
+Online
+</label>
 
 </div>
 
@@ -189,7 +199,7 @@ class="modeFee">
 
 <input
 id="onlineFee"
-placeholder="Enter Online Fee">
+placeholder="Enter Fee">
 
 </div>
 
@@ -202,7 +212,9 @@ type="checkbox"
 value="Hybrid"
 onchange="toggleFee('hybrid')">
 
-<label>Hybrid</label>
+<label>
+Hybrid
+</label>
 
 </div>
 
@@ -211,12 +223,11 @@ class="modeFee">
 
 <input
 id="hybridFee"
-placeholder="Enter Hybrid Fee">
+placeholder="Enter Fee">
 
 </div>
 
 </div>
-
 
 
 <h3>Institution Logo</h3>
@@ -226,10 +237,8 @@ type="file"
 id="logo"
 accept="image/*">
 
-<div
-id="logoPreview"
+<div id="logoPreview"
 class="preview"></div>
-
 
 
 <h3>Gallery Photos (Max 5)</h3>
@@ -240,8 +249,7 @@ id="gallery"
 multiple
 accept="image/*">
 
-<div
-id="galleryPreview"
+<div id="galleryPreview"
 class="preview"></div>
 
 
@@ -249,11 +257,8 @@ class="preview"></div>
 id="description"
 placeholder="About Institution"></textarea>
 
-
 <button type="submit">
-
 Continue To Payment
-
 </button>
 
 </form>
@@ -262,13 +267,34 @@ Continue To Payment
 
 
 
+<script>
+
+function toggleFee(id){
+
+let box=
+document.getElementById(id);
+
+box.style.display=
+
+box.style.display==="block"
+
+?
+
+"none"
+
+:
+
+"block";
+
+}
+
+</script>
+
 
 
 <script type="module">
 
-import {
-initializeApp
-}
+import {initializeApp}
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
@@ -281,7 +307,7 @@ from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig={
 
-apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+apiKey:"AIzaSy...",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"gurulink-59cc7",
@@ -291,115 +317,75 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
 
-const app=initializeApp(firebaseConfig);
+const app=
+initializeApp(firebaseConfig);
 
-const db=getDatabase(app);
+const db=
+getDatabase(app);
 
 const API_KEY=
 "31f729ff855eb2e42c00ee508a8647ea";
 
 
-/* ELEMENTS */
-
 const form=
 document.getElementById("form");
-
-const skill=
-document.getElementById("skill");
-
-const otherSkill=
-document.getElementById("otherSkill");
 
 const logo=
 document.getElementById("logo");
 
-const logoPreview=
-document.getElementById("logoPreview");
-
 const gallery=
 document.getElementById("gallery");
 
-const galleryPreview=
-document.getElementById("galleryPreview");
 
-
-/* IMAGE UPLOAD */
-
-async function upload(file){
-
-let fd=new FormData();
-
-fd.append(
-"image",
-file
-);
-
-let res=await fetch(
-`https://api.imgbb.com/1/upload?key=${API_KEY}`,
-{
-method:"POST",
-body:fd
-}
-);
-
-let data=await res.json();
-
-return data.data.url;
-
-}
-
-
-/* SKILL OTHER */
-
-skill.addEventListener(
-"change",
-()=>{
-
-otherSkill.style.display=
-skill.value==="other"
-?
-"block"
-:
-"none";
-
-}
-);
-
-
-/* LOGO PREVIEW */
+/* Logo Preview */
 
 logo.addEventListener(
 "change",
 function(){
 
-logoPreview.innerHTML="";
+document.getElementById(
+"logoPreview"
+).innerHTML="";
 
 if(this.files[0]){
 
-let img=document.createElement("img");
+let img=
+document.createElement("img");
 
 img.src=
-URL.createObjectURL(this.files[0]);
-
-logoPreview.appendChild(img);
-
-}
-
-}
+URL.createObjectURL(
+this.files[0]
 );
 
+document
+.getElementById(
+"logoPreview"
+)
+.appendChild(img);
 
-/* GALLERY PREVIEW */
+}
+
+});
+
+
+/* Gallery Preview */
 
 gallery.addEventListener(
 "change",
 function(){
 
-galleryPreview.innerHTML="";
+let preview=
+document.getElementById(
+"galleryPreview"
+);
+
+preview.innerHTML="";
 
 if(this.files.length>5){
 
-alert("Maximum 5 photos");
+alert(
+"Maximum 5 photos"
+);
 
 this.value="";
 
@@ -410,185 +396,17 @@ return;
 Array.from(this.files)
 .forEach(file=>{
 
-let img=document.createElement("img");
+let img=
+document.createElement("img");
 
 img.src=
 URL.createObjectURL(file);
 
-galleryPreview.appendChild(img);
+preview.appendChild(img);
 
 });
 
-}
-);
-
-
-/* SUBMIT */
-
-form.addEventListener(
-"submit",
-async(e)=>{
-
-e.preventDefault();
-
-try{
-
-/* LOGO */
-
-let logoUrl="";
-
-if(logo.files[0]){
-
-logoUrl=
-await upload(
-logo.files[0]
-);
-
-}
-
-
-/* GALLERY */
-
-let galleryUrls=[];
-
-for(let file of gallery.files){
-
-galleryUrls.push(
-await upload(file)
-);
-
-}
-
-
-/* MODES */
-
-let teachingModes=[];
-
-document
-.querySelectorAll(
-'input[type="checkbox"]:checked'
-)
-.forEach(c=>{
-
-teachingModes.push(
-c.value
-);
-
 });
-
-
-/* SAVE FIREBASE */
-
-let newRef=
-await push(
-ref(
-db,
-"institutions"
-),
-{
-
-name:
-document.getElementById("name").value,
-
-phone:
-document.getElementById("phone").value,
-
-email:
-document.getElementById("email").value,
-
-website:
-document.getElementById("website").value,
-
-address:
-document.getElementById("address").value,
-
-area:
-document.getElementById("area").value,
-
-skill:
-skill.value==="other"
-?
-otherSkill.value
-:
-skill.value,
-
-teachingModes,
-
-offlineFee:
-document.getElementById("offlineFee").value || "",
-
-onlineFee:
-document.getElementById("onlineFee").value || "",
-
-hybridFee:
-document.getElementById("hybridFee").value || "",
-
-logo:
-logoUrl,
-
-gallery:
-galleryUrls,
-
-description:
-document.getElementById("description").value,
-
-category:"skill",
-
-status:"pending"
-
-}
-
-);
-
-
-/* SAVE ID */
-
-const institutionId=
-newRef.key;
-
-localStorage.setItem(
-"institutionId",
-institutionId
-);
-
-
-/* REDIRECT PAYMENT */
-
-window.location.href=
-"payment.html?type=institution&id="+institutionId;
-
-}
-catch(error){
-
-console.log(error);
-
-alert(
-"Submission error:\n"+
-error.message
-);
-
-}
-
-});
-
-</script>
-
-
-<script>
-
-function toggleFee(id){
-
-let box=
-document.getElementById(id);
-
-box.style.display=
-box.style.display==="block"
-?
-"none"
-:
-"block";
-
-}
 
 </script>
 
