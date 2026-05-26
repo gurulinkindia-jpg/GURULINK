@@ -556,7 +556,27 @@ window.location=
 "edit.html?id="+id+"&type=institution";
 
 }
+window.deletePayment = (id) => {
 
+if (!id) {
+alert("Payment ID missing");
+return;
+}
+
+if (confirm("Delete this payment?")) {
+
+remove(ref(db, "payments/" + id))
+.then(() => {
+alert("Payment deleted successfully");
+})
+.catch(err => {
+alert("Delete failed: " + err.message);
+console.log(err);
+});
+
+}
+
+};
 </script>
 
 </body>
