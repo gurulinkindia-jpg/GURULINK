@@ -95,26 +95,27 @@ user = snap.val();
 }
 
 
+
 /* SAVE PAYMENT */
 await push(ref(db, "payments"), {
 
 type,
 id,
 
-/* USER INFO */
-name: user?.name || "",
-email: user?.email || "",
-phone: user?.phone || "",
-website: user?.website || "",
-address: user?.address || "",
-class: user?.class || "",
+// 🔴 THIS IS THE FIX (USER DATA)
+name: user?.name || "Unknown",
+email: user?.email || "-",
+phone: user?.phone || "-",
+class: user?.class || "-",
+website: user?.website || "-",
+address: user?.address || "-",
 
-/* FEES */
+// FEES (optional)
 homeFee: user?.homeFee || "",
 groupFee: user?.groupFee || "",
 onlineFee: user?.onlineIndividualFee || "",
 
-/* PAYMENT INFO */
+// PAYMENT INFO
 amount,
 status: "paid",
 date: new Date().toLocaleString(),
