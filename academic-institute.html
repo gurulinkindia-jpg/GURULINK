@@ -15,7 +15,7 @@ background:#eef2f7;
 
 header{
 background:#e65100;
-color:#fff;
+color:white;
 padding:18px;
 text-align:center;
 }
@@ -24,7 +24,7 @@ text-align:center;
 width:90%;
 max-width:800px;
 margin:20px auto;
-background:#fff;
+background:white;
 padding:25px;
 border-radius:15px;
 box-shadow:0 5px 15px rgba(0,0,0,.1);
@@ -55,6 +55,11 @@ font-size:16px;
 cursor:pointer;
 }
 
+button:disabled{
+opacity:.7;
+cursor:not-allowed;
+}
+
 .preview{
 display:flex;
 flex-wrap:wrap;
@@ -65,8 +70,8 @@ margin-top:10px;
 .preview img{
 width:90px;
 height:90px;
-object-fit:cover;
 border-radius:10px;
+object-fit:cover;
 border:1px solid #ddd;
 }
 
@@ -83,7 +88,7 @@ gap:10px;
 margin:10px 0;
 }
 
-.row input[type="checkbox"]{
+.row input{
 width:auto;
 margin:0;
 }
@@ -114,24 +119,36 @@ margin-bottom:10px;
 
 <input id="phone" placeholder="Contact Number" required>
 
-<input id="email" type="email" placeholder="Email">
+<input id="email"
+type="email"
+placeholder="Email">
 
-<input id="website" placeholder="Website">
+<input id="website"
+placeholder="Website">
 
-<input id="address" placeholder="Address">
+<input id="address"
+placeholder="Address">
 
-<input id="area" placeholder="Area">
+<input id="area"
+placeholder="Area">
+
 
 <select id="subject">
 
-<option value="">Select Subject</option>
+<option value="">
+Select Subject
+</option>
+
 <option>Physics</option>
 <option>Chemistry</option>
 <option>Mathematics</option>
 <option>Biology</option>
 <option>JEE</option>
 <option>NEET</option>
-<option value="other">Other</option>
+
+<option value="other">
+Other
+</option>
 
 </select>
 
@@ -139,6 +156,7 @@ margin-bottom:10px;
 id="otherSubject"
 placeholder="Enter Subject"
 style="display:none">
+
 
 <select id="class">
 
@@ -151,46 +169,71 @@ style="display:none">
 
 </select>
 
+
 <h3>Teaching Modes</h3>
 
 <div class="modeBox">
 
 <div class="row">
-<input type="checkbox"
+<input
+type="checkbox"
 value="Offline Classroom"
 onchange="toggleFee(this,'offline')">
-<label>Offline Classroom</label>
+
+<label>
+Offline Classroom
+</label>
 </div>
 
-<div id="offline" class="modeFee">
-<input id="offlineFee"
+<div id="offline"
+class="modeFee">
+
+<input
+id="offlineFee"
 placeholder="Enter Offline Fee">
+
 </div>
 
 
 <div class="row">
-<input type="checkbox"
+<input
+type="checkbox"
 value="Online"
 onchange="toggleFee(this,'online')">
-<label>Online</label>
+
+<label>
+Online
+</label>
 </div>
 
-<div id="online" class="modeFee">
-<input id="onlineFee"
+<div id="online"
+class="modeFee">
+
+<input
+id="onlineFee"
 placeholder="Enter Online Fee">
+
 </div>
 
 
 <div class="row">
-<input type="checkbox"
+<input
+type="checkbox"
 value="Hybrid"
 onchange="toggleFee(this,'hybrid')">
-<label>Hybrid</label>
+
+<label>
+Hybrid
+</label>
 </div>
 
-<div id="hybrid" class="modeFee">
-<input id="hybridFee"
+<div id="hybrid"
+class="modeFee">
+
+<input
+id="hybridFee"
 placeholder="Enter Hybrid Fee">
+
 </div>
 
 </div>
@@ -203,7 +246,9 @@ type="file"
 id="logo"
 accept="image/*">
 
-<div id="logoPreview" class="preview"></div>
+<div
+id="logoPreview"
+class="preview"></div>
 
 
 <h3>Gallery Photos (Max 5)</h3>
@@ -214,8 +259,10 @@ id="gallery"
 multiple
 accept="image/*">
 
-<div id="galleryPreview"
+<div
+id="galleryPreview"
 class="preview"></div>
+
 
 <textarea
 id="description"
@@ -228,7 +275,6 @@ Continue To Payment
 </form>
 
 </div>
-
 
 
 <script>
@@ -249,10 +295,11 @@ check.checked
 </script>
 
 
-
 <script type="module">
 
-import {initializeApp}
+import {
+initializeApp
+}
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
@@ -279,24 +326,24 @@ const app=initializeApp(firebaseConfig);
 
 const db=getDatabase(app);
 
-const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
+const API_KEY=
+"31f729ff855eb2e42c00ee508a8647ea";
+
 
 const form=document.getElementById("form");
-
 const subject=document.getElementById("subject");
-
 const otherSubject=document.getElementById("otherSubject");
 
 const logo=document.getElementById("logo");
-
-const gallery=document.getElementById("gallery");
-
 const logoPreview=document.getElementById("logoPreview");
 
+const gallery=document.getElementById("gallery");
 const galleryPreview=document.getElementById("galleryPreview");
 
 
-subject.addEventListener("change",()=>{
+subject.addEventListener(
+"change",
+()=>{
 
 otherSubject.style.display=
 subject.value==="other"
@@ -305,12 +352,11 @@ subject.value==="other"
 :
 "none";
 
-});
+}
+);
 
 
 async function upload(file){
-
-try{
 
 let fd=new FormData();
 
@@ -321,65 +367,60 @@ let res=await fetch(
 {
 method:"POST",
 body:fd
-});
+}
+);
 
 let data=await res.json();
 
-return data.success
-?
-data.data.url
-:
-"";
-
-}
-catch{
-
-return "";
-
-}
+return data.data.url;
 
 }
 
 
-/* Logo preview */
+/* Logo Preview */
 
-logo.addEventListener("change",()=>{
+logo.addEventListener(
+"change",
+function(){
 
 logoPreview.innerHTML="";
 
-if(logo.files[0]){
+if(this.files[0]){
 
 let img=document.createElement("img");
 
 img.src=
 URL.createObjectURL(
-logo.files[0]
+this.files[0]
 );
 
 logoPreview.appendChild(img);
 
 }
 
-});
+}
+);
 
 
-/* Gallery preview */
+/* Gallery Preview */
 
-gallery.addEventListener("change",()=>{
+gallery.addEventListener(
+"change",
+function(){
 
 galleryPreview.innerHTML="";
 
-if(gallery.files.length>5){
+if(this.files.length>5){
 
 alert("Maximum 5 photos");
 
-gallery.value="";
+this.value="";
 
 return;
 
 }
 
-Array.from(gallery.files)
+Array.from(this.files)
 .forEach(file=>{
 
 let img=document.createElement("img");
@@ -391,8 +432,11 @@ galleryPreview.appendChild(img);
 
 });
 
-});
+}
+);
 
+
+/* SUBMIT */
 
 form.addEventListener(
 "submit",
@@ -400,39 +444,39 @@ async(e)=>{
 
 e.preventDefault();
 
-const btn=
+try{
+
+let btn=
 form.querySelector("button");
 
 btn.disabled=true;
+btn.innerHTML="Submitting...";
 
-btn.innerHTML=
-"Submitting...";
 
-try{
+let logoUrl="";
 
-let logoUrl=
+if(logo.files[0]){
+
+logoUrl=
+await upload(
 logo.files[0]
-?
-await upload(logo.files[0])
-:
-"";
+);
+
+}
+
 
 let galleryUrls=[];
 
 for(let file of gallery.files){
 
-let url=
-await upload(file);
-
-if(url){
-
-galleryUrls.push(url);
+galleryUrls.push(
+await upload(file)
+);
 
 }
 
-}
 
-let modes=[];
+let teachingModes=[];
 
 document
 .querySelectorAll(
@@ -440,7 +484,9 @@ document
 )
 .forEach(c=>{
 
-modes.push(c.value);
+teachingModes.push(
+c.value
+);
 
 });
 
@@ -450,12 +496,23 @@ await push(
 ref(db,"institutions"),
 {
 
-name:name.value,
-phone:phone.value,
-email:email.value,
-website:website.value,
-address:address.value,
-area:area.value,
+name:
+document.getElementById("name").value,
+
+phone:
+document.getElementById("phone").value,
+
+email:
+document.getElementById("email").value,
+
+website:
+document.getElementById("website").value,
+
+address:
+document.getElementById("address").value,
+
+area:
+document.getElementById("area").value,
 
 subject:
 subject.value==="other"
@@ -467,16 +524,18 @@ subject.value,
 class:
 document.getElementById("class").value,
 
-modes:modes,
+teachingModes:
+
+teachingModes,
 
 offlineFee:
-offlineFee.value,
+document.getElementById("offlineFee").value || "",
 
 onlineFee:
-onlineFee.value,
+document.getElementById("onlineFee").value || "",
 
 hybridFee:
-hybridFee.value,
+document.getElementById("hybridFee").value || "",
 
 logo:
 logoUrl,
@@ -485,26 +544,34 @@ gallery:
 galleryUrls,
 
 description:
-description.value,
+document.getElementById("description").value,
 
-category:"academic",
+category:
+"academic",
 
-status:"pending",
+status:
+"pending",
 
 createdAt:
 Date.now()
 
-});
+}
+
+);
+
 
 window.location.href=
 "payment.html?type=institution&id="+newRef.key;
 
 }
-catch(err){
+catch(error){
 
-alert(err.message);
+console.log(error);
 
-console.log(err);
+alert(
+"Submission error:\n"+
+error.message
+);
 
 btn.disabled=false;
 
