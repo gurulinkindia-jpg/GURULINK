@@ -505,72 +505,38 @@ item.value
 
 /* SAVE FIREBASE */
 
-await push(
+let newRef = await push(
 ref(db,"teachers"),
 {
+    name: document.getElementById("name").value,
+    phone: document.getElementById("phone").value,
+    email: document.getElementById("email").value,
+    website: document.getElementById("website").value,
+    qualification: document.getElementById("qualification").value,
+    experience: document.getElementById("experience").value,
 
-name:
-document.getElementById("name").value,
+    subject: subject.value === "other"
+        ? otherSubject.value
+        : subject.value,
 
-phone:
-document.getElementById("phone").value,
+    class: document.getElementById("class").value,
+    location: document.getElementById("location").value,
 
-email:
-document.getElementById("email").value,
+    teachingModes: teachingModes,
 
-website:
-document.getElementById("website").value,
+    homeFee: document.getElementById("homeFee").value,
+    groupFee: document.getElementById("groupFee").value,
+    onlineIndividualFee: document.getElementById("onlineIndividualFee").value,
+    onlineGroupFee: document.getElementById("onlineGroupFee").value,
 
-qualification:
-document.getElementById("qualification").value,
+    photo: profileUrl,
+    gallery: galleryUrls,
 
-experience:
-document.getElementById("experience").value,
+    description: document.getElementById("description").value,
 
-subject:
-subject.value==="other"
-?
-otherSubject.value
-:
-subject.value,
-
-class:
-document.getElementById("class").value,
-
-location:
-document.getElementById("location").value,
-
-teachingModes:
-
-teachingModes,
-
-homeFee:
-document.getElementById("homeFee").value,
-
-groupFee:
-document.getElementById("groupFee").value,
-
-onlineIndividualFee:
-document.getElementById("onlineIndividualFee").value,
-
-onlineGroupFee:
-document.getElementById("onlineGroupFee").value,
-
-photo:
-profileUrl,
-
-gallery:
-galleryUrls,
-
-description:
-document.getElementById("description").value,
-
-category:"academic",
-
-status:"pending"
-
+    category: "academic",
+    status: "pending"
 }
-
 );
 
 
