@@ -548,13 +548,7 @@ alert(
 /* OPEN PAYMENT PAGE */
 
 window.location.href =
-"payment.html?type=teacher&id=" + newRef.key +
-"&category=academic&name=" +
-encodeURIComponent(document.getElementById("name").value) +
-"&email=" +
-encodeURIComponent(document.getElementById("email").value) +
-"&class=" +
-encodeURIComponent(document.getElementById("class").value);
+"payment.html?type=teacher&id=" + newRef.key;
 
 }
 catch(error){
