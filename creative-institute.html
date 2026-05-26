@@ -454,6 +454,8 @@ img
 
 /* SUBMIT */
 
+/* SUBMIT */
+
 form.addEventListener(
 "submit",
 async function(e){
@@ -461,7 +463,6 @@ async function(e){
 e.preventDefault();
 
 try{
-
 
 let logoUrl="";
 
@@ -473,6 +474,133 @@ logo.files[0]
 );
 
 }
+
+/* GALLERY */
+
+let galleryUrls=[];
+
+for(let file of gallery.files){
+
+let url=
+await upload(file);
+
+galleryUrls.push(url);
+
+}
+
+/* MODES */
+
+let modes=[];
+
+document
+.querySelectorAll(
+'input[type="checkbox"]:checked'
+)
+.forEach(c=>{
+
+modes.push(
+c.parentElement.innerText.trim()
+);
+
+});
+
+
+/* SAVE TO FIREBASE */
+
+let newRef = await push(
+ref(db,"institutions"),
+{
+
+name:
+document.getElementById("name").value,
+
+phone:
+document.getElementById("phone").value,
+
+email:
+document.getElementById("email").value,
+
+website:
+document.getElementById("website").value,
+
+address:
+document.getElementById("address").value,
+
+area:
+document.getElementById("area").value,
+
+creative:
+
+creative.value==="other"
+
+?
+
+otherCreative.value
+
+:
+
+creative.value,
+
+modes:modes,
+
+offlineFee:
+document.getElementById("offlineFee").value || "",
+
+onlineFee:
+document.getElementById("onlineFee").value || "",
+
+hybridFee:
+document.getElementById("hybridFee").value || "",
+
+logo:
+logoUrl,
+
+gallery:
+galleryUrls,
+
+description:
+document.getElementById("description").value,
+
+category:"creative",
+
+status:"pending"
+
+}
+
+);
+
+
+/* IMPORTANT FIX */
+
+const institutionId = newRef.key;
+
+localStorage.setItem(
+"institutionId",
+institutionId
+);
+
+
+/* GO TO PAYMENT */
+
+window.location.href =
+"payment.html?type=institution&id="+institutionId+"&category=creative";
+
+
+}
+catch(error){
+
+console.log(error);
+
+alert(
+"Error:\n"+
+error.message
+);
+
+}
+
+}
+
+);
 
 
 /* GALLERY */
