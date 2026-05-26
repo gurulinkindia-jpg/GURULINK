@@ -57,44 +57,17 @@ cursor:pointer;
 
 .preview{
 display:flex;
-flex-wrap:wrap;
 gap:10px;
-margin-top:10px;
+flex-wrap:wrap;
 }
 
 .preview img{
 width:90px;
 height:90px;
-border-radius:10px;
 object-fit:cover;
-border:1px solid #ccc;
-}
-
-.modeBox{
-padding:15px;
-border:1px solid #ddd;
 border-radius:10px;
 }
-
-.row{
-display:flex;
-align-items:center;
-gap:10px;
-margin:10px 0;
-}
-
-.row input[type=checkbox]{
-width:auto;
-transform:scale(1.2);
-}
-
-.modeFee{
-display:none;
-padding:10px;
-background:#f7f7f7;
-border-radius:10px;
-margin-bottom:10px;
-}
+.modeFee{display:none;padding:10px;background:#f7f7f7;border-radius:8px;}
 </style>
 </head>
 
@@ -140,41 +113,26 @@ margin-bottom:10px;
 
 <h3>Modes</h3>
 
-<div class="modeBox">
-
-<div class="row">
-<input type="checkbox" value="Offline Classroom" onclick="toggleFee('offline')">
-<label>Offline Classroom</label>
-</div>
+<label><input type="checkbox" value="Offline Classroom"> Offline Classroom</label>
 <div id="offline" class="modeFee">
-<input id="offlineFee" placeholder="Enter Fee">
+<input id="offlineFee" placeholder="Offline Fee">
 </div>
 
-<div class="row">
-<input type="checkbox" value="Home Tuition" onclick="toggleFee('home')">
-<label>Home Tuition</label>
-</div>
+<label><input type="checkbox" value="Home Tuition"> Home Tuition</label>
 <div id="home" class="modeFee">
-<input id="homeFee" placeholder="Enter Fee">
+<input id="homeFee" placeholder="Home Fee">
 </div>
 
-<div class="row">
-<input type="checkbox" value="Online" onclick="toggleFee('online')">
-<label>Online</label>
-</div>
+<label><input type="checkbox" value="Online"> Online</label>
 <div id="online" class="modeFee">
-<input id="onlineFee" placeholder="Enter Fee">
-</div>
-
+<input id="onlineFee" placeholder="Online Fee">
 </div>
 
 <h3>Logo</h3>
-<input type="file" id="logo" accept="image/*">
-<div class="preview" id="logoPreview"></div>
+<input type="file" id="logo">
 
-<h3>Gallery (Max 5)</h3>
-<input type="file" id="gallery" multiple accept="image/*">
-<div class="preview" id="galleryPreview"></div>
+<h3>Gallery</h3>
+<input type="file" id="gallery" multiple>
 
 <textarea id="description" placeholder="About Institution"></textarea>
 
@@ -204,115 +162,93 @@ const db = getDatabase(app);
 
 const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
 
-/* IMAGE UPLOAD */
+/* ELEMENTS */
+const form = document.getElementById("form");
+const name = document.getElementById("name");
+const phone = document.getElementById("phone");
+const email = document.getElementById("email");
+const website = document.getElementById("website");
+const address = document.getElementById("address");
+const area = document.getElementById("area");
+const subject = document.getElementById("subject");
+const otherSubject = document.getElementById("otherSubject");
+const classInput = document.getElementById("class");
+const description = document.getElementById("description");
+const logo = document.getElementById("logo");
+const gallery = document.getElementById("gallery");
+
+/* UPLOAD */
 async function upload(file){
 let fd = new FormData();
 fd.append("image", file);
 
-let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`, {
-method: "POST",
-body: fd
+let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`,{
+method:"POST",
+body:fd
 });
 
 let data = await res.json();
 return data.data.url;
 }
 
-/* TOGGLE FEES */
-function toggleFee(id){
-const box = document.getElementById(id);
-box.style.display = box.style.display === "block" ? "none" : "block";
-}
-window.toggleFee = toggleFee;
-
-/* SUBJECT OTHER */
-const subject = document.getElementById("subject");
-const otherSubject = document.getElementById("otherSubject");
-
-subject.addEventListener("change", () => {
-otherSubject.style.display = subject.value === "other" ? "block" : "none";
-});
-
-/* PREVIEW LOGO */
-const logo = document.getElementById("logo");
-const logoPreview = document.getElementById("logoPreview");
-
-logo.addEventListener("change", function(){
-logoPreview.innerHTML = "";
-if(this.files[0]){
-let img = document.createElement("img");
-img.src = URL.createObjectURL(this.files[0]);
-logoPreview.appendChild(img);
-}
-});
-
-/* PREVIEW GALLERY */
-const gallery = document.getElementById("gallery");
-const galleryPreview = document.getElementById("galleryPreview");
-
-gallery.addEventListener("change", function(){
-galleryPreview.innerHTML = "";
-
-if(this.files.length > 5){
-alert("Max 5 images allowed");
-this.value = "";
-return;
-}
-
-Array.from(this.files).forEach(file=>{
-let img = document.createElement("img");
-img.src = URL.createObjectURL(file);
-galleryPreview.appendChild(img);
-});
+/* SUBJECT */
+subject.addEventListener("change",()=>{
+otherSubject.style.display =
+subject.value==="other" ? "block" : "none";
 });
 
 /* SUBMIT */
-document.getElementById("form").addEventListener("submit", async function(e){
+form.addEventListener("submit", async (e)=>{
 e.preventDefault();
 
 try{
 
-let logoUrl = "";
-if(logo.files[0]){
-logoUrl = await upload(logo.files[0]);
-}
+let logoUrl = logo.files[0] ? await upload(logo.files[0]) : "";
 
 let galleryUrls = [];
-for(let file of gallery.files){
-galleryUrls.push(await upload(file));
+for(let f of gallery.files){
+galleryUrls.push(await upload(f));
 }
 
 let modes = [];
 document.querySelectorAll('input[type="checkbox"]:checked')
-.forEach(c => modes.push(c.value));
+.forEach(c=>modes.push(c.value));
 
 let newRef = await push(ref(db,"institutions"),{
+
 name: name.value,
 phone: phone.value,
 email: email.value,
 website: website.value,
 address: address.value,
 area: area.value,
-subject: subject.value === "other" ? otherSubject.value : subject.value,
-class: class.value,
-modes,
-offlineFee: offlineFee.value,
-homeFee: homeFee.value,
-onlineFee: onlineFee.value,
+
+subject: subject.value==="other" ? otherSubject.value : subject.value,
+class: classInput.value,
+
+modes: modes,
+
+offlineFee: document.getElementById("offlineFee").value || "",
+homeFee: document.getElementById("homeFee").value || "",
+onlineFee: document.getElementById("onlineFee").value || "",
+
 logo: logoUrl,
 gallery: galleryUrls,
+
 description: description.value,
 category: "academic",
 status: "pending"
+
 });
 
-/* SAME FIX AS TEACHER */
-localStorage.setItem("institutionId", newRef.key);
+/* IMPORTANT FIX */
+const id = newRef.key;
+localStorage.setItem("institutionId", id);
 
-window.location.href = "payment.html?type=institution&id=" + newRef.key;
+window.location.href =
+"payment.html?type=institution&id=" + id;
 
-}
-catch(err){
+}catch(err){
 alert("Error: " + err.message);
 console.log(err);
 }
