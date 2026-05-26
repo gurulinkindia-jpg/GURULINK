@@ -505,72 +505,41 @@ item.value
 
 /* SAVE FIREBASE */
 
-await push(
+let newRef = await push(
 ref(db,"teachers"),
 {
 
-name:
-document.getElementById("name").value,
-
-phone:
-document.getElementById("phone").value,
-
-email:
-document.getElementById("email").value,
-
-website:
-document.getElementById("website").value,
-
-qualification:
-document.getElementById("qualification").value,
-
-experience:
-document.getElementById("experience").value,
+name: document.getElementById("name").value,
+phone: document.getElementById("phone").value,
+email: document.getElementById("email").value,
+website: document.getElementById("website").value,
+qualification: document.getElementById("qualification").value,
+experience: document.getElementById("experience").value,
 
 subject:
-subject.value==="other"
-?
-otherSubject.value
-:
-subject.value,
+subject.value === "other"
+? otherSubject.value
+: subject.value,
 
-class:
-document.getElementById("class").value,
+class: document.getElementById("class").value,
+location: document.getElementById("location").value,
 
-location:
-document.getElementById("location").value,
+teachingModes: teachingModes,
 
-teachingModes:
+homeFee: document.getElementById("homeFee").value,
+groupFee: document.getElementById("groupFee").value,
+onlineIndividualFee: document.getElementById("onlineIndividualFee").value,
+onlineGroupFee: document.getElementById("onlineGroupFee").value,
 
-teachingModes,
+photo: profileUrl,
+gallery: galleryUrls,
 
-homeFee:
-document.getElementById("homeFee").value,
+description: document.getElementById("description").value,
 
-groupFee:
-document.getElementById("groupFee").value,
-
-onlineIndividualFee:
-document.getElementById("onlineIndividualFee").value,
-
-onlineGroupFee:
-document.getElementById("onlineGroupFee").value,
-
-photo:
-profileUrl,
-
-gallery:
-galleryUrls,
-
-description:
-document.getElementById("description").value,
-
-category:"academic",
-
-status:"pending"
+category: "academic",
+status: "pending"
 
 }
-
 );
 
 
@@ -581,8 +550,8 @@ alert(
 
 /* OPEN PAYMENT PAGE */
 
-window.location.href=
-"payment.html?type=teacher&category=academic";
+window.location.href =
+"payment-success.html?type=teacher&id=" + newRef.key + "&category=academic";
 
 }
 catch(error){
