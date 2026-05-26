@@ -582,7 +582,12 @@ alert(
 /* OPEN PAYMENT PAGE */
 
 window.location.href =
-"https://gurulink.onrender.com/payment.html?type=teacher&category=academic";
+"payment.html?type=teacher&category=academic&name=" +
+encodeURIComponent(document.getElementById("name").value) +
+"&email=" +
+encodeURIComponent(document.getElementById("email").value) +
+"&class=" +
+encodeURIComponent(document.getElementById("class").value);
 
 }
 catch(error){
