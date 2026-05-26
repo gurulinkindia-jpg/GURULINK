@@ -7,7 +7,6 @@
 <title>Academic Teacher Registration</title>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial,sans-serif;
@@ -96,7 +95,6 @@ background:#f7f7f7;
 border-radius:10px;
 margin-bottom:10px;
 }
-
 </style>
 </head>
 
@@ -112,31 +110,14 @@ margin-bottom:10px;
 <form id="form">
 
 <input id="name" placeholder="Full Name" required>
-
 <input id="phone" placeholder="Phone Number" required>
-
-<input type="email"
-id="email"
-placeholder="Email">
-
-<input
-id="website"
-placeholder="Website / Social Link">
-
-<input
-id="qualification"
-placeholder="Qualification">
-
-<input
-id="experience"
-placeholder="Experience">
+<input id="email" placeholder="Email">
+<input id="website" placeholder="Website / Social Link">
+<input id="qualification" placeholder="Qualification">
+<input id="experience" placeholder="Experience">
 
 <select id="subject">
-
-<option value="">
-Select Subject
-</option>
-
+<option value="">Select Subject</option>
 <option>Physics</option>
 <option>Chemistry</option>
 <option>Mathematics</option>
@@ -145,449 +126,177 @@ Select Subject
 <option>English</option>
 <option>Hindi</option>
 <option>Assamese</option>
-
-<option value="other">
-Other
-</option>
-
+<option value="other">Other</option>
 </select>
 
-<input
-id="otherSubject"
-placeholder="Write Subject"
-style="display:none">
+<input id="otherSubject" placeholder="Write Subject" style="display:none">
 
-<input
-id="class"
-placeholder="Class Example: Class 9-10">
-
-<input
-id="location"
-placeholder="Preferred Teaching Area">
+<input id="class" placeholder="Class Example: Class 9-10">
+<input id="location" placeholder="Preferred Teaching Area">
 
 <h3>Teaching Modes</h3>
 
 <div class="modeBox">
 
 <div class="row">
-
-<input
-type="checkbox"
-value="Home Tuition"
-id="homeCheck"
-onchange="toggleFee('home')">
-
+<input type="checkbox" value="Home Tuition" onchange="toggleFee('home')">
 <label>Home Tuition</label>
-
 </div>
-
 <div id="home" class="modeFee">
-
-<input
-id="homeFee"
-placeholder="Enter Home Tuition Fee">
-
+<input id="homeFee" placeholder="Enter Home Tuition Fee">
 </div>
 
-
-
 <div class="row">
-
-<input
-type="checkbox"
-value="Group Tuition"
-id="groupCheck"
-onchange="toggleFee('group')">
-
+<input type="checkbox" value="Group Tuition" onchange="toggleFee('group')">
 <label>Group Tuition</label>
-
 </div>
-
 <div id="group" class="modeFee">
-
-<input
-id="groupFee"
-placeholder="Enter Group Tuition Fee">
-
+<input id="groupFee" placeholder="Enter Group Tuition Fee">
 </div>
 
-
-
 <div class="row">
-
-<input
-type="checkbox"
-value="Online Individual"
-id="individualCheck"
-onchange="toggleFee('individual')">
-
+<input type="checkbox" value="Online Individual" onchange="toggleFee('individual')">
 <label>Online Individual</label>
-
 </div>
-
 <div id="individual" class="modeFee">
-
-<input
-id="onlineIndividualFee"
-placeholder="Enter Online Individual Fee">
-
+<input id="onlineIndividualFee" placeholder="Enter Online Individual Fee">
 </div>
-
-
 
 <div class="row">
-
-<input
-type="checkbox"
-value="Online Group"
-id="onlineCheck"
-onchange="toggleFee('online')">
-
+<input type="checkbox" value="Online Group" onchange="toggleFee('online')">
 <label>Online Group</label>
-
 </div>
-
 <div id="online" class="modeFee">
-
-<input
-id="onlineGroupFee"
-placeholder="Enter Online Group Fee">
-
+<input id="onlineGroupFee" placeholder="Enter Online Group Fee">
 </div>
 
 </div>
-
 
 <h3>Profile Photo</h3>
+<input type="file" id="photo" accept="image/*">
+<div class="preview" id="photoPreview"></div>
 
-<input
-type="file"
-id="photo"
-accept="image/*">
+<h3>Gallery Photos</h3>
+<input type="file" id="gallery" multiple accept="image/*">
+<div class="preview" id="galleryPreview"></div>
 
-<div
-class="preview"
-id="photoPreview"></div>
+<textarea id="description" placeholder="About Teacher"></textarea>
 
-
-<h3>Gallery Photos (Max 5)</h3>
-
-<input
-type="file"
-id="gallery"
-multiple
-accept="image/*">
-
-<div
-class="preview"
-id="galleryPreview"></div>
-
-
-<textarea
-id="description"
-placeholder="About Teacher"></textarea>
-
-
-<button type="submit">
-
-Continue To Payment
-
-</button>
+<button type="submit">Continue To Payment</button>
 
 </form>
 
 </div>
 
-
 <script type="module">
 
-import {
-initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-import {
-getDatabase,
-ref,
-push
-}
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-
-const firebaseConfig={
-
-apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-authDomain:"gurulink-59cc7.firebaseapp.com",
-databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"gurulink-59cc7",
-storageBucket:"gurulink-59cc7.appspot.com",
-messagingSenderId:"112148672399",
-appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
+const firebaseConfig = {
+apiKey: "AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain: "gurulink-59cc7.firebaseapp.com",
+databaseURL: "https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId: "gurulink-59cc7",
+storageBucket: "gurulink-59cc7.appspot.com",
+messagingSenderId: "112148672399",
+appId: "1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
-const app=initializeApp(firebaseConfig);
-const db=getDatabase(app);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
+const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
 
-
-/* GET ELEMENTS */
-
-const form=document.getElementById("form");
-
-const subject=document.getElementById("subject");
-const otherSubject=document.getElementById("otherSubject");
-
-const photo=document.getElementById("photo");
-const photoPreview=document.getElementById("photoPreview");
-
-const gallery=document.getElementById("gallery");
-const galleryPreview=document.getElementById("galleryPreview");
-
-
-/* IMAGE UPLOAD */
-
+/* upload image */
 async function upload(file){
+let fd = new FormData();
+fd.append("image", file);
 
-let fd=new FormData();
-
-fd.append("image",file);
-
-let res=await fetch(
-`https://api.imgbb.com/1/upload?key=${API_KEY}`,
-{
+let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`, {
 method:"POST",
-body:fd
-}
-);
-
-let data=await res.json();
-
-return data.data.url;
-
-}
-
-
-/* SUBJECT */
-
-subject.addEventListener(
-"change",
-()=>{
-
-otherSubject.style.display=
-subject.value==="other"
-?
-"block"
-:
-"none";
-
-}
-);
-
-
-/* PROFILE PREVIEW */
-
-photo.addEventListener(
-"change",
-function(){
-
-photoPreview.innerHTML="";
-
-if(this.files.length>0){
-
-let img=document.createElement("img");
-
-img.src=
-URL.createObjectURL(
-this.files[0]
-);
-
-photoPreview.appendChild(img);
-
-}
-
-}
-);
-
-
-/* GALLERY PREVIEW */
-
-gallery.addEventListener(
-"change",
-function(){
-
-galleryPreview.innerHTML="";
-
-if(this.files.length>5){
-
-alert(
-"Maximum 5 photos"
-);
-
-this.value="";
-
-return;
-
-}
-
-Array.from(this.files)
-.forEach(file=>{
-
-let img=
-document.createElement("img");
-
-img.src=
-URL.createObjectURL(file);
-
-galleryPreview.appendChild(img);
-
+body: fd
 });
 
+let data = await res.json();
+return data.data.url;
 }
-);
 
+/* toggle fee */
+function toggleFee(id){
+const box = document.getElementById(id);
+box.style.display = box.style.display === "block" ? "none" : "block";
+}
+window.toggleFee = toggleFee;
 
-/* SUBMIT */
+/* subject toggle */
+document.getElementById("subject").addEventListener("change", function(){
+document.getElementById("otherSubject").style.display =
+this.value === "other" ? "block" : "none";
+});
 
-form.addEventListener(
-"submit",
-async function(e){
+/* preview */
+document.getElementById("photo").addEventListener("change", function(){
+photoPreview.innerHTML = "";
+if(this.files[0]){
+let img = document.createElement("img");
+img.src = URL.createObjectURL(this.files[0]);
+photoPreview.appendChild(img);
+}
+});
 
+document.getElementById("gallery").addEventListener("change", function(){
+galleryPreview.innerHTML = "";
+Array.from(this.files).forEach(file=>{
+let img = document.createElement("img");
+img.src = URL.createObjectURL(file);
+galleryPreview.appendChild(img);
+});
+});
+
+/* submit */
+document.getElementById("form").addEventListener("submit", async function(e){
 e.preventDefault();
 
-try{
+let profileUrl = "";
+if(photo.files[0]) profileUrl = await upload(photo.files[0]);
 
-let profileUrl="";
-
-if(photo.files[0]){
-
-profileUrl=
-await upload(
-photo.files[0]
-);
-
-}
-
-
-/* GALLERY */
-
-let galleryUrls=[];
-
+let galleryUrls = [];
 for(let file of gallery.files){
-
-let url=
-await upload(file);
-
-galleryUrls.push(url);
-
+galleryUrls.push(await upload(file));
 }
 
+let modes = [];
+document.querySelectorAll('input[type="checkbox"]:checked')
+.forEach(c => modes.push(c.value));
 
-/* TEACHING MODES */
-
-let teachingModes=[];
-
-document
-.querySelectorAll(
-'input[type="checkbox"]:checked'
-)
-.forEach(item=>{
-
-teachingModes.push(
-item.value
-);
-
+let newRef = await push(ref(db,"teachers"),{
+name: name.value,
+phone: phone.value,
+email: email.value,
+website: website.value,
+qualification: qualification.value,
+experience: experience.value,
+subject: subject.value === "other" ? otherSubject.value : subject.value,
+class: class.value,
+location: location.value,
+modes,
+homeFee: homeFee.value,
+groupFee: groupFee.value,
+onlineIndividualFee: onlineIndividualFee.value,
+onlineGroupFee: onlineGroupFee.value,
+photo: profileUrl,
+gallery: galleryUrls,
+description: description.value,
+category: "academic",
+status: "pending"
 });
 
-
-/* SAVE FIREBASE */
-
-let newRef = await push(
-ref(db,"teachers"),
-{
-    name: document.getElementById("name").value,
-    phone: document.getElementById("phone").value,
-    email: document.getElementById("email").value,
-    website: document.getElementById("website").value,
-    qualification: document.getElementById("qualification").value,
-    experience: document.getElementById("experience").value,
-
-    subject: subject.value === "other"
-        ? otherSubject.value
-        : subject.value,
-
-    class: document.getElementById("class").value,
-    location: document.getElementById("location").value,
-
-    teachingModes: teachingModes,
-
-    homeFee: document.getElementById("homeFee").value,
-    groupFee: document.getElementById("groupFee").value,
-    onlineIndividualFee: document.getElementById("onlineIndividualFee").value,
-    onlineGroupFee: document.getElementById("onlineGroupFee").value,
-
-    photo: profileUrl,
-    gallery: galleryUrls,
-
-    description: document.getElementById("description").value,
-
-    category: "academic",
-    status: "pending"
-}
-);
-
-
-alert(
-"Form saved successfully"
-);
-
-
-/* OPEN PAYMENT PAGE */
-
-const teacherId = newRef.key;
-
-localStorage.setItem("teacherId", teacherId);
-
+/* IMPORTANT FIX (THIS SOLVES NOT FOUND ISSUE) */
 window.location.href =
-"payment.html?type=teacher";
+"payment.html?type=teacher&id=" + newRef.key;
 
-}
-catch(error){
-
-console.log(error);
-
-alert(
-"Error:\n"+
-error.message
-);
-
-}
-
-}
-);
-
-
-</script>
-
-
-<script>
-
-function toggleFee(id){
-
-let box=
-document.getElementById(id);
-
-box.style.display=
-box.style.display==="block"
-?
-"none"
-:
-"block";
-
-}
+});
 
 </script>
 
