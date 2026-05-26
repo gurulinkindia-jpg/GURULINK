@@ -464,27 +464,21 @@ p.amount||0
 );
 
 html+=`
-
 <div class="card">
 
-<p><b>Type:</b>
-${p.type||"-"}
-</p>
+<p><b>Name:</b> ${p.name || "Unknown"}</p>
 
-<p><b>Amount:</b>
-₹${p.amount||0}
-</p>
+<p><b>Type:</b> ${p.type||"-"}</p>
+<p><b>Amount:</b> ₹${p.amount||0}</p>
+<p><b>Status:</b> ${p.status||"-"}</p>
+<p><b>Date:</b> ${p.date||"-"}</p>
 
-<p><b>Status:</b>
-${p.status||"-"}
-</p>
-
-<p><b>Date:</b>
-${p.date||"-"}
-</p>
+<button class="delete"
+onclick="deletePayment('${c.key}')">
+Delete Payment
+</button>
 
 </div>
-
 `;
 
 });
