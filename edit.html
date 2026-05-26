@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
+
+<title>Edit Record</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#eef2f7;
+margin:0;
+padding:20px;
+}
+
+.container{
+
+max-width:700px;
+margin:auto;
+
+background:white;
+
+padding:25px;
+
+border-radius:15px;
+
+box-shadow:
+0 5px 15px rgba(0,0,0,.15);
+
+}
+
+h2{
+
+text-align:center;
+margin-bottom:20px;
+
+}
+
+input,textarea{
+
+width:100%;
+padding:12px;
+
+margin:10px 0;
+
+border:1px solid #ccc;
+
+border-radius:8px;
+
+box-sizing:border-box;
+
+}
+
+textarea{
+
+height:120px;
+
+resize:none;
+
+}
+
+button{
+
+width:100%;
+
+padding:14px;
+
+background:#0d47a1;
+
+color:white;
+
+border:none;
+
+border-radius:10px;
+
+font-size:16px;
+
+cursor:pointer;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Edit Record</h2>
+
+<input id="name" placeholder="Name">
+
+<input id="phone" placeholder="Phone">
+
+<input id="email" placeholder="Email">
+
+<input id="website" placeholder="Website">
+
+<input id="qualification" placeholder="Qualification">
+
+<input id="experience" placeholder="Experience">
+
+<input id="subject" placeholder="Subject">
+
+<input id="classField" placeholder="Class">
+
+<input id="location" placeholder="Location">
+
+<input id="homeFee" placeholder="Home Fee">
+
+<input id="groupFee" placeholder="Group Fee">
+
+<input id="onlineFee" placeholder="Online Fee">
+
+<textarea
+id="description"
+placeholder="Description">
+</textarea>
+
+<button onclick="saveData()">
+
+Save Changes
+
+</button>
+
+</div>
+
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+
+getDatabase,
+ref,
+get,
+update
+
+}
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+
+const firebaseConfig={
+
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+
+authDomain:"gurulink-59cc7.firebaseapp.com",
+
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:"gurulink-59cc7",
+
+storageBucket:"gurulink-59cc7.appspot.com",
+
+messagingSenderId:"112148672399",
+
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
+};
+
+const app=
+initializeApp(firebaseConfig);
+
+const db=
+getDatabase(app);
+
+
+const params=
+new URLSearchParams(
+window.location.search
+);
+
+const type=
+params.get("type");
+
+const id=
+params.get("id");
+
+
+const snap=
+await get(
+ref(db,`${type}/${id}`)
+);
+
+const d=
+snap.val();
+
+
+name.value=
+d.name||"";
+
+phone.value=
+d.phone||"";
+
+email.value=
+d.email||"";
+
+website.value=
+d.website||"";
+
+qualification.value=
+d.qualification||"";
+
+experience.value=
+d.experience||"";
+
+subject.value=
+d.subject||
+d.skill||
+d.creative||
+"";
+
+classField.value=
+d.class||"";
+
+location.value=
+d.location||
+d.area||
+"";
+
+homeFee.value=
+d.homeFee||
+d.fees?.home||
+"";
+
+groupFee.value=
+d.groupFee||
+d.fees?.group||
+"";
+
+onlineFee.value=
+d.onlineFee||
+d.fees?.online||
+"";
+
+description.value=
+d.description||
+"";
+
+
+
+window.saveData=
+async()=>{
+
+await update(
+ref(db,`${type}/${id}`),
+{
+
+name:name.value,
+
+phone:phone.value,
+
+email:email.value,
+
+website:website.value,
+
+qualification:qualification.value,
+
+experience:experience.value,
+
+subject:subject.value,
+
+class:classField.value,
+
+location:location.value,
+
+description:description.value,
+
+homeFee:homeFee.value,
+
+groupFee:groupFee.value,
+
+onlineFee:onlineFee.value
+
+}
+
+);
+
+alert(
+"Updated Successfully"
+);
+
+window.location.href=
+"admin.html";
+
+}
+
+</script>
+
+</body>
+</html>
