@@ -91,11 +91,9 @@ const path = type === "teacher"
 const snap = await get(ref(db, path));
 
 if (snap.exists()) {
-  user = snap.val();
+user = snap.val();
 } else {
-  console.log("NO USER FOUND IN DB:", path);
-  alert("User not found in database!");
-  throw new Error("User not found");
+console.log("NO USER FOUND IN DB:", path);
 }
 
 } else {
@@ -107,25 +105,24 @@ console.log("ID IS MISSING IN URL");
 /* SAVE PAYMENT */
 await push(ref(db, "payments"), {
 
-type,
-id,
+  type,
+  id,
 
-// ✅ IMPORTANT FIX
-name: (user && user.name) ? user.name : "NOT FOUND"
-email: user?.email || "-",
-phone: user?.phone || "-",
-class: user?.class || "-",
-website: user?.website || "-",
-address: user?.address || "-",
+  name: (user && user.name) ? user.name : "NOT FOUND",
+  email: user?.email || "-",
+  phone: user?.phone || "-",
+  class: user?.class || "-",
+  website: user?.website || "-",
+  address: user?.address || "-",
 
-homeFee: user?.homeFee || "",
-groupFee: user?.groupFee || "",
-onlineFee: user?.onlineIndividualFee || "",
+  homeFee: user?.homeFee || "",
+  groupFee: user?.groupFee || "",
+  onlineFee: user?.onlineIndividualFee || "",
 
-amount,
-status: "paid",
-date: new Date().toLocaleString(),
-createdAt: Date.now()
+  amount,
+  status: "paid",
+  date: new Date().toLocaleString(),
+  createdAt: Date.now()
 
 });
 
