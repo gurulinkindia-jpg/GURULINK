@@ -582,7 +582,8 @@ alert(
 /* OPEN PAYMENT PAGE */
 
 window.location.href =
-"payment.html?type=teacher&category=academic&name=" +
+"payment.html?type=teacher&id=" + newRef.key +
+"&category=academic&name=" +
 encodeURIComponent(document.getElementById("name").value) +
 "&email=" +
 encodeURIComponent(document.getElementById("email").value) +
