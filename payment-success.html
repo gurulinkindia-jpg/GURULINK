@@ -67,11 +67,15 @@ const db = getDatabase(app);
 const params = new URLSearchParams(window.location.search);
 
 const type = params.get("type") || "teacher";
-const id = sessionStorage.getItem("teacherId");
+const id = localStorage.getItem("teacherId");
+
 
 console.log("TYPE:", type);
 console.log("FINAL ID:", id);
-
+if (!id) {
+  alert("Teacher ID missing! Payment cannot be saved.");
+  throw new Error("Missing teacher ID");
+}
 
 /* AMOUNT */
 const amount = type === "institution" ? 2 : 1;
