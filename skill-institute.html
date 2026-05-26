@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Skill Institution Registration</title>
+<title>Academic Institution Registration</title>
 
 <style>
 
@@ -104,7 +104,7 @@ margin-bottom:10px;
 
 <header>
 
-<h1>Skill Institution Registration</h1>
+<h1>Academic Institution Registration</h1>
 <p>Registration Fee ₹200</p>
 
 </header>
@@ -141,23 +141,18 @@ id="area"
 placeholder="Preferred Service Area">
 
 
-
-<select id="skill">
+<select id="subject">
 
 <option value="">
-Select Skill Category
+Select Subject
 </option>
 
-<option>Computer Institute</option>
-<option>Coding</option>
-<option>Spoken English</option>
-<option>Digital Marketing</option>
-<option>Hand Craft</option>
-<option>Embroidery</option>
-<option>Cake Making</option>
-<option>Tailoring</option>
-<option>Graphic Design</option>
-<option>Video Editing</option>
+<option>Physics</option>
+<option>Chemistry</option>
+<option>Mathematics</option>
+<option>Biology</option>
+<option>JEE</option>
+<option>NEET</option>
 
 <option value="other">
 Other
@@ -167,8 +162,8 @@ Other
 
 
 <input
-id="otherSkill"
-placeholder="Write Skill Category"
+id="otherSubject"
+placeholder="Write Subject"
 style="display:none">
 
 
@@ -197,7 +192,6 @@ placeholder="Enter Offline Fee">
 </div>
 
 
-
 <div class="row">
 
 <input
@@ -217,7 +211,6 @@ id="onlineFee"
 placeholder="Enter Online Fee">
 
 </div>
-
 
 
 <div class="row">
@@ -243,7 +236,6 @@ placeholder="Enter Hybrid Fee">
 </div>
 
 
-
 <h3>Institution Logo</h3>
 
 <input
@@ -254,7 +246,6 @@ accept="image/*">
 <div
 id="logoPreview"
 class="preview"></div>
-
 
 
 <h3>Gallery Photos (Max 5)</h3>
@@ -322,16 +313,13 @@ const API_KEY=
 "31f729ff855eb2e42c00ee508a8647ea";
 
 
-/* ELEMENTS */
+const form=document.getElementById("form");
 
-const form=
-document.getElementById("form");
+const subject=
+document.getElementById("subject");
 
-const skill=
-document.getElementById("skill");
-
-const otherSkill=
-document.getElementById("otherSkill");
+const otherSubject=
+document.getElementById("otherSubject");
 
 const logo=
 document.getElementById("logo");
@@ -346,16 +334,11 @@ const galleryPreview=
 document.getElementById("galleryPreview");
 
 
-/* IMAGE UPLOAD */
-
 async function upload(file){
 
 let fd=new FormData();
 
-fd.append(
-"image",
-file
-);
+fd.append("image",file);
 
 let res=await fetch(
 `https://api.imgbb.com/1/upload?key=${API_KEY}`,
@@ -372,14 +355,12 @@ return data.data.url;
 }
 
 
-/* SKILL OTHER */
-
-skill.addEventListener(
+subject.addEventListener(
 "change",
 ()=>{
 
-otherSkill.style.display=
-skill.value==="other"
+otherSubject.style.display=
+subject.value==="other"
 ?
 "block"
 :
@@ -388,8 +369,6 @@ skill.value==="other"
 }
 );
 
-
-/* LOGO PREVIEW */
 
 logo.addEventListener(
 "change",
@@ -411,8 +390,6 @@ logoPreview.appendChild(img);
 }
 );
 
-
-/* GALLERY PREVIEW */
 
 gallery.addEventListener(
 "change",
@@ -446,8 +423,6 @@ galleryPreview.appendChild(img);
 );
 
 
-/* SUBMIT */
-
 form.addEventListener(
 "submit",
 async(e)=>{
@@ -455,8 +430,6 @@ async(e)=>{
 e.preventDefault();
 
 try{
-
-/* LOGO */
 
 let logoUrl="";
 
@@ -469,9 +442,6 @@ logo.files[0]
 
 }
 
-
-/* GALLERY */
-
 let galleryUrls=[];
 
 for(let file of gallery.files){
@@ -482,8 +452,6 @@ await upload(file)
 
 }
 
-
-/* MODES */
 
 let teachingModes=[];
 
@@ -500,62 +468,45 @@ c.value
 });
 
 
-/* SAVE FIREBASE */
-
 let newRef=
 await push(
-ref(
-db,
-"institutions"
-),
+ref(db,"institutions"),
 {
 
-name:
-document.getElementById("name").value,
+name:document.getElementById("name").value,
 
-phone:
-document.getElementById("phone").value,
+phone:document.getElementById("phone").value,
 
-email:
-document.getElementById("email").value,
+email:document.getElementById("email").value,
 
-website:
-document.getElementById("website").value,
+website:document.getElementById("website").value,
 
-address:
-document.getElementById("address").value,
+address:document.getElementById("address").value,
 
-area:
-document.getElementById("area").value,
+area:document.getElementById("area").value,
 
-skill:
-skill.value==="other"
+subject:
+subject.value==="other"
 ?
-otherSkill.value
+otherSubject.value
 :
-skill.value,
+subject.value,
 
 teachingModes,
 
-offlineFee:
-document.getElementById("offlineFee").value || "",
+offlineFee:document.getElementById("offlineFee").value||"",
 
-onlineFee:
-document.getElementById("onlineFee").value || "",
+onlineFee:document.getElementById("onlineFee").value||"",
 
-hybridFee:
-document.getElementById("hybridFee").value || "",
+hybridFee:document.getElementById("hybridFee").value||"",
 
-logo:
-logoUrl,
+logo:logoUrl,
 
-gallery:
-galleryUrls,
+gallery:galleryUrls,
 
-description:
-document.getElementById("description").value,
+description:document.getElementById("description").value,
 
-category:"skill",
+category:"academic",
 
 status:"pending"
 
@@ -563,19 +514,12 @@ status:"pending"
 
 );
 
-
-/* SAVE ID */
-
-const institutionId=
-newRef.key;
+const institutionId=newRef.key;
 
 localStorage.setItem(
 "institutionId",
 institutionId
 );
-
-
-/* REDIRECT PAYMENT */
 
 window.location.href=
 "payment.html?type=institution&id="+institutionId;
