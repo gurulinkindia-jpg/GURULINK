@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Payment Success</title>
+</head>
+<body>
+
+<h2>Payment Processing...</h2>
+
+<script type="module">
+
+import {
+initializeApp
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+push
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+
+const firebaseConfig={
+
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
+};
+
+const app=initializeApp(firebaseConfig);
+const db=getDatabase(app);
+
+
+const params=
+new URLSearchParams(
+window.location.search
+);
+
+const type=
+params.get("type") || "teacher";
+
+
+const amount=
+type==="institution"
+?
+2
+:
+1;
+
+
+await push(
+ref(db,"payments"),
+{
+
+type:type,
+amount:amount,
+status:"paid",
+date:new Date().toLocaleString(),
+createdAt:Date.now()
+
+});
+
+
+alert(
+"Payment successful"
+);
+
+window.location.href=
+"admin.html";
+
+</script>
+
+</body>
+</html>
