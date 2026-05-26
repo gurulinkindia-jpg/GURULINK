@@ -16,30 +16,32 @@ font-family:Arial,sans-serif;
 
 body{
 min-height:100vh;
-background:linear-gradient(
+background:
+linear-gradient(
 135deg,
-#dff1ff,
-#f4f9ff,
+#dcefff,
+#eef7ff,
 #ffffff
 );
+padding-bottom:50px;
 }
 
 header{
 padding:35px;
 text-align:center;
 background:rgba(255,255,255,.35);
-backdrop-filter:blur(20px);
+backdrop-filter:blur(25px);
 border-bottom:1px solid rgba(255,255,255,.5);
-color:#1565c0;
 }
 
 header h1{
-font-size:35px;
-margin-bottom:10px;
+font-size:38px;
+color:#1976d2;
 }
 
 header p{
-opacity:.8;
+margin-top:8px;
+color:#555;
 }
 
 .container{
@@ -61,27 +63,17 @@ gap:15px;
 padding:20px;
 
 background:
-rgba(
-255,
-255,
-255,
-0.4
-);
+rgba(255,255,255,.4);
 
 backdrop-filter:
-blur(20px);
+blur(25px);
 
 border-radius:25px;
 
 margin-bottom:30px;
 
 box-shadow:
-0 10px 30px rgba(
-0,
-0,
-0,
-0.05
-);
+0 10px 30px rgba(0,0,0,.05);
 
 }
 
@@ -96,9 +88,8 @@ outline:none;
 
 border-radius:15px;
 
-background:white;
-
-font-size:14px;
+background:
+rgba(255,255,255,.8);
 
 }
 
@@ -129,35 +120,20 @@ gap:25px;
 .card{
 
 background:
-rgba(
-255,
-255,
-255,
-0.4
-);
+rgba(255,255,255,.35);
 
 backdrop-filter:
-blur(20px);
+blur(25px);
 
 border-radius:25px;
 
 padding:20px;
 
 border:
-1px solid rgba(
-255,
-255,
-255,
-0.5
-);
+1px solid rgba(255,255,255,.5);
 
 box-shadow:
-0 10px 30px rgba(
-0,
-0,
-0,
-0.05
-);
+0 10px 30px rgba(0,0,0,.06);
 
 transition:.4s;
 
@@ -182,11 +158,8 @@ align-items:center;
 
 width:90px;
 height:90px;
-
 border-radius:50%;
-
 object-fit:cover;
-
 border:4px solid white;
 
 }
@@ -200,18 +173,12 @@ margin-top:8px;
 .badge{
 
 display:inline-block;
-
 padding:6px 12px;
-
 margin:3px;
-
 font-size:12px;
-
 border-radius:20px;
-
 background:white;
-
-color:#1565c0;
+color:#1976d2;
 
 }
 
@@ -226,8 +193,17 @@ color:white;
 
 margin-top:15px;
 line-height:1.8;
-font-size:14px;
 color:#444;
+
+}
+
+.mode{
+
+margin-top:15px;
+padding:12px;
+border-radius:15px;
+background:
+rgba(255,255,255,.45);
 
 }
 
@@ -244,39 +220,16 @@ margin-top:15px;
 
 width:70px;
 height:70px;
-
 border-radius:10px;
-
 object-fit:cover;
-
-}
-
-.mode{
-
-margin-top:10px;
-
-padding:10px;
-
-border-radius:15px;
-
-background:
-rgba(
-255,
-255,
-255,
-0.5
-);
 
 }
 
 .empty{
 
 padding:30px;
-
-border-radius:20px;
-
 text-align:center;
-
+border-radius:20px;
 background:white;
 
 }
@@ -293,6 +246,7 @@ background:white;
 <p>Find Teachers & Institutions</p>
 
 </header>
+
 
 <div class="container">
 
@@ -325,6 +279,7 @@ Skill
 <div id="dynamicFilters"></div>
 
 </div>
+
 
 <div
 id="grid"
@@ -371,9 +326,6 @@ getDatabase(app);
 
 let all=[];
 
-
-/* DYNAMIC FILTERS */
-
 const category=
 document.getElementById(
 "category"
@@ -389,9 +341,6 @@ category.addEventListener(
 "change",
 showFilters
 );
-
-
-showFilters();
 
 
 function showFilters(){
@@ -412,11 +361,8 @@ All Classes
 <option>Class 6-8</option>
 <option>Class 9-10</option>
 <option>Class 11-12</option>
-<option>JEE</option>
-<option>NEET</option>
 
 </select>
-
 
 <select id="subjectFilter">
 
@@ -428,21 +374,6 @@ All Subjects
 <option>Physics</option>
 <option>Chemistry</option>
 <option>Biology</option>
-<option>English</option>
-
-</select>
-
-
-<select id="modeFilter">
-
-<option value="">
-Teaching Mode
-</option>
-
-<option>Home Tuition</option>
-<option>Group Tuition</option>
-<option>Online Individual</option>
-<option>Online Group</option>
 
 </select>
 
@@ -450,8 +381,7 @@ Teaching Mode
 
 }
 
-
-if(category.value==="creative"){
+else if(category.value==="creative"){
 
 html=`
 
@@ -464,20 +394,6 @@ Creative Subject
 <option>Music</option>
 <option>Dance</option>
 <option>Drawing</option>
-<option>Singing</option>
-
-</select>
-
-
-<select id="modeFilter">
-
-<option value="">
-Teaching Mode
-</option>
-
-<option>Offline</option>
-<option>Online</option>
-<option>Hybrid</option>
 
 </select>
 
@@ -485,8 +401,7 @@ Teaching Mode
 
 }
 
-
-if(category.value==="skill"){
+else if(category.value==="skill"){
 
 html=`
 
@@ -499,20 +414,6 @@ Skill Subject
 <option>Computer</option>
 <option>Embroidery</option>
 <option>Cake Making</option>
-<option>Hand Craft</option>
-
-</select>
-
-
-<select id="modeFilter">
-
-<option value="">
-Teaching Mode
-</option>
-
-<option>Offline</option>
-<option>Online</option>
-<option>Hybrid</option>
 
 </select>
 
@@ -520,27 +421,22 @@ Teaching Mode
 
 }
 
-dynamic.innerHTML=
-html;
+dynamic.innerHTML=html;
 
-
-document
-.querySelectorAll(
-"#dynamicFilters select"
+document.querySelectorAll(
+"select,input"
 )
 .forEach(el=>{
 
-el.addEventListener(
-"change",
-render
-);
+el.oninput=render;
+el.onchange=render;
 
 });
 
 }
 
+showFilters();
 
-/* LOAD TEACHERS */
 
 onValue(
 ref(db,"teachers"),
@@ -552,45 +448,30 @@ snap.forEach(c=>{
 
 let d=c.val();
 
-if(
-d.status==="approved"
-){
+if(d.status==="approved"){
 
 all.push({
-
 ...d,
 type:"Teacher"
-
 });
 
 }
 
 });
 
-loadInstitutions();
-
-});
-
-
-function loadInstitutions(){
-
 onValue(
 ref(db,"institutions"),
-snap=>{
+s=>{
 
-snap.forEach(c=>{
+s.forEach(c=>{
 
 let d=c.val();
 
-if(
-d.status==="approved"
-){
+if(d.status==="approved"){
 
 all.push({
-
 ...d,
 type:"Institution"
-
 });
 
 }
@@ -601,84 +482,61 @@ render();
 
 });
 
-}
-
+});
 
 
 function render(){
 
 let search=
-document
-.getElementById(
+document.getElementById(
 "search"
-)
-.value
-.toLowerCase();
+).value.toLowerCase();
 
 let cat=
 category.value;
 
-let classFilter=
-document.getElementById(
-"classFilter"
-)?.value || "";
-
 let subjectFilter=
 document.getElementById(
 "subjectFilter"
-)?.value || "";
+)?.value||"";
 
-let modeFilter=
+let classFilter=
 document.getElementById(
-"modeFilter"
-)?.value || "";
+"classFilter"
+)?.value||"";
 
 
 let filtered=
 all.filter(x=>{
 
-
-if(
-cat &&
-x.category!==cat
-)
+if(cat&&x.category!==cat)
 return false;
-
 
 if(
 search &&
 !(
-x.name?.toLowerCase()
+(x.name||"")
+.toLowerCase()
 .includes(search)
-
 ||
-
-x.location?.toLowerCase()
+(x.location||"")
+.toLowerCase()
 .includes(search)
-
 ||
-
-x.address?.toLowerCase()
+(x.address||"")
+.toLowerCase()
 .includes(search)
 )
-)
-return false;
-
-
-if(
-classFilter &&
-x.class!==classFilter
 )
 return false;
 
 
 let subject=
 
-x.subject ||
-x.skillType ||
-x.creativeType ||
+x.subject||
+x.skillType||
+x.creativeType||
 "";
-
 
 if(
 subjectFilter &&
@@ -686,79 +544,39 @@ subject!==subjectFilter
 )
 return false;
 
-
-let modes=
-x.teachingModes ||
-[];
-
-
 if(
-modeFilter &&
-!modes.includes(
-modeFilter
-)
+classFilter &&
+x.class!==classFilter
 )
 return false;
-
 
 return true;
 
 });
 
 
-let html="";
-
-
 if(filtered.length===0){
 
 grid.innerHTML=
-
-`
-<div class="empty">
-
-No results found
-
-</div>
-`;
+`<div class="empty">
+No Results Found
+</div>`;
 
 return;
 
 }
 
 
+let html="";
 
 filtered.forEach(x=>{
 
-let gallery="";
+let subject=
 
-if(
-Array.isArray(
-x.gallery
-)
-){
-
-x.gallery.forEach(img=>{
-
-gallery+=
-`<img src="${img}">`;
-
-});
-
-}
-
-
-let modeHTML="";
-
-(
-x.teachingModes||
-[]
-).forEach(m=>{
-
-modeHTML+=
-`✓ ${m}<br>`;
-
-});
-
+x.subject||
+x.skillType||
+x.creativeType||
+"-";
 
 html+=`
 
@@ -777,29 +595,21 @@ x.logo||
 <div>
 
 <h2>
-
 ${x.name||"-"}
-
 </h2>
 
 <div class="badges">
 
 <span class="badge">
-
 ${x.type}
-
 </span>
 
 <span class="badge">
-
 ${x.category}
-
 </span>
 
 <span class="badge verify">
-
 Verified
-
 </span>
 
 </div>
@@ -812,8 +622,7 @@ Verified
 <div class="details">
 
 <b>Subject:</b>
-${subject||"-"}
-
+${subject}
 <br>
 
 <b>Location:</b>
@@ -824,29 +633,6 @@ ${x.location||x.address||"-"}
 <b>Phone:</b>
 ${x.phone||"-"}
 
-<br>
-
-<b>Experience:</b>
-${x.experience||"-"}
-
-</div>
-
-
-<div class="mode">
-
-<b>Teaching Modes</b>
-
-<br><br>
-
-${modeHTML||"-"}
-
-</div>
-
-
-<div class="gallery">
-
-${gallery}
-
 </div>
 
 </div>
@@ -855,31 +641,9 @@ ${gallery}
 
 });
 
-
-grid.innerHTML=
-html;
+grid.innerHTML=html;
 
 }
-
-
-
-document
-.querySelectorAll(
-"input,select"
-)
-.forEach(el=>{
-
-el.addEventListener(
-"input",
-render
-);
-
-el.addEventListener(
-"change",
-render
-);
-
-});
 
 </script>
 
