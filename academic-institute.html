@@ -114,70 +114,78 @@ border-radius:10px;
 
 
 
-<h3>Modes</h3>
 
 <div class="modeBox">
 
 <div class="row">
-<input type="checkbox"
+
+<input
+type="checkbox"
+value="Offline Classroom"
 onchange="toggleFee('offline')">
 
-Offline Classroom
+<label>Offline Classroom</label>
+
 </div>
 
-<div class="modeFee"
-id="offline">
+<div id="offline"
+class="modeFee">
 
 <input
 id="offlineFee"
-placeholder="Enter Fee">
+placeholder="Enter Offline Fee">
 
 </div>
+
 
 
 <div class="row">
 
 <input
 type="checkbox"
+value="Online"
 onchange="toggleFee('online')">
 
-Online
+<label>Online</label>
+
 </div>
 
-<div class="modeFee"
-id="online">
+<div id="online"
+class="modeFee">
 
 <input
 id="onlineFee"
-placeholder="Enter Fee">
+placeholder="Enter Online Fee">
 
 </div>
+
 
 
 <div class="row">
 
 <input
 type="checkbox"
+value="Hybrid"
 onchange="toggleFee('hybrid')">
 
-Hybrid
+<label>Hybrid</label>
+
 </div>
 
-<div class="modeFee"
-id="hybrid">
+<div id="hybrid"
+class="modeFee">
 
 <input
 id="hybridFee"
-placeholder="Enter Fee">
+placeholder="Enter Hybrid Fee">
 
 </div>
 
 </div>
 
 
-<label>
-<b>Institution Logo</b>
-</label>
+
+<h3>Institution Logo</h3>
 
 <input
 type="file"
@@ -189,9 +197,8 @@ id="logoPreview"
 class="preview"></div>
 
 
-<label>
-<b>Gallery Photos (Max 5)</b>
-</label>
+
+<h3>Gallery Photos (Max 5)</h3>
 
 <input
 type="file"
@@ -207,6 +214,7 @@ class="preview"></div>
 <textarea
 id="description"
 placeholder="About Institution"></textarea>
+
 
 <button type="submit">
 
