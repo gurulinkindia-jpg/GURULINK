@@ -18,67 +18,35 @@ body{
 min-height:100vh;
 background:linear-gradient(
 135deg,
-#d7ecff,
-#edf7ff,
-#f9fbfd
+#dff1ff,
+#f4f9ff,
+#ffffff
 );
-padding-bottom:50px;
 }
 
 header{
-
 padding:35px;
 text-align:center;
-color:#0d47a1;
-
-backdrop-filter:blur(15px);
-
-background:rgba(
-255,
-255,
-255,
-0.4
-);
-
-border-bottom:1px solid rgba(
-255,
-255,
-255,
-0.5
-);
-
-box-shadow:
-0 8px 20px rgba(
-0,
-0,
-0,
-0.05
-);
-
+background:rgba(255,255,255,.35);
+backdrop-filter:blur(20px);
+border-bottom:1px solid rgba(255,255,255,.5);
+color:#1565c0;
 }
 
 header h1{
-
 font-size:35px;
-margin-bottom:8px;
-
+margin-bottom:10px;
 }
 
 header p{
-
-font-size:15px;
 opacity:.8;
-
 }
 
-
 .container{
-
 width:95%;
 max-width:1400px;
 margin:auto;
-padding:20px;
-
+padding:25px;
 }
 
 .filters{
@@ -86,37 +54,29 @@ padding:20px;
 display:grid;
 
 grid-template-columns:
-repeat(
-auto-fit,
-minmax(220px,1fr)
-);
+repeat(auto-fit,minmax(220px,1fr));
 
 gap:15px;
 
 padding:20px;
 
-background:rgba(
-255,
-255,
-255,
-0.45
-);
-
-backdrop-filter:blur(20px);
-
-border-radius:25px;
-
-border:1px solid rgba(
+background:
+rgba(
 255,
 255,
 255,
 0.4
 );
 
+backdrop-filter:
+blur(20px);
+
+border-radius:25px;
+
 margin-bottom:30px;
 
 box-shadow:
-0 10px 25px rgba(
+0 10px 30px rgba(
 0,
 0,
 0,
@@ -136,40 +96,44 @@ outline:none;
 
 border-radius:15px;
 
-background:rgba(
-255,
-255,
-255,
-0.7
-);
+background:white;
 
 font-size:14px;
 
 }
 
+#dynamicFilters{
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+
+gap:15px;
+
+grid-column:1/-1;
+
+}
 
 .grid{
 
 display:grid;
 
 grid-template-columns:
-repeat(
-auto-fit,
-minmax(340px,1fr)
-);
+repeat(auto-fit,minmax(340px,1fr));
 
 gap:25px;
 
 }
 
-
 .card{
 
-background:rgba(
+background:
+rgba(
 255,
 255,
 255,
-0.35
+0.4
 );
 
 backdrop-filter:
@@ -179,7 +143,8 @@ border-radius:25px;
 
 padding:20px;
 
-border:1px solid rgba(
+border:
+1px solid rgba(
 255,
 255,
 255,
@@ -187,11 +152,11 @@ border:1px solid rgba(
 );
 
 box-shadow:
-0 10px 25px rgba(
+0 10px 30px rgba(
 0,
 0,
 0,
-0.06
+0.05
 );
 
 transition:.4s;
@@ -201,7 +166,7 @@ transition:.4s;
 .card:hover{
 
 transform:
-translateY(-7px);
+translateY(-8px);
 
 }
 
@@ -224,14 +189,6 @@ object-fit:cover;
 
 border:4px solid white;
 
-box-shadow:
-0 5px 15px rgba(
-0,
-0,
-0,
-0.1
-);
-
 }
 
 .badges{
@@ -246,21 +203,21 @@ display:inline-block;
 
 padding:6px 12px;
 
-border-radius:20px;
-
 margin:3px;
 
 font-size:12px;
 
+border-radius:20px;
+
 background:white;
 
-color:#0d47a1;
+color:#1565c0;
 
 }
 
 .verify{
 
-background:#1e88e5;
+background:#2196f3;
 color:white;
 
 }
@@ -268,11 +225,8 @@ color:white;
 .details{
 
 margin-top:15px;
-
 line-height:1.8;
-
 font-size:14px;
-
 color:#444;
 
 }
@@ -282,7 +236,6 @@ color:#444;
 display:flex;
 gap:8px;
 overflow:auto;
-
 margin-top:15px;
 
 }
@@ -293,7 +246,26 @@ width:70px;
 height:70px;
 
 border-radius:10px;
+
 object-fit:cover;
+
+}
+
+.mode{
+
+margin-top:10px;
+
+padding:10px;
+
+border-radius:15px;
+
+background:
+rgba(
+255,
+255,
+255,
+0.5
+);
 
 }
 
@@ -301,11 +273,11 @@ object-fit:cover;
 
 padding:30px;
 
+border-radius:20px;
+
 text-align:center;
 
 background:white;
-
-border-radius:20px;
 
 }
 
@@ -318,10 +290,9 @@ border-radius:20px;
 
 <h1>GURULINK</h1>
 
-<p>Find Verified Teachers & Institutions</p>
+<p>Find Teachers & Institutions</p>
 
 </header>
-
 
 <div class="container">
 
@@ -351,8 +322,9 @@ Skill
 
 </select>
 
-</div>
+<div id="dynamicFilters"></div>
 
+</div>
 
 <div
 id="grid"
@@ -382,21 +354,14 @@ from
 const firebaseConfig={
 
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-
 authDomain:"gurulink-59cc7.firebaseapp.com",
-
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-
 projectId:"gurulink-59cc7",
-
 storageBucket:"gurulink-59cc7.appspot.com",
-
 messagingSenderId:"112148672399",
-
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
-
 
 const app=
 initializeApp(firebaseConfig);
@@ -407,23 +372,193 @@ getDatabase(app);
 let all=[];
 
 
-/* TEACHERS */
+/* DYNAMIC FILTERS */
+
+const category=
+document.getElementById(
+"category"
+);
+
+const dynamic=
+document.getElementById(
+"dynamicFilters"
+);
+
+
+category.addEventListener(
+"change",
+showFilters
+);
+
+
+showFilters();
+
+
+function showFilters(){
+
+let html="";
+
+if(category.value==="academic"){
+
+html=`
+
+<select id="classFilter">
+
+<option value="">
+All Classes
+</option>
+
+<option>Class 1-5</option>
+<option>Class 6-8</option>
+<option>Class 9-10</option>
+<option>Class 11-12</option>
+<option>JEE</option>
+<option>NEET</option>
+
+</select>
+
+
+<select id="subjectFilter">
+
+<option value="">
+All Subjects
+</option>
+
+<option>Mathematics</option>
+<option>Physics</option>
+<option>Chemistry</option>
+<option>Biology</option>
+<option>English</option>
+
+</select>
+
+
+<select id="modeFilter">
+
+<option value="">
+Teaching Mode
+</option>
+
+<option>Home Tuition</option>
+<option>Group Tuition</option>
+<option>Online Individual</option>
+<option>Online Group</option>
+
+</select>
+
+`;
+
+}
+
+
+if(category.value==="creative"){
+
+html=`
+
+<select id="subjectFilter">
+
+<option value="">
+Creative Subject
+</option>
+
+<option>Music</option>
+<option>Dance</option>
+<option>Drawing</option>
+<option>Singing</option>
+
+</select>
+
+
+<select id="modeFilter">
+
+<option value="">
+Teaching Mode
+</option>
+
+<option>Offline</option>
+<option>Online</option>
+<option>Hybrid</option>
+
+</select>
+
+`;
+
+}
+
+
+if(category.value==="skill"){
+
+html=`
+
+<select id="subjectFilter">
+
+<option value="">
+Skill Subject
+</option>
+
+<option>Computer</option>
+<option>Embroidery</option>
+<option>Cake Making</option>
+<option>Hand Craft</option>
+
+</select>
+
+
+<select id="modeFilter">
+
+<option value="">
+Teaching Mode
+</option>
+
+<option>Offline</option>
+<option>Online</option>
+<option>Hybrid</option>
+
+</select>
+
+`;
+
+}
+
+dynamic.innerHTML=
+html;
+
+
+document
+.querySelectorAll(
+"#dynamicFilters select"
+)
+.forEach(el=>{
+
+el.addEventListener(
+"change",
+render
+);
+
+});
+
+}
+
+
+/* LOAD TEACHERS */
 
 onValue(
 ref(db,"teachers"),
 snap=>{
 
+all=[];
+
 snap.forEach(c=>{
 
-let data=c.val();
+let d=c.val();
 
 if(
-data.status==="approved"
+d.status==="approved"
 ){
 
 all.push({
 
-...data,
+...d,
 type:"Teacher"
 
 });
@@ -432,12 +567,12 @@ type:"Teacher"
 
 });
 
-render();
+loadInstitutions();
 
 });
 
 
-/* INSTITUTIONS */
+function loadInstitutions(){
 
 onValue(
 ref(db,"institutions"),
@@ -445,15 +580,15 @@ snap=>{
 
 snap.forEach(c=>{
 
-let data=c.val();
+let d=c.val();
 
 if(
-data.status==="approved"
+d.status==="approved"
 ){
 
 all.push({
 
-...data,
+...d,
 type:"Institution"
 
 });
@@ -465,6 +600,8 @@ type:"Institution"
 render();
 
 });
+
+}
 
 
 
@@ -478,12 +615,23 @@ document
 .value
 .toLowerCase();
 
-let category=
-document
-.getElementById(
-"category"
-)
-.value;
+let cat=
+category.value;
+
+let classFilter=
+document.getElementById(
+"classFilter"
+)?.value || "";
+
+let subjectFilter=
+document.getElementById(
+"subjectFilter"
+)?.value || "";
+
+let modeFilter=
+document.getElementById(
+"modeFilter"
+)?.value || "";
 
 
 let filtered=
@@ -491,8 +639,8 @@ all.filter(x=>{
 
 
 if(
-category &&
-x.category!=category
+cat &&
+x.category!==cat
 )
 return false;
 
@@ -517,6 +665,42 @@ x.address?.toLowerCase()
 return false;
 
 
+if(
+classFilter &&
+x.class!==classFilter
+)
+return false;
+
+
+let subject=
+
+x.subject ||
+x.skillType ||
+x.creativeType ||
+"";
+
+
+if(
+subjectFilter &&
+subject!==subjectFilter
+)
+return false;
+
+
+let modes=
+x.teachingModes ||
+[];
+
+
+if(
+modeFilter &&
+!modes.includes(
+modeFilter
+)
+)
+return false;
+
+
 return true;
 
 });
@@ -525,9 +709,7 @@ return true;
 let html="";
 
 
-if(
-filtered.length==0
-){
+if(filtered.length===0){
 
 grid.innerHTML=
 
@@ -547,7 +729,6 @@ return;
 
 filtered.forEach(x=>{
 
-
 let gallery="";
 
 if(
@@ -566,6 +747,19 @@ gallery+=
 }
 
 
+let modeHTML="";
+
+(
+x.teachingModes||
+[]
+).forEach(m=>{
+
+modeHTML+=
+`✓ ${m}<br>`;
+
+});
+
+
 html+=`
 
 <div class="card">
@@ -580,11 +774,12 @@ x.logo||
 'https://via.placeholder.com/100'
 }">
 
-
 <div>
 
 <h2>
+
 ${x.name||"-"}
+
 </h2>
 
 <div class="badges">
@@ -597,13 +792,13 @@ ${x.type}
 
 <span class="badge">
 
-${x.category||"-"}
+${x.category}
 
 </span>
 
 <span class="badge verify">
 
-✓ Verified
+Verified
 
 </span>
 
@@ -617,14 +812,12 @@ ${x.category||"-"}
 <div class="details">
 
 <b>Subject:</b>
-${x.subject||"-"}
+${subject||"-"}
 
 <br>
 
 <b>Location:</b>
-${x.location||
-x.address||
-"-"}
+${x.location||x.address||"-"}
 
 <br>
 
@@ -636,11 +829,16 @@ ${x.phone||"-"}
 <b>Experience:</b>
 ${x.experience||"-"}
 
-<br>
+</div>
 
-<b>Description:</b>
 
-${x.description||"-"}
+<div class="mode">
+
+<b>Teaching Modes</b>
+
+<br><br>
+
+${modeHTML||"-"}
 
 </div>
 
@@ -658,11 +856,8 @@ ${gallery}
 });
 
 
-document
-.getElementById(
-"grid"
-)
-.innerHTML=html;
+grid.innerHTML=
+html;
 
 }
 
