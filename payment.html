@@ -94,9 +94,10 @@ if(type==="teacher"){
 amount=1;
 
 paymentLink =
-"https://rzp.io/rzp/gurulink?redirect=true&redirect_url=https://gurulink.onrender.com/payment-success.html?type=teacher&id=" + id;
-
-}
+"https://rzp.io/rzp/gurulink?redirect=true&redirect_url=" +
+encodeURIComponent(
+"https://gurulink.onrender.com/payment-success.html?type=teacher&id=" + id
+);
 
 
 /* Institution */
@@ -106,9 +107,10 @@ if(type==="institution"){
 amount=2;
 
 paymentLink =
-"https://rzp.io/rzp/gurulink-I?redirect=true&redirect_url=https://gurulink.onrender.com/payment-success.html?type=institution&id=" + id;
-
-}
+"https://rzp.io/rzp/gurulink-I?redirect=true&redirect_url=" +
+encodeURIComponent(
+"https://gurulink.onrender.com/payment-success.html?type=institution&id=" + id
+);
 
 
 document.getElementById(
