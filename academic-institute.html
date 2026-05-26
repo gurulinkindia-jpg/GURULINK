@@ -15,7 +15,7 @@ background:#eef2f7;
 
 header{
 background:#e65100;
-color:white;
+color:#fff;
 padding:18px;
 text-align:center;
 }
@@ -24,7 +24,7 @@ text-align:center;
 width:90%;
 max-width:800px;
 margin:20px auto;
-background:white;
+background:#fff;
 padding:25px;
 border-radius:15px;
 box-shadow:0 5px 15px rgba(0,0,0,.1);
@@ -84,8 +84,7 @@ margin:10px 0;
 }
 
 .row input[type="checkbox"]{
-width:18px;
-height:18px;
+width:auto;
 margin:0;
 }
 
@@ -112,13 +111,19 @@ margin-bottom:10px;
 <form id="form">
 
 <input id="name" placeholder="Institution Name" required>
+
 <input id="phone" placeholder="Contact Number" required>
-<input id="email" placeholder="Email">
+
+<input id="email" type="email" placeholder="Email">
+
 <input id="website" placeholder="Website">
+
 <input id="address" placeholder="Address">
+
 <input id="area" placeholder="Area">
 
 <select id="subject">
+
 <option value="">Select Subject</option>
 <option>Physics</option>
 <option>Chemistry</option>
@@ -127,19 +132,23 @@ margin-bottom:10px;
 <option>JEE</option>
 <option>NEET</option>
 <option value="other">Other</option>
+
 </select>
 
-<input id="otherSubject"
+<input
+id="otherSubject"
 placeholder="Enter Subject"
 style="display:none">
 
 <select id="class">
+
 <option>Class 1-5</option>
 <option>Class 6-8</option>
 <option>Class 9-10</option>
 <option>Class 11-12</option>
 <option>JEE</option>
 <option>NEET</option>
+
 </select>
 
 <h3>Teaching Modes</h3>
@@ -148,8 +157,8 @@ style="display:none">
 
 <div class="row">
 <input type="checkbox"
-value="Offline"
-onclick="toggleFee('offline')">
+value="Offline Classroom"
+onchange="toggleFee(this,'offline')">
 <label>Offline Classroom</label>
 </div>
 
@@ -162,7 +171,7 @@ placeholder="Enter Offline Fee">
 <div class="row">
 <input type="checkbox"
 value="Online"
-onclick="toggleFee('online')">
+onchange="toggleFee(this,'online')">
 <label>Online</label>
 </div>
 
@@ -175,7 +184,7 @@ placeholder="Enter Online Fee">
 <div class="row">
 <input type="checkbox"
 value="Hybrid"
-onclick="toggleFee('hybrid')">
+onchange="toggleFee(this,'hybrid')">
 <label>Hybrid</label>
 </div>
 
@@ -189,17 +198,18 @@ placeholder="Enter Hybrid Fee">
 
 <h3>Institution Logo</h3>
 
-<input type="file"
+<input
+type="file"
 id="logo"
 accept="image/*">
 
-<div id="logoPreview"
-class="preview"></div>
+<div id="logoPreview" class="preview"></div>
 
 
 <h3>Gallery Photos (Max 5)</h3>
 
-<input type="file"
+<input
+type="file"
 id="gallery"
 multiple
 accept="image/*">
@@ -207,8 +217,8 @@ accept="image/*">
 <div id="galleryPreview"
 class="preview"></div>
 
-
-<textarea id="description"
+<textarea
+id="description"
 placeholder="About Institution"></textarea>
 
 <button type="submit">
@@ -220,19 +230,19 @@ Continue To Payment
 </div>
 
 
+
 <script>
 
-function toggleFee(id){
+function toggleFee(check,id){
 
-const box=
-document.getElementById(id);
+let box=document.getElementById(id);
 
 box.style.display=
-box.style.display==="block"
+check.checked
 ?
-"none"
+"block"
 :
-"block";
+"none";
 
 }
 
@@ -265,23 +275,42 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
 
-const app=
-initializeApp(firebaseConfig);
+const app=initializeApp(firebaseConfig);
 
-const db=
-getDatabase(app);
+const db=getDatabase(app);
 
-const API_KEY=
-"31f729ff855eb2e42c00ee508a8647ea";
+const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
 
 const form=document.getElementById("form");
+
+const subject=document.getElementById("subject");
+
+const otherSubject=document.getElementById("otherSubject");
+
 const logo=document.getElementById("logo");
+
 const gallery=document.getElementById("gallery");
+
 const logoPreview=document.getElementById("logoPreview");
+
 const galleryPreview=document.getElementById("galleryPreview");
 
 
+subject.addEventListener("change",()=>{
+
+otherSubject.style.display=
+subject.value==="other"
+?
+"block"
+:
+"none";
+
+});
+
+
 async function upload(file){
+
+try{
 
 let fd=new FormData();
 
@@ -292,21 +321,29 @@ let res=await fetch(
 {
 method:"POST",
 body:fd
-}
-);
+});
 
 let data=await res.json();
 
-return data.data.url;
+return data.success
+?
+data.data.url
+:
+"";
+
+}
+catch{
+
+return "";
+
+}
 
 }
 
 
-/* logo preview */
+/* Logo preview */
 
-logo.addEventListener(
-"change",
-()=>{
+logo.addEventListener("change",()=>{
 
 logoPreview.innerHTML="";
 
@@ -323,15 +360,12 @@ logoPreview.appendChild(img);
 
 }
 
-}
-);
+});
 
 
-/* gallery preview */
+/* Gallery preview */
 
-gallery.addEventListener(
-"change",
-()=>{
+gallery.addEventListener("change",()=>{
 
 galleryPreview.innerHTML="";
 
@@ -357,11 +391,8 @@ galleryPreview.appendChild(img);
 
 });
 
-}
-);
+});
 
-
-/* submit */
 
 form.addEventListener(
 "submit",
@@ -369,67 +400,116 @@ async(e)=>{
 
 e.preventDefault();
 
-try{
-
 const btn=
-document.querySelector("button");
+form.querySelector("button");
 
 btn.disabled=true;
-btn.innerHTML="Submitting...";
 
+btn.innerHTML=
+"Submitting...";
 
-let logoUrl="";
+try{
 
-if(logo.files[0]){
-
-logoUrl=
-await upload(
+let logoUrl=
 logo.files[0]
-);
-
-}
+?
+await upload(logo.files[0])
+:
+"";
 
 let galleryUrls=[];
 
 for(let file of gallery.files){
 
-galleryUrls.push(
-await upload(file)
-);
+let url=
+await upload(file);
+
+if(url){
+
+galleryUrls.push(url);
 
 }
+
+}
+
+let modes=[];
+
+document
+.querySelectorAll(
+'input[type="checkbox"]:checked'
+)
+.forEach(c=>{
+
+modes.push(c.value);
+
+});
+
 
 let newRef=
 await push(
 ref(db,"institutions"),
 {
+
 name:name.value,
 phone:phone.value,
 email:email.value,
 website:website.value,
 address:address.value,
 area:area.value,
-subject:subject.value,
-class:document.getElementById("class").value,
-offlineFee:offlineFee.value,
-onlineFee:onlineFee.value,
-hybridFee:hybridFee.value,
-logo:logoUrl,
-gallery:galleryUrls,
-description:description.value,
+
+subject:
+subject.value==="other"
+?
+otherSubject.value
+:
+subject.value,
+
+class:
+document.getElementById("class").value,
+
+modes:modes,
+
+offlineFee:
+offlineFee.value,
+
+onlineFee:
+onlineFee.value,
+
+hybridFee:
+hybridFee.value,
+
+logo:
+logoUrl,
+
+gallery:
+galleryUrls,
+
+description:
+description.value,
+
+category:"academic",
+
 status:"pending",
-createdAt:Date.now()
-}
-);
+
+createdAt:
+Date.now()
+
+});
 
 window.location.href=
-"payment.html?id="+newRef.key;
+"payment.html?type=institution&id="+newRef.key;
 
 }
 catch(err){
 
 alert(err.message);
+
 console.log(err);
+
+btn.disabled=false;
+
+btn.innerHTML=
+"Continue To Payment";
 
 }
 
