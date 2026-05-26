@@ -326,11 +326,19 @@ ${t.description||"-"}
 ${gallery}
 </div>
 
-<button
+${t.status!="approved"
+?
+`<button
 class="approve"
-onclick="approveTeacher('${c.key}')">
+onclick="approveInst('${c.key}')">
 Approve
-</button>
+</button>`
+:
+`<button
+disabled>
+Approved
+</button>`
+}
 
 <button
 class="edit"
