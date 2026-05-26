@@ -355,14 +355,24 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
 
-
 const app=initializeApp(firebaseConfig);
 const db=getDatabase(app);
 
 const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
 
 
-/* Image Upload */
+/* ELEMENTS */
+
+const teacherForm=document.getElementById("teacherForm");
+const subject=document.getElementById("subject");
+const customSubject=document.getElementById("customSubject");
+const photo=document.getElementById("photo");
+const photoPreview=document.getElementById("photoPreview");
+const gallery=document.getElementById("gallery");
+const galleryPreview=document.getElementById("galleryPreview");
+
+
+/* IMAGE UPLOAD */
 
 async function upload(file){
 
@@ -384,7 +394,7 @@ let data=await res.json();
 
 if(!data.success){
 
-throw new Error("Image upload failed");
+throw new Error("Upload failed");
 
 }
 
@@ -402,7 +412,7 @@ return "";
 }
 
 
-/* Subject */
+/* SUBJECT */
 
 subject.addEventListener(
 "change",
@@ -419,7 +429,7 @@ subject.value==="other"
 );
 
 
-/* Profile Preview */
+/* PROFILE PREVIEW */
 
 photo.addEventListener(
 "change",
@@ -444,7 +454,7 @@ photoPreview.appendChild(img);
 );
 
 
-/* Gallery Preview */
+/* GALLERY PREVIEW */
 
 gallery.addEventListener(
 "change",
@@ -469,7 +479,8 @@ gallery.files
 )
 .forEach(file=>{
 
-let img=document.createElement("img");
+let img=
+document.createElement("img");
 
 img.src=
 URL.createObjectURL(file);
@@ -482,7 +493,7 @@ galleryPreview.appendChild(img);
 );
 
 
-/* Submit Form */
+/* FORM SUBMIT */
 
 teacherForm.addEventListener(
 "submit",
@@ -503,13 +514,13 @@ btn.innerHTML=
 "Submitting...";
 
 
-/* Upload Profile */
+/* PHOTO */
 
-let profileUrl="";
+let photoUrl="";
 
 if(photo.files[0]){
 
-profileUrl=
+photoUrl=
 await upload(
 photo.files[0]
 );
@@ -517,7 +528,7 @@ photo.files[0]
 }
 
 
-/* Upload Gallery */
+/* GALLERY */
 
 let galleryUrls=[];
 
@@ -535,7 +546,7 @@ galleryUrls.push(url);
 }
 
 
-/* Subject Name */
+/* SUBJECT */
 
 let subjectName=
 
@@ -550,95 +561,75 @@ customSubject.value.trim()
 subject.value;
 
 
-/* Teaching Modes */
+/* TEACHING MODES */
 
 let teachingModes=[];
 
-if(document.querySelector(
-'input[onchange="toggleFee(\'homeFeeBox\')"]:checked'
-)){
+document
+.querySelectorAll(
+'input[type="checkbox"]:checked'
+)
+.forEach(c=>{
 
-teachingModes.push(
-"Home Tuition"
-);
+let text=
+c.parentElement.innerText.trim();
 
-}
+teachingModes.push(text);
 
-if(document.querySelector(
-'input[onchange="toggleFee(\'groupFeeBox\')"]:checked'
-)){
-
-teachingModes.push(
-"Group Tuition"
-);
-
-}
-
-if(document.querySelector(
-'input[onchange="toggleFee(\'onlineFeeBox\')"]:checked'
-)){
-
-teachingModes.push(
-"Online Individual"
-);
-
-}
-
-if(document.querySelector(
-'input[onchange="toggleFee(\'onlineGroupFeeBox\')"]:checked'
-)){
-
-teachingModes.push(
-"Online Group"
-);
-}
+});
 
 
-/* Save */
+/* SAVE FIREBASE */
 
+let newRef=
 await push(
 ref(db,"teachers"),
 {
 
-name:name.value.trim(),
+name:
+document.getElementById("name").value.trim(),
 
-phone:phone.value.trim(),
+phone:
+document.getElementById("phone").value.trim(),
 
-email:email.value.trim(),
+email:
+document.getElementById("email").value.trim(),
 
-website:website.value.trim(),
+website:
+document.getElementById("website").value.trim(),
 
 qualification:
-qualification.value.trim(),
+document.getElementById("qualification").value.trim(),
 
 experience:
-experience.value.trim(),
+document.getElementById("experience").value.trim(),
 
-subject:subjectName,
+subject:
+subjectName,
 
 location:
-location.value.trim(),
+document.getElementById("location").value.trim(),
 
 teachingModes:
 teachingModes,
 
 homeFee:
-homeFee.value,
+document.getElementById("homeFee").value || "",
 
 groupFee:
-groupFee.value,
+document.getElementById("groupFee").value || "",
 
 onlineIndividualFee:
-onlineFee.value,
+document.getElementById("onlineFee").value || "",
 
 onlineGroupFee:
-onlineGroupFee.value,
+document.getElementById("onlineGroupFee").value || "",
 
 description:
-description.value.trim(),
+document.getElementById("description").value.trim(),
 
 photo:
-profileUrl,
+photoUrl,
 
 gallery:
 galleryUrls,
@@ -653,18 +644,25 @@ createdAt:
 Date.now()
 
 }
+
 );
 
 
-alert(
-"Registration successful"
+/* SAVE GENERATED ID */
+
+const teacherId=
+newRef.key;
+
+localStorage.setItem(
+"teacherId",
+teacherId
 );
 
 
-/* Payment Redirect */
+/* PAYMENT REDIRECT */
 
 window.location.href=
-"payment.html?type=teacher&category=skill&amount=100";
+"payment.html?type=teacher&id="+teacherId;
 
 
 }
@@ -673,11 +671,11 @@ catch(err){
 console.log(err);
 
 alert(
-"Error: "+err.message
+"Error: "+
+err.message
 );
 
 }
-
 finally{
 
 const btn=
