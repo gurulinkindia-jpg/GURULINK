@@ -56,36 +56,13 @@ font-weight:bold;
 
 .call{background:#25D366}
 .whatsapp{background:#128C7E}
-.website{background:#1976D2}
+.website{background:#1976d2}
 
 .section{
 margin-top:15px;
 padding:10px;
 background:#f9f9ff;
 border-radius:10px;
-}
-
-.reviewBox{
-margin-top:10px;
-border-top:1px solid #ddd;
-padding-top:10px;
-}
-
-input,textarea,select{
-width:100%;
-padding:10px;
-margin:8px 0;
-border-radius:8px;
-border:1px solid #ccc;
-}
-
-button{
-padding:10px 15px;
-background:#1976d2;
-color:white;
-border:none;
-border-radius:8px;
-cursor:pointer;
 }
 
 .reviewItem{
@@ -107,19 +84,11 @@ border-radius:10px;
 object-fit:cover;
 }
 
-.feeBox{
-background:#eef3ff;
+.modeBox{
 padding:10px;
+background:#f5f5ff;
 border-radius:10px;
-margin-top:10px;
-}
-
-iframe{
-width:100%;
-height:250px;
-border:0;
-border-radius:10px;
-margin-top:10px;
+margin-top:8px;
 }
 </style>
 </head>
@@ -177,18 +146,21 @@ loadReviews();
 
 function renderProfile(){
 
+// SUBJECT FIX (both old + new support)
 const subjects =
 Array.isArray(data.subjects)
 ? data.subjects
 : data.subject
-? [data.subject]
+? (typeof data.subject === "string" ? data.subject.split(",") : [])
 : [];
 
-const mapEmbed = (data.mapLink || "").includes("http")
-? `<iframe src="${data.mapLink}" allowfullscreen></iframe>`
-: "";
+// TEACHING MODE FIX (ONLY SHOW IF DATA EXISTS)
+const modes = [];
 
-document.getElementById("profile") = document.getElementById("profile");
+if(data.homeFee) modes.push(`Home Tuition - ₹${data.homeFee}`);
+if(data.groupFee) modes.push(`Group Tuition - ₹${data.groupFee}`);
+if(data.onlineIndividualFee) modes.push(`Online Individual - ₹${data.onlineIndividualFee}`);
+if(data.onlineGroupFee) modes.push(`Online Group - ₹${data.onlineGroupFee}`);
 
 document.getElementById("profile").innerHTML = `
 <div class="header">
@@ -208,42 +180,37 @@ document.getElementById("profile").innerHTML = `
 </div>
 
 <div class="section">
-<p><b>Subjects:</b> ${subjects.join(", ") || "-"}</p>
+<p><b>Subjects:</b> ${subjects.length ? subjects.join(", ") : "-"}</p>
+
 <p><b>Location:</b> ${data.location||"-"}</p>
+
 <p><b>Phone:</b> ${data.phone||"-"}</p>
+
 <p><b>Notes:</b> ${data.description||data.notes||"-"}</p>
 </div>
 
-${data.mapLink ? `
 <div class="section">
 <h3>📍 Google Map</h3>
-<a href="${data.mapLink}" target="_blank">Open Map</a>
-${mapEmbed}
+${data.mapLink ? `
+<iframe 
+src="${data.mapLink.replace('watch?v=','embed/')}"
+width="100%" height="250" style="border:0;border-radius:10px"
+allowfullscreen>
+</iframe>
+` : "-"}
 </div>
-` : ""}
 
 <div class="section">
 <h3>💰 Teaching Modes</h3>
-<div class="feeBox">
-
-${data.homeFee ? `<p>🏠 Home Tuition: ${data.homeFee}</p>` : ""}
-${data.groupFee ? `<p>👥 Group Tuition: ${data.groupFee}</p>` : ""}
-${data.onlineIndividualFee ? `<p>💻 Online Individual: ${data.onlineIndividualFee}</p>` : ""}
-${data.onlineGroupFee ? `<p>🌐 Online Group: ${data.onlineGroupFee}</p>` : ""}
-
-${(!data.homeFee && !data.groupFee && !data.onlineIndividualFee && !data.onlineGroupFee)
-? "<p>No teaching modes available</p>" : ""}
-
-</div>
+${modes.length ? modes.map(m => `<div class="modeBox">${m}</div>`).join("") : "-"}
 </div>
 
 <div class="actions">
 <a class="call" href="tel:${data.phone||""}">📞 Call</a>
-<a class="whatsapp" target="_blank" href="https://wa.me/${data.phone||""}">💬 WhatsApp</a>
+<a class="whatsapp" target="_blank"
+href="https://wa.me/${data.phone||""}">💬 WhatsApp</a>
 
-${data.website
-? `<a class="website" target="_blank" href="${data.website}">🌐 Website</a>`
-: ""}
+${data.website ? `<a class="website" target="_blank" href="${data.website}">🌐 Website</a>` : ""}
 </div>
 
 ${data.gallery && data.gallery.length ? `
@@ -260,7 +227,7 @@ ${data.gallery.map(img => `<img src="${img}">`).join("")}
 <div id="avgRating">Loading...</div>
 </div>
 
-<div class="section reviewBox">
+<div class="section">
 
 <h3>Write Review</h3>
 
@@ -274,16 +241,15 @@ ${data.gallery.map(img => `<img src="${img}">`).join("")}
 <option value="1">⭐</option>
 </select>
 
-<textarea id="rtext" placeholder="Write review"></textarea>
+<textarea id="rtext" placeholder="Write your review"></textarea>
 
 <button onclick="submitReview()">Submit Review</button>
 
-<h3>All Reviews</h3>
+<h3 style="margin-top:15px">All Reviews</h3>
 <div id="reviews"></div>
 
 </div>
 `;
-
 }
 
 window.submitReview = function(){
@@ -321,10 +287,8 @@ html+=`
 `;
 });
 
-const avg = count ? (total/count).toFixed(1) : 0;
-
 document.getElementById("avgRating").innerHTML =
-`⭐ ${avg} / 5 (${count} reviews)`;
+`⭐ ${count ? (total/count).toFixed(1) : 0} / 5 (${count})`;
 
 document.getElementById("reviews").innerHTML =
 html || "No reviews yet";
