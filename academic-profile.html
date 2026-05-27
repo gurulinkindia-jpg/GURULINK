@@ -192,7 +192,11 @@ View Details
 </div>
 
 <div class="details">
-<b>Subject:</b> ${x.subject||"-"}<br>
+<b>Subject:</b> ${
+Array.isArray(x.subjects)
+? x.subjects.join(", ")
+: (x.subjects || "-")
+}<br>
 <b>Class:</b> ${x.class||"-"}<br>
 <b>Mode:</b> ${(x.teachingModes || x.modes || []).join(", ") || "-"}<br>
 <b>Location:</b> ${x.location || x.address || "-"}
