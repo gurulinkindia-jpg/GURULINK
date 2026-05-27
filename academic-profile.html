@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Academic Profile - GURULINK</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:linear-gradient(135deg,#d9efff,#f4f9ff,#fff);padding-bottom:40px}
+
+header{
+padding:30px;text-align:center;
+background:rgba(255,255,255,.4);
+backdrop-filter:blur(20px);
+border-bottom:1px solid rgba(255,255,255,.6);
+}
+
+.container{width:95%;max-width:1300px;margin:auto;padding:20px}
+
+.filters{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;padding:20px;
+background:rgba(255,255,255,.45);
+border-radius:20px;
+margin-bottom:20px;
+}
+
+.filters input,.filters select{
+padding:12px;border:none;border-radius:10px;outline:none
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+gap:20px;
+}
+
+.card{
+background:rgba(255,255,255,.45);
+border-radius:20px;
+padding:15px;
+border:1px solid #ddd;
+position:relative;
+}
+
+.card.institution{border-left:6px solid #e91e63}
+.card.teacher{border-left:6px solid #1976d2}
+
+.top{display:flex;gap:15px}
+.photo{width:70px;height:70px;border-radius:50%;object-fit:cover}
+
+.badge{background:#fff;padding:5px 10px;border-radius:20px;font-size:12px;margin:3px;display:inline-block}
+
+.verify{background:#2196f3;color:#fff}
+
+.stars{color:orange;font-size:13px;margin-top:5px}
+
+.btn{
+margin-top:10px;
+padding:7px 12px;
+border:none;
+background:#1976d2;
+color:#fff;
+border-radius:8px;
+cursor:pointer;
+}
+
+.details{margin-top:10px;font-size:14px;line-height:1.6}
+
+.empty{text-align:center;padding:20px;background:#fff;border-radius:15px}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Academic Profile</h1>
+<p>Find Teachers & Institutes</p>
+</header>
+
+<div class="container">
+
+<div class="filters">
+<input id="search" placeholder="Search name">
+<select id="classFilter">
+<option value="">All Classes</option>
+<option>Class 1-5</option>
+<option>Class 6-8</option>
+<option>Class 9-10</option>
+<option>Class 11-12</option>
+</select>
+</div>
+
+<div id="grid" class="grid"></div>
+
+</div>
+
+<script type="module">
+
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import {getDatabase,ref,onValue} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const app = initializeApp({
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db = getDatabase(app);
+
+let teachers=[],institutes=[];
+
+/* LOAD TEACHERS */
+onValue(ref(db,"teachers"),snap=>{
+teachers=[];
+snap.forEach(c=>{
+teachers.push({
+...c.val(),
+id:c.key,
+type:"Teacher"
+});
+});
+render();
+});
+
+/* LOAD INSTITUTES */
+onValue(ref(db,"institutions"),snap=>{
+institutes=[];
+snap.forEach(c=>{
+institutes.push({
+...c.val(),
+id:c.key,
+type:"Institution"
+});
+});
+render();
+});
+
+function getAll(){ return [...teachers,...institutes]; }
+
+/* VIEW */
+document.addEventListener("click",(e)=>{
+const btn=e.target.closest(".view");
+if(!btn) return;
+location.href="profile-view.html?id="+btn.dataset.id;
+});
+
+/* RENDER */
+function render(){
+
+const all=getAll();
+const search=document.getElementById("search").value.toLowerCase();
+const cls=document.getElementById("classFilter").value;
+
+const filtered=all.filter(x=>{
+if(search && !(x.name||"").toLowerCase().includes(search)) return false;
+if(cls && x.class!==cls) return false;
+return true;
+});
+
+const grid=document.getElementById("grid");
+
+if(!filtered.length){
+grid.innerHTML="<div class='empty'>No Data</div>";
+return;
+}
+
+grid.innerHTML=filtered.map(x=>`
+<div class="card ${x.type.toLowerCase()}">
+
+<div class="top">
+<img class="photo" src="${x.photo||x.logo||'https://via.placeholder.com/100'}">
+
+<div>
+<h3>${x.name||"-"}</h3>
+
+<div class="badge">${x.type}</div>
+<div class="badge ${x.verified?'verify':''}">
+${x.verified?'Verified':'Not Verified'}
+</div>
+
+<div class="stars">★★★★★</div>
+
+<button class="btn view" data-id="${x.id}">
+View Details
+</button>
+
+</div>
+</div>
+
+<div class="details">
+<b>Subject:</b> ${x.subject||"-"}<br>
+<b>Class:</b> ${x.class||"-"}<br>
+<b>Mode:</b> ${(x.teachingModes || x.modes || []).join(", ") || "-"}<br>
+<b>Location:</b> ${x.location || x.address || "-"}
+</div>
+
+</div>
+`).join("");
+}
+
+</script>
+
+</body>
+</html>
