@@ -11,25 +11,35 @@
 body{background:linear-gradient(135deg,#d9efff,#f4f9ff,#fff);padding-bottom:40px}
 
 header{
-padding:30px;text-align:center;
+padding:30px;
+text-align:center;
 background:rgba(255,255,255,.4);
 backdrop-filter:blur(20px);
 border-bottom:1px solid rgba(255,255,255,.6);
 }
 
-.container{width:95%;max-width:1300px;margin:auto;padding:20px}
+.container{
+width:95%;
+max-width:1300px;
+margin:auto;
+padding:20px
+}
 
 .filters{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:15px;padding:20px;
+gap:15px;
+padding:20px;
 background:rgba(255,255,255,.45);
 border-radius:20px;
 margin-bottom:20px;
 }
 
 .filters input,.filters select{
-padding:12px;border:none;border-radius:10px;outline:none
+padding:12px;
+border:none;
+border-radius:10px;
+outline:none
 }
 
 .grid{
@@ -46,17 +56,45 @@ border:1px solid #ddd;
 position:relative;
 }
 
-.card.institution{border-left:6px solid #e91e63}
-.card.teacher{border-left:6px solid #1976d2}
+.card.institution{
+border-left:6px solid #e91e63
+}
 
-.top{display:flex;gap:15px}
-.photo{width:70px;height:70px;border-radius:50%;object-fit:cover}
+.card.teacher{
+border-left:6px solid #1976d2
+}
 
-.badge{background:#fff;padding:5px 10px;border-radius:20px;font-size:12px;margin:3px;display:inline-block}
+.top{
+display:flex;
+gap:15px
+}
 
-.verify{background:#2196f3;color:#fff}
+.photo{
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover
+}
 
-.stars{color:orange;font-size:13px;margin-top:5px}
+.badge{
+background:#fff;
+padding:5px 10px;
+border-radius:20px;
+font-size:12px;
+margin:3px;
+display:inline-block
+}
+
+.verify{
+background:#2196f3;
+color:#fff
+}
+
+.stars{
+color:orange;
+font-size:13px;
+margin-top:5px
+}
 
 .btn{
 margin-top:10px;
@@ -68,9 +106,18 @@ border-radius:8px;
 cursor:pointer;
 }
 
-.details{margin-top:10px;font-size:14px;line-height:1.6}
+.details{
+margin-top:10px;
+font-size:14px;
+line-height:1.6
+}
 
-.empty{text-align:center;padding:20px;background:#fff;border-radius:15px}
+.empty{
+text-align:center;
+padding:20px;
+background:#fff;
+border-radius:15px
+}
 </style>
 </head>
 
@@ -84,14 +131,37 @@ cursor:pointer;
 <div class="container">
 
 <div class="filters">
-<input id="search" placeholder="Search name">
+
+<input id="search"
+placeholder="Search teacher, location">
+
 <select id="classFilter">
+
 <option value="">All Classes</option>
-<option>Class 1-5</option>
-<option>Class 6-8</option>
-<option>Class 9-10</option>
-<option>Class 11-12</option>
+
+<option>Play Group</option>
+<option>Nursery</option>
+<option>LKG</option>
+<option>UKG</option>
+
+<option>Class 1</option>
+<option>Class 2</option>
+<option>Class 3</option>
+<option>Class 4</option>
+<option>Class 5</option>
+<option>Class 6</option>
+<option>Class 7</option>
+<option>Class 8</option>
+<option>Class 9</option>
+<option>Class 10</option>
+<option>Class 11</option>
+<option>Class 12</option>
+
+<option>IIT JEE</option>
+<option>NEET</option>
+
 </select>
+
 </div>
 
 <div id="grid" class="grid"></div>
@@ -100,91 +170,214 @@ cursor:pointer;
 
 <script type="module">
 
-import {initializeApp} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import {getDatabase,ref,onValue} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import {initializeApp}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-const app = initializeApp({
+import {
+getDatabase,
+ref,
+onValue
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+
+const app=initializeApp({
+
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app"
+
 });
 
-const db = getDatabase(app);
+const db=getDatabase(app);
 
-let teachers=[],institutes=[];
+let teachers=[];
+let institutes=[];
+
 
 /* LOAD TEACHERS */
+
 onValue(ref(db,"teachers"),snap=>{
+
 teachers=[];
+
 snap.forEach(c=>{
+
 teachers.push({
+
 ...c.val(),
 id:c.key,
 type:"Teacher"
-});
-});
-render();
+
 });
 
+});
+
+render();
+
+});
+
+
 /* LOAD INSTITUTES */
+
 onValue(ref(db,"institutions"),snap=>{
+
 institutes=[];
+
 snap.forEach(c=>{
+
 institutes.push({
+
 ...c.val(),
 id:c.key,
 type:"Institution"
-});
-});
-render();
+
 });
 
-function getAll(){ return [...teachers,...institutes]; }
+});
+
+render();
+
+});
+
+
+function getAll(){
+
+return [...teachers,...institutes];
+
+}
+
 
 /* VIEW */
+
 document.addEventListener("click",(e)=>{
+
 const btn=e.target.closest(".view");
-if(!btn) return;
-location.href="profile-view.html?id="+btn.dataset.id;
+
+if(!btn)return;
+
+location.href=
+"profile-view.html?id="+btn.dataset.id;
+
 });
 
+
+/* SEARCH EVENTS */
+
+document
+.getElementById("search")
+.addEventListener("input",render);
+
+document
+.getElementById("classFilter")
+.addEventListener("change",render);
+
+
+
+/* CLASS MATCH */
+
+function classMatch(userClass,selectedClass){
+
+if(!selectedClass) return true;
+
+if(!userClass) return false;
+
+let data=userClass.toLowerCase();
+let search=selectedClass.toLowerCase();
+
+return data.includes(search);
+
+}
+
+
+
 /* RENDER */
+
 function render(){
 
 const all=getAll();
-const search=document.getElementById("search").value.toLowerCase();
-const cls=document.getElementById("classFilter").value;
+
+const search=
+document
+.getElementById("search")
+.value
+.toLowerCase();
+
+const cls=
+document
+.getElementById("classFilter")
+.value;
+
 
 const filtered=all.filter(x=>{
-if(search && !(x.name||"").toLowerCase().includes(search)) return false;
-if(cls && x.class!==cls) return false;
-return true;
-});
 
-const grid=document.getElementById("grid");
+const name=
+(x.name||"").toLowerCase();
 
-if(!filtered.length){
-grid.innerHTML="<div class='empty'>No Data</div>";
-return;
+const location=
+(x.location||x.address||"")
+.toLowerCase();
+
+
+if(
+search &&
+!name.includes(search) &&
+!location.includes(search)
+){
+return false;
 }
 
+if(
+!classMatch(x.class,cls)
+){
+return false;
+}
+
+return true;
+
+});
+
+
+const grid=
+document.getElementById("grid");
+
+
+if(!filtered.length){
+
+grid.innerHTML=
+"<div class='empty'>No Data Found</div>";
+
+return;
+
+}
+
+
 grid.innerHTML=filtered.map(x=>`
+
 <div class="card ${x.type.toLowerCase()}">
 
 <div class="top">
-<img class="photo" src="${x.photo||x.logo||'https://via.placeholder.com/100'}">
+
+<img class="photo"
+src="${x.photo||x.logo||'https://via.placeholder.com/100'}">
 
 <div>
+
 <h3>${x.name||"-"}</h3>
 
 <div class="badge">${x.type}</div>
+
 <div class="badge ${x.verified?'verify':''}">
 ${x.verified?'Verified':'Not Verified'}
 </div>
 
-<div class="stars">★★★★★</div>
+<div class="stars">
+★★★★★
+</div>
 
-<button class="btn view" data-id="${x.id}">
+<button
+class="btn view"
+data-id="${x.id}">
 View Details
 </button>
 
@@ -192,18 +385,39 @@ View Details
 </div>
 
 <div class="details">
-<b>Subject:</b> ${
+
+<b>Subject:</b>
+
+${
 Array.isArray(x.subjects)
-? x.subjects.join(", ")
-: (x.subjects || "-")
-}<br>
-<b>Class:</b> ${x.class||"-"}<br>
-<b>Mode:</b> ${(x.teachingModes || x.modes || []).join(", ") || "-"}<br>
-<b>Location:</b> ${x.location || x.address || "-"}
+?x.subjects.join(", ")
+:(x.subjects||"-")
+}
+
+<br>
+
+<b>Class:</b>
+${x.class||"-"}
+
+<br>
+
+<b>Mode:</b>
+
+${(x.teachingModes||x.modes||[])
+.join(", ")||"-"}
+
+<br>
+
+<b>Location:</b>
+
+${x.location||x.address||"-"}
+
 </div>
 
 </div>
+
 `).join("");
+
 }
 
 </script>
