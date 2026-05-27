@@ -628,172 +628,107 @@ function renderPreview() {
 
 
 
+
+
+
+
+
+
+
+
 /* SUBMIT */
 
-form.addEventListener(
-"submit",
-async function(e){
+form.addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-e.preventDefault();
+    const submitBtn = form.querySelector('button[type="submit"]');
 
-try{
+    if (submitBtn.disabled) return; // extra safety
 
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Processing...";
 
+    try {
+        let profileUrl = "";
+        if (photo.files[0]) {
+            profileUrl = await upload(photo.files[0]);
+        }
 
+        let idUrl = "";
+        let idType = idTypeSelect.value;
 
+        if (idUpload.files.length > 0) {
+            idUrl = await upload(idUpload.files[0]);
+        }
 
+        let galleryUrls = [];
+        for (let file of selectedFiles) {
+            galleryUrls.push(await upload(file));
+        }
 
-let profileUrl = "";
+        let teachingModes = [];
+        document.querySelectorAll('input[type="checkbox"]:checked')
+            .forEach(item => teachingModes.push(item.value));
 
-if (photo.files[0]) {
-    profileUrl = await upload(photo.files[0]);
-}
+        let subjects = [];
+        document.querySelectorAll(".subjectCheck:checked")
+            .forEach(item => {
+                if (item.value !== "other") subjects.push(item.value);
+            });
 
-/* ✅ ADD THIS HERE (ID SECTION) */
-let idUrl = "";
-let idType = idTypeSelect.value;
+        if (otherCheck.checked && otherSubject.value.trim() !== "") {
+            subjects.push(otherSubject.value);
+        }
 
-if (idUpload.files.length > 0) {
-    idUrl = await upload(idUpload.files[0]);
-}
+        let newRef = await push(ref(db, "teachers"), {
+            name: document.getElementById("name").value,
+            phone: document.getElementById("phone").value,
+            email: document.getElementById("email").value,
+            website: document.getElementById("website").value,
+            qualification: document.getElementById("qualification").value,
+            experience: document.getElementById("experience").value,
 
+            subjects,
+            mapLink: document.getElementById("mapLink").value,
+            class: document.getElementById("class").value,
+            location: document.getElementById("location").value,
 
+            teachingModes,
+            homeFee: document.getElementById("homeFee").value,
+            groupFee: document.getElementById("groupFee").value,
+            onlineIndividualFee: document.getElementById("onlineIndividualFee").value,
+            onlineGroupFee: document.getElementById("onlineGroupFee").value,
 
-/* GALLERY */
+            photo: profileUrl,
+            gallery: galleryUrls,
 
-let galleryUrls=[];
+            idType,
+            idProof: idUrl,
+            declarationAccepted: document.getElementById("declaration").checked,
 
-for (let file of selectedFiles){
+            description: document.getElementById("description").value,
 
-let url=
-await upload(file);
+            category: "academic",
+            status: "pending"
+        });
 
-galleryUrls.push(url);
+        const teacherId = newRef.key;
+        localStorage.setItem("teacherId", teacherId);
 
-}
+        // small delay ensures DB write completes
+        setTimeout(() => {
+            window.location.href = "payment.html?type=teacher";
+        }, 300);
 
+    } catch (error) {
+        console.log(error);
+        alert("Error:\n" + error.message);
 
-
-
-
-
-/* TEACHING MODES */
-
-let teachingModes=[];
-
-document
-.querySelectorAll(
-'input[type="checkbox"]:checked'
-)
-.forEach(item=>{
-
-teachingModes.push(
-item.value
-);
-
-});
-
-
-
-
-
-
-
-
-/* SUBJECTS COLLECT */
-let subjects = [];
-
-document.querySelectorAll(".subjectCheck:checked").forEach(item => {
-    if (item.value !== "other") {
-        subjects.push(item.value);
+        // re-enable button on error
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Continue To Payment";
     }
 });
-
-if (otherCheck.checked && otherSubject.value.trim() !== "") {
-    subjects.push(otherSubject.value);
-}
-
-
-
-
-
-
-
-
-/* SAVE FIREBASE */
-
-let newRef = await push(ref(db,"teachers"), {
-
-    name: document.getElementById("name").value,
-    phone: document.getElementById("phone").value,
-    email: document.getElementById("email").value,
-    website: document.getElementById("website").value,
-    qualification: document.getElementById("qualification").value,
-    experience: document.getElementById("experience").value,
-
-    subjects: subjects,
-    mapLink: document.getElementById("mapLink").value,
-
-    class: document.getElementById("class").value,
-    location: document.getElementById("location").value,
-
-    teachingModes: teachingModes,
-
-    homeFee: document.getElementById("homeFee").value,
-    groupFee: document.getElementById("groupFee").value,
-    onlineIndividualFee: document.getElementById("onlineIndividualFee").value,
-    onlineGroupFee: document.getElementById("onlineGroupFee").value,
-
-    photo: profileUrl,
-    gallery: galleryUrls,
-
-    idType: idType,          // ✅ FIXED
-    idProof: idUrl,          // ✅ FIXED
-    declarationAccepted: document.getElementById("declaration").checked, // ✅ FIXED
-
-    description: document.getElementById("description").value,
-
-    category: "academic",
-    status: "pending"
-});
-
-
-alert("Form saved successfully");
-
-
-
-
-
-
-
-
-
-/* OPEN PAYMENT PAGE */
-
-const teacherId = newRef.key;
-
-localStorage.setItem("teacherId", teacherId);
-
-
-
-
-window.location.href =
-"payment.html?type=teacher";
-
-}
-catch(error){
-
-console.log(error);
-
-alert(
-"Error:\n"+
-error.message
-);
-
-}
-
-}
-);
 
 
 </script>
