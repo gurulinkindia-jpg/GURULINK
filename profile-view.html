@@ -44,9 +44,13 @@ font-size:12px;
 margin:5px 3px;
 }
 
+.actions{
+margin-top:10px;
+}
+
 .actions a{
 display:inline-block;
-margin:8px 5px;
+margin:6px 5px;
 padding:10px 12px;
 border-radius:10px;
 text-decoration:none;
@@ -60,7 +64,7 @@ font-weight:bold;
 
 .section{
 margin-top:15px;
-padding:10px;
+padding:12px;
 background:#f9f9ff;
 border-radius:10px;
 }
@@ -86,9 +90,25 @@ object-fit:cover;
 
 .modeBox{
 padding:10px;
-background:#f5f5ff;
+background:#eef3ff;
 border-radius:10px;
+margin-top:6px;
+}
+
+.reviewCard{
+background:#fff;
+padding:12px;
+border-radius:10px;
+border:1px solid #eee;
 margin-top:8px;
+}
+
+iframe{
+width:100%;
+height:250px;
+border:0;
+border-radius:10px;
+margin-top:10px;
 }
 </style>
 </head>
@@ -146,7 +166,6 @@ loadReviews();
 
 function renderProfile(){
 
-// SUBJECT FIX (both old + new support)
 const subjects =
 Array.isArray(data.subjects)
 ? data.subjects
@@ -154,13 +173,32 @@ Array.isArray(data.subjects)
 ? (typeof data.subject === "string" ? data.subject.split(",") : [])
 : [];
 
-// TEACHING MODE FIX (ONLY SHOW IF DATA EXISTS)
+// teaching modes only if exist
 const modes = [];
-
 if(data.homeFee) modes.push(`Home Tuition - ₹${data.homeFee}`);
 if(data.groupFee) modes.push(`Group Tuition - ₹${data.groupFee}`);
 if(data.onlineIndividualFee) modes.push(`Online Individual - ₹${data.onlineIndividualFee}`);
 if(data.onlineGroupFee) modes.push(`Online Group - ₹${data.onlineGroupFee}`);
+
+// FIX MAP EMBED
+let mapHTML = "";
+if(data.mapLink){
+let embed = data.mapLink;
+
+if(embed.includes("google.com/maps")){
+embed = embed.replace("/maps", "/maps/embed");
+}
+
+mapHTML = `
+<div class="section">
+<h3>📍 Google Map</h3>
+
+<a href="${data.mapLink}" target="_blank">Open Map</a>
+
+<iframe src="${embed}" allowfullscreen></iframe>
+</div>
+`;
+}
 
 document.getElementById("profile").innerHTML = `
 <div class="header">
@@ -181,30 +219,12 @@ document.getElementById("profile").innerHTML = `
 
 <div class="section">
 <p><b>Subjects:</b> ${subjects.length ? subjects.join(", ") : "-"}</p>
-
 <p><b>Location:</b> ${data.location||"-"}</p>
-
 <p><b>Phone:</b> ${data.phone||"-"}</p>
-
 <p><b>Notes:</b> ${data.description||data.notes||"-"}</p>
 </div>
 
-<div class="section">
-<h3>📍 Google Map</h3>
-${data.mapLink ? `
-<iframe 
-src="${data.mapLink.replace('watch?v=','embed/')}"
-width="100%" height="250" style="border:0;border-radius:10px"
-allowfullscreen>
-</iframe>
-` : "-"}
-</div>
-
-<div class="section">
-<h3>💰 Teaching Modes</h3>
-${modes.length ? modes.map(m => `<div class="modeBox">${m}</div>`).join("") : "-"}
-</div>
-
+<!-- ACTIONS ABOVE MAP -->
 <div class="actions">
 <a class="call" href="tel:${data.phone||""}">📞 Call</a>
 <a class="whatsapp" target="_blank"
@@ -213,6 +233,18 @@ href="https://wa.me/${data.phone||""}">💬 WhatsApp</a>
 ${data.website ? `<a class="website" target="_blank" href="${data.website}">🌐 Website</a>` : ""}
 </div>
 
+<!-- MAP -->
+${mapHTML}
+
+<!-- TEACHING MODES -->
+${modes.length ? `
+<div class="section">
+<h3>💰 Teaching Modes</h3>
+${modes.map(m => `<div class="modeBox">${m}</div>`).join("")}
+</div>
+` : ""}
+
+<!-- GALLERY -->
 ${data.gallery && data.gallery.length ? `
 <div class="section">
 <h3>📸 Gallery</h3>
@@ -222,12 +254,14 @@ ${data.gallery.map(img => `<img src="${img}">`).join("")}
 </div>
 ` : ""}
 
+<!-- RATING -->
 <div class="section">
 <h3>⭐ Rating</h3>
 <div id="avgRating">Loading...</div>
 </div>
 
-<div class="section">
+<!-- REVIEW -->
+<div class="section reviewCard">
 
 <h3>Write Review</h3>
 
@@ -241,7 +275,7 @@ ${data.gallery.map(img => `<img src="${img}">`).join("")}
 <option value="1">⭐</option>
 </select>
 
-<textarea id="rtext" placeholder="Write your review"></textarea>
+<textarea id="rtext" placeholder="Write review"></textarea>
 
 <button onclick="submitReview()">Submit Review</button>
 
