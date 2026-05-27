@@ -81,16 +81,36 @@ box-shadow:0 2px 8px rgba(0,0,0,.05);
 
 .gallery{
 display:flex;
-flex-wrap:wrap;
-gap:10px;
-margin-top:10px;
+overflow-x:auto;
+gap:15px;
+padding:10px 0;
+scroll-behavior:smooth;
+scroll-snap-type:x mandatory;
+}
+
+.gallery::-webkit-scrollbar{
+height:8px;
+}
+
+.gallery::-webkit-scrollbar-thumb{
+background:#1976d2;
+border-radius:20px;
 }
 
 .gallery img{
-width:100px;
-height:100px;
-border-radius:10px;
+min-width:280px;
+width:280px;
+height:180px;
+border-radius:15px;
 object-fit:cover;
+scroll-snap-align:center;
+box-shadow:0 5px 15px rgba(0,0,0,.15);
+transition:.3s;
+cursor:pointer;
+}
+
+.gallery img:hover{
+transform:scale(1.03);
 }
 
 .modeBox{
@@ -326,7 +346,7 @@ ${data.location||"-"}
 ${data.phone||"-"}
 </p>
 
-<p><b>Notes:</b>
+<p><b>Description:</b>
 ${data.description||data.notes||"-"}
 </p>
 
@@ -380,7 +400,11 @@ ${data.gallery?.length?`
 <div class="gallery">
 
 ${data.gallery.map(
-img=>`<img src="${img}">`
+img=>`
+<img 
+src="${img}"
+onclick="window.open('${img}','_blank')">
+`
 ).join("")}
 
 </div>
