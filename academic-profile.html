@@ -56,13 +56,8 @@ border:1px solid #ddd;
 position:relative;
 }
 
-.card.institution{
-border-left:6px solid #e91e63
-}
-
-.card.teacher{
-border-left:6px solid #1976d2
-}
+.card.institution{border-left:6px solid #e91e63}
+.card.teacher{border-left:6px solid #1976d2}
 
 .top{
 display:flex;
@@ -204,11 +199,9 @@ teachers=[];
 snap.forEach(c=>{
 
 teachers.push({
-
 ...c.val(),
 id:c.key,
 type:"Teacher"
-
 });
 
 });
@@ -227,11 +220,9 @@ institutes=[];
 snap.forEach(c=>{
 
 institutes.push({
-
 ...c.val(),
 id:c.key,
 type:"Institution"
-
 });
 
 });
@@ -242,9 +233,7 @@ render();
 
 
 function getAll(){
-
 return [...teachers,...institutes];
-
 }
 
 
@@ -278,17 +267,41 @@ document
 
 function classMatch(userClass,selectedClass){
 
-if(!selectedClass) return true;
+if(!selectedClass)return true;
 
-if(!userClass) return false;
+if(!userClass)return false;
 
-let data=userClass.toLowerCase();
-let search=selectedClass.toLowerCase();
-
-return data.includes(search);
+return userClass
+.toLowerCase()
+.includes(
+selectedClass.toLowerCase()
+);
 
 }
 
+
+/* TYPO FRIENDLY SEARCH */
+
+function similar(a,b){
+
+a=a.toLowerCase();
+b=b.toLowerCase();
+
+if(a.includes(b)) return true;
+
+let count=0;
+
+for(let i=0;i<Math.min(a.length,b.length);i++){
+
+if(a[i]===b[i]){
+count++;
+}
+
+}
+
+return count>=5;
+
+}
 
 
 /* RENDER */
@@ -301,6 +314,7 @@ const search=
 document
 .getElementById("search")
 .value
+.trim()
 .toLowerCase();
 
 const cls=
@@ -312,17 +326,24 @@ document
 const filtered=all.filter(x=>{
 
 const name=
-(x.name||"").toLowerCase();
+(x.name||"")
+.toString()
+.trim()
+.toLowerCase();
 
 const location=
 (x.location||x.address||"")
+.toString()
+.trim()
 .toLowerCase();
 
 
 if(
 search &&
-!name.includes(search) &&
-!location.includes(search)
+!(
+similar(name,search)||
+similar(location,search)
+)
 ){
 return false;
 }
@@ -402,14 +423,12 @@ ${x.class||"-"}
 <br>
 
 <b>Mode:</b>
-
 ${(x.teachingModes||x.modes||[])
 .join(", ")||"-"}
 
 <br>
 
 <b>Location:</b>
-
 ${x.location||x.address||"-"}
 
 </div>
