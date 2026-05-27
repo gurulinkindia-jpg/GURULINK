@@ -431,8 +431,13 @@ const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
 
 const form=document.getElementById("form");
 
-const subject=document.getElementById("subject");
-const otherSubject=document.getElementById("otherSubject");
+
+
+
+
+
+
+
 
 const photo=document.getElementById("photo");
 const photoPreview=document.getElementById("photoPreview");
@@ -478,7 +483,14 @@ const otherCheck = document.getElementById("otherCheck");
 const otherSubject = document.getElementById("otherSubject");
 
 otherCheck.addEventListener("change", () => {
-otherSubject.style.display = otherCheck.checked ? "block" : "none";
+    if (otherCheck.checked) {
+        otherSubject.style.display = "block";
+        otherSubject.required = true;
+    } else {
+        otherSubject.style.display = "none";
+        otherSubject.value = "";
+        otherSubject.required = false;
+    }
 });
 
 
