@@ -358,7 +358,19 @@ id="photoPreview"></div>
 
 
 
+<h3>Identity Proof (Upload any one)</h3>
 
+<select id="idType">
+  <option value="">Select ID Type</option>
+  <option value="Aadhaar">Aadhaar Card</option>
+  <option value="Driving License">Driving License</option>
+  <option value="Voter ID">Voter ID</option>
+  <option value="Passport">Passport</option>
+</select>
+
+<input type="file" id="idUpload" accept="image/*">
+
+<div class="preview" id="idPreview"></div>
 
 
 
@@ -376,6 +388,18 @@ id="photoPreview"></div>
 
 
 
+
+
+
+<div style="margin-top:20px; padding:15px; background:#f5f5f5; border-radius:10px;">
+
+<input type="checkbox" id="declaration" required>
+
+<label for="declaration" style="font-size:14px; line-height:1.5;">
+I hereby declare that all the information provided by me in this form is true and correct to the best of my knowledge and belief. I understand that if any information is found to be false or incorrect, my application may be rejected or necessary action may be taken against me. I also agree to follow all the rules, regulations, and responsibilities assigned by the GURULINK, powered by G10 Group.
+</label>
+
+</div>
 
 
 
@@ -443,7 +467,8 @@ const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
 
 const form=document.getElementById("form");
 
-
+const idUpload = document.getElementById("idUpload");
+const idTypeSelect = document.getElementById("idType");
 
 
 
@@ -483,6 +508,32 @@ let data=await res.json();
 return data.data.url;
 
 }
+
+
+
+
+
+
+/* ID UPLOAD */
+
+
+
+
+idUpload.addEventListener("change", function () {
+    idPreview.innerHTML = "";
+
+    if (this.files.length > 0) {
+        let img = document.createElement("img");
+        img.src = URL.createObjectURL(this.files[0]);
+        idPreview.appendChild(img);
+    }
+});
+
+
+
+
+
+
 
 
 
@@ -587,18 +638,24 @@ e.preventDefault();
 
 try{
 
-let profileUrl="";
 
-if(photo.files[0]){
 
-profileUrl=
-await upload(
-photo.files[0]
-);
 
+
+
+let profileUrl = "";
+
+if (photo.files[0]) {
+    profileUrl = await upload(photo.files[0]);
 }
 
+/* ✅ ADD THIS HERE (ID SECTION) */
+let idUrl = "";
+let idType = idTypeSelect.value;
 
+if (idUpload.files.length > 0) {
+    idUrl = await upload(idUpload.files[0]);
+}
 
 
 
@@ -674,8 +731,8 @@ let newRef = await push(ref(db,"teachers"), {
     qualification: document.getElementById("qualification").value,
     experience: document.getElementById("experience").value,
 
-    subjects: subjects,   // ✅ FIX HERE
-    mapLink: document.getElementById("mapLink").value, // ✅ NEW
+    subjects: subjects,
+    mapLink: document.getElementById("mapLink").value,
 
     class: document.getElementById("class").value,
     location: document.getElementById("location").value,
@@ -690,6 +747,10 @@ let newRef = await push(ref(db,"teachers"), {
     photo: profileUrl,
     gallery: galleryUrls,
 
+    idType: idType,          // ✅ FIXED
+    idProof: idUrl,          // ✅ FIXED
+    declarationAccepted: document.getElementById("declaration").checked, // ✅ FIXED
+
     description: document.getElementById("description").value,
 
     category: "academic",
@@ -697,9 +758,9 @@ let newRef = await push(ref(db,"teachers"), {
 });
 
 
-alert(
-"Form saved successfully"
-);
+alert("Form saved successfully");
+
+
 
 
 
@@ -712,6 +773,9 @@ alert(
 const teacherId = newRef.key;
 
 localStorage.setItem("teacherId", teacherId);
+
+
+
 
 window.location.href =
 "payment.html?type=teacher";
