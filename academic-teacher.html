@@ -133,7 +133,7 @@ placeholder="Email">
 
 <input
 id="website"
-placeholder="Website / Social Link">
+placeholder="Website / Social Link: eg. FB, X, etc">
 
 
 
@@ -147,7 +147,7 @@ placeholder="Qualification">
 
 <input
 id="experience"
-placeholder="Experience">
+placeholder="Experience: 6 yeays, 8 Month">
 
 
 
@@ -156,7 +156,7 @@ placeholder="Experience">
 
 
 
-<h3>Subjects (Select Multiple)</h3>
+<h3>Subjects (More then one can be selected)</h3>
 
 <div class="modeBox">
 
@@ -210,7 +210,7 @@ style="display:none;margin-top:10px">
 
 <input
 id="class"
-placeholder="Class Example: Class 9-10">
+placeholder="Class Example: Class 9-10, IIT-JEE, etc ">
 
 
 
@@ -219,7 +219,7 @@ placeholder="Class Example: Class 9-10">
 
 <input
 id="location"
-placeholder="Preferred Teaching Area">
+placeholder="Preferred Teaching Area. Eg. Delhi, beltola, etc.">
 
 
 
@@ -253,7 +253,7 @@ onchange="toggleFee('home')">
 
 <input
 id="homeFee"
-placeholder="Enter Home Tuition Fee">
+placeholder="Enter Home Tuition Fee: 900-1000 Perclass, 8000 Mongthly ">
 
 </div>
 
@@ -280,7 +280,7 @@ onchange="toggleFee('group')">
 
 <input
 id="groupFee"
-placeholder="Enter Group Tuition Fee">
+placeholder="Enter Group Tuition Fee:  10000 Yearly, 2000 Mongthly">
 
 </div>
 
@@ -307,7 +307,7 @@ onchange="toggleFee('individual')">
 
 <input
 id="onlineIndividualFee"
-placeholder="Enter Online Individual Fee">
+placeholder="Enter Online Individual Fee: Fee 900-1000 Perclass, 8000 Mongthly">
 
 </div>
 
@@ -335,7 +335,7 @@ onchange="toggleFee('online')">
 
 <input
 id="onlineGroupFee"
-placeholder="Enter Online Group Fee">
+placeholder="Enter Online Group Fee: 10000 Yearly, 2000 Mongthly">
 
 </div>
 
@@ -359,22 +359,34 @@ id="photoPreview"></div>
 
 
 
+
+
+
+
 <h3>Gallery Photos (Max 5)</h3>
 
-<input
-type="file"
-id="gallery"
-multiple
-accept="image/*">
+<input type="file" id="gallery" accept="image/*" multiple style="display:none">
 
-<div
-class="preview"
-id="galleryPreview"></div>
+<button type="button" onclick="document.getElementById('gallery').click()">
+    📸 Add Gallery Images
+</button>
+
+<div class="preview" id="galleryPreview"></div>
+
+
+
+
+
+
+
 
 
 <textarea
 id="description"
 placeholder="About Teacher"></textarea>
+
+
+
 
 
 <button type="submit">
@@ -529,39 +541,37 @@ photoPreview.appendChild(img);
 
 /* GALLERY PREVIEW */
 
-gallery.addEventListener(
-"change",
-function(){
+let selectedFiles = [];
 
-galleryPreview.innerHTML="";
+gallery.addEventListener("change", function () {
 
-if(this.files.length>5){
+    let newFiles = Array.from(this.files);
 
-alert(
-"Maximum 5 photos"
-);
+    // limit check
+    if (selectedFiles.length + newFiles.length > 5) {
+        alert("Maximum 5 photos allowed (Photo of the teacher teaching, with students, etc)");
+        return;
+    }
 
-this.value="";
+    selectedFiles.push(...newFiles);
 
-return;
+    renderPreview();
 
-}
-
-Array.from(this.files)
-.forEach(file=>{
-
-let img=
-document.createElement("img");
-
-img.src=
-URL.createObjectURL(file);
-
-galleryPreview.appendChild(img);
-
+    // reset input so same file can be selected again
+    this.value = "";
 });
 
+function renderPreview() {
+    galleryPreview.innerHTML = "";
+
+    selectedFiles.forEach(file => {
+        let img = document.createElement("img");
+        img.src = URL.createObjectURL(file);
+        galleryPreview.appendChild(img);
+    });
 }
-);
+
+
 
 
 
@@ -589,6 +599,9 @@ photo.files[0]
 }
 
 
+
+
+
 /* GALLERY */
 
 let galleryUrls=[];
@@ -601,6 +614,10 @@ await upload(file);
 galleryUrls.push(url);
 
 }
+
+
+
+
 
 
 /* TEACHING MODES */
