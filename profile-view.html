@@ -56,7 +56,7 @@ font-weight:bold;
 
 .call{background:#25D366}
 .whatsapp{background:#128C7E}
-.website{background:#1976d2}
+.website{background:#1976D2}
 
 .section{
 margin-top:15px;
@@ -74,8 +74,7 @@ padding-top:10px;
 input,textarea,select{
 width:100%;
 padding:10px;
-margin-top:5px;
-margin-bottom:10px;
+margin:8px 0;
 border-radius:8px;
 border:1px solid #ccc;
 }
@@ -106,6 +105,21 @@ width:100px;
 height:100px;
 border-radius:10px;
 object-fit:cover;
+}
+
+.feeBox{
+background:#eef3ff;
+padding:10px;
+border-radius:10px;
+margin-top:10px;
+}
+
+iframe{
+width:100%;
+height:250px;
+border:0;
+border-radius:10px;
+margin-top:10px;
 }
 </style>
 </head>
@@ -171,6 +185,7 @@ Array.isArray(data.subjects)
 : [];
 
 document.getElementById("profile").innerHTML = `
+
 <div class="header">
 <img src="${data.photo||data.logo||'https://via.placeholder.com/120'}">
 
@@ -190,19 +205,39 @@ document.getElementById("profile").innerHTML = `
 <div class="section">
 <p><b>Subjects:</b> ${subjects.join(", ") || "-"}</p>
 
-<p><b>Location:</b> ${data.location||data.address||"-"}</p>
-
-<p><b>Google Map:</b> ${
-data.mapLink
-? `<a href="${data.mapLink}" target="_blank">View Map</a>`
-: "-"
-}</p>
+<p><b>Location:</b> ${data.location||"-"}</p>
 
 <p><b>Phone:</b> ${data.phone||"-"}</p>
 
 <p><b>Notes:</b> ${data.description||data.notes||"-"}</p>
 </div>
 
+<!-- GOOGLE MAP EMBED -->
+${data.mapLink ? `
+<div class="section">
+<h3>📍 Location Map</h3>
+<a href="${data.mapLink}" target="_blank">Open in Google Maps</a>
+
+<iframe
+src="${data.mapLink.replace('/maps?q=','/maps/embed/v1/place?q=') || data.mapLink}"
+allowfullscreen>
+</iframe>
+</div>
+` : ""}
+
+<!-- TEACHING MODE + FEE -->
+<div class="section">
+<h3>💰 Teaching Modes</h3>
+
+<div class="feeBox">
+<p><b>Home Tuition:</b> ${data.homeFee || "-"}</p>
+<p><b>Group Tuition:</b> ${data.groupFee || "-"}</p>
+<p><b>Online Individual:</b> ${data.onlineIndividualFee || "-"}</p>
+<p><b>Online Group:</b> ${data.onlineGroupFee || "-"}</p>
+</div>
+</div>
+
+<!-- ACTIONS -->
 <div class="actions">
 <a class="call" href="tel:${data.phone||""}">📞 Call</a>
 <a class="whatsapp" target="_blank"
@@ -213,6 +248,7 @@ ${data.website
 : ""}
 </div>
 
+<!-- GALLERY -->
 ${data.gallery && data.gallery.length ? `
 <div class="section">
 <h3>📸 Gallery</h3>
@@ -222,9 +258,10 @@ ${data.gallery.map(img => `<img src="${img}">`).join("")}
 </div>
 ` : ""}
 
+<!-- REVIEWS -->
 <div class="section">
 <h3>⭐ Rating</h3>
-<div id="avgRating">Loading rating...</div>
+<div id="avgRating">Loading...</div>
 </div>
 
 <div class="section reviewBox">
@@ -241,11 +278,11 @@ ${data.gallery.map(img => `<img src="${img}">`).join("")}
 <option value="1">⭐</option>
 </select>
 
-<textarea id="rtext" placeholder="Write your review"></textarea>
+<textarea id="rtext" placeholder="Write review"></textarea>
 
 <button onclick="submitReview()">Submit Review</button>
 
-<h3 style="margin-top:15px">All Reviews</h3>
+<h3>All Reviews</h3>
 <div id="reviews"></div>
 
 </div>
