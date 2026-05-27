@@ -65,11 +65,6 @@ background:#f9f9ff;
 border-radius:10px;
 }
 
-.star{
-color:orange;
-font-size:18px;
-}
-
 .reviewBox{
 margin-top:10px;
 border-top:1px solid #ddd;
@@ -98,6 +93,20 @@ cursor:pointer;
 padding:10px;
 border-bottom:1px solid #eee;
 }
+
+.gallery{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-top:10px;
+}
+
+.gallery img{
+width:100px;
+height:100px;
+border-radius:10px;
+object-fit:cover;
+}
 </style>
 </head>
 
@@ -108,7 +117,7 @@ border-bottom:1px solid #eee;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, get, child, onValue, push, set }
+import { getDatabase, ref, get, child, onValue, push }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const app = initializeApp({
@@ -154,8 +163,14 @@ loadReviews();
 
 function renderProfile(){
 
-document.getElementById("profile").innerHTML=`
+const subjects =
+Array.isArray(data.subjects)
+? data.subjects
+: data.subject
+? [data.subject]
+: [];
 
+document.getElementById("profile").innerHTML = `
 <div class="header">
 <img src="${data.photo||data.logo||'https://via.placeholder.com/120'}">
 
@@ -173,19 +188,29 @@ document.getElementById("profile").innerHTML=`
 </div>
 
 <div class="section">
-<p><b>Subject:</b> ${data.subject||"-"}</p>
+<p><b>Subjects:</b> ${subjects.join(", ") || "-"}</p>
+
 <p><b>Location:</b> ${data.location||data.address||"-"}</p>
+
+<p><b>Google Map:</b> ${
+data.mapLink
+? `<a href="${data.mapLink}" target="_blank">View Map</a>`
+: "-"
+}</p>
+
 <p><b>Phone:</b> ${data.phone||"-"}</p>
-<p><b>Notes:</b> ${data.notes||"No notes"}</p>
 </div>
 
-<div class="actions">
-<a class="call" href="tel:${data.phone}">📞 Call</a>
-<a class="whatsapp" target="_blank"
-href="https://wa.me/${data.phone}">💬 WhatsApp</a>
-
-${data.website?`<a class="website" target="_blank" href="${data.website}">🌐 Website</a>`:""}
+${data.gallery && data.gallery.length ? `
+<div class="section">
+<h3>📸 Gallery</h3>
+<div class="gallery">
+${data.gallery.map(img =>
+`<img src="${img}">`
+).join("")}
 </div>
+</div>
+` : ""}
 
 <div class="section">
 <h3>⭐ Rating</h3>
@@ -197,6 +222,7 @@ ${data.website?`<a class="website" target="_blank" href="${data.website}">🌐 W
 <h3>Write Review</h3>
 
 <input id="rname" placeholder="Your name">
+
 <select id="rrating">
 <option value="5">⭐⭐⭐⭐⭐</option>
 <option value="4">⭐⭐⭐⭐</option>
@@ -251,12 +277,12 @@ html+=`
 `;
 });
 
-const avg = count? (total/count).toFixed(1):0;
+const avg = count ? (total/count).toFixed(1) : 0;
 
-document.getElementById("avgRating").innerHTML=
+document.getElementById("avgRating").innerHTML =
 `⭐ ${avg} / 5 (${count} reviews)`;
 
-document.getElementById("reviews").innerHTML=
+document.getElementById("reviews").innerHTML =
 html || "No reviews yet";
 });
 }
