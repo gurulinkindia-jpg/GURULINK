@@ -133,7 +133,7 @@ placeholder="Email">
 
 <input
 id="website"
-placeholder="Website / Social Link: eg. FB, X, etc">
+placeholder="Website URL if available">
 
 
 
@@ -147,7 +147,7 @@ placeholder="Qualification">
 
 <input
 id="experience"
-placeholder="Experience: 6 yeays, 8 Month">
+placeholder="Experience: 6 years, 8 Months">
 
 
 
@@ -156,7 +156,7 @@ placeholder="Experience: 6 yeays, 8 Month">
 
 
 
-<h3>Subjects (More then one can be selected)</h3>
+<h3>Subjects (More than one can be selected) <span style="color:red">*</span></h3>
 
 <div class="modeBox">
 
@@ -200,30 +200,26 @@ placeholder="Experience: 6 yeays, 8 Month">
 placeholder="Write Other Subject"
 style="display:none;margin-top:10px">
 
+<p id="subjectError" style="color:red;display:none;">
+Please select at least one subject
+</p>
+
 </div>
-
-
-
-
-
 
 
 <input
 id="class"
-placeholder="Class Example: Class 9-10, IIT-JEE, etc ">
-
-
-
-
-
+placeholder="Class Example: Class 9-10, IIT-JEE, etc "
+required>
 
 <input
 id="location"
-placeholder="Preferred Teaching Area. Eg. Delhi, beltola, etc.">
+placeholder="Preferred Teaching Area. Eg. Guwahati, Barpeta, Delhi, Mumbai, etc."
+required>
 
 
 
-<input id="mapLink" placeholder="Google Map Location Link (Paste URL)">
+<input id="mapLink" placeholder="Google Map Location Link (Paste URL if available)">
 
 
 
@@ -350,25 +346,29 @@ placeholder="Enter Online Group Fee: 10000 Yearly, 2000 Mongthly">
 <input
 type="file"
 id="photo"
-accept="image/*">
+accept="image/*"
+required>
 
-<div
-class="preview"
-id="photoPreview"></div>
-
+<div class="preview" id="photoPreview"></div>
 
 
-<h3>Identity Proof (Upload any one)</h3>
 
-<select id="idType">
-  <option value="">Select ID Type</option>
-  <option value="Aadhaar">Aadhaar Card</option>
-  <option value="Driving License">Driving License</option>
-  <option value="Voter ID">Voter ID</option>
-  <option value="Passport">Passport</option>
+<h3>Identity Proof (Upload any one) <span style="color:red">*</span></h3>
+
+<select id="idType" required>
+    <option value="">Select ID Type</option>
+    <option value="Aadhaar">Aadhaar Card</option>
+    <option value="Driving License">Driving License</option>
+    <option value="Voter ID">Voter ID</option>
+    <option value="PAN">PAN ID</option>
+    <option value="Passport">Passport</option>
 </select>
 
-<input type="file" id="idUpload" accept="image/*">
+<input
+type="file"
+id="idUpload"
+accept="image/*"
+required>
 
 <div class="preview" id="idPreview"></div>
 
@@ -735,6 +735,36 @@ form.addEventListener("submit", async function (e) {
 
 
 <script>
+
+
+
+
+
+document.getElementById("otherCheck").addEventListener("change", function(){
+document.getElementById("otherSubject").style.display =
+this.checked ? "block" : "none";
+});
+
+// Validate subjects before form submit
+document.querySelector("form").addEventListener("submit", function(e){
+
+let checked = document.querySelectorAll(".subjectCheck:checked").length;
+let other = document.getElementById("otherCheck").checked;
+
+if(checked===0 && !other){
+e.preventDefault();
+document.getElementById("subjectError").style.display="block";
+}else{
+document.getElementById("subjectError").style.display="none";
+}
+
+});
+
+
+
+
+
+
 
 function toggleFee(id){
 
