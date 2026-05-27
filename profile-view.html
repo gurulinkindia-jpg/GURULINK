@@ -184,8 +184,13 @@ Array.isArray(data.subjects)
 ? [data.subject]
 : [];
 
-document.getElementById("profile").innerHTML = `
+const mapEmbed = (data.mapLink || "").includes("http")
+? `<iframe src="${data.mapLink}" allowfullscreen></iframe>`
+: "";
 
+document.getElementById("profile") = document.getElementById("profile");
+
+document.getElementById("profile").innerHTML = `
 <div class="header">
 <img src="${data.photo||data.logo||'https://via.placeholder.com/120'}">
 
@@ -204,51 +209,43 @@ document.getElementById("profile").innerHTML = `
 
 <div class="section">
 <p><b>Subjects:</b> ${subjects.join(", ") || "-"}</p>
-
 <p><b>Location:</b> ${data.location||"-"}</p>
-
 <p><b>Phone:</b> ${data.phone||"-"}</p>
-
 <p><b>Notes:</b> ${data.description||data.notes||"-"}</p>
 </div>
 
-<!-- GOOGLE MAP EMBED -->
 ${data.mapLink ? `
 <div class="section">
-<h3>📍 Location Map</h3>
-<a href="${data.mapLink}" target="_blank">Open in Google Maps</a>
-
-<iframe
-src="${data.mapLink.replace('/maps?q=','/maps/embed/v1/place?q=') || data.mapLink}"
-allowfullscreen>
-</iframe>
+<h3>📍 Google Map</h3>
+<a href="${data.mapLink}" target="_blank">Open Map</a>
+${mapEmbed}
 </div>
 ` : ""}
 
-<!-- TEACHING MODE + FEE -->
 <div class="section">
 <h3>💰 Teaching Modes</h3>
-
 <div class="feeBox">
-<p><b>Home Tuition:</b> ${data.homeFee || "-"}</p>
-<p><b>Group Tuition:</b> ${data.groupFee || "-"}</p>
-<p><b>Online Individual:</b> ${data.onlineIndividualFee || "-"}</p>
-<p><b>Online Group:</b> ${data.onlineGroupFee || "-"}</p>
+
+${data.homeFee ? `<p>🏠 Home Tuition: ${data.homeFee}</p>` : ""}
+${data.groupFee ? `<p>👥 Group Tuition: ${data.groupFee}</p>` : ""}
+${data.onlineIndividualFee ? `<p>💻 Online Individual: ${data.onlineIndividualFee}</p>` : ""}
+${data.onlineGroupFee ? `<p>🌐 Online Group: ${data.onlineGroupFee}</p>` : ""}
+
+${(!data.homeFee && !data.groupFee && !data.onlineIndividualFee && !data.onlineGroupFee)
+? "<p>No teaching modes available</p>" : ""}
+
 </div>
 </div>
 
-<!-- ACTIONS -->
 <div class="actions">
 <a class="call" href="tel:${data.phone||""}">📞 Call</a>
-<a class="whatsapp" target="_blank"
-href="https://wa.me/${data.phone||""}">💬 WhatsApp</a>
+<a class="whatsapp" target="_blank" href="https://wa.me/${data.phone||""}">💬 WhatsApp</a>
 
 ${data.website
 ? `<a class="website" target="_blank" href="${data.website}">🌐 Website</a>`
 : ""}
 </div>
 
-<!-- GALLERY -->
 ${data.gallery && data.gallery.length ? `
 <div class="section">
 <h3>📸 Gallery</h3>
@@ -258,7 +255,6 @@ ${data.gallery.map(img => `<img src="${img}">`).join("")}
 </div>
 ` : ""}
 
-<!-- REVIEWS -->
 <div class="section">
 <h3>⭐ Rating</h3>
 <div id="avgRating">Loading...</div>
@@ -287,6 +283,7 @@ ${data.gallery.map(img => `<img src="${img}">`).join("")}
 
 </div>
 `;
+
 }
 
 window.submitReview = function(){
