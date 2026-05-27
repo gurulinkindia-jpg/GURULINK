@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Profile View</title>
+<title>Profile View - GURULINK</title>
 
 <style>
 body{
@@ -13,7 +13,7 @@ padding:20px;
 }
 
 .box{
-max-width:850px;
+max-width:900px;
 margin:auto;
 background:white;
 padding:20px;
@@ -21,7 +21,7 @@ border-radius:15px;
 box-shadow:0 10px 25px rgba(0,0,0,0.1);
 }
 
-.top{
+.header{
 display:flex;
 gap:15px;
 align-items:center;
@@ -32,7 +32,6 @@ width:120px;
 height:120px;
 border-radius:50%;
 object-fit:cover;
-border:3px solid #eee;
 }
 
 .badge{
@@ -45,74 +44,59 @@ font-size:12px;
 margin:5px 3px;
 }
 
-.section{
-margin-top:15px;
-padding:12px;
-background:#f8f9ff;
-border-radius:10px;
-}
-
 .actions a{
 display:inline-block;
-margin:8px 5px 0 0;
+margin:8px 5px;
 padding:10px 12px;
 border-radius:10px;
-color:white;
 text-decoration:none;
-font-size:14px;
+color:white;
+font-weight:bold;
 }
 
-.call{background:#1976d2}
-.whatsapp{background:#25D366}
-.website{background:#ff9800}
+.call{background:#25D366}
+.whatsapp{background:#128C7E}
+.website{background:#1976d2}
 
-/* gallery */
-.gallery{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(100px,1fr));
-gap:8px;
-margin-top:10px;
-}
-
-.gallery img{
-width:100%;
-height:90px;
+.section{
+margin-top:15px;
+padding:10px;
+background:#f9f9ff;
 border-radius:10px;
-object-fit:cover;
 }
 
-/* rating */
-.stars{
-color:#ff9800;
+.star{
+color:orange;
 font-size:18px;
-margin:5px 0;
 }
 
-/* review */
-.review{
-background:#fff;
-border:1px solid #eee;
-padding:10px;
-border-radius:10px;
-margin-top:8px;
+.reviewBox{
+margin-top:10px;
+border-top:1px solid #ddd;
+padding-top:10px;
 }
 
-textarea{
+input,textarea,select{
 width:100%;
 padding:10px;
-margin-top:8px;
-border-radius:10px;
-border:1px solid #ddd;
+margin-top:5px;
+margin-bottom:10px;
+border-radius:8px;
+border:1px solid #ccc;
 }
 
 button{
-margin-top:8px;
-padding:8px 12px;
-border:none;
+padding:10px 15px;
 background:#1976d2;
 color:white;
+border:none;
 border-radius:8px;
 cursor:pointer;
+}
+
+.reviewItem{
+padding:10px;
+border-bottom:1px solid #eee;
 }
 </style>
 </head>
@@ -124,7 +108,7 @@ cursor:pointer;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, get, child }
+import { getDatabase, ref, get, child, onValue, push, set }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const app = initializeApp({
@@ -136,6 +120,8 @@ const db = getDatabase(app);
 
 const id = new URLSearchParams(location.search).get("id");
 
+let data, type;
+
 async function load(){
 
 if(!id){
@@ -144,12 +130,12 @@ return;
 }
 
 let snap = await get(child(ref(db),"teachers/"+id));
-let data = null;
-let type = "Teacher";
+type = "Teacher";
 
 if(snap.exists()){
 data = snap.val();
-}else{
+}
+else{
 let snap2 = await get(child(ref(db),"institutions/"+id));
 if(snap2.exists()){
 data = snap2.val();
@@ -162,16 +148,15 @@ document.getElementById("profile").innerHTML="Profile Not Found";
 return;
 }
 
-/* FAKE GALLERY fallback (if not in DB) */
-let gallery = data.gallery || [
-"https://via.placeholder.com/200",
-"https://via.placeholder.com/201",
-"https://via.placeholder.com/202"
-];
+renderProfile();
+loadReviews();
+}
 
-document.getElementById("profile").innerHTML = `
+function renderProfile(){
 
-<div class="top">
+document.getElementById("profile").innerHTML=`
+
+<div class="header">
 <img src="${data.photo||data.logo||'https://via.placeholder.com/120'}">
 
 <div>
@@ -182,45 +167,98 @@ document.getElementById("profile").innerHTML = `
 <span class="badge">${data.category||"-"}</span>
 </div>
 
-<div class="stars">★★★★★ (4.5)</div>
-
+<p><b>Qualification:</b> ${data.qualification||"Not added"}</p>
+<p><b>Experience:</b> ${data.experience||"Not added"}</p>
 </div>
 </div>
 
 <div class="section">
 <p><b>Subject:</b> ${data.subject||"-"}</p>
-<p><b>Qualification:</b> ${data.qualification||"Not added"}</p>
-<p><b>Experience:</b> ${data.experience||"Not added"}</p>
-<p><b>Location:</b> ${data.location||"-"}</p>
+<p><b>Location:</b> ${data.location||data.address||"-"}</p>
 <p><b>Phone:</b> ${data.phone||"-"}</p>
-<p><b>About:</b> ${data.note||"No description available"}</p>
+<p><b>Notes:</b> ${data.notes||"No notes"}</p>
 </div>
 
 <div class="actions">
 <a class="call" href="tel:${data.phone}">📞 Call</a>
-<a class="whatsapp" href="https://wa.me/${data.phone}" target="_blank">💬 WhatsApp</a>
-<a class="website" href="${data.website||'#'}" target="_blank">🌐 Website</a>
+<a class="whatsapp" target="_blank"
+href="https://wa.me/${data.phone}">💬 WhatsApp</a>
+
+${data.website?`<a class="website" target="_blank" href="${data.website}">🌐 Website</a>`:""}
 </div>
 
 <div class="section">
-<h3>Gallery</h3>
-<div class="gallery">
-${gallery.map(img=>`<img src="${img}">`).join("")}
-</div>
+<h3>⭐ Rating</h3>
+<div id="avgRating">Loading rating...</div>
 </div>
 
-<div class="section">
-<h3>Reviews</h3>
+<div class="section reviewBox">
 
-<div class="review">⭐ 5 - Excellent teaching!</div>
-<div class="review">⭐ 4 - Very good experience.</div>
+<h3>Write Review</h3>
 
-<textarea placeholder="Write a review..."></textarea>
-<button>Submit Review</button>
+<input id="rname" placeholder="Your name">
+<select id="rrating">
+<option value="5">⭐⭐⭐⭐⭐</option>
+<option value="4">⭐⭐⭐⭐</option>
+<option value="3">⭐⭐⭐</option>
+<option value="2">⭐⭐</option>
+<option value="1">⭐</option>
+</select>
+
+<textarea id="rtext" placeholder="Write your review"></textarea>
+
+<button onclick="submitReview()">Submit Review</button>
+
+<h3 style="margin-top:15px">All Reviews</h3>
+<div id="reviews"></div>
+
 </div>
-
 `;
+}
 
+window.submitReview = function(){
+
+const name = document.getElementById("rname").value;
+const rating = document.getElementById("rrating").value;
+const text = document.getElementById("rtext").value;
+
+push(ref(db,`reviews/${type.toLowerCase()}s/${id}`),{
+name,
+rating:Number(rating),
+text,
+time:Date.now()
+});
+
+alert("Review added!");
+};
+
+function loadReviews(){
+
+onValue(ref(db,`reviews/${type.toLowerCase()}s/${id}`),snap=>{
+
+let total=0,count=0,html="";
+
+snap.forEach(r=>{
+const d=r.val();
+total+=Number(d.rating);
+count++;
+
+html+=`
+<div class="reviewItem">
+<b>${d.name}</b> - ⭐ ${d.rating}
+<p>${d.text}</p>
+</div>
+`;
+});
+
+const avg = count? (total/count).toFixed(1):0;
+
+document.getElementById("avgRating").innerHTML=
+`⭐ ${avg} / 5 (${count} reviews)`;
+
+document.getElementById("reviews").innerHTML=
+html || "No reviews yet";
+});
 }
 
 load();
