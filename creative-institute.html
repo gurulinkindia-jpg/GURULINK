@@ -312,6 +312,79 @@ const gallery=document.getElementById("gallery");
 
 /* IMAGE UPLOAD */
 
+
+/* LOGO PREVIEW */
+
+logo.addEventListener(
+"change",
+()=>{
+
+let preview=
+document.getElementById(
+"logoPreview"
+);
+
+preview.innerHTML="";
+
+if(logo.files[0]){
+
+let img=
+document.createElement(
+"img"
+);
+
+img.src=
+URL.createObjectURL(
+logo.files[0]
+);
+
+preview.appendChild(img);
+
+}
+
+}
+);
+
+
+/* GALLERY PREVIEW */
+
+gallery.addEventListener(
+"change",
+()=>{
+
+let preview=
+document.getElementById(
+"galleryPreview"
+);
+
+preview.innerHTML="";
+
+
+Array.from(
+gallery.files
+)
+.slice(0,5)
+.forEach(file=>{
+
+let img=
+document.createElement(
+"img"
+);
+
+img.src=
+URL.createObjectURL(
+file
+);
+
+preview.appendChild(img);
+
+});
+
+}
+);
+
+
+
 async function upload(file){
 
 let fd=new FormData();
