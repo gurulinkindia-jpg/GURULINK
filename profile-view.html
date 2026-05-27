@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profile View</title>
+
+<style>
+body{
+font-family:Arial;
+background:#f5f7ff;
+padding:20px;
+}
+
+.box{
+max-width:800px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+img{
+width:120px;
+height:120px;
+border-radius:50%;
+object-fit:cover;
+}
+
+.badge{
+display:inline-block;
+padding:5px 10px;
+background:#1976d2;
+color:white;
+border-radius:20px;
+font-size:12px;
+margin:5px 3px;
+}
+
+.call{
+display:inline-block;
+margin-top:10px;
+padding:8px 12px;
+background:#25D366;
+color:white;
+text-decoration:none;
+border-radius:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box" id="profile">Loading...</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, get, child }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const app = initializeApp({
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db = getDatabase(app);
+
+const id = new URLSearchParams(location.search).get("id");
+
+async function load(){
+
+if(!id){
+document.getElementById("profile").innerHTML="No ID Found";
+return;
+}
+
+/* TRY TEACHERS */
+let snap = await get(child(ref(db),"teachers/"+id));
+
+let data = null;
+let type = "Teacher";
+
+if(snap.exists()){
+data = snap.val();
+}
+
+/* TRY INSTITUTIONS */
+else{
+let snap2 = await get(child(ref(db),"institutions/"+id));
+
+if(snap2.exists()){
+data = snap2.val();
+type = "Institution";
+}
+}
+
+if(!data){
+document.getElementById("profile").innerHTML="Profile Not Found";
+return;
+}
+
+document.getElementById("profile").innerHTML=`
+<img src="${data.photo||data.logo||'https://via.placeholder.com/120'}">
+
+<h2>${data.name||"-"}</h2>
+
+<div>
+<span class="badge">${type}</span>
+<span class="badge">${data.category||"-"}</span>
+</div>
+
+<p><b>Subject:</b> ${data.subject||"-"}</p>
+<p><b>Phone:</b> ${data.phone||"-"}</p>
+
+<a class="call" href="tel:${data.phone}">Call Now</a>
+`;
+}
+
+load();
+
+</script>
+
+</body>
+</html>
