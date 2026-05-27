@@ -636,9 +636,8 @@ if (otherCheck.checked && otherSubject.value.trim() !== "") {
 
 /* SAVE FIREBASE */
 
-let newRef = await push(
-ref(db,"teachers"),
-{
+let newRef = await push(ref(db,"teachers"), {
+
     name: document.getElementById("name").value,
     phone: document.getElementById("phone").value,
     email: document.getElementById("email").value,
@@ -646,24 +645,8 @@ ref(db,"teachers"),
     qualification: document.getElementById("qualification").value,
     experience: document.getElementById("experience").value,
 
-   
-
-  subjects: subjects,   // ✅ FIX HERE
+    subjects: subjects,   // ✅ FIX HERE
     mapLink: document.getElementById("mapLink").value, // ✅ NEW
-
-
-
-
-
-
-if(otherCheck.checked && otherSubject.value){
-subjects.push(otherSubject.value);
-}
-		
-		
-		
-		
-		
 
     class: document.getElementById("class").value,
     location: document.getElementById("location").value,
@@ -682,8 +665,7 @@ subjects.push(otherSubject.value);
 
     category: "academic",
     status: "pending"
-}
-);
+});
 
 
 alert(
