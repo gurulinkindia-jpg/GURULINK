@@ -6,6 +6,7 @@
 <title>Profile View - GURULINK</title>
 
 <style>
+
 body{
 font-family:Arial;
 background:#f5f7ff;
@@ -70,8 +71,12 @@ border-radius:10px;
 }
 
 .reviewItem{
-padding:10px;
-border-bottom:1px solid #eee;
+padding:12px;
+background:white;
+border-radius:10px;
+margin-top:10px;
+border-left:4px solid #1976d2;
+box-shadow:0 2px 8px rgba(0,0,0,.05);
 }
 
 .gallery{
@@ -95,14 +100,6 @@ border-radius:10px;
 margin-top:6px;
 }
 
-.reviewCard{
-background:#fff;
-padding:12px;
-border-radius:10px;
-border:1px solid #eee;
-margin-top:8px;
-}
-
 iframe{
 width:100%;
 height:250px;
@@ -110,223 +107,437 @@ border:0;
 border-radius:10px;
 margin-top:10px;
 }
+
+input,textarea,select{
+width:100%;
+padding:10px;
+border:1px solid #ddd;
+border-radius:10px;
+margin-top:10px;
+}
+
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#1976d2;
+color:white;
+font-size:15px;
+cursor:pointer;
+margin-top:10px;
+}
+
+.ratingCard{
+text-align:center;
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.bigRating{
+font-size:40px;
+font-weight:bold;
+color:#1976d2;
+}
+
+.starText{
+font-size:24px;
+color:orange;
+}
+
+.reviewForm{
+background:white;
+padding:15px;
+border-radius:15px;
+margin-top:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="box" id="profile">Loading...</div>
+<div class="box" id="profile">
+Loading...
+</div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, get, child, onValue, push }
+
+import {
+getDatabase,
+ref,
+get,
+child,
+onValue,
+push
+}
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-const app = initializeApp({
+const app=initializeApp({
+
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app"
+
 });
 
-const db = getDatabase(app);
+const db=getDatabase(app);
 
-const id = new URLSearchParams(location.search).get("id");
+const id=new URLSearchParams(location.search).get("id");
 
-let data, type;
+let data,type;
 
 async function load(){
 
 if(!id){
-document.getElementById("profile").innerHTML="No ID Found";
+profile.innerHTML="No ID Found";
 return;
 }
 
-let snap = await get(child(ref(db),"teachers/"+id));
-type = "Teacher";
+let snap=await get(child(ref(db),"teachers/"+id));
+
+type="Teacher";
 
 if(snap.exists()){
-data = snap.val();
-}
-else{
-let snap2 = await get(child(ref(db),"institutions/"+id));
+data=snap.val();
+}else{
+
+let snap2=await get(
+child(ref(db),"institutions/"+id)
+);
+
 if(snap2.exists()){
-data = snap2.val();
-type = "Institution";
+data=snap2.val();
+type="Institution";
 }
+
 }
 
 if(!data){
-document.getElementById("profile").innerHTML="Profile Not Found";
+
+profile.innerHTML="Profile Not Found";
 return;
+
 }
 
 renderProfile();
 loadReviews();
+
 }
 
 function renderProfile(){
 
-const subjects =
+const subjects=
 Array.isArray(data.subjects)
-? data.subjects
-: data.subject
-? (typeof data.subject === "string" ? data.subject.split(",") : [])
-: [];
+?data.subjects
+:data.subject
+?[data.subject]
+:[];
 
-// teaching modes only if exist
-const modes = [];
-if(data.homeFee) modes.push(`Home Tuition - ₹${data.homeFee}`);
-if(data.groupFee) modes.push(`Group Tuition - ₹${data.groupFee}`);
-if(data.onlineIndividualFee) modes.push(`Online Individual - ₹${data.onlineIndividualFee}`);
-if(data.onlineGroupFee) modes.push(`Online Group - ₹${data.onlineGroupFee}`);
+const modes=[];
 
-// FIX MAP EMBED
-let mapHTML = "";
+if(data.homeFee)
+modes.push(`🏠 Home Tuition - ₹${data.homeFee}`);
+
+if(data.groupFee)
+modes.push(`👨‍🏫 Group Tuition - ₹${data.groupFee}`);
+
+if(data.onlineIndividualFee)
+modes.push(`💻 Online Individual - ₹${data.onlineIndividualFee}`);
+
+if(data.onlineGroupFee)
+modes.push(`🖥 Online Group - ₹${data.onlineGroupFee}`);
+
+let mapHTML="";
+
 if(data.mapLink){
-let embed = data.mapLink;
+
+let embed=data.mapLink;
 
 if(embed.includes("google.com/maps")){
-embed = embed.replace("/maps", "/maps/embed");
+embed=embed.replace("/maps","/maps/embed");
 }
 
-mapHTML = `
+mapHTML=`
+
 <div class="section">
+
 <h3>📍 Google Map</h3>
 
-<a href="${data.mapLink}" target="_blank">Open Map</a>
+<a href="${data.mapLink}" target="_blank">
+Open Map
+</a>
 
-<iframe src="${embed}" allowfullscreen></iframe>
+<iframe src="${embed}"></iframe>
+
 </div>
+
 `;
+
 }
 
-document.getElementById("profile").innerHTML = `
+profile.innerHTML=`
+
 <div class="header">
+
 <img src="${data.photo||data.logo||'https://via.placeholder.com/120'}">
 
 <div>
+
 <h2>${data.name||"-"}</h2>
 
 <div>
+
 <span class="badge">${type}</span>
-<span class="badge">${data.category||"-"}</span>
+
+<span class="badge">
+${data.category||"-"}
+</span>
+
 </div>
 
-<p><b>Qualification:</b> ${data.qualification||"Not added"}</p>
-<p><b>Experience:</b> ${data.experience||"Not added"}</p>
+<p><b>Qualification:</b>
+${data.qualification||"-"}
+</p>
+
+<p><b>Experience:</b>
+${data.experience||"-"}
+</p>
+
 </div>
+
 </div>
 
 <div class="section">
-<p><b>Subjects:</b> ${subjects.length ? subjects.join(", ") : "-"}</p>
-<p><b>Location:</b> ${data.location||"-"}</p>
-<p><b>Phone:</b> ${data.phone||"-"}</p>
-<p><b>Notes:</b> ${data.description||data.notes||"-"}</p>
+
+<p><b>Subjects:</b>
+${subjects.join(", ")||"-"}
+</p>
+
+<p><b>Location:</b>
+${data.location||"-"}
+</p>
+
+<p><b>Phone:</b>
+${data.phone||"-"}
+</p>
+
+<p><b>Notes:</b>
+${data.description||data.notes||"-"}
+</p>
+
 </div>
 
-<!-- ACTIONS ABOVE MAP -->
 <div class="actions">
-<a class="call" href="tel:${data.phone||""}">📞 Call</a>
-<a class="whatsapp" target="_blank"
-href="https://wa.me/${data.phone||""}">💬 WhatsApp</a>
 
-${data.website ? `<a class="website" target="_blank" href="${data.website}">🌐 Website</a>` : ""}
+<a class="call"
+href="tel:${data.phone||""}">
+📞 Call
+</a>
+
+<a class="whatsapp"
+target="_blank"
+href="https://wa.me/${data.phone||""}">
+💬 WhatsApp
+</a>
+
+${data.website
+?`<a class="website"
+target="_blank"
+href="${data.website}">
+🌐 Website
+</a>`
+:""}
+
 </div>
 
-<!-- MAP -->
 ${mapHTML}
 
-<!-- TEACHING MODES -->
-${modes.length ? `
+${modes.length?`
+
 <div class="section">
+
 <h3>💰 Teaching Modes</h3>
-${modes.map(m => `<div class="modeBox">${m}</div>`).join("")}
-</div>
-` : ""}
 
-<!-- GALLERY -->
-${data.gallery && data.gallery.length ? `
+${modes.map(m=>
+`<div class="modeBox">${m}</div>`
+).join("")}
+
+</div>
+
+`:""}
+
+${data.gallery?.length?`
+
 <div class="section">
+
 <h3>📸 Gallery</h3>
+
 <div class="gallery">
-${data.gallery.map(img => `<img src="${img}">`).join("")}
-</div>
-</div>
-` : ""}
 
-<!-- RATING -->
+${data.gallery.map(
+img=>`<img src="${img}">`
+).join("")}
+
+</div>
+
+</div>
+
+`:""}
+
 <div class="section">
-<h3>⭐ Rating</h3>
-<div id="avgRating">Loading...</div>
+
+<div class="ratingCard">
+
+<div class="bigRating"
+id="avgRating">
+
+0.0
+
 </div>
 
-<!-- REVIEW -->
-<div class="section reviewCard">
+<div class="starText">
+⭐⭐⭐⭐⭐
+</div>
 
-<h3>Write Review</h3>
+<div id="totalReviews">
+0 Reviews
+</div>
 
-<input id="rname" placeholder="Your name">
+</div>
+
+<div class="reviewForm">
+
+<h3>✍️ Write Review</h3>
+
+<input
+id="rname"
+placeholder="Your name">
 
 <select id="rrating">
-<option value="5">⭐⭐⭐⭐⭐</option>
-<option value="4">⭐⭐⭐⭐</option>
-<option value="3">⭐⭐⭐</option>
-<option value="2">⭐⭐</option>
-<option value="1">⭐</option>
+
+<option value="5">
+⭐⭐⭐⭐⭐ Excellent
+</option>
+
+<option value="4">
+⭐⭐⭐⭐ Very Good
+</option>
+
+<option value="3">
+⭐⭐⭐ Good
+</option>
+
+<option value="2">
+⭐⭐ Average
+</option>
+
+<option value="1">
+⭐ Poor
+</option>
+
 </select>
 
-<textarea id="rtext" placeholder="Write review"></textarea>
+<textarea
+id="rtext"
+placeholder="Share your experience">
+</textarea>
 
-<button onclick="submitReview()">Submit Review</button>
-
-<h3 style="margin-top:15px">All Reviews</h3>
-<div id="reviews"></div>
+<button onclick="submitReview()">
+Submit Review
+</button>
 
 </div>
+
+<div style="margin-top:15px">
+
+<h3>💬 User Reviews</h3>
+
+<div id="reviews">
+No reviews yet
+</div>
+
+</div>
+
+</div>
+
 `;
+
 }
 
-window.submitReview = function(){
+window.submitReview=function(){
 
-const name = document.getElementById("rname").value;
-const rating = document.getElementById("rrating").value;
-const text = document.getElementById("rtext").value;
-
-push(ref(db,`reviews/${type.toLowerCase()}s/${id}`),{
-name,
-rating:Number(rating),
-text,
+push(
+ref(db,
+`reviews/${type.toLowerCase()}s/${id}`),
+{
+name:rname.value,
+rating:Number(rrating.value),
+text:rtext.value,
 time:Date.now()
-});
+}
+);
 
-alert("Review added!");
-};
+alert("Review added");
+
+}
 
 function loadReviews(){
 
-onValue(ref(db,`reviews/${type.toLowerCase()}s/${id}`),snap=>{
+onValue(
+ref(db,
+`reviews/${type.toLowerCase()}s/${id}`),
 
-let total=0,count=0,html="";
+snap=>{
+
+let total=0;
+let count=0;
+let html="";
 
 snap.forEach(r=>{
+
 const d=r.val();
-total+=Number(d.rating);
+
+total+=d.rating;
 count++;
 
 html+=`
+
 <div class="reviewItem">
-<b>${d.name}</b> - ⭐ ${d.rating}
-<p>${d.text}</p>
+
+<b>${d.name}</b>
+
+<div>
+${"⭐".repeat(d.rating)}
 </div>
+
+<p>${d.text}</p>
+
+</div>
+
 `;
+
 });
 
-document.getElementById("avgRating").innerHTML =
-`⭐ ${count ? (total/count).toFixed(1) : 0} / 5 (${count})`;
+let avg=
+count?
+(total/count).toFixed(1)
+:"0.0";
 
-document.getElementById("reviews").innerHTML =
-html || "No reviews yet";
+avgRating.innerHTML=avg;
+
+totalReviews.innerHTML=
+`${count} Reviews`;
+
+reviews.innerHTML=
+html||"No reviews yet";
+
 });
+
 }
 
 load();
