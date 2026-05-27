@@ -4,18 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Sports Teacher Registration</title>
+<title>Sport Teacher Registration</title>
 
 <style>
 
 body{
 margin:0;
-font-family:Arial,sans-serif;
+font-family:Arial;
 background:#eef2f7;
 }
 
 header{
-background:#1976d2;
+background:#1565c0;
 color:white;
 padding:18px;
 text-align:center;
@@ -23,7 +23,7 @@ text-align:center;
 
 .container{
 width:90%;
-max-width:850px;
+max-width:800px;
 margin:20px auto;
 background:white;
 padding:25px;
@@ -31,9 +31,7 @@ border-radius:15px;
 box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 
-input,
-select,
-textarea{
+input,select,textarea{
 width:100%;
 padding:12px;
 margin:10px 0;
@@ -50,9 +48,9 @@ resize:none;
 button{
 width:100%;
 padding:14px;
-background:#1976d2;
-border:none;
+background:#1565c0;
 color:white;
+border:none;
 border-radius:10px;
 font-size:16px;
 cursor:pointer;
@@ -60,9 +58,9 @@ cursor:pointer;
 
 .preview{
 display:flex;
-flex-wrap:wrap;
 gap:10px;
-margin:10px 0;
+flex-wrap:wrap;
+margin-top:10px;
 }
 
 .preview img{
@@ -74,18 +72,17 @@ border:1px solid #ddd;
 }
 
 .modeBox{
-padding:10px;
 border:1px solid #ddd;
+padding:15px;
 border-radius:10px;
-margin-top:10px;
 }
 
 .modeFee{
 display:none;
 padding:10px;
-background:#f7f7f7;
-margin-top:10px;
+background:#f4f4f4;
 border-radius:10px;
+margin-bottom:10px;
 }
 
 .row{
@@ -95,82 +92,57 @@ gap:10px;
 margin:10px 0;
 }
 
-.row input[type=checkbox]{
+.row input{
 width:auto;
+transform:scale(1.2);
 }
 
 </style>
-
 </head>
 
 <body>
 
 <header>
-
-<h1>Sports Teacher Registration</h1>
+<h1>Sport Teacher Registration</h1>
 <p>Registration Fee ₹100</p>
-
 </header>
-
 
 <div class="container">
 
-<form id="form">
+<form id="teacherForm">
 
-<input
-id="name"
-placeholder="Teacher Name"
-required>
+<input id="name" placeholder="Full Name" required>
 
-<input
-id="phone"
-placeholder="Phone Number"
-required>
+<input id="phone" placeholder="Phone Number" required>
 
-<input
-id="email"
-type="email"
-placeholder="Email">
+<input type="email" id="email" placeholder="Email">
 
-<input
-id="qualification"
-placeholder="Qualification">
+<input id="website" placeholder="Website / Social Link">
 
-<input
-id="experience"
-placeholder="Experience">
+<input id="qualification" placeholder="Qualification">
 
-<input
-id="location"
-placeholder="Location">
+<input id="experience" placeholder="Experience">
 
-
+<!-- SPORT SUBJECT -->
 <select id="sport">
 
-<option value="">
-Select Sport
-</option>
+<option value="">Select Sport</option>
 
 <option>Cricket</option>
 <option>Football</option>
 <option>Badminton</option>
 <option>Basketball</option>
+<option>Volleyball</option>
+<option>Athletics</option>
 <option>Swimming</option>
-<option>Karate</option>
-<option>Yoga</option>
 <option>Gym Training</option>
-<option>Tennis</option>
-
-<option value="other">
-Other
-</option>
+<option value="other">Other</option>
 
 </select>
 
-<input
-id="otherSport"
-style="display:none"
-placeholder="Enter Sport">
+<input id="customSport" placeholder="Write Sport" style="display:none">
+
+<input id="location" placeholder="Preferred Teaching Area">
 
 
 <h3>Teaching Modes</h3>
@@ -178,154 +150,67 @@ placeholder="Enter Sport">
 <div class="modeBox">
 
 <div class="row">
-
-<input
-type="checkbox"
-onchange="toggleFee('home')">
-
-Home Training
-
+<input type="checkbox" value="Home Training" onchange="toggleFee('home')">
+<label>Home Training</label>
 </div>
-
-<div
-class="modeFee"
-id="home">
-
-<input
-id="homeFee"
-placeholder="Enter Fee">
-
+<div id="home" class="modeFee">
+<input id="homeFee" placeholder="Enter Home Fee">
 </div>
 
 
 <div class="row">
-
-<input
-type="checkbox"
-onchange="toggleFee('group')">
-
-Group Training
-
+<input type="checkbox" value="Group Training" onchange="toggleFee('group')">
+<label>Group Training</label>
 </div>
-
-<div
-class="modeFee"
-id="group">
-
-<input
-id="groupFee"
-placeholder="Enter Fee">
-
+<div id="group" class="modeFee">
+<input id="groupFee" placeholder="Enter Group Fee">
 </div>
 
 
 <div class="row">
-
-<input
-type="checkbox"
-onchange="toggleFee('online')">
-
-Online Individual
-
+<input type="checkbox" value="Online Individual" onchange="toggleFee('onlineInd')">
+<label>Online Individual</label>
 </div>
-
-<div
-class="modeFee"
-id="online">
-
-<input
-id="onlineFee"
-placeholder="Enter Fee">
-
+<div id="onlineInd" class="modeFee">
+<input id="onlineIndividualFee" placeholder="Enter Fee">
 </div>
 
 
 <div class="row">
-
-<input
-type="checkbox"
-onchange="toggleFee('onlineGroup')">
-
-Online Group
-
+<input type="checkbox" value="Online Group" onchange="toggleFee('onlineGrp')">
+<label>Online Group</label>
 </div>
-
-<div
-class="modeFee"
-id="onlineGroup">
-
-<input
-id="onlineGroupFee"
-placeholder="Enter Fee">
-
+<div id="onlineGrp" class="modeFee">
+<input id="onlineGroupFee" placeholder="Enter Fee">
 </div>
 
 </div>
 
 
-<label>
-<b>Profile Photo</b>
-</label>
-
-<input
-type="file"
-id="photo"
-accept="image/*">
-
-<div
-id="photoPreview"
-class="preview"></div>
+<h3>Profile Photo</h3>
+<input type="file" id="photo" accept="image/*">
+<div id="photoPreview" class="preview"></div>
 
 
-<label>
-<b>Gallery Photos (Max 5)</b>
-</label>
-
-<input
-type="file"
-id="gallery"
-multiple
-accept="image/*">
-
-<div
-id="galleryPreview"
-class="preview"></div>
+<h3>Gallery (Max 5)</h3>
+<input type="file" id="gallery" multiple accept="image/*">
+<div id="galleryPreview" class="preview"></div>
 
 
-<textarea
-id="description"
-placeholder="About Yourself"></textarea>
+<textarea id="description" placeholder="About Teacher"></textarea>
 
-
-<button type="submit">
-
-Continue To Payment
-
-</button>
+<button type="submit">Continue To Payment</button>
 
 </form>
 
 </div>
 
-
-
 <script type="module">
 
-import {
-initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-import {
-getDatabase,
-ref,
-push
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-
-const firebaseConfig={
-
+const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -333,245 +218,142 @@ projectId:"gurulink-59cc7",
 storageBucket:"gurulink-59cc7.appspot.com",
 messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
 };
 
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-const app=
-initializeApp(firebaseConfig);
+const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
 
-const db=
-getDatabase(app);
+const form = document.getElementById("teacherForm");
+const sport = document.getElementById("sport");
+const customSport = document.getElementById("customSport");
+const photo = document.getElementById("photo");
+const gallery = document.getElementById("gallery");
+const photoPreview = document.getElementById("photoPreview");
+const galleryPreview = document.getElementById("galleryPreview");
 
-const API_KEY=
-"31f729ff855eb2e42c00ee508a8647ea";
-
-
-const form=document.getElementById("form");
-const sport=document.getElementById("sport");
-const otherSport=document.getElementById("otherSport");
-
-const photo=document.getElementById("photo");
-const gallery=document.getElementById("gallery");
-
-
-sport.addEventListener(
-"change",
-()=>{
-
-otherSport.style.display=
-sport.value==="other"
-?
-"block"
-:
-"none";
-
-}
-);
-
-
-/* PHOTO PREVIEW */
-
-photo.addEventListener(
-"change",
-()=>{
-
-photoPreview.innerHTML="";
-
-if(photo.files[0]){
-
-photoPreview.innerHTML=
-`<img src="${URL.createObjectURL(photo.files[0])}">`;
-
-}
-
-}
-);
-
-
-/* GALLERY PREVIEW */
-
-gallery.addEventListener(
-"change",
-()=>{
-
-galleryPreview.innerHTML="";
-
-Array.from(
-gallery.files
-)
-.slice(0,5)
-.forEach(file=>{
-
-galleryPreview.innerHTML+=
-`<img src="${URL.createObjectURL(file)}">`;
-
+/* SPORT CHANGE */
+sport.addEventListener("change", () => {
+customSport.style.display = sport.value === "other" ? "block" : "none";
 });
 
-}
-);
-
-
+/* IMAGE UPLOAD */
 async function upload(file){
+let fd = new FormData();
+fd.append("image", file);
 
-let fd=new FormData();
-
-fd.append("image",file);
-
-let res=
-await fetch(
+let res = await fetch(
 `https://api.imgbb.com/1/upload?key=${API_KEY}`,
-{
-method:"POST",
-body:fd
-}
+{ method:"POST", body:fd }
 );
 
-let data=
-await res.json();
-
+let data = await res.json();
 return data.data.url;
-
 }
 
+/* PHOTO PREVIEW */
+photo.addEventListener("change", () => {
+photoPreview.innerHTML="";
+if(photo.files[0]){
+let img=document.createElement("img");
+img.src=URL.createObjectURL(photo.files[0]);
+photoPreview.appendChild(img);
+}
+});
 
+/* GALLERY PREVIEW */
+gallery.addEventListener("change", () => {
+galleryPreview.innerHTML="";
 
-form.addEventListener(
-"submit",
-async(e)=>{
+if(gallery.files.length>5){
+alert("Max 5 images allowed");
+gallery.value="";
+return;
+}
 
+Array.from(gallery.files).forEach(file=>{
+let img=document.createElement("img");
+img.src=URL.createObjectURL(file);
+galleryPreview.appendChild(img);
+});
+});
+
+/* SUBMIT */
+form.addEventListener("submit", async(e)=>{
 e.preventDefault();
 
 try{
 
 let photoUrl="";
-
 if(photo.files[0]){
-
-photoUrl=
-await upload(
-photo.files[0]
-);
-
+photoUrl=await upload(photo.files[0]);
 }
-
 
 let galleryUrls=[];
-
-for(let file of gallery.files){
-
-galleryUrls.push(
-await upload(file)
-);
-
+for(let f of gallery.files){
+galleryUrls.push(await upload(f));
 }
 
-
-let teachingModes=[];
-
-document
-.querySelectorAll(
-'input[type="checkbox"]:checked'
-)
+let modes=[];
+document.querySelectorAll('input[type="checkbox"]:checked')
 .forEach(c=>{
+modes.push(c.value || "");
+});
 
-teachingModes.push(
-c.parentElement.innerText.trim()
-);
+/* FIX: NO undefined values allowed */
+let newRef = await push(ref(db,"teachers"),{
+
+name: document.getElementById("name").value || "",
+phone: document.getElementById("phone").value || "",
+email: document.getElementById("email").value || "",
+website: document.getElementById("website").value || "",
+qualification: document.getElementById("qualification").value || "",
+experience: document.getElementById("experience").value || "",
+
+sport: sport.value === "other"
+? customSport.value || ""
+: sport.value || "",
+
+location: document.getElementById("location").value || "",
+
+teachingModes: modes,
+
+homeFee: document.getElementById("homeFee").value || "",
+groupFee: document.getElementById("groupFee").value || "",
+onlineIndividualFee: document.getElementById("onlineIndividualFee").value || "",
+onlineGroupFee: document.getElementById("onlineGroupFee").value || "",
+
+photo: photoUrl || "",
+gallery: galleryUrls || [],
+description: document.getElementById("description").value || "",
+
+category:"sport",
+status:"pending"
 
 });
 
+const teacherId = newRef.key;
+localStorage.setItem("teacherId", teacherId);
 
-let newRef=
-await push(
-ref(db,"teachers"),
-{
-
-name:name.value,
-
-phone:phone.value,
-
-email:email.value,
-
-qualification:
-qualification.value,
-
-experience:
-experience.value,
-
-location:
-location.value,
-
-sport:
-sport.value==="other"
-?
-otherSport.value
-:
-sport.value,
-
-teachingModes:
-
-teachingModes,
-
-homeFee:
-homeFee.value,
-
-groupFee:
-groupFee.value,
-
-onlineIndividualFee:
-onlineFee.value,
-
-onlineGroupFee:
-onlineGroupFee.value,
-
-photo:
-photoUrl,
-
-gallery:
-galleryUrls,
-
-description:
-description.value,
-
-category:"sports",
-
-status:"pending"
-
-}
-
-);
-
-
-window.location.href=
-"payment.html?type=teacher&id="+newRef.key;
+window.location.href =
+"payment.html?type=teacher&id="+teacherId;
 
 }
 catch(err){
-
-alert(err.message);
-
+console.log(err);
+alert("Error: " + err.message);
 }
 
 });
 
 </script>
 
-
 <script>
 
 function toggleFee(id){
-
-let box=
-document.getElementById(id);
-
-box.style.display=
-box.style.display==="block"
-?
-"none"
-:
-"block";
-
+let box=document.getElementById(id);
+box.style.display = box.style.display==="block" ? "none" : "block";
 }
 
 </script>
