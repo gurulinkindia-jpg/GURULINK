@@ -111,63 +111,131 @@ margin-bottom:10px;
 
 <form id="form">
 
+
+
+
 <input id="name" placeholder="Full Name" required>
 
+
+
+
 <input id="phone" placeholder="Phone Number" required>
+
+
+
 
 <input type="email"
 id="email"
 placeholder="Email">
 
+
+
+
 <input
 id="website"
 placeholder="Website / Social Link">
+
+
+
 
 <input
 id="qualification"
 placeholder="Qualification">
 
+
+
+
 <input
 id="experience"
 placeholder="Experience">
 
-<select id="subject">
 
-<option value="">
-Select Subject
-</option>
 
-<option>Physics</option>
-<option>Chemistry</option>
-<option>Mathematics</option>
-<option>Biology</option>
-<option>SST</option>
-<option>English</option>
-<option>Hindi</option>
-<option>Assamese</option>
 
-<option value="other">
-Other
-</option>
 
-</select>
 
-<input
-id="otherSubject"
-placeholder="Write Subject"
-style="display:none">
+
+
+<h3>Subjects (Select Multiple)</h3>
+
+<div class="modeBox">
+
+<div class="row">
+<input type="checkbox" value="Physics" class="subjectCheck"> Physics
+</div>
+
+<div class="row">
+<input type="checkbox" value="Chemistry" class="subjectCheck"> Chemistry
+</div>
+
+<div class="row">
+<input type="checkbox" value="Mathematics" class="subjectCheck"> Mathematics
+</div>
+
+<div class="row">
+<input type="checkbox" value="Biology" class="subjectCheck"> Biology
+</div>
+
+<div class="row">
+<input type="checkbox" value="English" class="subjectCheck"> English
+</div>
+
+<div class="row">
+<input type="checkbox" value="Hindi" class="subjectCheck"> Hindi
+</div>
+
+<div class="row">
+<input type="checkbox" value="Assamese" class="subjectCheck"> Assamese
+</div>
+
+<div class="row">
+<input type="checkbox" value="SST" class="subjectCheck"> SST
+</div>
+
+<div class="row">
+<input type="checkbox" value="other" id="otherCheck"> Other
+</div>
+
+<input id="otherSubject"
+placeholder="Write Other Subject"
+style="display:none;margin-top:10px">
+
+</div>
+
+
+
+
+
+
 
 <input
 id="class"
 placeholder="Class Example: Class 9-10">
 
+
+
+
+
+
 <input
 id="location"
 placeholder="Preferred Teaching Area">
 
+
+
+<input id="mapLink" placeholder="Google Map Location Link (Paste URL)">
+
+
+
+
+
+
 <h3>Teaching Modes</h3>
 
 <div class="modeBox">
+
+
+
 
 <div class="row">
 
@@ -188,6 +256,11 @@ id="homeFee"
 placeholder="Enter Home Tuition Fee">
 
 </div>
+
+
+
+
+
 
 
 
@@ -213,6 +286,11 @@ placeholder="Enter Group Tuition Fee">
 
 
 
+
+
+
+
+
 <div class="row">
 
 <input
@@ -232,6 +310,12 @@ id="onlineIndividualFee"
 placeholder="Enter Online Individual Fee">
 
 </div>
+
+
+
+
+
+
 
 
 
@@ -258,6 +342,9 @@ placeholder="Enter Online Group Fee">
 </div>
 
 
+
+
+
 <h3>Profile Photo</h3>
 
 <input
@@ -268,6 +355,8 @@ accept="image/*">
 <div
 class="preview"
 id="photoPreview"></div>
+
+
 
 
 <h3>Gallery Photos (Max 5)</h3>
@@ -334,6 +423,10 @@ const db=getDatabase(app);
 const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
 
 
+
+
+
+
 /* GET ELEMENTS */
 
 const form=document.getElementById("form");
@@ -346,6 +439,10 @@ const photoPreview=document.getElementById("photoPreview");
 
 const gallery=document.getElementById("gallery");
 const galleryPreview=document.getElementById("galleryPreview");
+
+
+
+
 
 
 /* IMAGE UPLOAD */
@@ -371,21 +468,22 @@ return data.data.url;
 }
 
 
+
+
+
+
 /* SUBJECT */
 
-subject.addEventListener(
-"change",
-()=>{
 
-otherSubject.style.display=
-subject.value==="other"
-?
-"block"
-:
-"none";
+const otherSubject = document.getElementById("otherSubject");
 
-}
-);
+otherCheck.addEventListener("change", () => {
+otherSubject.style.display = otherCheck.checked ? "block" : "none";
+});
+
+
+
+
 
 
 /* PROFILE PREVIEW */
@@ -411,6 +509,10 @@ photoPreview.appendChild(img);
 
 }
 );
+
+
+
+
 
 
 /* GALLERY PREVIEW */
@@ -448,6 +550,9 @@ galleryPreview.appendChild(img);
 
 }
 );
+
+
+
 
 
 /* SUBMIT */
@@ -503,6 +608,32 @@ item.value
 });
 
 
+
+
+
+
+
+
+/* SUBJECTS COLLECT */
+let subjects = [];
+
+document.querySelectorAll(".subjectCheck:checked").forEach(item => {
+    if (item.value !== "other") {
+        subjects.push(item.value);
+    }
+});
+
+if (otherCheck.checked && otherSubject.value.trim() !== "") {
+    subjects.push(otherSubject.value);
+}
+
+
+
+
+
+
+
+
 /* SAVE FIREBASE */
 
 let newRef = await push(
@@ -515,9 +646,8 @@ ref(db,"teachers"),
     qualification: document.getElementById("qualification").value,
     experience: document.getElementById("experience").value,
 
-    subject: subject.value === "other"
-        ? otherSubject.value
-        : subject.value,
+    subjects: subjects,   // ✅ FIX HERE
+    mapLink: document.getElementById("mapLink").value || "", // ✅ NEW
 
     class: document.getElementById("class").value,
     location: document.getElementById("location").value,
@@ -536,13 +666,17 @@ ref(db,"teachers"),
 
     category: "academic",
     status: "pending"
-}
-);
+});
 
 
 alert(
 "Form saved successfully"
 );
+
+
+
+
+
 
 
 /* OPEN PAYMENT PAGE */
