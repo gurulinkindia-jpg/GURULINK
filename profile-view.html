@@ -199,15 +199,25 @@ data.mapLink
 }</p>
 
 <p><b>Phone:</b> ${data.phone||"-"}</p>
+
+<p><b>Notes:</b> ${data.description||data.notes||"-"}</p>
+</div>
+
+<div class="actions">
+<a class="call" href="tel:${data.phone||""}">📞 Call</a>
+<a class="whatsapp" target="_blank"
+href="https://wa.me/${data.phone||""}">💬 WhatsApp</a>
+
+${data.website
+? `<a class="website" target="_blank" href="${data.website}">🌐 Website</a>`
+: ""}
 </div>
 
 ${data.gallery && data.gallery.length ? `
 <div class="section">
 <h3>📸 Gallery</h3>
 <div class="gallery">
-${data.gallery.map(img =>
-`<img src="${img}">`
-).join("")}
+${data.gallery.map(img => `<img src="${img}">`).join("")}
 </div>
 </div>
 ` : ""}
