@@ -474,7 +474,7 @@ return data.data.url;
 
 /* SUBJECT */
 
-
+const otherCheck = document.getElementById("otherCheck");
 const otherSubject = document.getElementById("otherSubject");
 
 otherCheck.addEventListener("change", () => {
@@ -646,8 +646,24 @@ ref(db,"teachers"),
     qualification: document.getElementById("qualification").value,
     experience: document.getElementById("experience").value,
 
-    subjects: subjects,   // ✅ FIX HERE
-    mapLink: document.getElementById("mapLink").value || "", // ✅ NEW
+   
+
+  subjects: subjects,   // ✅ FIX HERE
+    mapLink: document.getElementById("mapLink").value, // ✅ NEW
+
+
+
+
+
+
+if(otherCheck.checked && otherSubject.value){
+subjects.push(otherSubject.value);
+}
+		
+		
+		
+		
+		
 
     class: document.getElementById("class").value,
     location: document.getElementById("location").value,
@@ -666,7 +682,8 @@ ref(db,"teachers"),
 
     category: "academic",
     status: "pending"
-});
+}
+);
 
 
 alert(
