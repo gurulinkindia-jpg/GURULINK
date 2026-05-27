@@ -4,18 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Sports Institution Registration</title>
+<title>Sport Institution Registration</title>
 
 <style>
 
 body{
 margin:0;
-font-family:Arial,sans-serif;
+font-family:Arial;
 background:#eef2f7;
 }
 
 header{
-background:#1976d2;
+background:#1565c0;
 color:white;
 padding:18px;
 text-align:center;
@@ -31,17 +31,13 @@ border-radius:15px;
 box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 
-input,
-select,
-textarea{
-
+input,select,textarea{
 width:100%;
 padding:12px;
 margin:10px 0;
 border:1px solid #ccc;
 border-radius:8px;
 box-sizing:border-box;
-
 }
 
 textarea{
@@ -50,67 +46,55 @@ resize:none;
 }
 
 button{
-
 width:100%;
 padding:14px;
-background:#1976d2;
-border:none;
+background:#1565c0;
 color:white;
+border:none;
 border-radius:10px;
 font-size:16px;
 cursor:pointer;
-
 }
 
 .preview{
-
 display:flex;
-flex-wrap:wrap;
 gap:10px;
-margin:10px 0;
-
+flex-wrap:wrap;
+margin-top:10px;
 }
 
 .preview img{
-
 width:90px;
 height:90px;
 border-radius:10px;
 object-fit:cover;
 border:1px solid #ddd;
-
 }
 
 .modeBox{
-
-padding:10px;
 border:1px solid #ddd;
+padding:15px;
 border-radius:10px;
-margin-top:10px;
-
 }
 
 .modeFee{
-
 display:none;
 padding:10px;
-background:#f7f7f7;
-margin-top:10px;
+background:#f4f4f4;
 border-radius:10px;
-
+margin-bottom:10px;
 }
 
 .row{
-
 display:flex;
 align-items:center;
 gap:10px;
 margin:10px 0;
-
 }
 
-.row input[type=checkbox]{
+.row input{
 width:auto;
+transform:scale(1.2);
 }
 
 </style>
@@ -119,68 +103,40 @@ width:auto;
 <body>
 
 <header>
-
-<h1>Sports Institution Registration</h1>
+<h1>Sport Institution Registration</h1>
 <p>Registration Fee ₹200</p>
-
 </header>
 
 <div class="container">
 
-<form id="form">
+<form id="instForm">
 
-<input
-id="name"
-placeholder="Institution Name"
-required>
+<input id="name" placeholder="Institution Name" required>
+<input id="phone" placeholder="Phone Number" required>
 
-<input
-id="phone"
-placeholder="Contact Number"
-required>
+<input type="email" id="email" placeholder="Email">
+<input id="website" placeholder="Website / Social Link">
+<input id="address" placeholder="Address">
+<input id="area" placeholder="Service Area (e.g. Beltola)">
 
-<input
-id="email"
-type="email"
-placeholder="Email">
-
-<input
-id="website"
-placeholder="Website">
-
-<input
-id="address"
-placeholder="Address">
-
-<input
-id="area"
-placeholder="Preferred Service Area">
-
+<!-- SPORT CATEGORY -->
 <select id="sport">
 
-<option value="">
-Select Sports Category
-</option>
+<option value="">Select Sport Category</option>
 
 <option>Cricket Academy</option>
 <option>Football Academy</option>
 <option>Badminton Academy</option>
 <option>Basketball Academy</option>
 <option>Swimming Academy</option>
-<option>Karate School</option>
-<option>Yoga Center</option>
-<option>Gym Training Center</option>
+<option>Athletics Academy</option>
+<option>Gym / Fitness Center</option>
 
-<option value="other">
-Other
-</option>
+<option value="other">Other</option>
 
 </select>
 
-<input
-id="otherSport"
-style="display:none"
-placeholder="Enter Sport Category">
+<input id="otherSport" placeholder="Write Sport Category" style="display:none">
 
 
 <h3>Training Modes</h3>
@@ -188,132 +144,57 @@ placeholder="Enter Sport Category">
 <div class="modeBox">
 
 <div class="row">
-
-<input
-type="checkbox"
-onchange="toggleFee('offline')">
-
-Offline Training
-
+<input type="checkbox" value="Offline Training" onchange="toggleFee('offline')">
+<label>Offline Training</label>
 </div>
-
-<div
-class="modeFee"
-id="offline">
-
-<input
-id="offlineFee"
-placeholder="Enter Fee">
-
+<div id="offline" class="modeFee">
+<input id="offlineFee" placeholder="Enter Fee">
 </div>
-
 
 <div class="row">
-
-<input
-type="checkbox"
-onchange="toggleFee('online')">
-
-Online Training
-
+<input type="checkbox" value="Online Training" onchange="toggleFee('online')">
+<label>Online Training</label>
 </div>
-
-<div
-class="modeFee"
-id="online">
-
-<input
-id="onlineFee"
-placeholder="Enter Fee">
-
+<div id="online" class="modeFee">
+<input id="onlineFee" placeholder="Enter Fee">
 </div>
-
 
 <div class="row">
-
-<input
-type="checkbox"
-onchange="toggleFee('hybrid')">
-
-Hybrid Training
-
+<input type="checkbox" value="Hybrid Training" onchange="toggleFee('hybrid')">
+<label>Hybrid Training</label>
 </div>
-
-<div
-class="modeFee"
-id="hybrid">
-
-<input
-id="hybridFee"
-placeholder="Enter Fee">
-
+<div id="hybrid" class="modeFee">
+<input id="hybridFee" placeholder="Enter Fee">
 </div>
 
 </div>
 
 
-<label>
-<b>Institution Logo</b>
-</label>
-
-<input
-type="file"
-id="logo"
-accept="image/*">
-
-<div
-id="logoPreview"
-class="preview"></div>
+<label><b>Logo</b></label>
+<input type="file" id="logo" accept="image/*">
+<div id="logoPreview" class="preview"></div>
 
 
-<label>
-<b>Gallery Photos (Max 5)</b>
-</label>
-
-<input
-type="file"
-id="gallery"
-multiple
-accept="image/*">
-
-<div
-id="galleryPreview"
-class="preview"></div>
+<label><b>Gallery (Max 5)</b></label>
+<input type="file" id="gallery" multiple accept="image/*">
+<div id="galleryPreview" class="preview"></div>
 
 
-<textarea
-id="description"
-placeholder="About Institution"></textarea>
+<textarea id="description" placeholder="About Institution"></textarea>
 
-<button type="submit">
-
-Continue To Payment
-
-</button>
+<button type="submit">Continue To Payment</button>
 
 </form>
 
 </div>
 
 
-
 <script type="module">
 
-import {
-initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-import {
-getDatabase,
-ref,
-push
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-
-const firebaseConfig={
-
+const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -321,224 +202,147 @@ projectId:"gurulink-59cc7",
 storageBucket:"gurulink-59cc7.appspot.com",
 messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
 };
 
-const app=initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-const db=getDatabase(app);
+const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
 
-const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
+const form = document.getElementById("instForm");
+const sport = document.getElementById("sport");
+const otherSport = document.getElementById("otherSport");
+const logo = document.getElementById("logo");
+const gallery = document.getElementById("gallery");
+
+const logoPreview = document.getElementById("logoPreview");
+const galleryPreview = document.getElementById("galleryPreview");
 
 
-const form=document.getElementById("form");
-const sport=document.getElementById("sport");
-const otherSport=document.getElementById("otherSport");
+/* SPORT OTHER */
+sport.addEventListener("change", ()=>{
+otherSport.style.display =
+sport.value === "other" ? "block" : "none";
+});
 
-const logo=document.getElementById("logo");
-const gallery=document.getElementById("gallery");
 
+/* IMAGE UPLOAD */
+async function upload(file){
+let fd = new FormData();
+fd.append("image", file);
 
-sport.addEventListener(
-"change",
-()=>{
-
-otherSport.style.display=
-sport.value==="other"
-?
-"block"
-:
-"none";
-
-}
+let res = await fetch(
+`https://api.imgbb.com/1/upload?key=${API_KEY}`,
+{ method:"POST", body:fd }
 );
+
+let data = await res.json();
+return data.data.url;
+}
 
 
 /* LOGO PREVIEW */
-
-logo.addEventListener(
-"change",
-()=>{
-
+logo.addEventListener("change", ()=>{
 logoPreview.innerHTML="";
-
 if(logo.files[0]){
-
-logoPreview.innerHTML=
-`<img src="${URL.createObjectURL(logo.files[0])}">`;
-
+let img=document.createElement("img");
+img.src=URL.createObjectURL(logo.files[0]);
+logoPreview.appendChild(img);
 }
-
-}
-);
+});
 
 
 /* GALLERY PREVIEW */
-
-gallery.addEventListener(
-"change",
-()=>{
-
+gallery.addEventListener("change", ()=>{
 galleryPreview.innerHTML="";
 
-Array.from(gallery.files)
-.slice(0,5)
-.forEach(file=>{
+if(gallery.files.length > 5){
+alert("Max 5 images allowed");
+gallery.value="";
+return;
+}
 
-galleryPreview.innerHTML+=
-`<img src="${URL.createObjectURL(file)}">`;
-
+Array.from(gallery.files).forEach(file=>{
+let img=document.createElement("img");
+img.src=URL.createObjectURL(file);
+galleryPreview.appendChild(img);
+});
 });
 
-}
-);
+
+/* TOGGLE FEE */
+window.toggleFee = function(id){
+let box=document.getElementById(id);
+box.style.display = box.style.display==="block" ? "none" : "block";
+};
 
 
-async function upload(file){
-
-let fd=new FormData();
-
-fd.append("image",file);
-
-let res=await fetch(
-`https://api.imgbb.com/1/upload?key=${API_KEY}`,
-{
-method:"POST",
-body:fd
-}
-);
-
-let data=await res.json();
-
-return data.data.url;
-
-}
-
-
-
-form.addEventListener(
-"submit",
-async(e)=>{
-
+/* SUBMIT */
+form.addEventListener("submit", async(e)=>{
 e.preventDefault();
 
 try{
 
-let logoUrl="";
-
+let logoUrl = "";
 if(logo.files[0]){
-
-logoUrl=
-await upload(
-logo.files[0]
-);
-
+logoUrl = await upload(logo.files[0]);
 }
 
-
-let galleryUrls=[];
-
-for(let file of gallery.files){
-
-galleryUrls.push(
-await upload(file)
-);
-
+let galleryUrls = [];
+for(let f of gallery.files){
+galleryUrls.push(await upload(f));
 }
 
-
-let modes=[];
-
-document
-.querySelectorAll(
-'input[type="checkbox"]:checked'
-)
+let modes = [];
+document.querySelectorAll('input[type="checkbox"]:checked')
 .forEach(c=>{
-
-modes.push(
-c.parentElement.innerText.trim()
-);
-
+modes.push(c.value || "");
 });
 
 
-let newRef=
-await push(
-ref(db,"institutions"),
-{
+let newRef = await push(ref(db,"institutions"),{
 
-name:name.value,
-phone:phone.value,
-email:email.value,
-website:website.value,
-address:address.value,
-area:area.value,
+name: document.getElementById("name").value || "",
+phone: document.getElementById("phone").value || "",
+email: document.getElementById("email").value || "",
+website: document.getElementById("website").value || "",
+address: document.getElementById("address").value || "",
+area: document.getElementById("area").value || "",
 
 sport:
-sport.value==="other"
-?
-otherSport.value
-:
-sport.value,
+sport.value === "other"
+? otherSport.value || ""
+: sport.value || "",
 
-modes:modes,
+modes: modes,
 
-offlineFee:
-offlineFee.value,
+offlineFee: document.getElementById("offlineFee").value || "",
+onlineFee: document.getElementById("onlineFee").value || "",
+hybridFee: document.getElementById("hybridFee").value || "",
 
-onlineFee:
-onlineFee.value,
+logo: logoUrl || "",
+gallery: galleryUrls || [],
 
-hybridFee:
-hybridFee.value,
+description: document.getElementById("description").value || "",
 
-logo:logoUrl,
+category: "sport",
+status: "pending"
 
-gallery:galleryUrls,
+});
 
-description:
-description.value,
+const institutionId = newRef.key;
+localStorage.setItem("institutionId", institutionId);
 
-category:"sports",
-
-status:"pending"
-
-}
-
-);
-
-
-window.location.href=
-"payment.html?type=institution&id="+newRef.key;
+window.location.href =
+"payment.html?type=institution&id=" + institutionId;
 
 }
 catch(err){
-
-alert(err.message);
-
+console.log(err);
+alert("Error: " + err.message);
 }
 
-}
-
-);
-
-</script>
-
-<script>
-
-function toggleFee(id){
-
-let box=
-document.getElementById(id);
-
-box.style.display=
-box.style.display==="block"
-?
-"none"
-:
-"block";
-
-}
+});
 
 </script>
 
