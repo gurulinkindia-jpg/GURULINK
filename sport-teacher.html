@@ -282,8 +282,6 @@ Please select at least one sport
 </div>
 
 <script type="module">
-import { get, query, orderByChild, equalTo } 
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
@@ -382,10 +380,6 @@ e.preventDefault();
 
 
 
-
-
-
-
 const password = document.getElementById("password").value;
 const confirm = document.getElementById("confirmPassword").value;
 
@@ -395,28 +389,6 @@ if (password !== confirm) {
     confirmPassword.focus();
     return;
 }
-
-/* 2. PHONE DUPLICATE CHECK (ADD HERE 👇) */
-const phone = document.getElementById("phone").value;
-
-const phoneQuery = query(
-    ref(db, "teachers"),
-    orderByChild("phone"),
-    equalTo(phone)
-);
-
-const snapshot = await get(phoneQuery);
-
-if (snapshot.exists()) {
-    alert("❌ This phone number is already registered!");
-    return;
-}
-
-
-
-
-
-
 
 
 
