@@ -75,6 +75,7 @@ cursor:pointer;
 }
 
 .approve{background:green}
+.notapprove{background:red}
 .del{background:red}
 .edit{background:#0d47a1}
 .review{background:#6a1b9a}
@@ -248,8 +249,11 @@ x.category==="creative"?"#e91e63":
 x.category==="skill"?"#ff9800":
 "#607d8b";
 
+let isApproved = x.status === "approved";
+
 html+=`
 <div class="card ${x.type}">
+
 <h3>${x.name||"-"}</h3>
 
 <span class="tag" style="background:${categoryColor};color:white">
@@ -262,10 +266,18 @@ ${x.category||"-"}
 <p><b>Public Review:</b> ${x.publicReview||"-"}</p>
 <p><b>Admin Review:</b> ${x.adminReview||"-"}</p>
 
-<button class="approve" onclick="approve('${x.type}','${x.id}')">Approve</button>
+<button 
+class="${isApproved ? 'approve' : 'notapprove'}"
+onclick="toggleApprove('${x.type}','${x.id}','${x.status}')">
+
+${isApproved ? "Approved" : "Not Approved"}
+
+</button>
+
 <button class="edit" onclick='openEdit(${JSON.stringify(x)})'>Edit</button>
 <button class="review" onclick="adminReview('${x.type}','${x.id}')">Admin Review</button>
 <button class="del" onclick="del('${x.type}','${x.id}')">Delete</button>
+
 </div>
 `;
 });
@@ -289,17 +301,23 @@ html+=`
 document.getElementById("payments").innerHTML=html;
 }
 
-/* ACTIONS */
-window.approve=(type,id)=>{
-update(ref(db,`${type}s/${id}`),{status:"approved"});
+/* TOGGLE APPROVE */
+window.toggleApprove = (type,id,status)=>{
+let newStatus = status === "approved" ? "pending" : "approved";
+
+update(ref(db,`${type}s/${id}`),{
+status:newStatus
+});
 };
 
+/* DELETE */
 window.del=(type,id)=>{
 if(confirm("Delete?")){
 remove(ref(db,`${type}s/${id}`));
 }
 };
 
+/* ADMIN REVIEW */
 window.adminReview=(type,id)=>{
 let msg=prompt("Admin review:");
 if(msg){
