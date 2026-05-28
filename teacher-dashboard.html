@@ -29,7 +29,7 @@ border-radius:10px;
 box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 
-input,select,textarea{
+input,textarea{
 width:100%;
 padding:10px;
 margin:8px 0;
@@ -48,6 +48,10 @@ border-radius:8px;
 cursor:pointer;
 }
 
+button.logout{
+background:red;
+}
+
 .preview img{
 width:90px;
 height:90px;
@@ -62,6 +66,8 @@ padding:10px;
 border:1px solid #ddd;
 border-radius:8px;
 }
+
+#content{display:none;}
 </style>
 </head>
 
@@ -73,33 +79,30 @@ border-radius:8px;
 
 <div class="container">
 
-<div id="loading">Loading profile...</div>
+<div id="loading">Loading your profile...</div>
 
-<div id="content" style="display:none;">
-
-<h3>Edit Profile</h3>
+<div id="content">
 
 <input id="name" placeholder="Full Name">
 <input id="phone" placeholder="Phone">
 <input id="email" placeholder="Email">
-
 <input id="experience" placeholder="Experience">
 <input id="location" placeholder="Location">
 
 <textarea id="description" placeholder="About You"></textarea>
 
 <div class="section">
-<h4>Sports (comma separated)</h4>
-<input id="sports">
+<h4>Subjects (comma separated)</h4>
+<input id="subjects">
 </div>
 
 <div class="section">
-<h4>Training Modes</h4>
+<h4>Teaching Modes</h4>
 <input id="modes">
 </div>
 
 <div class="section">
-<h4>Fees</h4>
+<h4>Fee</h4>
 <input id="fee">
 </div>
 
@@ -110,10 +113,9 @@ border-radius:8px;
 </div>
 
 <button onclick="saveData()">Save Changes</button>
-<button style="background:red" onclick="logout()">Logout</button>
+<button class="logout" onclick="logout()">Logout</button>
 
 </div>
-
 </div>
 
 <script type="module">
@@ -136,18 +138,18 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-/* SECURITY CHECK */
+/* SECURITY */
 const uid = localStorage.getItem("uid");
-const profileId = localStorage.getItem("profileId");
 const role = localStorage.getItem("role");
+const profileId = localStorage.getItem("profileId");
 
 if(!uid || role !== "teacher"){
 alert("Access Denied");
 window.location.href = "login.html";
 }
 
-/* LOAD DATA */
-async function loadData(){
+/* LOAD PROFILE */
+async function loadProfile(){
 
 const snap = await get(ref(db,"teachers/"+profileId));
 
@@ -158,18 +160,17 @@ return;
 
 const d = snap.val();
 
-/* fill data */
+/* fill form */
 document.getElementById("name").value = d.name || "";
 document.getElementById("phone").value = d.phone || "";
 document.getElementById("email").value = d.email || "";
 document.getElementById("experience").value = d.experience || "";
 document.getElementById("location").value = d.location || "";
 document.getElementById("description").value = d.description || "";
-document.getElementById("sports").value = (d.sports || []).join(", ");
+document.getElementById("subjects").value = (d.subjects || []).join(", ");
 document.getElementById("modes").value = (d.teachingModes || []).join(", ");
 document.getElementById("fee").value = d.fee || "";
 
-/* photo */
 if(d.photo){
 document.getElementById("photoPreview").innerHTML =
 `<img src="${d.photo}">`;
@@ -179,7 +180,7 @@ document.getElementById("loading").style.display="none";
 document.getElementById("content").style.display="block";
 }
 
-loadData();
+loadProfile();
 
 /* IMAGE UPLOAD */
 const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
@@ -197,7 +198,7 @@ let data = await res.json();
 return data.data.url;
 }
 
-/* SAVE */
+/* SAVE DATA */
 window.saveData = async function(){
 
 let photoUrl = "";
@@ -214,14 +215,16 @@ email:document.getElementById("email").value,
 experience:document.getElementById("experience").value,
 location:document.getElementById("location").value,
 description:document.getElementById("description").value,
-sports:document.getElementById("sports").value.split(",").map(x=>x.trim()),
+
+subjects:document.getElementById("subjects").value.split(",").map(x=>x.trim()),
 teachingModes:document.getElementById("modes").value.split(",").map(x=>x.trim()),
 fee:document.getElementById("fee").value,
-photo:photoUrl || undefined
+
+photo: photoUrl || undefined
 
 });
 
-alert("Updated Successfully");
+alert("Profile Updated Successfully");
 };
 
 /* LOGOUT */
