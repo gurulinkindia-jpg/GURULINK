@@ -3,12 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Skill Institute Registration</title>
+
+<title>Skill Institution Registration</title>
 
 <style>
+
 body{
 margin:0;
-font-family:Arial;
+font-family:Arial,sans-serif;
 background:#eef2f7;
 }
 
@@ -20,77 +22,153 @@ text-align:center;
 }
 
 .container{
-max-width:900px;
+width:90%;
+max-width:800px;
 margin:20px auto;
 background:white;
-padding:20px;
-border-radius:12px;
+padding:25px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 
-input,textarea{
+input,select,textarea{
 width:100%;
-padding:10px;
-margin:8px 0;
+padding:12px;
+margin:10px 0;
 border:1px solid #ccc;
 border-radius:8px;
+box-sizing:border-box;
+}
+
+textarea{
+height:100px;
+resize:none;
 }
 
 button{
 width:100%;
-padding:12px;
+padding:14px;
 background:#2e7d32;
 color:white;
 border:none;
-border-radius:8px;
+border-radius:10px;
+font-size:16px;
 cursor:pointer;
+}
+
+.preview{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-top:10px;
+}
+
+.preview img{
+width:90px;
+height:90px;
+border-radius:10px;
+object-fit:cover;
+border:1px solid #ddd;
+}
+
+.modeBox{
+padding:15px;
+border:1px solid #ddd;
+border-radius:10px;
 }
 
 .row{
 display:flex;
-gap:10px;
 align-items:center;
-margin:6px 0;
+gap:10px;
+margin:10px 0;
 }
+
+.row input[type=checkbox]{
+width:auto;
+transform:scale(1.2);
+}
+
+.modeFee{
+display:none;
+padding:10px;
+background:#f4f4f4;
+border-radius:10px;
+margin-bottom:10px;
+}
+
 </style>
 </head>
 
 <body>
 
 <header>
-<h2>Skill Institute Registration</h2>
-<p>Technical • Vocational • Training • Skills</p>
+<h1>Skill Institution Registration</h1>
+<p>Registration Fee ₹150</p>
 </header>
 
 <div class="container">
 
 <form id="form">
 
-<h3>Login Details</h3>
+<input id="name" placeholder="Institution Name" required>
+<input id="ownerName" placeholder="Owner Name" required>
+<input type="date" id="establishedDate" required>
 
-<input id="email" type="email" placeholder="Email" required>
-<input id="password" type="password" placeholder="Password" required>
-
-<h3>Institute Info</h3>
-
-<input id="name" placeholder="Institute Name" required>
-<input id="owner" placeholder="Owner Name" required>
-<input id="phone" placeholder="Phone Number" required>
-<input id="address" placeholder="Address" required>
+<input id="phone" placeholder="Contact Number" required>
+<input id="email" placeholder="Email">
+<input id="address" placeholder="Address">
 
 <h3>Skill Categories</h3>
 
-<div class="row"><input type="checkbox" value="Computer Training" class="cat"> Computer Training</div>
-<div class="row"><input type="checkbox" value="Coding" class="cat"> Coding / Programming</div>
-<div class="row"><input type="checkbox" value="Digital Marketing" class="cat"> Digital Marketing</div>
-<div class="row"><input type="checkbox" value="Accounting" class="cat"> Accounting</div>
-<div class="row"><input type="checkbox" value="Electrical" class="cat"> Electrical Training</div>
-<div class="row"><input type="checkbox" value="Mechanical" class="cat"> Mechanical Training</div>
-<div class="row"><input type="checkbox" value="Car Repair" class="cat"> Car Repair</div>
-<div class="row"><input type="checkbox" value="Beauty & Wellness" class="cat"> Beauty & Wellness</div>
+<div class="modeBox">
 
-<textarea id="about" placeholder="About Institute"></textarea>
+<div class="row"><input type="checkbox" class="subjectCheck" value="Computer"> Computer</div>
+<div class="row"><input type="checkbox" class="subjectCheck" value="Fashion Design"> Fashion Design</div>
+<div class="row"><input type="checkbox" class="subjectCheck" value="Beauty & Makeup"> Beauty & Makeup</div>
+<div class="row"><input type="checkbox" class="subjectCheck" value="Cooking"> Cooking</div>
+<div class="row"><input type="checkbox" class="subjectCheck" value="Photography"> Photography</div>
+<div class="row"><input type="checkbox" class="subjectCheck" value="Music"> Music</div>
+<div class="row"><input type="checkbox" class="subjectCheck" value="Dance"> Dance</div>
+<div class="row"><input type="checkbox" class="subjectCheck" value="Graphic Design"> Graphic Design</div>
 
-<button type="submit">Register & Continue</button>
+</div>
+
+<h3>Training Modes</h3>
+
+<div class="modeBox">
+
+<div class="row">
+<input type="checkbox" value="Online" onchange="toggleFee('online')"> Online
+</div>
+<div id="online" class="modeFee">
+<input id="onlineFee" placeholder="Online Fee">
+</div>
+
+<div class="row">
+<input type="checkbox" value="Offline" onchange="toggleFee('offline')"> Offline
+</div>
+<div id="offline" class="modeFee">
+<input id="offlineFee" placeholder="Offline Fee">
+</div>
+
+</div>
+
+<h3>Logo</h3>
+<input type="file" id="logo" accept="image/*">
+<div id="logoPreview" class="preview"></div>
+
+<h3>ID Proof</h3>
+<input type="file" id="idUpload" accept="image/*">
+<div id="idPreview" class="preview"></div>
+
+<h3>Gallery</h3>
+<input type="file" id="gallery" accept="image/*" multiple>
+<div id="galleryPreview" class="preview"></div>
+
+<textarea id="description" placeholder="About Skill Institution"></textarea>
+
+<button type="submit">Continue To Payment</button>
 
 </form>
 
@@ -99,16 +177,7 @@ margin:6px 0;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import {
-getAuth,
-createUserWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-
-import {
-getDatabase,
-ref,
-set
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -121,67 +190,42 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getDatabase(app);
+
+function toggleFee(id){
+document.getElementById(id).style.display =
+document.getElementById(id).style.display === "block" ? "none" : "block";
+}
 
 document.getElementById("form").addEventListener("submit", async (e)=>{
 e.preventDefault();
 
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
-
-const name = document.getElementById("name").value;
-const owner = document.getElementById("owner").value;
-const phone = document.getElementById("phone").value;
-const address = document.getElementById("address").value;
-const about = document.getElementById("about").value;
-
-const categories = [];
-document.querySelectorAll(".cat:checked").forEach(c=>{
-categories.push(c.value);
+let categories = [];
+document.querySelectorAll(".subjectCheck:checked").forEach(i=>{
+categories.push(i.value);
 });
 
-if(categories.length === 0){
-alert("Select at least one skill category");
-return;
-}
-
-try {
-
-// 1. CREATE AUTH USER
-const userCred = await createUserWithEmailAndPassword(auth, email, password);
-const uid = userCred.user.uid;
-
-// 2. SAVE INSTITUTE DATA (UID BASED)
-await set(ref(db, "skill_institutes/" + uid), {
-uid,
-name,
-owner,
-phone,
-email,
-address,
-about,
+const data = {
+name:document.getElementById("name").value,
+ownerName:document.getElementById("ownerName").value,
+establishedDate:document.getElementById("establishedDate").value,
+phone:document.getElementById("phone").value,
+email:document.getElementById("email").value,
+address:document.getElementById("address").value,
 categories,
-role:"skill_institute",
+onlineFee:document.getElementById("onlineFee").value,
+offlineFee:document.getElementById("offlineFee").value,
+description:document.getElementById("description").value,
+category:"skill",
 status:"pending",
 createdAt:Date.now()
-});
+};
 
-// 3. ROLE MAPPING
-await set(ref(db, "users/" + uid), {
-uid,
-role:"skill_institute",
-profileId:uid
-});
+const newRef = await push(ref(db,"institutions"), data);
 
-alert("Skill Institute Registered Successfully");
+localStorage.setItem("institutionId", newRef.key);
 
-window.location.href = "payment.html?type=skill_institute&id=" + uid;
-
-}
-catch(err){
-alert(err.message);
-}
+window.location.href = "payment.html?type=skill";
 
 });
 
