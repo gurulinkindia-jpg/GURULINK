@@ -108,10 +108,8 @@ margin-bottom:10px;
 <body>
 
 <header>
-
 <h1>Sport Teacher Registration</h1>
 <p>Registration Fee ₹100</p>
-
 </header>
 
 <div class="container">
@@ -129,7 +127,7 @@ margin-bottom:10px;
 <input id="qualification" placeholder="Qualification / Certification">
 <input id="experience" placeholder="Experience: 5 Years, 6 Months">
 <input id="location" placeholder="Preferred Training Area" required>
-<input id="mapLink" placeholder="Google Map Location Link (Paste URL if available)">
+<input id="mapLink" placeholder="Google Map Location Link">
 
 <h3>Sports / Activities <span style="color:red">*</span></h3>
 
@@ -171,7 +169,7 @@ margin-bottom:10px;
 </div>
 
 <input id="otherSport" placeholder="Write Other Sport / Activity"
-style="display:none;margin-top:10px;padding:12px;border:1px solid #ccc;border-radius:8px;">
+style="display:none;margin-top:10px">
 
 <p id="sportError" style="color:red;display:none;">
 Please select at least one sport
@@ -258,7 +256,6 @@ Please select at least one sport
 <div id="idPreview" class="preview"></div>
 
 <h3>Gallery Photos</h3>
-
 <input type="file" id="gallery" accept="image/*" multiple style="display:none">
 
 <button type="button" onclick="document.getElementById('gallery').click()">
@@ -294,113 +291,123 @@ databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabas
 const db = getDatabase(app);
 const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
 
-/* ===== FIX 1: IMAGE PREVIEW ===== */
+/* FIXED ELEMENTS */
+const form = document.getElementById("teacherForm");
+const photo = document.getElementById("photo");
+const idUpload = document.getElementById("idUpload");
+const gallery = document.getElementById("gallery");
+const idType = document.getElementById("idType");
 
-photo.addEventListener("change",()=>{
-photoPreview.innerHTML="";
+const photoPreview = document.getElementById("photoPreview");
+const idPreview = document.getElementById("idPreview");
+const galleryPreview = document.getElementById("galleryPreview");
+
+const otherCheck = document.getElementById("otherCheck");
+const otherSport = document.getElementById("otherSport");
+
+/* OTHER SPORT FIX */
+otherCheck.addEventListener("change", () => {
+otherSport.style.display = otherCheck.checked ? "block" : "none";
+otherSport.value = "";
+});
+
+/* PREVIEW FIX */
+photo.addEventListener("change", () => {
+photoPreview.innerHTML = "";
 if(photo.files[0]){
-const img=document.createElement("img");
-img.src=URL.createObjectURL(photo.files[0]);
+const img = document.createElement("img");
+img.src = URL.createObjectURL(photo.files[0]);
 photoPreview.appendChild(img);
 }
 });
 
-idUpload.addEventListener("change",()=>{
-idPreview.innerHTML="";
+idUpload.addEventListener("change", () => {
+idPreview.innerHTML = "";
 if(idUpload.files[0]){
-const img=document.createElement("img");
-img.src=URL.createObjectURL(idUpload.files[0]);
+const img = document.createElement("img");
+img.src = URL.createObjectURL(idUpload.files[0]);
 idPreview.appendChild(img);
 }
 });
 
-gallery.addEventListener("change",function(){
-galleryPreview.innerHTML="";
-Array.from(this.files).forEach(f=>{
-const img=document.createElement("img");
-img.src=URL.createObjectURL(f);
+let selectedFiles = [];
+
+gallery.addEventListener("change", function () {
+Array.from(this.files).forEach(f => {
+if(selectedFiles.length < 5) selectedFiles.push(f);
+});
+renderGallery();
+});
+
+function renderGallery(){
+galleryPreview.innerHTML = "";
+selectedFiles.forEach(f=>{
+const img = document.createElement("img");
+img.src = URL.createObjectURL(f);
 galleryPreview.appendChild(img);
 });
-});
-
-/* ===== FIX 2: OTHER SPORT INPUT ===== */
-
-otherCheck.addEventListener("change",function(){
-if(this.checked){
-otherSport.style.display="block";
-otherSport.focus();
-otherSport.required=true;
-}else{
-otherSport.style.display="none";
-otherSport.value="";
-otherSport.required=false;
 }
-});
 
-/* ===== UPLOAD ===== */
-
+/* SAFE UPLOAD */
 async function upload(file){
-let fd=new FormData();
-fd.append("image",file);
+try{
+let fd = new FormData();
+fd.append("image", file);
 
-let res=await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`,{
+let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`,{
 method:"POST",
 body:fd
 });
 
-let data=await res.json();
-return data.data.url;
+let data = await res.json();
+return data?.data?.url || "";
+}catch(e){
+console.log("Upload error", e);
+return "";
+}
 }
 
-/* ===== SUBMIT ===== */
-
-form.addEventListener("submit",async function(e){
+/* SUBMIT FIX */
+form.addEventListener("submit", async (e) => {
 e.preventDefault();
-
-let checked=document.querySelectorAll(".sportCheck:checked").length;
-
-if(checked===0 && !otherCheck.checked){
-document.getElementById("sportError").style.display="block";
-return;
-}else{
-document.getElementById("sportError").style.display="none";
-}
-
-const btn=form.querySelector("button[type=submit]");
-btn.disabled=true;
-btn.innerText="Processing...";
 
 try{
 
-let photoUrl="";
-if(photo.files[0]) photoUrl=await upload(photo.files[0]);
-
-let idUrl="";
-if(idUpload.files[0]) idUrl=await upload(idUpload.files[0]);
-
-let galleryUrls=[];
-for(let f of gallery.files){
-galleryUrls.push(await upload(f));
+const checked = document.querySelectorAll(".sportCheck:checked").length;
+if(checked === 0 && !otherCheck.checked){
+document.getElementById("sportError").style.display = "block";
+return;
 }
 
-let sports=[];
-document.querySelectorAll(".sportCheck:checked").forEach(i=>{
-if(i.value!=="other") sports.push(i.value);
-});
+const btn = form.querySelector("button[type=submit]");
+btn.disabled = true;
+btn.innerText = "Processing...";
 
-if(otherCheck.checked && otherSport.value.trim()!==""){
+let photoUrl = photo.files[0] ? await upload(photo.files[0]) : "";
+let idUrl = idUpload.files[0] ? await upload(idUpload.files[0]) : "";
+
+let galleryUrls = [];
+for(let f of selectedFiles){
+let url = await upload(f);
+if(url) galleryUrls.push(url);
+}
+
+let sports = [];
+document.querySelectorAll(".sportCheck:checked").forEach(i=>{
+if(i.value !== "other") sports.push(i.value);
+});
+if(otherCheck.checked && otherSport.value.trim()){
 sports.push(otherSport.value);
 }
 
-let teachingModes=[];
-document.querySelectorAll("#teacherForm input[type=checkbox]").forEach(i=>{
-if(!i.classList.contains("sportCheck") && i.id!=="otherCheck" && i.id!=="declaration" && i.checked){
+let teachingModes = [];
+document.querySelectorAll("#teacherForm input[type=checkbox]:checked").forEach(i=>{
+if(!i.classList.contains("sportCheck") && i.id !== "otherCheck" && i.id !== "declaration"){
 teachingModes.push(i.value);
 }
 });
 
 let newRef = await push(ref(db,"teachers"),{
-
 name:document.getElementById("name").value,
 phone:document.getElementById("phone").value,
 email:document.getElementById("email").value,
@@ -423,21 +430,26 @@ role:"teacher",
 profileId:newRef.key
 });
 
-localStorage.setItem("teacherId",newRef.key);
+localStorage.setItem("teacherId", newRef.key);
 
-window.location.href="payment.html?id="+newRef.key;
+/* GUARANTEED REDIRECT */
+window.location.href = "payment.html?id=" + newRef.key;
 
 }catch(err){
-alert(err.message);
-btn.disabled=false;
-btn.innerText="Continue To Payment";
+console.log(err);
+alert("Error: " + err.message);
+
+const btn = form.querySelector("button[type=submit]");
+btn.disabled = false;
+btn.innerText = "Continue To Payment";
 }
 
 });
 
+/* TOGGLE */
 function toggleFee(id){
-const el=document.getElementById(id);
-el.style.display = el.style.display==="block" ? "none":"block";
+const el = document.getElementById(id);
+el.style.display = el.style.display === "block" ? "none" : "block";
 }
 
 </script>
