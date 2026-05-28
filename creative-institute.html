@@ -13,7 +13,7 @@ background:#eef2f7;
 }
 
 header{
-background:#8e24aa;
+background:#7b1fa2;
 color:white;
 padding:18px;
 text-align:center;
@@ -27,7 +27,7 @@ padding:20px;
 border-radius:12px;
 }
 
-input,select,textarea{
+input,textarea{
 width:100%;
 padding:10px;
 margin:8px 0;
@@ -38,18 +38,19 @@ border-radius:8px;
 button{
 width:100%;
 padding:12px;
-background:#8e24aa;
+background:#7b1fa2;
 color:white;
 border:none;
 border-radius:8px;
 cursor:pointer;
+font-size:16px;
 }
 
 .row{
 display:flex;
-gap:10px;
 align-items:center;
-margin:8px 0;
+gap:10px;
+margin:6px 0;
 }
 </style>
 </head>
@@ -58,7 +59,7 @@ margin:8px 0;
 
 <header>
 <h2>Creative Teacher Registration</h2>
-<p>Music • Dance • Art • Photography</p>
+<p>Music • Dance • Art • Design</p>
 </header>
 
 <div class="container">
@@ -66,24 +67,23 @@ margin:8px 0;
 <form id="form">
 
 <h3>Login Details</h3>
-
 <input id="email" type="email" placeholder="Email" required>
 <input id="password" type="password" placeholder="Password" required>
 
-<h3>Teacher Info</h3>
-
+<h3>Basic Information</h3>
 <input id="name" placeholder="Full Name" required>
 <input id="phone" placeholder="Phone Number" required>
 <input id="experience" placeholder="Experience (Years)">
 <input id="address" placeholder="Address">
 
-<h3>Skills</h3>
+<h3>Creative Skills</h3>
 
-<div class="row"><input type="checkbox" value="Music Teacher" class="skill"> Music</div>
-<div class="row"><input type="checkbox" value="Dance Teacher" class="skill"> Dance</div>
+<div class="row"><input type="checkbox" value="Music" class="skill"> Music</div>
+<div class="row"><input type="checkbox" value="Dance" class="skill"> Dance</div>
 <div class="row"><input type="checkbox" value="Painting" class="skill"> Painting</div>
 <div class="row"><input type="checkbox" value="Photography" class="skill"> Photography</div>
 <div class="row"><input type="checkbox" value="Graphic Design" class="skill"> Graphic Design</div>
+<div class="row"><input type="checkbox" value="Fashion Design" class="skill"> Fashion Design</div>
 <div class="row"><input type="checkbox" value="Acting" class="skill"> Acting</div>
 
 <textarea id="bio" placeholder="Short Bio"></textarea>
@@ -125,8 +125,8 @@ const db = getDatabase(app);
 document.getElementById("form").addEventListener("submit", async (e)=>{
 e.preventDefault();
 
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
+const email = emailInput.value;
+const password = passwordInput.value;
 
 const name = document.getElementById("name").value;
 const phone = document.getElementById("phone").value;
@@ -139,13 +139,18 @@ document.querySelectorAll(".skill:checked").forEach(s=>{
 skills.push(s.value);
 });
 
+if(skills.length === 0){
+alert("Select at least one skill");
+return;
+}
+
 try {
 
 // 1. CREATE AUTH USER
 const userCred = await createUserWithEmailAndPassword(auth, email, password);
 const uid = userCred.user.uid;
 
-// 2. SAVE TEACHER DATA (UID BASED)
+// 2. SAVE PROFILE (UID BASED)
 await set(ref(db, "creative_teachers/" + uid), {
 uid,
 name,
@@ -160,15 +165,16 @@ status:"pending",
 createdAt:Date.now()
 });
 
-// 3. ROLE MAP
+// 3. ROLE MAPPING (IMPORTANT FOR LOGIN SYSTEM)
 await set(ref(db, "users/" + uid), {
 uid,
 role:"creative_teacher",
 profileId:uid
 });
 
-alert("Creative Teacher Registered Successfully");
+alert("Registration Successful");
 
+// 4. PAYMENT REDIRECT
 window.location.href = "payment.html?type=creative_teacher&id=" + uid;
 
 }
