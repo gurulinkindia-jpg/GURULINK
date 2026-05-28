@@ -59,7 +59,11 @@ padding:12px;
 border-radius:10px;
 margin-top:10px;
 box-shadow:0 3px 10px rgba(0,0,0,.1);
+border-left:6px solid #999;
 }
+
+.teacher{border-left-color:#1565c0;}
+.institution{border-left-color:#2e7d32;}
 
 button{
 padding:7px 10px;
@@ -75,7 +79,17 @@ cursor:pointer;
 .edit{background:#0d47a1}
 .review{background:#6a1b9a}
 
-/* EDIT MODAL */
+/* TAGS */
+.tag{
+display:inline-block;
+padding:3px 8px;
+border-radius:12px;
+font-size:12px;
+margin:2px;
+background:#eee;
+}
+
+/* MODAL */
 .modal{
 display:none;
 position:fixed;
@@ -95,7 +109,7 @@ max-height:90vh;
 overflow:auto;
 }
 
-.modalBox input, .modalBox textarea{
+.modalBox input,.modalBox textarea{
 width:100%;
 padding:10px;
 margin:5px 0;
@@ -111,7 +125,6 @@ margin:5px 0;
 
 <div class="container">
 
-<!-- DASHBOARD -->
 <div class="dashboard">
 <div class="box">Teachers <h3 id="tCount">0</h3></div>
 <div class="box">Institutions <h3 id="iCount">0</h3></div>
@@ -119,10 +132,9 @@ margin:5px 0;
 <div class="box">Earnings <h3 id="earn">₹0</h3></div>
 </div>
 
-<!-- FILTER -->
 <div class="topbar">
 <input id="search" placeholder="Search name/email/phone">
-<input id="phone" placeholder="Exact phone filter">
+<input id="phone" placeholder="Exact phone">
 <select id="type">
 <option value="">All</option>
 <option value="teacher">Teachers</option>
@@ -138,7 +150,7 @@ margin:5px 0;
 
 </div>
 
-<!-- EDIT MODAL -->
+<!-- MODAL -->
 <div class="modal" id="modal">
 <div class="modalBox">
 <h3>Edit Full Profile</h3>
@@ -167,68 +179,53 @@ databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabas
 
 const db = getDatabase(app);
 
-/* SAFE STORAGE */
-let teachers = [];
-let institutions = [];
-let payments = [];
+let teachers=[], institutions=[], payments=[];
+let currentEdit=null;
 
-let currentEdit = null;
-
-/* LOAD TEACHERS */
+/* LOAD */
 onValue(ref(db,"teachers"),snap=>{
-teachers = [];
+teachers=[];
 snap.forEach(c=>{
-teachers.push({id:c.key,...c.val(),type:"teacher"});
+teachers.push({id:c.key,type:"teacher",...c.val()});
 });
 render();
 });
 
-/* LOAD INSTITUTIONS */
 onValue(ref(db,"institutions"),snap=>{
-institutions = [];
+institutions=[];
 snap.forEach(c=>{
-institutions.push({id:c.key,...c.val(),type:"institution"});
+institutions.push({id:c.key,type:"institution",...c.val()});
 });
 render();
 });
 
-/* LOAD PAYMENTS */
 onValue(ref(db,"payments"),snap=>{
-payments = [];
-let total = 0;
+payments=[];
+let total=0;
 
 snap.forEach(c=>{
-let p = c.val();
+let p=c.val();
 payments.push(p);
-total += Number(p.amount||0);
+total+=Number(p.amount||0);
 });
 
-document.getElementById("pCount").innerText = snap.size;
-document.getElementById("earn").innerText = "₹"+total;
-
+document.getElementById("pCount").innerText=snap.size;
+document.getElementById("earn").innerText="₹"+total;
 renderPayments();
 });
 
-/* DASHBOARD */
-function dashboard(all){
-document.getElementById("tCount").innerText =
-all.filter(x=>x.type==="teacher").length;
-
-document.getElementById("iCount").innerText =
-all.filter(x=>x.type==="institution").length;
-}
-
-/* MAIN RENDER */
+/* RENDER */
 function render(){
 
-let all = [...teachers, ...institutions];
-dashboard(all);
+let all=[...teachers,...institutions];
 
-let search = document.getElementById("search").value.toLowerCase();
-let phone = document.getElementById("phone").value;
-let type = document.getElementById("type").value;
+let search=document.getElementById("search").value.toLowerCase();
+let phone=document.getElementById("phone").value;
+let type=document.getElementById("type").value;
 
-let html = "";
+let html="";
+
+let t=0,i=0;
 
 all.forEach(x=>{
 
@@ -240,12 +237,25 @@ if(search &&
 !(x.phone||"").toLowerCase().includes(search)
 ) return;
 
-if(phone && x.phone !== phone) return;
+if(phone && x.phone!==phone) return;
 
-html += `
-<div class="card">
+if(x.type==="teacher") t++;
+if(x.type==="institution") i++;
 
+let categoryColor =
+x.category==="academic"?"#2196f3":
+x.category==="creative"?"#e91e63":
+x.category==="skill"?"#ff9800":
+"#607d8b";
+
+html+=`
+<div class="card ${x.type}">
 <h3>${x.name||"-"}</h3>
+
+<span class="tag" style="background:${categoryColor};color:white">
+${x.category||"-"}
+</span>
+
 <p>📞 ${x.phone||"-"}</p>
 <p>Status: ${x.status||"pending"}</p>
 
@@ -256,93 +266,85 @@ html += `
 <button class="edit" onclick='openEdit(${JSON.stringify(x)})'>Edit</button>
 <button class="review" onclick="adminReview('${x.type}','${x.id}')">Admin Review</button>
 <button class="del" onclick="del('${x.type}','${x.id}')">Delete</button>
-
 </div>
 `;
 });
 
-document.getElementById("list").innerHTML = html;
+document.getElementById("list").innerHTML=html;
+document.getElementById("tCount").innerText=t;
+document.getElementById("iCount").innerText=i;
 }
 
 /* PAYMENTS */
 function renderPayments(){
-let html = "";
-
+let html="";
 payments.forEach(p=>{
-html += `
+html+=`
 <div class="card">
-<p><b>${p.name||"Unknown"}</b></p>
+<b>${p.name||"Unknown"}</b>
 <p>₹${p.amount||0}</p>
 <p>${p.status||""}</p>
-</div>
-`;
+</div>`;
 });
-
-document.getElementById("payments").innerHTML = html;
+document.getElementById("payments").innerHTML=html;
 }
 
-/* APPROVE */
-window.approve = (type,id)=>{
+/* ACTIONS */
+window.approve=(type,id)=>{
 update(ref(db,`${type}s/${id}`),{status:"approved"});
-}
+};
 
-/* DELETE */
-window.del = (type,id)=>{
-if(confirm("Delete this record?")){
+window.del=(type,id)=>{
+if(confirm("Delete?")){
 remove(ref(db,`${type}s/${id}`));
 }
-}
+};
 
-/* ADMIN REVIEW */
-window.adminReview = (type,id)=>{
-let msg = prompt("Write admin review:");
+window.adminReview=(type,id)=>{
+let msg=prompt("Admin review:");
 if(msg){
 update(ref(db,`${type}s/${id}`),{adminReview:msg});
 }
-}
+};
 
-/* OPEN EDIT */
-window.openEdit = (data)=>{
-currentEdit = data;
+/* EDIT */
+window.openEdit=(data)=>{
+currentEdit=data;
+let html="";
 
-let html = "";
+Object.keys(data).forEach(k=>{
+if(typeof data[k]==="object") return;
 
-for(let k in data){
-if(typeof data[k] === "object") continue;
-
-html += `
+html+=`
 <label>${k}</label>
 <input id="e_${k}" value="${data[k]||""}">
 `;
-}
+});
 
-document.getElementById("form").innerHTML = html;
+document.getElementById("form").innerHTML=html;
 document.getElementById("modal").style.display="flex";
-}
+};
 
-/* SAVE EDIT */
-window.saveEdit = ()=>{
-let up = {};
+window.saveEdit=()=>{
+let up={};
 
-for(let k in currentEdit){
-let el = document.getElementById("e_"+k);
-if(el) up[k] = el.value;
-}
+Object.keys(currentEdit).forEach(k=>{
+let el=document.getElementById("e_"+k);
+if(el) up[k]=el.value;
+});
 
 update(ref(db,`${currentEdit.type}s/${currentEdit.id}`),up);
-
 closeModal();
-}
+};
 
-/* CLOSE */
-window.closeModal = ()=>{
+window.closeModal=()=>{
 document.getElementById("modal").style.display="none";
-}
+};
 
-/* FILTER EVENTS */
-document.getElementById("search").oninput = render;
-document.getElementById("phone").oninput = render;
-document.getElementById("type").onchange = render;
+/* EVENTS */
+document.getElementById("search").oninput=render;
+document.getElementById("phone").oninput=render;
+document.getElementById("type").onchange=render;
 
 </script>
 
