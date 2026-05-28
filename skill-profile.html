@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,29 +8,50 @@
 <title>Skill Profile - GURULINK</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{background:linear-gradient(135deg,#d9efff,#f4f9ff,#fff);padding-bottom:40px}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:linear-gradient(135deg,#d9efff,#f4f9ff,#fff);
+padding-bottom:40px;
+}
 
 header{
-padding:30px;text-align:center;
+padding:30px;
+text-align:center;
 background:rgba(255,255,255,.4);
 backdrop-filter:blur(20px);
 border-bottom:1px solid rgba(255,255,255,.6);
 }
 
-.container{width:95%;max-width:1300px;margin:auto;padding:20px}
+.container{
+width:95%;
+max-width:1300px;
+margin:auto;
+padding:20px;
+}
 
 .filters{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:15px;padding:20px;
+gap:15px;
+padding:20px;
 background:rgba(255,255,255,.45);
 border-radius:20px;
 margin-bottom:20px;
 }
 
-.filters input,.filters select{
-padding:12px;border:none;border-radius:10px;outline:none
+.filters input,
+.filters select{
+padding:12px;
+border:none;
+border-radius:10px;
+outline:none;
 }
 
 .grid{
@@ -46,66 +68,147 @@ border:1px solid #ddd;
 position:relative;
 }
 
-.card.institution{border-left:6px solid #e91e63}
-.card.teacher{border-left:6px solid #1976d2}
+.card.institution{
+border-left:6px solid #e91e63;
+}
 
-.top{display:flex;gap:15px}
-.photo{width:70px;height:70px;border-radius:50%;object-fit:cover}
+.card.teacher{
+border-left:6px solid #1976d2;
+}
 
-.badge{background:#fff;padding:5px 10px;border-radius:20px;font-size:12px;margin:3px;display:inline-block}
+.top{
+display:flex;
+gap:15px;
+}
 
-.verify{background:#2196f3;color:#fff}
+.photo{
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover;
+}
+
+.badge{
+background:#fff;
+padding:5px 10px;
+border-radius:20px;
+font-size:12px;
+margin:3px;
+display:inline-block;
+}
+
+.verify{
+background:#2196f3;
+color:#fff;
+}
 
 .btn{
 margin-top:10px;
-padding:7px 12px;
+padding:10px 14px;
 border:none;
 background:#1976d2;
 color:#fff;
 border-radius:8px;
 cursor:pointer;
+font-weight:bold;
 }
 
 .details{
 margin-top:10px;
 font-size:14px;
-line-height:1.6;
+line-height:1.7;
 }
 
-.empty{text-align:center;padding:20px;background:#fff;border-radius:15px}
+.empty{
+text-align:center;
+padding:20px;
+background:#fff;
+border-radius:15px;
+}
+
 </style>
 </head>
 
 <body>
 
 <header>
+
 <h1>Skill Profile</h1>
-<p>Find Skill Teachers & Training Institutes</p>
+
+<p>
+Find Skill Teachers & Training Institutes
+</p>
+
 </header>
 
 <div class="container">
 
 <div class="filters">
-<input id="search" placeholder="Search name / location">
+
+<input
+id="search"
+placeholder="Search name / location">
 
 <select id="subjectFilter">
-<option value="">All Skills</option>
-<option>Computer</option>
-<option>Embroidery</option>
-<option>Cake Making</option>
-<option>Hand Craft</option>
-<option>Electric Work</option>
-<option>Cooking</option>
-<option>Tailoring</option>
+
+<option value="">
+All Skills
+</option>
+
+<option>
+Computer
+</option>
+
+<option>
+Embroidery
+</option>
+
+<option>
+Cake Making
+</option>
+
+<option>
+Hand Craft
+</option>
+
+<option>
+Electric Work
+</option>
+
+<option>
+Cooking
+</option>
+
+<option>
+Tailoring
+</option>
+
 </select>
 
 <select id="modeFilter">
-<option value="">All Modes</option>
-<option>Home Tuition</option>
-<option>Group Tuition</option>
-<option>Online Individual</option>
-<option>Online Group</option>
+
+<option value="">
+All Modes
+</option>
+
+<option>
+Home Tuition
+</option>
+
+<option>
+Group Tuition
+</option>
+
+<option>
+Online Individual
+</option>
+
+<option>
+Online Group
+</option>
+
 </select>
+
 </div>
 
 <div id="grid" class="grid"></div>
@@ -114,135 +217,358 @@ line-height:1.6;
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import {
+initializeApp
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+onValue
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+/* FIREBASE */
 
 const firebaseConfig = {
+
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+
 authDomain:"gurulink-59cc7.firebaseapp.com",
+
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
 projectId:"gurulink-59cc7",
+
 storageBucket:"gurulink-59cc7.appspot.com",
+
 messagingSenderId:"112148672399",
+
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getDatabase(app);
 
 let teachers = [];
+
 let institutions = [];
 
-/* SAFE LOAD */
+/* LOAD DATA */
+
 function loadData(){
 
-onValue(ref(db,"teachers"), snap=>{
+onValue(ref(db,"teachers"),snap=>{
+
 teachers = [];
+
 snap.forEach(c=>{
+
 const d = c.val();
 
-if(d.status==="approved" && (d.category||"").toLowerCase()==="skill"){
-teachers.push({...d, id:c.key, type:"Teacher"});
-}
-});
-render();
+if(
+d.status==="approved"
+&&
+(d.category||"").toLowerCase()==="skill"
+){
+
+teachers.push({
+
+...d,
+
+id:c.key,
+
+type:"Teacher"
+
 });
 
-onValue(ref(db,"institutions"), snap=>{
+}
+
+});
+
+render();
+
+});
+
+onValue(ref(db,"institutions"),snap=>{
+
 institutions = [];
+
 snap.forEach(c=>{
+
 const d = c.val();
 
-if(d.status==="approved" && (d.category||"").toLowerCase()==="skill"){
-institutions.push({...d, id:c.key, type:"Institution"});
+if(
+d.status==="approved"
+&&
+(d.category||"").toLowerCase()==="skill"
+){
+
+institutions.push({
+
+...d,
+
+id:c.key,
+
+type:"Institution"
+
+});
+
 }
+
 });
+
 render();
+
 });
+
 }
 
 loadData();
 
+/* ALL DATA */
+
 function getAll(){
-return [...teachers, ...institutions];
+
+return [
+
+...teachers,
+
+...institutions
+
+];
+
 }
 
-/* VIEW BUTTON */
-document.addEventListener("click",(e)=>{
-const btn = e.target.closest(".view");
-if(!btn) return;
-location.href = "profile-view.html?id=" + btn.dataset.id;
-});
+/* SEARCH FILTER */
+
+document
+.getElementById("search")
+.addEventListener("input",render);
+
+document
+.getElementById("subjectFilter")
+.addEventListener("change",render);
+
+document
+.getElementById("modeFilter")
+.addEventListener("change",render);
+
+/* CHECK LOGIN */
+
+window.checkStudentLogin = function(id){
+
+const uid =
+localStorage.getItem("uid");
+
+const role =
+localStorage.getItem("role");
+
+/* NOT LOGGED IN */
+
+if(!uid){
+
+localStorage.setItem(
+"redirectProfileId",
+id
+);
+
+window.location.href =
+"student-login.html";
+
+return;
+
+}
+
+/* ONLY STUDENT */
+
+if(role !== "student"){
+
+alert(
+"Please login as student"
+);
+
+localStorage.setItem(
+"redirectProfileId",
+id
+);
+
+window.location.href =
+"student-login.html";
+
+return;
+
+}
+
+/* OPEN PROFILE */
+
+window.location.href =
+"profile-view.html?id=" + id;
+
+};
 
 /* RENDER */
+
 function render(){
 
 const all = getAll();
 
-const search = document.getElementById("search").value.toLowerCase();
-const subject = document.getElementById("subjectFilter").value;
-const mode = document.getElementById("modeFilter").value;
+const search =
+document
+.getElementById("search")
+.value
+.toLowerCase();
+
+const subject =
+document
+.getElementById("subjectFilter")
+.value;
+
+const mode =
+document
+.getElementById("modeFilter")
+.value;
 
 const filtered = all.filter(x=>{
 
-const name = (x.name||"").toLowerCase();
-const location = (x.location||x.address||"").toLowerCase();
+const name =
+(x.name||"")
+.toLowerCase();
+
+const location =
+(x.location||x.address||"")
+.toLowerCase();
 
 /* SEARCH */
-if(search && !(name.includes(search) || location.includes(search)))
+
+if(
+search &&
+!(
+name.includes(search)
+||
+location.includes(search)
+)
+){
 return false;
-
-/* SUBJECT */
-if(subject && (x.subject||"") !== subject)
-return false;
-
-/* MODE */
-const modes = x.teachingModes || x.modes || [];
-if(mode && !modes.includes(mode))
-return false;
-
-return true;
-});
-
-const grid = document.getElementById("grid");
-
-if(filtered.length===0){
-grid.innerHTML = "<div class='empty'>No Skill Profiles Found</div>";
-return;
 }
 
-grid.innerHTML = filtered.map(x=>`
+/* SUBJECT */
+
+if(
+subject &&
+(x.subject||"") !== subject
+){
+return false;
+}
+
+/* MODE */
+
+const modes =
+x.teachingModes
+||
+x.modes
+||
+[];
+
+if(
+mode &&
+!modes.includes(mode)
+){
+return false;
+}
+
+return true;
+
+});
+
+const grid =
+document.getElementById("grid");
+
+/* EMPTY */
+
+if(filtered.length===0){
+
+grid.innerHTML =
+
+`<div class="empty">
+
+No Skill Profiles Found
+
+</div>`;
+
+return;
+
+}
+
+/* CARDS */
+
+grid.innerHTML =
+
+filtered.map(x=>`
 
 <div class="card ${x.type==="Institution"?"institution":"teacher"}">
 
 <div class="top">
-<img class="photo" src="${x.photo || 'https://via.placeholder.com/100'}">
+
+<img
+class="photo"
+src="${x.photo || x.logo || 'https://via.placeholder.com/100'}">
 
 <div>
-<h3>${x.name || "-"}</h3>
 
-<div class="badge">${x.type}</div>
-<div class="badge verify">Verified</div>
+<h3>
+${x.name || "-"}
+</h3>
+
+<div class="badge">
+${x.type}
+</div>
+
+<div class="badge verify">
+Verified
+</div>
 
 </div>
+
 </div>
 
 <div class="details">
-<b>Skill:</b> ${x.subject || "-"}<br>
-<b>Location:</b> ${x.location || "-"}<br>
-<b>Mode:</b> ${(x.teachingModes || x.modes || []).join(", ") || "-"}
+
+<b>Skill:</b>
+${x.subject || "-"}
+
+<br>
+
+<b>Location:</b>
+${x.location || x.address || "-"}
+
+<br>
+
+<b>Mode:</b>
+
+${(x.teachingModes || x.modes || []).join(", ") || "-"}
+
 </div>
 
-<button class="btn view" data-id="${x.id}">
+<button
+class="btn"
+onclick="checkStudentLogin('${x.id}')">
+
 View Details
+
 </button>
 
 </div>
 
 `).join("");
+
 }
 
 </script>
 
 </body>
 </html>
+```
