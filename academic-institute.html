@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +8,7 @@
 <title>Academic Institution Registration</title>
 
 <style>
+
 body{
 margin:0;
 font-family:Arial,sans-serif;
@@ -100,6 +102,7 @@ background:#f4f4f4;
 border-radius:10px;
 margin-bottom:10px;
 }
+
 </style>
 </head>
 
@@ -115,70 +118,157 @@ margin-bottom:10px;
 <form id="form">
 
 <input id="name" placeholder="Institution Name" required>
+
 <input id="ownerName" placeholder="Owner / Director Name" required>
 
 <input type="date" id="establishedDate" required>
 
 <input id="phone" placeholder="Contact Number" required>
+
 <input id="alternatePhone" placeholder="Alternate Phone Number">
 
 <input type="email" id="email" placeholder="Email" required>
-<input type="password" id="password" placeholder="Create Password" required>
+
+<input
+type="password"
+id="password"
+placeholder="Create Password"
+required>
 
 <input id="website" placeholder="Website URL if available">
+
 <input id="address" placeholder="Full Address">
+
 <input id="area" placeholder="Area / City / State">
+
 <input id="mapLink" placeholder="Google Map Location Link">
 
 <h3>Subjects</h3>
 
 <div class="modeBox">
-<div class="row"><input type="checkbox" value="Physics" class="subjectCheck"> Physics</div>
-<div class="row"><input type="checkbox" value="Chemistry" class="subjectCheck"> Chemistry</div>
-<div class="row"><input type="checkbox" value="Mathematics" class="subjectCheck"> Mathematics</div>
-<div class="row"><input type="checkbox" value="Biology" class="subjectCheck"> Biology</div>
-<div class="row"><input type="checkbox" value="English" class="subjectCheck"> English</div>
-<div class="row"><input type="checkbox" value="Hindi" class="subjectCheck"> Hindi</div>
 
-<div class="row"><input type="checkbox" id="otherCheck"> Other</div>
-
-<input id="otherSubject" placeholder="Write Other Subject" style="display:none;">
-<p id="subjectError" style="color:red;display:none;">Select at least one subject</p>
+<div class="row">
+<input type="checkbox" value="Physics" class="subjectCheck"> Physics
 </div>
 
-<input id="class" placeholder="Classes (1-12 / JEE / NEET)" required>
+<div class="row">
+<input type="checkbox" value="Chemistry" class="subjectCheck"> Chemistry
+</div>
+
+<div class="row">
+<input type="checkbox" value="Mathematics" class="subjectCheck"> Mathematics
+</div>
+
+<div class="row">
+<input type="checkbox" value="Biology" class="subjectCheck"> Biology
+</div>
+
+<div class="row">
+<input type="checkbox" value="English" class="subjectCheck"> English
+</div>
+
+<div class="row">
+<input type="checkbox" value="Hindi" class="subjectCheck"> Hindi
+</div>
+
+<div class="row">
+<input type="checkbox" id="otherCheck"> Other
+</div>
+
+<input
+id="otherSubject"
+placeholder="Write Other Subject"
+style="display:none;">
+
+<p
+id="subjectError"
+style="color:red;display:none;">
+
+Select at least one subject
+
+</p>
+
+</div>
+
+<input
+id="class"
+placeholder="Classes (1-12 / JEE / NEET)"
+required>
 
 <h3>Teaching Modes</h3>
 
 <div class="modeBox">
-<div class="row"><input type="checkbox" value="Individual Coaching"> Individual Coaching</div>
-<div class="row"><input type="checkbox" value="Home Tuition"> Home Tuition</div>
-<div class="row"><input type="checkbox" value="Group Coaching"> Group Coaching</div>
-<div class="row"><input type="checkbox" value="Online"> Online</div>
+
+<div class="row">
+<input type="checkbox" value="Individual Coaching" class="mode">
+Individual Coaching
+</div>
+
+<div class="row">
+<input type="checkbox" value="Home Tuition" class="mode">
+Home Tuition
+</div>
+
+<div class="row">
+<input type="checkbox" value="Group Coaching" class="mode">
+Group Coaching
+</div>
+
+<div class="row">
+<input type="checkbox" value="Online" class="mode">
+Online
+</div>
+
 </div>
 
 <h3>Logo</h3>
-<input type="file" id="logo" accept="image/*" required>
+
+<input
+type="file"
+id="logo"
+accept="image/*"
+required>
+
 <div id="logoPreview" class="preview"></div>
 
 <h3>ID Proof</h3>
+
 <select id="idType" required>
+
 <option value="">Select</option>
 <option>Aadhaar</option>
 <option>PAN</option>
 <option>License</option>
+
 </select>
 
-<input type="file" id="idUpload" accept="image/*" required>
+<input
+type="file"
+id="idUpload"
+accept="image/*"
+required>
+
 <div id="idPreview" class="preview"></div>
 
 <h3>Gallery</h3>
-<input type="file" id="gallery" multiple accept="image/*">
+
+<input
+type="file"
+id="gallery"
+multiple
+accept="image/*">
+
 <div id="galleryPreview" class="preview"></div>
 
-<textarea id="description" placeholder="About Institution"></textarea>
+<textarea
+id="description"
+placeholder="About Institution"></textarea>
 
-<button type="submit">Continue To Payment</button>
+<button type="submit">
+
+Continue To Payment
+
+</button>
 
 </form>
 
@@ -186,11 +276,26 @@ margin-bottom:10px;
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import {
+initializeApp
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+set
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+import {
+getAuth,
+createUserWithEmailAndPassword
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
+
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -198,117 +303,432 @@ projectId:"gurulink-59cc7",
 storageBucket:"gurulink-59cc7.appspot.com",
 messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getDatabase(app);
+
 const auth = getAuth(app);
 
 const form = document.getElementById("form");
 
+const API_KEY =
+"31f729ff855eb2e42c00ee508a8647ea";
+
 /* SUBJECT OTHER */
-document.getElementById("otherCheck").addEventListener("change",(e)=>{
-document.getElementById("otherSubject").style.display = e.target.checked ? "block" : "none";
+
+document
+.getElementById("otherCheck")
+.addEventListener("change",(e)=>{
+
+document.getElementById(
+"otherSubject"
+).style.display =
+
+e.target.checked
+
+?
+
+"block"
+
+:
+
+"none";
+
 });
 
-/* UPLOAD IMAGE */
-const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
+/* IMAGE UPLOAD */
 
 async function upload(file){
+
 let fd = new FormData();
+
 fd.append("image",file);
 
-let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`,{
+let res = await fetch(
+
+`https://api.imgbb.com/1/upload?key=${API_KEY}`,
+
+{
 method:"POST",
 body:fd
-});
+}
+
+);
 
 let data = await res.json();
+
 return data.data.url;
+
 }
 
 /* PREVIEW */
+
 function preview(input, box){
+
 input.addEventListener("change",()=>{
+
 box.innerHTML="";
+
 if(input.files[0]){
-let img = document.createElement("img");
-img.src = URL.createObjectURL(input.files[0]);
+
+let img =
+document.createElement("img");
+
+img.src =
+URL.createObjectURL(
+input.files[0]
+);
+
 box.appendChild(img);
+
 }
+
 });
+
 }
 
-preview(document.getElementById("logo"), document.getElementById("logoPreview"));
-preview(document.getElementById("idUpload"), document.getElementById("idPreview"));
+preview(
+document.getElementById("logo"),
+document.getElementById("logoPreview")
+);
 
-let galleryFiles = [];
+preview(
+document.getElementById("idUpload"),
+document.getElementById("idPreview")
+);
 
-document.getElementById("gallery").addEventListener("change",function(){
-galleryFiles = Array.from(this.files);
-document.getElementById("galleryPreview").innerHTML =
-galleryFiles.map(f=>`<img src="${URL.createObjectURL(f)}">`).join("");
+let galleryFiles=[];
+
+document
+.getElementById("gallery")
+.addEventListener("change",function(){
+
+galleryFiles =
+Array.from(this.files);
+
+document.getElementById(
+"galleryPreview"
+).innerHTML =
+
+galleryFiles.map(f=>
+
+`<img src="${URL.createObjectURL(f)}">`
+
+).join("");
+
 });
 
 /* SUBMIT */
-form.addEventListener("submit", async (e)=>{
+
+form.addEventListener(
+"submit",
+async (e)=>{
+
 e.preventDefault();
+
+const submitBtn =
+form.querySelector("button");
+
+submitBtn.disabled=true;
+submitBtn.innerText="Processing...";
 
 try{
 
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
+/* SUBJECT VALIDATION */
 
-/* 1. CREATE LOGIN */
-const userCred = await createUserWithEmailAndPassword(auth,email,password);
-const uid = userCred.user.uid;
+let checked =
+document.querySelectorAll(
+".subjectCheck:checked"
+).length;
 
-/* 2. UPLOAD IMAGES */
-const logo = await upload(document.getElementById("logo").files[0]);
-const idProof = await upload(document.getElementById("idUpload").files[0]);
+if(
+checked===0 &&
+!document.getElementById("otherCheck").checked
+){
 
-let gallery = [];
-for(let f of galleryFiles){
-gallery.push(await upload(f));
+document.getElementById(
+"subjectError"
+).style.display="block";
+
+submitBtn.disabled=false;
+submitBtn.innerText=
+"Continue To Payment";
+
+return;
+
 }
 
-/* 3. SAVE INSTITUTION */
-const instRef = await push(ref(db,"institutions"),{
-name:document.getElementById("name").value,
-ownerName:document.getElementById("ownerName").value,
-phone:document.getElementById("phone").value,
+document.getElementById(
+"subjectError"
+).style.display="none";
+
+/* FORM VALUES */
+
+const email =
+document.getElementById("email")
+.value
+.trim()
+.toLowerCase();
+
+const password =
+document.getElementById("password")
+.value;
+
+/* CREATE AUTH */
+
+const userCred =
+
+await createUserWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+const uid =
+userCred.user.uid;
+
+/* SAVE LOGIN */
+
+localStorage.setItem(
+"uid",
+uid
+);
+
+localStorage.setItem(
+"profileId",
+uid
+);
+
+localStorage.setItem(
+"role",
+"institution"
+);
+
+/* UPLOAD IMAGES */
+
+let logoUrl="";
+
+if(
+document.getElementById("logo").files[0]
+){
+
+logoUrl = await upload(
+document.getElementById("logo").files[0]
+);
+
+}
+
+let idProofUrl="";
+
+if(
+document.getElementById("idUpload").files[0]
+){
+
+idProofUrl = await upload(
+document.getElementById("idUpload").files[0]
+);
+
+}
+
+let gallery=[];
+
+for(let file of galleryFiles){
+
+gallery.push(
+await upload(file)
+);
+
+}
+
+/* SUBJECTS */
+
+let subjects=[];
+
+document
+.querySelectorAll(
+".subjectCheck:checked"
+)
+.forEach(item=>{
+
+subjects.push(item.value);
+
+});
+
+if(
+document.getElementById("otherCheck").checked &&
+document.getElementById("otherSubject").value.trim()!==""
+){
+
+subjects.push(
+document.getElementById("otherSubject").value
+);
+
+}
+
+/* MODES */
+
+let teachingModes=[];
+
+document
+.querySelectorAll(".mode:checked")
+.forEach(item=>{
+
+teachingModes.push(
+item.value
+);
+
+});
+
+/* SAVE INSTITUTION */
+
+await set(
+
+ref(db,"institutions/"+uid),
+
+{
+
+uid:uid,
+
+name:
+document.getElementById("name").value,
+
+ownerName:
+document.getElementById("ownerName").value,
+
+establishedDate:
+document.getElementById("establishedDate").value,
+
+phone:
+document.getElementById("phone").value,
+
+alternatePhone:
+document.getElementById("alternatePhone").value,
+
 email:email,
-address:document.getElementById("address").value,
-area:document.getElementById("area").value,
-logo:logo,
+
+website:
+document.getElementById("website").value,
+
+address:
+document.getElementById("address").value,
+
+area:
+document.getElementById("area").value,
+
+mapLink:
+document.getElementById("mapLink").value,
+
+subjects:subjects,
+
+class:
+document.getElementById("class").value,
+
+teachingModes:
+teachingModes,
+
+logo:logoUrl,
+
 gallery:gallery,
-idProof:idProof,
-description:document.getElementById("description").value,
-status:"pending"
-});
 
-const institutionId = instRef.key;
+idType:
+document.getElementById("idType").value,
 
-/* 4. USER ROLE */
-await set(ref(db,"users/"+uid),{
+idProof:idProofUrl,
+
+description:
+document.getElementById("description").value,
+
+category:"academic",
+
 role:"institution",
-profileId:institutionId
-});
 
-localStorage.setItem("institutionId",institutionId);
+status:"pending",
 
-alert("Registered Successfully!");
+createdAt:Date.now()
 
-window.location.href = "payment.html?type=institution";
+}
+
+);
+
+/* USER ROLE */
+
+await set(
+
+ref(db,"users/"+uid),
+
+{
+
+uid:uid,
+
+role:"institution",
+
+profileId:uid
+
+}
+
+);
+
+/* LOCAL STORAGE */
+
+localStorage.setItem(
+"institutionId",
+uid
+);
+
+alert(
+"Registration Successful"
+);
+
+/* REDIRECT */
+
+window.location.href =
+
+"payment.html?type=institution&id="+uid;
 
 }
 catch(err){
+
+console.log(err);
+
+if(
+err.code==="auth/email-already-in-use"
+){
+
+alert(
+"This email already exists.\nPlease login instead."
+);
+
+}
+else if(
+err.code==="auth/weak-password"
+){
+
+alert(
+"Password must be minimum 6 characters."
+);
+
+}
+else{
+
 alert(err.message);
+
 }
 
-});
+submitBtn.disabled=false;
+
+submitBtn.innerText=
+"Continue To Payment";
+
+}
+
+}
+);
 
 </script>
 
 </body>
 </html>
+```
