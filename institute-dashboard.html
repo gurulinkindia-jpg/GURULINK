@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Institute Dashboard</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#eef2f7;
+}
+
+header{
+background:#e65100;
+color:white;
+padding:15px;
+text-align:center;
+}
+
+.container{
+width:90%;
+max-width:900px;
+margin:20px auto;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+input,textarea{
+width:100%;
+padding:10px;
+margin:8px 0;
+border:1px solid #ccc;
+border-radius:6px;
+}
+
+button{
+padding:12px;
+width:100%;
+background:#e65100;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-size:16px;
+}
+
+.preview img{
+width:100px;
+height:100px;
+object-fit:cover;
+margin:5px;
+border-radius:8px;
+}
+
+.section{
+margin-top:15px;
+padding:10px;
+border:1px solid #ddd;
+border-radius:8px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>Institute Dashboard</h2>
+</header>
+
+<div class="container">
+
+<h3>My Institution Profile</h3>
+
+<div id="loading">Loading...</div>
+
+<div id="content" style="display:none;">
+
+<input id="name" placeholder="Institution Name">
+<input id="ownerName" placeholder="Owner Name">
+<input id="phone" placeholder="Phone">
+<input id="email" placeholder="Email">
+<input id="area" placeholder="Area">
+<input id="address" placeholder="Address">
+
+<textarea id="description" placeholder="Description"></textarea>
+
+<div class="section">
+<h4>Logo</h4>
+<div id="logoPreview" class="preview"></div>
+</div>
+
+<div class="section">
+<h4>Gallery</h4>
+<div id="galleryPreview" class="preview"></div>
+</div>
+
+<button onclick="saveData()">Save Changes</button>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+/* GET ID FROM LOGIN OR REGISTRATION */
+const institutionId = localStorage.getItem("institutionId");
+
+if(!institutionId){
+alert("Not logged in!");
+window.location.href="login.html";
+}
+
+const loading = document.getElementById("loading");
+const content = document.getElementById("content");
+
+/* LOAD DATA */
+async function loadData(){
+const snap = await get(ref(db,"institutions/" + institutionId));
+
+if(!snap.exists()){
+alert("Data not found!");
+return;
+}
+
+const data = snap.val();
+
+/* fill form */
+document.getElementById("name").value = data.name || "";
+document.getElementById("ownerName").value = data.ownerName || "";
+document.getElementById("phone").value = data.phone || "";
+document.getElementById("email").value = data.email || "";
+document.getElementById("area").value = data.area || "";
+document.getElementById("address").value = data.address || "";
+document.getElementById("description").value = data.description || "";
+
+/* images */
+if(data.logo){
+document.getElementById("logoPreview").innerHTML =
+`<img src="${data.logo}">`;
+}
+
+if(data.gallery){
+document.getElementById("galleryPreview").innerHTML =
+data.gallery.map(img=>`<img src="${img}">`).join("");
+}
+
+loading.style.display="none";
+content.style.display="block";
+}
+
+loadData();
+
+/* SAVE */
+window.saveData = async function(){
+
+const updates = {
+name:document.getElementById("name").value,
+ownerName:document.getElementById("ownerName").value,
+phone:document.getElementById("phone").value,
+email:document.getElementById("email").value,
+area:document.getElementById("area").value,
+address:document.getElementById("address").value,
+description:document.getElementById("description").value
+};
+
+await update(ref(db,"institutions/" + institutionId), updates);
+
+alert("Updated Successfully");
+};
+
+</script>
+
+</body>
+</html>
