@@ -2,9 +2,12 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Payment Success</title>
 
 <style>
+
 body{
 font-family:Arial,sans-serif;
 background:#eef2f7;
@@ -23,148 +26,285 @@ text-align:center;
 box-shadow:0 5px 15px rgba(0,0,0,.15);
 width:350px;
 }
+
+h2{
+margin-top:0;
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="box">
+
 <h2>Payment Processing...</h2>
-<p id="msg">Saving payment details...</p>
+
+<p id="msg">
+Saving payment details...
+</p>
+
 </div>
 
 <script type="module">
 
 import {
 initializeApp
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
 getDatabase,
 ref,
 push,
 get,
-child
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+set
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+import {
+getAuth
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 
 /* FIREBASE */
+
 const firebaseConfig = {
-apiKey: "AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-authDomain: "gurulink-59cc7.firebaseapp.com",
-databaseURL: "https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId: "gurulink-59cc7",
-storageBucket: "gurulink-59cc7.appspot.com",
-messagingSenderId: "112148672399",
-appId: "1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+
+authDomain:"gurulink-59cc7.firebaseapp.com",
+
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:"gurulink-59cc7",
+
+storageBucket:"gurulink-59cc7.appspot.com",
+
+messagingSenderId:"112148672399",
+
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
 };
 
+
 const app = initializeApp(firebaseConfig);
+
 const db = getDatabase(app);
+
+const auth = getAuth(app);
+
 
 
 /* URL PARAMS */
-const params = new URLSearchParams(window.location.search);
 
-const type = params.get("type") || "teacher";
-let id = params.get("id");
+const params =
+new URLSearchParams(window.location.search);
 
-if (!id) {
-  id =
-    type === "institution"
-      ? localStorage.getItem("institutionId")
-      : localStorage.getItem("teacherId");
+const type =
+params.get("type") || "teacher";
+
+let id =
+params.get("id");
+
+
+/* LOCAL STORAGE FALLBACK */
+
+if(!id){
+
+id =
+
+type === "institution"
+
+?
+
+localStorage.getItem("institutionId")
+
+:
+
+localStorage.getItem("teacherId");
+
 }
 
 
-console.log("TYPE:", type);
-console.log("FINAL ID:", id);
-if (!id) {
-  alert("Teacher ID missing! Payment cannot be saved.");
-  throw new Error("Missing teacher ID");
+/* CHECK */
+
+if(!id){
+
+document.getElementById("msg").innerHTML =
+
+"Profile ID missing. Please login again.";
+
+throw new Error("Missing Profile ID");
+
 }
+
 
 /* AMOUNT */
-const amount = type === "institution" ? 2 : 1;
+
+const amount =
+
+type === "institution"
+
+?
+
+200
+
+:
+
+100;
+
 
 
 /* MAIN */
-try {
+
+async function savePayment(){
+
+try{
 
 let user = null;
 
-/* FETCH USER DATA */
-if (id) {
 
-const path = type === "teacher"
-? `teachers/${id}`
-: `institutions/${id}`;
+/* PATH */
 
-const snap = await get(ref(db, path));
+const path =
 
-if (snap.exists()) {
+type === "teacher"
+
+?
+
+"teachers/" + id
+
+:
+
+"institutions/" + id;
+
+
+/* GET PROFILE */
+
+const snap = await get(ref(db,path));
+
+
+if(snap.exists()){
+
 user = snap.val();
-} else {
-console.log("NO USER FOUND IN DB:", path);
-}
 
-} else {
-console.log("ID IS MISSING IN URL");
+}else{
+
+document.getElementById("msg").innerHTML =
+
+"Profile not found.";
+
+throw new Error("Profile not found");
+
 }
 
 
 
 /* SAVE PAYMENT */
-await push(ref(db, "payments"), {
 
-  type,
-  id,
+const paymentRef = push(ref(db,"payments"));
 
-  name: (user && user.name) ? user.name : "NOT FOUND",
-  email: user?.email || "-",
-  phone: user?.phone || "-",
-  class: user?.class || "-",
-  website: user?.website || "-",
-  address: user?.address || "-",
+await set(paymentRef,{
 
-  homeFee: user?.homeFee || "",
-  groupFee: user?.groupFee || "",
-  onlineFee: user?.onlineIndividualFee || "",
+paymentId:paymentRef.key,
 
-  amount,
-  status: "paid",
-  date: new Date().toLocaleString(),
-  createdAt: Date.now()
+type:type,
+
+profileId:id,
+
+uid:id,
+
+name:user.name || "",
+
+email:user.email || "",
+
+phone:user.phone || "",
+
+address:user.address || "",
+
+website:user.website || "",
+
+class:user.class || "",
+
+subjects:user.subjects || [],
+
+teachingModes:user.teachingModes || [],
+
+homeFee:user.homeFee || "",
+
+groupFee:user.groupFee || "",
+
+onlineFee:user.onlineFee || "",
+
+amount:amount,
+
+status:"paid",
+
+date:new Date().toLocaleString(),
+
+createdAt:Date.now()
 
 });
 
 
+/* UPDATE PAYMENT STATUS */
+
+await set(ref(db,path+"/paymentStatus"),"paid");
+
+
+/* LOCAL STORAGE */
+
+localStorage.setItem("paymentDone","yes");
+
+
 document.getElementById("msg").innerHTML =
+
 "Payment successful! Redirecting...";
 
-setTimeout(() => {
+
+/* REDIRECT */
+
+setTimeout(()=>{
 
 if(type==="teacher"){
-window.location.href=`profile-view.html?id=${id}`;
+
+window.location.href =
+
+`profile-view.html?type=teacher&id=${id}`;
+
 }
 else if(type==="institution"){
-window.location.href=`profile-view.html?id=${id}`;
+
+window.location.href =
+
+`profile-view.html?type=institution&id=${id}`;
+
 }
 else{
-window.location.href="index.html";
+
+window.location.href = "index.html";
+
 }
 
 },2000);
 
 }
-catch (err) {
+catch(err){
 
 console.log(err);
 
 document.getElementById("msg").innerHTML =
-"Payment saved with error. Please contact support.";
+
+"Payment save failed.<br><br>" + err.message;
 
 }
+
+}
+
+
+savePayment();
 
 </script>
 
