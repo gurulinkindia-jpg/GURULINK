@@ -2,194 +2,76 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>Academic Institution Registration</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login</title>
 
 <style>
 body{
 margin:0;
-font-family:Arial,sans-serif;
+font-family:Arial;
 background:#eef2f7;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
 }
 
-header{
-background:#e65100;
-color:white;
-padding:18px;
-text-align:center;
-}
-
-.container{
-width:90%;
-max-width:800px;
-margin:20px auto;
+.box{
+width:350px;
 background:white;
 padding:25px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,.1);
+border-radius:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
-input,select,textarea{
+input{
 width:100%;
 padding:12px;
 margin:10px 0;
 border:1px solid #ccc;
-border-radius:8px;
-box-sizing:border-box;
-}
-
-textarea{
-height:100px;
-resize:none;
+border-radius:6px;
 }
 
 button{
 width:100%;
-padding:14px;
-background:#e65100;
+padding:12px;
+background:#1565c0;
 color:white;
 border:none;
-border-radius:10px;
-font-size:16px;
+border-radius:6px;
 cursor:pointer;
-}
-
-button:disabled{
-opacity:.7;
-cursor:not-allowed;
-}
-
-.preview{
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-margin-top:10px;
-}
-
-.preview img{
-width:90px;
-height:90px;
-border-radius:10px;
-object-fit:cover;
-border:1px solid #ddd;
-}
-
-.modeBox{
-padding:15px;
-border:1px solid #ddd;
-border-radius:10px;
-}
-
-.row{
-display:flex;
-align-items:center;
-gap:10px;
-margin:10px 0;
-}
-
-.row input[type=checkbox]{
-width:auto;
-transform:scale(1.2);
-}
-
-.modeFee{
-display:none;
-padding:10px;
-background:#f4f4f4;
-border-radius:10px;
-margin-bottom:10px;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-<h1>Academic Institution Registration</h1>
-<p>Registration Fee ₹200</p>
-</header>
+<div class="box">
+<h2>Login</h2>
 
-<div class="container">
+<input id="email" type="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
 
-<form id="form">
+<button onclick="loginUser()">Login</button>
 
-<input id="name" placeholder="Institution Name" required>
-<input id="ownerName" placeholder="Owner / Director Name" required>
-
-<input type="date" id="establishedDate" required>
-
-<input id="phone" placeholder="Contact Number" required>
-<input id="alternatePhone" placeholder="Alternate Phone Number">
-
-<input type="email" id="email" placeholder="Email" required>
-<input type="password" id="password" placeholder="Create Password" required>
-
-<input id="website" placeholder="Website URL if available">
-<input id="address" placeholder="Full Address">
-<input id="area" placeholder="Area / City / State">
-<input id="mapLink" placeholder="Google Map Location Link">
-
-<h3>Subjects</h3>
-
-<div class="modeBox">
-<div class="row"><input type="checkbox" value="Physics" class="subjectCheck"> Physics</div>
-<div class="row"><input type="checkbox" value="Chemistry" class="subjectCheck"> Chemistry</div>
-<div class="row"><input type="checkbox" value="Mathematics" class="subjectCheck"> Mathematics</div>
-<div class="row"><input type="checkbox" value="Biology" class="subjectCheck"> Biology</div>
-<div class="row"><input type="checkbox" value="English" class="subjectCheck"> English</div>
-<div class="row"><input type="checkbox" value="Hindi" class="subjectCheck"> Hindi</div>
-
-<div class="row"><input type="checkbox" id="otherCheck"> Other</div>
-
-<input id="otherSubject" placeholder="Write Other Subject" style="display:none;">
-<p id="subjectError" style="color:red;display:none;">Select at least one subject</p>
-</div>
-
-<input id="class" placeholder="Classes (1-12 / JEE / NEET)" required>
-
-<h3>Teaching Modes</h3>
-
-<div class="modeBox">
-<div class="row"><input type="checkbox" value="Individual Coaching"> Individual Coaching</div>
-<div class="row"><input type="checkbox" value="Home Tuition"> Home Tuition</div>
-<div class="row"><input type="checkbox" value="Group Coaching"> Group Coaching</div>
-<div class="row"><input type="checkbox" value="Online"> Online</div>
-</div>
-
-<h3>Logo</h3>
-<input type="file" id="logo" accept="image/*" required>
-<div id="logoPreview" class="preview"></div>
-
-<h3>ID Proof</h3>
-<select id="idType" required>
-<option value="">Select</option>
-<option>Aadhaar</option>
-<option>PAN</option>
-<option>License</option>
-</select>
-
-<input type="file" id="idUpload" accept="image/*" required>
-<div id="idPreview" class="preview"></div>
-
-<h3>Gallery</h3>
-<input type="file" id="gallery" multiple accept="image/*">
-<div id="galleryPreview" class="preview"></div>
-
-<textarea id="description" placeholder="About Institution"></textarea>
-
-<button type="submit">Continue To Payment</button>
-
-</form>
-
+<p id="msg"></p>
 </div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { 
+getAuth, 
+signInWithEmailAndPassword 
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
+import { 
+getDatabase, 
+ref, 
+get 
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+/* Firebase Config */
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
@@ -201,112 +83,57 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
 const auth = getAuth(app);
+const db = getDatabase(app);
 
-const form = document.getElementById("form");
-
-/* SUBJECT OTHER */
-document.getElementById("otherCheck").addEventListener("change",(e)=>{
-document.getElementById("otherSubject").style.display = e.target.checked ? "block" : "none";
-});
-
-/* UPLOAD IMAGE */
-const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
-
-async function upload(file){
-let fd = new FormData();
-fd.append("image",file);
-
-let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`,{
-method:"POST",
-body:fd
-});
-
-let data = await res.json();
-return data.data.url;
-}
-
-/* PREVIEW */
-function preview(input, box){
-input.addEventListener("change",()=>{
-box.innerHTML="";
-if(input.files[0]){
-let img = document.createElement("img");
-img.src = URL.createObjectURL(input.files[0]);
-box.appendChild(img);
-}
-});
-}
-
-preview(document.getElementById("logo"), document.getElementById("logoPreview"));
-preview(document.getElementById("idUpload"), document.getElementById("idPreview"));
-
-let galleryFiles = [];
-
-document.getElementById("gallery").addEventListener("change",function(){
-galleryFiles = Array.from(this.files);
-document.getElementById("galleryPreview").innerHTML =
-galleryFiles.map(f=>`<img src="${URL.createObjectURL(f)}">`).join("");
-});
-
-/* SUBMIT */
-form.addEventListener("submit", async (e)=>{
-e.preventDefault();
-
-try{
+window.loginUser = async function(){
 
 const email = document.getElementById("email").value;
 const password = document.getElementById("password").value;
+const msg = document.getElementById("msg");
 
-/* 1. CREATE LOGIN */
-const userCred = await createUserWithEmailAndPassword(auth,email,password);
+msg.innerText = "Logging in...";
+
+try {
+
+const userCred = await signInWithEmailAndPassword(auth, email, password);
 const uid = userCred.user.uid;
 
-/* 2. UPLOAD IMAGES */
-const logo = await upload(document.getElementById("logo").files[0]);
-const idProof = await upload(document.getElementById("idUpload").files[0]);
+/* GET USER DATA FROM DB */
+const snap = await get(ref(db, "users/" + uid));
 
-let gallery = [];
-for(let f of galleryFiles){
-gallery.push(await upload(f));
+if(!snap.exists()){
+msg.innerText = "User profile not found in database";
+return;
 }
 
-/* 3. SAVE INSTITUTION */
-const instRef = await push(ref(db,"institutions"),{
-name:document.getElementById("name").value,
-ownerName:document.getElementById("ownerName").value,
-phone:document.getElementById("phone").value,
-email:email,
-address:document.getElementById("address").value,
-area:document.getElementById("area").value,
-logo:logo,
-gallery:gallery,
-idProof:idProof,
-description:document.getElementById("description").value,
-status:"pending"
-});
+const data = snap.val();
 
-const institutionId = instRef.key;
+/* SAVE SESSION */
+localStorage.setItem("uid", uid);
+localStorage.setItem("role", data.role);
+localStorage.setItem("profileId", data.profileId || uid);
 
-/* 4. USER ROLE */
-await set(ref(db,"users/"+uid),{
-role:"institution",
-profileId:institutionId
-});
-
-localStorage.setItem("institutionId",institutionId);
-
-alert("Registered Successfully!");
-
-window.location.href = "payment.html?type=institution";
+/* REDIRECT BASED ON ROLE */
+if(data.role === "teacher"){
+window.location.href = "teacher-dashboard.html";
+}
+else if(data.role === "admin"){
+window.location.href = "admin.html";
+}
+else if(data.role === "institute"){
+window.location.href = "institution-register.html";
+}
+else{
+msg.innerText = "Unknown role";
+}
 
 }
 catch(err){
-alert(err.message);
+msg.innerText = "Error: " + err.message;
 }
 
-});
+};
 
 </script>
 
