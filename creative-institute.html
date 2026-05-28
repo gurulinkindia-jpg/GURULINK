@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Creative Institute Registration</title>
+<title>Creative Teacher Registration</title>
 
 <style>
 body{
@@ -13,7 +13,7 @@ background:#eef2f7;
 }
 
 header{
-background:#6a1b9a;
+background:#8e24aa;
 color:white;
 padding:18px;
 text-align:center;
@@ -38,7 +38,7 @@ border-radius:8px;
 button{
 width:100%;
 padding:12px;
-background:#6a1b9a;
+background:#8e24aa;
 color:white;
 border:none;
 border-radius:8px;
@@ -57,8 +57,8 @@ margin:8px 0;
 <body>
 
 <header>
-<h2>Creative Institute Registration</h2>
-<p>Music • Dance • Art • Design</p>
+<h2>Creative Teacher Registration</h2>
+<p>Music • Dance • Art • Photography</p>
 </header>
 
 <div class="container">
@@ -70,23 +70,23 @@ margin:8px 0;
 <input id="email" type="email" placeholder="Email" required>
 <input id="password" type="password" placeholder="Password" required>
 
-<h3>Institute Info</h3>
+<h3>Teacher Info</h3>
 
-<input id="name" placeholder="Institute Name" required>
-<input id="owner" placeholder="Owner Name" required>
+<input id="name" placeholder="Full Name" required>
 <input id="phone" placeholder="Phone Number" required>
-<input id="address" placeholder="Address" required>
+<input id="experience" placeholder="Experience (Years)">
+<input id="address" placeholder="Address">
 
-<h3>Creative Categories</h3>
+<h3>Skills</h3>
 
-<div class="row"><input type="checkbox" value="Music" class="cat"> Music</div>
-<div class="row"><input type="checkbox" value="Dance" class="cat"> Dance</div>
-<div class="row"><input type="checkbox" value="Painting" class="cat"> Painting</div>
-<div class="row"><input type="checkbox" value="Photography" class="cat"> Photography</div>
-<div class="row"><input type="checkbox" value="Graphic Design" class="cat"> Graphic Design</div>
-<div class="row"><input type="checkbox" value="Fashion Design" class="cat"> Fashion Design</div>
+<div class="row"><input type="checkbox" value="Music Teacher" class="skill"> Music</div>
+<div class="row"><input type="checkbox" value="Dance Teacher" class="skill"> Dance</div>
+<div class="row"><input type="checkbox" value="Painting" class="skill"> Painting</div>
+<div class="row"><input type="checkbox" value="Photography" class="skill"> Photography</div>
+<div class="row"><input type="checkbox" value="Graphic Design" class="skill"> Graphic Design</div>
+<div class="row"><input type="checkbox" value="Acting" class="skill"> Acting</div>
 
-<textarea id="about" placeholder="About Institute"></textarea>
+<textarea id="bio" placeholder="Short Bio"></textarea>
 
 <button type="submit">Register & Continue</button>
 
@@ -129,14 +129,14 @@ const email = document.getElementById("email").value;
 const password = document.getElementById("password").value;
 
 const name = document.getElementById("name").value;
-const owner = document.getElementById("owner").value;
 const phone = document.getElementById("phone").value;
+const experience = document.getElementById("experience").value;
 const address = document.getElementById("address").value;
-const about = document.getElementById("about").value;
+const bio = document.getElementById("bio").value;
 
-const categories = [];
-document.querySelectorAll(".cat:checked").forEach(c=>{
-categories.push(c.value);
+const skills = [];
+document.querySelectorAll(".skill:checked").forEach(s=>{
+skills.push(s.value);
 });
 
 try {
@@ -145,31 +145,31 @@ try {
 const userCred = await createUserWithEmailAndPassword(auth, email, password);
 const uid = userCred.user.uid;
 
-// 2. SAVE INSTITUTE DATA (SECURE UID BASED)
-await set(ref(db, "institutes/" + uid), {
+// 2. SAVE TEACHER DATA (UID BASED)
+await set(ref(db, "creative_teachers/" + uid), {
 uid,
 name,
-owner,
 phone,
 email,
+experience,
 address,
-about,
-categories,
-role:"institute",
+skills,
+bio,
+role:"creative_teacher",
 status:"pending",
 createdAt:Date.now()
 });
 
-// 3. USER ROLE MAP
+// 3. ROLE MAP
 await set(ref(db, "users/" + uid), {
 uid,
-role:"institute",
+role:"creative_teacher",
 profileId:uid
 });
 
-alert("Institute Registered Successfully");
+alert("Creative Teacher Registered Successfully");
 
-window.location.href = "payment.html?type=institute&id=" + uid;
+window.location.href = "payment.html?type=creative_teacher&id=" + uid;
 
 }
 catch(err){
