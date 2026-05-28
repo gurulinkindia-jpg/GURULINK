@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Profile View</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<style>
+body{
+font-family:Arial;
+margin:0;
+background:#eef2f7;
+}
+
+header{
+background:#1565c0;
+color:white;
+padding:15px;
+text-align:center;
+}
+
+.container{
+max-width:900px;
+margin:20px auto;
+background:white;
+padding:20px;
+border-radius:12px;
+}
+
+img{
+max-width:150px;
+border-radius:10px;
+}
+
+.row{
+margin:10px 0;
+padding:10px;
+border-bottom:1px solid #ddd;
+}
+
+button{
+padding:10px;
+background:#1565c0;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>My Profile</h2>
+</header>
+
+<div class="container" id="profileBox">
+Loading...
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+import {
+getDatabase,
+ref,
+get
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+const box = document.getElementById("profileBox");
+
+onAuthStateChanged(auth, async (user) => {
+
+if(!user){
+box.innerHTML = "<h3>Please login first</h3>";
+return;
+}
+
+const uid = user.uid;
+
+// get user role
+const userSnap = await get(ref(db, "users/" + uid));
+
+if(!userSnap.exists()){
+box.innerHTML = "User not found";
+return;
+}
+
+const userData = userSnap.val();
+const role = userData.role;
+const profileId = userData.profileId;
+
+// fetch profile
+const profileSnap = await get(ref(db, role + "s/" + profileId));
+
+if(!profileSnap.exists()){
+box.innerHTML = "Profile not found";
+return;
+}
+
+const data = profileSnap.val();
+
+box.innerHTML = `
+<h2>${data.name || "No Name"}</h2>
+
+<div class="row">
+<b>Phone:</b> ${data.phone || ""}
+</div>
+
+<div class="row">
+<b>Email:</b> ${data.email || ""}
+</div>
+
+<div class="row">
+<b>Address:</b> ${data.address || ""}
+</div>
+
+<div class="row">
+<b>Status:</b> ${data.status || ""}
+</div>
+
+<img src="${data.photo || data.logo || ''}" />
+
+<br>
+
+<button onclick="window.location.href='teacher-dashboard.html'">
+Edit Dashboard
+</button>
+`;
+
+});
+
+</script>
+
+</body>
+</html>
