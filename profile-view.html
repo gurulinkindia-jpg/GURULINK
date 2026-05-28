@@ -11,6 +11,7 @@ body{
 font-family:Arial;
 background:#f5f7ff;
 padding:20px;
+margin:0;
 }
 
 .box{
@@ -26,13 +27,15 @@ box-shadow:0 10px 25px rgba(0,0,0,0.1);
 display:flex;
 gap:15px;
 align-items:center;
+flex-wrap:wrap;
 }
 
-img{
+.mainPhoto{
 width:120px;
 height:120px;
 border-radius:50%;
 object-fit:cover;
+border:4px solid #1976d2;
 }
 
 .badge{
@@ -46,28 +49,30 @@ margin:5px 3px;
 }
 
 .actions{
-margin-top:10px;
+margin-top:15px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
 }
 
 .actions a{
 display:inline-block;
-margin:6px 5px;
-padding:10px 12px;
+padding:10px 14px;
 border-radius:10px;
 text-decoration:none;
 color:white;
 font-weight:bold;
 }
 
-.call{background:#25D366}
-.whatsapp{background:#128C7E}
-.website{background:#1976d2}
+.call{background:#4caf50}
+.whatsapp{background:#009688}
+.website{background:#1565c0}
 
 .section{
-margin-top:15px;
-padding:12px;
+margin-top:20px;
+padding:15px;
 background:#f9f9ff;
-border-radius:10px;
+border-radius:12px;
 }
 
 .reviewItem{
@@ -85,16 +90,6 @@ overflow-x:auto;
 gap:15px;
 padding:10px 0;
 scroll-behavior:smooth;
-scroll-snap-type:x mandatory;
-}
-
-.gallery::-webkit-scrollbar{
-height:8px;
-}
-
-.gallery::-webkit-scrollbar-thumb{
-background:#1976d2;
-border-radius:20px;
 }
 
 .gallery img{
@@ -103,21 +98,15 @@ width:280px;
 height:180px;
 border-radius:15px;
 object-fit:cover;
-scroll-snap-align:center;
 box-shadow:0 5px 15px rgba(0,0,0,.15);
-transition:.3s;
 cursor:pointer;
-}
-
-.gallery img:hover{
-transform:scale(1.03);
 }
 
 .modeBox{
 padding:10px;
 background:#eef3ff;
 border-radius:10px;
-margin-top:6px;
+margin-top:8px;
 }
 
 iframe{
@@ -134,6 +123,7 @@ padding:10px;
 border:1px solid #ddd;
 border-radius:10px;
 margin-top:10px;
+box-sizing:border-box;
 }
 
 button{
@@ -175,13 +165,23 @@ margin-top:15px;
 box-shadow:0 5px 15px rgba(0,0,0,.08);
 }
 
+.loading{
+text-align:center;
+font-size:20px;
+padding:50px;
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="box" id="profile">
-Loading...
+
+<div class="loading">
+Loading Profile...
+</div>
+
 </div>
 
 <script type="module">
@@ -198,67 +198,98 @@ push
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-const app=initializeApp({
+/* FIREBASE */
+
+const firebaseConfig = {
 
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app"
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
-});
+};
 
-const db=getDatabase(app);
+const app = initializeApp(firebaseConfig);
 
-const id=new URLSearchParams(location.search).get("id");
+const db = getDatabase(app);
 
-let data,type;
+const profile = document.getElementById("profile");
+
+const id = new URLSearchParams(location.search).get("id");
+
+let data = null;
+let type = "";
+
+/* LOAD PROFILE */
 
 async function load(){
 
 if(!id){
-profile.innerHTML="No ID Found";
+
+profile.innerHTML = "<h2>No ID Found</h2>";
 return;
+
 }
 
-let snap=await get(child(ref(db),"teachers/"+id));
+/* CHECK TEACHER */
 
-type="Teacher";
+let snap = await get(
+child(ref(db),"teachers/"+id)
+);
 
 if(snap.exists()){
-data=snap.val();
-}else{
 
-let snap2=await get(
+data = snap.val();
+type = "Teacher";
+
+}
+
+/* CHECK INSTITUTION */
+
+if(!data){
+
+let snap2 = await get(
 child(ref(db),"institutions/"+id)
 );
 
 if(snap2.exists()){
-data=snap2.val();
-type="Institution";
+
+data = snap2.val();
+type = "Institution";
+
 }
 
 }
+
+/* NOT FOUND */
 
 if(!data){
 
-profile.innerHTML="Profile Not Found";
+profile.innerHTML = "<h2>Profile Not Found</h2>";
 return;
 
 }
 
 renderProfile();
+
 loadReviews();
 
 }
 
+/* RENDER */
+
 function renderProfile(){
 
-const subjects=
-Array.isArray(data.subjects)
-?data.subjects
-:data.subject
-?[data.subject]
-:[];
+const subjects = Array.isArray(data.subjects)
+? data.subjects
+: [];
 
-const modes=[];
+const modes = [];
+
+/* FEES */
 
 if(data.homeFee)
 modes.push(`🏠 Home Tuition - ₹${data.homeFee}`);
@@ -266,33 +297,35 @@ modes.push(`🏠 Home Tuition - ₹${data.homeFee}`);
 if(data.groupFee)
 modes.push(`👨‍🏫 Group Tuition - ₹${data.groupFee}`);
 
-if(data.onlineIndividualFee)
-modes.push(`💻 Online Individual - ₹${data.onlineIndividualFee}`);
+if(data.onlineFee)
+modes.push(`💻 Online - ₹${data.onlineFee}`);
 
-if(data.onlineGroupFee)
-modes.push(`🖥 Online Group - ₹${data.onlineGroupFee}`);
+if(data.individualFee)
+modes.push(`👤 Individual - ₹${data.individualFee}`);
 
-let mapHTML="";
+if(data.offlineFee)
+modes.push(`🏫 Offline Classroom - ₹${data.offlineFee}`);
+
+if(data.hybridFee)
+modes.push(`🔄 Hybrid - ₹${data.hybridFee}`);
+
+/* MAP */
+
+let mapHTML = "";
 
 if(data.mapLink){
 
-let embed=data.mapLink;
-
-if(embed.includes("google.com/maps")){
-embed=embed.replace("/maps","/maps/embed");
-}
-
-mapHTML=`
+mapHTML = `
 
 <div class="section">
 
 <h3>📍 Google Map</h3>
 
 <a href="${data.mapLink}" target="_blank">
-Open Map
+Open Location
 </a>
 
-<iframe src="${embed}"></iframe>
+<iframe src="${data.mapLink}"></iframe>
 
 </div>
 
@@ -300,44 +333,52 @@ Open Map
 
 }
 
-profile.innerHTML=`
+/* MAIN */
+
+profile.innerHTML = `
 
 <div class="header">
 
-<img src="${data.photo||data.logo||'https://via.placeholder.com/120'}">
+<img 
+class="mainPhoto"
+src="${data.photo || data.logo || 'https://via.placeholder.com/120'}">
 
 <div>
 
-<h2>${data.name||"-"}</h2>
+<h2>${data.name || "-"}</h2>
 
 <div>
 
 <span class="badge">${type}</span>
 
 <span class="badge">
-${data.category||"-"}
+${data.category || "-"}
 </span>
 
 </div>
 
 ${type==="Teacher" ? `
 
-<p><b>Qualification:</b>
-${data.qualification||"-"}
+<p>
+<b>Qualification:</b>
+${data.qualification || "-"}
 </p>
 
-<p><b>Experience:</b>
-${data.experience||"-"}
+<p>
+<b>Experience:</b>
+${data.experience || "-"}
 </p>
 
 ` : `
 
-<p><b>Owner Name:</b>
-${data.ownerName||"-"}
+<p>
+<b>Owner:</b>
+${data.ownerName || "-"}
 </p>
 
-<p><b>Established Date:</b>
-${data.establishedDate||"-"}
+<p>
+<b>Established:</b>
+${data.establishedDate || "-"}
 </p>
 
 `}
@@ -348,82 +389,77 @@ ${data.establishedDate||"-"}
 
 <div class="section">
 
-<p><b>Subjects:</b>
-${subjects.join(", ")||"-"}
+<p>
+<b>Subjects:</b>
+${subjects.join(", ") || "-"}
 </p>
 
-<p><b>Location:</b>
+<p>
+<b>Phone:</b>
+${data.phone || "-"}
+</p>
+
+<p>
+<b>Email:</b>
+${data.email || "-"}
+</p>
+
+<p>
+<b>Location:</b>
 ${data.location || data.address || data.area || "-"}
 </p>
 
-<p><b>Phone:</b>
-${data.phone||"-"}
+<p>
+<b>Description:</b>
+${data.description || "-"}
 </p>
-
-${data.alternatePhone ? `
-
-<p><b>Alternate Phone:</b>
-${data.alternatePhone}
-</p>
-
-` : ""}
-
-${data.email ? `
-
-<p><b>Email:</b>
-${data.email}
-</p>
-
-` : ""}
-
-<p><b>Description:</b>
-${data.description||data.notes||"-"}
-</p>
-
-
 
 </div>
 
 <div class="actions">
 
 <a class="call"
-href="tel:${data.phone||""}">
+href="tel:${data.phone || ''}">
 📞 Call
 </a>
 
 <a class="whatsapp"
 target="_blank"
-href="https://wa.me/${data.phone||""}">
+href="https://wa.me/${data.phone || ''}">
 💬 WhatsApp
 </a>
 
-${data.website
-?`<a class="website"
+${data.website ? `
+
+<a class="website"
 target="_blank"
 href="${data.website}">
 🌐 Website
-</a>`
-:""}
+</a>
+
+` : ""}
 
 </div>
 
 ${mapHTML}
 
-${modes.length?`
+${modes.length ? `
 
 <div class="section">
 
-<h3>💰 Teaching Modes</h3>
+<h3>💰 Teaching Modes & Fees</h3>
 
-${modes.map(m=>
-`<div class="modeBox">${m}</div>`
-).join("")}
+${modes.map(m=>`
+<div class="modeBox">
+${m}
+</div>
+`).join("")}
 
 </div>
 
-`:""}
+` : ""}
 
-${data.gallery?.length?`
+${data.gallery && data.gallery.length ? `
 
 <div class="section">
 
@@ -431,29 +467,26 @@ ${data.gallery?.length?`
 
 <div class="gallery">
 
-${data.gallery.map(
-img=>`
+${data.gallery.map(img=>`
+
 <img 
 src="${img}"
 onclick="window.open('${img}','_blank')">
-`
-).join("")}
+
+`).join("")}
 
 </div>
 
 </div>
 
-`:""}
+` : ""}
 
 <div class="section">
 
 <div class="ratingCard">
 
-<div class="bigRating"
-id="avgRating">
-
+<div class="bigRating" id="avgRating">
 0.0
-
 </div>
 
 <div class="starText">
@@ -472,7 +505,7 @@ id="avgRating">
 
 <input
 id="rname"
-placeholder="Your name">
+placeholder="Your Name">
 
 <select id="rrating">
 
@@ -500,8 +533,7 @@ placeholder="Your name">
 
 <textarea
 id="rtext"
-placeholder="Share your experience">
-</textarea>
+placeholder="Write your review"></textarea>
 
 <button onclick="submitReview()">
 Submit Review
@@ -509,12 +541,12 @@ Submit Review
 
 </div>
 
-<div style="margin-top:15px">
+<div style="margin-top:20px;">
 
-<h3>💬 User Reviews</h3>
+<h3>💬 Reviews</h3>
 
 <div id="reviews">
-No reviews yet
+No Reviews Yet
 </div>
 
 </div>
@@ -525,43 +557,59 @@ No reviews yet
 
 }
 
-window.submitReview=function(){
+/* SUBMIT REVIEW */
 
-push(
-ref(db,
-`reviews/${type.toLowerCase()}s/${id}`),
+window.submitReview = async function(){
+
+const name = document.getElementById("rname").value;
+const rating = Number(document.getElementById("rrating").value);
+const text = document.getElementById("rtext").value;
+
+if(!name || !text){
+
+alert("Please fill all fields");
+return;
+
+}
+
+await push(
+ref(db,`reviews/${type.toLowerCase()}s/${id}`),
 {
-name:rname.value,
-rating:Number(rrating.value),
-text:rtext.value,
+name,
+rating,
+text,
 time:Date.now()
 }
 );
 
-alert("Review added");
+alert("Review Submitted");
 
-}
+document.getElementById("rname").value="";
+document.getElementById("rtext").value="";
+
+};
+
+/* LOAD REVIEWS */
 
 function loadReviews(){
 
 onValue(
-ref(db,
-`reviews/${type.toLowerCase()}s/${id}`),
+ref(db,`reviews/${type.toLowerCase()}s/${id}`),
 
-snap=>{
+(snapshot)=>{
 
-let total=0;
-let count=0;
-let html="";
+let total = 0;
+let count = 0;
+let html = "";
 
-snap.forEach(r=>{
+snapshot.forEach((item)=>{
 
-const d=r.val();
+const d = item.val();
 
-total+=d.rating;
+total += d.rating;
 count++;
 
-html+=`
+html += `
 
 <div class="reviewItem">
 
@@ -579,22 +627,23 @@ ${"⭐".repeat(d.rating)}
 
 });
 
-let avg=
-count?
-(total/count).toFixed(1)
-:"0.0";
+const avg = count
+? (total/count).toFixed(1)
+: "0.0";
 
-avgRating.innerHTML=avg;
+document.getElementById("avgRating").innerHTML = avg;
 
-totalReviews.innerHTML=
-`${count} Reviews`;
+document.getElementById("totalReviews").innerHTML =
+count + " Reviews";
 
-reviews.innerHTML=
-html||"No reviews yet";
+document.getElementById("reviews").innerHTML =
+html || "No Reviews Yet";
 
 });
 
 }
+
+/* START */
 
 load();
 
