@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -200,23 +199,39 @@ required>
 <div class="modeBox">
 
 <div class="row">
-<input type="checkbox" value="Individual Coaching" class="mode">
+<input type="checkbox" class="mode" value="Individual Coaching" onchange="toggleFee('individualFeeBox')">
 Individual Coaching
 </div>
 
+<div id="individualFeeBox" class="modeFee">
+<input id="individualFee" placeholder="Enter Individual Coaching Fee">
+</div>
+
 <div class="row">
-<input type="checkbox" value="Home Tuition" class="mode">
+<input type="checkbox" class="mode" value="Home Tuition" onchange="toggleFee('homeFeeBox')">
 Home Tuition
 </div>
 
-<div class="row">
-<input type="checkbox" value="Group Coaching" class="mode">
-Group Coaching
+<div id="homeFeeBox" class="modeFee">
+<input id="homeFee" placeholder="Enter Home Tuition Fee">
 </div>
 
 <div class="row">
-<input type="checkbox" value="Online" class="mode">
+<input type="checkbox" class="mode" value="Group Coaching" onchange="toggleFee('groupFeeBox')">
+Group Coaching
+</div>
+
+<div id="groupFeeBox" class="modeFee">
+<input id="groupFee" placeholder="Enter Group Coaching Fee">
+</div>
+
+<div class="row">
+<input type="checkbox" class="mode" value="Online" onchange="toggleFee('onlineFeeBox')">
 Online
+</div>
+
+<div id="onlineFeeBox" class="modeFee">
+<input id="onlineFee" placeholder="Enter Online Fee">
 </div>
 
 </div>
@@ -274,6 +289,23 @@ Continue To Payment
 
 </div>
 
+<script>
+
+function toggleFee(id){
+
+const box=document.getElementById(id);
+
+box.style.display=
+box.style.display==="block"
+?
+"none"
+:
+"block";
+
+}
+
+</script>
+
 <script type="module">
 
 import {
@@ -328,13 +360,9 @@ document.getElementById(
 ).style.display =
 
 e.target.checked
-
 ?
-
 "block"
-
 :
-
 "none";
 
 });
@@ -437,8 +465,6 @@ submitBtn.innerText="Processing...";
 
 try{
 
-/* SUBJECT VALIDATION */
-
 let checked =
 document.querySelectorAll(
 ".subjectCheck:checked"
@@ -465,8 +491,6 @@ document.getElementById(
 "subjectError"
 ).style.display="none";
 
-/* FORM VALUES */
-
 const email =
 document.getElementById("email")
 .value
@@ -490,7 +514,7 @@ password
 const uid =
 userCred.user.uid;
 
-/* SAVE LOGIN */
+/* LOCAL STORAGE */
 
 localStorage.setItem(
 "uid",
@@ -507,7 +531,7 @@ localStorage.setItem(
 "institution"
 );
 
-/* UPLOAD IMAGES */
+/* IMAGE UPLOAD */
 
 let logoUrl="";
 
@@ -629,6 +653,18 @@ document.getElementById("class").value,
 teachingModes:
 teachingModes,
 
+individualFee:
+document.getElementById("individualFee").value,
+
+homeFee:
+document.getElementById("homeFee").value,
+
+groupFee:
+document.getElementById("groupFee").value,
+
+onlineFee:
+document.getElementById("onlineFee").value,
+
 logo:logoUrl,
 
 gallery:gallery,
@@ -671,8 +707,6 @@ profileId:uid
 
 );
 
-/* LOCAL STORAGE */
-
 localStorage.setItem(
 "institutionId",
 uid
@@ -682,10 +716,7 @@ alert(
 "Registration Successful"
 );
 
-/* REDIRECT */
-
 window.location.href =
-
 "payment.html?type=institution&id="+uid;
 
 }
@@ -731,4 +762,3 @@ submitBtn.innerText=
 
 </body>
 </html>
-```
