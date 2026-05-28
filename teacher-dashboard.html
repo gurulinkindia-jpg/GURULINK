@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Teacher Dashboard</title>
+</head>
+<body>
+
+<h2>My Profile</h2>
+
+<div id="box"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const app = initializeApp({
+apiKey:"YOUR_KEY",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db = getDatabase(app);
+
+/* GET LOGGED USER */
+let user = JSON.parse(localStorage.getItem("user"));
+
+if(!user){
+window.location = "login.html";
+}
+
+if(user.role !== "teacher"){
+alert("Access denied");
+window.location = "login.html";
+}
+
+let profileId = user.profileId;
+
+/* LOAD ONLY HIS PROFILE */
+async function load(){
+
+const snap = await get(ref(db,"teachers/"+profileId));
+
+if(!snap.exists()){
+document.getElementById("box").innerHTML = "Profile not found";
+return;
+}
+
+const d = snap.val();
+
+document.getElementById("box").innerHTML = `
+<input id="name" value="${d.name || ''}">
+<input id="phone" value="${d.phone || ''}">
+<input id="email" value="${d.email || ''}">
+<textarea id="desc">${d.description || ''}</textarea>
+
+<button onclick="save()">Save</button>
+`;
+
+}
+
+load();
+
+/* UPDATE ONLY OWN PROFILE */
+window.save = async () => {
+
+await update(ref(db,"teachers/"+profileId), {
+name: document.getElementById("name").value,
+phone: document.getElementById("phone").value,
+email: document.getElementById("email").value,
+description: document.getElementById("desc").value
+});
+
+alert("Updated Successfully");
+
+};
+
+</script>
+
+</body>
+</html>

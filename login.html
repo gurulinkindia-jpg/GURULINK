@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login</title>
+</head>
+<body>
+
+<h2>Login</h2>
+
+<input id="input" placeholder="Email / Phone">
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="login()">Login</button>
+
+<p id="msg"></p>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const app = initializeApp({
+apiKey:"YOUR_KEY",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app"
+});
+
+const db = getDatabase(app);
+
+window.login = async () => {
+
+let input = document.getElementById("input").value;
+let pass = document.getElementById("password").value;
+
+const snap = await get(ref(db,"users"));
+
+let found = null;
+
+snap.forEach(child => {
+let u = child.val();
+
+if(
+(u.email === input || u.phone === input) &&
+u.password === pass
+){
+found = {id: child.key, ...u};
+}
+});
+
+if(found){
+
+if(found.role !== "teacher"){
+document.getElementById("msg").innerText = "Only teachers allowed";
+return;
+}
+
+localStorage.setItem("user", JSON.stringify(found));
+window.location = "teacher-dashboard.html";
+
+}else{
+document.getElementById("msg").innerText = "Invalid login";
+}
+
+};
+
+</script>
+
+</body>
+</html>
