@@ -3,10 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GURULINK MASTER ADMIN</title>
+<title>GURULINK Admin Panel</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#eef2f7}
+body{
+margin:0;
+font-family:Arial;
+background:#eef2f7;
+}
 
 header{
 background:#0d47a1;
@@ -16,104 +20,43 @@ text-align:center;
 }
 
 .container{
-width:95%;
-max-width:1400px;
-margin:auto;
-padding:15px;
-}
-
-/* DASHBOARD */
-.dashboard{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-gap:10px;
-margin:10px 0;
-}
-
-.box{
+max-width:1000px;
+margin:20px auto;
 background:white;
-padding:12px;
+padding:20px;
 border-radius:10px;
-text-align:center;
 }
 
-/* FILTER */
-.topbar{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-margin-bottom:10px;
-}
-
-input,select{
-padding:10px;
-border-radius:8px;
-border:1px solid #ccc;
-flex:1;
-}
-
-/* CARD */
-.card{
-background:white;
-padding:12px;
-border-radius:10px;
-margin-top:10px;
-box-shadow:0 3px 10px rgba(0,0,0,.1);
-border-left:6px solid #999;
-}
-
-.teacher{border-left-color:#1565c0;}
-.institution{border-left-color:#2e7d32;}
-
-button{
-padding:7px 10px;
-border:none;
-border-radius:6px;
-color:white;
-margin:3px;
-cursor:pointer;
-}
-
-.approve{background:green}
-.notapprove{background:red}
-.del{background:red}
-.edit{background:#0d47a1}
-.review{background:#6a1b9a}
-
-/* TAGS */
-.tag{
-display:inline-block;
-padding:3px 8px;
-border-radius:12px;
-font-size:12px;
-margin:2px;
-background:#eee;
-}
-
-/* MODAL */
-.modal{
-display:none;
-position:fixed;
-top:0;left:0;
-width:100%;height:100%;
-background:rgba(0,0,0,.6);
-align-items:center;
-justify-content:center;
-}
-
-.modalBox{
-background:white;
-width:90%;
-max-width:900px;
-padding:15px;
-max-height:90vh;
-overflow:auto;
-}
-
-.modalBox input,.modalBox textarea{
-width:100%;
+input,button{
 padding:10px;
 margin:5px 0;
+width:100%;
+box-sizing:border-box;
+}
+
+button{
+background:#0d47a1;
+color:white;
+border:none;
+cursor:pointer;
+border-radius:6px;
+}
+
+.card{
+padding:10px;
+border:1px solid #ddd;
+margin:10px 0;
+border-radius:10px;
+background:#fff;
+}
+
+.row{
+display:flex;
+gap:10px;
+}
+
+.row button{
+flex:1;
 }
 </style>
 </head>
@@ -121,250 +64,7 @@ margin:5px 0;
 <body>
 
 <header>
-<h2>MASTER ADMIN PANEL</h2>
+<h2>GURULINK ADMIN PANEL</h2>
 </header>
 
-<div class="container">
-
-<div class="dashboard">
-<div class="box">Teachers <h3 id="tCount">0</h3></div>
-<div class="box">Institutions <h3 id="iCount">0</h3></div>
-<div class="box">Payments <h3 id="pCount">0</h3></div>
-<div class="box">Earnings <h3 id="earn">₹0</h3></div>
-</div>
-
-<div class="topbar">
-<input id="search" placeholder="Search name/email/phone">
-<input id="phone" placeholder="Exact phone">
-<select id="type">
-<option value="">All</option>
-<option value="teacher">Teachers</option>
-<option value="institution">Institutions</option>
-</select>
-</div>
-
-<h3>ALL PROFILES</h3>
-<div id="list"></div>
-
-<h3>PAYMENTS</h3>
-<div id="payments"></div>
-
-</div>
-
-<!-- MODAL -->
-<div class="modal" id="modal">
-<div class="modalBox">
-<h3>Edit Full Profile</h3>
-<div id="form"></div>
-<button onclick="saveEdit()">SAVE</button>
-<button onclick="closeModal()">CLOSE</button>
-</div>
-</div>
-
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import {
-getDatabase,
-ref,
-onValue,
-update,
-remove
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-const app = initializeApp({
-apiKey:"AIzaSyBK0...",
-authDomain:"gurulink-59cc7.firebaseapp.com",
-databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app"
-});
-
-const db = getDatabase(app);
-
-let teachers=[], institutions=[], payments=[];
-let currentEdit=null;
-
-/* LOAD */
-onValue(ref(db,"teachers"),snap=>{
-teachers=[];
-snap.forEach(c=>{
-teachers.push({id:c.key,type:"teacher",...c.val()});
-});
-render();
-});
-
-onValue(ref(db,"institutions"),snap=>{
-institutions=[];
-snap.forEach(c=>{
-institutions.push({id:c.key,type:"institution",...c.val()});
-});
-render();
-});
-
-onValue(ref(db,"payments"),snap=>{
-payments=[];
-let total=0;
-
-snap.forEach(c=>{
-let p=c.val();
-payments.push(p);
-total+=Number(p.amount||0);
-});
-
-document.getElementById("pCount").innerText=snap.size;
-document.getElementById("earn").innerText="₹"+total;
-renderPayments();
-});
-
-/* RENDER */
-function render(){
-
-let all=[...teachers,...institutions];
-
-let search=document.getElementById("search").value.toLowerCase();
-let phone=document.getElementById("phone").value;
-let type=document.getElementById("type").value;
-
-let html="";
-
-let t=0,i=0;
-
-all.forEach(x=>{
-
-if(type && x.type!==type) return;
-
-if(search &&
-!(x.name||"").toLowerCase().includes(search) &&
-!(x.email||"").toLowerCase().includes(search) &&
-!(x.phone||"").toLowerCase().includes(search)
-) return;
-
-if(phone && x.phone!==phone) return;
-
-if(x.type==="teacher") t++;
-if(x.type==="institution") i++;
-
-let categoryColor =
-x.category==="academic"?"#2196f3":
-x.category==="creative"?"#e91e63":
-x.category==="skill"?"#ff9800":
-"#607d8b";
-
-let isApproved = x.status === "approved";
-
-html+=`
-<div class="card ${x.type}">
-
-<h3>${x.name||"-"}</h3>
-
-<span class="tag" style="background:${categoryColor};color:white">
-${x.category||"-"}
-</span>
-
-<p>📞 ${x.phone||"-"}</p>
-<p>Status: ${x.status||"pending"}</p>
-
-<p><b>Public Review:</b> ${x.publicReview||"-"}</p>
-<p><b>Admin Review:</b> ${x.adminReview||"-"}</p>
-
-<button 
-class="${isApproved ? 'approve' : 'notapprove'}"
-onclick="toggleApprove('${x.type}','${x.id}','${x.status}')">
-
-${isApproved ? "Approved" : "Not Approved"}
-
-</button>
-
-<button class="edit" onclick='openEdit(${JSON.stringify(x)})'>Edit</button>
-<button class="review" onclick="adminReview('${x.type}','${x.id}')">Admin Review</button>
-<button class="del" onclick="del('${x.type}','${x.id}')">Delete</button>
-
-</div>
-`;
-});
-
-document.getElementById("list").innerHTML=html;
-document.getElementById("tCount").innerText=t;
-document.getElementById("iCount").innerText=i;
-}
-
-/* PAYMENTS */
-function renderPayments(){
-let html="";
-payments.forEach(p=>{
-html+=`
-<div class="card">
-<b>${p.name||"Unknown"}</b>
-<p>₹${p.amount||0}</p>
-<p>${p.status||""}</p>
-</div>`;
-});
-document.getElementById("payments").innerHTML=html;
-}
-
-/* TOGGLE APPROVE */
-window.toggleApprove = (type,id,status)=>{
-let newStatus = status === "approved" ? "pending" : "approved";
-
-update(ref(db,`${type}s/${id}`),{
-status:newStatus
-});
-};
-
-/* DELETE */
-window.del=(type,id)=>{
-if(confirm("Delete?")){
-remove(ref(db,`${type}s/${id}`));
-}
-};
-
-/* ADMIN REVIEW */
-window.adminReview=(type,id)=>{
-let msg=prompt("Admin review:");
-if(msg){
-update(ref(db,`${type}s/${id}`),{adminReview:msg});
-}
-};
-
-/* EDIT */
-window.openEdit=(data)=>{
-currentEdit=data;
-let html="";
-
-Object.keys(data).forEach(k=>{
-if(typeof data[k]==="object") return;
-
-html+=`
-<label>${k}</label>
-<input id="e_${k}" value="${data[k]||""}">
-`;
-});
-
-document.getElementById("form").innerHTML=html;
-document.getElementById("modal").style.display="flex";
-};
-
-window.saveEdit=()=>{
-let up={};
-
-Object.keys(currentEdit).forEach(k=>{
-let el=document.getElementById("e_"+k);
-if(el) up[k]=el.value;
-});
-
-update(ref(db,`${currentEdit.type}s/${currentEdit.id}`),up);
-closeModal();
-};
-
-window.closeModal=()=>{
-document.getElementById("modal").style.display="none";
-};
-
-/* EVENTS */
-document.getElementById("search").oninput=render;
-document.getElementById("phone").oninput=render;
-document.getElementById("type").onchange=render;
-
-</script>
-
-</body>
-</html>
+<!-- LOGIN
