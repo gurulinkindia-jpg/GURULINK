@@ -1,12 +1,181 @@
-import { getAuth, onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Teacher Dashboard</title>
 
-const auth = getAuth(app);
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#eef2f7;
+}
 
-onAuthStateChanged(auth, (user) => {
-  if (!user) {
-    window.location.href = "login.html";
-  } else {
-    loadTeacher(user.uid);
-  }
+header{
+background:#1565c0;
+color:white;
+padding:15px;
+text-align:center;
+}
+
+.container{
+max-width:800px;
+margin:20px auto;
+background:white;
+padding:20px;
+border-radius:10px;
+}
+
+input,textarea{
+width:100%;
+padding:10px;
+margin:8px 0;
+border:1px solid #ccc;
+border-radius:6px;
+}
+
+button{
+padding:10px;
+width:100%;
+background:#1565c0;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.preview img{
+width:100px;
+height:100px;
+object-fit:cover;
+border-radius:10px;
+margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>Teacher Dashboard</h2>
+<button onclick="logout()">Logout</button>
+</header>
+
+<div class="container">
+
+<h3>Your Profile</h3>
+
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
+<input id="email" placeholder="Email" disabled>
+
+<textarea id="about" placeholder="About You"></textarea>
+
+<h4>Profile Photo</h4>
+<input type="file" id="photo">
+<div class="preview" id="preview"></div>
+
+<button onclick="saveData()">Save Changes</button>
+
+<p id="msg"></p>
+
+</div>
+
+<script type="module">
+
+import { auth, db, requireLogin, logout } from "./auth.js";
+import { ref, get, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getStorage, ref as sRef, uploadBytes, getDownloadURL } 
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+
+requireLogin(["teacher"]);
+
+let uid;
+let imageFile = null;
+
+const name = document.getElementById("name");
+const phone = document.getElementById("phone");
+const email = document.getElementById("email");
+const about = document.getElementById("about");
+const preview = document.getElementById("preview");
+const photo = document.getElementById("photo");
+
+onAuthStateChanged(auth, async (user)=>{
+if(!user) return;
+
+uid = user.uid;
+
+const snap = await get(ref(db,"teachers/"+uid));
+
+if(snap.exists()){
+const data = snap.val();
+
+name.value = data.name || "";
+phone.value = data.phone || "";
+email.value = data.email || "";
+about.value = data.about || "";
+
+if(data.photo){
+preview.innerHTML = `<img src="${data.photo}">`;
+}
+}
 });
+
+/* image preview */
+photo.addEventListener("change", (e)=>{
+imageFile = e.target.files[0];
+
+preview.innerHTML = "";
+
+if(imageFile){
+const img = document.createElement("img");
+img.src = URL.createObjectURL(imageFile);
+preview.appendChild(img);
+}
+});
+
+/* SAVE DATA */
+window.saveData = async function(){
+
+try{
+
+let photoURL = "";
+
+if(imageFile){
+
+const storage = getStorage();
+const imgRef = sRef(storage, "teachers/"+uid);
+
+await uploadBytes(imgRef, imageFile);
+photoURL = await getDownloadURL(imgRef);
+
+}
+
+await set(ref(db,"teachers/"+uid),{
+name: name.value,
+phone: phone.value,
+email: email.value,
+about: about.value,
+photo: photoURL || null,
+role:"teacher",
+status:"pending"
+});
+
+document.getElementById("msg").innerText = "Saved Successfully";
+
+}catch(err){
+console.log(err);
+document.getElementById("msg").innerText = err.message;
+}
+
+}
+
+/* logout */
+window.logout = logout;
+
+</script>
+
+</body>
+</html>
