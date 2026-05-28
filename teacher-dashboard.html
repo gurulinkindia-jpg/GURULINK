@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Teacher Dashboard</title>
+
+<title>Dashboard - GURULINK</title>
 
 <style>
+
 body{
 margin:0;
 font-family:Arial;
@@ -35,6 +37,7 @@ padding:10px;
 margin:8px 0;
 border:1px solid #ccc;
 border-radius:6px;
+box-sizing:border-box;
 }
 
 button{
@@ -46,6 +49,7 @@ color:white;
 border:none;
 border-radius:8px;
 cursor:pointer;
+font-size:15px;
 }
 
 button.logout{
@@ -67,171 +71,456 @@ border:1px solid #ddd;
 border-radius:8px;
 }
 
-#content{display:none;}
+#content{
+display:none;
+}
+
+.roleBadge{
+display:inline-block;
+padding:5px 12px;
+background:#1565c0;
+color:white;
+border-radius:20px;
+font-size:13px;
+margin-top:5px;
+}
+
 </style>
 </head>
 
 <body>
 
 <header>
-<h2>Teacher Dashboard</h2>
+
+<h2 id="dashboardTitle">
+Dashboard
+</h2>
+
+<div class="roleBadge" id="roleText">
+Loading...
+</div>
+
 </header>
 
 <div class="container">
 
-<div id="loading">Loading your profile...</div>
+<div id="loading">
+Loading your profile...
+</div>
 
 <div id="content">
 
-<input id="name" placeholder="Full Name">
+<input id="name" placeholder="Name">
+
 <input id="phone" placeholder="Phone">
+
 <input id="email" placeholder="Email">
-<input id="experience" placeholder="Experience">
-<input id="location" placeholder="Location">
 
-<textarea id="description" placeholder="About You"></textarea>
+<input id="experience" placeholder="Experience / Established Year">
+
+<input id="location" placeholder="Location / Address">
+
+<textarea
+id="description"
+placeholder="About">
+</textarea>
 
 <div class="section">
-<h4>Subjects (comma separated)</h4>
+
+<h4>
+Subjects (comma separated)
+</h4>
+
 <input id="subjects">
+
 </div>
 
 <div class="section">
-<h4>Teaching Modes</h4>
+
+<h4>
+Teaching Modes (comma separated)
+</h4>
+
 <input id="modes">
+
 </div>
 
 <div class="section">
-<h4>Fee</h4>
+
+<h4>
+Fee
+</h4>
+
 <input id="fee">
+
 </div>
 
 <div class="section">
-<h4>Profile Photo</h4>
+
+<h4>
+Profile Photo / Logo
+</h4>
+
 <div id="photoPreview" class="preview"></div>
+
 <input type="file" id="photo">
-</div>
-
-<button onclick="saveData()">Save Changes</button>
-<button class="logout" onclick="logout()">Logout</button>
 
 </div>
+
+<button onclick="saveData()">
+Save Changes
+</button>
+
+<button
+class="logout"
+onclick="logout()">
+Logout
+</button>
+
+</div>
+
 </div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import {
+initializeApp
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+update
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+import {
+getAuth,
+signOut
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+/* FIREBASE */
 
 const firebaseConfig = {
+
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+
 authDomain:"gurulink-59cc7.firebaseapp.com",
+
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
 projectId:"gurulink-59cc7",
+
 storageBucket:"gurulink-59cc7.appspot.com",
+
 messagingSenderId:"112148672399",
+
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getDatabase(app);
+
 const auth = getAuth(app);
 
-/* SECURITY */
-const uid = localStorage.getItem("uid");
-const role = localStorage.getItem("role");
-const profileId = localStorage.getItem("profileId");
+/* LOCAL STORAGE */
 
-if(!uid || role !== "teacher"){
+const uid =
+localStorage.getItem("uid");
+
+const role =
+localStorage.getItem("role");
+
+const profileId =
+localStorage.getItem("profileId");
+
+/* SECURITY */
+
+if(
+!uid ||
+(
+role !== "teacher" &&
+role !== "institution"
+)
+){
+
 alert("Access Denied");
-window.location.href = "login.html";
+
+window.location.href =
+"login.html";
+
 }
 
+/* ROLE UI */
+
+document.getElementById("roleText")
+.innerHTML = role.toUpperCase();
+
+document.getElementById("dashboardTitle")
+.innerHTML =
+
+role === "teacher"
+
+?
+
+"Teacher Dashboard"
+
+:
+
+"Institution Dashboard";
+
+/* DATABASE PATH */
+
+const dbPath =
+
+role === "teacher"
+
+?
+
+"teachers/" + profileId
+
+:
+
+"institutions/" + profileId;
+
 /* LOAD PROFILE */
+
 async function loadProfile(){
 
-const snap = await get(ref(db,"teachers/"+profileId));
+try{
+
+const snap =
+await get(ref(db,dbPath));
 
 if(!snap.exists()){
+
 alert("Profile not found");
+
 return;
+
 }
 
 const d = snap.val();
 
-/* fill form */
-document.getElementById("name").value = d.name || "";
-document.getElementById("phone").value = d.phone || "";
-document.getElementById("email").value = d.email || "";
-document.getElementById("experience").value = d.experience || "";
-document.getElementById("location").value = d.location || "";
-document.getElementById("description").value = d.description || "";
-document.getElementById("subjects").value = (d.subjects || []).join(", ");
-document.getElementById("modes").value = (d.teachingModes || []).join(", ");
-document.getElementById("fee").value = d.fee || "";
+/* FILL FORM */
 
-if(d.photo){
-document.getElementById("photoPreview").innerHTML =
-`<img src="${d.photo}">`;
+document.getElementById("name").value =
+d.name || "";
+
+document.getElementById("phone").value =
+d.phone || "";
+
+document.getElementById("email").value =
+d.email || "";
+
+document.getElementById("experience").value =
+
+d.experience ||
+d.establishedDate ||
+"";
+
+document.getElementById("location").value =
+
+d.location ||
+d.address ||
+d.area ||
+"";
+
+document.getElementById("description").value =
+d.description || "";
+
+document.getElementById("subjects").value =
+
+Array.isArray(d.subjects)
+
+?
+
+d.subjects.join(", ")
+
+:
+
+"";
+
+document.getElementById("modes").value =
+
+Array.isArray(d.teachingModes)
+
+?
+
+d.teachingModes.join(", ")
+
+:
+
+"";
+
+document.getElementById("fee").value =
+
+d.fee ||
+d.homeFee ||
+d.groupFee ||
+d.onlineFee ||
+"";
+
+/* PHOTO */
+
+const photo =
+
+d.photo ||
+d.logo ||
+"";
+
+if(photo){
+
+document.getElementById(
+"photoPreview"
+).innerHTML =
+
+`<img src="${photo}">`;
+
 }
 
-document.getElementById("loading").style.display="none";
-document.getElementById("content").style.display="block";
+/* SHOW */
+
+document.getElementById("loading")
+.style.display="none";
+
+document.getElementById("content")
+.style.display="block";
+
+}
+catch(err){
+
+console.log(err);
+
+alert(err.message);
+
+}
+
 }
 
 loadProfile();
 
 /* IMAGE UPLOAD */
-const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
+
+const API_KEY =
+"31f729ff855eb2e42c00ee508a8647ea";
 
 async function upload(file){
+
 let fd = new FormData();
+
 fd.append("image",file);
 
-let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`,{
+let res = await fetch(
+
+`https://api.imgbb.com/1/upload?key=${API_KEY}`,
+
+{
 method:"POST",
 body:fd
-});
-
-let data = await res.json();
-return data.data.url;
 }
 
-/* SAVE DATA */
+);
+
+let data = await res.json();
+
+return data.data.url;
+
+}
+
+/* SAVE */
+
 window.saveData = async function(){
+
+try{
 
 let photoUrl = "";
 
-if(document.getElementById("photo").files[0]){
-photoUrl = await upload(document.getElementById("photo").files[0]);
+/* UPLOAD */
+
+if(
+document.getElementById("photo").files[0]
+){
+
+photoUrl = await upload(
+document.getElementById("photo").files[0]
+);
+
 }
 
-await update(ref(db,"teachers/"+profileId),{
+/* UPDATE */
 
-name:document.getElementById("name").value,
-phone:document.getElementById("phone").value,
-email:document.getElementById("email").value,
-experience:document.getElementById("experience").value,
-location:document.getElementById("location").value,
-description:document.getElementById("description").value,
+await update(ref(db,dbPath),{
 
-subjects:document.getElementById("subjects").value.split(",").map(x=>x.trim()),
-teachingModes:document.getElementById("modes").value.split(",").map(x=>x.trim()),
-fee:document.getElementById("fee").value,
+name:
+document.getElementById("name").value,
 
-photo: photoUrl || undefined
+phone:
+document.getElementById("phone").value,
+
+email:
+document.getElementById("email").value,
+
+experience:
+document.getElementById("experience").value,
+
+location:
+document.getElementById("location").value,
+
+description:
+document.getElementById("description").value,
+
+subjects:
+document.getElementById("subjects")
+.value
+.split(",")
+.map(x=>x.trim()),
+
+teachingModes:
+document.getElementById("modes")
+.value
+.split(",")
+.map(x=>x.trim()),
+
+fee:
+document.getElementById("fee").value,
+
+photo:
+photoUrl || undefined
 
 });
 
-alert("Profile Updated Successfully");
+alert(
+"Profile Updated Successfully"
+);
+
+}
+catch(err){
+
+console.log(err);
+
+alert(err.message);
+
+}
+
 };
 
 /* LOGOUT */
+
 window.logout = async function(){
+
 await signOut(auth);
+
 localStorage.clear();
-window.location.href = "login.html";
+
+window.location.href =
+"login.html";
+
 };
 
 </script>
