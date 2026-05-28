@@ -7,8 +7,18 @@
 <title>Academic Profile - GURULINK</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{background:linear-gradient(135deg,#d9efff,#f4f9ff,#fff);padding-bottom:40px}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:linear-gradient(135deg,#d9efff,#f4f9ff,#fff);
+padding-bottom:40px;
+}
 
 header{
 padding:30px;
@@ -22,7 +32,7 @@ border-bottom:1px solid rgba(255,255,255,.6);
 width:95%;
 max-width:1300px;
 margin:auto;
-padding:20px
+padding:20px;
 }
 
 .filters{
@@ -35,11 +45,12 @@ border-radius:20px;
 margin-bottom:20px;
 }
 
-.filters input,.filters select{
+.filters input,
+.filters select{
 padding:12px;
 border:none;
 border-radius:10px;
-outline:none
+outline:none;
 }
 
 .grid{
@@ -56,19 +67,24 @@ border:1px solid #ddd;
 position:relative;
 }
 
-.card.institution{border-left:6px solid #e91e63}
-.card.teacher{border-left:6px solid #1976d2}
+.card.institution{
+border-left:6px solid #e91e63;
+}
+
+.card.teacher{
+border-left:6px solid #1976d2;
+}
 
 .top{
 display:flex;
-gap:15px
+gap:15px;
 }
 
 .photo{
 width:70px;
 height:70px;
 border-radius:50%;
-object-fit:cover
+object-fit:cover;
 }
 
 .badge{
@@ -77,18 +93,18 @@ padding:5px 10px;
 border-radius:20px;
 font-size:12px;
 margin:3px;
-display:inline-block
+display:inline-block;
 }
 
 .verify{
 background:#2196f3;
-color:#fff
+color:#fff;
 }
 
 .stars{
 color:orange;
 font-size:13px;
-margin-top:5px
+margin-top:5px;
 }
 
 .btn{
@@ -104,56 +120,116 @@ cursor:pointer;
 .details{
 margin-top:10px;
 font-size:14px;
-line-height:1.6
+line-height:1.6;
 }
 
 .empty{
 text-align:center;
 padding:20px;
 background:#fff;
-border-radius:15px
+border-radius:15px;
 }
+
 </style>
 </head>
 
 <body>
 
 <header>
+
 <h1>Academic Profile</h1>
-<p>Find Teachers & Institutes</p>
+
+<p>
+Find Teachers & Institutes
+</p>
+
 </header>
 
 <div class="container">
 
 <div class="filters">
 
-<input id="search"
-placeholder="Search teacher, location">
+<input
+id="search"
+placeholder="Search teacher, institute, location">
 
 <select id="classFilter">
 
-<option value="">All Classes</option>
+<option value="">
+All Classes
+</option>
 
-<option>Play Group</option>
-<option>Nursery</option>
-<option>LKG</option>
-<option>UKG</option>
+<option>
+Play Group
+</option>
 
-<option>Class 1</option>
-<option>Class 2</option>
-<option>Class 3</option>
-<option>Class 4</option>
-<option>Class 5</option>
-<option>Class 6</option>
-<option>Class 7</option>
-<option>Class 8</option>
-<option>Class 9</option>
-<option>Class 10</option>
-<option>Class 11</option>
-<option>Class 12</option>
+<option>
+Nursery
+</option>
 
-<option>IIT JEE</option>
-<option>NEET</option>
+<option>
+LKG
+</option>
+
+<option>
+UKG
+</option>
+
+<option>
+Class 1
+</option>
+
+<option>
+Class 2
+</option>
+
+<option>
+Class 3
+</option>
+
+<option>
+Class 4
+</option>
+
+<option>
+Class 5
+</option>
+
+<option>
+Class 6
+</option>
+
+<option>
+Class 7
+</option>
+
+<option>
+Class 8
+</option>
+
+<option>
+Class 9
+</option>
+
+<option>
+Class 10
+</option>
+
+<option>
+Class 11
+</option>
+
+<option>
+Class 12
+</option>
+
+<option>
+IIT JEE
+</option>
+
+<option>
+NEET
+</option>
 
 </select>
 
@@ -165,7 +241,9 @@ placeholder="Search teacher, location">
 
 <script type="module">
 
-import {initializeApp}
+import {
+initializeApp
+}
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
@@ -175,81 +253,99 @@ onValue
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
+/* FIREBASE */
 
-const app=initializeApp({
+const firebaseConfig = {
 
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+
 authDomain:"gurulink-59cc7.firebaseapp.com",
-databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app"
 
-});
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 
-const db=getDatabase(app);
+projectId:"gurulink-59cc7",
 
-let teachers=[];
-let institutes=[];
+storageBucket:"gurulink-59cc7.appspot.com",
 
+messagingSenderId:"112148672399",
+
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getDatabase(app);
+
+let teachers = [];
+let institutes = [];
 
 /* LOAD TEACHERS */
 
-onValue(ref(db,"teachers"),snap=>{
+onValue(ref(db,"teachers"), snapshot=>{
 
-teachers=[];
+teachers = [];
 
-snap.forEach(c=>{
+snapshot.forEach(c=>{
+
+const d = c.val();
+
+if(
+d.status==="approved" &&
+(d.category||"").toLowerCase()==="academic"
+){
 
 teachers.push({
-...c.val(),
+...d,
 id:c.key,
 type:"Teacher"
 });
 
+}
+
 });
 
 render();
 
 });
 
+/* LOAD INSTITUTIONS */
 
-/* LOAD INSTITUTES */
+onValue(ref(db,"institutions"), snapshot=>{
 
-onValue(ref(db,"institutions"),snap=>{
+institutes = [];
 
-institutes=[];
+snapshot.forEach(c=>{
 
-snap.forEach(c=>{
+const d = c.val();
+
+if(
+d.status==="approved" &&
+(d.category||"").toLowerCase()==="academic"
+){
 
 institutes.push({
-...c.val(),
+...d,
 id:c.key,
 type:"Institution"
 });
 
+}
+
 });
 
 render();
 
 });
 
-
 function getAll(){
-return [...teachers,...institutes];
+
+return [
+...teachers,
+...institutes
+];
+
 }
-
-
-/* VIEW */
-
-document.addEventListener("click",(e)=>{
-
-const btn=e.target.closest(".view");
-
-if(!btn)return;
-
-location.href=
-"profile-view.html?id="+btn.dataset.id;
-
-});
-
 
 /* SEARCH EVENTS */
 
@@ -261,15 +357,59 @@ document
 .getElementById("classFilter")
 .addEventListener("change",render);
 
+/* VIEW DETAILS */
 
+document.addEventListener("click",(e)=>{
+
+const btn = e.target.closest(".view");
+
+if(!btn) return;
+
+const id = btn.dataset.id;
+
+/* CHECK STUDENT LOGIN */
+
+const studentId =
+localStorage.getItem("studentId");
+
+if(!studentId){
+
+alert(
+"Please Login As Student To View Full Details"
+);
+
+/* SAVE REDIRECT PAGE */
+
+localStorage.setItem(
+"redirectAfterLogin",
+"profile-view.html?id="+id
+);
+
+/* GO LOGIN */
+
+window.location.href =
+"student-login.html";
+
+return;
+
+}
+
+/* OPEN PROFILE */
+
+window.location.href =
+"profile-view.html?id="+id;
+
+});
 
 /* CLASS MATCH */
 
 function classMatch(userClass,selectedClass){
 
-if(!selectedClass)return true;
+if(!selectedClass)
+return true;
 
-if(!userClass)return false;
+if(!userClass)
+return false;
 
 return userClass
 .toLowerCase()
@@ -279,19 +419,23 @@ selectedClass.toLowerCase()
 
 }
 
-
 /* TYPO FRIENDLY SEARCH */
 
 function similar(a,b){
 
-a=a.toLowerCase();
-b=b.toLowerCase();
+a = a.toLowerCase();
+b = b.toLowerCase();
 
-if(a.includes(b)) return true;
+if(a.includes(b))
+return true;
 
-let count=0;
+let count = 0;
 
-for(let i=0;i<Math.min(a.length,b.length);i++){
+for(
+let i=0;
+i<Math.min(a.length,b.length);
+i++
+){
 
 if(a[i]===b[i]){
 count++;
@@ -303,45 +447,40 @@ return count>=5;
 
 }
 
-
 /* RENDER */
 
 function render(){
 
-const all=getAll();
+const all = getAll();
 
-const search=
+const search =
 document
 .getElementById("search")
 .value
 .trim()
 .toLowerCase();
 
-const cls=
+const cls =
 document
 .getElementById("classFilter")
 .value;
 
+const filtered = all.filter(x=>{
 
-const filtered=all.filter(x=>{
-
-const name=
+const name =
 (x.name||"")
 .toString()
-.trim()
 .toLowerCase();
 
-const location=
-(x.location||x.address||"")
+const location =
+(x.location||x.address||x.area||"")
 .toString()
-.trim()
 .toLowerCase();
-
 
 if(
 search &&
 !(
-similar(name,search)||
+similar(name,search) ||
 similar(location,search)
 )
 ){
@@ -358,38 +497,41 @@ return true;
 
 });
 
-
-const grid=
+const grid =
 document.getElementById("grid");
-
 
 if(!filtered.length){
 
-grid.innerHTML=
-"<div class='empty'>No Data Found</div>";
+grid.innerHTML =
+
+"<div class='empty'>No Academic Profiles Found</div>";
 
 return;
 
 }
 
-
-grid.innerHTML=filtered.map(x=>`
+grid.innerHTML = filtered.map(x=>`
 
 <div class="card ${x.type.toLowerCase()}">
 
 <div class="top">
 
-<img class="photo"
-src="${x.photo||x.logo||'https://via.placeholder.com/100'}">
+<img
+class="photo"
+src="${x.photo || x.logo || 'https://via.placeholder.com/100'}">
 
 <div>
 
-<h3>${x.name||"-"}</h3>
+<h3>
+${x.name || "-"}
+</h3>
 
-<div class="badge">${x.type}</div>
+<div class="badge">
+${x.type}
+</div>
 
-<div class="badge ${x.verified?'verify':''}">
-${x.verified?'Verified':'Not Verified'}
+<div class="badge ${x.verified ? 'verify' : ''}">
+${x.verified ? 'Verified' : 'Not Verified'}
 </div>
 
 <div class="stars">
@@ -403,33 +545,43 @@ View Details
 </button>
 
 </div>
+
 </div>
 
 <div class="details">
 
-<b>Subject:</b>
+<b>Subjects:</b>
 
 ${
 Array.isArray(x.subjects)
-?x.subjects.join(", ")
-:(x.subjects||"-")
+? x.subjects.join(", ")
+: (x.subjects || x.subject || "-")
 }
 
 <br>
 
 <b>Class:</b>
-${x.class||"-"}
+${x.class || "-"}
 
 <br>
 
 <b>Mode:</b>
-${(x.teachingModes||x.modes||[])
-.join(", ")||"-"}
+
+${
+(x.teachingModes || x.modes || [])
+.join(", ") || "-"
+}
 
 <br>
 
 <b>Location:</b>
-${x.location||x.address||"-"}
+
+${
+x.location ||
+x.address ||
+x.area ||
+"-"
+}
 
 </div>
 
