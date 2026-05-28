@@ -60,14 +60,14 @@ border:1px solid #ccc;
 flex:1;
 }
 
-/* CARDS */
+/* CARD */
 .card{
 background:#fff;
 padding:15px;
 border-radius:12px;
 margin-top:15px;
 box-shadow:0 3px 10px rgba(0,0,0,.1);
-border-left:6px solid #ccc;
+border-left:6px solid #999;
 }
 
 .teacher{border-left-color:#1565c0;}
@@ -75,6 +75,11 @@ border-left:6px solid #ccc;
 
 .pending{background:#fff3e0;}
 .approved{background:#e8f5e9;}
+
+.highlight{
+border:2px solid red;
+box-shadow:0 0 10px rgba(255,0,0,.3);
+}
 
 .top{
 display:flex;
@@ -100,20 +105,7 @@ font-size:12px;
 .green{background:green;}
 .orange{background:orange;}
 
-.gallery{
-display:flex;
-gap:6px;
-overflow:auto;
-margin-top:10px;
-}
-
-.gallery img{
-width:60px;
-height:60px;
-border-radius:8px;
-object-fit:cover;
-}
-
+/* BUTTONS */
 button{
 padding:7px 10px;
 border:none;
@@ -128,19 +120,30 @@ margin:3px;
 .approve{background:green;}
 .review{background:#6a1b9a;}
 
-/* EDIT DROPDOWN */
+/* EDIT BOX */
 .editBox{
 display:none;
-background:#f7f7f7;
+background:#f5f5f5;
 padding:10px;
 margin-top:10px;
 border-radius:10px;
 }
 
-.editBox input, .editBox textarea{
+.editBox input,
+.editBox textarea{
 width:100%;
-margin:5px 0;
 padding:8px;
+margin:5px 0;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+/* PAYMENTS */
+.payBox{
+background:#fff;
+padding:10px;
+border-radius:10px;
+margin-top:10px;
 }
 
 </style>
@@ -162,7 +165,7 @@ padding:8px;
 <div class="box"><h2 id="earn">₹0</h2><p>Earnings</p></div>
 </div>
 
-<!-- FILTER -->
+<!-- SEARCH -->
 <div class="filterRow">
 <input id="search" placeholder="Search name / phone / email">
 <select id="filter">
@@ -174,7 +177,7 @@ padding:8px;
 </select>
 </div>
 
-<h3>Teachers & Institutions</h3>
+<h3>Users</h3>
 <div id="list"></div>
 
 <h3>Payments</h3>
@@ -203,42 +206,36 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* DATA STORE */
-let teachersData = [];
-let instData = [];
+let teachers = [];
+let insts = [];
 
-/* LOAD TEACHERS */
+/* LOAD */
 onValue(ref(db,"teachers"),snap=>{
-teachersData = [];
-snap.forEach(c=>{
-teachersData.push({id:c.key,...c.val()});
-});
+teachers=[];
+snap.forEach(c=>teachers.push({id:c.key,...c.val()}));
 render();
 });
 
-/* LOAD INSTITUTIONS */
 onValue(ref(db,"institutions"),snap=>{
-instData = [];
-snap.forEach(c=>{
-instData.push({id:c.key,...c.val()});
-});
+insts=[];
+snap.forEach(c=>insts.push({id:c.key,...c.val()}));
 render();
 });
 
-/* LOAD PAYMENTS */
+/* PAYMENTS */
 onValue(ref(db,"payments"),snap=>{
 let html="";
 let total=0;
 
 snap.forEach(c=>{
 let p=c.val();
-total += Number(p.amount||0);
+total+=Number(p.amount||0);
 
 html+=`
-<div class="card">
-<p><b>${p.name}</b></p>
-<p>₹${p.amount}</p>
-<p>${p.status}</p>
+<div class="payBox">
+<b>${p.name}</b><br>
+₹${p.amount}<br>
+${p.status}
 </div>
 `;
 });
@@ -248,26 +245,28 @@ document.getElementById("pCount").innerText=snap.size;
 document.getElementById("earn").innerText="₹"+total;
 });
 
-/* RENDER MAIN LIST */
+/* RENDER */
 function render(){
 
-let search = document.getElementById("search").value.toLowerCase();
-let filter = document.getElementById("filter").value;
+let search=document.getElementById("search").value.toLowerCase();
+let filter=document.getElementById("filter").value;
 
-let all = [
-...teachersData.map(t=>({...t,type:"teacher"})),
-...instData.map(i=>({...i,type:"institution"}))
+let all=[
+...teachers.map(t=>({...t,type:"teacher"})),
+...insts.map(i=>({...i,type:"institution"}))
 ];
 
 let html="";
-
-let tCount=0, iCount=0;
+let tc=0,ic=0;
 
 all.forEach(item=>{
 
-let text = (item.name||"")+(item.phone||"")+(item.email||"");
+let text=(item.name||"")+(item.phone||"")+(item.email||"");
 
-if(!text.toLowerCase().includes(search)) return;
+let matchPhone = item.phone && item.phone.includes(search);
+let matchText = text.toLowerCase().includes(search);
+
+if(!(matchText||matchPhone)) return;
 
 if(filter!="all"){
 if(filter=="teacher" && item.type!="teacher") return;
@@ -276,18 +275,18 @@ if(filter=="pending" && item.status=="approved") return;
 if(filter=="approved" && item.status!="approved") return;
 }
 
-if(item.type=="teacher") tCount++;
-if(item.type=="institution") iCount++;
+if(item.type=="teacher") tc++;
+if(item.type=="institution") ic++;
 
 html+=`
-<div class="card ${item.type} ${item.status||''}">
+<div class="card ${item.type} ${item.status||''} ${matchPhone?'highlight':''}">
 
 <div class="top">
 <img class="photo" src="${item.photo||item.logo||''}">
 <div>
-<h3>${item.name}</h3>
-<span class="badge ${item.status=="approved"?"green":"orange"}">
-${item.status||"pending"}
+<h3>${item.name||""}</h3>
+<span class="badge ${item.status=='approved'?'green':'orange'}">
+${item.status||'pending'}
 </span>
 </div>
 </div>
@@ -297,15 +296,22 @@ ${item.status||"pending"}
 
 <button class="approve" onclick="approve('${item.type}','${item.id}')">Approve</button>
 <button class="del" onclick="del('${item.type}','${item.id}')">Delete</button>
-<button class="edit" onclick="toggleEdit('${item.id}')">Edit</button>
+<button class="edit" onclick="toggle('${item.id}')">Edit</button>
 <button class="review" onclick="review('${item.id}')">Review</button>
 
 <div class="editBox" id="edit_${item.id}">
+
 <input id="name_${item.id}" value="${item.name||""}">
 <input id="phone_${item.id}" value="${item.phone||""}">
 <input id="email_${item.id}" value="${item.email||""}">
+<input id="location_${item.id}" value="${item.location||""}">
+
 <textarea id="desc_${item.id}">${item.description||""}</textarea>
+<textarea id="admin_${item.id}" placeholder="Admin Review">${item.adminReview||""}</textarea>
+<textarea id="public_${item.id}" placeholder="Public Review">${item.publicReview||""}</textarea>
+
 <button onclick="save('${item.type}','${item.id}')">Save</button>
+
 </div>
 
 </div>
@@ -313,8 +319,8 @@ ${item.status||"pending"}
 });
 
 document.getElementById("list").innerHTML=html;
-document.getElementById("tCount").innerText=tCount;
-document.getElementById("iCount").innerText=iCount;
+document.getElementById("tCount").innerText=tc;
+document.getElementById("iCount").innerText=ic;
 }
 
 /* ACTIONS */
@@ -328,9 +334,9 @@ remove(ref(db,`${type}s/${id}`));
 }
 };
 
-window.toggleEdit=(id)=>{
-let box=document.getElementById("edit_"+id);
-box.style.display = box.style.display=="block"?"none":"block";
+window.toggle=(id)=>{
+let el=document.getElementById("edit_"+id);
+el.style.display = el.style.display==="block"?"none":"block";
 };
 
 window.save=(type,id)=>{
@@ -338,19 +344,25 @@ update(ref(db,`${type}s/${id}`),{
 name:document.getElementById("name_"+id).value,
 phone:document.getElementById("phone_"+id).value,
 email:document.getElementById("email_"+id).value,
-description:document.getElementById("desc_"+id).value
+location:document.getElementById("location_"+id).value,
+description:document.getElementById("desc_"+id).value,
+adminReview:document.getElementById("admin_"+id).value,
+publicReview:document.getElementById("public_"+id).value
 });
 alert("Updated");
 };
 
 window.review=(id)=>{
-let msg=prompt("Write admin review:");
-if(msg){
-update(ref(db,"teachers/"+id),{adminReview:msg});
+let a=prompt("Admin review:");
+let p=prompt("Public review:");
+if(a||p){
+update(ref(db,"teachers/"+id),{
+adminReview:a||"",
+publicReview:p||""
+});
 }
 };
 
-/* SEARCH */
 document.getElementById("search").addEventListener("input",render);
 document.getElementById("filter").addEventListener("change",render);
 
