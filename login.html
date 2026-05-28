@@ -1,15 +1,152 @@
-import { getAuth, signInWithEmailAndPassword } 
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login - GURULINK</title>
 
-const auth = getAuth(app);
-
-async function login() {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  const user = await signInWithEmailAndPassword(auth, email, password);
-
-  localStorage.setItem("uid", user.user.uid);
-
-  window.location.href = "teacher-dashboard.html";
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#eef2f7;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
 }
+
+.box{
+width:90%;
+max-width:400px;
+background:white;
+padding:25px;
+border-radius:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border:1px solid #ccc;
+border-radius:8px;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#1565c0;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-size:16px;
+}
+
+h2{
+text-align:center;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>Login</h2>
+
+<input type="email" id="email" placeholder="Email">
+<input type="password" id="password" placeholder="Password">
+
+<button onclick="loginUser()">Login</button>
+
+<p id="msg" style="color:red;text-align:center;"></p>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { 
+getAuth,
+signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+import {
+getDatabase,
+ref,
+get
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+window.loginUser = async function(){
+
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+const msg = document.getElementById("msg");
+
+msg.innerText = "";
+
+try{
+
+// 1. LOGIN FIREBASE AUTH
+const userCred = await signInWithEmailAndPassword(auth, email, password);
+const user = userCred.user;
+
+// 2. GET ROLE FROM DATABASE
+const snap = await get(ref(db,"users/" + user.uid));
+
+if(!snap.exists()){
+msg.innerText = "User role not found!";
+return;
+}
+
+const data = snap.val();
+const role = data.role;
+const profileId = data.profileId;
+
+// 3. SAVE SESSION
+localStorage.setItem("uid", user.uid);
+localStorage.setItem("role", role);
+localStorage.setItem("profileId", profileId);
+
+// 4. REDIRECT BY ROLE
+if(role === "teacher"){
+window.location.href = "teacher-dashboard.html";
+}
+
+else if(role === "institution"){
+window.location.href = "institute-dashboard.html";
+}
+
+else if(role === "admin"){
+window.location.href = "admin.html";
+}
+
+else{
+msg.innerText = "Invalid role!";
+}
+
+}
+catch(err){
+msg.innerText = err.message;
+}
+
+}
+
+</script>
+
+</body>
+</html>
