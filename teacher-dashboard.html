@@ -2,12 +2,60 @@
 <html>
 <head>
 <title>Teacher Dashboard</title>
+
+<style>
+body{
+font-family:Arial;
+background:#eef2f7;
+margin:0;
+padding:20px;
+}
+
+.card{
+max-width:800px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+input,textarea{
+width:100%;
+padding:10px;
+margin:8px 0;
+border:1px solid #ccc;
+border-radius:8px;
+}
+
+h2{
+text-align:center;
+}
+
+.section{
+margin-top:15px;
+padding:10px;
+background:#f7f7f7;
+border-radius:10px;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#1565c0;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+</style>
 </head>
+
 <body>
 
-<h2>My Profile</h2>
+<h2>My Teacher Profile</h2>
 
-<div id="box"></div>
+<div class="card" id="box"></div>
 
 <script type="module">
 
@@ -22,24 +70,17 @@ databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabas
 
 const db = getDatabase(app);
 
-/* GET LOGGED USER */
 let user = JSON.parse(localStorage.getItem("user"));
 
-if(!user){
+if(!user || user.role !== "teacher"){
 window.location = "login.html";
 }
 
-if(user.role !== "teacher"){
-alert("Access denied");
-window.location = "login.html";
-}
+let id = user.profileId;
 
-let profileId = user.profileId;
-
-/* LOAD ONLY HIS PROFILE */
 async function load(){
 
-const snap = await get(ref(db,"teachers/"+profileId));
+const snap = await get(ref(db,"teachers/"+id));
 
 if(!snap.exists()){
 document.getElementById("box").innerHTML = "Profile not found";
@@ -49,29 +90,60 @@ return;
 const d = snap.val();
 
 document.getElementById("box").innerHTML = `
-<input id="name" value="${d.name || ''}">
-<input id="phone" value="${d.phone || ''}">
-<input id="email" value="${d.email || ''}">
-<textarea id="desc">${d.description || ''}</textarea>
 
-<button onclick="save()">Save</button>
+<div class="section">
+<h3>Basic Info</h3>
+<input id="name" value="${d.name || ""}">
+<input id="phone" value="${d.phone || ""}">
+<input id="email" value="${d.email || ""}">
+</div>
+
+<div class="section">
+<h3>About</h3>
+<textarea id="description">${d.description || ""}</textarea>
+</div>
+
+<div class="section">
+<h3>Sports</h3>
+<textarea id="sports">${(d.sports || []).join(", ")}</textarea>
+</div>
+
+<div class="section">
+<h3>Teaching Modes</h3>
+<textarea id="modes">${(d.teachingModes || []).join(", ")}</textarea>
+</div>
+
+<div class="section">
+<h3>Location</h3>
+<input id="location" value="${d.location || ""}">
+<input id="mapLink" value="${d.mapLink || ""}">
+</div>
+
+<button onclick="save()">Save Profile</button>
+
 `;
 
 }
 
 load();
 
-/* UPDATE ONLY OWN PROFILE */
 window.save = async () => {
 
-await update(ref(db,"teachers/"+profileId), {
-name: document.getElementById("name").value,
-phone: document.getElementById("phone").value,
-email: document.getElementById("email").value,
-description: document.getElementById("desc").value
+await update(ref(db,"teachers/"+id), {
+
+name:document.getElementById("name").value,
+phone:document.getElementById("phone").value,
+email:document.getElementById("email").value,
+description:document.getElementById("description").value,
+location:document.getElementById("location").value,
+mapLink:document.getElementById("mapLink").value,
+
+sports:document.getElementById("sports").value.split(","),
+teachingModes:document.getElementById("modes").value.split(",")
+
 });
 
-alert("Updated Successfully");
+alert("Profile Updated Successfully");
 
 };
 
