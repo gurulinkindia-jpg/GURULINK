@@ -7,29 +7,50 @@
 <title>Sport Profile - GURULINK</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
-body{background:linear-gradient(135deg,#d9efff,#f4f9ff,#fff);padding-bottom:40px}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
+background:linear-gradient(135deg,#d9efff,#f4f9ff,#fff);
+padding-bottom:40px;
+}
 
 header{
-padding:30px;text-align:center;
+padding:30px;
+text-align:center;
 background:rgba(255,255,255,.4);
 backdrop-filter:blur(20px);
 border-bottom:1px solid rgba(255,255,255,.6);
 }
 
-.container{width:95%;max-width:1300px;margin:auto;padding:20px}
+.container{
+width:95%;
+max-width:1300px;
+margin:auto;
+padding:20px;
+}
 
 .filters{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:15px;padding:20px;
+gap:15px;
+padding:20px;
 background:rgba(255,255,255,.45);
 border-radius:20px;
 margin-bottom:20px;
 }
 
-.filters input,.filters select{
-padding:12px;border:none;border-radius:10px;outline:none
+.filters input,
+.filters select{
+padding:12px;
+border:none;
+border-radius:10px;
+outline:none;
 }
 
 .grid{
@@ -46,35 +67,64 @@ border:1px solid #ddd;
 position:relative;
 }
 
-.card.institution{border-left:6px solid #e91e63}
-.card.teacher{border-left:6px solid #1976d2}
+.card.institution{
+border-left:6px solid #e91e63;
+}
 
-.top{display:flex;gap:15px}
-.photo{width:70px;height:70px;border-radius:50%;object-fit:cover}
+.card.teacher{
+border-left:6px solid #1976d2;
+}
 
-.badge{background:#fff;padding:5px 10px;border-radius:20px;font-size:12px;margin:3px;display:inline-block}
+.top{
+display:flex;
+gap:15px;
+}
 
-.verify{background:#2196f3;color:#fff}
+.photo{
+width:70px;
+height:70px;
+border-radius:50%;
+object-fit:cover;
+}
 
-.stars{color:orange;font-size:13px;margin-top:5px}
+.badge{
+background:#fff;
+padding:5px 10px;
+border-radius:20px;
+font-size:12px;
+margin:3px;
+display:inline-block;
+}
+
+.verify{
+background:#2196f3;
+color:#fff;
+}
 
 .btn{
 margin-top:10px;
-padding:7px 12px;
+padding:10px 14px;
 border:none;
 background:#1976d2;
 color:#fff;
 border-radius:8px;
 cursor:pointer;
+font-weight:bold;
 }
 
 .details{
 margin-top:10px;
 font-size:14px;
-line-height:1.6;
+line-height:1.7;
 }
 
-.empty{text-align:center;padding:20px;background:#fff;border-radius:15px}
+.empty{
+text-align:center;
+padding:20px;
+background:#fff;
+border-radius:15px;
+}
+
 </style>
 </head>
 
@@ -88,9 +138,11 @@ line-height:1.6;
 <div class="container">
 
 <div class="filters">
+
 <input id="search" placeholder="Search name">
 
 <select id="sportFilter">
+
 <option value="">All Sports</option>
 <option>Cricket</option>
 <option>Football</option>
@@ -102,15 +154,19 @@ line-height:1.6;
 <option>Yoga</option>
 <option>Table Tennis</option>
 <option>Volleyball</option>
+
 </select>
 
 <select id="modeFilter">
+
 <option value="">All Modes</option>
 <option>Indoor Training</option>
 <option>Outdoor Training</option>
 <option>Personal Coaching</option>
 <option>Group Coaching</option>
+
 </select>
+
 </div>
 
 <div id="grid" class="grid"></div>
@@ -119,132 +175,311 @@ line-height:1.6;
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import {
+initializeApp
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+onValue
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+/* FIREBASE */
 
 const firebaseConfig = {
+
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+
 authDomain:"gurulink-59cc7.firebaseapp.com",
+
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
 projectId:"gurulink-59cc7",
+
 storageBucket:"gurulink-59cc7.appspot.com",
+
 messagingSenderId:"112148672399",
+
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getDatabase(app);
 
 let teachers = [];
 let institutes = [];
 
 /* LOAD TEACHERS */
+
 onValue(ref(db,"teachers"), snap=>{
+
 teachers = [];
+
 snap.forEach(c=>{
+
 const d = c.val();
 
-if(d.status==="approved" && (d.category||"").toLowerCase()==="sport"){
-teachers.push({...d, id:c.key, type:"Teacher"});
-}
-});
-render();
+if(
+d.status==="approved" &&
+(d.category || "").toLowerCase()==="sport"
+){
+
+teachers.push({
+...d,
+id:c.key,
+type:"Teacher"
 });
 
-/* LOAD INSTITUTES */
+}
+
+});
+
+render();
+
+});
+
+/* LOAD INSTITUTIONS */
+
 onValue(ref(db,"institutions"), snap=>{
+
 institutes = [];
+
 snap.forEach(c=>{
+
 const d = c.val();
 
-if(d.status==="approved" && (d.category||"").toLowerCase()==="sport"){
-institutes.push({...d, id:c.key, type:"Institution"});
+if(
+d.status==="approved" &&
+(d.category || "").toLowerCase()==="sport"
+){
+
+institutes.push({
+...d,
+id:c.key,
+type:"Institution"
+});
+
 }
+
 });
+
 render();
+
 });
+
+/* COMBINE */
 
 function getAll(){
-return [...teachers, ...institutes];
+
+return [
+...teachers,
+...institutes
+];
+
 }
 
-/* VIEW DETAIL */
+/* FILTER EVENTS */
+
+document.getElementById("search")
+.addEventListener("input",render);
+
+document.getElementById("sportFilter")
+.addEventListener("change",render);
+
+document.getElementById("modeFilter")
+.addEventListener("change",render);
+
+/* VIEW DETAILS */
+
 document.addEventListener("click",(e)=>{
+
 const btn = e.target.closest(".view");
+
 if(!btn) return;
-location.href = "profile-view.html?id=" + btn.dataset.id;
+
+const id = btn.dataset.id;
+
+/* STUDENT LOGIN CHECK */
+
+const studentUid =
+localStorage.getItem("studentUid");
+
+if(!studentUid){
+
+/* SAVE TARGET PROFILE */
+
+localStorage.setItem(
+"redirectProfileId",
+id
+);
+
+localStorage.setItem(
+"redirectPage",
+"profile-view.html"
+);
+
+/* GO LOGIN */
+
+window.location.href =
+"student-login.html";
+
+return;
+
+}
+
+/* OPEN PROFILE */
+
+window.location.href =
+"profile-view.html?id=" + id;
+
 });
 
 /* RENDER */
+
 function render(){
 
 const all = getAll();
 
-const search = document.getElementById("search").value.toLowerCase();
-const sport = document.getElementById("sportFilter").value;
-const mode = document.getElementById("modeFilter").value;
+const search =
+document.getElementById("search")
+.value
+.toLowerCase();
+
+const sport =
+document.getElementById("sportFilter")
+.value;
+
+const mode =
+document.getElementById("modeFilter")
+.value;
 
 const filtered = all.filter(x=>{
 
-const name = (x.name||"").toLowerCase();
-const location = (x.location||x.address||"").toLowerCase();
+const name =
+(x.name || "").toLowerCase();
+
+const location =
+(x.location || x.address || "")
+.toLowerCase();
 
 /* SEARCH */
-if(search && !(name.includes(search) || location.includes(search)))
+
+if(
+search &&
+!(
+name.includes(search) ||
+location.includes(search)
+)
+)
 return false;
 
 /* SPORT */
-if(sport && (x.subject||"").toLowerCase() !== sport.toLowerCase())
+
+if(
+sport &&
+(x.subject || "")
+.toLowerCase() !==
+sport.toLowerCase()
+)
 return false;
 
 /* MODE */
+
 if(mode){
-const modes = x.teachingModes || x.modes || [];
-if(!modes.includes(mode)) return false;
+
+const modes =
+x.teachingModes ||
+x.modes ||
+[];
+
+if(!modes.includes(mode))
+return false;
+
 }
 
 return true;
+
 });
 
-const grid = document.getElementById("grid");
+const grid =
+document.getElementById("grid");
+
+/* EMPTY */
 
 if(filtered.length===0){
-grid.innerHTML = "<div class='empty'>No Sport Profiles Found</div>";
+
+grid.innerHTML =
+
+"<div class='empty'>No Sport Profiles Found</div>";
+
 return;
+
 }
+
+/* CARDS */
 
 grid.innerHTML = filtered.map(x=>`
 
 <div class="card ${x.type==="Institution" ? "institution" : "teacher"}">
 
 <div class="top">
-<img class="photo" src="${x.photo || x.logo || 'https://via.placeholder.com/100'}">
+
+<img
+class="photo"
+src="${x.photo || x.logo || 'https://via.placeholder.com/100'}">
 
 <div>
+
 <h3>${x.name || "-"}</h3>
 
-<div class="badge">${x.type}</div>
-<div class="badge">${x.category || "sport"}</div>
-<div class="badge ${x.verified ? "verify" : ""}">
-${x.verified ? "Verified" : "Not Verified"}
+<div class="badge">
+${x.type}
+</div>
+
+<div class="badge">
+${x.category || "sport"}
+</div>
+
+<div class="badge verify">
+Verified
 </div>
 
 </div>
+
 </div>
 
 <div class="details">
-<b>Sport:</b> ${x.subject || "-"}<br>
-<b>Mode:</b> ${(x.teachingModes || x.modes || []).join(", ") || "-"}<br>
-<b>Location:</b> ${x.location || x.address || "-"}
+
+<b>Sport:</b>
+${x.subject || "-"}
+<br>
+
+<b>Mode:</b>
+${(x.teachingModes || x.modes || []).join(", ") || "-"}
+<br>
+
+<b>Location:</b>
+${x.location || x.address || "-"}
+
 </div>
 
-<button class="btn view" data-id="${x.id}">
+<button
+class="btn view"
+data-id="${x.id}">
+
 View Details
+
 </button>
 
 </div>
 
 `).join("");
+
 }
 
 </script>
