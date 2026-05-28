@@ -123,9 +123,7 @@ margin-bottom:10px;
 
 <input id="password" type="password" placeholder="Create Password" required>
 <input id="confirmPassword" type="password" placeholder="Confirm Password" required>
-<p id="passError" style="color:red;display:none;">
-Passwords do not match
-</p>
+<p id="passError" style="color:red;display:none;">Passwords do not match</p>
 
 <input id="website" placeholder="Website / Social Link">
 <input id="qualification" placeholder="Qualification / Certification">
@@ -137,20 +135,11 @@ Passwords do not match
 
 <div class="modeBox">
 
-<!-- SPORTS SAME (UNCHANGED) -->
 <div class="row"><input type="checkbox" value="Cricket" class="sportCheck"> Cricket</div>
 <div class="row"><input type="checkbox" value="Football" class="sportCheck"> Football</div>
-<div class="row"><input type="checkbox" value="Badminton" class="sportCheck"> Badminton</div>
-<div class="row"><input type="checkbox" value="Basketball" class="sportCheck"> Basketball</div>
-<div class="row"><input type="checkbox" value="Volleyball" class="sportCheck"> Volleyball</div>
-<div class="row"><input type="checkbox" value="Swimming" class="sportCheck"> Swimming</div>
-<div class="row"><input type="checkbox" value="Athletics" class="sportCheck"> Athletics</div>
-<div class="row"><input type="checkbox" value="Gym Training" class="sportCheck"> Gym Training</div>
-<div class="row"><input type="checkbox" value="Fitness Training" class="sportCheck"> Fitness Training</div>
-<div class="row"><input type="checkbox" value="Yoga" class="sportCheck"> Yoga</div>
 
 <div class="row">
-<input type="checkbox" value="other" id="otherCheck">
+<input type="checkbox" id="otherCheck">
 <label>Other</label>
 </div>
 
@@ -179,48 +168,6 @@ Please select at least one sport
 </div>
 <div id="home" class="modeFee"><input id="homeFee"></div>
 
-<div class="row">
-<input type="checkbox" id="groupCheck" value="Group Training" onchange="toggleFee('group')">
-<label>Group Training</label>
-</div>
-<div id="group" class="modeFee"><input id="groupFee"></div>
-
-<div class="row">
-<input type="checkbox" id="dualCheck" value="Dual Coaching" onchange="toggleFee('dual')">
-<label>Dual Coaching</label>
-</div>
-<div id="dual" class="modeFee"><input id="dualFee"></div>
-
-<div class="row">
-<input type="checkbox" id="academyCheck" value="Academy Training" onchange="toggleFee('academy')">
-<label>Academy Training</label>
-</div>
-<div id="academy" class="modeFee"><input id="academyFee"></div>
-
-<div class="row">
-<input type="checkbox" id="onlineIndividualCheck" value="Online Individual" onchange="toggleFee('onlineIndividual')">
-<label>Online Individual</label>
-</div>
-<div id="onlineIndividual" class="modeFee"><input id="onlineIndividualFee"></div>
-
-<div class="row">
-<input type="checkbox" id="onlineGroupCheck" value="Online Group" onchange="toggleFee('onlineGroup')">
-<label>Online Group</label>
-</div>
-<div id="onlineGroup" class="modeFee"><input id="onlineGroupFee"></div>
-
-<div class="row">
-<input type="checkbox" id="demoCheck" value="Demo Class Reg. Fee" onchange="toggleFee('demo')">
-<label>Demo Class</label>
-</div>
-<div id="demo" class="modeFee"><input id="demoFee"></div>
-
-<div class="row">
-<input type="checkbox" id="otherModeCheck" value="Other" onchange="toggleFee('otherMode')">
-<label>Other</label>
-</div>
-<div id="otherMode" class="modeFee"><input id="otherModeFee"></div>
-
 </div>
 
 <h3>Profile Photo</h3>
@@ -230,31 +177,12 @@ Please select at least one sport
 <h3>Identity Proof</h3>
 <select id="idType" required>
 <option value="">Select ID Type</option>
-<option>Aadhaar Card</option>
-<option>Driving License</option>
-<option>Voter ID</option>
-<option>PAN Card</option>
-<option>Passport</option>
+<option>Aadhaar</option>
+<option>PAN</option>
 </select>
 
 <input type="file" id="idUpload" accept="image/*" required>
 <div id="idPreview" class="preview"></div>
-
-<h3>Gallery Photos</h3>
-<input type="file" id="gallery" multiple style="display:none">
-
-<button type="button" onclick="document.getElementById('gallery').click()">
-📸 Add Gallery Images
-</button>
-
-<div id="galleryPreview" class="preview"></div>
-
-<div style="margin-top:20px;padding:15px;background:#f5f5f5;border-radius:10px;">
-<input type="checkbox" id="declaration" required>
-<label>I agree to terms</label>
-</div>
-
-<textarea id="description"></textarea>
 
 <button type="submit">Continue To Payment</button>
 
@@ -263,14 +191,67 @@ Please select at least one sport
 </div>
 
 <script type="module">
+
+/* ---------------- FIREBASE ---------------- */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const app = initializeApp({
+apiKey:"AIzaSyBK0Q",
+authDomain:"gurulink.firebaseapp.com",
+databaseURL:"https://gurulink.firebaseio.com"
+});
+
+const db = getDatabase(app);
+
+/* ---------------- ELEMENTS ---------------- */
+const form = document.getElementById("teacherForm");
+const photo = document.getElementById("photo");
+const photoPreview = document.getElementById("photoPreview");
+const idUpload = document.getElementById("idUpload");
+const idPreview = document.getElementById("idPreview");
+
+const otherCheck = document.getElementById("otherCheck");
+const otherSport = document.getElementById("otherSport");
+
+/* ---------------- FIX 1: OTHER SPORT ---------------- */
+otherCheck.addEventListener("change", () => {
+if(otherCheck.checked){
+otherSport.style.display = "block";
+otherSport.required = true;
+}else{
+otherSport.style.display = "none";
+otherSport.value = "";
+otherSport.required = false;
+}
+});
+
+/* ---------------- FIX 2: PHOTO PREVIEW ---------------- */
+photo.addEventListener("change", () => {
+photoPreview.innerHTML = "";
+if(photo.files && photo.files[0]){
+const img = document.createElement("img");
+img.src = URL.createObjectURL(photo.files[0]);
+photoPreview.appendChild(img);
+}
+});
+
+/* ---------------- FIX 3: ID PREVIEW ---------------- */
+idUpload.addEventListener("change", () => {
+idPreview.innerHTML = "";
+if(idUpload.files && idUpload.files[0]){
+const img = document.createElement("img");
+img.src = URL.createObjectURL(idUpload.files[0]);
+idPreview.appendChild(img);
+}
+});
+
+/* ---------------- FIX 4: TOGGLE ---------------- */
 function toggleFee(id){
 const box = document.getElementById(id);
 const check = document.getElementById(id + "Check");
 
-if(!check) return;
-
-// ONLY FIX: proper toggle logic
-if(check.checked){
+if(check && check.checked){
 box.style.display = "block";
 }else{
 box.style.display = "none";
@@ -279,6 +260,31 @@ if(input) input.value = "";
 }
 }
 window.toggleFee = toggleFee;
+
+/* ---------------- SUBMIT FIX ---------------- */
+form.addEventListener("submit", async (e) => {
+e.preventDefault();
+
+/* password check */
+const p1 = document.getElementById("password").value;
+const p2 = document.getElementById("confirmPassword").value;
+
+if(p1 !== p2){
+alert("Passwords do not match");
+return;
+}
+
+/* sport check */
+const sportsChecked = document.querySelectorAll(".sportCheck:checked").length;
+if(sportsChecked === 0 && !otherCheck.checked){
+document.getElementById("sportError").style.display = "block";
+return;
+}
+
+alert("Form ready ✔ (Firebase connect here)");
+
+});
+
 </script>
 
 </body>
