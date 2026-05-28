@@ -10,7 +10,7 @@
 
 body{
 margin:0;
-font-family:Arial;
+font-family:Arial,sans-serif;
 background:#eef2f7;
 }
 
@@ -23,7 +23,7 @@ text-align:center;
 
 .container{
 width:90%;
-max-width:800px;
+max-width:850px;
 margin:20px auto;
 background:white;
 padding:25px;
@@ -56,10 +56,15 @@ font-size:16px;
 cursor:pointer;
 }
 
+button:disabled{
+opacity:.7;
+cursor:not-allowed;
+}
+
 .preview{
 display:flex;
-gap:10px;
 flex-wrap:wrap;
+gap:10px;
 margin-top:10px;
 }
 
@@ -72,9 +77,22 @@ border:1px solid #ddd;
 }
 
 .modeBox{
-border:1px solid #ddd;
 padding:15px;
+border:1px solid #ddd;
 border-radius:10px;
+margin-top:10px;
+}
+
+.row{
+display:flex;
+align-items:center;
+gap:10px;
+margin:10px 0;
+}
+
+.row input[type=checkbox]{
+width:auto;
+transform:scale(1.2);
 }
 
 .modeFee{
@@ -85,116 +103,588 @@ border-radius:10px;
 margin-bottom:10px;
 }
 
-.row{
-display:flex;
-align-items:center;
-gap:10px;
-margin:10px 0;
-}
-
-.row input{
-width:auto;
-transform:scale(1.2);
-}
-
 </style>
 </head>
 
 <body>
 
 <header>
+
 <h1>Sport Institution Registration</h1>
 <p>Registration Fee ₹200</p>
+
 </header>
 
 <div class="container">
 
-<form id="instForm">
+<form id="form">
 
-<input id="name" placeholder="Institution Name" required>
-<input id="phone" placeholder="Phone Number" required>
+<input
+id="name"
+placeholder="Institution Name"
+required>
 
-<input type="email" id="email" placeholder="Email">
-<input id="website" placeholder="Website / Social Link">
-<input id="address" placeholder="Address">
-<input id="area" placeholder="Service Area (e.g. Beltola)">
+<input
+id="ownerName"
+placeholder="Owner / Director Name"
+required>
 
-<!-- SPORT CATEGORY -->
-<select id="sport">
+<label for="establishedDate">
+Established Date
+</label>
 
-<option value="">Select Sport Category</option>
+<input
+type="date"
+id="establishedDate"
+required>
 
-<option>Cricket Academy</option>
-<option>Football Academy</option>
-<option>Badminton Academy</option>
-<option>Basketball Academy</option>
-<option>Swimming Academy</option>
-<option>Athletics Academy</option>
-<option>Gym / Fitness Center</option>
+<input
+id="phone"
+placeholder="Contact Number"
+required>
 
-<option value="other">Other</option>
+<input
+id="alternatePhone"
+placeholder="Alternate Phone Number">
 
-</select>
+<input
+type="email"
+id="email"
+placeholder="Email">
 
-<input id="otherSport" placeholder="Write Sport Category" style="display:none">
+<input
+id="website"
+placeholder="Website URL if available">
+
+<input
+id="address"
+placeholder="Full Address">
+
+<input
+id="area"
+placeholder="Area / City / State">
+
+<input
+id="mapLink"
+placeholder="Google Map Location Link (Paste URL if available)">
+
+
+
+<h3>
+Sports Categories
+<span style="color:red">*</span>
+</h3>
+
+<div class="modeBox">
+
+<div class="row">
+<input type="checkbox" value="Cricket Academy" class="subjectCheck"> Cricket Academy
+</div>
+
+<div class="row">
+<input type="checkbox" value="Football Academy" class="subjectCheck"> Football Academy
+</div>
+
+<div class="row">
+<input type="checkbox" value="Badminton Academy" class="subjectCheck"> Badminton Academy
+</div>
+
+<div class="row">
+<input type="checkbox" value="Basketball Academy" class="subjectCheck"> Basketball Academy
+</div>
+
+<div class="row">
+<input type="checkbox" value="Volleyball Academy" class="subjectCheck"> Volleyball Academy
+</div>
+
+<div class="row">
+<input type="checkbox" value="Swimming Academy" class="subjectCheck"> Swimming Academy
+</div>
+
+<div class="row">
+<input type="checkbox" value="Athletics Academy" class="subjectCheck"> Athletics Academy
+</div>
+
+<div class="row">
+<input type="checkbox" value="Gymnastics" class="subjectCheck"> Gymnastics
+</div>
+
+<div class="row">
+<input type="checkbox" value="Martial Arts" class="subjectCheck"> Martial Arts
+</div>
+
+<div class="row">
+<input type="checkbox" value="Karate" class="subjectCheck"> Karate
+</div>
+
+<div class="row">
+<input type="checkbox" value="Taekwondo" class="subjectCheck"> Taekwondo
+</div>
+
+<div class="row">
+<input type="checkbox" value="Boxing" class="subjectCheck"> Boxing
+</div>
+
+<div class="row">
+<input type="checkbox" value="Wrestling" class="subjectCheck"> Wrestling
+</div>
+
+<div class="row">
+<input type="checkbox" value="Kabaddi" class="subjectCheck"> Kabaddi
+</div>
+
+<div class="row">
+<input type="checkbox" value="Chess Academy" class="subjectCheck"> Chess Academy
+</div>
+
+<div class="row">
+<input type="checkbox" value="Table Tennis" class="subjectCheck"> Table Tennis
+</div>
+
+<div class="row">
+<input type="checkbox" value="Tennis Academy" class="subjectCheck"> Tennis Academy
+</div>
+
+<div class="row">
+<input type="checkbox" value="Hockey Academy" class="subjectCheck"> Hockey Academy
+</div>
+
+<div class="row">
+<input type="checkbox" value="Skating" class="subjectCheck"> Skating
+</div>
+
+<div class="row">
+<input type="checkbox" value="Yoga Center" class="subjectCheck"> Yoga Center
+</div>
+
+<div class="row">
+<input type="checkbox" value="Fitness Center" class="subjectCheck"> Fitness Center
+</div>
+
+<div class="row">
+<input type="checkbox" value="Gym / Fitness Center" class="subjectCheck"> Gym / Fitness Center
+</div>
+
+<div class="row">
+<input type="checkbox" value="Zumba" class="subjectCheck"> Zumba
+</div>
+
+<div class="row">
+<input type="checkbox" value="Cycling Club" class="subjectCheck"> Cycling Club
+</div>
+
+<div class="row">
+<input type="checkbox" value="Archery" class="subjectCheck"> Archery
+</div>
+
+<div class="row">
+<input type="checkbox" value="Shooting" class="subjectCheck"> Shooting
+</div>
+
+<div class="row">
+<input type="checkbox" value="other" id="otherCheck"> Other
+</div>
+
+<input
+id="otherSubject"
+placeholder="Write Other Sports Category"
+style="display:none;margin-top:10px">
+
+<p
+id="subjectError"
+style="color:red;display:none;">
+
+Please select at least one category
+
+</p>
+
+</div>
+
+
+
+<input
+id="class"
+placeholder="Batch / Age Group / Training Details"
+required>
+
 
 
 <h3>Training Modes</h3>
 
 <div class="modeBox">
 
-<div class="row">
-<input type="checkbox" value="Offline Training" onchange="toggleFee('offline')">
-<label>Offline Training</label>
-</div>
-<div id="offline" class="modeFee">
-<input id="offlineFee" placeholder="Enter Fee">
-</div>
 
 <div class="row">
-<input type="checkbox" value="Online Training" onchange="toggleFee('online')">
-<label>Online Training</label>
+<input
+type="checkbox"
+value="Individual Coaching"
+id="individualCheck"
+onchange="toggleFee('individual')">
+
+<label>
+Individual Coaching
+</label>
 </div>
+
+<div id="individual" class="modeFee">
+
+<input
+id="individualFee"
+placeholder="Enter Individual Coaching Fee">
+
+</div>
+
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Home Training"
+id="homeCheck"
+onchange="toggleFee('home')">
+
+<label>
+Home Training
+</label>
+</div>
+
+<div id="home" class="modeFee">
+
+<input
+id="homeFee"
+placeholder="Enter Home Training Fee">
+
+</div>
+
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Group Coaching"
+id="groupCheck"
+onchange="toggleFee('group')">
+
+<label>
+Group Coaching
+</label>
+</div>
+
+<div id="group" class="modeFee">
+
+<input
+id="groupFee"
+placeholder="Enter Group Coaching Fee">
+
+</div>
+
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Dual Coaching"
+id="dualCheck"
+onchange="toggleFee('dual')">
+
+<label>
+Dual Coaching
+</label>
+</div>
+
+<div id="dual" class="modeFee">
+
+<input
+id="dualFee"
+placeholder="Enter Dual Coaching Fee">
+
+</div>
+
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Super/Special Group Coaching"
+id="superCheck"
+onchange="toggleFee('superGroup')">
+
+<label>
+Super/Special Group Coaching
+</label>
+</div>
+
+<div id="superGroup" class="modeFee">
+
+<input
+id="superGroupFee"
+placeholder="Enter Super/Special Group Coaching Fee">
+
+</div>
+
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Online Training"
+id="onlineCheck"
+onchange="toggleFee('online')">
+
+<label>
+Online Training
+</label>
+</div>
+
 <div id="online" class="modeFee">
-<input id="onlineFee" placeholder="Enter Fee">
+
+<input
+id="onlineFee"
+placeholder="Enter Online Training Fee">
+
 </div>
+
+
 
 <div class="row">
-<input type="checkbox" value="Hybrid Training" onchange="toggleFee('hybrid')">
-<label>Hybrid Training</label>
+<input
+type="checkbox"
+value="Offline Training"
+id="offlineCheck"
+onchange="toggleFee('offline')">
+
+<label>
+Offline Training
+</label>
 </div>
+
+<div id="offline" class="modeFee">
+
+<input
+id="offlineFee"
+placeholder="Enter Offline Training Fee">
+
+</div>
+
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Hybrid Training"
+id="hybridCheck"
+onchange="toggleFee('hybrid')">
+
+<label>
+Hybrid Training
+</label>
+</div>
+
 <div id="hybrid" class="modeFee">
-<input id="hybridFee" placeholder="Enter Fee">
+
+<input
+id="hybridFee"
+placeholder="Enter Hybrid Training Fee">
+
+</div>
+
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Demo Class Reg. Fee"
+id="demoCheck"
+onchange="toggleFee('demo')">
+
+<label>
+Demo Class Reg. Fee
+</label>
+</div>
+
+<div id="demo" class="modeFee">
+
+<input
+id="demoFee"
+placeholder="Enter Demo Class Registration Fee">
+
+</div>
+
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Other"
+id="otherModeCheck"
+onchange="toggleFee('otherMode')">
+
+<label>
+Other
+</label>
+</div>
+
+<div id="otherMode" class="modeFee">
+
+<input
+id="otherModeFee"
+placeholder="Enter Other Fee / Details">
+
 </div>
 
 </div>
 
 
-<label><b>Logo</b></label>
-<input type="file" id="logo" accept="image/*">
-<div id="logoPreview" class="preview"></div>
+
+<h3>Institution Logo</h3>
+
+<input
+type="file"
+id="logo"
+accept="image/*"
+required>
+
+<div
+id="logoPreview"
+class="preview"></div>
 
 
-<label><b>Gallery (Max 5)</b></label>
-<input type="file" id="gallery" multiple accept="image/*">
-<div id="galleryPreview" class="preview"></div>
+
+<h3>Identity Proof (Upload any one) <span style="color:red">*</span></h3>
+
+<select id="idType" required>
+
+<option value="">
+Select ID Type
+</option>
+
+<option value="Owner Aadhaar">
+Owner Aadhaar Card
+</option>
+
+<option value="Owner Driving License">
+Owner Driving License
+</option>
+
+<option value="Owner Voter ID">
+Owner Voter ID
+</option>
+
+<option value="Registration Certificate">
+Registration Certificate
+</option>
+
+<option value="Trade License">
+Trade License
+</option>
+
+<option value="GST Certificate">
+GST Certificate
+</option>
+
+<option value="Owner PAN">
+Owner PAN Card
+</option>
+
+<option value="Other">
+Other
+</option>
+
+<option value="Owner Passport">
+Owner Passport
+</option>
+
+</select>
+
+<input
+type="file"
+id="idUpload"
+accept="image/*"
+required>
+
+<div
+class="preview"
+id="idPreview"></div>
 
 
-<textarea id="description" placeholder="About Institution"></textarea>
 
-<button type="submit">Continue To Payment</button>
+<h3>Gallery Photos (Max 5)</h3>
+
+<input
+type="file"
+id="gallery"
+accept="image/*"
+multiple
+style="display:none">
+
+<button
+type="button"
+onclick="document.getElementById('gallery').click()">
+
+📸 Add Gallery Images
+
+</button>
+
+<div
+id="galleryPreview"
+class="preview"></div>
+
+
+
+<div style="margin-top:20px;padding:15px;background:#f5f5f5;border-radius:10px;">
+
+<input
+type="checkbox"
+id="declaration"
+required>
+
+<label
+for="declaration"
+style="font-size:14px;line-height:1.5;">
+
+I hereby declare that all the information provided by me is true and correct.
+
+</label>
+
+</div>
+
+
+
+<textarea
+id="description"
+placeholder="About Institution"></textarea>
+
+
+
+<button type="submit">
+
+Continue To Payment
+
+</button>
 
 </form>
 
 </div>
 
 
+
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import {
+initializeApp
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-const firebaseConfig = {
+import {
+getDatabase,
+ref,
+push
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+
+const firebaseConfig={
+
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -202,147 +692,473 @@ projectId:"gurulink-59cc7",
 storageBucket:"gurulink-59cc7.appspot.com",
 messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const app=initializeApp(firebaseConfig);
 
-const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
+const db=getDatabase(app);
 
-const form = document.getElementById("instForm");
-const sport = document.getElementById("sport");
-const otherSport = document.getElementById("otherSport");
-const logo = document.getElementById("logo");
-const gallery = document.getElementById("gallery");
+const API_KEY=
+"31f729ff855eb2e42c00ee508a8647ea";
 
-const logoPreview = document.getElementById("logoPreview");
-const galleryPreview = document.getElementById("galleryPreview");
+const form=document.getElementById("form");
+
+const logo=
+document.getElementById("logo");
+
+const logoPreview=
+document.getElementById("logoPreview");
+
+const gallery=
+document.getElementById("gallery");
+
+const galleryPreview=
+document.getElementById("galleryPreview");
+
+const idUpload=
+document.getElementById("idUpload");
+
+const idPreview=
+document.getElementById("idPreview");
+
+const idTypeSelect=
+document.getElementById("idType");
 
 
-/* SPORT OTHER */
-sport.addEventListener("change", ()=>{
-otherSport.style.display =
-sport.value === "other" ? "block" : "none";
-});
-
-
-/* IMAGE UPLOAD */
 async function upload(file){
-let fd = new FormData();
-fd.append("image", file);
 
-let res = await fetch(
+let fd=new FormData();
+
+fd.append("image",file);
+
+let res=await fetch(
 `https://api.imgbb.com/1/upload?key=${API_KEY}`,
-{ method:"POST", body:fd }
+{
+method:"POST",
+body:fd
+}
 );
 
-let data = await res.json();
+let data=await res.json();
+
 return data.data.url;
+
 }
+
+
+/* SUBJECT */
+
+const otherCheck=
+document.getElementById("otherCheck");
+
+const otherSubject=
+document.getElementById("otherSubject");
+
+otherCheck.addEventListener("change",()=>{
+
+if(otherCheck.checked){
+
+otherSubject.style.display="block";
+otherSubject.required=true;
+
+}else{
+
+otherSubject.style.display="none";
+otherSubject.required=false;
+otherSubject.value="";
+
+}
+
+});
 
 
 /* LOGO PREVIEW */
-logo.addEventListener("change", ()=>{
+
+logo.addEventListener(
+"change",
+function(){
+
 logoPreview.innerHTML="";
-if(logo.files[0]){
+
+if(this.files.length>0){
+
 let img=document.createElement("img");
-img.src=URL.createObjectURL(logo.files[0]);
+
+img.src=
+URL.createObjectURL(
+this.files[0]
+);
+
 logoPreview.appendChild(img);
+
 }
-});
+
+}
+);
 
 
-/* GALLERY PREVIEW */
-gallery.addEventListener("change", ()=>{
+/* ID PREVIEW */
+
+idUpload.addEventListener(
+"change",
+function(){
+
+idPreview.innerHTML="";
+
+if(this.files.length>0){
+
+let img=document.createElement("img");
+
+img.src=
+URL.createObjectURL(
+this.files[0]
+);
+
+idPreview.appendChild(img);
+
+}
+
+}
+);
+
+
+/* GALLERY */
+
+let selectedFiles=[];
+
+gallery.addEventListener(
+"change",
+function(){
+
+let newFiles=
+Array.from(this.files);
+
+if(
+selectedFiles.length +
+newFiles.length > 5
+){
+
+alert(
+"Maximum 5 photos allowed"
+);
+
+return;
+
+}
+
+selectedFiles.push(...newFiles);
+
+renderPreview();
+
+this.value="";
+
+}
+);
+
+function renderPreview(){
+
 galleryPreview.innerHTML="";
 
-if(gallery.files.length > 5){
-alert("Max 5 images allowed");
-gallery.value="";
-return;
-}
+selectedFiles.forEach(file=>{
 
-Array.from(gallery.files).forEach(file=>{
-let img=document.createElement("img");
-img.src=URL.createObjectURL(file);
+let img=
+document.createElement("img");
+
+img.src=
+URL.createObjectURL(file);
+
 galleryPreview.appendChild(img);
-});
+
 });
 
-
-/* TOGGLE FEE */
-window.toggleFee = function(id){
-let box=document.getElementById(id);
-box.style.display = box.style.display==="block" ? "none" : "block";
-};
+}
 
 
 /* SUBMIT */
-form.addEventListener("submit", async(e)=>{
+
+form.addEventListener(
+"submit",
+async function(e){
+
 e.preventDefault();
+
+let checked=
+document.querySelectorAll(
+".subjectCheck:checked"
+).length;
+
+if(
+checked===0 &&
+!otherCheck.checked
+){
+
+document.getElementById(
+"subjectError"
+).style.display="block";
+
+return;
+
+}else{
+
+document.getElementById(
+"subjectError"
+).style.display="none";
+
+}
+
+const submitBtn=
+form.querySelector(
+'button[type="submit"]'
+);
+
+submitBtn.disabled=true;
+submitBtn.innerText="Processing...";
 
 try{
 
-let logoUrl = "";
+let logoUrl="";
+
 if(logo.files[0]){
-logoUrl = await upload(logo.files[0]);
+
+logoUrl=
+await upload(
+logo.files[0]
+);
+
 }
 
-let galleryUrls = [];
-for(let f of gallery.files){
-galleryUrls.push(await upload(f));
+
+let idUrl="";
+
+if(idUpload.files[0]){
+
+idUrl=
+await upload(
+idUpload.files[0]
+);
+
 }
 
-let modes = [];
-document.querySelectorAll('input[type="checkbox"]:checked')
-.forEach(c=>{
-modes.push(c.value || "");
+
+let galleryUrls=[];
+
+for(let file of selectedFiles){
+
+galleryUrls.push(
+await upload(file)
+);
+
+}
+
+
+let teachingModes=[];
+
+document
+.querySelectorAll(
+'input[type="checkbox"]:checked'
+)
+.forEach(item=>{
+
+teachingModes.push(
+item.value
+);
+
 });
 
 
-let newRef = await push(ref(db,"institutions"),{
+let subjects=[];
 
-name: document.getElementById("name").value || "",
-phone: document.getElementById("phone").value || "",
-email: document.getElementById("email").value || "",
-website: document.getElementById("website").value || "",
-address: document.getElementById("address").value || "",
-area: document.getElementById("area").value || "",
+document
+.querySelectorAll(
+".subjectCheck:checked"
+)
+.forEach(item=>{
 
-sport:
-sport.value === "other"
-? otherSport.value || ""
-: sport.value || "",
+if(item.value!=="other"){
 
-modes: modes,
+subjects.push(
+item.value
+);
 
-offlineFee: document.getElementById("offlineFee").value || "",
-onlineFee: document.getElementById("onlineFee").value || "",
-hybridFee: document.getElementById("hybridFee").value || "",
-
-logo: logoUrl || "",
-gallery: galleryUrls || [],
-
-description: document.getElementById("description").value || "",
-
-category: "sport",
-status: "pending"
+}
 
 });
 
-const institutionId = newRef.key;
-localStorage.setItem("institutionId", institutionId);
 
-window.location.href =
-"payment.html?type=institution&id=" + institutionId;
+if(
+otherCheck.checked &&
+otherSubject.value.trim()!==""
+){
+
+subjects.push(
+otherSubject.value
+);
 
 }
-catch(err){
-console.log(err);
-alert("Error: " + err.message);
+
+
+let newRef=
+
+await push(
+
+ref(db,"institutions"),
+
+{
+
+name:
+document.getElementById("name").value,
+
+ownerName:
+document.getElementById("ownerName").value,
+
+establishedDate:
+document.getElementById("establishedDate").value,
+
+phone:
+document.getElementById("phone").value,
+
+alternatePhone:
+document.getElementById("alternatePhone").value,
+
+email:
+document.getElementById("email").value,
+
+website:
+document.getElementById("website").value,
+
+address:
+document.getElementById("address").value,
+
+area:
+document.getElementById("area").value,
+
+mapLink:
+document.getElementById("mapLink").value,
+
+subjects,
+
+class:
+document.getElementById("class").value,
+
+teachingModes,
+
+individualFee:
+document.getElementById("individualFee").value,
+
+homeFee:
+document.getElementById("homeFee").value,
+
+groupFee:
+document.getElementById("groupFee").value,
+
+dualFee:
+document.getElementById("dualFee").value,
+
+superGroupFee:
+document.getElementById("superGroupFee").value,
+
+onlineFee:
+document.getElementById("onlineFee").value,
+
+offlineFee:
+document.getElementById("offlineFee").value,
+
+hybridFee:
+document.getElementById("hybridFee").value,
+
+demoFee:
+document.getElementById("demoFee").value,
+
+otherModeFee:
+document.getElementById("otherModeFee").value,
+
+logo:
+logoUrl,
+
+gallery:
+galleryUrls,
+
+idType:
+idTypeSelect.value,
+
+idProof:
+idUrl,
+
+declarationAccepted:
+document.getElementById("declaration").checked,
+
+description:
+document.getElementById("description").value,
+
+category:"sport",
+
+status:"pending"
+
 }
 
-});
+);
+
+
+const institutionId=
+newRef.key;
+
+localStorage.setItem(
+"institutionId",
+institutionId
+);
+
+setTimeout(()=>{
+
+window.location.href=
+"payment.html?type=institution&id="+institutionId;
+
+},300);
+
+}
+catch(error){
+
+console.log(error);
+
+alert(
+"Error:\n"+
+error.message
+);
+
+submitBtn.disabled=false;
+
+submitBtn.innerText=
+"Continue To Payment";
+
+}
+
+}
+);
+
+</script>
+
+
+
+<script>
+
+function toggleFee(id){
+
+let box=
+document.getElementById(id);
+
+box.style.display=
+
+box.style.display==="block"
+
+?
+
+"none"
+
+:
+
+"block";
+
+}
 
 </script>
 
