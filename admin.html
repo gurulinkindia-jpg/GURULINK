@@ -3,21 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GURULINK Admin</title>
+<title>GURULINK Admin Panel</title>
 
 <style>
-
-*{margin:0;padding:0;box-sizing:border-box;}
-
 body{
+margin:0;
 font-family:Arial;
 background:#eef2f7;
 }
 
 header{
 background:#0d47a1;
-color:white;
-padding:20px;
+color:#fff;
+padding:18px;
 text-align:center;
 }
 
@@ -28,33 +26,16 @@ margin:auto;
 padding:20px;
 }
 
-.analytics{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:15px;
-margin-bottom:20px;
-}
-
-.box{
-background:white;
-padding:20px;
-border-radius:15px;
-text-align:center;
-box-shadow:0 5px 15px rgba(0,0,0,.1);
-}
-
 .search{
 width:100%;
 padding:12px;
 border:none;
 border-radius:10px;
-margin-bottom:20px;
+margin:15px 0;
 }
 
-.section{margin-top:30px;}
-
 .card{
-background:white;
+background:#fff;
 padding:15px;
 margin-top:15px;
 border-radius:15px;
@@ -68,121 +49,117 @@ align-items:center;
 }
 
 .photo{
-width:80px;height:80px;border-radius:50%;
-object-fit:cover;border:2px solid #0d47a1;
+width:80px;
+height:80px;
+border-radius:50%;
+object-fit:cover;
+border:2px solid #0d47a1;
+}
+
+.gallery{
+display:flex;
+gap:8px;
+overflow:auto;
+margin-top:10px;
+}
+
+.gallery img{
+width:70px;
+height:70px;
+object-fit:cover;
+border-radius:10px;
 }
 
 .badge{
-padding:5px 10px;
+padding:4px 10px;
 border-radius:20px;
 font-size:12px;
-display:inline-block;
-margin-top:5px;
+color:#fff;
 }
 
-.verify{background:green;color:white;}
-.pending{background:orange;color:white;}
-
-.gallery{display:flex;gap:8px;overflow:auto;margin-top:10px;}
-.gallery img{width:70px;height:70px;border-radius:10px;object-fit:cover;}
+.verify{background:green;}
+.pending{background:orange;}
 
 button{
-padding:10px 14px;
+padding:8px 12px;
 border:none;
 border-radius:8px;
 cursor:pointer;
-margin:5px;
-color:white;
+margin:4px;
+color:#fff;
 }
 
 .approve{background:green;}
 .delete{background:red;}
 .edit{background:#0d47a1;}
-.review{background:#ff9800;}
 
 .modal{
+display:none;
 position:fixed;
 top:0;left:0;
-width:100%;
-height:100%;
+width:100%;height:100%;
 background:rgba(0,0,0,.6);
-display:none;
-justify-content:center;
-align-items:center;
 }
 
-.modalBox{
-background:white;
+.modal-box{
+background:#fff;
+width:90%;
+max-width:700px;
+margin:40px auto;
 padding:20px;
-width:400px;
 border-radius:12px;
+max-height:90vh;
+overflow:auto;
 }
 
-.modalBox input,textarea{
+input,textarea,select{
 width:100%;
 padding:10px;
 margin:8px 0;
+border:1px solid #ccc;
+border-radius:8px;
 }
 
-.closeBtn{
-background:red;
+.small-img{
+width:60px;height:60px;
+object-fit:cover;
+margin:3px;
+border-radius:8px;
 }
-
 </style>
 </head>
 
 <body>
 
 <header>
-<h1>GURULINK ADMIN PANEL</h1>
+<h2>GURULINK ADMIN PANEL (FULL EDIT MODE)</h2>
 </header>
 
 <div class="container">
 
-<div class="analytics">
-<div class="box"><h2 id="teacherCount">0</h2>Teachers</div>
-<div class="box"><h2 id="institutionCount">0</h2>Institutions</div>
-<div class="box"><h2 id="paymentCount">0</h2>Payments</div>
-<div class="box"><h2 id="earnings">₹0</h2>Total Earnings</div>
-</div>
+<input id="search" class="search" placeholder="Search teachers / institutions">
 
-<input id="search" class="search" placeholder="Search...">
-
-<div class="section">
-<h2>Teachers</h2>
+<h3>Teachers</h3>
 <div id="teachers"></div>
-</div>
 
-<div class="section">
-<h2>Institutions</h2>
+<h3>Institutions</h3>
 <div id="institutions"></div>
-</div>
-
-<div class="section">
-<h2>Payments</h2>
-<div id="payments"></div>
-</div>
 
 </div>
 
-<!-- EDIT MODAL -->
+<!-- ================= EDIT MODAL ================= -->
 <div class="modal" id="editModal">
-<div class="modalBox">
+<div class="modal-box">
 
-<h3>Edit Profile</h3>
+<h3>Edit Data</h3>
 
-<input id="editName" placeholder="Name">
-<input id="editPhone" placeholder="Phone">
-<input id="editEmail" placeholder="Email">
-<input id="editLocation" placeholder="Location">
-<textarea id="editDesc" placeholder="Description"></textarea>
+<div id="editForm"></div>
 
-<button onclick="saveEdit()">Save</button>
-<button class="closeBtn" onclick="closeModal()">Close</button>
+<button onclick="saveEdit()" style="background:green">Save</button>
+<button onclick="closeModal()" style="background:red">Close</button>
 
 </div>
 </div>
-
 
 <script type="module">
 
@@ -193,7 +170,7 @@ update, remove, get, child
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
-apiKey:"AIzaSyBK0Q...",
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"gurulink-59cc7",
@@ -205,13 +182,13 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let editId=null;
-let editType=null;
+/* CURRENT EDIT */
+let editId = null;
+let editType = null;
 
-/* LOAD TEACHERS */
+/* ================= LOAD TEACHERS ================= */
 onValue(ref(db,"teachers"),snap=>{
 let html="";
-document.getElementById("teacherCount").innerText=snap.size;
 
 snap.forEach(c=>{
 let t=c.val();
@@ -220,31 +197,49 @@ html+=`
 <div class="card">
 
 <div class="top">
-<img class="photo" src="${t.photo||'https://via.placeholder.com/80'}">
+<img class="photo" src="${t.photo||''}">
 <div>
-<h3>${t.name||"-"}</h3>
-<span class="badge ${t.status=="approved"?"verify":"pending"}">${t.status||"pending"}</span>
+<h3>${t.name||""}</h3>
+<span class="badge ${t.status==='approved'?'verify':'pending'}">${t.status||'pending'}</span>
 </div>
 </div>
 
-<p>${t.phone||""}</p>
-<p>${t.location||""}</p>
+<p><b>Phone:</b> ${t.phone||""}</p>
+<p><b>Email:</b> ${t.email||""}</p>
+<p><b>Skills:</b> ${(t.skills||[]).join(", ")}</p>
+<p><b>Location:</b> ${t.location||""}</p>
+
+<p><b>Fees:</b>
+Ind: ₹${t.individualFee||0},
+Home: ₹${t.homeFee||0},
+Group: ₹${t.groupFee||0}
+</p>
+
+<p><b>ID Type:</b> ${t.idType||""}</p>
+
+<div class="gallery">
+${(t.gallery||[]).map(i=>`<img src="${i}">`).join("")}
+</div>
+
+<div class="gallery">
+<img class="small-img" src="${t.idProof||''}">
+</div>
 
 <button class="approve" onclick="approve('teachers','${c.key}')">Approve</button>
-<button class="edit" onclick="openEdit('teachers','${c.key}')">Edit</button>
+<button class="edit" onclick="edit('teachers','${c.key}')">Edit</button>
 <button class="delete" onclick="del('teachers','${c.key}')">Delete</button>
-<button class="review" onclick="review('${c.key}')">Review</button>
 
-</div>`;
+</div>
+`;
 });
 
-teachers.innerHTML=html;
+document.getElementById("teachers").innerHTML = html;
 });
 
-/* LOAD INSTITUTIONS */
+
+/* ================= LOAD INSTITUTIONS ================= */
 onValue(ref(db,"institutions"),snap=>{
 let html="";
-document.getElementById("institutionCount").innerText=snap.size;
 
 snap.forEach(c=>{
 let t=c.val();
@@ -252,92 +247,85 @@ let t=c.val();
 html+=`
 <div class="card">
 
-<h3>${t.name||"-"}</h3>
-<p>${t.phone||""}</p>
-<p>${t.address||""}</p>
+<h3>${t.name||""}</h3>
+<p><b>Sport:</b> ${t.sport||""}</p>
+<p><b>Phone:</b> ${t.phone||""}</p>
+<p><b>Address:</b> ${t.address||""}</p>
+
+<div class="gallery">
+<img class="small-img" src="${t.logo||''}">
+</div>
+
+<div class="gallery">
+${(t.gallery||[]).map(i=>`<img src="${i}">`).join("")}
+</div>
 
 <button class="approve" onclick="approve('institutions','${c.key}')">Approve</button>
-<button class="edit" onclick="openEdit('institutions','${c.key}')">Edit</button>
+<button class="edit" onclick="edit('institutions','${c.key}')">Edit</button>
 <button class="delete" onclick="del('institutions','${c.key}')">Delete</button>
 
-</div>`;
+</div>
+`;
 });
 
-institutions.innerHTML=html;
+document.getElementById("institutions").innerHTML = html;
 });
 
-/* PAYMENTS */
-onValue(ref(db,"payments"),snap=>{
-let total=0;
-let html="";
 
-snap.forEach(c=>{
-let p=c.val();
-total+=Number(p.amount||0);
+/* ================= ACTIONS ================= */
 
-html+=`
-<div class="card">
-<p>${p.name}</p>
-<p>₹${p.amount}</p>
-<p>${p.status}</p>
-
-<button class="delete" onclick="del('payments','${c.key}')">Delete</button>
-</div>`;
-});
-
-payments.innerHTML=html;
-document.getElementById("earnings").innerText="₹"+total;
-});
-
-/* GLOBAL ACTIONS */
 window.approve=(type,id)=>{
 update(ref(db,`${type}/${id}`),{status:"approved"});
 };
 
 window.del=(type,id)=>{
-if(confirm("Delete?")) remove(ref(db,`${type}/${id}`));
+if(confirm("Delete?")){
+remove(ref(db,`${type}/${id}`));
+}
 };
 
-/* EDIT */
-window.openEdit=async(type,id)=>{
+
+/* ================= EDIT ================= */
+
+window.edit=async(type,id)=>{
 editId=id;
 editType=type;
 
-const snap=await get(child(ref(db),`${type}/${id}`));
-const data=snap.val();
+const snap = await get(child(ref(db),`${type}/${id}`));
+const data = snap.val();
 
-document.getElementById("editName").value=data.name||"";
-document.getElementById("editPhone").value=data.phone||"";
-document.getElementById("editEmail").value=data.email||"";
-document.getElementById("editLocation").value=data.location||data.address||"";
-document.getElementById("editDesc").value=data.description||"";
+let form="";
 
-document.getElementById("editModal").style.display="flex";
-};
+for(let key in data){
+if(typeof data[key]==="string"||typeof data[key]==="number"){
+form+=`
+<label>${key}</label>
+<input id="f_${key}" value="${data[key]||""}">
+`;
+}
+}
 
-window.saveEdit=()=>{
-update(ref(db,`${editType}/${editId}`),{
-name:editName.value,
-phone:editPhone.value,
-email:editEmail.value,
-location:editLocation.value,
-description:editDesc.value
-});
-closeModal();
+document.getElementById("editForm").innerHTML=form;
+document.getElementById("editModal").style.display="block";
 };
 
 window.closeModal=()=>{
 document.getElementById("editModal").style.display="none";
 };
 
-/* SIMPLE REVIEW SYSTEM */
-window.review=(id)=>{
-let text=prompt("Write admin review:");
-if(text){
-update(ref(db,"teachers/"+id),{
-adminReview:text
+window.saveEdit=async()=>{
+
+let updates={};
+
+document.querySelectorAll("#editForm input").forEach(inp=>{
+let key=inp.id.replace("f_","");
+updates[key]=inp.value;
 });
-}
+
+await update(ref(db,`${editType}/${editId}`),updates);
+
+closeModal();
+alert("Updated!");
 };
 
 </script>
