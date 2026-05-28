@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GURULINK ADMIN DASHBOARD</title>
+<title>GURULINK SUPER ADMIN</title>
 
 <style>
 body{
@@ -26,49 +26,34 @@ margin:auto;
 padding:15px;
 }
 
-/* DASHBOARD */
-.dashboard{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-gap:10px;
-margin-top:15px;
-}
-
-.box{
-background:white;
-padding:15px;
-border-radius:12px;
-text-align:center;
-box-shadow:0 3px 10px rgba(0,0,0,.1);
-}
-
-/* FILTER */
-.filterRow{
+/* TOP BAR */
+.topbar{
 display:flex;
 gap:10px;
-flex-wrap:wrap;
 margin:15px 0;
 }
 
 input,select{
 padding:10px;
+flex:1;
 border-radius:8px;
 border:1px solid #ccc;
-flex:1;
 }
 
 /* CARD */
 .card{
 background:white;
 padding:15px;
+margin:15px 0;
 border-radius:12px;
-margin-top:15px;
 box-shadow:0 3px 10px rgba(0,0,0,.1);
-border-left:6px solid #aaa;
+border-left:6px solid gray;
 }
 
-.teacher{border-left-color:#1565c0;}
-.institution{border-left-color:#2e7d32;}
+.academic{border-left-color:#1565c0;}
+.skill{border-left-color:#e65100;}
+.sport{border-left-color:#2e7d32;}
+.creative{border-left-color:#6a1b9a;}
 
 .top{
 display:flex;
@@ -81,7 +66,7 @@ width:70px;
 height:70px;
 border-radius:50%;
 object-fit:cover;
-border:2px solid #1565c0;
+border:2px solid #333;
 }
 
 .gallery img{
@@ -92,18 +77,28 @@ margin:3px;
 object-fit:cover;
 }
 
+.badge{
+padding:4px 10px;
+border-radius:20px;
+color:white;
+font-size:12px;
+}
+
+.approved{background:green;}
+.pending{background:orange;}
+
 button{
-padding:7px 10px;
+padding:6px 10px;
+margin:3px;
 border:none;
 border-radius:6px;
 color:white;
 cursor:pointer;
-margin:3px;
 }
 
-.approve{background:green;}
-.del{background:red;}
 .edit{background:#0d47a1;}
+.delete{background:red;}
+.approve{background:green;}
 .review{background:#6a1b9a;}
 
 /* FULL EDIT PANEL */
@@ -111,8 +106,8 @@ margin:3px;
 display:none;
 background:#f7f7f7;
 padding:10px;
-border-radius:10px;
 margin-top:10px;
+border-radius:10px;
 }
 
 .editBox input,
@@ -120,16 +115,8 @@ margin-top:10px;
 width:100%;
 padding:8px;
 margin:5px 0;
-border:1px solid #ccc;
 border-radius:6px;
-}
-
-.badge{
-padding:3px 10px;
-border-radius:20px;
-font-size:12px;
-color:white;
-display:inline-block;
+border:1px solid #ccc;
 }
 </style>
 </head>
@@ -137,97 +124,65 @@ display:inline-block;
 <body>
 
 <header>
-<h2>GURULINK ADMIN DASHBOARD</h2>
+<h2>SUPER ADMIN - ALL FORMS CONTROL</h2>
 </header>
 
 <div class="container">
 
-<div class="dashboard">
-<div class="box"><h2 id="tCount">0</h2><p>Teachers</p></div>
-<div class="box"><h2 id="iCount">0</h2><p>Institutions</p></div>
-<div class="box"><h2 id="pCount">0</h2><p>Payments</p></div>
-<div class="box"><h2 id="earn">₹0</h2><p>Earnings</p></div>
-</div>
-
-<div class="filterRow">
-<input id="search" placeholder="Search name / phone / email">
+<div class="topbar">
+<input id="search" placeholder="Search phone / name / email">
 <select id="filter">
 <option value="all">All</option>
-<option value="teacher">Teachers</option>
-<option value="institution">Institutions</option>
+<option value="academic">Academic</option>
+<option value="skill">Skill</option>
+<option value="sport">Sport</option>
+<option value="creative">Creative</option>
+<option value="teacher">Teacher</option>
+<option value="institution">Institution</option>
 <option value="pending">Pending</option>
 <option value="approved">Approved</option>
 </select>
 </div>
 
-<h3>Users</h3>
 <div id="list"></div>
-
-<h3>Payments</h3>
-<div id="payments"></div>
 
 </div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import {
-getDatabase, ref, onValue, update, remove
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, onValue, update, remove } 
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-const firebaseConfig = {
+const app = initializeApp({
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"gurulink-59cc7",
-storageBucket:"gurulink-59cc7.appspot.com",
-messagingSenderId:"112148672399",
-appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-};
+projectId:"gurulink-59cc7"
+});
 
-const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let teachers=[], insts=[];
+let allData = [];
 
-/* LOAD TEACHERS */
+/* LOAD ALL */
+function load(){
 onValue(ref(db,"teachers"),snap=>{
-teachers=[];
 snap.forEach(c=>{
-teachers.push({id:c.key,type:"teacher",...c.val()});
+allData.push({id:c.key,type:"teacher",...c.val()});
 });
 render();
 });
 
-/* LOAD INSTITUTIONS */
 onValue(ref(db,"institutions"),snap=>{
-insts=[];
 snap.forEach(c=>{
-insts.push({id:c.key,type:"institution",...c.val()});
+allData.push({id:c.key,type:"institution",...c.val()});
 });
 render();
 });
+}
 
-/* PAYMENTS */
-onValue(ref(db,"payments"),snap=>{
-let html="", total=0;
-
-snap.forEach(c=>{
-let p=c.val();
-total += Number(p.amount||0);
-
-html+=`
-<div class="card">
-<p><b>${p.name}</b></p>
-<p>₹${p.amount}</p>
-<p>${p.status}</p>
-</div>`;
-});
-
-document.getElementById("payments").innerHTML=html;
-document.getElementById("pCount").innerText=snap.size;
-document.getElementById("earn").innerText="₹"+total;
-});
+load();
 
 /* RENDER */
 function render(){
@@ -235,34 +190,28 @@ function render(){
 let search=document.getElementById("search").value.toLowerCase();
 let filter=document.getElementById("filter").value;
 
-let all=[...teachers,...insts];
-
 let html="";
-let t=0,i=0;
 
-all.forEach(u=>{
+allData.forEach(u=>{
 
 let text=(u.name||"")+(u.phone||"")+(u.email||"");
 
 if(!text.toLowerCase().includes(search)) return;
 
 if(filter!="all"){
-if(filter=="teacher" && u.type!="teacher") return;
-if(filter=="institution" && u.type!="institution") return;
+if(u.type!=filter && u.category!=filter) return;
 if(filter=="approved" && u.status!="approved") return;
 if(filter=="pending" && u.status=="approved") return;
 }
 
-if(u.type=="teacher") t++; else i++;
-
 html+=`
-<div class="card ${u.type}">
+<div class="card ${u.category||''}">
 
 <div class="top">
 <img class="photo" src="${u.photo||u.logo||''}">
 <div>
-<h3>${u.name}</h3>
-<span class="badge" style="background:${u.status=='approved'?'green':'orange'}">
+<h3>${u.name||""}</h3>
+<span class="badge ${u.status=="approved"?"approved":"pending"}">
 ${u.status||"pending"}
 </span>
 </div>
@@ -270,23 +219,31 @@ ${u.status||"pending"}
 
 <p>📞 ${u.phone||""}</p>
 <p>📧 ${u.email||""}</p>
+<p>📚 Category: ${u.category||u.type}</p>
 
+<p><b>Subjects/Skills:</b> ${u.subjects||u.skills||u.sport||""}</p>
+
+<p><b>Description:</b> ${u.description||""}</p>
+
+<div>
 <button class="approve" onclick="approve('${u.type}','${u.id}')">Approve</button>
-<button class="del" onclick="del('${u.type}','${u.id}')">Delete</button>
+<button class="delete" onclick="del('${u.type}','${u.id}')">Delete</button>
 <button class="edit" onclick="toggle('${u.id}')">Edit Full</button>
 <button class="review" onclick="review('${u.type}','${u.id}')">Review</button>
+</div>
 
 <div class="editBox" id="box_${u.id}">
 
-<input id="name_${u.id}" value="${u.name||''}">
-<input id="phone_${u.id}" value="${u.phone||''}">
-<input id="email_${u.id}" value="${u.email||''}">
-<input id="location_${u.id}" value="${u.location||''}">
-<textarea id="desc_${u.id}">${u.description||''}</textarea>
+<input id="name_${u.id}" value="${u.name||""}">
+<input id="phone_${u.id}" value="${u.phone||""}">
+<input id="email_${u.id}" value="${u.email||""}">
+<input id="location_${u.id}" value="${u.location||""}">
+<textarea id="desc_${u.id}">${u.description||""}</textarea>
 
-<input id="fee_${u.id}" value="${u.homeFee||''}" placeholder="Home Fee">
+<input id="fee_${u.id}" value="${u.homeFee||""}" placeholder="Home Fee">
 
 <button onclick="save('${u.type}','${u.id}')">Save</button>
+
 </div>
 
 </div>
@@ -294,8 +251,6 @@ ${u.status||"pending"}
 });
 
 document.getElementById("list").innerHTML=html;
-document.getElementById("tCount").innerText=t;
-document.getElementById("iCount").innerText=i;
 }
 
 /* ACTIONS */
@@ -304,12 +259,12 @@ update(ref(db,`${type}s/${id}`),{status:"approved"});
 };
 
 window.del=(type,id)=>{
-if(confirm("Delete?")) remove(ref(db,`${type}s/${id}`));
+remove(ref(db,`${type}s/${id}`));
 };
 
 window.toggle=(id)=>{
-let box=document.getElementById("box_"+id);
-box.style.display = box.style.display==="block"?"none":"block";
+let b=document.getElementById("box_"+id);
+b.style.display=b.style.display==="block"?"none":"block";
 };
 
 window.save=(type,id)=>{
@@ -321,7 +276,6 @@ location:document.getElementById("location_"+id).value,
 description:document.getElementById("desc_"+id).value,
 homeFee:document.getElementById("fee_"+id).value
 });
-alert("Updated");
 };
 
 window.review=(type,id)=>{
