@@ -49,18 +49,23 @@ button{
 width:100%;
 padding:14px;
 background:#6a1b9a;
-border:none;
 color:white;
+border:none;
 border-radius:10px;
 font-size:16px;
 cursor:pointer;
+}
+
+button:disabled{
+opacity:.7;
+cursor:not-allowed;
 }
 
 .preview{
 display:flex;
 flex-wrap:wrap;
 gap:10px;
-margin:10px 0;
+margin-top:10px;
 }
 
 .preview img{
@@ -72,17 +77,8 @@ border:1px solid #ddd;
 }
 
 .modeBox{
-padding:10px;
+padding:15px;
 border:1px solid #ddd;
-border-radius:10px;
-margin-top:10px;
-}
-
-.modeFee{
-display:none;
-padding:10px;
-background:#f7f7f7;
-margin-top:10px;
 border-radius:10px;
 }
 
@@ -95,6 +91,15 @@ margin:10px 0;
 
 .row input[type=checkbox]{
 width:auto;
+transform:scale(1.2);
+}
+
+.modeFee{
+display:none;
+padding:10px;
+background:#f4f4f4;
+border-radius:10px;
+margin-bottom:10px;
 }
 
 </style>
@@ -105,6 +110,7 @@ width:auto;
 <header>
 
 <h1>Creative Institution Registration</h1>
+
 <p>Registration Fee ₹200</p>
 
 </header>
@@ -113,145 +119,518 @@ width:auto;
 
 <form id="form">
 
-<input id="name"
+<input
+id="name"
 placeholder="Institution Name"
 required>
 
-<input id="phone"
+<input
+id="ownerName"
+placeholder="Owner / Director Name"
+required>
+
+<label for="establishedDate">
+Established Date
+</label>
+
+<input
+type="date"
+id="establishedDate"
+required>
+
+<input
+id="phone"
 placeholder="Contact Number"
 required>
 
-<input id="email"
-type="email"
-placeholder="Email">
-
-<input id="website"
-placeholder="Website">
-
-<input id="address"
-placeholder="Address">
-
-<input id="area"
-placeholder="Preferred Service Area Example: Beltola">
-
-<select id="creative">
-
-<option value="">Select Creative Category</option>
-
-<option>Music Academy</option>
-<option>Dance Academy</option>
-<option>Drawing School</option>
-<option>Art School</option>
-<option>Guitar Classes</option>
-<option>Piano Classes</option>
-<option>Photography</option>
-<option>Singing Classes</option>
-
-<option value="other">
-Other
-</option>
-
-</select>
+<input
+id="alternatePhone"
+placeholder="Alternate Phone Number">
 
 <input
-id="otherCreative"
-style="display:none"
-placeholder="Enter Category">
+type="email"
+id="email"
+placeholder="Email">
+
+<input
+id="website"
+placeholder="Website URL if available">
+
+<input
+id="address"
+placeholder="Full Address">
+
+<input
+id="area"
+placeholder="Area / City / State">
+
+<input
+id="mapLink"
+placeholder="Google Map Location Link (Paste URL if available)">
 
 
-<h3>Modes</h3>
+
+<h3>
+Creative Categories
+<span style="color:red">*</span>
+</h3>
 
 <div class="modeBox">
 
 <div class="row">
-<input type="checkbox"
-onchange="toggleFee('offline')">
-
-Offline Classroom
+<input type="checkbox" value="Music Academy" class="creativeCheck">
+Music Academy
 </div>
 
-<div class="modeFee"
-id="offline">
+<div class="row">
+<input type="checkbox" value="Dance Academy" class="creativeCheck">
+Dance Academy
+</div>
+
+<div class="row">
+<input type="checkbox" value="Drawing School" class="creativeCheck">
+Drawing School
+</div>
+
+<div class="row">
+<input type="checkbox" value="Art School" class="creativeCheck">
+Art School
+</div>
+
+<div class="row">
+<input type="checkbox" value="Guitar Classes" class="creativeCheck">
+Guitar Classes
+</div>
+
+<div class="row">
+<input type="checkbox" value="Piano Classes" class="creativeCheck">
+Piano Classes
+</div>
+
+<div class="row">
+<input type="checkbox" value="Photography" class="creativeCheck">
+Photography
+</div>
+
+<div class="row">
+<input type="checkbox" value="Singing Classes" class="creativeCheck">
+Singing Classes
+</div>
+
+<div class="row">
+<input type="checkbox" value="Acting Classes" class="creativeCheck">
+Acting Classes
+</div>
+
+<div class="row">
+<input type="checkbox" value="Craft Classes" class="creativeCheck">
+Craft Classes
+</div>
+
+<div class="row">
+<input type="checkbox" value="Fashion Designing" class="creativeCheck">
+Fashion Designing
+</div>
+
+<div class="row">
+<input type="checkbox" value="other" id="otherCheck">
+Other
+</div>
 
 <input
-id="offlineFee"
-placeholder="Enter Fee">
+id="otherCreative"
+placeholder="Write Other Creative Category"
+style="display:none;margin-top:10px">
+
+<p
+id="creativeError"
+style="color:red;display:none;">
+
+Please select at least one creative category
+
+</p>
 
 </div>
+
+
+
+<input
+id="class"
+placeholder="Age Group / Batch / Course Example: Kids, Adults, Beginner, Advanced etc">
+
+
+
+<h3>Training Modes</h3>
+
+<div class="modeBox">
 
 
 <div class="row">
 
 <input
 type="checkbox"
-onchange="toggleFee('online')">
+value="Individual Coaching"
+id="individualCheck"
+onchange="toggleFee('individual')">
 
-Online
+<label>
+Individual Coaching
+</label>
+
 </div>
 
-<div class="modeFee"
-id="online">
+<div id="individual" class="modeFee">
+
+<input
+id="individualFee"
+placeholder="Enter Individual Coaching Fee">
+
+</div>
+
+
+
+<div class="row">
+
+<input
+type="checkbox"
+value="Home Tuition"
+id="homeCheck"
+onchange="toggleFee('home')">
+
+<label>
+Home Tuition
+</label>
+
+</div>
+
+<div id="home" class="modeFee">
+
+<input
+id="homeFee"
+placeholder="Enter Home Tuition Fee">
+
+</div>
+
+
+
+<div class="row">
+
+<input
+type="checkbox"
+value="Group Coaching"
+id="groupCheck"
+onchange="toggleFee('group')">
+
+<label>
+Group Coaching
+</label>
+
+</div>
+
+<div id="group" class="modeFee">
+
+<input
+id="groupFee"
+placeholder="Enter Group Coaching Fee">
+
+</div>
+
+
+
+<div class="row">
+
+<input
+type="checkbox"
+value="Dual Coaching"
+id="dualCheck"
+onchange="toggleFee('dual')">
+
+<label>
+Dual Coaching
+</label>
+
+</div>
+
+<div id="dual" class="modeFee">
+
+<input
+id="dualFee"
+placeholder="Enter Dual Coaching Fee">
+
+</div>
+
+
+
+<div class="row">
+
+<input
+type="checkbox"
+value="Super/Special Group Coaching"
+id="superCheck"
+onchange="toggleFee('superGroup')">
+
+<label>
+Super/Special Group Coaching
+</label>
+
+</div>
+
+<div id="superGroup" class="modeFee">
+
+<input
+id="superGroupFee"
+placeholder="Enter Super/Special Group Coaching Fee">
+
+</div>
+
+
+
+<div class="row">
+
+<input
+type="checkbox"
+value="Online"
+id="onlineCheck"
+onchange="toggleFee('online')">
+
+<label>
+Online
+</label>
+
+</div>
+
+<div id="online" class="modeFee">
 
 <input
 id="onlineFee"
-placeholder="Enter Fee">
+placeholder="Enter Online Fee">
 
 </div>
+
 
 
 <div class="row">
 
 <input
 type="checkbox"
-onchange="toggleFee('hybrid')">
+value="Offline Classroom"
+id="offlineCheck"
+onchange="toggleFee('offline')">
 
-Hybrid
+<label>
+Offline Classroom
+</label>
+
 </div>
 
-<div class="modeFee"
-id="hybrid">
+<div id="offline" class="modeFee">
+
+<input
+id="offlineFee"
+placeholder="Enter Offline Classroom Fee">
+
+</div>
+
+
+
+<div class="row">
+
+<input
+type="checkbox"
+value="Hybrid"
+id="hybridCheck"
+onchange="toggleFee('hybrid')">
+
+<label>
+Hybrid
+</label>
+
+</div>
+
+<div id="hybrid" class="modeFee">
 
 <input
 id="hybridFee"
-placeholder="Enter Fee">
+placeholder="Enter Hybrid Fee">
 
 </div>
 
-</div>
 
+
+<div class="row">
+
+<input
+type="checkbox"
+value="Demo Class Reg. Fee"
+id="demoCheck"
+onchange="toggleFee('demo')">
 
 <label>
-<b>Institution Logo</b>
+Demo Class Reg. Fee
 </label>
+
+</div>
+
+<div id="demo" class="modeFee">
+
+<input
+id="demoFee"
+placeholder="Enter Demo Class Registration Fee">
+
+</div>
+
+
+
+<div class="row">
+
+<input
+type="checkbox"
+value="Other"
+id="otherModeCheck"
+onchange="toggleFee('otherMode')">
+
+<label>
+Other
+</label>
+
+</div>
+
+<div id="otherMode" class="modeFee">
+
+<input
+id="otherModeFee"
+placeholder="Enter Other Fee / Details">
+
+</div>
+
+</div>
+
+
+
+
+<h3>Institution Logo</h3>
 
 <input
 type="file"
 id="logo"
-accept="image/*">
+accept="image/*"
+required>
 
 <div
 id="logoPreview"
 class="preview"></div>
 
 
-<label>
-<b>Gallery Photos (Max 5)</b>
-</label>
+
+
+<h3>Identity Proof (Upload any one) <span style="color:red">*</span></h3>
+
+<select id="idType" required>
+
+<option value="">
+Select ID Type
+</option>
+
+<option value="Owner Aadhaar">
+Owner Aadhaar Card
+</option>
+
+<option value="Owner Driving License">
+Owner Driving License
+</option>
+
+<option value="Owner Voter ID">
+Owner Voter ID
+</option>
+
+<option value="Registration Certificate">
+Registration Certificate
+</option>
+
+<option value="Trade License">
+Trade License
+</option>
+
+<option value="GST Certificate">
+GST Certificate
+</option>
+
+<option value="Owner PAN">
+Owner PAN Card
+</option>
+
+<option value="Owner Passport">
+Owner Passport
+</option>
+
+<option value="Other">
+Other
+</option>
+
+</select>
+
+<input
+type="file"
+id="idUpload"
+accept="image/*"
+required>
+
+<div
+class="preview"
+id="idPreview"></div>
+
+
+
+
+<h3>Gallery Photos (Max 5)</h3>
 
 <input
 type="file"
 id="gallery"
+accept="image/*"
 multiple
-accept="image/*">
+style="display:none">
+
+<button
+type="button"
+onclick="document.getElementById('gallery').click()">
+
+📸 Add Gallery Images
+
+</button>
 
 <div
 id="galleryPreview"
 class="preview"></div>
 
 
+
+
+<div style="margin-top:20px;padding:15px;background:#f5f5f5;border-radius:10px;">
+
+<input
+type="checkbox"
+id="declaration"
+required>
+
+<label
+for="declaration"
+style="font-size:14px;line-height:1.5;">
+
+I hereby declare that all the information provided by me in this form is true and correct to the best of my knowledge and belief. I understand that if any information is found to be false or incorrect, my application may be rejected or necessary action may be taken against me. I also agree to follow all the rules, regulations, and responsibilities assigned by the GURULINK, powered by G10 Group.
+
+</label>
+
+</div>
+
+
+
+
 <textarea
 id="description"
 placeholder="About Institution"></textarea>
+
+
 
 <button type="submit">
 
@@ -267,19 +646,19 @@ Continue To Payment
 
 
 
-
-
 <script type="module">
 
-import { 
-initializeApp 
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import {
+initializeApp
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-import { 
+import {
 getDatabase,
 ref,
 push
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 
 const firebaseConfig={
@@ -295,93 +674,36 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
 const app=initializeApp(firebaseConfig);
+
 const db=getDatabase(app);
 
-const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
+const API_KEY=
+"31f729ff855eb2e42c00ee508a8647ea";
 
 
-/* ELEMENTS */
 
 const form=document.getElementById("form");
-const creative=document.getElementById("creative");
-const otherCreative=document.getElementById("otherCreative");
 
-const logo=document.getElementById("logo");
-const gallery=document.getElementById("gallery");
+const logo=
+document.getElementById("logo");
 
+const logoPreview=
+document.getElementById("logoPreview");
 
-/* IMAGE UPLOAD */
+const gallery=
+document.getElementById("gallery");
 
+const galleryPreview=
+document.getElementById("galleryPreview");
 
-/* LOGO PREVIEW */
+const idUpload=
+document.getElementById("idUpload");
 
-logo.addEventListener(
-"change",
-()=>{
+const idPreview=
+document.getElementById("idPreview");
 
-let preview=
-document.getElementById(
-"logoPreview"
-);
-
-preview.innerHTML="";
-
-if(logo.files[0]){
-
-let img=
-document.createElement(
-"img"
-);
-
-img.src=
-URL.createObjectURL(
-logo.files[0]
-);
-
-preview.appendChild(img);
-
-}
-
-}
-);
-
-
-/* GALLERY PREVIEW */
-
-gallery.addEventListener(
-"change",
-()=>{
-
-let preview=
-document.getElementById(
-"galleryPreview"
-);
-
-preview.innerHTML="";
-
-
-Array.from(
-gallery.files
-)
-.slice(0,5)
-.forEach(file=>{
-
-let img=
-document.createElement(
-"img"
-);
-
-img.src=
-URL.createObjectURL(
-file
-);
-
-preview.appendChild(img);
-
-});
-
-}
-);
+const idTypeSelect=
+document.getElementById("idType");
 
 
 
@@ -406,34 +728,180 @@ return data.data.url;
 }
 
 
-/* OTHER CATEGORY */
 
-creative.addEventListener(
+/* CATEGORY */
+
+const otherCheck=
+document.getElementById("otherCheck");
+
+const otherCreative=
+document.getElementById("otherCreative");
+
+otherCheck.addEventListener("change",()=>{
+
+if(otherCheck.checked){
+
+otherCreative.style.display="block";
+otherCreative.required=true;
+
+}else{
+
+otherCreative.style.display="none";
+otherCreative.required=false;
+otherCreative.value="";
+
+}
+
+});
+
+
+
+/* LOGO PREVIEW */
+
+logo.addEventListener(
 "change",
-()=>{
+function(){
 
-otherCreative.style.display=
-creative.value==="other"
-?
-"block"
-:
-"none";
+logoPreview.innerHTML="";
+
+if(this.files.length>0){
+
+let img=document.createElement("img");
+
+img.src=
+URL.createObjectURL(
+this.files[0]
+);
+
+logoPreview.appendChild(img);
+
+}
 
 }
 );
+
+
+
+/* ID PREVIEW */
+
+idUpload.addEventListener(
+"change",
+function(){
+
+idPreview.innerHTML="";
+
+if(this.files.length>0){
+
+let img=document.createElement("img");
+
+img.src=
+URL.createObjectURL(
+this.files[0]
+);
+
+idPreview.appendChild(img);
+
+}
+
+}
+);
+
+
+
+/* GALLERY */
+
+let selectedFiles=[];
+
+gallery.addEventListener(
+"change",
+function(){
+
+let newFiles=
+Array.from(this.files);
+
+if(
+selectedFiles.length +
+newFiles.length > 5
+){
+
+alert(
+"Maximum 5 photos allowed"
+);
+
+return;
+
+}
+
+selectedFiles.push(...newFiles);
+
+renderPreview();
+
+this.value="";
+
+}
+);
+
+function renderPreview(){
+
+galleryPreview.innerHTML="";
+
+selectedFiles.forEach(file=>{
+
+let img=
+document.createElement("img");
+
+img.src=
+URL.createObjectURL(file);
+
+galleryPreview.appendChild(img);
+
+});
+
+}
+
 
 
 /* SUBMIT */
 
 form.addEventListener(
 "submit",
-async(e)=>{
+async function(e){
 
 e.preventDefault();
 
-try{
+let checked=
+document.querySelectorAll(
+".creativeCheck:checked"
+).length;
 
-/* LOGO */
+if(
+checked===0 &&
+!otherCheck.checked
+){
+
+document.getElementById(
+"creativeError"
+).style.display="block";
+
+return;
+
+}else{
+
+document.getElementById(
+"creativeError"
+).style.display="none";
+
+}
+
+const submitBtn=
+form.querySelector(
+'button[type="submit"]'
+);
+
+submitBtn.disabled=true;
+submitBtn.innerText="Processing...";
+
+try{
 
 let logoUrl="";
 
@@ -447,11 +915,21 @@ logo.files[0]
 }
 
 
-/* GALLERY */
+let idUrl="";
+
+if(idUpload.files[0]){
+
+idUrl=
+await upload(
+idUpload.files[0]
+);
+
+}
+
 
 let galleryUrls=[];
 
-for(let file of gallery.files){
+for(let file of selectedFiles){
 
 galleryUrls.push(
 await upload(file)
@@ -460,36 +938,71 @@ await upload(file)
 }
 
 
-/* MODES */
-
-let modes=[];
+let teachingModes=[];
 
 document
 .querySelectorAll(
 'input[type="checkbox"]:checked'
 )
-.forEach(c=>{
+.forEach(item=>{
 
-let txt=
-c.parentElement.innerText.trim();
-
-modes.push(txt);
+teachingModes.push(
+item.value
+);
 
 });
 
 
-/* SAVE FIREBASE */
+let creatives=[];
+
+document
+.querySelectorAll(
+".creativeCheck:checked"
+)
+.forEach(item=>{
+
+creatives.push(
+item.value
+);
+
+});
+
+
+if(
+otherCheck.checked &&
+otherCreative.value.trim()!==""
+){
+
+creatives.push(
+otherCreative.value
+);
+
+}
+
+
 
 let newRef=
+
 await push(
+
 ref(db,"institutions"),
+
 {
 
 name:
 document.getElementById("name").value,
 
+ownerName:
+document.getElementById("ownerName").value,
+
+establishedDate:
+document.getElementById("establishedDate").value,
+
 phone:
 document.getElementById("phone").value,
+
+alternatePhone:
+document.getElementById("alternatePhone").value,
 
 email:
 document.getElementById("email").value,
@@ -503,27 +1016,60 @@ document.getElementById("address").value,
 area:
 document.getElementById("area").value,
 
-creative:
-creative.value==="other"
-?
-otherCreative.value
-:
-creative.value,
+mapLink:
+document.getElementById("mapLink").value,
 
-modes:modes,
+creatives,
 
-offlineFee:
-document.getElementById("offlineFee").value || "",
+class:
+document.getElementById("class").value,
+
+teachingModes,
+
+individualFee:
+document.getElementById("individualFee").value,
+
+homeFee:
+document.getElementById("homeFee").value,
+
+groupFee:
+document.getElementById("groupFee").value,
+
+dualFee:
+document.getElementById("dualFee").value,
+
+superGroupFee:
+document.getElementById("superGroupFee").value,
 
 onlineFee:
-document.getElementById("onlineFee").value || "",
+document.getElementById("onlineFee").value,
+
+offlineFee:
+document.getElementById("offlineFee").value,
 
 hybridFee:
-document.getElementById("hybridFee").value || "",
+document.getElementById("hybridFee").value,
 
-logo:logoUrl,
+demoFee:
+document.getElementById("demoFee").value,
 
-gallery:galleryUrls,
+otherModeFee:
+document.getElementById("otherModeFee").value,
+
+logo:
+logoUrl,
+
+gallery:
+galleryUrls,
+
+idType:
+idTypeSelect.value,
+
+idProof:
+idUrl,
+
+declarationAccepted:
+document.getElementById("declaration").checked,
 
 description:
 document.getElementById("description").value,
@@ -537,8 +1083,6 @@ status:"pending"
 );
 
 
-/* SAVE ID */
-
 const institutionId=
 newRef.key;
 
@@ -547,11 +1091,12 @@ localStorage.setItem(
 institutionId
 );
 
-
-/* GO PAYMENT PAGE */
+setTimeout(()=>{
 
 window.location.href=
-"payment.html?type=institution&id="+institutionId;
+"payment.html?type=institution";
+
+},300);
 
 }
 catch(error){
@@ -563,13 +1108,18 @@ alert(
 error.message
 );
 
-}
+submitBtn.disabled=false;
+
+submitBtn.innerText=
+"Continue To Payment";
 
 }
 
+}
 );
 
 </script>
+
 
 
 <script>
@@ -580,10 +1130,15 @@ let box=
 document.getElementById(id);
 
 box.style.display=
+
 box.style.display==="block"
+
 ?
+
 "none"
+
 :
+
 "block";
 
 }
