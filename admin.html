@@ -3,52 +3,102 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>MASTER GURULINK ADMIN</title>
+<title>GURULINK MASTER ADMIN</title>
 
 <style>
 body{margin:0;font-family:Arial;background:#eef2f7}
-header{background:#0d47a1;color:white;padding:15px;text-align:center}
 
-.container{width:95%;max-width:1400px;margin:auto;padding:15px}
+header{
+background:#0d47a1;
+color:white;
+padding:15px;
+text-align:center;
+}
 
-/* dashboard */
+.container{
+width:95%;
+max-width:1400px;
+margin:auto;
+padding:15px;
+}
+
+/* DASHBOARD */
 .dashboard{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-gap:10px;margin:10px 0
+gap:10px;
+margin:10px 0;
 }
+
 .box{
-background:white;padding:12px;border-radius:10px;text-align:center
+background:white;
+padding:12px;
+border-radius:10px;
+text-align:center;
 }
 
-/* filters */
-.topbar{display:flex;gap:10px;flex-wrap:wrap}
-input,select{padding:10px;flex:1;border-radius:8px;border:1px solid #ccc}
+/* FILTER */
+.topbar{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-bottom:10px;
+}
 
-/* cards */
+input,select{
+padding:10px;
+border-radius:8px;
+border:1px solid #ccc;
+flex:1;
+}
+
+/* CARD */
 .card{
-background:white;padding:12px;border-radius:10px;margin-top:10px
+background:white;
+padding:12px;
+border-radius:10px;
+margin-top:10px;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
 }
 
 button{
-padding:7px 10px;border:none;border-radius:6px;color:white;margin:3px;cursor:pointer
+padding:7px 10px;
+border:none;
+border-radius:6px;
+color:white;
+margin:3px;
+cursor:pointer;
 }
+
 .approve{background:green}
 .del{background:red}
 .edit{background:#0d47a1}
 .review{background:#6a1b9a}
-.pay{background:#ff9800}
 
-/* edit modal */
+/* EDIT MODAL */
 .modal{
-display:none;position:fixed;top:0;left:0;width:100%;height:100%;
-background:rgba(0,0,0,.6);align-items:center;justify-content:center
+display:none;
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,.6);
+align-items:center;
+justify-content:center;
 }
-.box2{
-background:white;width:90%;max-width:900px;padding:15px;max-height:90vh;overflow:auto
+
+.modalBox{
+background:white;
+width:90%;
+max-width:900px;
+padding:15px;
+max-height:90vh;
+overflow:auto;
 }
-.box2 input, .box2 textarea{
-width:100%;padding:10px;margin:5px 0
+
+.modalBox input, .modalBox textarea{
+width:100%;
+padding:10px;
+margin:5px 0;
 }
 </style>
 </head>
@@ -69,10 +119,10 @@ width:100%;padding:10px;margin:5px 0
 <div class="box">Earnings <h3 id="earn">₹0</h3></div>
 </div>
 
-<!-- FILTERS -->
+<!-- FILTER -->
 <div class="topbar">
-<input id="search" placeholder="Search name/email">
-<input id="phone" placeholder="Search phone exact">
+<input id="search" placeholder="Search name/email/phone">
+<input id="phone" placeholder="Exact phone filter">
 <select id="type">
 <option value="">All</option>
 <option value="teacher">Teachers</option>
@@ -80,7 +130,7 @@ width:100%;padding:10px;margin:5px 0
 </select>
 </div>
 
-<h3>PROFILES</h3>
+<h3>ALL PROFILES</h3>
 <div id="list"></div>
 
 <h3>PAYMENTS</h3>
@@ -90,10 +140,10 @@ width:100%;padding:10px;margin:5px 0
 
 <!-- EDIT MODAL -->
 <div class="modal" id="modal">
-<div class="box2">
+<div class="modalBox">
 <h3>Edit Full Profile</h3>
 <div id="form"></div>
-<button onclick="save()">SAVE</button>
+<button onclick="saveEdit()">SAVE</button>
 <button onclick="closeModal()">CLOSE</button>
 </div>
 </div>
@@ -102,7 +152,11 @@ width:100%;padding:10px;margin:5px 0
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import {
-getDatabase, ref, onValue, update, remove
+getDatabase,
+ref,
+onValue,
+update,
+remove
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const app = initializeApp({
@@ -113,71 +167,86 @@ databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabas
 
 const db = getDatabase(app);
 
-let teachers=[], inst=[], payments=[];
-let current=null;
+/* SAFE STORAGE */
+let teachers = [];
+let institutions = [];
+let payments = [];
+
+let currentEdit = null;
 
 /* LOAD TEACHERS */
-onValue(ref(db,"teachers"),s=>{
-teachers=[];
-s.forEach(c=>teachers.push({id:c.key,...c.val(),type:"teacher"}));
+onValue(ref(db,"teachers"),snap=>{
+teachers = [];
+snap.forEach(c=>{
+teachers.push({id:c.key,...c.val(),type:"teacher"});
+});
 render();
 });
 
 /* LOAD INSTITUTIONS */
-onValue(ref(db,"institutions"),s=>{
-inst=[];
-s.forEach(c=>inst.push({id:c.key,...c.val(),type:"institution"}));
+onValue(ref(db,"institutions"),snap=>{
+institutions = [];
+snap.forEach(c=>{
+institutions.push({id:c.key,...c.val(),type:"institution"});
+});
 render();
 });
 
 /* LOAD PAYMENTS */
-onValue(ref(db,"payments"),s=>{
-payments=[];
-let total=0;
+onValue(ref(db,"payments"),snap=>{
+payments = [];
+let total = 0;
 
-s.forEach(c=>{
-let p=c.val();
+snap.forEach(c=>{
+let p = c.val();
 payments.push(p);
-total+=Number(p.amount||0);
+total += Number(p.amount||0);
 });
 
-document.getElementById("pCount").innerText=s.size;
-document.getElementById("earn").innerText="₹"+total;
+document.getElementById("pCount").innerText = snap.size;
+document.getElementById("earn").innerText = "₹"+total;
 
 renderPayments();
 });
 
 /* DASHBOARD */
-function dashboard(list){
-document.getElementById("tCount").innerText=list.filter(x=>x.type==="teacher").length;
-document.getElementById("iCount").innerText=list.filter(x=>x.type==="institution").length;
+function dashboard(all){
+document.getElementById("tCount").innerText =
+all.filter(x=>x.type==="teacher").length;
+
+document.getElementById("iCount").innerText =
+all.filter(x=>x.type==="institution").length;
 }
 
-/* RENDER */
+/* MAIN RENDER */
 function render(){
 
-let all=[...teachers,...inst];
+let all = [...teachers, ...institutions];
 dashboard(all);
 
-let search=document.getElementById("search").value.toLowerCase();
-let phone=document.getElementById("phone").value;
-let type=document.getElementById("type").value;
+let search = document.getElementById("search").value.toLowerCase();
+let phone = document.getElementById("phone").value;
+let type = document.getElementById("type").value;
 
-let html="";
+let html = "";
 
 all.forEach(x=>{
 
 if(type && x.type!==type) return;
-if(search && !(x.name||"").toLowerCase().includes(search)
-&& !(x.email||"").toLowerCase().includes(search)) return;
-if(phone && x.phone!==phone) return;
 
-html+=`
+if(search &&
+!(x.name||"").toLowerCase().includes(search) &&
+!(x.email||"").toLowerCase().includes(search) &&
+!(x.phone||"").toLowerCase().includes(search)
+) return;
+
+if(phone && x.phone !== phone) return;
+
+html += `
 <div class="card">
 
-<h3>${x.name}</h3>
-<p>📞 ${x.phone}</p>
-
+<h3>${x.name||"-"}</h3>
+<p>📞 ${x.phone||"-"}</p>
 <p>Status: ${x.status||"pending"}</p>
 
 <p><b>Public Review:</b> ${x.publicReview||"-"}</p>
@@ -192,75 +261,88 @@ html+=`
 `;
 });
 
-document.getElementById("list").innerHTML=html;
+document.getElementById("list").innerHTML = html;
 }
 
 /* PAYMENTS */
 function renderPayments(){
-let html="";
+let html = "";
+
 payments.forEach(p=>{
-html+=`
+html += `
 <div class="card">
-<p>${p.name}</p>
-<p>₹${p.amount}</p>
-<p>${p.status}</p>
-</div>`;
+<p><b>${p.name||"Unknown"}</b></p>
+<p>₹${p.amount||0}</p>
+<p>${p.status||""}</p>
+</div>
+`;
 });
-document.getElementById("payments").innerHTML=html;
+
+document.getElementById("payments").innerHTML = html;
 }
 
 /* APPROVE */
-window.approve=(type,id)=>{
+window.approve = (type,id)=>{
 update(ref(db,`${type}s/${id}`),{status:"approved"});
 }
 
-/* DELETE FIXED */
-window.del=(type,id)=>{
-if(confirm("Delete?")){
+/* DELETE */
+window.del = (type,id)=>{
+if(confirm("Delete this record?")){
 remove(ref(db,`${type}s/${id}`));
 }
 }
 
 /* ADMIN REVIEW */
-window.adminReview=(type,id)=>{
-let msg=prompt("Admin Review:");
+window.adminReview = (type,id)=>{
+let msg = prompt("Write admin review:");
 if(msg){
 update(ref(db,`${type}s/${id}`),{adminReview:msg});
 }
 }
 
-/* EDIT FULL */
-window.openEdit=(data)=>{
-current=data;
-let html="";
+/* OPEN EDIT */
+window.openEdit = (data)=>{
+currentEdit = data;
+
+let html = "";
+
 for(let k in data){
-if(typeof data[k]==="object") continue;
-html+=`<input id="f_${k}" value="${data[k]||""}">`;
+if(typeof data[k] === "object") continue;
+
+html += `
+<label>${k}</label>
+<input id="e_${k}" value="${data[k]||""}">
+`;
 }
-document.getElementById("form").innerHTML=html;
+
+document.getElementById("form").innerHTML = html;
 document.getElementById("modal").style.display="flex";
 }
 
-/* SAVE */
-window.save=()=>{
-let up={};
-for(let k in current){
-let el=document.getElementById("f_"+k);
-if(el) up[k]=el.value;
+/* SAVE EDIT */
+window.saveEdit = ()=>{
+let up = {};
+
+for(let k in currentEdit){
+let el = document.getElementById("e_"+k);
+if(el) up[k] = el.value;
 }
-update(ref(db,`${current.type}s/${current.id}`),up);
+
+update(ref(db,`${currentEdit.type}s/${currentEdit.id}`),up);
+
 closeModal();
 }
 
 /* CLOSE */
-window.closeModal=()=>{
+window.closeModal = ()=>{
 document.getElementById("modal").style.display="none";
 }
 
 /* FILTER EVENTS */
-document.getElementById("search").oninput=render;
-document.getElementById("phone").oninput=render;
-document.getElementById("type").onchange=render;
+document.getElementById("search").oninput = render;
+document.getElementById("phone").oninput = render;
+document.getElementById("type").onchange = render;
 
 </script>
 
