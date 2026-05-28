@@ -332,11 +332,11 @@ ${data.experience||"-"}
 
 ` : `
 
-<p><b>Owner / Director:</b>
+<p><b>Owner Name:</b>
 ${data.ownerName||"-"}
 </p>
 
-<p><b>Established:</b>
+<p><b>Established Date:</b>
 ${data.establishedDate||"-"}
 </p>
 
@@ -353,16 +353,34 @@ ${subjects.join(", ")||"-"}
 </p>
 
 <p><b>Location:</b>
-${data.location||data.area||data.address||"-"}
+${data.location || data.address || data.area || "-"}
 </p>
 
 <p><b>Phone:</b>
 ${data.phone||"-"}
 </p>
 
+${data.alternatePhone ? `
+
+<p><b>Alternate Phone:</b>
+${data.alternatePhone}
+</p>
+
+` : ""}
+
+${data.email ? `
+
+<p><b>Email:</b>
+${data.email}
+</p>
+
+` : ""}
+
 <p><b>Description:</b>
 ${data.description||data.notes||"-"}
 </p>
+
+
 
 </div>
 
