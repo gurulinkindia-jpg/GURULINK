@@ -10,7 +10,7 @@
 
 body{
 margin:0;
-font-family:Arial;
+font-family:Arial,sans-serif;
 background:#eef2f7;
 }
 
@@ -23,7 +23,7 @@ text-align:center;
 
 .container{
 width:90%;
-max-width:750px;
+max-width:800px;
 margin:20px auto;
 background:white;
 padding:25px;
@@ -48,13 +48,17 @@ resize:none;
 button{
 width:100%;
 padding:14px;
-border:none;
-border-radius:10px;
 background:#e65100;
 color:white;
+border:none;
+border-radius:10px;
 font-size:16px;
 cursor:pointer;
-margin-top:20px;
+}
+
+button:disabled{
+opacity:.7;
+cursor:not-allowed;
 }
 
 .preview{
@@ -65,37 +69,37 @@ margin-top:10px;
 }
 
 .preview img{
-width:80px;
-height:80px;
-object-fit:cover;
+width:90px;
+height:90px;
 border-radius:10px;
+object-fit:cover;
 border:1px solid #ddd;
 }
 
 .modeBox{
-border:1px solid #ddd;
 padding:15px;
+border:1px solid #ddd;
 border-radius:10px;
 }
 
-.modeItem{
-margin-bottom:15px;
-}
-
-.modeItem label{
+.row{
 display:flex;
 align-items:center;
 gap:10px;
-font-weight:bold;
+margin:10px 0;
 }
 
-.modeItem input[type="checkbox"]{
+.row input[type=checkbox]{
 width:auto;
+transform:scale(1.2);
 }
 
 .modeFee{
 display:none;
-margin-top:10px;
+padding:10px;
+background:#f4f4f4;
+border-radius:10px;
+margin-bottom:10px;
 }
 
 </style>
@@ -106,6 +110,7 @@ margin-top:10px;
 <header>
 
 <h1>Skill Teacher Registration</h1>
+<p>Registration Fee ₹100</p>
 
 </header>
 
@@ -124,8 +129,12 @@ placeholder="Phone Number"
 required>
 
 <input
-id="email"
+id="alternatePhone"
+placeholder="Alternate Phone Number">
+
+<input
 type="email"
+id="email"
 placeholder="Email">
 
 <input
@@ -134,72 +143,262 @@ placeholder="Website / Social Link">
 
 <input
 id="qualification"
-placeholder="Qualification">
+placeholder="Qualification / Certification">
 
 <input
 id="experience"
-placeholder="Experience">
-
-
-<h3>Skill Subject</h3>
-
-<select id="subject">
-
-<option value="">
-Select Skill Subject
-</option>
-
-<option>Computer</option>
-<option>Coding</option>
-<option>Spoken English</option>
-<option>Digital Marketing</option>
-<option>Hand Craft</option>
-<option>Embroidery</option>
-<option>Cake Making</option>
-<option>Cooking</option>
-<option>Beautician</option>
-<option>Tailoring</option>
-<option>Graphic Design</option>
-<option>Video Editing</option>
-
-<option value="other">
-Other
-</option>
-
-</select>
-
-<input
-id="customSubject"
-placeholder="Write Subject Name"
-style="display:none"
->
-
+placeholder="Experience: 5 Years, 6 Months">
 
 <input
 id="location"
-placeholder="Preferred Teaching Area Example: Beltola"
->
+placeholder="Preferred Teaching Area. Example: Guwahati, Delhi, Mumbai etc."
+required>
+
+<input
+id="mapLink"
+placeholder="Google Map Location Link (Paste URL if available)">
+
+
+
+<h3>
+Skills / Subjects (More than one can be selected)
+<span style="color:red">*</span>
+</h3>
+
+<div class="modeBox">
+
+<div class="row">
+<input type="checkbox" value="Computer" class="skillCheck"> Computer
+</div>
+
+<div class="row">
+<input type="checkbox" value="Coding" class="skillCheck"> Coding
+</div>
+
+<div class="row">
+<input type="checkbox" value="Programming" class="skillCheck"> Programming
+</div>
+
+<div class="row">
+<input type="checkbox" value="Web Development" class="skillCheck"> Web Development
+</div>
+
+<div class="row">
+<input type="checkbox" value="App Development" class="skillCheck"> App Development
+</div>
+
+<div class="row">
+<input type="checkbox" value="AI & Machine Learning" class="skillCheck"> AI & Machine Learning
+</div>
+
+<div class="row">
+<input type="checkbox" value="Data Science" class="skillCheck"> Data Science
+</div>
+
+<div class="row">
+<input type="checkbox" value="Digital Marketing" class="skillCheck"> Digital Marketing
+</div>
+
+<div class="row">
+<input type="checkbox" value="Graphic Design" class="skillCheck"> Graphic Design
+</div>
+
+<div class="row">
+<input type="checkbox" value="Video Editing" class="skillCheck"> Video Editing
+</div>
+
+<div class="row">
+<input type="checkbox" value="Animation" class="skillCheck"> Animation
+</div>
+
+<div class="row">
+<input type="checkbox" value="Photography" class="skillCheck"> Photography
+</div>
+
+<div class="row">
+<input type="checkbox" value="Content Writing" class="skillCheck"> Content Writing
+</div>
+
+<div class="row">
+<input type="checkbox" value="Spoken English" class="skillCheck"> Spoken English
+</div>
+
+<div class="row">
+<input type="checkbox" value="Public Speaking" class="skillCheck"> Public Speaking
+</div>
+
+<div class="row">
+<input type="checkbox" value="Personality Development" class="skillCheck"> Personality Development
+</div>
+
+<div class="row">
+<input type="checkbox" value="Hand Craft" class="skillCheck"> Hand Craft
+</div>
+
+<div class="row">
+<input type="checkbox" value="Embroidery" class="skillCheck"> Embroidery
+</div>
+
+<div class="row">
+<input type="checkbox" value="Tailoring" class="skillCheck"> Tailoring
+</div>
+
+<div class="row">
+<input type="checkbox" value="Fashion Designing" class="skillCheck"> Fashion Designing
+</div>
+
+<div class="row">
+<input type="checkbox" value="Beautician" class="skillCheck"> Beautician
+</div>
+
+<div class="row">
+<input type="checkbox" value="Hair Styling" class="skillCheck"> Hair Styling
+</div>
+
+<div class="row">
+<input type="checkbox" value="Makeup Artist" class="skillCheck"> Makeup Artist
+</div>
+
+<div class="row">
+<input type="checkbox" value="Cooking" class="skillCheck"> Cooking
+</div>
+
+<div class="row">
+<input type="checkbox" value="Cake Making" class="skillCheck"> Cake Making
+</div>
+
+<div class="row">
+<input type="checkbox" value="Bakery" class="skillCheck"> Bakery
+</div>
+
+<div class="row">
+<input type="checkbox" value="Yoga" class="skillCheck"> Yoga
+</div>
+
+<div class="row">
+<input type="checkbox" value="Fitness Training" class="skillCheck"> Fitness Training
+</div>
+
+<div class="row">
+<input type="checkbox" value="Gym Training" class="skillCheck"> Gym Training
+</div>
+
+<div class="row">
+<input type="checkbox" value="Martial Arts" class="skillCheck"> Martial Arts
+</div>
+
+<div class="row">
+<input type="checkbox" value="Driving" class="skillCheck"> Driving
+</div>
+
+<div class="row">
+<input type="checkbox" value="Electrician" class="skillCheck"> Electrician
+</div>
+
+<div class="row">
+<input type="checkbox" value="Plumbing" class="skillCheck"> Plumbing
+</div>
+
+<div class="row">
+<input type="checkbox" value="Carpentry" class="skillCheck"> Carpentry
+</div>
+
+<div class="row">
+<input type="checkbox" value="Mobile Repairing" class="skillCheck"> Mobile Repairing
+</div>
+
+<div class="row">
+<input type="checkbox" value="Computer Hardware" class="skillCheck"> Computer Hardware
+</div>
+
+<div class="row">
+<input type="checkbox" value="AC Repairing" class="skillCheck"> AC Repairing
+</div>
+
+<div class="row">
+<input type="checkbox" value="CCTV Installation" class="skillCheck"> CCTV Installation
+</div>
+
+<div class="row">
+<input type="checkbox" value="Interior Design" class="skillCheck"> Interior Design
+</div>
+
+<div class="row">
+<input type="checkbox" value="Event Management" class="skillCheck"> Event Management
+</div>
+
+<div class="row">
+<input type="checkbox" value="Business Training" class="skillCheck"> Business Training
+</div>
+
+<div class="row">
+<input type="checkbox" value="Stock Market" class="skillCheck"> Stock Market
+</div>
+
+<div class="row">
+<input type="checkbox" value="Trading" class="skillCheck"> Trading
+</div>
+
+<div class="row">
+<input type="checkbox" value="other" id="otherCheck"> Other
+</div>
+
+<input
+id="otherSkill"
+placeholder="Write Other Skill"
+style="display:none;margin-top:10px">
+
+<p
+id="skillError"
+style="color:red;display:none;">
+
+Please select at least one skill
+
+</p>
+
+</div>
+
 
 
 <h3>Teaching Modes</h3>
 
 <div class="modeBox">
 
-<div class="modeItem">
-
-<label>
-
+<div class="row">
 <input
 type="checkbox"
-onchange="toggleFee('homeFeeBox')">
+value="Individual Coaching"
+id="individualCheck"
+onchange="toggleFee('individual')">
 
-Home Tuition
-
+<label>
+Individual Coaching
 </label>
+</div>
 
-<div
-id="homeFeeBox"
-class="modeFee">
+<div id="individual" class="modeFee">
+
+<input
+id="individualFee"
+placeholder="Enter Individual Coaching Fee">
+
+</div>
+
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Home Tuition"
+id="homeCheck"
+onchange="toggleFee('home')">
+
+<label>
+Home Tuition
+</label>
+</div>
+
+<div id="home" class="modeFee">
 
 <input
 id="homeFee"
@@ -207,74 +406,109 @@ placeholder="Enter Home Tuition Fee">
 
 </div>
 
-</div>
 
 
-<div class="modeItem">
-
-<label>
-
+<div class="row">
 <input
 type="checkbox"
-onchange="toggleFee('groupFeeBox')">
+value="Group Coaching"
+id="groupCheck"
+onchange="toggleFee('group')">
 
-Group Tuition
-
+<label>
+Group Coaching
 </label>
+</div>
 
-<div
-id="groupFeeBox"
-class="modeFee">
+<div id="group" class="modeFee">
 
 <input
 id="groupFee"
-placeholder="Enter Group Tuition Fee">
+placeholder="Enter Group Coaching Fee">
 
 </div>
 
-</div>
 
 
-<div class="modeItem">
-
-<label>
-
+<div class="row">
 <input
 type="checkbox"
-onchange="toggleFee('onlineFeeBox')">
+value="Dual Coaching"
+id="dualCheck"
+onchange="toggleFee('dual')">
 
+<label>
+Dual Coaching
+</label>
+</div>
+
+<div id="dual" class="modeFee">
+
+<input
+id="dualFee"
+placeholder="Enter Dual Coaching Fee">
+
+</div>
+
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Super/Special Group Coaching"
+id="superCheck"
+onchange="toggleFee('superGroup')">
+
+<label>
+Super/Special Group Coaching
+</label>
+</div>
+
+<div id="superGroup" class="modeFee">
+
+<input
+id="superGroupFee"
+placeholder="Enter Super/Special Group Coaching Fee">
+
+</div>
+
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Online Individual"
+id="onlineIndividualCheck"
+onchange="toggleFee('onlineIndividual')">
+
+<label>
 Online Individual
-
 </label>
+</div>
 
-<div
-id="onlineFeeBox"
-class="modeFee">
+<div id="onlineIndividual" class="modeFee">
 
 <input
-id="onlineFee"
-placeholder="Enter Online Fee">
+id="onlineIndividualFee"
+placeholder="Enter Online Individual Fee">
 
 </div>
 
-</div>
 
 
-<div class="modeItem">
-
-<label>
-
+<div class="row">
 <input
 type="checkbox"
-onchange="toggleFee('onlineGroupFeeBox')">
+value="Online Group"
+id="onlineGroupCheck"
+onchange="toggleFee('onlineGroup')">
 
+<label>
 Online Group
-
 </label>
+</div>
 
-<div
-id="onlineGroupFeeBox"
-class="modeFee">
+<div id="onlineGroup" class="modeFee">
 
 <input
 id="onlineGroupFee"
@@ -282,9 +516,52 @@ placeholder="Enter Online Group Fee">
 
 </div>
 
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Demo Class Reg. Fee"
+id="demoCheck"
+onchange="toggleFee('demo')">
+
+<label>
+Demo Class Reg. Fee
+</label>
+</div>
+
+<div id="demo" class="modeFee">
+
+<input
+id="demoFee"
+placeholder="Enter Demo Class Registration Fee">
+
+</div>
+
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Other"
+id="otherModeCheck"
+onchange="toggleFee('otherMode')">
+
+<label>
+Other
+</label>
+</div>
+
+<div id="otherMode" class="modeFee">
+
+<input
+id="otherModeFee"
+placeholder="Enter Other Fee / Details">
+
 </div>
 
 </div>
+
 
 
 <h3>Profile Photo</h3>
@@ -292,11 +569,59 @@ placeholder="Enter Online Group Fee">
 <input
 type="file"
 id="photo"
-accept="image/*">
+accept="image/*"
+required>
 
 <div
 id="photoPreview"
 class="preview"></div>
+
+
+
+<h3>Identity Proof (Upload any one) <span style="color:red">*</span></h3>
+
+<select id="idType" required>
+
+<option value="">
+Select ID Type
+</option>
+
+<option value="Aadhaar">
+Aadhaar Card
+</option>
+
+<option value="Driving License">
+Driving License
+</option>
+
+<option value="Voter ID">
+Voter ID
+</option>
+
+<option value="PAN">
+PAN Card
+</option>
+
+<option value="Passport">
+Passport
+</option>
+
+<option value="Other">
+Other
+</option>
+
+</select>
+
+<input
+type="file"
+id="idUpload"
+accept="image/*"
+required>
+
+<div
+class="preview"
+id="idPreview"></div>
+
 
 
 <h3>Gallery Photos (Max 5)</h3>
@@ -304,17 +629,47 @@ class="preview"></div>
 <input
 type="file"
 id="gallery"
+accept="image/*"
 multiple
-accept="image/*">
+style="display:none">
+
+<button
+type="button"
+onclick="document.getElementById('gallery').click()">
+
+📸 Add Gallery Images
+
+</button>
 
 <div
 id="galleryPreview"
 class="preview"></div>
 
 
+
+<div style="margin-top:20px;padding:15px;background:#f5f5f5;border-radius:10px;">
+
+<input
+type="checkbox"
+id="declaration"
+required>
+
+<label
+for="declaration"
+style="font-size:14px;line-height:1.5;">
+
+I hereby declare that all the information provided by me in this form is true and correct to the best of my knowledge and belief. I understand that if any information is found to be false or incorrect, my application may be rejected or necessary action may be taken against me. I also agree to follow all the rules, regulations, and responsibilities assigned by the GURULINK, powered by G10 Group.
+
+</label>
+
+</div>
+
+
+
 <textarea
 id="description"
 placeholder="About Teacher"></textarea>
+
 
 
 <button type="submit">
@@ -326,6 +681,8 @@ Continue To Payment
 </form>
 
 </div>
+
+
 
 
 <script type="module">
@@ -356,27 +713,38 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
 const app=initializeApp(firebaseConfig);
+
 const db=getDatabase(app);
 
-const API_KEY="31f729ff855eb2e42c00ee508a8647ea";
+const API_KEY=
+"31f729ff855eb2e42c00ee508a8647ea";
 
 
-/* ELEMENTS */
+const form=document.getElementById("teacherForm");
 
-const teacherForm=document.getElementById("teacherForm");
-const subject=document.getElementById("subject");
-const customSubject=document.getElementById("customSubject");
-const photo=document.getElementById("photo");
-const photoPreview=document.getElementById("photoPreview");
-const gallery=document.getElementById("gallery");
-const galleryPreview=document.getElementById("galleryPreview");
+const photo=
+document.getElementById("photo");
 
+const photoPreview=
+document.getElementById("photoPreview");
 
-/* IMAGE UPLOAD */
+const gallery=
+document.getElementById("gallery");
+
+const galleryPreview=
+document.getElementById("galleryPreview");
+
+const idUpload=
+document.getElementById("idUpload");
+
+const idPreview=
+document.getElementById("idPreview");
+
+const idTypeSelect=
+document.getElementById("idType");
+
 
 async function upload(file){
-
-try{
 
 let fd=new FormData();
 
@@ -392,58 +760,54 @@ body:fd
 
 let data=await res.json();
 
-if(!data.success){
-
-throw new Error("Upload failed");
-
-}
-
 return data.data.url;
 
 }
-catch(err){
 
-console.log(err);
 
-return "";
+
+/* SKILL */
+
+const otherCheck=
+document.getElementById("otherCheck");
+
+const otherSkill=
+document.getElementById("otherSkill");
+
+otherCheck.addEventListener("change",()=>{
+
+if(otherCheck.checked){
+
+otherSkill.style.display="block";
+otherSkill.required=true;
+
+}else{
+
+otherSkill.style.display="none";
+otherSkill.required=false;
+otherSkill.value="";
 
 }
 
-}
+});
 
 
-/* SUBJECT */
 
-subject.addEventListener(
-"change",
-()=>{
-
-customSubject.style.display=
-subject.value==="other"
-?
-"block"
-:
-"none";
-
-}
-);
-
-
-/* PROFILE PREVIEW */
+/* PHOTO PREVIEW */
 
 photo.addEventListener(
 "change",
-()=>{
+function(){
 
 photoPreview.innerHTML="";
 
-if(photo.files[0]){
+if(this.files.length>0){
 
 let img=document.createElement("img");
 
 img.src=
 URL.createObjectURL(
-photo.files[0]
+this.files[0]
 );
 
 photoPreview.appendChild(img);
@@ -454,30 +818,71 @@ photoPreview.appendChild(img);
 );
 
 
-/* GALLERY PREVIEW */
+
+/* ID PREVIEW */
+
+idUpload.addEventListener(
+"change",
+function(){
+
+idPreview.innerHTML="";
+
+if(this.files.length>0){
+
+let img=document.createElement("img");
+
+img.src=
+URL.createObjectURL(
+this.files[0]
+);
+
+idPreview.appendChild(img);
+
+}
+
+}
+);
+
+
+
+/* GALLERY */
+
+let selectedFiles=[];
 
 gallery.addEventListener(
 "change",
-()=>{
+function(){
 
-galleryPreview.innerHTML="";
+let newFiles=
+Array.from(this.files);
 
-if(gallery.files.length>5){
+if(
+selectedFiles.length +
+newFiles.length > 5
+){
 
 alert(
 "Maximum 5 photos allowed"
 );
 
-gallery.value="";
-
 return;
 
 }
 
-Array.from(
-gallery.files
-)
-.forEach(file=>{
+selectedFiles.push(...newFiles);
+
+renderPreview();
+
+this.value="";
+
+}
+);
+
+function renderPreview(){
+
+galleryPreview.innerHTML="";
+
+selectedFiles.forEach(file=>{
 
 let img=
 document.createElement("img");
@@ -490,31 +895,50 @@ galleryPreview.appendChild(img);
 });
 
 }
-);
 
 
-/* FORM SUBMIT */
 
-teacherForm.addEventListener(
+/* SUBMIT */
+
+form.addEventListener(
 "submit",
-async(e)=>{
+async function(e){
 
 e.preventDefault();
 
-try{
+let checked=
+document.querySelectorAll(
+".skillCheck:checked"
+).length;
 
-const btn=
-teacherForm.querySelector(
-"button"
+if(
+checked===0 &&
+!otherCheck.checked
+){
+
+document.getElementById(
+"skillError"
+).style.display="block";
+
+return;
+
+}else{
+
+document.getElementById(
+"skillError"
+).style.display="none";
+
+}
+
+const submitBtn=
+form.querySelector(
+'button[type="submit"]'
 );
 
-btn.disabled=true;
+submitBtn.disabled=true;
+submitBtn.innerText="Processing...";
 
-btn.innerHTML=
-"Submitting...";
-
-
-/* PHOTO */
+try{
 
 let photoUrl="";
 
@@ -528,40 +952,28 @@ photo.files[0]
 }
 
 
-/* GALLERY */
+let idUrl="";
+
+if(idUpload.files[0]){
+
+idUrl=
+await upload(
+idUpload.files[0]
+);
+
+}
+
 
 let galleryUrls=[];
 
-for(let file of gallery.files){
+for(let file of selectedFiles){
 
-let url=
-await upload(file);
-
-if(url){
-
-galleryUrls.push(url);
+galleryUrls.push(
+await upload(file)
+);
 
 }
 
-}
-
-
-/* SUBJECT */
-
-let subjectName=
-
-subject.value==="other"
-
-?
-
-customSubject.value.trim()
-
-:
-
-subject.value;
-
-
-/* TEACHING MODES */
 
 let teachingModes=[];
 
@@ -569,64 +981,112 @@ document
 .querySelectorAll(
 'input[type="checkbox"]:checked'
 )
-.forEach(c=>{
+.forEach(item=>{
 
-let text=
-c.parentElement.innerText.trim();
-
-teachingModes.push(text);
+teachingModes.push(
+item.value
+);
 
 });
 
 
-/* SAVE FIREBASE */
+let skills=[];
+
+document
+.querySelectorAll(
+".skillCheck:checked"
+)
+.forEach(item=>{
+
+if(item.value!=="other"){
+
+skills.push(
+item.value
+);
+
+}
+
+});
+
+
+if(
+otherCheck.checked &&
+otherSkill.value.trim()!==""
+){
+
+skills.push(
+otherSkill.value
+);
+
+}
+
+
 
 let newRef=
+
 await push(
+
 ref(db,"teachers"),
+
 {
 
 name:
-document.getElementById("name").value.trim(),
+document.getElementById("name").value,
 
 phone:
-document.getElementById("phone").value.trim(),
+document.getElementById("phone").value,
+
+alternatePhone:
+document.getElementById("alternatePhone").value,
 
 email:
-document.getElementById("email").value.trim(),
+document.getElementById("email").value,
 
 website:
-document.getElementById("website").value.trim(),
+document.getElementById("website").value,
 
 qualification:
-document.getElementById("qualification").value.trim(),
+document.getElementById("qualification").value,
 
 experience:
-document.getElementById("experience").value.trim(),
+document.getElementById("experience").value,
 
-subject:
-subjectName,
+skills,
+
+mapLink:
+document.getElementById("mapLink").value,
 
 location:
-document.getElementById("location").value.trim(),
+document.getElementById("location").value,
 
-teachingModes:
 teachingModes,
 
+individualFee:
+document.getElementById("individualFee").value,
+
 homeFee:
-document.getElementById("homeFee").value || "",
+document.getElementById("homeFee").value,
 
 groupFee:
-document.getElementById("groupFee").value || "",
+document.getElementById("groupFee").value,
+
+dualFee:
+document.getElementById("dualFee").value,
+
+superGroupFee:
+document.getElementById("superGroupFee").value,
 
 onlineIndividualFee:
-document.getElementById("onlineFee").value || "",
+document.getElementById("onlineIndividualFee").value,
 
 onlineGroupFee:
-document.getElementById("onlineGroupFee").value || "",
+document.getElementById("onlineGroupFee").value,
 
-description:
-document.getElementById("description").value.trim(),
+demoFee:
+document.getElementById("demoFee").value,
+
+otherModeFee:
+document.getElementById("otherModeFee").value,
 
 photo:
 photoUrl,
@@ -634,21 +1094,26 @@ photoUrl,
 gallery:
 galleryUrls,
 
+idType:
+idTypeSelect.value,
+
+idProof:
+idUrl,
+
+declarationAccepted:
+document.getElementById("declaration").checked,
+
+description:
+document.getElementById("description").value,
+
 category:"skill",
 
-type:"teacher",
-
-status:"pending",
-
-createdAt:
-Date.now()
+status:"pending"
 
 }
 
 );
 
-
-/* SAVE GENERATED ID */
 
 const teacherId=
 newRef.key;
@@ -658,41 +1123,35 @@ localStorage.setItem(
 teacherId
 );
 
-
-/* PAYMENT REDIRECT */
+setTimeout(()=>{
 
 window.location.href=
-"payment.html?type=teacher&id="+teacherId;
+"payment.html?type=teacher";
 
+},300);
 
 }
-catch(err){
+catch(error){
 
-console.log(err);
+console.log(error);
 
 alert(
-"Error: "+
-err.message
+"Error:\n"+
+error.message
 );
 
-}
-finally{
+submitBtn.disabled=false;
 
-const btn=
-teacherForm.querySelector(
-"button"
-);
-
-btn.disabled=false;
-
-btn.innerHTML=
+submitBtn.innerText=
 "Continue To Payment";
 
 }
 
-});
+}
+);
 
 </script>
+
 
 
 <script>
