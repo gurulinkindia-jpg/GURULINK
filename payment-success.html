@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -9,26 +9,59 @@
 <style>
 
 body{
+margin:0;
 font-family:Arial,sans-serif;
 background:#eef2f7;
 display:flex;
 justify-content:center;
 align-items:center;
 height:100vh;
-margin:0;
 }
 
 .box{
+width:90%;
+max-width:400px;
 background:white;
 padding:30px;
 border-radius:15px;
 text-align:center;
 box-shadow:0 5px 15px rgba(0,0,0,.15);
-width:350px;
 }
 
 h2{
 margin-top:0;
+color:#1565c0;
+}
+
+p{
+font-size:15px;
+line-height:1.6;
+}
+
+.loader{
+width:50px;
+height:50px;
+border:5px solid #ddd;
+border-top:5px solid #1565c0;
+border-radius:50%;
+margin:20px auto;
+animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+100%{
+transform:rotate(360deg);
+}
+}
+
+.success{
+color:green;
+font-weight:bold;
+}
+
+.error{
+color:red;
+font-weight:bold;
 }
 
 </style>
@@ -38,7 +71,9 @@ margin-top:0;
 
 <div class="box">
 
-<h2>Payment Processing...</h2>
+<h2>Payment Processing</h2>
+
+<div class="loader" id="loader"></div>
 
 <p id="msg">
 Saving payment details...
@@ -58,7 +93,8 @@ getDatabase,
 ref,
 push,
 get,
-set
+set,
+update
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
@@ -88,13 +124,11 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
 
-
 const app = initializeApp(firebaseConfig);
 
 const db = getDatabase(app);
 
 const auth = getAuth(app);
-
 
 
 /* URL PARAMS */
@@ -113,39 +147,42 @@ params.get("id");
 
 if(!id){
 
+if(type==="institution"){
+
 id =
+localStorage.getItem("institutionId");
 
-type === "institution"
+}
+else{
 
-?
-
-localStorage.getItem("institutionId")
-
-:
-
+id =
 localStorage.getItem("teacherId");
 
 }
 
+}
 
-/* CHECK */
+
+/* CHECK ID */
 
 if(!id){
 
+document.getElementById("loader").style.display="none";
+
 document.getElementById("msg").innerHTML =
 
-"Profile ID missing. Please login again.";
+'<span class="error">Profile ID missing.</span>';
 
-throw new Error("Missing Profile ID");
+throw new Error("Profile ID Missing");
 
 }
 
 
-/* AMOUNT */
+/* PAYMENT AMOUNT */
 
 const amount =
 
-type === "institution"
+type==="institution"
 
 ?
 
@@ -156,137 +193,168 @@ type === "institution"
 100;
 
 
-
-/* MAIN */
+/* MAIN FUNCTION */
 
 async function savePayment(){
 
 try{
 
-let user = null;
+/* DATABASE PATH */
 
+const profilePath =
 
-/* PATH */
-
-const path =
-
-type === "teacher"
+type==="institution"
 
 ?
 
-"teachers/" + id
+"institutions/"+id
 
 :
 
-"institutions/" + id;
+"teachers/"+id;
 
 
 /* GET PROFILE */
 
-const snap = await get(ref(db,path));
+const snap =
+await get(ref(db,profilePath));
 
 
-if(snap.exists()){
+if(!snap.exists()){
 
-user = snap.val();
-
-}else{
+document.getElementById("loader").style.display="none";
 
 document.getElementById("msg").innerHTML =
 
-"Profile not found.";
+'<span class="error">Profile not found.</span>';
 
 throw new Error("Profile not found");
 
 }
 
 
+const user = snap.val();
+
+
+/* CREATE PAYMENT */
+
+const paymentRef =
+push(ref(db,"payments"));
+
 
 /* SAVE PAYMENT */
-
-const paymentRef = push(ref(db,"payments"));
 
 await set(paymentRef,{
 
 paymentId:paymentRef.key,
 
-type:type,
-
 profileId:id,
 
 uid:id,
 
+type:type,
+
 name:user.name || "",
+
+ownerName:user.ownerName || "",
 
 email:user.email || "",
 
 phone:user.phone || "",
 
+alternatePhone:
+user.alternatePhone || "",
+
 address:user.address || "",
+
+area:user.area || "",
 
 website:user.website || "",
 
-class:user.class || "",
+mapLink:user.mapLink || "",
 
 subjects:user.subjects || [],
 
-teachingModes:user.teachingModes || [],
+class:user.class || "",
 
-homeFee:user.homeFee || "",
+qualification:
+user.qualification || "",
 
-groupFee:user.groupFee || "",
+experience:
+user.experience || "",
 
-onlineFee:user.onlineFee || "",
+teachingModes:
+user.teachingModes || [],
+
+individualFee:
+user.individualFee || "",
+
+homeFee:
+user.homeFee || "",
+
+groupFee:
+user.groupFee || "",
+
+onlineFee:
+user.onlineFee || "",
+
+offlineFee:
+user.offlineFee || "",
+
+hybridFee:
+user.hybridFee || "",
+
+demoFee:
+user.demoFee || "",
+
+otherModeFee:
+user.otherModeFee || "",
 
 amount:amount,
 
 status:"paid",
 
-date:new Date().toLocaleString(),
+date:
+new Date().toLocaleString(),
 
 createdAt:Date.now()
 
 });
 
 
-/* UPDATE PAYMENT STATUS */
+/* UPDATE PROFILE */
 
-await set(ref(db,path+"/paymentStatus"),"paid");
+await update(
+ref(db,profilePath),
+{
+paymentStatus:"paid"
+}
+);
 
 
-/* LOCAL STORAGE */
+/* SAVE LOCAL STORAGE */
 
-localStorage.setItem("paymentDone","yes");
+localStorage.setItem(
+"paymentDone",
+"yes"
+);
 
+
+/* SUCCESS MESSAGE */
+
+document.getElementById("loader").style.display="none";
 
 document.getElementById("msg").innerHTML =
 
-"Payment successful! Redirecting...";
+'<span class="success">Payment successful! Redirecting...</span>';
 
 
 /* REDIRECT */
 
 setTimeout(()=>{
 
-if(type==="teacher"){
-
 window.location.href =
-
-`profile-view.html?type=teacher&id=${id}`;
-
-}
-else if(type==="institution"){
-
-window.location.href =
-
-`profile-view.html?type=institution&id=${id}`;
-
-}
-else{
-
-window.location.href = "index.html";
-
-}
+"profile-view.html?id="+id;
 
 },2000);
 
@@ -295,14 +363,20 @@ catch(err){
 
 console.log(err);
 
+document.getElementById("loader").style.display="none";
+
 document.getElementById("msg").innerHTML =
 
-"Payment save failed.<br><br>" + err.message;
+'<span class="error">Payment failed.</span><br><br>' +
+
+err.message;
 
 }
 
 }
 
+
+/* START */
 
 savePayment();
 
