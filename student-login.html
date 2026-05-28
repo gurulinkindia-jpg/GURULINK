@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Student Login - GURULINK</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#eef2f7;
+display:flex;
+justify-content:center;
+align-items:center;
+min-height:100vh;
+padding:20px;
+}
+
+.box{
+width:100%;
+max-width:420px;
+background:white;
+padding:30px;
+border-radius:18px;
+box-shadow:0 5px 20px rgba(0,0,0,.12);
+}
+
+h2{
+margin-top:0;
+text-align:center;
+color:#1565c0;
+}
+
+p{
+text-align:center;
+color:#666;
+margin-bottom:20px;
+}
+
+input{
+width:100%;
+padding:13px;
+margin:10px 0;
+border:1px solid #ccc;
+border-radius:10px;
+font-size:15px;
+}
+
+button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:10px;
+font-size:15px;
+cursor:pointer;
+margin-top:10px;
+font-weight:bold;
+}
+
+.loginBtn{
+background:#1565c0;
+color:white;
+}
+
+.switchBtn{
+background:#43a047;
+color:white;
+}
+
+#msg{
+margin-top:15px;
+text-align:center;
+font-weight:bold;
+}
+
+.hidden{
+display:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<!-- LOGIN -->
+
+<div id="loginBox">
+
+<h2>Student Login</h2>
+
+<p>
+Login to view teacher and institute details
+</p>
+
+<input
+type="email"
+id="loginEmail"
+placeholder="Enter Email">
+
+<input
+type="password"
+id="loginPassword"
+placeholder="Enter Password">
+
+<button
+class="loginBtn"
+onclick="loginStudent()">
+
+Login
+
+</button>
+
+<button
+class="switchBtn"
+onclick="showRegister()">
+
+New Student? Register
+
+</button>
+
+</div>
+
+
+<!-- REGISTER -->
+
+<div id="registerBox" class="hidden">
+
+<h2>Student Registration</h2>
+
+<p>
+Create your student account
+</p>
+
+<input
+id="regName"
+placeholder="Full Name">
+
+<input
+type="email"
+id="regEmail"
+placeholder="Email">
+
+<input
+id="regPhone"
+placeholder="Phone Number">
+
+<input
+type="password"
+id="regPassword"
+placeholder="Create Password">
+
+<button
+class="loginBtn"
+onclick="registerStudent()">
+
+Register
+
+</button>
+
+<button
+class="switchBtn"
+onclick="showLogin()">
+
+Already Have Account? Login
+
+</button>
+
+</div>
+
+<div id="msg"></div>
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+import {
+getDatabase,
+ref,
+set
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+/* FIREBASE CONFIG */
+
+const firebaseConfig = {
+
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+
+authDomain:"gurulink-59cc7.firebaseapp.com",
+
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:"gurulink-59cc7",
+
+storageBucket:"gurulink-59cc7.appspot.com",
+
+messagingSenderId:"112148672399",
+
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
+};
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const db = getDatabase(app);
+
+const msg = document.getElementById("msg");
+
+/* SHOW REGISTER */
+
+window.showRegister = function(){
+
+document
+.getElementById("loginBox")
+.classList.add("hidden");
+
+document
+.getElementById("registerBox")
+.classList.remove("hidden");
+
+msg.innerHTML = "";
+
+};
+
+/* SHOW LOGIN */
+
+window.showLogin = function(){
+
+document
+.getElementById("registerBox")
+.classList.add("hidden");
+
+document
+.getElementById("loginBox")
+.classList.remove("hidden");
+
+msg.innerHTML = "";
+
+};
+
+/* REGISTER */
+
+window.registerStudent = async function(){
+
+const name =
+document.getElementById("regName")
+.value
+.trim();
+
+const email =
+document.getElementById("regEmail")
+.value
+.trim()
+.toLowerCase();
+
+const phone =
+document.getElementById("regPhone")
+.value
+.trim();
+
+const password =
+document.getElementById("regPassword")
+.value;
+
+if(
+!name ||
+!email ||
+!phone ||
+!password
+){
+
+msg.style.color = "red";
+
+msg.innerHTML =
+"Please fill all fields";
+
+return;
+
+}
+
+msg.style.color = "#1565c0";
+
+msg.innerHTML =
+"Creating account...";
+
+try{
+
+const userCred =
+
+await createUserWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+const uid =
+userCred.user.uid;
+
+/* SAVE STUDENT */
+
+await set(
+ref(db,"students/"+uid),
+{
+
+uid:uid,
+
+name:name,
+
+email:email,
+
+phone:phone,
+
+role:"student",
+
+createdAt:Date.now()
+
+}
+);
+
+/* SAVE USER ROLE */
+
+await set(
+ref(db,"users/"+uid),
+{
+
+uid:uid,
+
+role:"student",
+
+profileId:uid
+
+}
+);
+
+/* SESSION */
+
+localStorage.setItem("uid",uid);
+
+localStorage.setItem("role","student");
+
+localStorage.setItem("profileId",uid);
+
+msg.style.color = "green";
+
+msg.innerHTML =
+"Registration Successful";
+
+/* REDIRECT */
+
+const redirectId =
+localStorage.getItem(
+"redirectProfileId"
+);
+
+setTimeout(()=>{
+
+if(redirectId){
+
+localStorage.removeItem(
+"redirectProfileId"
+);
+
+window.location.href =
+"profile-view.html?id=" +
+redirectId;
+
+}
+else{
+
+window.location.href =
+"index.html";
+
+}
+
+},1500);
+
+}
+catch(err){
+
+msg.style.color = "red";
+
+if(
+err.code ===
+"auth/email-already-in-use"
+){
+
+msg.innerHTML =
+"Email already registered";
+
+}
+else if(
+err.code ===
+"auth/weak-password"
+){
+
+msg.innerHTML =
+"Password must be minimum 6 characters";
+
+}
+else{
+
+msg.innerHTML =
+err.message;
+
+}
+
+}
+
+};
+
+/* LOGIN */
+
+window.loginStudent = async function(){
+
+const email =
+document.getElementById("loginEmail")
+.value
+.trim()
+.toLowerCase();
+
+const password =
+document.getElementById("loginPassword")
+.value;
+
+if(!email || !password){
+
+msg.style.color = "red";
+
+msg.innerHTML =
+"Enter email and password";
+
+return;
+
+}
+
+msg.style.color = "#1565c0";
+
+msg.innerHTML =
+"Logging in...";
+
+try{
+
+const userCred =
+
+await signInWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+const uid =
+userCred.user.uid;
+
+/* SAVE SESSION */
+
+localStorage.setItem("uid",uid);
+
+localStorage.setItem("role","student");
+
+localStorage.setItem("profileId",uid);
+
+msg.style.color = "green";
+
+msg.innerHTML =
+"Login Successful";
+
+/* REDIRECT */
+
+const redirectId =
+localStorage.getItem(
+"redirectProfileId"
+);
+
+setTimeout(()=>{
+
+if(redirectId){
+
+localStorage.removeItem(
+"redirectProfileId"
+);
+
+window.location.href =
+"profile-view.html?id=" +
+redirectId;
+
+}
+else{
+
+window.location.href =
+"index.html";
+
+}
+
+},1000);
+
+}
+catch(err){
+
+msg.style.color = "red";
+
+msg.innerHTML =
+"Invalid email or password";
+
+}
+
+};
+
+</script>
+
+</body>
+</html>
