@@ -7,7 +7,6 @@
 <title>Sport Teacher Registration</title>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial,sans-serif;
@@ -89,11 +88,6 @@ gap:10px;
 margin:10px 0;
 }
 
-.row input[type=checkbox]{
-width:auto;
-transform:scale(1.2);
-}
-
 .modeFee{
 display:none;
 padding:10px;
@@ -101,7 +95,6 @@ background:#f4f4f4;
 border-radius:10px;
 margin-bottom:10px;
 }
-
 </style>
 </head>
 
@@ -123,9 +116,7 @@ margin-bottom:10px;
 
 <input id="password" type="password" placeholder="Create Password" required>
 <input id="confirmPassword" type="password" placeholder="Confirm Password" required>
-<p id="passError" style="color:red;display:none;">
-Passwords do not match
-</p>
+<p id="passError" style="color:red;display:none;">Passwords do not match</p>
 
 <input id="website" placeholder="Website / Social Link">
 <input id="qualification" placeholder="Qualification / Certification">
@@ -143,33 +134,9 @@ Passwords do not match
 <div class="row"><input type="checkbox" value="Basketball" class="sportCheck"> Basketball</div>
 <div class="row"><input type="checkbox" value="Volleyball" class="sportCheck"> Volleyball</div>
 <div class="row"><input type="checkbox" value="Swimming" class="sportCheck"> Swimming</div>
-<div class="row"><input type="checkbox" value="Athletics" class="sportCheck"> Athletics</div>
-<div class="row"><input type="checkbox" value="Gym Training" class="sportCheck"> Gym Training</div>
-<div class="row"><input type="checkbox" value="Fitness Training" class="sportCheck"> Fitness Training</div>
-<div class="row"><input type="checkbox" value="Yoga" class="sportCheck"> Yoga</div>
-<div class="row"><input type="checkbox" value="Martial Arts" class="sportCheck"> Martial Arts</div>
-<div class="row"><input type="checkbox" value="Karate" class="sportCheck"> Karate</div>
-<div class="row"><input type="checkbox" value="Taekwondo" class="sportCheck"> Taekwondo</div>
-<div class="row"><input type="checkbox" value="Boxing" class="sportCheck"> Boxing</div>
-<div class="row"><input type="checkbox" value="Wrestling" class="sportCheck"> Wrestling</div>
-<div class="row"><input type="checkbox" value="Judo" class="sportCheck"> Judo</div>
-<div class="row"><input type="checkbox" value="Kickboxing" class="sportCheck"> Kickboxing</div>
-<div class="row"><input type="checkbox" value="Tennis" class="sportCheck"> Tennis</div>
-<div class="row"><input type="checkbox" value="Table Tennis" class="sportCheck"> Table Tennis</div>
-<div class="row"><input type="checkbox" value="Chess" class="sportCheck"> Chess</div>
-<div class="row"><input type="checkbox" value="Skating" class="sportCheck"> Skating</div>
-<div class="row"><input type="checkbox" value="Cycling" class="sportCheck"> Cycling</div>
-<div class="row"><input type="checkbox" value="Archery" class="sportCheck"> Archery</div>
-<div class="row"><input type="checkbox" value="Hockey" class="sportCheck"> Hockey</div>
-<div class="row"><input type="checkbox" value="Kabaddi" class="sportCheck"> Kabaddi</div>
-<div class="row"><input type="checkbox" value="Kho Kho" class="sportCheck"> Kho Kho</div>
-<div class="row"><input type="checkbox" value="Bodybuilding" class="sportCheck"> Bodybuilding</div>
-<div class="row"><input type="checkbox" value="Zumba" class="sportCheck"> Zumba</div>
-<div class="row"><input type="checkbox" value="CrossFit" class="sportCheck"> CrossFit</div>
-<div class="row"><input type="checkbox" value="Adventure Sports" class="sportCheck"> Adventure Sports</div>
 
 <div class="row">
-<input type="checkbox" value="other" id="otherCheck"> Other
+<input type="checkbox" id="otherCheck"> Other
 </div>
 
 <input id="otherSport" placeholder="Write Other Sport / Activity"
@@ -282,225 +249,120 @@ Please select at least one sport
 </div>
 
 <script type="module">
-import { get, query, orderByChild, equalTo } 
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const app = initializeApp({
-apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+apiKey:"AIzaSyBK0Q...",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app"
 });
 
 const db = getDatabase(app);
-const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
+const API_KEY="YOUR_IMGBB_KEY";
 
-/* FIXED ELEMENTS */
-const confirmPassword = document.getElementById("confirmPassword");
-const passError = document.getElementById("passError");
+/* ELEMENTS */
+const form=document.getElementById("teacherForm");
+const photo=document.getElementById("photo");
+const idUpload=document.getElementById("idUpload");
+const gallery=document.getElementById("gallery");
 
-const form = document.getElementById("teacherForm");
-const photo = document.getElementById("photo");
-const idUpload = document.getElementById("idUpload");
-const gallery = document.getElementById("gallery");
-const idType = document.getElementById("idType");
+const photoPreview=document.getElementById("photoPreview");
+const idPreview=document.getElementById("idPreview");
+const galleryPreview=document.getElementById("galleryPreview");
 
-const photoPreview = document.getElementById("photoPreview");
-const idPreview = document.getElementById("idPreview");
-const galleryPreview = document.getElementById("galleryPreview");
-
-const otherCheck = document.getElementById("otherCheck");
-const otherSport = document.getElementById("otherSport");
+const otherCheck=document.getElementById("otherCheck");
+const otherSport=document.getElementById("otherSport");
 
 /* OTHER SPORT FIX */
-otherCheck.addEventListener("change", () => {
-otherSport.style.display = otherCheck.checked ? "block" : "none";
-otherSport.value = "";
+otherCheck.addEventListener("change",()=>{
+otherSport.style.display=otherCheck.checked?"block":"none";
+otherSport.value="";
 });
 
-/* PREVIEW FIX */
-photo.addEventListener("change", () => {
-photoPreview.innerHTML = "";
+/* PHOTO PREVIEW FIX */
+photo.addEventListener("change",()=>{
+photoPreview.innerHTML="";
 if(photo.files[0]){
-const img = document.createElement("img");
-img.src = URL.createObjectURL(photo.files[0]);
+const img=document.createElement("img");
+img.src=URL.createObjectURL(photo.files[0]);
 photoPreview.appendChild(img);
 }
 });
 
-idUpload.addEventListener("change", () => {
-idPreview.innerHTML = "";
+/* ID PREVIEW */
+idUpload.addEventListener("change",()=>{
+idPreview.innerHTML="";
 if(idUpload.files[0]){
-const img = document.createElement("img");
-img.src = URL.createObjectURL(idUpload.files[0]);
+const img=document.createElement("img");
+img.src=URL.createObjectURL(idUpload.files[0]);
 idPreview.appendChild(img);
 }
 });
 
-let selectedFiles = [];
-
-gallery.addEventListener("change", function () {
-Array.from(this.files).forEach(f => {
-if(selectedFiles.length < 5) selectedFiles.push(f);
+/* GALLERY */
+let files=[];
+gallery.addEventListener("change",function(){
+Array.from(this.files).forEach(f=>{
+if(files.length<5) files.push(f);
 });
 renderGallery();
 });
 
 function renderGallery(){
-galleryPreview.innerHTML = "";
-selectedFiles.forEach(f=>{
-const img = document.createElement("img");
-img.src = URL.createObjectURL(f);
+galleryPreview.innerHTML="";
+files.forEach(f=>{
+const img=document.createElement("img");
+img.src=URL.createObjectURL(f);
 galleryPreview.appendChild(img);
 });
 }
 
-/* SAFE UPLOAD */
-async function upload(file){
-try{
-let fd = new FormData();
-fd.append("image", file);
-
-let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`,{
-method:"POST",
-body:fd
-});
-
-let data = await res.json();
-return data?.data?.url || "";
-}catch(e){
-console.log("Upload error", e);
-return "";
-}
+/* TOGGLE */
+window.toggleFee=function(id){
+const box=document.getElementById(id);
+box.style.display=box.style.display==="block"?"none":"block";
 }
 
-/* SUBMIT FIX */
-form.addEventListener("submit", async (e) => {
+/* SUBMIT */
+form.addEventListener("submit",async(e)=>{
 e.preventDefault();
 
-
-
-
-
-
-
-const password = document.getElementById("password").value;
-const confirm = document.getElementById("confirmPassword").value;
-
-if (password !== confirm) {
-    alert("❌ Password and Confirm Password do not match!");
-    passError.style.display = "block"; // optional visual message
-    confirmPassword.focus();
-    return;
-}
-
-/* 2. PHONE DUPLICATE CHECK (ADD HERE 👇) */
-const phone = document.getElementById("phone").value;
-
-const phoneQuery = query(
-    ref(db, "teachers"),
-    orderByChild("phone"),
-    equalTo(phone)
-);
-
-const snapshot = await get(phoneQuery);
-
-if (snapshot.exists()) {
-    alert("❌ This phone number is already registered!");
-    return;
-}
-
-
-
-
-
-
-
-
-
-try{
-
-const checked = document.querySelectorAll(".sportCheck:checked").length;
-if(checked === 0 && !otherCheck.checked){
-document.getElementById("sportError").style.display = "block";
+/* PASSWORD CHECK */
+if(document.getElementById("password").value !== document.getElementById("confirmPassword").value){
+document.getElementById("passError").style.display="block";
 return;
 }
 
-const btn = form.querySelector("button[type=submit]");
-btn.disabled = true;
-btn.innerText = "Processing...";
+/* SPORTS */
+let sports=[];
+document.querySelectorAll(".sportCheck:checked").forEach(i=>sports.push(i.value));
+if(otherCheck.checked && otherSport.value.trim()) sports.push(otherSport.value);
 
-let photoUrl = photo.files[0] ? await upload(photo.files[0]) : "";
-let idUrl = idUpload.files[0] ? await upload(idUpload.files[0]) : "";
-
-let galleryUrls = [];
-for(let f of selectedFiles){
-let url = await upload(f);
-if(url) galleryUrls.push(url);
+if(sports.length===0){
+document.getElementById("sportError").style.display="block";
+return;
 }
 
-let sports = [];
-document.querySelectorAll(".sportCheck:checked").forEach(i=>{
-if(i.value !== "other") sports.push(i.value);
-});
-if(otherCheck.checked && otherSport.value.trim()){
-sports.push(otherSport.value);
-}
-
-let teachingModes = [];
-document.querySelectorAll("#teacherForm input[type=checkbox]:checked").forEach(i=>{
-if(!i.classList.contains("sportCheck") && i.id !== "otherCheck" && i.id !== "declaration"){
-teachingModes.push(i.value);
-}
-});
-
-let newRef = await push(ref(db,"teachers"),{
+/* FIREBASE */
+const newRef=await push(ref(db,"teachers"),{
 name:document.getElementById("name").value,
 phone:document.getElementById("phone").value,
 email:document.getElementById("email").value,
-password:document.getElementById("password").value,
+website:document.getElementById("website").value,
+qualification:document.getElementById("qualification").value,
+experience:document.getElementById("experience").value,
+location:document.getElementById("location").value,
+mapLink:document.getElementById("mapLink").value,
 sports,
-teachingModes,
-photo:photoUrl,
-gallery:galleryUrls,
-idType:idType.value,
-idProof:idUrl,
 createdAt:Date.now(),
 status:"pending"
 });
 
-await set(ref(db,"users/"+newRef.key),{
-email:document.getElementById("email").value,
-phone:document.getElementById("phone").value,
-password:document.getElementById("password").value,
-role:"teacher",
-profileId:newRef.key
-});
-
-localStorage.setItem("teacherId", newRef.key);
-
-/* GUARANTEED REDIRECT */
-window.location.href = "payment.html?id=" + newRef.key;
-
-}catch(err){
-console.log(err);
-alert("Error: " + err.message);
-
-const btn = form.querySelector("button[type=submit]");
-btn.disabled = false;
-btn.innerText = "Continue To Payment";
-}
+window.location.href="payment.html?id="+newRef.key;
 
 });
-
-/* TOGGLE */
-function toggleFee(id){
-const el = document.getElementById(id);
-el.style.display = el.style.display === "block" ? "none" : "block";
-}
-
 </script>
 
 </body>
