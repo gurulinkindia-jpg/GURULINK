@@ -6,7 +6,6 @@
 <title>GURULINK ADMIN DASHBOARD</title>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial;
@@ -15,7 +14,7 @@ background:#eef2f7;
 
 header{
 background:#0d47a1;
-color:#fff;
+color:white;
 padding:18px;
 text-align:center;
 }
@@ -36,14 +35,12 @@ margin-top:15px;
 }
 
 .box{
-background:#fff;
+background:white;
 padding:15px;
 border-radius:12px;
 text-align:center;
 box-shadow:0 3px 10px rgba(0,0,0,.1);
 }
-
-.box h2{color:#0d47a1}
 
 /* FILTER */
 .filterRow{
@@ -53,7 +50,7 @@ flex-wrap:wrap;
 margin:15px 0;
 }
 
-select,input{
+input,select{
 padding:10px;
 border-radius:8px;
 border:1px solid #ccc;
@@ -62,24 +59,16 @@ flex:1;
 
 /* CARD */
 .card{
-background:#fff;
+background:white;
 padding:15px;
 border-radius:12px;
 margin-top:15px;
 box-shadow:0 3px 10px rgba(0,0,0,.1);
-border-left:6px solid #999;
+border-left:6px solid #aaa;
 }
 
 .teacher{border-left-color:#1565c0;}
 .institution{border-left-color:#2e7d32;}
-
-.pending{background:#fff3e0;}
-.approved{background:#e8f5e9;}
-
-.highlight{
-border:2px solid red;
-box-shadow:0 0 10px rgba(255,0,0,.3);
-}
 
 .top{
 display:flex;
@@ -95,38 +84,35 @@ object-fit:cover;
 border:2px solid #1565c0;
 }
 
-.badge{
-padding:3px 10px;
-border-radius:20px;
-color:#fff;
-font-size:12px;
+.gallery img{
+width:60px;
+height:60px;
+border-radius:8px;
+margin:3px;
+object-fit:cover;
 }
 
-.green{background:green;}
-.orange{background:orange;}
-
-/* BUTTONS */
 button{
 padding:7px 10px;
 border:none;
 border-radius:6px;
-color:#fff;
+color:white;
 cursor:pointer;
 margin:3px;
 }
 
-.edit{background:#0d47a1;}
-.del{background:red;}
 .approve{background:green;}
+.del{background:red;}
+.edit{background:#0d47a1;}
 .review{background:#6a1b9a;}
 
-/* EDIT BOX */
+/* FULL EDIT PANEL */
 .editBox{
 display:none;
-background:#f5f5f5;
+background:#f7f7f7;
 padding:10px;
-margin-top:10px;
 border-radius:10px;
+margin-top:10px;
 }
 
 .editBox input,
@@ -134,18 +120,17 @@ border-radius:10px;
 width:100%;
 padding:8px;
 margin:5px 0;
-border-radius:6px;
 border:1px solid #ccc;
+border-radius:6px;
 }
 
-/* PAYMENTS */
-.payBox{
-background:#fff;
-padding:10px;
-border-radius:10px;
-margin-top:10px;
+.badge{
+padding:3px 10px;
+border-radius:20px;
+font-size:12px;
+color:white;
+display:inline-block;
 }
-
 </style>
 </head>
 
@@ -157,7 +142,6 @@ margin-top:10px;
 
 <div class="container">
 
-<!-- DASHBOARD -->
 <div class="dashboard">
 <div class="box"><h2 id="tCount">0</h2><p>Teachers</p></div>
 <div class="box"><h2 id="iCount">0</h2><p>Institutions</p></div>
@@ -165,7 +149,6 @@ margin-top:10px;
 <div class="box"><h2 id="earn">₹0</h2><p>Earnings</p></div>
 </div>
 
-<!-- SEARCH -->
 <div class="filterRow">
 <input id="search" placeholder="Search name / phone / email">
 <select id="filter">
@@ -189,8 +172,7 @@ margin-top:10px;
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import {
-getDatabase, ref, onValue,
-update, remove
+getDatabase, ref, onValue, update, remove
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -206,38 +188,40 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let teachers = [];
-let insts = [];
+let teachers=[], insts=[];
 
-/* LOAD */
+/* LOAD TEACHERS */
 onValue(ref(db,"teachers"),snap=>{
 teachers=[];
-snap.forEach(c=>teachers.push({id:c.key,...c.val()}));
+snap.forEach(c=>{
+teachers.push({id:c.key,type:"teacher",...c.val()});
+});
 render();
 });
 
+/* LOAD INSTITUTIONS */
 onValue(ref(db,"institutions"),snap=>{
 insts=[];
-snap.forEach(c=>insts.push({id:c.key,...c.val()}));
+snap.forEach(c=>{
+insts.push({id:c.key,type:"institution",...c.val()});
+});
 render();
 });
 
 /* PAYMENTS */
 onValue(ref(db,"payments"),snap=>{
-let html="";
-let total=0;
+let html="", total=0;
 
 snap.forEach(c=>{
 let p=c.val();
-total+=Number(p.amount||0);
+total += Number(p.amount||0);
 
 html+=`
-<div class="payBox">
-<b>${p.name}</b><br>
-₹${p.amount}<br>
-${p.status}
-</div>
-`;
+<div class="card">
+<p><b>${p.name}</b></p>
+<p>₹${p.amount}</p>
+<p>${p.status}</p>
+</div>`;
 });
 
 document.getElementById("payments").innerHTML=html;
@@ -251,67 +235,58 @@ function render(){
 let search=document.getElementById("search").value.toLowerCase();
 let filter=document.getElementById("filter").value;
 
-let all=[
-...teachers.map(t=>({...t,type:"teacher"})),
-...insts.map(i=>({...i,type:"institution"}))
-];
+let all=[...teachers,...insts];
 
 let html="";
-let tc=0,ic=0;
+let t=0,i=0;
 
-all.forEach(item=>{
+all.forEach(u=>{
 
-let text=(item.name||"")+(item.phone||"")+(item.email||"");
+let text=(u.name||"")+(u.phone||"")+(u.email||"");
 
-let matchPhone = item.phone && item.phone.includes(search);
-let matchText = text.toLowerCase().includes(search);
-
-if(!(matchText||matchPhone)) return;
+if(!text.toLowerCase().includes(search)) return;
 
 if(filter!="all"){
-if(filter=="teacher" && item.type!="teacher") return;
-if(filter=="institution" && item.type!="institution") return;
-if(filter=="pending" && item.status=="approved") return;
-if(filter=="approved" && item.status!="approved") return;
+if(filter=="teacher" && u.type!="teacher") return;
+if(filter=="institution" && u.type!="institution") return;
+if(filter=="approved" && u.status!="approved") return;
+if(filter=="pending" && u.status=="approved") return;
 }
 
-if(item.type=="teacher") tc++;
-if(item.type=="institution") ic++;
+if(u.type=="teacher") t++; else i++;
 
 html+=`
-<div class="card ${item.type} ${item.status||''} ${matchPhone?'highlight':''}">
+<div class="card ${u.type}">
 
 <div class="top">
-<img class="photo" src="${item.photo||item.logo||''}">
+<img class="photo" src="${u.photo||u.logo||''}">
 <div>
-<h3>${item.name||""}</h3>
-<span class="badge ${item.status=='approved'?'green':'orange'}">
-${item.status||'pending'}
+<h3>${u.name}</h3>
+<span class="badge" style="background:${u.status=='approved'?'green':'orange'}">
+${u.status||"pending"}
 </span>
 </div>
 </div>
 
-<p>📞 ${item.phone||""}</p>
-<p>📧 ${item.email||""}</p>
+<p>📞 ${u.phone||""}</p>
+<p>📧 ${u.email||""}</p>
 
-<button class="approve" onclick="approve('${item.type}','${item.id}')">Approve</button>
-<button class="del" onclick="del('${item.type}','${item.id}')">Delete</button>
-<button class="edit" onclick="toggle('${item.id}')">Edit</button>
-<button class="review" onclick="review('${item.id}')">Review</button>
+<button class="approve" onclick="approve('${u.type}','${u.id}')">Approve</button>
+<button class="del" onclick="del('${u.type}','${u.id}')">Delete</button>
+<button class="edit" onclick="toggle('${u.id}')">Edit Full</button>
+<button class="review" onclick="review('${u.type}','${u.id}')">Review</button>
 
-<div class="editBox" id="edit_${item.id}">
+<div class="editBox" id="box_${u.id}">
 
-<input id="name_${item.id}" value="${item.name||""}">
-<input id="phone_${item.id}" value="${item.phone||""}">
-<input id="email_${item.id}" value="${item.email||""}">
-<input id="location_${item.id}" value="${item.location||""}">
+<input id="name_${u.id}" value="${u.name||''}">
+<input id="phone_${u.id}" value="${u.phone||''}">
+<input id="email_${u.id}" value="${u.email||''}">
+<input id="location_${u.id}" value="${u.location||''}">
+<textarea id="desc_${u.id}">${u.description||''}</textarea>
 
-<textarea id="desc_${item.id}">${item.description||""}</textarea>
-<textarea id="admin_${item.id}" placeholder="Admin Review">${item.adminReview||""}</textarea>
-<textarea id="public_${item.id}" placeholder="Public Review">${item.publicReview||""}</textarea>
+<input id="fee_${u.id}" value="${u.homeFee||''}" placeholder="Home Fee">
 
-<button onclick="save('${item.type}','${item.id}')">Save</button>
-
+<button onclick="save('${u.type}','${u.id}')">Save</button>
 </div>
 
 </div>
@@ -319,8 +294,8 @@ ${item.status||'pending'}
 });
 
 document.getElementById("list").innerHTML=html;
-document.getElementById("tCount").innerText=tc;
-document.getElementById("iCount").innerText=ic;
+document.getElementById("tCount").innerText=t;
+document.getElementById("iCount").innerText=i;
 }
 
 /* ACTIONS */
@@ -329,14 +304,12 @@ update(ref(db,`${type}s/${id}`),{status:"approved"});
 };
 
 window.del=(type,id)=>{
-if(confirm("Delete?")){
-remove(ref(db,`${type}s/${id}`));
-}
+if(confirm("Delete?")) remove(ref(db,`${type}s/${id}`));
 };
 
 window.toggle=(id)=>{
-let el=document.getElementById("edit_"+id);
-el.style.display = el.style.display==="block"?"none":"block";
+let box=document.getElementById("box_"+id);
+box.style.display = box.style.display==="block"?"none":"block";
 };
 
 window.save=(type,id)=>{
@@ -346,20 +319,15 @@ phone:document.getElementById("phone_"+id).value,
 email:document.getElementById("email_"+id).value,
 location:document.getElementById("location_"+id).value,
 description:document.getElementById("desc_"+id).value,
-adminReview:document.getElementById("admin_"+id).value,
-publicReview:document.getElementById("public_"+id).value
+homeFee:document.getElementById("fee_"+id).value
 });
 alert("Updated");
 };
 
-window.review=(id)=>{
-let a=prompt("Admin review:");
-let p=prompt("Public review:");
-if(a||p){
-update(ref(db,"teachers/"+id),{
-adminReview:a||"",
-publicReview:p||""
-});
+window.review=(type,id)=>{
+let r=prompt("Admin Review:");
+if(r){
+update(ref(db,`${type}s/${id}`),{adminReview:r});
 }
 };
 
