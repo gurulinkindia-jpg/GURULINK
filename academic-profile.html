@@ -130,6 +130,26 @@ background:#fff;
 border-radius:15px;
 }
 
+.loginBox{
+background:white;
+padding:15px;
+border-radius:15px;
+margin-bottom:20px;
+text-align:center;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.loginBtn{
+display:inline-block;
+margin-top:10px;
+padding:10px 18px;
+background:#1565c0;
+color:white;
+text-decoration:none;
+border-radius:10px;
+font-weight:bold;
+}
+
 </style>
 </head>
 
@@ -147,89 +167,52 @@ Find Teachers & Institutes
 
 <div class="container">
 
+<div class="loginBox">
+
+<h3>
+🔒 Student Login Required
+</h3>
+
+<p style="margin-top:8px;">
+Please login or register as student to view full teacher/institute details.
+</p>
+
+<a class="loginBtn" href="student-login.html">
+Student Login / Register
+</a>
+
+</div>
+
 <div class="filters">
 
 <input
 id="search"
-placeholder="Search teacher, institute, location">
+placeholder="Search teacher, location">
 
 <select id="classFilter">
 
-<option value="">
-All Classes
-</option>
+<option value="">All Classes</option>
 
-<option>
-Play Group
-</option>
+<option>Play Group</option>
+<option>Nursery</option>
+<option>LKG</option>
+<option>UKG</option>
 
-<option>
-Nursery
-</option>
+<option>Class 1</option>
+<option>Class 2</option>
+<option>Class 3</option>
+<option>Class 4</option>
+<option>Class 5</option>
+<option>Class 6</option>
+<option>Class 7</option>
+<option>Class 8</option>
+<option>Class 9</option>
+<option>Class 10</option>
+<option>Class 11</option>
+<option>Class 12</option>
 
-<option>
-LKG
-</option>
-
-<option>
-UKG
-</option>
-
-<option>
-Class 1
-</option>
-
-<option>
-Class 2
-</option>
-
-<option>
-Class 3
-</option>
-
-<option>
-Class 4
-</option>
-
-<option>
-Class 5
-</option>
-
-<option>
-Class 6
-</option>
-
-<option>
-Class 7
-</option>
-
-<option>
-Class 8
-</option>
-
-<option>
-Class 9
-</option>
-
-<option>
-Class 10
-</option>
-
-<option>
-Class 11
-</option>
-
-<option>
-Class 12
-</option>
-
-<option>
-IIT JEE
-</option>
-
-<option>
-NEET
-</option>
+<option>IIT JEE</option>
+<option>NEET</option>
 
 </select>
 
@@ -282,23 +265,38 @@ let institutes = [];
 
 /* LOAD TEACHERS */
 
-onValue(ref(db,"teachers"), snapshot=>{
+onValue(ref(db,"teachers"),snap=>{
 
 teachers = [];
 
-snapshot.forEach(c=>{
+snap.forEach(c=>{
 
 const d = c.val();
 
+/* SHOW APPROVED ACADEMIC */
+
 if(
-d.status==="approved" &&
-(d.category||"").toLowerCase()==="academic"
+
+d.status === "approved"
+
+&&
+
+(
+
+!d.category ||
+
+(d.category || "").toLowerCase() === "academic"
+
+)
+
 ){
 
 teachers.push({
+
 ...d,
 id:c.key,
 type:"Teacher"
+
 });
 
 }
@@ -308,26 +306,42 @@ type:"Teacher"
 render();
 
 });
+
 
 /* LOAD INSTITUTIONS */
 
-onValue(ref(db,"institutions"), snapshot=>{
+onValue(ref(db,"institutions"),snap=>{
 
 institutes = [];
 
-snapshot.forEach(c=>{
+snap.forEach(c=>{
 
 const d = c.val();
 
+/* SHOW APPROVED ACADEMIC */
+
 if(
-d.status==="approved" &&
-(d.category||"").toLowerCase()==="academic"
+
+d.status === "approved"
+
+&&
+
+(
+
+!d.category ||
+
+(d.category || "").toLowerCase() === "academic"
+
+)
+
 ){
 
 institutes.push({
+
 ...d,
 id:c.key,
 type:"Institution"
+
 });
 
 }
@@ -338,24 +352,13 @@ render();
 
 });
 
+
 function getAll(){
 
-return [
-...teachers,
-...institutes
-];
+return [...teachers,...institutes];
 
 }
 
-/* SEARCH EVENTS */
-
-document
-.getElementById("search")
-.addEventListener("input",render);
-
-document
-.getElementById("classFilter")
-.addEventListener("change",render);
 
 /* VIEW DETAILS */
 
@@ -365,27 +368,16 @@ const btn = e.target.closest(".view");
 
 if(!btn) return;
 
-const id = btn.dataset.id;
+const studentUid =
+localStorage.getItem("studentUid");
 
-/* CHECK STUDENT LOGIN */
+/* NOT LOGGED IN */
 
-const studentId =
-localStorage.getItem("studentId");
-
-if(!studentId){
+if(!studentUid){
 
 alert(
-"Please Login As Student To View Full Details"
+"Please login as student first"
 );
-
-/* SAVE REDIRECT PAGE */
-
-localStorage.setItem(
-"redirectAfterLogin",
-"profile-view.html?id="+id
-);
-
-/* GO LOGIN */
 
 window.location.href =
 "student-login.html";
@@ -397,9 +389,21 @@ return;
 /* OPEN PROFILE */
 
 window.location.href =
-"profile-view.html?id="+id;
+"profile-view.html?id=" + btn.dataset.id;
 
 });
+
+
+/* SEARCH EVENTS */
+
+document
+.getElementById("search")
+.addEventListener("input",render);
+
+document
+.getElementById("classFilter")
+.addEventListener("change",render);
+
 
 /* CLASS MATCH */
 
@@ -419,6 +423,7 @@ selectedClass.toLowerCase()
 
 }
 
+
 /* TYPO FRIENDLY SEARCH */
 
 function similar(a,b){
@@ -437,15 +442,16 @@ i<Math.min(a.length,b.length);
 i++
 ){
 
-if(a[i]===b[i]){
+if(a[i] === b[i]){
 count++;
 }
 
 }
 
-return count>=5;
+return count >= 5;
 
 }
+
 
 /* RENDER */
 
@@ -454,6 +460,7 @@ function render(){
 const all = getAll();
 
 const search =
+
 document
 .getElementById("search")
 .value
@@ -461,44 +468,78 @@ document
 .toLowerCase();
 
 const cls =
+
 document
 .getElementById("classFilter")
 .value;
 
+
+/* FILTER */
+
 const filtered = all.filter(x=>{
 
 const name =
-(x.name||"")
+
+(x.name || "")
 .toString()
+.trim()
 .toLowerCase();
 
 const location =
-(x.location||x.address||x.area||"")
+
+(x.location || x.address || "")
 .toString()
+.trim()
 .toLowerCase();
 
-if(
-search &&
-!(
-similar(name,search) ||
-similar(location,search)
-)
-){
-return false;
-}
+
+/* SEARCH */
 
 if(
-!classMatch(x.class,cls)
+
+search
+
+&&
+
+!(
+
+similar(name,search)
+
+||
+
+similar(location,search)
+
+)
+
 ){
+
 return false;
+
+}
+
+
+/* CLASS */
+
+if(
+
+!classMatch(x.class,cls)
+
+){
+
+return false;
+
 }
 
 return true;
 
 });
 
+
 const grid =
 document.getElementById("grid");
+
+
+/* EMPTY */
 
 if(!filtered.length){
 
@@ -509,6 +550,9 @@ grid.innerHTML =
 return;
 
 }
+
+
+/* CARDS */
 
 grid.innerHTML = filtered.map(x=>`
 
@@ -550,12 +594,12 @@ View Details
 
 <div class="details">
 
-<b>Subjects:</b>
+<b>Subject:</b>
 
 ${
 Array.isArray(x.subjects)
 ? x.subjects.join(", ")
-: (x.subjects || x.subject || "-")
+: (x.subjects || "-")
 }
 
 <br>
@@ -568,20 +612,22 @@ ${x.class || "-"}
 <b>Mode:</b>
 
 ${
+
 (x.teachingModes || x.modes || [])
-.join(", ") || "-"
+
+.join(", ")
+
+||
+
+"-"
+
 }
 
 <br>
 
 <b>Location:</b>
 
-${
-x.location ||
-x.address ||
-x.area ||
-"-"
-}
+${x.location || x.address || "-"}
 
 </div>
 
