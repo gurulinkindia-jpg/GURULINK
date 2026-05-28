@@ -7,11 +7,7 @@
 
 <style>
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
 
 body{
 font-family:Arial;
@@ -47,11 +43,6 @@ text-align:center;
 box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 
-.box h2{
-color:#0d47a1;
-margin-bottom:10px;
-}
-
 .search{
 width:100%;
 padding:12px;
@@ -60,9 +51,7 @@ border-radius:10px;
 margin-bottom:20px;
 }
 
-.section{
-margin-top:30px;
-}
+.section{margin-top:30px;}
 
 .card{
 background:white;
@@ -79,11 +68,8 @@ align-items:center;
 }
 
 .photo{
-width:80px;
-height:80px;
-border-radius:50%;
-object-fit:cover;
-border:2px solid #0d47a1;
+width:80px;height:80px;border-radius:50%;
+object-fit:cover;border:2px solid #0d47a1;
 }
 
 .badge{
@@ -94,29 +80,11 @@ display:inline-block;
 margin-top:5px;
 }
 
-.verify{
-background:green;
-color:white;
-}
+.verify{background:green;color:white;}
+.pending{background:orange;color:white;}
 
-.pending{
-background:orange;
-color:white;
-}
-
-.gallery{
-display:flex;
-gap:8px;
-overflow:auto;
-margin-top:10px;
-}
-
-.gallery img{
-width:70px;
-height:70px;
-object-fit:cover;
-border-radius:10px;
-}
+.gallery{display:flex;gap:8px;overflow:auto;margin-top:10px;}
+.gallery img{width:70px;height:70px;border-radius:10px;object-fit:cover;}
 
 button{
 padding:10px 14px;
@@ -127,25 +95,37 @@ margin:5px;
 color:white;
 }
 
-.approve{
-background:green;
+.approve{background:green;}
+.delete{background:red;}
+.edit{background:#0d47a1;}
+.review{background:#ff9800;}
+
+.modal{
+position:fixed;
+top:0;left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.6);
+display:none;
+justify-content:center;
+align-items:center;
 }
 
-.delete{
+.modalBox{
+background:white;
+padding:20px;
+width:400px;
+border-radius:12px;
+}
+
+.modalBox input,textarea{
+width:100%;
+padding:10px;
+margin:8px 0;
+}
+
+.closeBtn{
 background:red;
-}
-
-.edit{
-background:#0d47a1;
-}
-
-.payment{
-background:#6a1b9a;
-}
-
-p{
-margin-top:5px;
-line-height:1.5;
 }
 
 </style>
@@ -160,33 +140,13 @@ line-height:1.5;
 <div class="container">
 
 <div class="analytics">
-
-<div class="box">
-<h2 id="teacherCount">0</h2>
-Teachers
+<div class="box"><h2 id="teacherCount">0</h2>Teachers</div>
+<div class="box"><h2 id="institutionCount">0</h2>Institutions</div>
+<div class="box"><h2 id="paymentCount">0</h2>Payments</div>
+<div class="box"><h2 id="earnings">₹0</h2>Total Earnings</div>
 </div>
 
-<div class="box">
-<h2 id="institutionCount">0</h2>
-Institutions
-</div>
-
-<div class="box">
-<h2 id="paymentCount">0</h2>
-Payments
-</div>
-
-<div class="box">
-<h2 id="earnings">₹0</h2>
-Total Earnings
-</div>
-
-</div>
-
-<input
-id="search"
-class="search"
-placeholder="Search...">
+<input id="search" class="search" placeholder="Search...">
 
 <div class="section">
 <h2>Teachers</h2>
@@ -205,444 +165,181 @@ placeholder="Search...">
 
 </div>
 
+<!-- EDIT MODAL -->
+<div class="modal" id="editModal">
+<div class="modalBox">
+
+<h3>Edit Profile</h3>
+
+<input id="editName" placeholder="Name">
+<input id="editPhone" placeholder="Phone">
+<input id="editEmail" placeholder="Email">
+<input id="editLocation" placeholder="Location">
+<textarea id="editDesc" placeholder="Description"></textarea>
+
+<button onclick="saveEdit()">Save</button>
+<button class="closeBtn" onclick="closeModal()">Close</button>
+
+</div>
+</div>
+
 
 <script type="module">
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import {
-initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+getDatabase, ref, onValue,
+update, remove, get, child
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-import {
-getDatabase,
-ref,
-onValue,
-update,
-remove
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-
-const firebaseConfig={
-
-apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+const firebaseConfig = {
+apiKey:"AIzaSyBK0Q...",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"gurulink-59cc7",
 storageBucket:"gurulink-59cc7.appspot.com",
 messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
 };
 
-const app=initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-const db=getDatabase(app);
+let editId=null;
+let editType=null;
 
-let teacherTotal=0;
-let institutionTotal=0;
-let paymentTotal=0;
-let earningTotal=0;
-
-
-/* TEACHERS */
-
+/* LOAD TEACHERS */
 onValue(ref(db,"teachers"),snap=>{
-
-teacherTotal=0;
-
 let html="";
+document.getElementById("teacherCount").innerText=snap.size;
 
 snap.forEach(c=>{
-
-teacherTotal++;
-
 let t=c.val();
 
-let gallery="";
-
-if(t.gallery){
-
-t.gallery.forEach(img=>{
-
-gallery+=`<img src="${img}">`;
-
-});
-
-}
-
 html+=`
-
 <div class="card">
 
 <div class="top">
-
-<img class="photo"
-src="${t.photo || 'https://via.placeholder.com/100'}">
-
+<img class="photo" src="${t.photo||'https://via.placeholder.com/80'}">
 <div>
-
 <h3>${t.name||"-"}</h3>
-
-<span class="badge ${t.status=="approved"?"verify":"pending"}">
-
-${t.status}
-
-</span>
-
+<span class="badge ${t.status=="approved"?"verify":"pending"}">${t.status||"pending"}</span>
+</div>
 </div>
 
-</div>
+<p>${t.phone||""}</p>
+<p>${t.location||""}</p>
 
-<p><b>Category:</b> ${t.category||"-"}</p>
-<p><b>Subject:</b> ${t.subject||"-"}</p>
-<p><b>Class:</b> ${t.class||"-"}</p>
+<button class="approve" onclick="approve('teachers','${c.key}')">Approve</button>
+<button class="edit" onclick="openEdit('teachers','${c.key}')">Edit</button>
+<button class="delete" onclick="del('teachers','${c.key}')">Delete</button>
+<button class="review" onclick="review('${c.key}')">Review</button>
 
-<p><b>Phone:</b> ${t.phone||"-"}</p>
-
-<p><b>Email:</b> ${t.email||"-"}</p>
-
-<p><b>Website:</b> ${t.website||"-"}</p>
-
-<p><b>Qualification:</b> ${t.qualification||"-"}</p>
-
-<p><b>Experience:</b> ${t.experience||"-"}</p>
-
-<p><b>Location:</b> ${t.location||"-"}</p>
-
-<p><b>Home Fee:</b> ₹${t.homeFee||t.fees?.home||0}</p>
-
-<p><b>Group Fee:</b> ₹${t.groupFee||t.fees?.group||0}</p>
-
-<p><b>Online Fee:</b> ₹${t.onlineIndividualFee||t.fees?.online||0}</p>
-
-<p><b>Online Group:</b> ₹${t.onlineGroupFee||t.fees?.onlineGroup||0}</p>
-
-<p><b>Description:</b>
-${t.description||"-"}
-</p>
-
-<div class="gallery">
-${gallery}
-</div>
-
-${t.status!="approved"
-?
-`<button
-class="approve"
-onclick="approveTeacher('${c.key}')">
-Approve
-</button>`
-:
-`<button disabled>
-Approved
-</button>`
-}
-
-<button
-class="edit"
-onclick="editTeacher('${c.key}')">
-Edit
-</button>
-
-<button
-class="delete"
-onclick="deleteTeacher('${c.key}')">
-Delete
-</button>
-
-</div>
-
-`;
-
+</div>`;
 });
 
 teachers.innerHTML=html;
-teacherCount.innerHTML=teacherTotal;
-
 });
 
-
-/* INSTITUTIONS */
-
+/* LOAD INSTITUTIONS */
 onValue(ref(db,"institutions"),snap=>{
-
-institutionTotal=0;
-
 let html="";
+document.getElementById("institutionCount").innerText=snap.size;
 
 snap.forEach(c=>{
-
-institutionTotal++;
-
 let t=c.val();
 
-let gallery="";
-
-if(t.gallery){
-
-t.gallery.forEach(img=>{
-
-gallery+=`<img src="${img}">`;
-
-});
-
-}
-
 html+=`
-
 <div class="card">
 
 <h3>${t.name||"-"}</h3>
+<p>${t.phone||""}</p>
+<p>${t.address||""}</p>
 
-<p><b>Category:</b> ${t.category||"-"}</p>
+<button class="approve" onclick="approve('institutions','${c.key}')">Approve</button>
+<button class="edit" onclick="openEdit('institutions','${c.key}')">Edit</button>
+<button class="delete" onclick="del('institutions','${c.key}')">Delete</button>
 
-<p><b>Phone:</b> ${t.phone||"-"}</p>
-
-<p><b>Email:</b> ${t.email||"-"}</p>
-
-<p><b>Website:</b> ${t.website||"-"}</p>
-
-<p><b>Address:</b> ${t.address||"-"}</p>
-
-<p><b>Area:</b> ${t.area||"-"}</p>
-
-<p><b>Subject:</b>
-${t.subject||t.creative||t.skill||"-"}
-</p>
-
-<p><b>Description:</b>
-${t.description||"-"}
-</p>
-
-<div class="gallery">
-${gallery}
-</div>
-
-${t.status!="approved"
-?
-`<button
-class="approve"
-onclick="approveInst('${c.key}')">
-Approve
-</button>`
-:
-`<button disabled>
-Approved
-</button>`
-}
-
-<button
-class="edit"
-onclick="editInst('${c.key}')">
-Edit
-</button>
-
-<button
-class="delete"
-onclick="deleteInst('${c.key}')">
-Delete
-</button>
-
-</div>
-
-`;
-
+</div>`;
 });
 
 institutions.innerHTML=html;
-
-institutionCount.innerHTML=
-institutionTotal;
-
 });
 
-
 /* PAYMENTS */
-
 onValue(ref(db,"payments"),snap=>{
-
-paymentTotal=0;
-earningTotal=0;
-
+let total=0;
 let html="";
 
 snap.forEach(c=>{
-
-paymentTotal++;
-
 let p=c.val();
-
-earningTotal+=Number(
-p.amount||0
-);
+total+=Number(p.amount||0);
 
 html+=`
 <div class="card">
+<p>${p.name}</p>
+<p>₹${p.amount}</p>
+<p>${p.status}</p>
 
-<p><b>Name:</b> ${p.name || "Unknown"}</p>
-
-<p><b>Type:</b> ${p.type||"-"}</p>
-<p><b>Amount:</b> ₹${p.amount||0}</p>
-<p><b>Status:</b> ${p.status||"-"}</p>
-<p><b>Date:</b> ${p.date||"-"}</p>
-
-<button class="delete"
-onclick="deletePayment('${c.key}')">
-Delete Payment
-</button>
-
-</div>
-`;
-
+<button class="delete" onclick="del('payments','${c.key}')">Delete</button>
+</div>`;
 });
 
 payments.innerHTML=html;
-
-paymentCount.innerHTML=
-paymentTotal;
-
-earnings.innerHTML=
-"₹"+earningTotal;
-
+document.getElementById("earnings").innerText="₹"+total;
 });
 
+/* GLOBAL ACTIONS */
+window.approve=(type,id)=>{
+update(ref(db,`${type}/${id}`),{status:"approved"});
+};
 
-/* BUTTON FUNCTIONS */
+window.del=(type,id)=>{
+if(confirm("Delete?")) remove(ref(db,`${type}/${id}`));
+};
 
-/* BUTTON FUNCTIONS */
+/* EDIT */
+window.openEdit=async(type,id)=>{
+editId=id;
+editType=type;
 
-window.approveTeacher=(id)=>{
+const snap=await get(child(ref(db),`${type}/${id}`));
+const data=snap.val();
 
-update(
-ref(db,"teachers/"+id),
-{
-status:"approved"
-}
-)
-.then(()=>{
+document.getElementById("editName").value=data.name||"";
+document.getElementById("editPhone").value=data.phone||"";
+document.getElementById("editEmail").value=data.email||"";
+document.getElementById("editLocation").value=data.location||data.address||"";
+document.getElementById("editDesc").value=data.description||"";
 
-alert("Teacher approved");
+document.getElementById("editModal").style.display="flex";
+};
 
-})
-.catch(err=>{
-
-alert(err.message);
-
+window.saveEdit=()=>{
+update(ref(db,`${editType}/${editId}`),{
+name:editName.value,
+phone:editPhone.value,
+email:editEmail.value,
+location:editLocation.value,
+description:editDesc.value
 });
-
+closeModal();
 };
 
+window.closeModal=()=>{
+document.getElementById("editModal").style.display="none";
+};
 
-window.deleteTeacher=(id)=>{
-
-if(confirm("Delete teacher?")){
-
-remove(
-ref(db,"teachers/"+id)
-)
-.then(()=>{
-
-alert("Teacher deleted");
-
+/* SIMPLE REVIEW SYSTEM */
+window.review=(id)=>{
+let text=prompt("Write admin review:");
+if(text){
+update(ref(db,"teachers/"+id),{
+adminReview:text
 });
-
 }
-
 };
 
-
-window.editTeacher=(id)=>{
-
-window.location=
-"edit.html?id="+id+"&type=teacher";
-
-};
-
-
-window.approveInst=(id)=>{
-
-update(
-ref(db,"institutions/"+id),
-{
-status:"approved"
-}
-)
-.then(()=>{
-
-alert("Institution approved");
-
-})
-.catch(err=>{
-
-alert(err.message);
-
-});
-
-};
-
-
-window.deleteInst=(id)=>{
-
-if(confirm("Delete institution?")){
-
-remove(
-ref(db,"institutions/"+id)
-)
-.then(()=>{
-
-alert("Institution deleted");
-
-});
-
-}
-
-};
-
-
-window.editInst=(id)=>{
-
-window.location=
-"edit.html?id="+id+"&type=institution";
-
-};
-
-
-window.deletePayment=(id)=>{
-
-if(!id){
-
-alert("Payment ID missing");
-return;
-
-}
-
-if(confirm("Delete this payment?")){
-
-remove(
-ref(db,"payments/"+id)
-)
-.then(()=>{
-
-alert(
-"Payment deleted successfully"
-);
-
-})
-.catch(err=>{
-
-alert(
-"Delete failed: "+
-err.message
-);
-
-console.log(err);
-
-});
-
-}
-
-};
 </script>
 
 </body>
