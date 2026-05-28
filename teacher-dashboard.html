@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Teacher Dashboard</title>
 
 <style>
@@ -20,14 +20,16 @@ text-align:center;
 }
 
 .container{
-max-width:800px;
+width:95%;
+max-width:900px;
 margin:20px auto;
 background:white;
 padding:20px;
 border-radius:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 
-input,textarea{
+input,select,textarea{
 width:100%;
 padding:10px;
 margin:8px 0;
@@ -36,21 +38,29 @@ border-radius:6px;
 }
 
 button{
-padding:10px;
+padding:12px;
 width:100%;
+margin-top:10px;
 background:#1565c0;
 color:white;
 border:none;
-border-radius:6px;
+border-radius:8px;
 cursor:pointer;
 }
 
 .preview img{
-width:100px;
-height:100px;
+width:90px;
+height:90px;
 object-fit:cover;
-border-radius:10px;
-margin-top:10px;
+border-radius:8px;
+margin:5px;
+}
+
+.section{
+margin-top:15px;
+padding:10px;
+border:1px solid #ddd;
+border-radius:8px;
 }
 </style>
 </head>
@@ -59,121 +69,167 @@ margin-top:10px;
 
 <header>
 <h2>Teacher Dashboard</h2>
-<button onclick="logout()">Logout</button>
 </header>
 
 <div class="container">
 
-<h3>Your Profile</h3>
+<div id="loading">Loading profile...</div>
 
-<input id="name" placeholder="Name">
+<div id="content" style="display:none;">
+
+<h3>Edit Profile</h3>
+
+<input id="name" placeholder="Full Name">
 <input id="phone" placeholder="Phone">
-<input id="email" placeholder="Email" disabled>
+<input id="email" placeholder="Email">
 
-<textarea id="about" placeholder="About You"></textarea>
+<input id="experience" placeholder="Experience">
+<input id="location" placeholder="Location">
 
+<textarea id="description" placeholder="About You"></textarea>
+
+<div class="section">
+<h4>Sports (comma separated)</h4>
+<input id="sports">
+</div>
+
+<div class="section">
+<h4>Training Modes</h4>
+<input id="modes">
+</div>
+
+<div class="section">
+<h4>Fees</h4>
+<input id="fee">
+</div>
+
+<div class="section">
 <h4>Profile Photo</h4>
+<div id="photoPreview" class="preview"></div>
 <input type="file" id="photo">
-<div class="preview" id="preview"></div>
+</div>
 
 <button onclick="saveData()">Save Changes</button>
+<button style="background:red" onclick="logout()">Logout</button>
 
-<p id="msg"></p>
+</div>
 
 </div>
 
 <script type="module">
 
-import { auth, db, requireLogin, logout } from "./auth.js";
-import { ref, get, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-import { getStorage, ref as sRef, uploadBytes, getDownloadURL } 
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-requireLogin(["teacher"]);
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
 
-let uid;
-let imageFile = null;
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
 
-const name = document.getElementById("name");
-const phone = document.getElementById("phone");
-const email = document.getElementById("email");
-const about = document.getElementById("about");
-const preview = document.getElementById("preview");
-const photo = document.getElementById("photo");
+/* SECURITY CHECK */
+const uid = localStorage.getItem("uid");
+const profileId = localStorage.getItem("profileId");
+const role = localStorage.getItem("role");
 
-onAuthStateChanged(auth, async (user)=>{
-if(!user) return;
-
-uid = user.uid;
-
-const snap = await get(ref(db,"teachers/"+uid));
-
-if(snap.exists()){
-const data = snap.val();
-
-name.value = data.name || "";
-phone.value = data.phone || "";
-email.value = data.email || "";
-about.value = data.about || "";
-
-if(data.photo){
-preview.innerHTML = `<img src="${data.photo}">`;
+if(!uid || role !== "teacher"){
+alert("Access Denied");
+window.location.href = "login.html";
 }
+
+/* LOAD DATA */
+async function loadData(){
+
+const snap = await get(ref(db,"teachers/"+profileId));
+
+if(!snap.exists()){
+alert("Profile not found");
+return;
 }
+
+const d = snap.val();
+
+/* fill data */
+document.getElementById("name").value = d.name || "";
+document.getElementById("phone").value = d.phone || "";
+document.getElementById("email").value = d.email || "";
+document.getElementById("experience").value = d.experience || "";
+document.getElementById("location").value = d.location || "";
+document.getElementById("description").value = d.description || "";
+document.getElementById("sports").value = (d.sports || []).join(", ");
+document.getElementById("modes").value = (d.teachingModes || []).join(", ");
+document.getElementById("fee").value = d.fee || "";
+
+/* photo */
+if(d.photo){
+document.getElementById("photoPreview").innerHTML =
+`<img src="${d.photo}">`;
+}
+
+document.getElementById("loading").style.display="none";
+document.getElementById("content").style.display="block";
+}
+
+loadData();
+
+/* IMAGE UPLOAD */
+const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
+
+async function upload(file){
+let fd = new FormData();
+fd.append("image",file);
+
+let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`,{
+method:"POST",
+body:fd
 });
 
-/* image preview */
-photo.addEventListener("change", (e)=>{
-imageFile = e.target.files[0];
-
-preview.innerHTML = "";
-
-if(imageFile){
-const img = document.createElement("img");
-img.src = URL.createObjectURL(imageFile);
-preview.appendChild(img);
+let data = await res.json();
+return data.data.url;
 }
-});
 
-/* SAVE DATA */
+/* SAVE */
 window.saveData = async function(){
 
-try{
+let photoUrl = "";
 
-let photoURL = "";
-
-if(imageFile){
-
-const storage = getStorage();
-const imgRef = sRef(storage, "teachers/"+uid);
-
-await uploadBytes(imgRef, imageFile);
-photoURL = await getDownloadURL(imgRef);
-
+if(document.getElementById("photo").files[0]){
+photoUrl = await upload(document.getElementById("photo").files[0]);
 }
 
-await set(ref(db,"teachers/"+uid),{
-name: name.value,
-phone: phone.value,
-email: email.value,
-about: about.value,
-photo: photoURL || null,
-role:"teacher",
-status:"pending"
+await update(ref(db,"teachers/"+profileId),{
+
+name:document.getElementById("name").value,
+phone:document.getElementById("phone").value,
+email:document.getElementById("email").value,
+experience:document.getElementById("experience").value,
+location:document.getElementById("location").value,
+description:document.getElementById("description").value,
+sports:document.getElementById("sports").value.split(",").map(x=>x.trim()),
+teachingModes:document.getElementById("modes").value.split(",").map(x=>x.trim()),
+fee:document.getElementById("fee").value,
+photo:photoUrl || undefined
+
 });
 
-document.getElementById("msg").innerText = "Saved Successfully";
+alert("Updated Successfully");
+};
 
-}catch(err){
-console.log(err);
-document.getElementById("msg").innerText = err.message;
-}
-
-}
-
-/* logout */
-window.logout = logout;
+/* LOGOUT */
+window.logout = async function(){
+await signOut(auth);
+localStorage.clear();
+window.location.href = "login.html";
+};
 
 </script>
 
