@@ -4,236 +4,98 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Sport Teacher Registration</title>
+<title>Teacher Form</title>
 
 <style>
-body{
-margin:0;
-font-family:Arial,sans-serif;
-background:#eef2f7;
-}
-
-header{
-background:#1565c0;
-color:white;
-padding:18px;
-text-align:center;
-}
-
-.container{
-width:90%;
-max-width:850px;
-margin:20px auto;
-background:white;
-padding:25px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,.1);
-}
-
-input,select,textarea{
-width:100%;
-padding:12px;
-margin:10px 0;
-border:1px solid #ccc;
-border-radius:8px;
-box-sizing:border-box;
-}
-
-textarea{
-height:100px;
-resize:none;
-}
-
-button{
-width:100%;
-padding:14px;
-background:#1565c0;
-color:white;
-border:none;
-border-radius:10px;
-font-size:16px;
-cursor:pointer;
-}
-
-button:disabled{
-opacity:.7;
-cursor:not-allowed;
-}
-
-.preview{
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-margin-top:10px;
-}
-
-.preview img{
-width:90px;
-height:90px;
-border-radius:10px;
-object-fit:cover;
-border:1px solid #ddd;
-}
+body{font-family:Arial;background:#eef2f7;margin:0}
+.container{max-width:850px;margin:20px auto;background:#fff;padding:20px;border-radius:12px}
 
 .modeBox{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:10px;
 padding:15px;
 border:1px solid #ddd;
 border-radius:10px;
-display:grid;
-grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-gap:10px;
 }
 
-.row{
-display:flex;
-align-items:center;
-gap:8px;
-padding:8px;
-border:1px solid #eee;
-border-radius:8px;
-background:#fafafa;
-}
+.row{display:flex;gap:8px;align-items:center;background:#f8f8f8;padding:8px;border-radius:8px}
 
-.row input[type=checkbox]{
-width:auto;
-transform:scale(1.2);
-}
+.modeFee{display:none;background:#eee;padding:10px;border-radius:8px;margin:5px 0}
 
-.modeFee{
-display:none;
-padding:10px;
-background:#f4f4f4;
-border-radius:10px;
-margin-bottom:10px;
-}
+.preview{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.preview img{width:80px;height:80px;border-radius:10px;object-fit:cover}
 </style>
 </head>
 
 <body>
 
-<header>
-<h1>Sport Teacher Registration</h1>
-<p>Registration Fee ₹100</p>
-</header>
-
 <div class="container">
 
-<form id="teacherForm">
-
-<!-- BASIC INFO -->
-<input id="name" placeholder="Full Name" required>
-<input id="phone" placeholder="Phone Number" required>
-<input id="alternatePhone" placeholder="Alternate Phone Number">
-<input id="email" type="email" placeholder="Email">
-
-<!-- EXTRA INFO -->
-<input id="website" placeholder="Website / Social Link">
-<input id="qualification" placeholder="Qualification / Certification">
-<input id="experience" placeholder="Experience (e.g. 5 Years)">
-<input id="location" placeholder="Preferred Training Area" required>
-<input id="mapLink" placeholder="Google Map Link">
-
-<!-- PASSWORD -->
-<input id="password" type="password" placeholder="Create Password" required>
-<input id="confirmPassword" type="password" placeholder="Confirm Password" required>
-<p id="passError" style="color:red;display:none;">Passwords do not match</p>
-
-<!-- SPORTS -->
-<h3>Sports / Activities</h3>
+<h2>SPORTS</h2>
 <div class="modeBox">
 
-<div class="row"><input type="checkbox" value="Cricket" class="sportCheck"> Cricket</div>
-<div class="row"><input type="checkbox" value="Football" class="sportCheck"> Football</div>
-<div class="row"><input type="checkbox" value="Badminton" class="sportCheck"> Badminton</div>
-
-<div class="row">
-<input type="checkbox" id="sportOtherCheck"> Other
-</div>
-
-<input id="otherSport" placeholder="Other Sport" style="display:none">
+<div class="row"><input type="checkbox" class="sportCheck" value="Cricket">Cricket</div>
+<div class="row"><input type="checkbox" class="sportCheck" value="Football">Football</div>
+<div class="row"><input type="checkbox" id="sportOther">Other</div>
 
 </div>
 
-<!-- TRAINING MODES -->
-<h3>Training Modes</h3>
+<input id="otherSport" placeholder="Other sport" style="display:none;margin-top:10px">
+
+<h2>TRAINING MODES</h2>
 <div class="modeBox">
 
 <div class="row">
-<input type="checkbox" class="modeCheck" value="Individual Coaching" data-target="individual">
-Individual Coaching
+<input type="checkbox" class="modeCheck" data-target="ind">Individual
 </div>
-<div id="individual" class="modeFee"><input placeholder="Fee"></div>
+<div id="ind" class="modeFee"><input placeholder="Fee"></div>
 
 <div class="row">
-<input type="checkbox" class="modeCheck" value="Home Training" data-target="home">
-Home Training
+<input type="checkbox" class="modeCheck" data-target="home">Home
 </div>
 <div id="home" class="modeFee"><input placeholder="Fee"></div>
 
 <div class="row">
-<input type="checkbox" class="modeCheck" value="Group Training" data-target="group">
-Group Training
+<input type="checkbox" class="modeCheck" data-target="group">Group
 </div>
 <div id="group" class="modeFee"><input placeholder="Fee"></div>
 
-<div class="row">
-<input type="checkbox" class="modeCheck" value="Other" data-target="otherMode">
-Other
-</div>
-<div id="otherMode" class="modeFee"><input placeholder="Fee / Notes"></div>
-
 </div>
 
-<!-- PHOTO -->
-<h3>Profile Photo</h3>
-<input type="file" id="photo" accept="image/*">
+<h2>PROFILE PHOTO</h2>
+<input type="file" id="photo">
 <div id="photoPreview" class="preview"></div>
 
-<!-- ID -->
-<h3>Identity Proof</h3>
-<select id="idType">
-<option value="">Select ID</option>
-<option>Aadhaar</option>
-<option>PAN</option>
-<option>Voter ID</option>
-<option>Passport</option>
-</select>
-
-<input type="file" id="idUpload" accept="image/*">
+<h2>ID PROOF</h2>
+<input type="file" id="id">
 <div id="idPreview" class="preview"></div>
 
-<!-- GALLERY -->
-<h3>Gallery Photos</h3>
+<h2>GALLERY</h2>
 <input type="file" id="gallery" multiple style="display:none">
-<button type="button" onclick="document.getElementById('gallery').click()">Add Gallery</button>
+<button onclick="document.getElementById('gallery').click()">Add Images</button>
 <div id="galleryPreview" class="preview"></div>
 
-<!-- DECLARATION -->
-<div style="margin-top:20px;padding:15px;background:#f5f5f5;border-radius:10px;">
-<input type="checkbox" id="declaration" required>
-<label>I agree that all information is correct.</label>
+<button onclick="submitForm()">SUBMIT</button>
+
 </div>
 
-<textarea id="description" placeholder="About Coach"></textarea>
+<script>
 
-<button type="submit">Continue To Payment</button>
+/* =====================
+SPORT OTHER
+===================== */
+const sportOther=document.getElementById("sportOther");
+const otherSport=document.getElementById("otherSport");
 
-</form>
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-const app = initializeApp({
-apiKey:"YOUR_KEY",
-authDomain:"YOUR_DOMAIN",
-databaseURL:"YOUR_DB_URL"
+sportOther.addEventListener("change",()=>{
+otherSport.style.display=sportOther.checked?"block":"none";
+if(!sportOther.checked) otherSport.value="";
 });
 
-const db = getDatabase(app);
-
-/* TOGGLE FEES */
+/* =====================
+TRAINING TOGGLE (FIXED)
+===================== */
 document.querySelectorAll(".modeCheck").forEach(cb=>{
 cb.addEventListener("change",function(){
 const box=document.getElementById(this.dataset.target);
@@ -246,42 +108,40 @@ box.querySelector("input").value="";
 });
 });
 
-/* SPORT OTHER */
-const sportOther=document.getElementById("sportOtherCheck");
-const sportInput=document.getElementById("otherSport");
-
-sportOther.addEventListener("change",()=>{
-sportInput.style.display=sportOther.checked?"block":"none";
-if(!sportOther.checked) sportInput.value="";
-});
-
-/* PREVIEW FUNCTIONS */
-document.getElementById("photo").onchange=e=>{
+/* =====================
+PHOTO PREVIEW
+===================== */
+document.getElementById("photo").addEventListener("change",function(){
 let box=document.getElementById("photoPreview");
 box.innerHTML="";
-if(e.target.files[0]){
+if(this.files[0]){
 let img=new Image();
-img.src=URL.createObjectURL(e.target.files[0]);
+img.src=URL.createObjectURL(this.files[0]);
 box.appendChild(img);
 }
-};
+});
 
-document.getElementById("idUpload").onchange=e=>{
+/* =====================
+ID PREVIEW
+===================== */
+document.getElementById("id").addEventListener("change",function(){
 let box=document.getElementById("idPreview");
 box.innerHTML="";
-if(e.target.files[0]){
+if(this.files[0]){
 let img=new Image();
-img.src=URL.createObjectURL(e.target.files[0]);
+img.src=URL.createObjectURL(this.files[0]);
 box.appendChild(img);
 }
-};
+});
 
-/* GALLERY */
+/* =====================
+GALLERY PREVIEW
+===================== */
 let files=[];
-document.getElementById("gallery").onchange=e=>{
-files.push(...e.target.files);
+document.getElementById("gallery").addEventListener("change",function(){
+files.push(...this.files);
 render();
-};
+});
 
 function render(){
 let box=document.getElementById("galleryPreview");
@@ -293,60 +153,31 @@ box.appendChild(img);
 });
 }
 
-/* SUBMIT */
-document.getElementById("teacherForm").addEventListener("submit",async e=>{
-e.preventDefault();
+/* =====================
+SUBMIT DEMO
+===================== */
+function submitForm(){
 
-/* PASSWORD CHECK */
-if(document.getElementById("password").value !== document.getElementById("confirmPassword").value){
-document.getElementById("passError").style.display="block";
-return;
-}
-
-/* DECLARATION */
-if(!document.getElementById("declaration").checked){
-alert("Accept declaration");
-return;
-}
-
-/* COLLECT DATA */
-let data={
-name:document.getElementById("name").value,
-phone:document.getElementById("phone").value,
-email:document.getElementById("email").value,
-website:document.getElementById("website").value,
-qualification:document.getElementById("qualification").value,
-experience:document.getElementById("experience").value,
-location:document.getElementById("location").value,
-mapLink:document.getElementById("mapLink").value,
-description:document.getElementById("description").value,
-createdAt:Date.now()
-};
-
-/* SPORTS */
 let sports=[];
 document.querySelectorAll(".sportCheck:checked").forEach(i=>sports.push(i.value));
-if(sportOther.checked && sportInput.value.trim()) sports.push(sportInput.value);
-data.sports=sports;
+if(sportOther.checked && otherSport.value.trim()) sports.push(otherSport.value);
 
-/* MODES */
 let modes=[];
 document.querySelectorAll(".modeCheck:checked").forEach(i=>{
-modes.push({
-mode:i.value,
-fee:document.getElementById(i.dataset.target).querySelector("input").value
+modes.push(i.dataset.target);
 });
+
+console.log({
+sports,
+modes,
+photo:document.getElementById("photo").files[0],
+id:document.getElementById("id").files[0],
+gallery:files
 });
-data.modes=modes;
 
-/* SAVE */
-const newRef = await push(ref(db,"teachers"),data);
+alert("All working ✔ Check console");
+}
 
-alert("Success ✔");
-
-window.location.href="payment.html?id="+newRef.key;
-
-});
 </script>
 
 </body>
