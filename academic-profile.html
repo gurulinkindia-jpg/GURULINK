@@ -130,26 +130,6 @@ background:#fff;
 border-radius:15px;
 }
 
-.loginBox{
-background:white;
-padding:15px;
-border-radius:15px;
-margin-bottom:20px;
-text-align:center;
-box-shadow:0 5px 15px rgba(0,0,0,.08);
-}
-
-.loginBtn{
-display:inline-block;
-margin-top:10px;
-padding:10px 18px;
-background:#1565c0;
-color:white;
-text-decoration:none;
-border-radius:10px;
-font-weight:bold;
-}
-
 </style>
 </head>
 
@@ -166,22 +146,6 @@ Find Teachers & Institutes
 </header>
 
 <div class="container">
-
-<div class="loginBox">
-
-<h3>
-🔒 Student Login Required
-</h3>
-
-<p style="margin-top:8px;">
-Please login or register as student to view full teacher/institute details.
-</p>
-
-<a class="loginBtn" href="student-login.html">
-Student Login / Register
-</a>
-
-</div>
 
 <div class="filters">
 
@@ -375,12 +339,16 @@ localStorage.getItem("studentUid");
 
 if(!studentUid){
 
-alert(
-"Please login as student first"
+const goLogin = confirm(
+"Please login or register as student to view full profile details."
 );
+
+if(goLogin){
 
 window.location.href =
 "student-login.html";
+
+}
 
 return;
 
