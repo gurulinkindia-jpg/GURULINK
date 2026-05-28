@@ -56,6 +56,11 @@ font-size:16px;
 cursor:pointer;
 }
 
+button:disabled{
+opacity:.7;
+cursor:not-allowed;
+}
+
 .preview{
 display:flex;
 flex-wrap:wrap;
@@ -68,7 +73,7 @@ width:90px;
 height:90px;
 border-radius:10px;
 object-fit:cover;
-border:1px solid #ccc;
+border:1px solid #ddd;
 }
 
 .modeBox{
@@ -92,7 +97,7 @@ transform:scale(1.2);
 .modeFee{
 display:none;
 padding:10px;
-background:#f7f7f7;
+background:#f4f4f4;
 border-radius:10px;
 margin-bottom:10px;
 }
@@ -111,31 +116,37 @@ margin-bottom:10px;
 
 <form id="form">
 
-<input id="name"
-placeholder="Institution Name"
+<input id="name" placeholder="Institution Name" required>
+
+<input id="ownerName" placeholder="Owner / Director Name" required>
+
+<input
+type="date"
+id="establishedDate"
 required>
 
-<input id="phone"
-placeholder="Contact Number"
-required>
+<input id="phone" placeholder="Contact Number" required>
 
-<input type="email"
+<input
+type="email"
 id="email"
 placeholder="Email">
 
-<input id="website"
+<input
+id="website"
 placeholder="Website URL if available">
 
-<input id="address"
+<input
+id="address"
 placeholder="Full Address">
 
-<input id="area"
-placeholder="Area / City / Location">
+<input
+id="area"
+placeholder="Area / City / State">
 
-<input id="mapLink"
+<input
+id="mapLink"
 placeholder="Google Map Location Link (Paste URL if available)">
-
-
 
 
 <h3>
@@ -146,89 +157,69 @@ Subjects (More than one can be selected)
 <div class="modeBox">
 
 <div class="row">
-<input type="checkbox"
-value="Physics"
-class="subjectCheck"> Physics
+<input type="checkbox" value="Physics" class="subjectCheck"> Physics
 </div>
 
 <div class="row">
-<input type="checkbox"
-value="Chemistry"
-class="subjectCheck"> Chemistry
+<input type="checkbox" value="Chemistry" class="subjectCheck"> Chemistry
 </div>
 
 <div class="row">
-<input type="checkbox"
-value="Mathematics"
-class="subjectCheck"> Mathematics
+<input type="checkbox" value="Mathematics" class="subjectCheck"> Mathematics
 </div>
 
 <div class="row">
-<input type="checkbox"
-value="Biology"
-class="subjectCheck"> Biology
+<input type="checkbox" value="Biology" class="subjectCheck"> Biology
 </div>
 
 <div class="row">
-<input type="checkbox"
-value="English"
-class="subjectCheck"> English
+<input type="checkbox" value="English" class="subjectCheck"> English
 </div>
 
 <div class="row">
-<input type="checkbox"
-value="Hindi"
-class="subjectCheck"> Hindi
+<input type="checkbox" value="Hindi" class="subjectCheck"> Hindi
 </div>
 
 <div class="row">
-<input type="checkbox"
-value="Assamese"
-class="subjectCheck"> Assamese
+<input type="checkbox" value="Assamese" class="subjectCheck"> Assamese
 </div>
 
 <div class="row">
-<input type="checkbox"
-value="SST"
-class="subjectCheck"> SST
+<input type="checkbox" value="SST" class="subjectCheck"> SST
 </div>
 
 <div class="row">
-<input type="checkbox"
-value="IIT JEE"
-class="subjectCheck"> IIT JEE
+<input type="checkbox" value="JEE" class="subjectCheck"> JEE
 </div>
 
 <div class="row">
-<input type="checkbox"
-value="NEET"
-class="subjectCheck"> NEET
+<input type="checkbox" value="NEET" class="subjectCheck"> NEET
 </div>
 
 <div class="row">
-<input type="checkbox"
-value="other"
-id="otherCheck"> Other
+<input type="checkbox" value="other" id="otherCheck"> Other
 </div>
 
-<input id="otherSubject"
+<input
+id="otherSubject"
 placeholder="Write Other Subject"
 style="display:none;margin-top:10px">
 
-<p id="subjectError"
+<p
+id="subjectError"
 style="color:red;display:none;">
+
 Please select at least one subject
+
 </p>
 
 </div>
 
 
-
 <input
 id="class"
-placeholder="Class Example: Play Group, Nursery, Class 1-10, IIT-JEE, NEET etc"
+placeholder="Class Example: Class 1-10, Class 11-12, IIT-JEE, NEET etc"
 required>
-
 
 
 
@@ -236,35 +227,118 @@ required>
 
 <div class="modeBox">
 
-<div class="row">
 
+<div class="row">
 <input
 type="checkbox"
-value="Offline Classroom"
-id="offlineCheck"
-onchange="toggleFee('offline')">
+value="Individual Coaching"
+id="individualCheck"
+onchange="toggleFee('individual')">
 
 <label>
-Offline Classroom
+Individual Coaching
 </label>
-
 </div>
 
-<div id="offline"
-class="modeFee">
+<div id="individual" class="modeFee">
 
 <input
-id="offlineFee"
-placeholder="Enter Offline Classroom Fee">
+id="individualFee"
+placeholder="Enter Individual Coaching Fee">
 
 </div>
-
-
 
 
 
 <div class="row">
+<input
+type="checkbox"
+value="Home Tuition"
+id="homeCheck"
+onchange="toggleFee('home')">
 
+<label>
+Home Tuition
+</label>
+</div>
+
+<div id="home" class="modeFee">
+
+<input
+id="homeFee"
+placeholder="Enter Home Tuition Fee">
+
+</div>
+
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Group Coaching"
+id="groupCheck"
+onchange="toggleFee('group')">
+
+<label>
+Group Coaching
+</label>
+</div>
+
+<div id="group" class="modeFee">
+
+<input
+id="groupFee"
+placeholder="Enter Group Coaching Fee">
+
+</div>
+
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Dual Coaching"
+id="dualCheck"
+onchange="toggleFee('dual')">
+
+<label>
+Dual Coaching
+</label>
+</div>
+
+<div id="dual" class="modeFee">
+
+<input
+id="dualFee"
+placeholder="Enter Dual Coaching Fee">
+
+</div>
+
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Super/Special Group Coaching"
+id="superCheck"
+onchange="toggleFee('superGroup')">
+
+<label>
+Super/Special Group Coaching
+</label>
+</div>
+
+<div id="superGroup" class="modeFee">
+
+<input
+id="superGroupFee"
+placeholder="Enter Super/Special Group Coaching Fee">
+
+</div>
+
+
+
+<div class="row">
 <input
 type="checkbox"
 value="Online"
@@ -274,11 +348,9 @@ onchange="toggleFee('online')">
 <label>
 Online
 </label>
-
 </div>
 
-<div id="online"
-class="modeFee">
+<div id="online" class="modeFee">
 
 <input
 id="onlineFee"
@@ -288,10 +360,29 @@ placeholder="Enter Online Fee">
 
 
 
+<div class="row">
+<input
+type="checkbox"
+value="Offline Classroom"
+id="offlineCheck"
+onchange="toggleFee('offline')">
+
+<label>
+Offline Classroom
+</label>
+</div>
+
+<div id="offline" class="modeFee">
+
+<input
+id="offlineFee"
+placeholder="Enter Offline Classroom Fee">
+
+</div>
+
 
 
 <div class="row">
-
 <input
 type="checkbox"
 value="Hybrid"
@@ -301,11 +392,9 @@ onchange="toggleFee('hybrid')">
 <label>
 Hybrid
 </label>
-
 </div>
 
-<div id="hybrid"
-class="modeFee">
+<div id="hybrid" class="modeFee">
 
 <input
 id="hybridFee"
@@ -313,8 +402,51 @@ placeholder="Enter Hybrid Fee">
 
 </div>
 
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Demo Class Reg. Fee"
+id="demoCheck"
+onchange="toggleFee('demo')">
+
+<label>
+Demo Class Reg. Fee
+</label>
 </div>
 
+<div id="demo" class="modeFee">
+
+<input
+id="demoFee"
+placeholder="Enter Demo Class Registration Fee">
+
+</div>
+
+
+
+<div class="row">
+<input
+type="checkbox"
+value="Other"
+id="otherModeCheck"
+onchange="toggleFee('otherMode')">
+
+<label>
+Other
+</label>
+</div>
+
+<div id="otherMode" class="modeFee">
+
+<input
+id="otherModeFee"
+placeholder="Enter Other Fee / Details">
+
+</div>
+
+</div>
 
 
 
@@ -327,9 +459,9 @@ id="logo"
 accept="image/*"
 required>
 
-<div class="preview"
-id="logoPreview"></div>
-
+<div
+id="logoPreview"
+class="preview"></div>
 
 
 
@@ -342,24 +474,24 @@ id="logoPreview"></div>
 Select ID Type
 </option>
 
-<option value="Registration Certificate">
-Registration Certificate
+<option value="Aadhaar">
+Aadhaar Card
 </option>
 
-<option value="Trade License">
-Trade License
+<option value="Driving License">
+Driving License
 </option>
 
-<option value="GST Certificate">
-GST Certificate
+<option value="Voter ID">
+Voter ID
 </option>
 
 <option value="PAN">
-PAN Card
+PAN ID
 </option>
 
-<option value="Other">
-Other
+<option value="Passport">
+Passport
 </option>
 
 </select>
@@ -370,9 +502,9 @@ id="idUpload"
 accept="image/*"
 required>
 
-<div class="preview"
+<div
+class="preview"
 id="idPreview"></div>
-
 
 
 
@@ -394,9 +526,9 @@ onclick="document.getElementById('gallery').click()">
 
 </button>
 
-<div class="preview"
-id="galleryPreview"></div>
-
+<div
+id="galleryPreview"
+class="preview"></div>
 
 
 
@@ -421,17 +553,16 @@ I hereby declare that all the information provided by me in this form is true an
 
 
 
-
 <textarea
 id="description"
 placeholder="About Institution"></textarea>
 
 
 
-
-
 <button type="submit">
+
 Continue To Payment
+
 </button>
 
 </form>
@@ -441,22 +572,19 @@ Continue To Payment
 
 
 
-
 <script type="module">
 
 import {
 initializeApp
 }
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
 getDatabase,
 ref,
 push
 }
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 
 const firebaseConfig={
@@ -480,20 +608,28 @@ const API_KEY=
 
 
 
-
-
 const form=document.getElementById("form");
 
-const logo=document.getElementById("logo");
-const logoPreview=document.getElementById("logoPreview");
+const logo=
+document.getElementById("logo");
 
-const gallery=document.getElementById("gallery");
-const galleryPreview=document.getElementById("galleryPreview");
+const logoPreview=
+document.getElementById("logoPreview");
 
-const idUpload=document.getElementById("idUpload");
-const idTypeSelect=document.getElementById("idType");
+const gallery=
+document.getElementById("gallery");
 
+const galleryPreview=
+document.getElementById("galleryPreview");
 
+const idUpload=
+document.getElementById("idUpload");
+
+const idPreview=
+document.getElementById("idPreview");
+
+const idTypeSelect=
+document.getElementById("idType");
 
 
 
@@ -518,6 +654,31 @@ return data.data.url;
 }
 
 
+
+/* SUBJECT */
+
+const otherCheck=
+document.getElementById("otherCheck");
+
+const otherSubject=
+document.getElementById("otherSubject");
+
+otherCheck.addEventListener("change",()=>{
+
+if(otherCheck.checked){
+
+otherSubject.style.display="block";
+otherSubject.required=true;
+
+}else{
+
+otherSubject.style.display="none";
+otherSubject.required=false;
+otherSubject.value="";
+
+}
+
+});
 
 
 
@@ -547,8 +708,6 @@ logoPreview.appendChild(img);
 
 
 
-
-
 /* ID PREVIEW */
 
 idUpload.addEventListener(
@@ -575,40 +734,6 @@ idPreview.appendChild(img);
 
 
 
-
-
-/* SUBJECT */
-
-const otherCheck=
-document.getElementById("otherCheck");
-
-const otherSubject=
-document.getElementById("otherSubject");
-
-otherCheck.addEventListener(
-"change",
-()=>{
-
-if(otherCheck.checked){
-
-otherSubject.style.display="block";
-otherSubject.required=true;
-
-}else{
-
-otherSubject.style.display="none";
-otherSubject.value="";
-otherSubject.required=false;
-
-}
-
-}
-);
-
-
-
-
-
 /* GALLERY */
 
 let selectedFiles=[];
@@ -621,8 +746,8 @@ let newFiles=
 Array.from(this.files);
 
 if(
-selectedFiles.length+
-newFiles.length>5
+selectedFiles.length +
+newFiles.length > 5
 ){
 
 alert(
@@ -662,8 +787,6 @@ galleryPreview.appendChild(img);
 
 
 
-
-
 /* SUBMIT */
 
 form.addEventListener(
@@ -677,12 +800,10 @@ document.querySelectorAll(
 ".subjectCheck:checked"
 ).length;
 
-let other=
-document.getElementById(
-"otherCheck"
-).checked;
-
-if(checked===0 && !other){
+if(
+checked===0 &&
+!otherCheck.checked
+){
 
 document.getElementById(
 "subjectError"
@@ -698,20 +819,13 @@ document.getElementById(
 
 }
 
-
 const submitBtn=
 form.querySelector(
 'button[type="submit"]'
 );
 
-if(submitBtn.disabled)
-return;
-
 submitBtn.disabled=true;
-
-submitBtn.innerText=
-"Processing...";
-
+submitBtn.innerText="Processing...";
 
 try{
 
@@ -796,18 +910,23 @@ otherSubject.value
 }
 
 
+
 let newRef=
+
 await push(
 
-ref(
-db,
-"institutions"
-),
+ref(db,"institutions"),
 
 {
 
 name:
 document.getElementById("name").value,
+
+ownerName:
+document.getElementById("ownerName").value,
+
+establishedDate:
+document.getElementById("establishedDate").value,
 
 phone:
 document.getElementById("phone").value,
@@ -834,14 +953,35 @@ document.getElementById("class").value,
 
 teachingModes,
 
-offlineFee:
-document.getElementById("offlineFee").value,
+individualFee:
+document.getElementById("individualFee").value,
+
+homeFee:
+document.getElementById("homeFee").value,
+
+groupFee:
+document.getElementById("groupFee").value,
+
+dualFee:
+document.getElementById("dualFee").value,
+
+superGroupFee:
+document.getElementById("superGroupFee").value,
 
 onlineFee:
 document.getElementById("onlineFee").value,
 
+offlineFee:
+document.getElementById("offlineFee").value,
+
 hybridFee:
 document.getElementById("hybridFee").value,
+
+demoFee:
+document.getElementById("demoFee").value,
+
+otherModeFee:
+document.getElementById("otherModeFee").value,
 
 logo:
 logoUrl,
@@ -878,7 +1018,6 @@ localStorage.setItem(
 institutionId
 );
 
-
 setTimeout(()=>{
 
 window.location.href=
@@ -910,8 +1049,6 @@ submitBtn.innerText=
 
 
 
-
-
 <script>
 
 function toggleFee(id){
@@ -920,10 +1057,15 @@ let box=
 document.getElementById(id);
 
 box.style.display=
+
 box.style.display==="block"
+
 ?
+
 "none"
+
 :
+
 "block";
 
 }
