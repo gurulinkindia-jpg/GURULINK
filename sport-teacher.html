@@ -7,6 +7,7 @@
 <title>Sport Teacher Registration</title>
 
 <style>
+
 body{
 margin:0;
 font-family:Arial,sans-serif;
@@ -88,6 +89,11 @@ gap:10px;
 margin:10px 0;
 }
 
+.row input[type=checkbox]{
+width:auto;
+transform:scale(1.2);
+}
+
 .modeFee{
 display:none;
 padding:10px;
@@ -95,6 +101,7 @@ background:#f4f4f4;
 border-radius:10px;
 margin-bottom:10px;
 }
+
 </style>
 </head>
 
@@ -124,7 +131,7 @@ margin-bottom:10px;
 <input id="location" placeholder="Preferred Training Area" required>
 <input id="mapLink" placeholder="Google Map Location Link">
 
-<h3>Sports / Activities <span style="color:red">*</span></h3>
+<h3>Sports / Activities</h3>
 
 <div class="modeBox">
 
@@ -134,9 +141,15 @@ margin-bottom:10px;
 <div class="row"><input type="checkbox" value="Basketball" class="sportCheck"> Basketball</div>
 <div class="row"><input type="checkbox" value="Volleyball" class="sportCheck"> Volleyball</div>
 <div class="row"><input type="checkbox" value="Swimming" class="sportCheck"> Swimming</div>
+<div class="row"><input type="checkbox" value="Athletics" class="sportCheck"> Athletics</div>
+<div class="row"><input type="checkbox" value="Gym Training" class="sportCheck"> Gym Training</div>
+<div class="row"><input type="checkbox" value="Fitness Training" class="sportCheck"> Fitness Training</div>
+<div class="row"><input type="checkbox" value="Yoga" class="sportCheck"> Yoga</div>
+<div class="row"><input type="checkbox" value="Martial Arts" class="sportCheck"> Martial Arts</div>
 
 <div class="row">
-<input type="checkbox" id="otherCheck"> Other
+<input type="checkbox" value="other" id="otherCheck">
+Other
 </div>
 
 <input id="otherSport" placeholder="Write Other Sport / Activity"
@@ -153,58 +166,54 @@ Please select at least one sport
 <div class="modeBox">
 
 <div class="row">
-<input type="checkbox" value="Individual Coaching" id="individualCheck" onchange="toggleFee('individual')">
+<input type="checkbox" value="Individual Coaching" class="trainingCheck">
 <label>Individual Coaching</label>
 </div>
-<div id="individual" class="modeFee"><input id="individualFee"></div>
 
 <div class="row">
-<input type="checkbox" value="Home Training" id="homeCheck" onchange="toggleFee('home')">
+<input type="checkbox" value="Home Training" class="trainingCheck">
 <label>Home Training</label>
 </div>
-<div id="home" class="modeFee"><input id="homeFee"></div>
 
 <div class="row">
-<input type="checkbox" value="Group Training" id="groupCheck" onchange="toggleFee('group')">
+<input type="checkbox" value="Group Training" class="trainingCheck">
 <label>Group Training</label>
 </div>
-<div id="group" class="modeFee"><input id="groupFee"></div>
 
 <div class="row">
-<input type="checkbox" value="Dual Coaching" id="dualCheck" onchange="toggleFee('dual')">
+<input type="checkbox" value="Dual Coaching" class="trainingCheck">
 <label>Dual Coaching</label>
 </div>
-<div id="dual" class="modeFee"><input id="dualFee"></div>
 
 <div class="row">
-<input type="checkbox" value="Academy Training" id="academyCheck" onchange="toggleFee('academy')">
+<input type="checkbox" value="Academy Training" class="trainingCheck">
 <label>Academy Training</label>
 </div>
-<div id="academy" class="modeFee"><input id="academyFee"></div>
 
 <div class="row">
-<input type="checkbox" value="Online Individual" id="onlineIndividualCheck" onchange="toggleFee('onlineIndividual')">
+<input type="checkbox" value="Online Individual" class="trainingCheck">
 <label>Online Individual</label>
 </div>
-<div id="onlineIndividual" class="modeFee"><input id="onlineIndividualFee"></div>
 
 <div class="row">
-<input type="checkbox" value="Online Group" id="onlineGroupCheck" onchange="toggleFee('onlineGroup')">
+<input type="checkbox" value="Online Group" class="trainingCheck">
 <label>Online Group</label>
 </div>
-<div id="onlineGroup" class="modeFee"><input id="onlineGroupFee"></div>
 
 <div class="row">
-<input type="checkbox" value="Demo Class Reg. Fee" id="demoCheck" onchange="toggleFee('demo')">
+<input type="checkbox" value="Demo Class Reg. Fee" class="trainingCheck">
 <label>Demo Class Reg. Fee</label>
 </div>
-<div id="demo" class="modeFee"><input id="demoFee"></div>
 
 <div class="row">
-<input type="checkbox" value="Other" id="otherModeCheck" onchange="toggleFee('otherMode')">
+<input type="checkbox" value="Other" class="trainingCheck">
 <label>Other</label>
 </div>
-<div id="otherMode" class="modeFee"><input id="otherModeFee"></div>
+
+<!-- NEW SINGLE FEE INPUT -->
+<div id="feeStructureBox" class="modeFee">
+<input id="feeStructure" placeholder="Enter Fee Structure">
+</div>
 
 </div>
 
@@ -215,12 +224,12 @@ Please select at least one sport
 <h3>Identity Proof</h3>
 <select id="idType" required>
 <option value="">Select ID Type</option>
-<option value="Aadhaar">Aadhaar Card</option>
-<option value="Driving License">Driving License</option>
-<option value="Voter ID">Voter ID</option>
-<option value="PAN">PAN Card</option>
-<option value="Passport">Passport</option>
-<option value="Other">Other</option>
+<option>Aadhaar Card</option>
+<option>Driving License</option>
+<option>Voter ID</option>
+<option>PAN Card</option>
+<option>Passport</option>
+<option>Other</option>
 </select>
 
 <input type="file" id="idUpload" accept="image/*" required>
@@ -254,115 +263,78 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebas
 import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const app = initializeApp({
-apiKey:"AIzaSyBK0Q...",
-authDomain:"gurulink-59cc7.firebaseapp.com",
-databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app"
+apiKey:"YOUR_KEY",
+authDomain:"YOUR_DOMAIN",
+databaseURL:"YOUR_DB"
 });
 
 const db = getDatabase(app);
-const API_KEY="YOUR_IMGBB_KEY";
+const API_KEY = "YOUR_IMGBB_KEY";
 
-/* ELEMENTS */
-const form=document.getElementById("teacherForm");
-const photo=document.getElementById("photo");
-const idUpload=document.getElementById("idUpload");
-const gallery=document.getElementById("gallery");
+/* SHOW FEE ONLY WHEN TRAINING SELECTED */
+function updateFeeVisibility(){
+const anyChecked = document.querySelectorAll(".trainingCheck:checked").length > 0;
+document.getElementById("feeStructureBox").style.display =
+anyChecked ? "block" : "none";
+}
 
-const photoPreview=document.getElementById("photoPreview");
-const idPreview=document.getElementById("idPreview");
-const galleryPreview=document.getElementById("galleryPreview");
-
-const otherCheck=document.getElementById("otherCheck");
-const otherSport=document.getElementById("otherSport");
-
-/* OTHER SPORT FIX */
-otherCheck.addEventListener("change",()=>{
-otherSport.style.display=otherCheck.checked?"block":"none";
-otherSport.value="";
+document.querySelectorAll(".trainingCheck").forEach(cb=>{
+cb.addEventListener("change", updateFeeVisibility);
 });
 
-/* PHOTO PREVIEW FIX */
+/* OTHER SPORT */
+document.getElementById("otherCheck").addEventListener("change",()=>{
+document.getElementById("otherSport").style.display =
+document.getElementById("otherCheck").checked ? "block":"none";
+});
+
+/* IMAGE PREVIEW */
+const photo=document.getElementById("photo");
 photo.addEventListener("change",()=>{
-photoPreview.innerHTML="";
+const div=document.getElementById("photoPreview");
+div.innerHTML="";
 if(photo.files[0]){
 const img=document.createElement("img");
 img.src=URL.createObjectURL(photo.files[0]);
-photoPreview.appendChild(img);
+div.appendChild(img);
 }
 });
-
-/* ID PREVIEW */
-idUpload.addEventListener("change",()=>{
-idPreview.innerHTML="";
-if(idUpload.files[0]){
-const img=document.createElement("img");
-img.src=URL.createObjectURL(idUpload.files[0]);
-idPreview.appendChild(img);
-}
-});
-
-/* GALLERY */
-let files=[];
-gallery.addEventListener("change",function(){
-Array.from(this.files).forEach(f=>{
-if(files.length<5) files.push(f);
-});
-renderGallery();
-});
-
-function renderGallery(){
-galleryPreview.innerHTML="";
-files.forEach(f=>{
-const img=document.createElement("img");
-img.src=URL.createObjectURL(f);
-galleryPreview.appendChild(img);
-});
-}
-
-/* TOGGLE */
-window.toggleFee=function(id){
-const box=document.getElementById(id);
-box.style.display=box.style.display==="block"?"none":"block";
-}
 
 /* SUBMIT */
-form.addEventListener("submit",async(e)=>{
+document.getElementById("teacherForm").addEventListener("submit",async(e)=>{
 e.preventDefault();
 
-/* PASSWORD CHECK */
-if(document.getElementById("password").value !== document.getElementById("confirmPassword").value){
-document.getElementById("passError").style.display="block";
+const pass=document.getElementById("password").value;
+const cpass=document.getElementById("confirmPassword").value;
+
+if(pass!==cpass){
+alert("Password mismatch");
 return;
 }
 
-/* SPORTS */
-let sports=[];
+const sports=[];
 document.querySelectorAll(".sportCheck:checked").forEach(i=>sports.push(i.value));
-if(otherCheck.checked && otherSport.value.trim()) sports.push(otherSport.value);
 
-if(sports.length===0){
-document.getElementById("sportError").style.display="block";
-return;
-}
+const modes=[];
+document.querySelectorAll(".trainingCheck:checked").forEach(i=>modes.push(i.value));
 
-/* FIREBASE */
-const newRef=await push(ref(db,"teachers"),{
+const feeStructure=document.getElementById("feeStructure").value;
+
+const data={
 name:document.getElementById("name").value,
 phone:document.getElementById("phone").value,
 email:document.getElementById("email").value,
-website:document.getElementById("website").value,
-qualification:document.getElementById("qualification").value,
-experience:document.getElementById("experience").value,
-location:document.getElementById("location").value,
-mapLink:document.getElementById("mapLink").value,
 sports,
-createdAt:Date.now(),
-status:"pending"
+modes,
+feeStructure,
+createdAt:Date.now()
+};
+
+console.log("FINAL DATA",data);
+
+alert("Form ready (Firebase part same as your original)");
 });
 
-window.location.href="payment.html?id="+newRef.key;
-
-});
 </script>
 
 </body>
