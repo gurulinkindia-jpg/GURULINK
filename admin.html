@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GURULINK Admin Panel</title>
+<title>GURULINK ADMIN PANEL</title>
 
 <style>
 body{
@@ -20,51 +20,214 @@ text-align:center;
 }
 
 .container{
-max-width:1000px;
+width:95%;
+max-width:1100px;
 margin:20px auto;
-background:white;
-padding:20px;
-border-radius:10px;
 }
 
-input,button{
-padding:10px;
-margin:5px 0;
-width:100%;
-box-sizing:border-box;
+.box{
+background:white;
+padding:15px;
+margin-bottom:15px;
+border-radius:10px;
+box-shadow:0 2px 10px rgba(0,0,0,0.1);
 }
 
 button{
-background:#0d47a1;
-color:white;
+padding:6px 10px;
+margin:3px;
 border:none;
-cursor:pointer;
 border-radius:6px;
+cursor:pointer;
 }
 
-.card{
-padding:10px;
-border:1px solid #ddd;
-margin:10px 0;
-border-radius:10px;
-background:#fff;
+.delete{background:red;color:white;}
+.approve{background:green;color:white;}
+.reject{background:orange;color:white;}
+
+table{
+width:100%;
+border-collapse:collapse;
 }
 
-.row{
-display:flex;
-gap:10px;
+th,td{
+padding:8px;
+border-bottom:1px solid #ddd;
+font-size:14px;
 }
 
-.row button{
-flex:1;
-}
+h2{margin:10px 0;}
 </style>
 </head>
 
 <body>
 
 <header>
-<h2>GURULINK ADMIN PANEL</h2>
+<h1>GURULINK ADMIN DASHBOARD</h1>
 </header>
 
-<!-- LOGIN
+<div class="container">
+
+<div class="box">
+<h2>Teachers</h2>
+<div id="teachers"></div>
+</div>
+
+<div class="box">
+<h2>Institutions</h2>
+<div id="institutions"></div>
+</div>
+
+<div class="box">
+<h2>Payments</h2>
+<div id="payments"></div>
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import {
+getDatabase,
+ref,
+onValue,
+remove,
+update
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+/* ========== TEACHERS ========== */
+const teacherBox = document.getElementById("teachers");
+
+onValue(ref(db,"teachers"), snap=>{
+let data = snap.val() || {};
+
+let html = `<table>
+<tr>
+<th>Name</th>
+<th>Phone</th>
+<th>Email</th>
+<th>Status</th>
+<th>Action</th>
+</tr>`;
+
+Object.keys(data).forEach(id=>{
+let t = data[id];
+
+html += `
+<tr>
+<td>${t.name || ""}</td>
+<td>${t.phone || ""}</td>
+<td>${t.email || ""}</td>
+<td>${t.status || "pending"}</td>
+<td>
+<button class="approve" onclick="approveTeacher('${id}')">Approve</button>
+<button class="delete" onclick="deleteTeacher('${id}')">Delete</button>
+</td>
+</tr>`;
+});
+
+html += `</table>`;
+teacherBox.innerHTML = html;
+});
+
+/* ========== INSTITUTIONS ========== */
+const instBox = document.getElementById("institutions");
+
+onValue(ref(db,"institutions"), snap=>{
+let data = snap.val() || {};
+
+let html = `<table>
+<tr>
+<th>Name</th>
+<th>Owner</th>
+<th>Phone</th>
+<th>Status</th>
+<th>Action</th>
+</tr>`;
+
+Object.keys(data).forEach(id=>{
+let t = data[id];
+
+html += `
+<tr>
+<td>${t.name || ""}</td>
+<td>${t.ownerName || ""}</td>
+<td>${t.phone || ""}</td>
+<td>${t.status || "pending"}</td>
+<td>
+<button class="approve" onclick="approveInst('${id}')">Approve</button>
+<button class="delete" onclick="deleteInst('${id}')">Delete</button>
+</td>
+</tr>`;
+});
+
+html += `</table>`;
+instBox.innerHTML = html;
+});
+
+/* ========== PAYMENTS ========== */
+const payBox = document.getElementById("payments");
+
+onValue(ref(db,"payments"), snap=>{
+let data = snap.val() || {};
+
+let html = `<table>
+<tr>
+<th>User</th>
+<th>Amount</th>
+<th>Status</th>
+</tr>`;
+
+Object.keys(data).forEach(id=>{
+let p = data[id];
+
+html += `
+<tr>
+<td>${p.userId || ""}</td>
+<td>${p.amount || ""}</td>
+<td>${p.status || ""}</td>
+</tr>`;
+});
+
+html += `</table>`;
+payBox.innerHTML = html;
+});
+
+/* ========== ACTIONS ========== */
+
+window.deleteTeacher = async (id)=>{
+await remove(ref(db,"teachers/"+id));
+await remove(ref(db,"users/"+id));
+}
+
+window.deleteInst = async (id)=>{
+await remove(ref(db,"institutions/"+id));
+await remove(ref(db,"users/"+id));
+}
+
+window.approveTeacher = async (id)=>{
+await update(ref(db,"teachers/"+id),{status:"approved"});
+}
+
+window.approveInst = async (id)=>{
+await update(ref(db,"institutions/"+id),{status:"approved"});
+}
+
+</script>
+
+</body>
+</html>
