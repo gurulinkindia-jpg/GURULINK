@@ -1,161 +1,75 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>GURULINK SUPER ADMIN</title>
+<title>Edit Full Form</title>
 
 <style>
 body{
-margin:0;
 font-family:Arial;
 background:#eef2f7;
-}
-
-header{
-background:#0d47a1;
-color:white;
-padding:18px;
-text-align:center;
+margin:0;
 }
 
 .container{
-width:95%;
-max-width:1400px;
-margin:auto;
-padding:15px;
-}
-
-/* TOP BAR */
-.topbar{
-display:flex;
-gap:10px;
-margin:15px 0;
-}
-
-input,select{
-padding:10px;
-flex:1;
-border-radius:8px;
-border:1px solid #ccc;
-}
-
-/* CARD */
-.card{
+width:90%;
+max-width:800px;
+margin:20px auto;
 background:white;
-padding:15px;
-margin:15px 0;
-border-radius:12px;
-box-shadow:0 3px 10px rgba(0,0,0,.1);
-border-left:6px solid gray;
-}
-
-.academic{border-left-color:#1565c0;}
-.skill{border-left-color:#e65100;}
-.sport{border-left-color:#2e7d32;}
-.creative{border-left-color:#6a1b9a;}
-
-.top{
-display:flex;
-gap:10px;
-align-items:center;
-}
-
-.photo{
-width:70px;
-height:70px;
-border-radius:50%;
-object-fit:cover;
-border:2px solid #333;
-}
-
-.gallery img{
-width:60px;
-height:60px;
-border-radius:8px;
-margin:3px;
-object-fit:cover;
-}
-
-.badge{
-padding:4px 10px;
-border-radius:20px;
-color:white;
-font-size:12px;
-}
-
-.approved{background:green;}
-.pending{background:orange;}
-
-button{
-padding:6px 10px;
-margin:3px;
-border:none;
-border-radius:6px;
-color:white;
-cursor:pointer;
-}
-
-.edit{background:#0d47a1;}
-.delete{background:red;}
-.approve{background:green;}
-.review{background:#6a1b9a;}
-
-/* FULL EDIT PANEL */
-.editBox{
-display:none;
-background:#f7f7f7;
-padding:10px;
-margin-top:10px;
+padding:20px;
 border-radius:10px;
 }
 
-.editBox input,
-.editBox textarea{
+input,select,textarea{
 width:100%;
-padding:8px;
-margin:5px 0;
-border-radius:6px;
-border:1px solid #ccc;
+padding:10px;
+margin:8px 0;
+}
+
+button{
+padding:12px;
+background:#0d47a1;
+color:white;
+border:none;
+width:100%;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-<h2>SUPER ADMIN - ALL FORMS CONTROL</h2>
-</header>
-
 <div class="container">
 
-<div class="topbar">
-<input id="search" placeholder="Search phone / name / email">
-<select id="filter">
-<option value="all">All</option>
-<option value="academic">Academic</option>
-<option value="skill">Skill</option>
-<option value="sport">Sport</option>
-<option value="creative">Creative</option>
-<option value="teacher">Teacher</option>
-<option value="institution">Institution</option>
-<option value="pending">Pending</option>
-<option value="approved">Approved</option>
-</select>
-</div>
+<h2>Edit Full Profile</h2>
 
-<div id="list"></div>
+<form id="editForm">
+
+<input id="name" placeholder="Name">
+<input id="phone" placeholder="Phone">
+<input id="email" placeholder="Email">
+<input id="qualification" placeholder="Qualification">
+<input id="experience" placeholder="Experience">
+
+<textarea id="description" placeholder="Description"></textarea>
+
+<button type="submit">SAVE CHANGES</button>
+
+</form>
 
 </div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, onValue, update, remove } 
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import {
+getDatabase,
+ref,
+get,
+update
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const app = initializeApp({
-apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+apiKey:"AIzaSyBK0Q...",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"gurulink-59cc7"
@@ -163,130 +77,45 @@ projectId:"gurulink-59cc7"
 
 const db = getDatabase(app);
 
-let allData = [];
+// GET URL DATA
+const params = new URLSearchParams(window.location.search);
+const type = params.get("type");
+const id = params.get("id");
 
-/* LOAD ALL */
-function load(){
-onValue(ref(db,"teachers"),snap=>{
-snap.forEach(c=>{
-allData.push({id:c.key,type:"teacher",...c.val()});
-});
-render();
-});
+// LOAD DATA
+async function loadData(){
+const snap = await get(ref(db, `${type}s/${id}`));
 
-onValue(ref(db,"institutions"),snap=>{
-snap.forEach(c=>{
-allData.push({id:c.key,type:"institution",...c.val()});
-});
-render();
-});
+if(snap.exists()){
+const data = snap.val();
+
+document.getElementById("name").value = data.name || "";
+document.getElementById("phone").value = data.phone || "";
+document.getElementById("email").value = data.email || "";
+document.getElementById("qualification").value = data.qualification || "";
+document.getElementById("experience").value = data.experience || "";
+document.getElementById("description").value = data.description || "";
+}
 }
 
-load();
+loadData();
 
-/* RENDER */
-function render(){
+// SAVE DATA
+document.getElementById("editForm").addEventListener("submit", async (e)=>{
+e.preventDefault();
 
-let search=document.getElementById("search").value.toLowerCase();
-let filter=document.getElementById("filter").value;
-
-let html="";
-
-allData.forEach(u=>{
-
-let text=(u.name||"")+(u.phone||"")+(u.email||"");
-
-if(!text.toLowerCase().includes(search)) return;
-
-if(filter!="all"){
-if(u.type!=filter && u.category!=filter) return;
-if(filter=="approved" && u.status!="approved") return;
-if(filter=="pending" && u.status=="approved") return;
-}
-
-html+=`
-<div class="card ${u.category||''}">
-
-<div class="top">
-<img class="photo" src="${u.photo||u.logo||''}">
-<div>
-<h3>${u.name||""}</h3>
-<span class="badge ${u.status=="approved"?"approved":"pending"}">
-${u.status||"pending"}
-</span>
-</div>
-</div>
-
-<p>📞 ${u.phone||""}</p>
-<p>📧 ${u.email||""}</p>
-<p>📚 Category: ${u.category||u.type}</p>
-
-<p><b>Subjects/Skills:</b> ${u.subjects||u.skills||u.sport||""}</p>
-
-<p><b>Description:</b> ${u.description||""}</p>
-
-<div>
-<button class="approve" onclick="approve('${u.type}','${u.id}')">Approve</button>
-<button class="delete" onclick="del('${u.type}','${u.id}')">Delete</button>
-<button class="edit" onclick="toggle('${u.id}')">Edit Full</button>
-<button class="review" onclick="review('${u.type}','${u.id}')">Review</button>
-</div>
-
-<div class="editBox" id="box_${u.id}">
-
-<input id="name_${u.id}" value="${u.name||""}">
-<input id="phone_${u.id}" value="${u.phone||""}">
-<input id="email_${u.id}" value="${u.email||""}">
-<input id="location_${u.id}" value="${u.location||""}">
-<textarea id="desc_${u.id}">${u.description||""}</textarea>
-
-<input id="fee_${u.id}" value="${u.homeFee||""}" placeholder="Home Fee">
-
-<button onclick="save('${u.type}','${u.id}')">Save</button>
-
-</div>
-
-</div>
-`;
+await update(ref(db, `${type}s/${id}`), {
+name: name.value,
+phone: phone.value,
+email: email.value,
+qualification: qualification.value,
+experience: experience.value,
+description: description.value
 });
 
-document.getElementById("list").innerHTML=html;
-}
-
-/* ACTIONS */
-window.approve=(type,id)=>{
-update(ref(db,`${type}s/${id}`),{status:"approved"});
-};
-
-window.del=(type,id)=>{
-remove(ref(db,`${type}s/${id}`));
-};
-
-window.toggle=(id)=>{
-let b=document.getElementById("box_"+id);
-b.style.display=b.style.display==="block"?"none":"block";
-};
-
-window.save=(type,id)=>{
-update(ref(db,`${type}s/${id}`),{
-name:document.getElementById("name_"+id).value,
-phone:document.getElementById("phone_"+id).value,
-email:document.getElementById("email_"+id).value,
-location:document.getElementById("location_"+id).value,
-description:document.getElementById("desc_"+id).value,
-homeFee:document.getElementById("fee_"+id).value
+alert("Updated Successfully");
+window.location.href = "admin.html";
 });
-};
-
-window.review=(type,id)=>{
-let r=prompt("Admin Review:");
-if(r){
-update(ref(db,`${type}s/${id}`),{adminReview:r});
-}
-};
-
-document.getElementById("search").addEventListener("input",render);
-document.getElementById("filter").addEventListener("change",render);
 
 </script>
 
