@@ -332,27 +332,32 @@ const btn = e.target.closest(".view");
 
 if(!btn) return;
 
-const studentUid =
-localStorage.getItem("studentUid");
 
-/* NOT LOGGED IN */
+
+
+
+const studentUid = localStorage.getItem("studentUid");
 
 if(!studentUid){
 
-const goLogin = confirm(
-"Please login or register as student to view full profile details."
-);
+  // store where user wanted to go
+  localStorage.setItem("redirectAfterLogin",
+    "profile-view.html?id=" + btn.dataset.id
+  );
 
-if(goLogin){
+  const goLogin = confirm(
+    "Please login or register as student to view full profile details."
+  );
 
-window.location.href =
-"student-login.html";
+  if(goLogin){
+    window.location.href = "student-login.html";
+  }
 
+  return;
 }
 
-return;
 
-}
+
 
 /* OPEN PROFILE */
 
