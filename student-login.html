@@ -3,56 +3,80 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Universal Login - GURULINK</title>
+<title>Student Login - GURULINK</title>
 
 <style>
+*{box-sizing:border-box;}
+
 body{
 margin:0;
-font-family:Arial;
+font-family:Arial,sans-serif;
 background:#eef2f7;
 display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
+min-height:100vh;
+padding:20px;
 }
 
 .box{
-width:350px;
-background:#fff;
-padding:25px;
-border-radius:12px;
-box-shadow:0 5px 20px rgba(0,0,0,0.1);
+width:100%;
+max-width:420px;
+background:white;
+padding:30px;
+border-radius:18px;
+box-shadow:0 5px 20px rgba(0,0,0,.12);
 }
 
 h2{
+margin-top:0;
 text-align:center;
-margin-bottom:10px;
+color:#1565c0;
+}
+
+p{
+text-align:center;
+color:#666;
+margin-bottom:20px;
 }
 
 input{
 width:100%;
-padding:12px;
+padding:13px;
 margin:10px 0;
 border:1px solid #ccc;
-border-radius:8px;
+border-radius:10px;
+font-size:15px;
 }
 
 button{
 width:100%;
-padding:12px;
-background:#1565c0;
-color:#fff;
+padding:14px;
 border:none;
-border-radius:8px;
+border-radius:10px;
+font-size:15px;
 cursor:pointer;
+margin-top:10px;
 font-weight:bold;
 }
 
+.loginBtn{
+background:#1565c0;
+color:white;
+}
+
+.switchBtn{
+background:#43a047;
+color:white;
+}
+
 #msg{
-margin-top:10px;
+margin-top:15px;
 text-align:center;
 font-weight:bold;
 }
+
+.hidden{display:none;}
 </style>
 </head>
 
@@ -60,12 +84,13 @@ font-weight:bold;
 
 <div class="box">
 
-<h2>Universal Login</h2>
+<h2>Login</h2>
+<p>Login to continue</p>
 
-<input type="email" id="email" placeholder="Email">
-<input type="password" id="password" placeholder="Password">
+<input type="email" id="loginEmail" placeholder="Enter Email">
+<input type="password" id="loginPassword" placeholder="Enter Password">
 
-<button onclick="login()">Login</button>
+<button class="loginBtn" onclick="loginUser()">Login</button>
 
 <div id="msg"></div>
 
@@ -79,13 +104,13 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0
 
 /* FIREBASE CONFIG */
 const firebaseConfig = {
-apiKey:"YOUR_KEY",
-authDomain:"YOUR_DOMAIN",
-databaseURL:"YOUR_DB",
-projectId:"YOUR_ID",
-storageBucket:"YOUR_BUCKET",
-messagingSenderId:"YOUR_ID",
-appId:"YOUR_APP_ID"
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -94,74 +119,56 @@ const db = getDatabase(app);
 
 const msg = document.getElementById("msg");
 
-/* LOGIN FUNCTION */
-window.login = async function(){
+/* LOGIN */
+window.loginUser = async function(){
 
-const email = document.getElementById("email").value.trim().toLowerCase();
-const password = document.getElementById("password").value;
+const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+const password = document.getElementById("loginPassword").value;
 
 if(!email || !password){
-msg.innerHTML = "Enter email & password";
-msg.style.color = "red";
+msg.style.color="red";
+msg.innerHTML="Enter email & password";
 return;
 }
 
-msg.innerHTML = "Logging in...";
-msg.style.color = "#1565c0";
+msg.style.color="#1565c0";
+msg.innerHTML="Logging in...";
 
 try{
 
-/* 1. LOGIN AUTH */
+/* 1. AUTH LOGIN */
 const userCred = await signInWithEmailAndPassword(auth,email,password);
 const uid = userCred.user.uid;
 
-/* 2. FIND ROLE (MULTI-CHECK SYSTEM) */
+/* 2. FIND ROLE FROM DATABASE */
 let role = null;
-let data = null;
 
-/* USERS TABLE */
-let snap = await get(ref(db,"users/"+uid));
-if(snap.exists()){
-data = snap.val();
-role = data.role;
+/* USERS NODE (PRIMARY ROLE STORE) */
+const userSnap = await get(ref(db,"users/"+uid));
+if(userSnap.exists()){
+role = userSnap.val().role;
 }
 
-/* STUDENT */
+/* FALLBACK CHECKS */
 if(!role){
-snap = await get(ref(db,"students/"+uid));
-if(snap.exists()){
-role = "student";
-}
-}
 
-/* TEACHER */
-if(!role){
+let snap = await get(ref(db,"students/"+uid));
+if(snap.exists()) role = "student";
+
 snap = await get(ref(db,"teachers/"+uid));
-if(snap.exists()){
-role = "teacher";
-}
-}
+if(snap.exists()) role = "teacher";
 
-/* INSTITUTION */
-if(!role){
 snap = await get(ref(db,"institutions/"+uid));
-if(snap.exists()){
-role = "institution";
-}
-}
+if(snap.exists()) role = "institution";
 
-/* ADMIN (optional direct check) */
-if(!role){
 snap = await get(ref(db,"admins/"+uid));
-if(snap.exists()){
-role = "admin";
-}
+if(snap.exists()) role = "admin";
 }
 
-/* NO ROLE FOUND */
+/* NOT FOUND */
 if(!role){
-msg.style.color = "red";
-msg.innerHTML = "Account exists but role not assigned";
+msg.style.color="red";
+msg.innerHTML="Account exists but role not set";
 return;
 }
 
@@ -169,10 +176,11 @@ return;
 localStorage.setItem("uid",uid);
 localStorage.setItem("role",role);
 
-/* 4. REDIRECT */
-msg.style.color = "green";
-msg.innerHTML = "Login Successful";
+/* 4. SUCCESS */
+msg.style.color="green";
+msg.innerHTML="Login Successful";
 
+/* 5. REDIRECT */
 setTimeout(()=>{
 
 if(role === "student"){
@@ -192,7 +200,7 @@ window.location.href = "admin.html";
 }
 
 else{
-msg.innerHTML = "Unknown role";
+window.location.href = "index.html";
 }
 
 },800);
@@ -201,11 +209,11 @@ msg.innerHTML = "Unknown role";
 
 catch(err){
 console.log(err);
-msg.style.color = "red";
-msg.innerHTML = "Invalid email or password";
+msg.style.color="red";
+msg.innerHTML="Invalid email or password";
 }
 
-}
+};
 
 </script>
 
