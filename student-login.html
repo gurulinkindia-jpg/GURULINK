@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Student Login - GURULINK</title>
+<title>Universal Login - GURULINK</title>
 
 <style>
 
@@ -95,10 +95,10 @@ display:none;
 
 <div id="loginBox">
 
-<h2>Student Login</h2>
+<h2>Login</h2>
 
 <p>
-Login to view teacher and institute details
+Student / Teacher / Institution / Admin
 </p>
 
 <input
@@ -113,7 +113,7 @@ placeholder="Enter Password">
 
 <button
 class="loginBtn"
-onclick="loginStudent()">
+onclick="loginUser()">
 
 Login
 
@@ -197,7 +197,8 @@ from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import {
 getDatabase,
 ref,
-set
+set,
+get
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
@@ -261,7 +262,7 @@ msg.innerHTML = "";
 
 };
 
-/* REGISTER */
+/* STUDENT REGISTER */
 
 window.registerStudent = async function(){
 
@@ -348,9 +349,15 @@ ref(db,"users/"+uid),
 
 uid:uid,
 
+name:name,
+
+email:email,
+
 role:"student",
 
-profileId:uid
+profileId:uid,
+
+createdAt:Date.now()
 
 }
 );
@@ -391,7 +398,8 @@ redirectId;
 else{
 
 window.location.href =
-"index.html";
+"profile-view.html?id=" +
+uid;
 
 }
 
@@ -431,9 +439,9 @@ err.message;
 
 };
 
-/* LOGIN */
+/* UNIVERSAL LOGIN */
 
-window.loginStudent = async function(){
+window.loginUser = async function(){
 
 const email =
 document.getElementById("loginEmail")
@@ -474,13 +482,43 @@ password
 const uid =
 userCred.user.uid;
 
+/* GET USER ROLE */
+
+const snap = await get(
+ref(db,"users/"+uid)
+);
+
+if(!snap.exists()){
+
+msg.style.color = "red";
+
+msg.innerHTML =
+"User profile not found";
+
+return;
+
+}
+
+const userData = snap.val();
+
+const role = userData.role;
+
 /* SAVE SESSION */
 
-localStorage.setItem("uid",uid);
+localStorage.setItem(
+"uid",
+uid
+);
 
-localStorage.setItem("role","student");
+localStorage.setItem(
+"profileId",
+userData.profileId || uid
+);
 
-localStorage.setItem("profileId",uid);
+localStorage.setItem(
+"role",
+role
+);
 
 msg.style.color = "green";
 
@@ -489,12 +527,16 @@ msg.innerHTML =
 
 /* REDIRECT */
 
+setTimeout(()=>{
+
+/* STUDENT */
+
+if(role === "student"){
+
 const redirectId =
 localStorage.getItem(
 "redirectProfileId"
 );
-
-setTimeout(()=>{
 
 if(redirectId){
 
@@ -510,7 +552,48 @@ redirectId;
 else{
 
 window.location.href =
-"index.html";
+"profile-view.html?id=" +
+uid;
+
+}
+
+}
+
+/* TEACHER */
+
+else if(role === "teacher"){
+
+window.location.href =
+"teacher-dashboard.html";
+
+}
+
+/* INSTITUTION */
+
+else if(role === "institution"){
+
+window.location.href =
+"teacher-dashboard.html";
+
+}
+
+/* ADMIN */
+
+else if(role === "admin"){
+
+window.location.href =
+"admin.html";
+
+}
+
+/* UNKNOWN */
+
+else{
+
+msg.style.color = "red";
+
+msg.innerHTML =
+"Unknown role";
 
 }
 
@@ -521,8 +604,21 @@ catch(err){
 
 msg.style.color = "red";
 
+if(
+err.code ===
+"auth/invalid-credential"
+){
+
 msg.innerHTML =
 "Invalid email or password";
+
+}
+else{
+
+msg.innerHTML =
+err.message;
+
+}
 
 }
 
