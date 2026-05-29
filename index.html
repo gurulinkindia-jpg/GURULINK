@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>GURULINK INDIA</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
+
 *{
 margin:0;
 padding:0;
@@ -19,39 +21,40 @@ body{
 background:#f4f7fb;
 }
 
-/* HEADER */
-header{
-background:#0f172a;
-color:white;
+/* NAVBAR */
+nav{
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:14px 5%;
+padding:15px 5%;
+background:#0f172a;
+color:white;
 position:sticky;
 top:0;
 z-index:1000;
 }
 
 .logo{
-font-size:24px;
+font-size:22px;
 font-weight:700;
 }
 
-.logo span{ color:#38bdf8; }
+.logo span{color:#38bdf8}
 
-/* NAV */
-nav{
+/* MENU */
+.menu{
 display:flex;
-gap:18px;
+gap:15px;
 align-items:center;
 }
 
-nav a{
+.menu a{
 color:white;
 text-decoration:none;
 font-size:14px;
 }
 
+/* DROPDOWN */
 .dropdown{
 position:relative;
 }
@@ -60,13 +63,11 @@ position:relative;
 display:none;
 position:absolute;
 top:30px;
-left:0;
 background:white;
-color:black;
-min-width:180px;
+min-width:220px;
 border-radius:10px;
 overflow:hidden;
-box-shadow:0 10px 20px rgba(0,0,0,0.2);
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
 }
 
 .dropdown-content a{
@@ -74,92 +75,121 @@ display:block;
 padding:10px;
 color:black;
 text-decoration:none;
+font-size:13px;
 }
 
 .dropdown-content a:hover{
 background:#f2f2f2;
 }
 
-/* RIGHT SIDE */
-.right{
-display:flex;
-align-items:center;
-gap:10px;
-}
-
-.login{
-background:#38bdf8;
-padding:8px 12px;
-border-radius:8px;
-color:white;
-text-decoration:none;
-font-size:14px;
-}
-
+/* PROFILE ICON */
 .profile{
 width:40px;
 height:40px;
 border-radius:50%;
-display:none;
-border:2px solid white;
-object-fit:cover;
+background:#38bdf8;
+display:flex;
+align-items:center;
+justify-content:center;
 cursor:pointer;
+overflow:hidden;
+}
+
+.profile img{
+width:100%;
+height:100%;
+object-fit:cover;
 }
 
 /* HERO */
 .hero{
-height:90vh;
-background:
-linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
-url('https://images.unsplash.com/photo-1523240795612-9a054b0db644') center/cover;
-color:white;
+height:85vh;
 display:flex;
+flex-direction:column;
 align-items:center;
 justify-content:center;
 text-align:center;
+background:linear-gradient(135deg,#0f172a,#1e293b);
+color:white;
 padding:20px;
 }
 
 .hero h1{
-font-size:50px;
+font-size:40px;
 }
 
 .hero p{
 margin-top:10px;
-opacity:0.9;
+color:#cbd5e1;
 }
 
-.btns{
+.btn{
 margin-top:20px;
-}
-
-.btns a{
-display:inline-block;
-margin:10px;
-padding:12px 22px;
+padding:12px 20px;
+background:#38bdf8;
+color:white;
+border:none;
 border-radius:8px;
+cursor:pointer;
 text-decoration:none;
-font-weight:600;
 }
 
-.btn1{ background:#38bdf8;color:white; }
-.btn2{ background:white;color:#0f172a; }
+/* PORTALS */
+.section{
+padding:60px 5%;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+}
+
+.card{
+background:white;
+padding:25px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
+text-align:center;
+}
+
+.card a{
+display:inline-block;
+margin-top:10px;
+text-decoration:none;
+background:#0f172a;
+color:white;
+padding:10px 15px;
+border-radius:8px;
+}
+
+/* FOOTER */
+footer{
+background:#0f172a;
+color:white;
+text-align:center;
+padding:30px;
+margin-top:40px;
+}
 
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<header>
+<!-- NAV -->
+<nav>
 
 <div class="logo">GURU<span>LINK</span></div>
 
-<nav>
+<div class="menu">
 
+<a href="index.html">Home</a>
+
+<!-- FIND TEACHER -->
 <div class="dropdown">
-<a href="#" onclick="toggle('t1')">Find Teachers ▼</a>
-<div id="t1" class="dropdown-content">
+<a href="#" onclick="toggle('d1')">Find Teacher ▼</a>
+<div id="d1" class="dropdown-content">
 <a href="academic-profile.html">Academic</a>
 <a href="skill-profile.html">Skill</a>
 <a href="creative-profile.html">Creative</a>
@@ -167,87 +197,111 @@ font-weight:600;
 </div>
 </div>
 
+<!-- REGISTER -->
 <div class="dropdown">
-<a href="#" onclick="toggle('t2')">Find Institutes ▼</a>
-<div id="t2" class="dropdown-content">
-<a href="academic-institute.html">Academic</a>
-<a href="skill-institute.html">Skill</a>
-<a href="creative-institute.html">Creative</a>
-<a href="sport-institution.html">Sports</a>
+<a href="#" onclick="toggle('d2')">Register ▼</a>
+<div id="d2" class="dropdown-content">
+<a href="academic-teacher.html">Teacher Academic</a>
+<a href="skill-teacher.html">Teacher Skill</a>
+<a href="creative-teacher.html">Teacher Creative</a>
+<a href="sport-teacher.html">Teacher Sports</a>
+<hr>
+<a href="academic-institute.html">Institute Academic</a>
+<a href="skill-institute.html">Institute Skill</a>
+<a href="creative-institute.html">Institute Creative</a>
+<a href="sport-institution.html">Institute Sports</a>
 </div>
 </div>
 
-<a href="teacher-dashboard.html">Teacher</a>
-<a href="student-dashboard.html">Student</a>
-<a href="institute-dashboard.html">Institute</a>
+<a href="teacher-dashboard.html">Teacher Dashboard</a>
+<a href="student-login.html">Student</a>
+<a href="admin.html">Admin</a>
+
+<!-- PROFILE ICON -->
+<div class="profile" onclick="goProfile()">
+<img src="https://i.ibb.co/placeholder/profile.png" id="userImg">
+</div>
+
+</div>
 
 </nav>
-
-<div class="right">
-
-<a href="login.html" id="loginBtn" class="login">Login</a>
-
-<img id="profilePic" class="profile">
-
-</div>
-
-</header>
 
 <!-- HERO -->
 <section class="hero">
 
-<div>
-<h1>India’s Smart Learning Platform</h1>
-<p>Find Teachers, Institutes & Skills Across India</p>
+<h1>India’s Smart Teacher Discovery Platform</h1>
 
-<div class="btns">
-<a href="academic-profile.html" class="btn1">Find Teachers</a>
-<a href="teacher-register.html" class="btn2">Register Now</a>
+<p>Find Teachers • Institutes • Courses • Skills Across India</p>
+
+<a class="btn" href="academic-profile.html">Explore Teachers</a>
+
+</section>
+
+<!-- PORTALS -->
+<section class="section">
+
+<h2 style="text-align:center;margin-bottom:20px;">Quick Access</h2>
+
+<div class="grid">
+
+<div class="card">
+<h3>Teachers</h3>
+<p>Find verified teachers</p>
+<a href="academic-profile.html">Open</a>
+</div>
+
+<div class="card">
+<h3>Institutes</h3>
+<p>Find coaching institutes</p>
+<a href="academic-institute.html">Open</a>
+</div>
+
+<div class="card">
+<h3>Student Login</h3>
+<p>Access learning dashboard</p>
+<a href="student-login.html">Login</a>
+</div>
+
+<div class="card">
+<h3>Admin Panel</h3>
+<p>Manage platform</p>
+<a href="admin.html">Open</a>
 </div>
 
 </div>
 
 </section>
 
-<script type="module">
+<!-- FOOTER -->
+<footer>
+<h3>GURULINK INDIA</h3>
+<p>Connecting Teachers, Institutes & Students</p>
+</footer>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+<script>
 
-const firebaseConfig = {
-apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-authDomain:"gurulink-59cc7.firebaseapp.com",
-databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"gurulink-59cc7",
-storageBucket:"gurulink-59cc7.appspot.com",
-messagingSenderId:"112148672399",
-appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-/* DROPDOWN */
-window.toggle = function(id){
-const el = document.getElementById(id);
+function toggle(id){
+let el = document.getElementById(id);
 el.style.display = el.style.display === "block" ? "none" : "block";
 }
 
-/* LOGIN CHECK */
-const uid = localStorage.getItem("uid");
+function goProfile(){
 
-if(uid){
-document.getElementById("loginBtn").style.display = "none";
-document.getElementById("profilePic").style.display = "block";
+let role = localStorage.getItem("role");
 
-get(ref(db,"users/"+uid)).then(snap=>{
-if(snap.exists()){
-const d = snap.val();
-if(d.photo){
-document.getElementById("profilePic").src = d.photo;
+if(role === "teacher"){
+window.location.href = "teacher-dashboard.html";
 }
+else if(role === "institution"){
+window.location.href = "institute-dashboard.html";
 }
-});
+else if(localStorage.getItem("studentUid")){
+window.location.href = "student-dashboard.html";
+}
+else{
+window.location.href = "login.html";
+}
+
 }
 
 </script>
