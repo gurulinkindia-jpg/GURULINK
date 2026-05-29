@@ -333,23 +333,25 @@ if(!uid){
 
 /* SAVE REDIRECT PAGE */
 
-localStorage.setItem(
+/* NOT LOGGED IN */
+if(!uid){
 
+const redirectURL =
+"profile-view.html?id=" + profileId;
+
+/* SAVE REDIRECT */
+sessionStorage.setItem(
 "redirectAfterLogin",
-
-"profile-view.html?id=" + profileId
-
+redirectURL
 );
 
 alert("Please login first");
 
-/* OPEN STUDENT LOGIN */
-
+/* GO LOGIN */
 window.location.href =
 "student-login.html";
 
 return;
-
 }
 
 /* OPEN PROFILE */
