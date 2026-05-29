@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings - GURULINK</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:#f4f7fb;
+}
+
+/* HEADER */
+header{
+background:#0f172a;
+color:white;
+padding:15px 5%;
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:sticky;
+top:0;
+z-index:1000;
+}
+
+.logo{
+font-size:22px;
+font-weight:700;
+}
+
+.logo span{color:#38bdf8}
+
+/* PROFILE */
+.profile{
+width:42px;
+height:42px;
+border-radius:50%;
+overflow:hidden;
+border:2px solid #38bdf8;
+cursor:pointer;
+}
+
+.profile img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+/* CONTAINER */
+.container{
+width:95%;
+max-width:1100px;
+margin:auto;
+padding:20px;
+}
+
+/* SECTION */
+.section{
+margin-top:20px;
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
+}
+
+.section h3{
+margin-bottom:15px;
+color:#0f172a;
+}
+
+/* SUB ITEMS */
+.sub-wrap{
+display:flex;
+align-items:center;
+gap:12px;
+margin:10px 0;
+}
+
+.sub-icon{
+width:40px;
+height:40px;
+border-radius:50%;
+overflow:hidden;
+border:1px solid #ddd;
+flex-shrink:0;
+}
+
+.sub-icon img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+/* BUTTON */
+.sub-btn{
+flex:1;
+padding:12px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-size:14px;
+text-align:left;
+background:#f1f5f9;
+transition:0.3s;
+}
+
+.sub-btn:hover{
+background:#e2e8f0;
+}
+
+.academic{border-left:5px solid #1976d2;}
+.creative{border-left:5px solid #e91e63;}
+.skill{border-left:5px solid #16a34a;}
+.sports{border-left:5px solid #f59e0b;}
+
+/* SETTINGS BOX */
+.settings-box{
+margin-top:20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:15px;
+}
+
+.setting-card{
+background:white;
+padding:20px;
+border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,0.08);
+text-align:center;
+cursor:pointer;
+transition:0.3s;
+}
+
+.setting-card:hover{
+transform:translateY(-5px);
+}
+
+/* PROFILE INFO */
+.profile-info{
+text-align:center;
+padding:20px;
+}
+
+.profile-info img{
+width:80px;
+height:80px;
+border-radius:50%;
+object-fit:cover;
+border:3px solid #38bdf8;
+}
+
+.badge{
+display:inline-block;
+margin-top:5px;
+padding:5px 10px;
+background:#38bdf8;
+color:white;
+border-radius:20px;
+font-size:12px;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+.sub-btn{
+font-size:13px;
+}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">GURU<span>LINK</span></div>
+
+<div class="profile" onclick="logout()">
+<img id="profileImg" src="https://i.ibb.co/placeholder/profile.png">
+</div>
+</header>
+
+<div class="container">
+
+<!-- PROFILE -->
+<div class="section profile-info">
+<img id="userImg">
+<h3 id="userName">Guest</h3>
+<div class="badge" id="userRole">Not Logged</div>
+</div>
+
+<!-- FIND TEACHER -->
+<div class="section">
+<h3>Find Teachers</h3>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn academic" onclick="location.href='academic-profile.html'">Academic Teachers</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn creative" onclick="location.href='creative-profile.html'">Creative Teachers</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn skill" onclick="location.href='skill-profile.html'">Skill Teachers</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn sports" onclick="location.href='sport-profile.html'">Sports Teachers</button>
+</div>
+</div>
+
+<!-- INSTITUTES -->
+<div class="section">
+<h3>Find Institutes</h3>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn academic" onclick="location.href='academic-institute.html'">Academic Institute</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn creative" onclick="location.href='creative-institute.html'">Creative Institute</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn skill" onclick="location.href='skill-institute.html'">Skill Institute</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn sports" onclick="location.href='sport-institution.html'">Sports Institute</button>
+</div>
+</div>
+
+<!-- SETTINGS -->
+<div class="settings-box">
+
+<div class="setting-card" onclick="location.href='mailto:gurulinkindia@gmail.com'">
+📧 Email Developer
+</div>
+
+<div class="setting-card" onclick="location.href='tel:+919999999999'">
+📞 Customer Care
+</div>
+
+<div class="setting-card" onclick="logout()">
+🚪 Logout
+</div>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+const uid = localStorage.getItem("uid");
+const role = localStorage.getItem("role");
+const profileId = localStorage.getItem("profileId");
+
+async function loadProfile(){
+
+if(!profileId) return;
+
+const path =
+role === "teacher"
+? "teachers/"+profileId
+: role === "institution"
+? "institutions/"+profileId
+: "students/"+profileId;
+
+const snap = await get(ref(db,path));
+
+if(!snap.exists()) return;
+
+const d = snap.val();
+
+const img = d.photo || d.logo || "https://i.ibb.co/placeholder/profile.png";
+
+document.getElementById("userImg").src = img;
+document.getElementById("profileImg").src = img;
+
+document.getElementById("userName").innerText = d.name || "User";
+document.getElementById("userRole").innerText = (role || "guest").toUpperCase();
+}
+
+loadProfile();
+
+/* LOGOUT */
+window.logout = async function(){
+await signOut(auth);
+localStorage.clear();
+window.location.href = "login.html";
+};
+
+</script>
+
+</body>
+</html>
