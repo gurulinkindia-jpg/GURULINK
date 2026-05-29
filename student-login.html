@@ -129,7 +129,6 @@ New Student? Register
 
 </div>
 
-
 <!-- REGISTER -->
 
 <div id="registerBox" class="hidden">
@@ -197,7 +196,8 @@ from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import {
 getDatabase,
 ref,
-set
+set,
+get
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
@@ -348,9 +348,15 @@ ref(db,"users/"+uid),
 
 uid:uid,
 
+name:name,
+
+email:email,
+
 role:"student",
 
-profileId:uid
+profileId:uid,
+
+createdAt:Date.now()
 
 }
 );
@@ -368,24 +374,21 @@ msg.style.color = "green";
 msg.innerHTML =
 "Registration Successful";
 
-/* REDIRECT */
-
-const redirectId =
-localStorage.getItem(
-"redirectProfileId"
-);
+/* REDIRECT FIXED */
 
 setTimeout(()=>{
 
-if(redirectId){
+const redirectPage =
+sessionStorage.getItem("redirectAfterLogin");
+
+if(redirectPage){
 
 localStorage.removeItem(
-"redirectProfileId"
+"redirectAfterLogin"
 );
 
 window.location.href =
-"profile-view.html?id=" +
-redirectId;
+redirectPage;
 
 }
 else{
@@ -399,6 +402,8 @@ window.location.href =
 
 }
 catch(err){
+
+console.log(err);
 
 msg.style.color = "red";
 
@@ -474,6 +479,38 @@ password
 const uid =
 userCred.user.uid;
 
+/* CHECK USER EXISTS */
+
+const userSnap =
+await get(ref(db,"users/"+uid));
+
+if(!userSnap.exists()){
+
+msg.style.color = "red";
+
+msg.innerHTML =
+"User profile not found";
+
+return;
+
+}
+
+const userData =
+userSnap.val();
+
+/* ONLY STUDENT ALLOWED */
+
+if(userData.role !== "student"){
+
+msg.style.color = "red";
+
+msg.innerHTML =
+"Please use main login page";
+
+return;
+
+}
+
 /* SAVE SESSION */
 
 localStorage.setItem("uid",uid);
@@ -487,24 +524,21 @@ msg.style.color = "green";
 msg.innerHTML =
 "Login Successful";
 
-/* REDIRECT */
-
-const redirectId =
-localStorage.getItem(
-"redirectProfileId"
-);
+/* REDIRECT FIXED */
 
 setTimeout(()=>{
 
-if(redirectId){
+const redirectPage =
+localStorage.getItem("redirectAfterLogin");
 
-localStorage.removeItem(
-"redirectProfileId"
+if(redirectPage){
+
+sessionStorage.removeItem(
+"redirectAfterLogin"
 );
 
 window.location.href =
-"profile-view.html?id=" +
-redirectId;
+redirectPage;
 
 }
 else{
@@ -518,6 +552,8 @@ window.location.href =
 
 }
 catch(err){
+
+console.log(err);
 
 msg.style.color = "red";
 
