@@ -45,6 +45,7 @@ font-weight:700;
 display:flex;
 gap:15px;
 align-items:center;
+flex-wrap:wrap;
 }
 
 .menu a{
@@ -63,7 +64,7 @@ display:none;
 position:absolute;
 top:35px;
 background:white;
-min-width:220px;
+min-width:240px;
 border-radius:10px;
 overflow:hidden;
 box-shadow:0 10px 25px rgba(0,0,0,0.2);
@@ -111,9 +112,7 @@ color:white;
 padding:20px;
 }
 
-.hero h1{
-font-size:40px;
-}
+.hero h1{font-size:40px;}
 
 .hero p{
 margin-top:10px;
@@ -184,14 +183,14 @@ margin-top:40px;
 
 <a href="index.html">Home</a>
 
-<!-- FIND TEACHER (FIXED SAME SYSTEM) -->
+<!-- FIND -->
 <div class="dropdown">
-<a href="#" onclick="toggle('d1')">Find / Explore Teacher ▼</a>
+<a href="#" onclick="toggle('d1')">Find / Explore ▼</a>
 <div id="d1" class="dropdown-content">
-<a href="academic-profile.html">Academic</a>
-<a href="skill-profile.html">Skill</a>
-<a href="creative-profile.html">Creative</a>
-<a href="sport-profile.html">Sports</a>
+<a href="academic-profile.html">Academic Teachers</a>
+<a href="skill-profile.html">Skill Teachers</a>
+<a href="creative-profile.html">Creative Teachers</a>
+<a href="sport-profile.html">Sports Teachers</a>
 </div>
 </div>
 
@@ -211,12 +210,36 @@ margin-top:40px;
 </div>
 </div>
 
+<!-- SUPPORT -->
+<div class="dropdown">
+<a href="#" onclick="toggle('d3')">Support ▼</a>
+<div id="d3" class="dropdown-content">
+
+<a href="mailto:gurulinkindia@gmail.com">
+📧 Email Developer
+</a>
+
+<a href="tel:+919999999999">
+☎ Customer Care
+</a>
+
+<a href="support.html">
+💬 Help Center
+</a>
+
+<a href="settings.html">
+⚙ Settings
+</a>
+
+</div>
+</div>
+
 <a href="teacher-dashboard.html">Teacher Dashboard</a>
 <a href="student-login.html">Student</a>
 <a href="admin.html">Admin</a>
 
 <div class="profile" onclick="goProfile()">
-<img src="https://i.ibb.co/placeholder/profile.png" id="userImg">
+<img src="https://i.ibb.co/placeholder/profile.png">
 </div>
 
 </div>
@@ -279,13 +302,12 @@ Explore Teachers
 
 <script>
 
-/* DROPDOWN */
 function toggle(id){
 let el = document.getElementById(id);
 el.style.display = el.style.display === "block" ? "none" : "block";
 }
 
-/* CLOSE DROPDOWN WHEN CLICK OUTSIDE */
+/* CLOSE DROPDOWN OUTSIDE CLICK */
 document.addEventListener("click", function(e){
 if(!e.target.closest(".dropdown")){
 document.querySelectorAll(".dropdown-content")
@@ -293,7 +315,7 @@ document.querySelectorAll(".dropdown-content")
 }
 });
 
-/* PROFILE ROUTING */
+/* PROFILE ROUTE */
 function goProfile(){
 
 let role = localStorage.getItem("role");
