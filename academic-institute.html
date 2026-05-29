@@ -513,6 +513,7 @@ password
 
 const uid =
 userCred.user.uid;
+await auth.currentUser.getIdToken(true);
 
 /* LOCAL STORAGE */
 
@@ -692,19 +693,15 @@ createdAt:Date.now()
 /* USER ROLE */
 
 await set(
-
 ref(db,"users/"+uid),
-
 {
-
 uid:uid,
-
+name:document.getElementById("name").value,
+email:email,
 role:"institution",
-
-profileId:uid
-
+profileId:uid,
+createdAt:Date.now()
 }
-
 );
 
 localStorage.setItem(
