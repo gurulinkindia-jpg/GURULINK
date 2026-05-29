@@ -362,20 +362,29 @@ createdAt:Date.now()
 }
 );
 
-/* SESSION */
+/* SAVE SESSION */
 
-localStorage.setItem("uid",uid);
+localStorage.setItem(
+"uid",
+uid
+);
 
-localStorage.setItem("role","student");
+localStorage.setItem(
+"role",
+"student"
+);
 
-localStorage.setItem("profileId",uid);
+localStorage.setItem(
+"profileId",
+uid
+);
 
 msg.style.color = "green";
 
 msg.innerHTML =
 "Registration Successful";
 
-/* REDIRECT */
+/* REDIRECT TO TEACHER PROFILE */
 
 const redirectId =
 localStorage.getItem(
@@ -398,8 +407,7 @@ redirectId;
 else{
 
 window.location.href =
-"profile-view.html?id=" +
-uid;
+"index.html";
 
 }
 
@@ -525,8 +533,6 @@ msg.style.color = "green";
 msg.innerHTML =
 "Login Successful";
 
-/* REDIRECT */
-
 setTimeout(()=>{
 
 /* STUDENT */
@@ -552,8 +558,7 @@ redirectId;
 else{
 
 window.location.href =
-"profile-view.html?id=" +
-uid;
+"index.html";
 
 }
 
