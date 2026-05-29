@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>GURULINK INDIA</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
-
 *{
 margin:0;
 padding:0;
@@ -20,7 +20,7 @@ body{
 background:#f4f7fb;
 }
 
-/* NAV */
+/* NAVBAR */
 nav{
 display:flex;
 justify-content:space-between;
@@ -31,20 +31,39 @@ color:white;
 position:sticky;
 top:0;
 z-index:1000;
+flex-wrap:wrap;
+gap:10px;
 }
 
 .logo{
 font-size:22px;
 font-weight:700;
 }
-
 .logo span{color:#38bdf8}
+
+/* LEFT BUTTONS */
+.left-actions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.left-actions button{
+padding:8px 12px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-size:13px;
+background:#38bdf8;
+color:white;
+}
 
 /* MENU */
 .menu{
 display:flex;
 gap:15px;
 align-items:center;
+flex-wrap:wrap;
 }
 
 .menu a{
@@ -52,25 +71,6 @@ color:white;
 text-decoration:none;
 font-size:14px;
 }
-
-/* TOP LEFT BUTTONS */
-.top-buttons{
-display:flex;
-gap:10px;
-margin-left:10px;
-}
-
-.top-buttons button{
-padding:6px 10px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-font-size:12px;
-font-weight:600;
-}
-
-.reg-teacher{background:#38bdf8;color:white;}
-.reg-inst{background:#ff9800;color:white;}
 
 /* PROFILE */
 .profile{
@@ -88,6 +88,51 @@ height:100%;
 object-fit:cover;
 }
 
+/* DROPDOWN PANEL */
+.panel{
+display:none;
+position:absolute;
+top:70px;
+left:5%;
+right:5%;
+background:white;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+padding:20px;
+z-index:2000;
+}
+
+.panel h3{
+margin-bottom:10px;
+}
+
+.sub-wrap{
+display:flex;
+align-items:center;
+gap:10px;
+margin:8px 0;
+}
+
+.sub-icon img{
+width:35px;
+height:35px;
+border-radius:50%;
+}
+
+.sub-btn{
+flex:1;
+padding:10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+color:white;
+}
+
+.academic{background:#1976d2}
+.creative{background:#9c27b0}
+.skill{background:#ff9800}
+.sports{background:#e91e63}
+
 /* PROFILE MENU */
 .profile-menu{
 position:absolute;
@@ -99,21 +144,20 @@ width:260px;
 box-shadow:0 10px 25px rgba(0,0,0,0.2);
 display:none;
 overflow:hidden;
-z-index:2000;
+z-index:3000;
 }
 
 .profile-header{
 padding:15px;
 background:#0f172a;
 color:white;
+text-align:center;
 }
 
 .profile-header img{
-width:45px;
-height:45px;
+width:50px;
+height:50px;
 border-radius:50%;
-object-fit:cover;
-margin-bottom:8px;
 }
 
 .badge{
@@ -126,23 +170,9 @@ border-radius:20px;
 margin-top:5px;
 }
 
-.profile-menu a{
-display:block;
-padding:10px;
-text-decoration:none;
-color:#222;
-font-size:13px;
-}
-
-.profile-menu a:hover{
-background:#f2f2f2;
-}
-
-hr{border:none;border-top:1px solid #eee;}
-
 /* HERO */
 .hero{
-height:85vh;
+height:75vh;
 display:flex;
 flex-direction:column;
 align-items:center;
@@ -164,59 +194,9 @@ cursor:pointer;
 text-decoration:none;
 }
 
-/* FIND PANEL */
-.panel{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.65);
-display:none;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-z-index:9999;
-padding:20px;
+@media(max-width:768px){
+nav{flex-direction:column}
 }
-
-.sub-wrap{
-display:flex;
-align-items:center;
-gap:12px;
-background:white;
-padding:10px;
-margin:10px;
-border-radius:12px;
-width:300px;
-}
-
-.sub-icon img{
-width:40px;
-height:40px;
-border-radius:50%;
-}
-
-.sub-btn{
-flex:1;
-padding:10px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-font-weight:600;
-}
-
-.academic{background:#1976d2;color:white;}
-.creative{background:#e91e63;color:white;}
-.skill{background:#ff9800;color:white;}
-.sports{background:#4caf50;color:white;}
-
-.back{
-margin-top:15px;
-padding:10px 15px;
-background:white;
-border:none;
-border-radius:8px;
-cursor:pointer;
-}
-
 </style>
 </head>
 
@@ -227,28 +207,71 @@ cursor:pointer;
 
 <div class="logo">GURU<span>LINK</span></div>
 
-<div class="menu">
-
-<div class="top-buttons">
-<button class="reg-teacher" onclick="openTeacher()">Teacher Reg.</button>
-<button class="reg-inst" onclick="openInstitute()">Institute Reg.</button>
+<div class="left-actions">
+<button onclick="togglePanel('teacherPanel')">Teacher Reg</button>
+<button onclick="togglePanel('instPanel')">Institute Reg</button>
 </div>
 
-<a href="academic-profile.html">Find Teachers</a>
+<div class="menu">
+<a href="index.html">Home</a>
+<a href="#" onclick="togglePanel('findPanel')">Find Teachers</a>
 <a href="teacher-dashboard.html">Dashboard</a>
 
 <div class="profile" onclick="toggleProfileMenu()">
 <img id="profileImg" src="https://i.ibb.co/placeholder/profile.png">
 </div>
-
 </div>
+
 </nav>
+
+<!-- FIND TEACHER PANEL -->
+<div class="panel" id="findPanel">
+<h3>Find Teachers</h3>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn academic" onclick="location.href='academic-profile.html'">Academic Teachers</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn creative" onclick="location.href='creative-profile.html'">Creative Teachers</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn skill" onclick="location.href='skill-profile.html'">Skill Teachers</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn sports" onclick="location.href='sport-profile.html'">Sports Teachers</button>
+</div>
+</div>
+
+<!-- TEACHER REG PANEL -->
+<div class="panel" id="teacherPanel">
+<h3>Teacher Registration</h3>
+<div class="sub-wrap"><button class="sub-btn academic" onclick="location.href='academic-teacher.html'">Academic Teacher</button></div>
+<div class="sub-wrap"><button class="sub-btn creative" onclick="location.href='creative-teacher.html'">Creative Teacher</button></div>
+<div class="sub-wrap"><button class="sub-btn skill" onclick="location.href='skill-teacher.html'">Skill Teacher</button></div>
+<div class="sub-wrap"><button class="sub-btn sports" onclick="location.href='sport-teacher.html'">Sports Teacher</button></div>
+</div>
+
+<!-- INSTITUTE REG PANEL -->
+<div class="panel" id="instPanel">
+<h3>Institute Registration</h3>
+<div class="sub-wrap"><button class="sub-btn academic" onclick="location.href='academic-institute.html'">Academic Institute</button></div>
+<div class="sub-wrap"><button class="sub-btn creative" onclick="location.href='creative-institute.html'">Creative Institute</button></div>
+<div class="sub-wrap"><button class="sub-btn skill" onclick="location.href='skill-institute.html'">Skill Institute</button></div>
+<div class="sub-wrap"><button class="sub-btn sports" onclick="location.href='sport-institution.html'">Sports Institute</button></div>
+</div>
 
 <!-- PROFILE MENU -->
 <div id="profileMenu" class="profile-menu">
 
 <div class="profile-header">
-<img id="menuImg" src="">
+<img id="menuImg">
 <div id="menuName">Guest</div>
 <div class="badge" id="menuRole">Not Logged In</div>
 </div>
@@ -274,66 +297,8 @@ cursor:pointer;
 <section class="hero">
 <h1>GURULINK INDIA</h1>
 <p>Smart Education Platform</p>
-<a class="btn" onclick="openTeacher()">Find Teachers</a>
+<a class="btn" href="academic-profile.html">Explore Teachers</a>
 </section>
-
-<!-- TEACHER PANEL -->
-<div id="teacherPanel" class="panel">
-
-<h3 style="color:white">Teacher Categories</h3>
-
-<div class="sub-wrap">
-<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
-<button class="sub-btn academic" onclick="location.href='academic-teacher.html'">Academic Teacher</button>
-</div>
-
-<div class="sub-wrap">
-<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
-<button class="sub-btn creative" onclick="location.href='creative-teacher.html'">Creative Teacher</button>
-</div>
-
-<div class="sub-wrap">
-<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
-<button class="sub-btn skill" onclick="location.href='skill-teacher.html'">Skill Teacher</button>
-</div>
-
-<div class="sub-wrap">
-<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
-<button class="sub-btn sports" onclick="location.href='sport-teacher.html'">Sports Teacher</button>
-</div>
-
-<button class="back" onclick="closePanels()">← Back</button>
-
-</div>
-
-<!-- INSTITUTE PANEL -->
-<div id="instPanel" class="panel">
-
-<h3 style="color:white">Institution Categories</h3>
-
-<div class="sub-wrap">
-<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
-<button class="sub-btn academic" onclick="location.href='academic-institute.html'">Academic Institution</button>
-</div>
-
-<div class="sub-wrap">
-<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
-<button class="sub-btn creative" onclick="location.href='creative-institute.html'">Creative Institution</button>
-</div>
-
-<div class="sub-wrap">
-<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
-<button class="sub-btn skill" onclick="location.href='skill-institute.html'">Skill Institution</button>
-</div>
-
-<div class="sub-wrap">
-<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
-<button class="sub-btn sports" onclick="location.href='sport-institution.html'">Sports Institution</button>
-</div>
-
-<button class="back" onclick="closePanels()">← Back</button>
-
-</div>
 
 <script type="module">
 
@@ -355,29 +320,55 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-/* PANELS */
-window.openTeacher = () => {
-document.getElementById("teacherPanel").style.display="flex";
+const uid = localStorage.getItem("uid");
+const role = localStorage.getItem("role");
+const profileId = localStorage.getItem("profileId");
+
+/* LOAD PROFILE */
+async function loadProfile(){
+if(!profileId) return;
+
+const path =
+role==="teacher"?"teachers/"+profileId:
+role==="institution"?"institutions/"+profileId:
+"students/"+profileId;
+
+const snap = await get(ref(db,path));
+if(!snap.exists()) return;
+
+const d = snap.val();
+
+const img = d.photo || d.logo || "https://i.ibb.co/placeholder/profile.png";
+
+document.getElementById("profileImg").src = img;
+document.getElementById("menuImg").src = img;
+document.getElementById("menuName").innerText = d.name || "User";
+document.getElementById("menuRole").innerText = role || "Guest";
+}
+loadProfile();
+
+/* PANEL TOGGLE */
+window.togglePanel = function(id){
+document.querySelectorAll(".panel").forEach(p=>p.style.display="none");
+document.getElementById(id).style.display =
+document.getElementById(id).style.display==="block"?"none":"block";
 }
 
-window.openInstitute = () => {
-document.getElementById("instPanel").style.display="flex";
-}
-
-window.closePanels = () => {
-document.getElementById("teacherPanel").style.display="none";
-document.getElementById("instPanel").style.display="none";
-}
-
-/* PROFILE */
 window.toggleProfileMenu = function(){
 const m = document.getElementById("profileMenu");
-m.style.display = m.style.display === "block" ? "none" : "block";
+m.style.display = m.style.display==="block"?"none":"block";
 }
+
+/* CLOSE OUTSIDE */
+document.addEventListener("click",(e)=>{
+if(!e.target.closest(".profile")){
+document.getElementById("profileMenu").style.display="none";
+}
+});
 
 /* LOGOUT */
 window.logout = async function(){
-try{ await signOut(auth); }catch(e){}
+await signOut(auth);
 localStorage.clear();
 window.location.href="login.html";
 }
