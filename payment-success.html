@@ -7,7 +7,6 @@
 <title>Payment Success</title>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial,sans-serif;
@@ -28,15 +27,9 @@ text-align:center;
 box-shadow:0 5px 15px rgba(0,0,0,.15);
 }
 
-h2{
-margin-top:0;
-color:#1565c0;
-}
+h2{color:#1565c0;margin-top:0;}
 
-p{
-font-size:15px;
-line-height:1.6;
-}
+p{font-size:15px;line-height:1.6;}
 
 .loader{
 width:50px;
@@ -49,334 +42,139 @@ animation:spin 1s linear infinite;
 }
 
 @keyframes spin{
-100%{
-transform:rotate(360deg);
-}
+100%{transform:rotate(360deg);}
 }
 
-.success{
-color:green;
-font-weight:bold;
-}
-
-.error{
-color:red;
-font-weight:bold;
-}
-
+.success{color:green;font-weight:bold;}
+.error{color:red;font-weight:bold;}
 </style>
 </head>
 
 <body>
 
 <div class="box">
-
 <h2>Payment Processing</h2>
-
 <div class="loader" id="loader"></div>
-
-<p id="msg">
-Saving payment details...
-</p>
-
+<p id="msg">Saving payment details...</p>
 </div>
 
 <script type="module">
 
-import {
-initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
-import {
-getDatabase,
-ref,
-push,
-get,
-set,
-update
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-import {
-getAuth
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-
-
-/* FIREBASE */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, push, get, set, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
-
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-
 authDomain:"gurulink-59cc7.firebaseapp.com",
-
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-
 projectId:"gurulink-59cc7",
-
 storageBucket:"gurulink-59cc7.appspot.com",
-
 messagingSenderId:"112148672399",
-
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getDatabase(app);
 
-const auth = getAuth(app);
-
-
 /* URL PARAMS */
+const params = new URLSearchParams(window.location.search);
+const type = params.get("type") || "teacher";
+let id = params.get("id");
 
-const params =
-new URLSearchParams(window.location.search);
-
-const type =
-params.get("type") || "teacher";
-
-let id =
-params.get("id");
-
-
-/* LOCAL STORAGE FALLBACK */
-
-if(!id){
-
-if(type==="institution"){
-
-id =
-localStorage.getItem("institutionId");
-
-}
-else{
-
-id =
-localStorage.getItem("teacherId");
-
+/* SAFE FALLBACK */
+if (!id || id === "null" || id === "undefined") {
+    id = localStorage.getItem(type + "Id");
 }
 
+/* FINAL CHECK */
+if (!id) {
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("msg").innerHTML =
+        '<span class="error">Profile ID missing.</span>';
+    throw new Error("Profile ID Missing");
 }
-
-
-/* CHECK ID */
-
-if(!id){
-
-document.getElementById("loader").style.display="none";
-
-document.getElementById("msg").innerHTML =
-
-'<span class="error">Profile ID missing.</span>';
-
-throw new Error("Profile ID Missing");
-
-}
-
 
 /* PAYMENT AMOUNT */
+const amount = type === "institution" ? 200 : 100;
 
-const amount =
+/* MAIN */
+async function savePayment() {
 
-type==="institution"
-
-?
-
-200
-
-:
-
-100;
-
-
-/* MAIN FUNCTION */
-
-async function savePayment(){
-
-try{
-
-/* DATABASE PATH */
+try {
 
 const profilePath =
-
-type==="institution"
-
-?
-
-"institutions/"+id
-
-:
-
-"teachers/"+id;
-
+type === "institution"
+? "institutions/" + id
+: "teachers/" + id;
 
 /* GET PROFILE */
+const snap = await get(ref(db, profilePath));
 
-const snap =
-await get(ref(db,profilePath));
-
-
-if(!snap.exists()){
-
-document.getElementById("loader").style.display="none";
-
-document.getElementById("msg").innerHTML =
-
-'<span class="error">Profile not found.</span>';
-
-throw new Error("Profile not found");
-
+if (!snap.exists()) {
+    throw new Error("Profile not found in database");
 }
-
 
 const user = snap.val();
 
+/* PAYMENT RECORD */
+const paymentRef = push(ref(db, "payments"));
 
-/* CREATE PAYMENT */
+await set(paymentRef, {
+paymentId: paymentRef.key,
+profileId: id,
+uid: id,
+type: type,
 
-const paymentRef =
-push(ref(db,"payments"));
+name: user.name || "",
+ownerName: user.ownerName || "",
+email: user.email || "",
+phone: user.phone || "",
+alternatePhone: user.alternatePhone || "",
+address: user.address || "",
+area: user.area || "",
+website: user.website || "",
+mapLink: user.mapLink || "",
 
+subjects: user.subjects || [],
+class: user.class || "",
+teachingModes: user.teachingModes || [],
 
-/* SAVE PAYMENT */
+individualFee: user.individualFee || "",
+homeFee: user.homeFee || "",
+groupFee: user.groupFee || "",
+onlineFee: user.onlineFee || "",
 
-await set(paymentRef,{
-
-paymentId:paymentRef.key,
-
-profileId:id,
-
-uid:id,
-
-type:type,
-
-name:user.name || "",
-
-ownerName:user.ownerName || "",
-
-email:user.email || "",
-
-phone:user.phone || "",
-
-alternatePhone:
-user.alternatePhone || "",
-
-address:user.address || "",
-
-area:user.area || "",
-
-website:user.website || "",
-
-mapLink:user.mapLink || "",
-
-subjects:user.subjects || [],
-
-class:user.class || "",
-
-qualification:
-user.qualification || "",
-
-experience:
-user.experience || "",
-
-teachingModes:
-user.teachingModes || [],
-
-individualFee:
-user.individualFee || "",
-
-homeFee:
-user.homeFee || "",
-
-groupFee:
-user.groupFee || "",
-
-onlineFee:
-user.onlineFee || "",
-
-offlineFee:
-user.offlineFee || "",
-
-hybridFee:
-user.hybridFee || "",
-
-demoFee:
-user.demoFee || "",
-
-otherModeFee:
-user.otherModeFee || "",
-
-amount:amount,
-
-status:"paid",
-
-date:
-new Date().toLocaleString(),
-
-createdAt:Date.now()
-
+amount: amount,
+status: "paid",
+date: new Date().toLocaleString(),
+createdAt: Date.now()
 });
 
-
 /* UPDATE PROFILE */
+await update(ref(db, profilePath), {
+paymentStatus: "paid"
+});
 
-await update(
-ref(db,profilePath),
-{
-paymentStatus:"paid"
-}
-);
-
-
-/* SAVE LOCAL STORAGE */
-
-localStorage.setItem(
-"paymentDone",
-"yes"
-);
-
-
-/* SUCCESS MESSAGE */
-
-document.getElementById("loader").style.display="none";
-
+/* SUCCESS */
+document.getElementById("loader").style.display = "none";
 document.getElementById("msg").innerHTML =
-
 '<span class="success">Payment successful! Redirecting...</span>';
 
+setTimeout(() => {
+window.location.href = "profile-view.html?id=" + id;
+}, 2000);
 
-/* REDIRECT */
-
-setTimeout(()=>{
-
-window.location.href =
-"profile-view.html?id="+id;
-
-},2000);
-
-}
-catch(err){
+} catch (err) {
 
 console.log(err);
 
-document.getElementById("loader").style.display="none";
-
+document.getElementById("loader").style.display = "none";
 document.getElementById("msg").innerHTML =
-
-'<span class="error">Payment failed.</span><br><br>' +
-
-err.message;
+'<span class="error">Payment failed.</span><br><br>' + err.message;
 
 }
 
 }
-
-
-/* START */
 
 savePayment();
 
