@@ -244,7 +244,7 @@ if(!btn) return;
 
 const profileId = btn.dataset.id;
 
-/* ANY LOGIN TYPE CHECK */
+/* ✅ FIXED LOGIN CHECK */
 const uid =
 localStorage.getItem("uid") ||
 localStorage.getItem("studentUid") ||
@@ -255,21 +255,20 @@ localStorage.getItem("institutionId");
 /* NOT LOGGED IN */
 if(!uid){
 
+/* IMPORTANT FIX: correct key */
 localStorage.setItem(
 "redirectAfterLogin",
 "profile-view.html?id=" + profileId
 );
 
-if(confirm("Please login to continue")){
+alert("Please login first");
 
 window.location.href = "student-login.html";
-
-}
 
 return;
 }
 
-/* OPEN PROFILE DIRECTLY */
+/* OPEN PROFILE */
 window.location.href =
 "profile-view.html?id=" + profileId;
 
@@ -306,12 +305,10 @@ const filtered = all.filter(x=>{
 const name = (x.name||"").toLowerCase();
 const location = (x.location || x.address || "").toLowerCase();
 
-/* search */
 if(search && !(similar(name,search) || similar(location,search))){
 return false;
 }
 
-/* class */
 if(!classMatch(x.class,cls)){
 return false;
 }
