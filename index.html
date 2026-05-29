@@ -32,6 +32,7 @@ color:white;
 position:sticky;
 top:0;
 z-index:1000;
+flex-wrap:wrap;
 }
 
 .logo{
@@ -41,11 +42,18 @@ font-weight:700;
 
 .logo span{color:#38bdf8}
 
+/* HAMBURGER */
+.hamburger{
+display:none;
+font-size:26px;
+cursor:pointer;
+}
+
+/* MENU */
 .menu{
 display:flex;
 gap:15px;
 align-items:center;
-flex-wrap:wrap;
 }
 
 .menu a{
@@ -113,11 +121,7 @@ padding:20px;
 }
 
 .hero h1{font-size:40px;}
-
-.hero p{
-margin-top:10px;
-color:#cbd5e1;
-}
+.hero p{margin-top:10px;color:#cbd5e1;}
 
 .btn{
 margin-top:20px;
@@ -150,16 +154,6 @@ box-shadow:0 5px 15px rgba(0,0,0,0.1);
 text-align:center;
 }
 
-.card a{
-display:inline-block;
-margin-top:10px;
-text-decoration:none;
-background:#0f172a;
-color:white;
-padding:10px 15px;
-border-radius:8px;
-}
-
 /* FOOTER */
 footer{
 background:#0f172a;
@@ -169,28 +163,67 @@ padding:30px;
 margin-top:40px;
 }
 
+/* ================= MOBILE ================= */
+@media(max-width:900px){
+
+.hamburger{
+display:block;
+}
+
+.menu{
+display:none;
+width:100%;
+flex-direction:column;
+background:#0f172a;
+padding:15px;
+margin-top:10px;
+border-top:1px solid rgba(255,255,255,0.1);
+}
+
+.menu.active{
+display:flex;
+}
+
+.dropdown-content{
+position:relative;
+top:0;
+box-shadow:none;
+background:#1e293b;
+}
+
+.dropdown-content a{
+color:white;
+}
+
+.hero h1{
+font-size:26px;
+}
+
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- NAV -->
 <nav>
 
 <div class="logo">GURU<span>LINK</span></div>
 
-<div class="menu">
+<div class="hamburger" onclick="toggleMenu()">☰</div>
+
+<div class="menu" id="menu">
 
 <a href="index.html">Home</a>
 
 <!-- FIND -->
 <div class="dropdown">
-<a href="#" onclick="toggle('d1')">Find / Explore ▼</a>
+<a href="#" onclick="toggle('d1')">Find ▼</a>
 <div id="d1" class="dropdown-content">
-<a href="academic-profile.html">Academic Teachers</a>
-<a href="skill-profile.html">Skill Teachers</a>
-<a href="creative-profile.html">Creative Teachers</a>
-<a href="sport-profile.html">Sports Teachers</a>
+<a href="academic-profile.html">Academic</a>
+<a href="skill-profile.html">Skill</a>
+<a href="creative-profile.html">Creative</a>
+<a href="sport-profile.html">Sports</a>
 </div>
 </div>
 
@@ -214,31 +247,17 @@ margin-top:40px;
 <div class="dropdown">
 <a href="#" onclick="toggle('d3')">Support ▼</a>
 <div id="d3" class="dropdown-content">
-
-<a href="mailto:gurulinkindia@gmail.com">
-📧 Email Developer
-</a>
-
-<a href="tel:+919999999999">
-☎ Customer Care
-</a>
-
-<a href="support.html">
-💬 Help Center
-</a>
-
-<a href="settings.html">
-⚙ Settings
-</a>
-
+<a href="mailto:gurulinkindia@gmail.com">📧 Email Developer</a>
+<a href="tel:+919999999999">☎ Customer Care</a>
+<a href="settings.html">⚙ Settings</a>
 </div>
 </div>
 
-<a href="teacher-dashboard.html">Teacher Dashboard</a>
+<a href="teacher-dashboard.html">Dashboard</a>
 <a href="student-login.html">Student</a>
 <a href="admin.html">Admin</a>
 
-<div class="profile" onclick="goProfile()">
+<div class="profile">
 <img src="https://i.ibb.co/placeholder/profile.png">
 </div>
 
@@ -246,93 +265,37 @@ margin-top:40px;
 
 </nav>
 
-<!-- HERO -->
 <section class="hero">
-
 <h1>India’s Smart Teacher Discovery Platform</h1>
-
-<p>Find Teachers • Institutes • Courses • Skills Across India</p>
-
-<a class="btn" href="academic-profile.html">
-Explore Teachers
-</a>
-
+<p>Find Teachers • Institutes • Courses</p>
+<a class="btn" href="academic-profile.html">Explore Teachers</a>
 </section>
 
-<!-- QUICK -->
 <section class="section">
-
-<h2 style="text-align:center;margin-bottom:20px;">Quick Access</h2>
-
 <div class="grid">
 
-<div class="card">
-<h3>Teachers</h3>
-<p>Find verified teachers</p>
-<a href="academic-profile.html">Open</a>
-</div>
-
-<div class="card">
-<h3>Institutes</h3>
-<p>Find coaching institutes</p>
-<a href="academic-institute.html">Open</a>
-</div>
-
-<div class="card">
-<h3>Student Login</h3>
-<p>Access dashboard</p>
-<a href="student-login.html">Login</a>
-</div>
-
-<div class="card">
-<h3>Admin Panel</h3>
-<p>Manage platform</p>
-<a href="admin.html">Open</a>
-</div>
+<div class="card">Teachers</div>
+<div class="card">Institutes</div>
+<div class="card">Student</div>
+<div class="card">Admin</div>
 
 </div>
-
 </section>
 
-<!-- FOOTER -->
 <footer>
-<h3>GURULINK INDIA</h3>
-<p>Connecting Teachers, Institutes & Students</p>
+GURULINK INDIA
 </footer>
 
 <script>
 
 function toggle(id){
-let el = document.getElementById(id);
-el.style.display = el.style.display === "block" ? "none" : "block";
+document.getElementById(id).style.display =
+document.getElementById(id).style.display === "block"
+? "none" : "block";
 }
 
-/* CLOSE DROPDOWN OUTSIDE CLICK */
-document.addEventListener("click", function(e){
-if(!e.target.closest(".dropdown")){
-document.querySelectorAll(".dropdown-content")
-.forEach(d => d.style.display = "none");
-}
-});
-
-/* PROFILE ROUTE */
-function goProfile(){
-
-let role = localStorage.getItem("role");
-
-if(role === "teacher"){
-window.location.href = "teacher-dashboard.html";
-}
-else if(role === "institution"){
-window.location.href = "institute-dashboard.html";
-}
-else if(localStorage.getItem("studentUid")){
-window.location.href = "student-dashboard.html";
-}
-else{
-window.location.href = "login.html";
-}
-
+function toggleMenu(){
+document.getElementById("menu").classList.toggle("active");
 }
 
 </script>
