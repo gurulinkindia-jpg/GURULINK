@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Universal Login - GURULINK</title>
+<title>Student Login - GURULINK</title>
 
 <style>
 
@@ -95,10 +95,10 @@ display:none;
 
 <div id="loginBox">
 
-<h2>Login</h2>
+<h2>Student Login</h2>
 
 <p>
-Student / Teacher / Institution / Admin
+Login to view teacher and institute details
 </p>
 
 <input
@@ -113,7 +113,7 @@ placeholder="Enter Password">
 
 <button
 class="loginBtn"
-onclick="loginUser()">
+onclick="loginStudent()">
 
 Login
 
@@ -197,8 +197,7 @@ from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import {
 getDatabase,
 ref,
-set,
-get
+set
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
@@ -262,7 +261,7 @@ msg.innerHTML = "";
 
 };
 
-/* STUDENT REGISTER */
+/* REGISTER */
 
 window.registerStudent = async function(){
 
@@ -349,42 +348,27 @@ ref(db,"users/"+uid),
 
 uid:uid,
 
-name:name,
-
-email:email,
-
 role:"student",
 
-profileId:uid,
-
-createdAt:Date.now()
+profileId:uid
 
 }
 );
 
-/* SAVE SESSION */
+/* SESSION */
 
-localStorage.setItem(
-"uid",
-uid
-);
+localStorage.setItem("uid",uid);
 
-localStorage.setItem(
-"role",
-"student"
-);
+localStorage.setItem("role","student");
 
-localStorage.setItem(
-"profileId",
-uid
-);
+localStorage.setItem("profileId",uid);
 
 msg.style.color = "green";
 
 msg.innerHTML =
 "Registration Successful";
 
-/* REDIRECT TO TEACHER PROFILE */
+/* REDIRECT */
 
 const redirectId =
 localStorage.getItem(
@@ -447,9 +431,9 @@ err.message;
 
 };
 
-/* UNIVERSAL LOGIN */
+/* LOGIN */
 
-window.loginUser = async function(){
+window.loginStudent = async function(){
 
 const email =
 document.getElementById("loginEmail")
@@ -490,59 +474,27 @@ password
 const uid =
 userCred.user.uid;
 
-/* GET USER ROLE */
-
-const snap = await get(
-ref(db,"users/"+uid)
-);
-
-if(!snap.exists()){
-
-msg.style.color = "red";
-
-msg.innerHTML =
-"User profile not found";
-
-return;
-
-}
-
-const userData = snap.val();
-
-const role = userData.role;
-
 /* SAVE SESSION */
 
-localStorage.setItem(
-"uid",
-uid
-);
+localStorage.setItem("uid",uid);
 
-localStorage.setItem(
-"profileId",
-userData.profileId || uid
-);
+localStorage.setItem("role","student");
 
-localStorage.setItem(
-"role",
-role
-);
+localStorage.setItem("profileId",uid);
 
 msg.style.color = "green";
 
 msg.innerHTML =
 "Login Successful";
 
-setTimeout(()=>{
-
-/* STUDENT */
-
-if(role === "student"){
+/* REDIRECT */
 
 const redirectId =
 localStorage.getItem(
 "redirectProfileId"
 );
+
+setTimeout(()=>{
 
 if(redirectId){
 
@@ -562,46 +514,6 @@ window.location.href =
 
 }
 
-}
-
-/* TEACHER */
-
-else if(role === "teacher"){
-
-window.location.href =
-"teacher-dashboard.html";
-
-}
-
-/* INSTITUTION */
-
-else if(role === "institution"){
-
-window.location.href =
-"teacher-dashboard.html";
-
-}
-
-/* ADMIN */
-
-else if(role === "admin"){
-
-window.location.href =
-"admin.html";
-
-}
-
-/* UNKNOWN */
-
-else{
-
-msg.style.color = "red";
-
-msg.innerHTML =
-"Unknown role";
-
-}
-
 },1000);
 
 }
@@ -609,21 +521,8 @@ catch(err){
 
 msg.style.color = "red";
 
-if(
-err.code ===
-"auth/invalid-credential"
-){
-
 msg.innerHTML =
 "Invalid email or password";
-
-}
-else{
-
-msg.innerHTML =
-err.message;
-
-}
 
 }
 
