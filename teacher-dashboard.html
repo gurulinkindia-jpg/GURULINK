@@ -185,343 +185,161 @@ Logout
 
 import {
 initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
 getDatabase,
 ref,
 get,
 update
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 import {
 getAuth,
 signOut
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 /* FIREBASE */
-
 const firebaseConfig = {
-
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-
 authDomain:"gurulink-59cc7.firebaseapp.com",
-
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-
 projectId:"gurulink-59cc7",
-
 storageBucket:"gurulink-59cc7.appspot.com",
-
 messagingSenderId:"112148672399",
-
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getDatabase(app);
-
 const auth = getAuth(app);
 
 /* LOCAL STORAGE */
-
-const uid =
-localStorage.getItem("uid");
-
-const role =
-localStorage.getItem("role");
-
-const profileId =
-localStorage.getItem("profileId");
+const uid = localStorage.getItem("uid");
+const role = localStorage.getItem("role");
+const profileId = localStorage.getItem("profileId");
 
 /* SECURITY */
-
-if(
-!uid ||
-(
-role !== "teacher" &&
-role !== "institution"
-)
-){
-
+if(!uid || (role !== "teacher" && role !== "institution")){
 alert("Access Denied");
-
-window.location.href =
-"login.html";
-
+window.location.href = "login.html";
 }
 
-/* ROLE UI */
-
-document.getElementById("roleText")
-.innerHTML = role.toUpperCase();
-
-document.getElementById("dashboardTitle")
-.innerHTML =
-
-role === "teacher"
-
-?
-
-"Teacher Dashboard"
-
-:
-
-"Institution Dashboard";
-
-/* DATABASE PATH */
-
+/* DB PATH */
 const dbPath =
-
 role === "teacher"
+? "teachers/" + profileId
+: "institutions/" + profileId;
 
-?
-
-"teachers/" + profileId
-
-:
-
-"institutions/" + profileId;
-
-/* LOAD PROFILE */
-
+/* LOAD */
 async function loadProfile(){
-
-try{
-
-const snap =
-await get(ref(db,dbPath));
+const snap = await get(ref(db, dbPath));
 
 if(!snap.exists()){
-
 alert("Profile not found");
-
 return;
-
 }
 
 const d = snap.val();
 
-/* FILL FORM */
-
-document.getElementById("name").value =
-d.name || "";
-
-document.getElementById("phone").value =
-d.phone || "";
-
-document.getElementById("email").value =
-d.email || "";
-
-document.getElementById("experience").value =
-
-d.experience ||
-d.establishedDate ||
-"";
-
-document.getElementById("location").value =
-
-d.location ||
-d.address ||
-d.area ||
-"";
-
-document.getElementById("description").value =
-d.description || "";
+document.getElementById("name").value = d.name || "";
+document.getElementById("phone").value = d.phone || "";
+document.getElementById("email").value = d.email || "";
+document.getElementById("experience").value = d.experience || d.establishedDate || "";
+document.getElementById("location").value = d.location || d.address || d.area || "";
+document.getElementById("description").value = d.description || "";
 
 document.getElementById("subjects").value =
-
-Array.isArray(d.subjects)
-
-?
-
-d.subjects.join(", ")
-
-:
-
-"";
+Array.isArray(d.subjects) ? d.subjects.join(", ") : "";
 
 document.getElementById("modes").value =
-
-Array.isArray(d.teachingModes)
-
-?
-
-d.teachingModes.join(", ")
-
-:
-
-"";
+Array.isArray(d.teachingModes) ? d.teachingModes.join(", ") : "";
 
 document.getElementById("fee").value =
+d.fee || d.homeFee || d.groupFee || d.onlineFee || "";
 
-d.fee ||
-d.homeFee ||
-d.groupFee ||
-d.onlineFee ||
-"";
-
-/* PHOTO */
-
-const photo =
-
-d.photo ||
-d.logo ||
-"";
-
+const photo = d.photo || d.logo || "";
 if(photo){
-
-document.getElementById(
-"photoPreview"
-).innerHTML =
-
+document.getElementById("photoPreview").innerHTML =
 `<img src="${photo}">`;
-
 }
 
-/* SHOW */
-
-document.getElementById("loading")
-.style.display="none";
-
-document.getElementById("content")
-.style.display="block";
-
-}
-catch(err){
-
-console.log(err);
-
-alert(err.message);
-
-}
-
+document.getElementById("loading").style.display = "none";
+document.getElementById("content").style.display = "block";
 }
 
 loadProfile();
 
 /* IMAGE UPLOAD */
-
-const API_KEY =
-"31f729ff855eb2e42c00ee508a8647ea";
+const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
 
 async function upload(file){
-
 let fd = new FormData();
-
-fd.append("image",file);
+fd.append("image", file);
 
 let res = await fetch(
-
 `https://api.imgbb.com/1/upload?key=${API_KEY}`,
-
-{
-method:"POST",
-body:fd
-}
-
+{ method:"POST", body:fd }
 );
 
 let data = await res.json();
-
-return data.data.url;
-
+return data?.data?.url || "";
 }
 
-/* SAVE */
-
+/* SAFE UPDATE FUNCTION */
 window.saveData = async function(){
 
 try{
 
-let photoUrl = "";
+let updateData = {
+name: document.getElementById("name").value || "",
+phone: document.getElementById("phone").value || "",
+email: document.getElementById("email").value || "",
+experience: document.getElementById("experience").value || "",
+location: document.getElementById("location").value || "",
+description: document.getElementById("description").value || "",
 
-/* UPLOAD */
+subjects: document.getElementById("subjects").value
+? document.getElementById("subjects").value.split(",").map(x=>x.trim()).filter(Boolean)
+: [],
 
-if(
-document.getElementById("photo").files[0]
-){
+teachingModes: document.getElementById("modes").value
+? document.getElementById("modes").value.split(",").map(x=>x.trim()).filter(Boolean)
+: [],
 
-photoUrl = await upload(
-document.getElementById("photo").files[0]
-);
+fee: document.getElementById("fee").value || ""
+};
 
+/* PHOTO SAFE HANDLING */
+const file = document.getElementById("photo").files[0];
+
+if(file){
+const photoUrl = await upload(file);
+if(photoUrl){
+updateData.photo = photoUrl; // ONLY if valid
+}
 }
 
-/* UPDATE */
+/* FINAL UPDATE */
+await update(ref(db, dbPath), updateData);
 
-await update(ref(db,dbPath),{
-
-name:
-document.getElementById("name").value,
-
-phone:
-document.getElementById("phone").value,
-
-email:
-document.getElementById("email").value,
-
-experience:
-document.getElementById("experience").value,
-
-location:
-document.getElementById("location").value,
-
-description:
-document.getElementById("description").value,
-
-subjects:
-document.getElementById("subjects")
-.value
-.split(",")
-.map(x=>x.trim()),
-
-teachingModes:
-document.getElementById("modes")
-.value
-.split(",")
-.map(x=>x.trim()),
-
-fee:
-document.getElementById("fee").value,
-
-photo:
-photoUrl || undefined
-
-});
-
-alert(
-"Profile Updated Successfully"
-);
+alert("Profile Updated Successfully");
 
 }
 catch(err){
-
 console.log(err);
-
 alert(err.message);
-
 }
-
 };
 
 /* LOGOUT */
-
 window.logout = async function(){
-
 await signOut(auth);
-
 localStorage.clear();
-
-window.location.href =
-"login.html";
-
+window.location.href = "login.html";
 };
+
+</script>
 
 </script>
 
