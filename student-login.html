@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Universal Login - GURULINK</title>
+<title>student-login - GURULINK</title>
 
 <style>
 
@@ -384,24 +384,34 @@ msg.style.color = "green";
 msg.innerHTML =
 "Registration Successful";
 
-/* REDIRECT TO TEACHER PROFILE */
+/* IMPORTANT FIX */
 
 const redirectPage =
-sessionStorage.getItem("redirectAfterLogin");
+sessionStorage.getItem(
+"redirectAfterLogin"
+);
 
 setTimeout(()=>{
 
-if(redirectId){
+/* GO TO PROFILE PAGE */
+
+if(
+redirectPage &&
+redirectPage !== "null" &&
+redirectPage !== "undefined"
+){
 
 sessionStorage.removeItem(
 "redirectAfterLogin"
 );
 
 window.location.href =
-"profile-view.html?id=" +
-redirectId;
+redirectPage;
 
 }
+
+/* NORMAL HOME */
+
 else{
 
 window.location.href =
@@ -537,22 +547,32 @@ setTimeout(()=>{
 
 if(role === "student"){
 
-const redirectId =
-localStorage.getItem(
-"redirectProfileId"
+/* IMPORTANT FIX */
+
+const redirectPage =
+sessionStorage.getItem(
+"redirectAfterLogin"
 );
 
-if(redirectId){
+/* GO TO PROFILE */
 
-localStorage.removeItem(
-"redirectProfileId"
+if(
+redirectPage &&
+redirectPage !== "null" &&
+redirectPage !== "undefined"
+){
+
+sessionStorage.removeItem(
+"redirectAfterLogin"
 );
 
 window.location.href =
-"profile-view.html?id=" +
-redirectId;
+redirectPage;
 
 }
+
+/* NORMAL HOME */
+
 else{
 
 window.location.href =
