@@ -24,6 +24,11 @@ border-radius:12px;
 box-shadow:0 5px 20px rgba(0,0,0,0.1);
 }
 
+h2{
+text-align:center;
+margin-bottom:10px;
+}
+
 input{
 width:100%;
 padding:12px;
@@ -40,11 +45,13 @@ color:#fff;
 border:none;
 border-radius:8px;
 cursor:pointer;
+font-weight:bold;
 }
 
 #msg{
 margin-top:10px;
 text-align:center;
+font-weight:bold;
 }
 </style>
 </head>
@@ -53,7 +60,7 @@ text-align:center;
 
 <div class="box">
 
-<h2>Login</h2>
+<h2>Universal Login</h2>
 
 <input type="email" id="email" placeholder="Email">
 <input type="password" id="password" placeholder="Password">
@@ -70,6 +77,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebas
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
+/* FIREBASE CONFIG */
 const firebaseConfig = {
 apiKey:"YOUR_KEY",
 authDomain:"YOUR_DOMAIN",
@@ -86,6 +94,7 @@ const db = getDatabase(app);
 
 const msg = document.getElementById("msg");
 
+/* LOGIN FUNCTION */
 window.login = async function(){
 
 const email = document.getElementById("email").value.trim().toLowerCase();
@@ -93,33 +102,77 @@ const password = document.getElementById("password").value;
 
 if(!email || !password){
 msg.innerHTML = "Enter email & password";
+msg.style.color = "red";
 return;
 }
 
 msg.innerHTML = "Logging in...";
+msg.style.color = "#1565c0";
 
 try{
 
-// 1. AUTH LOGIN
+/* 1. LOGIN AUTH */
 const userCred = await signInWithEmailAndPassword(auth,email,password);
 const uid = userCred.user.uid;
 
-// 2. GET ROLE FROM DATABASE
-const snap = await get(ref(db,"users/"+uid));
+/* 2. FIND ROLE (MULTI-CHECK SYSTEM) */
+let role = null;
+let data = null;
 
-if(!snap.exists()){
-msg.innerHTML = "User role not found";
+/* USERS TABLE */
+let snap = await get(ref(db,"users/"+uid));
+if(snap.exists()){
+data = snap.val();
+role = data.role;
+}
+
+/* STUDENT */
+if(!role){
+snap = await get(ref(db,"students/"+uid));
+if(snap.exists()){
+role = "student";
+}
+}
+
+/* TEACHER */
+if(!role){
+snap = await get(ref(db,"teachers/"+uid));
+if(snap.exists()){
+role = "teacher";
+}
+}
+
+/* INSTITUTION */
+if(!role){
+snap = await get(ref(db,"institutions/"+uid));
+if(snap.exists()){
+role = "institution";
+}
+}
+
+/* ADMIN (optional direct check) */
+if(!role){
+snap = await get(ref(db,"admins/"+uid));
+if(snap.exists()){
+role = "admin";
+}
+}
+
+/* NO ROLE FOUND */
+if(!role){
+msg.style.color = "red";
+msg.innerHTML = "Account exists but role not assigned";
 return;
 }
 
-const data = snap.val();
-const role = data.role;
-
-// 3. SAVE SESSION
+/* 3. SAVE SESSION */
 localStorage.setItem("uid",uid);
 localStorage.setItem("role",role);
 
-// 4. REDIRECT BY ROLE
+/* 4. REDIRECT */
+msg.style.color = "green";
+msg.innerHTML = "Login Successful";
+
 setTimeout(()=>{
 
 if(role === "student"){
@@ -147,6 +200,8 @@ msg.innerHTML = "Unknown role";
 }
 
 catch(err){
+console.log(err);
+msg.style.color = "red";
 msg.innerHTML = "Invalid email or password";
 }
 
