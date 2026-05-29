@@ -386,17 +386,15 @@ msg.innerHTML =
 
 /* REDIRECT TO TEACHER PROFILE */
 
-const redirectId =
-localStorage.getItem(
-"redirectProfileId"
-);
+const redirectPage =
+sessionStorage.getItem("redirectAfterLogin");
 
 setTimeout(()=>{
 
 if(redirectId){
 
-localStorage.removeItem(
-"redirectProfileId"
+sessionStorage.removeItem(
+"redirectAfterLogin"
 );
 
 window.location.href =
