@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Student Login - GURULINK</title>
+<title>Universal Login - GURULINK</title>
 
 <style>
 
@@ -95,10 +95,10 @@ display:none;
 
 <div id="loginBox">
 
-<h2>Student Login</h2>
+<h2>Login</h2>
 
 <p>
-Login to view teacher and institute details
+Student / Teacher / Institution / Admin
 </p>
 
 <input
@@ -113,7 +113,7 @@ placeholder="Enter Password">
 
 <button
 class="loginBtn"
-onclick="loginStudent()">
+onclick="loginUser()">
 
 Login
 
@@ -128,6 +128,7 @@ New Student? Register
 </button>
 
 </div>
+
 
 <!-- REGISTER -->
 
@@ -261,7 +262,7 @@ msg.innerHTML = "";
 
 };
 
-/* REGISTER */
+/* STUDENT REGISTER */
 
 window.registerStudent = async function(){
 
@@ -361,34 +362,46 @@ createdAt:Date.now()
 }
 );
 
-/* SESSION */
+/* SAVE SESSION */
 
-localStorage.setItem("uid",uid);
+localStorage.setItem(
+"uid",
+uid
+);
 
-localStorage.setItem("role","student");
+localStorage.setItem(
+"role",
+"student"
+);
 
-localStorage.setItem("profileId",uid);
+localStorage.setItem(
+"profileId",
+uid
+);
 
 msg.style.color = "green";
 
 msg.innerHTML =
 "Registration Successful";
 
-/* REDIRECT FIXED */
+/* REDIRECT TO TEACHER PROFILE */
+
+const redirectId =
+localStorage.getItem(
+"redirectProfileId"
+);
 
 setTimeout(()=>{
 
-const redirectPage =
-sessionStorage.getItem("redirectAfterLogin");
-
-if(redirectPage){
+if(redirectId){
 
 localStorage.removeItem(
-"redirectAfterLogin"
+"redirectProfileId"
 );
 
 window.location.href =
-redirectPage;
+"profile-view.html?id=" +
+redirectId;
 
 }
 else{
@@ -402,8 +415,6 @@ window.location.href =
 
 }
 catch(err){
-
-console.log(err);
 
 msg.style.color = "red";
 
@@ -436,9 +447,9 @@ err.message;
 
 };
 
-/* LOGIN */
+/* UNIVERSAL LOGIN */
 
-window.loginStudent = async function(){
+window.loginUser = async function(){
 
 const email =
 document.getElementById("loginEmail")
@@ -479,12 +490,13 @@ password
 const uid =
 userCred.user.uid;
 
-/* CHECK USER EXISTS */
+/* GET USER ROLE */
 
-const userSnap =
-await get(ref(db,"users/"+uid));
+const snap = await get(
+ref(db,"users/"+uid)
+);
 
-if(!userSnap.exists()){
+if(!snap.exists()){
 
 msg.style.color = "red";
 
@@ -495,50 +507,52 @@ return;
 
 }
 
-const userData =
-userSnap.val();
+const userData = snap.val();
 
-/* ONLY STUDENT ALLOWED */
-
-if(userData.role !== "student"){
-
-msg.style.color = "red";
-
-msg.innerHTML =
-"Please use main login page";
-
-return;
-
-}
+const role = userData.role;
 
 /* SAVE SESSION */
 
-localStorage.setItem("uid",uid);
+localStorage.setItem(
+"uid",
+uid
+);
 
-localStorage.setItem("role","student");
+localStorage.setItem(
+"profileId",
+userData.profileId || uid
+);
 
-localStorage.setItem("profileId",uid);
+localStorage.setItem(
+"role",
+role
+);
 
 msg.style.color = "green";
 
 msg.innerHTML =
 "Login Successful";
 
-/* REDIRECT FIXED */
-
 setTimeout(()=>{
 
-const redirectPage =
-localStorage.getItem("redirectAfterLogin");
+/* STUDENT */
 
-if(redirectPage){
+if(role === "student"){
 
-sessionStorage.removeItem(
-"redirectAfterLogin"
+const redirectId =
+localStorage.getItem(
+"redirectProfileId"
+);
+
+if(redirectId){
+
+localStorage.removeItem(
+"redirectProfileId"
 );
 
 window.location.href =
-redirectPage;
+"profile-view.html?id=" +
+redirectId;
 
 }
 else{
@@ -548,17 +562,68 @@ window.location.href =
 
 }
 
+}
+
+/* TEACHER */
+
+else if(role === "teacher"){
+
+window.location.href =
+"teacher-dashboard.html";
+
+}
+
+/* INSTITUTION */
+
+else if(role === "institution"){
+
+window.location.href =
+"teacher-dashboard.html";
+
+}
+
+/* ADMIN */
+
+else if(role === "admin"){
+
+window.location.href =
+"admin.html";
+
+}
+
+/* UNKNOWN */
+
+else{
+
+msg.style.color = "red";
+
+msg.innerHTML =
+"Unknown role";
+
+}
+
 },1000);
 
 }
 catch(err){
 
-console.log(err);
-
 msg.style.color = "red";
+
+if(
+err.code ===
+"auth/invalid-credential"
+){
 
 msg.innerHTML =
 "Invalid email or password";
+
+}
+else{
+
+msg.innerHTML =
+err.message;
+
+}
 
 }
 
