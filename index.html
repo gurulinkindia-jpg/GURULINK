@@ -33,20 +33,6 @@ top:0;
 z-index:1000;
 }
 
-/* MOBILE FONT FIX */
-@media(max-width:768px){
-nav{
-padding:10px 4%;
-font-size:12px;
-}
-nav a{
-font-size:12px;
-}
-.logo{
-font-size:16px;
-}
-}
-
 .logo{
 font-size:22px;
 font-weight:700;
@@ -54,72 +40,24 @@ font-weight:700;
 
 .logo span{color:#38bdf8}
 
-/* MENU */
+/* LEFT BUTTONS */
+.left-actions{
+display:flex;
+gap:10px;
+align-items:center;
+}
+
+/* NAV MENU */
 .menu{
 display:flex;
 gap:15px;
 align-items:center;
-flex-wrap:wrap;
 }
 
 .menu a{
 color:white;
 text-decoration:none;
 font-size:14px;
-}
-
-/* DROPDOWN */
-.dropdown{
-position:relative;
-}
-
-.dropdown-content{
-display:none;
-position:absolute;
-top:35px;
-left:0;
-background:white;
-min-width:220px;
-border-radius:10px;
-overflow:hidden;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
-z-index:999;
-}
-
-.dropdown-content a{
-display:block;
-padding:10px;
-color:black;
-text-decoration:none;
-font-size:13px;
-}
-
-.dropdown-content a:hover{
-background:#f2f2f2;
-}
-
-/* HERO */
-.hero{
-height:85vh;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-text-align:center;
-background:linear-gradient(135deg,#0f172a,#1e293b);
-color:white;
-padding:20px;
-}
-
-.btn{
-margin-top:20px;
-padding:12px 20px;
-background:#38bdf8;
-color:white;
-border:none;
-border-radius:8px;
-cursor:pointer;
-text-decoration:none;
 }
 
 /* PROFILE */
@@ -130,6 +68,7 @@ border-radius:50%;
 overflow:hidden;
 border:2px solid #38bdf8;
 cursor:pointer;
+margin-left:10px;
 }
 
 .profile img{
@@ -138,87 +77,208 @@ height:100%;
 object-fit:cover;
 }
 
+/* DROPDOWN PANELS */
+.panel{
+display:none;
+position:absolute;
+top:70px;
+left:5%;
+right:5%;
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+z-index:999;
+}
+
+.sub-wrap{
+display:flex;
+align-items:center;
+gap:12px;
+margin:10px 0;
+}
+
+.sub-icon img{
+width:40px;
+height:40px;
+border-radius:50%;
+}
+
+.sub-btn{
+padding:10px 15px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+background:#0f172a;
+color:white;
+width:100%;
+text-align:left;
+}
+
+.sub-btn.academic{background:#1976d2;}
+.sub-btn.creative{background:#e91e63;}
+.sub-btn.skill{background:#ff9800;}
+.sub-btn.sports{background:#4caf50;}
+
+.back{
+margin-top:10px;
+padding:10px;
+background:red;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+nav{flex-wrap:wrap;font-size:12px}
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- NAV -->
 <nav>
 
 <div class="logo">GURU<span>LINK</span></div>
 
+<!-- LEFT BUTTONS -->
+<div class="left-actions">
+
+<button onclick="togglePanel('teacherPanel')">Teacher Reg</button>
+<button onclick="togglePanel('instPanel')">Institute Reg</button>
+
+</div>
+
+<!-- MENU -->
 <div class="menu">
 
-<a href="index.html">Home</a>
-
+<a href="#" onclick="togglePanel('findPanel')">Find Teacher ▼</a>
 <a href="teacher-dashboard.html">Dashboard</a>
 
-<!-- FIND -->
-<div class="dropdown">
-<a href="#" onclick="toggleMenu('findMenu')">Find Teacher ▼</a>
-<div id="findMenu" class="dropdown-content">
-<a href="academic-profile.html">Academic</a>
-<a href="creative-profile.html">Creative</a>
-<a href="skill-profile.html">Skill</a>
-<a href="sport-profile.html">Sports</a>
-</div>
-</div>
-
-<!-- REGISTER -->
-<div class="dropdown">
-<a href="#" onclick="toggleMenu('regMenu')">Register ▼</a>
-<div id="regMenu" class="dropdown-content">
-
-<a href="academic-teacher.html">Teacher Register</a>
-<a href="skill-teacher.html">Teacher Register</a>
-<a href="creative-teacher.html">Teacher Register</a>
-<a href="sport-teacher.html">Teacher Register</a>
-
-<hr>
-
-<a href="academic-institute.html">Institute Register</a>
-<a href="skill-institute.html">Institute Register</a>
-<a href="creative-institute.html">Institute Register</a>
-<a href="sport-institution.html">Institute Register</a>
-
-</div>
+<!-- PROFILE -->
+<div class="profile" onclick="alert('Profile Open')">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
 </div>
 
 </div>
 
 </nav>
 
-<!-- HERO -->
-<section class="hero">
-<h1>GURULINK INDIA</h1>
-<p>Smart Education Platform</p>
-</section>
+<!-- FIND PANEL -->
+<div id="findPanel" class="panel">
+
+<h3>Find Teachers</h3>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn academic" onclick="location.href='academic-profile.html'">Academic Teachers</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn creative" onclick="location.href='creative-profile.html'">Creative Teachers</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn skill" onclick="location.href='skill-profile.html'">Skill Teachers</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn sports" onclick="location.href='sport-profile.html'">Sports Teachers</button>
+</div>
+
+<button class="back" onclick="closePanels()">Close</button>
+
+</div>
+
+<!-- TEACHER PANEL -->
+<div id="teacherPanel" class="panel">
+
+<h3>Teacher Registration</h3>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn academic" onclick="location.href='academic-teacher.html'">Academic Teacher</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn creative" onclick="location.href='creative-teacher.html'">Creative Teacher</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn skill" onclick="location.href='skill-teacher.html'">Skill Teacher</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn sports" onclick="location.href='sport-teacher.html'">Sports Teacher</button>
+</div>
+
+<button class="back" onclick="closePanels()">Close</button>
+
+</div>
+
+<!-- INSTITUTE PANEL -->
+<div id="instPanel" class="panel">
+
+<h3>Institute Registration</h3>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn academic" onclick="location.href='academic-institute.html'">Academic Institution</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn creative" onclick="location.href='creative-institute.html'">Creative Institution</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn skill" onclick="location.href='skill-institute.html'">Skill Institution</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<button class="sub-btn sports" onclick="location.href='sport-institution.html'">Sports Institution</button>
+</div>
+
+<button class="back" onclick="closePanels()">Close</button>
+
+</div>
 
 <script>
 
-/* AUTO CLOSE DROPDOWN (ONLY ONE OPEN) */
-function toggleMenu(id){
+function togglePanel(id){
 
-let menus = document.querySelectorAll(".dropdown-content");
+let panels = document.querySelectorAll('.panel');
 
-menus.forEach(m => {
-if(m.id !== id){
-m.style.display = "none";
+panels.forEach(p=>{
+if(p.id !== id){
+p.style.display="none";
 }
 });
 
 let el = document.getElementById(id);
-
-el.style.display = (el.style.display === "block") ? "none" : "block";
+el.style.display = (el.style.display==="block")?"none":"block";
 }
 
-/* CLOSE OUTSIDE */
-document.addEventListener("click",(e)=>{
-if(!e.target.closest(".dropdown")){
-document.querySelectorAll(".dropdown-content").forEach(m=>{
-m.style.display="none";
+function closePanels(){
+document.querySelectorAll('.panel').forEach(p=>{
+p.style.display="none";
 });
+}
+
+document.addEventListener("click",(e)=>{
+if(!e.target.closest(".panel") && !e.target.closest("button")){
+closePanels();
 }
 });
 
