@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>GURULINK INDIA</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -32,7 +31,6 @@ color:white;
 position:sticky;
 top:0;
 z-index:1000;
-flex-wrap:wrap;
 }
 
 .logo{
@@ -41,13 +39,6 @@ font-weight:700;
 }
 
 .logo span{color:#38bdf8}
-
-/* HAMBURGER */
-.hamburger{
-display:none;
-font-size:26px;
-cursor:pointer;
-}
 
 /* MENU */
 .menu{
@@ -62,49 +53,75 @@ text-decoration:none;
 font-size:14px;
 }
 
-/* DROPDOWN */
-.dropdown{
-position:relative;
-}
-
-.dropdown-content{
-display:none;
-position:absolute;
-top:35px;
-background:white;
-min-width:240px;
-border-radius:10px;
-overflow:hidden;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
-z-index:1000;
-}
-
-.dropdown-content a{
-display:block;
-padding:10px;
-color:black;
-text-decoration:none;
-font-size:13px;
-}
-
-.dropdown-content a:hover{
-background:#f2f2f2;
-}
-
 /* PROFILE */
 .profile{
-width:40px;
-height:40px;
+width:42px;
+height:42px;
 border-radius:50%;
-background:#38bdf8;
 overflow:hidden;
 cursor:pointer;
+border:2px solid #38bdf8;
 }
 
 .profile img{
 width:100%;
 height:100%;
 object-fit:cover;
+}
+
+/* PROFILE MENU */
+.profile-menu{
+position:absolute;
+right:5%;
+top:70px;
+background:white;
+border-radius:12px;
+width:260px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+display:none;
+overflow:hidden;
+z-index:2000;
+}
+
+.profile-header{
+padding:15px;
+background:#0f172a;
+color:white;
+}
+
+.profile-header img{
+width:45px;
+height:45px;
+border-radius:50%;
+object-fit:cover;
+margin-bottom:8px;
+}
+
+.badge{
+display:inline-block;
+padding:3px 8px;
+background:#38bdf8;
+color:white;
+font-size:11px;
+border-radius:20px;
+margin-top:5px;
+}
+
+.profile-menu a{
+display:block;
+padding:10px;
+text-decoration:none;
+color:#222;
+font-size:13px;
+}
+
+.profile-menu a:hover{
+background:#f2f2f2;
+}
+
+hr{
+border:none;
+border-top:1px solid #eee;
 }
 
 /* HERO */
@@ -120,9 +137,6 @@ color:white;
 padding:20px;
 }
 
-.hero h1{font-size:40px;}
-.hero p{margin-top:10px;color:#cbd5e1;}
-
 .btn{
 margin-top:20px;
 padding:12px 20px;
@@ -132,73 +146,6 @@ border:none;
 border-radius:8px;
 cursor:pointer;
 text-decoration:none;
-display:inline-block;
-}
-
-/* GRID */
-.section{
-padding:60px 5%;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:20px;
-}
-
-.card{
-background:white;
-padding:25px;
-border-radius:15px;
-box-shadow:0 5px 15px rgba(0,0,0,0.1);
-text-align:center;
-}
-
-/* FOOTER */
-footer{
-background:#0f172a;
-color:white;
-text-align:center;
-padding:30px;
-margin-top:40px;
-}
-
-/* ================= MOBILE ================= */
-@media(max-width:900px){
-
-.hamburger{
-display:block;
-}
-
-.menu{
-display:none;
-width:100%;
-flex-direction:column;
-background:#0f172a;
-padding:15px;
-margin-top:10px;
-border-top:1px solid rgba(255,255,255,0.1);
-}
-
-.menu.active{
-display:flex;
-}
-
-.dropdown-content{
-position:relative;
-top:0;
-box-shadow:none;
-background:#1e293b;
-}
-
-.dropdown-content a{
-color:white;
-}
-
-.hero h1{
-font-size:26px;
-}
-
 }
 
 </style>
@@ -206,96 +153,144 @@ font-size:26px;
 
 <body>
 
+<!-- NAV -->
 <nav>
 
 <div class="logo">GURU<span>LINK</span></div>
 
-<div class="hamburger" onclick="toggleMenu()">☰</div>
-
-<div class="menu" id="menu">
+<div class="menu">
 
 <a href="index.html">Home</a>
-
-<!-- FIND -->
-<div class="dropdown">
-<a href="#" onclick="toggle('d1')">Find ▼</a>
-<div id="d1" class="dropdown-content">
-<a href="academic-profile.html">Academic</a>
-<a href="skill-profile.html">Skill</a>
-<a href="creative-profile.html">Creative</a>
-<a href="sport-profile.html">Sports</a>
-</div>
-</div>
-
-<!-- REGISTER -->
-<div class="dropdown">
-<a href="#" onclick="toggle('d2')">Register ▼</a>
-<div id="d2" class="dropdown-content">
-<a href="academic-teacher.html">Teacher Academic</a>
-<a href="skill-teacher.html">Teacher Skill</a>
-<a href="creative-teacher.html">Teacher Creative</a>
-<a href="sport-teacher.html">Teacher Sports</a>
-<hr>
-<a href="academic-institute.html">Institute Academic</a>
-<a href="skill-institute.html">Institute Skill</a>
-<a href="creative-institute.html">Institute Creative</a>
-<a href="sport-institution.html">Institute Sports</a>
-</div>
-</div>
-
-<!-- SUPPORT -->
-<div class="dropdown">
-<a href="#" onclick="toggle('d3')">Support ▼</a>
-<div id="d3" class="dropdown-content">
-<a href="mailto:gurulinkindia@gmail.com">📧 Email Developer</a>
-<a href="tel:+919999999999">☎ Customer Care</a>
-<a href="settings.html">⚙ Settings</a>
-</div>
-</div>
-
+<a href="academic-profile.html">Find Teachers</a>
 <a href="teacher-dashboard.html">Dashboard</a>
-<a href="student-login.html">Student</a>
-<a href="admin.html">Admin</a>
 
-<div class="profile">
-<img src="https://i.ibb.co/placeholder/profile.png">
+<!-- PROFILE -->
+<div class="profile" onclick="toggleProfileMenu()">
+<img id="profileImg" src="https://i.ibb.co/placeholder/profile.png">
 </div>
 
 </div>
 
 </nav>
 
+<!-- PROFILE MENU -->
+<div id="profileMenu" class="profile-menu">
+
+<div class="profile-header">
+<img id="menuImg" src="">
+<div id="menuName">Guest</div>
+<div class="badge" id="menuRole">Not Logged In</div>
+</div>
+
+<a href="teacher-dashboard.html">Teacher Dashboard</a>
+<a href="student-dashboard.html">Student Dashboard</a>
+<a href="institute-dashboard.html">Institute Dashboard</a>
+<a href="admin.html">Admin Panel</a>
+
+<hr>
+
+<a href="settings.html">Settings</a>
+<a href="mailto:gurulinkindia@gmail.com">Email Developer</a>
+<a href="tel:+919999999999">Customer Care</a>
+
+<hr>
+
+<a href="#" onclick="logout()" style="color:red;">Logout</a>
+
+</div>
+
+<!-- HERO -->
 <section class="hero">
-<h1>India’s Smart Teacher Discovery Platform</h1>
-<p>Find Teachers • Institutes • Courses</p>
+<h1>GURULINK INDIA</h1>
+<p>Smart Education Platform</p>
 <a class="btn" href="academic-profile.html">Explore Teachers</a>
 </section>
 
-<section class="section">
-<div class="grid">
+<script type="module">
 
-<div class="card">Teachers</div>
-<div class="card">Institutes</div>
-<div class="card">Student</div>
-<div class="card">Admin</div>
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-</div>
-</section>
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
 
-<footer>
-GURULINK INDIA
-</footer>
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
 
-<script>
+/* SESSION */
+const uid = localStorage.getItem("uid");
+const role = localStorage.getItem("role") || "guest";
+const profileId = localStorage.getItem("profileId");
 
-function toggle(id){
-document.getElementById(id).style.display =
-document.getElementById(id).style.display === "block"
-? "none" : "block";
+/* AUTO REDIRECT IF NOT LOGGED */
+if(!uid){
+document.getElementById("menuRole").innerText = "Guest";
+document.getElementById("menuName").innerText = "Not Logged In";
 }
 
-function toggleMenu(){
-document.getElementById("menu").classList.toggle("active");
+/* LOAD PROFILE */
+async function loadProfile(){
+
+if(!profileId) return;
+
+const path =
+role === "teacher"
+? "teachers/"+profileId
+: role === "institution"
+? "institutions/"+profileId
+: "students/"+profileId;
+
+const snap = await get(ref(db, path));
+
+if(!snap.exists()) return;
+
+const data = snap.val();
+
+const img = data.photo || data.logo || "https://i.ibb.co/placeholder/profile.png";
+
+document.getElementById("profileImg").src = img;
+document.getElementById("menuImg").src = img;
+
+document.getElementById("menuName").innerText =
+data.name || "User";
+
+document.getElementById("menuRole").innerText =
+role.toUpperCase();
+}
+
+loadProfile();
+
+/* MENU */
+window.toggleProfileMenu = function(){
+const menu = document.getElementById("profileMenu");
+menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+/* CLOSE OUTSIDE */
+document.addEventListener("click",(e)=>{
+if(!e.target.closest(".profile")){
+document.getElementById("profileMenu").style.display = "none";
+}
+});
+
+/* LOGOUT */
+window.logout = async function(){
+
+try{
+await signOut(auth);
+}catch(e){}
+
+localStorage.clear();
+window.location.href = "login.html";
 }
 
 </script>
