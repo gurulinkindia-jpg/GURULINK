@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>GURULINK INDIA</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
+
 *{
 margin:0;
 padding:0;
@@ -33,6 +33,20 @@ top:0;
 z-index:1000;
 }
 
+/* MOBILE FONT FIX */
+@media(max-width:768px){
+nav{
+padding:10px 4%;
+font-size:12px;
+}
+nav a{
+font-size:12px;
+}
+.logo{
+font-size:16px;
+}
+}
+
 .logo{
 font-size:22px;
 font-weight:700;
@@ -40,10 +54,12 @@ font-weight:700;
 
 .logo span{color:#38bdf8}
 
+/* MENU */
 .menu{
 display:flex;
 gap:15px;
 align-items:center;
+flex-wrap:wrap;
 }
 
 .menu a{
@@ -52,77 +68,39 @@ text-decoration:none;
 font-size:14px;
 }
 
-/* PROFILE */
-.profile{
-width:42px;
-height:42px;
-border-radius:50%;
-overflow:hidden;
-cursor:pointer;
-border:2px solid #38bdf8;
-}
-
-.profile img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
 /* DROPDOWN */
-.profile-menu{
-position:absolute;
-right:5%;
-top:70px;
-background:white;
-border-radius:12px;
-width:260px;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
+.dropdown{
+position:relative;
+}
+
+.dropdown-content{
 display:none;
-z-index:2000;
+position:absolute;
+top:35px;
+left:0;
+background:white;
+min-width:220px;
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+z-index:999;
 }
 
-.profile-header{
-padding:15px;
-background:#0f172a;
-color:white;
-text-align:center;
-}
-
-.profile-header img{
-width:50px;
-height:50px;
-border-radius:50%;
-object-fit:cover;
-margin-bottom:5px;
-}
-
-.badge{
-display:inline-block;
-padding:3px 8px;
-background:#38bdf8;
-color:white;
-font-size:11px;
-border-radius:20px;
-margin-top:5px;
-}
-
-.profile-menu a{
+.dropdown-content a{
 display:block;
 padding:10px;
+color:black;
 text-decoration:none;
-color:#222;
 font-size:13px;
 }
 
-.profile-menu a:hover{
+.dropdown-content a:hover{
 background:#f2f2f2;
 }
 
-hr{border:none;border-top:1px solid #eee}
-
 /* HERO */
 .hero{
-height:70vh;
+height:85vh;
 display:flex;
 flex-direction:column;
 align-items:center;
@@ -133,255 +111,116 @@ color:white;
 padding:20px;
 }
 
-.hero h1{
-font-size:40px;
-}
-
 .btn{
-margin-top:15px;
-padding:12px 18px;
+margin-top:20px;
+padding:12px 20px;
 background:#38bdf8;
 color:white;
+border:none;
 border-radius:8px;
+cursor:pointer;
 text-decoration:none;
 }
 
-/* SECTION */
-.section{
-padding:40px 5%;
-}
-
-/* COLLAPSE */
-.toggle-btn{
-width:100%;
-padding:12px;
-background:#0f172a;
-color:white;
-border:none;
-border-radius:10px;
-margin-bottom:10px;
-cursor:pointer;
-text-align:left;
-font-size:15px;
-}
-
-.box{
-display:none;
-margin-bottom:20px;
-}
-
-/* SUB BUTTONS */
-.sub-wrap{
-display:flex;
-align-items:center;
-gap:10px;
-background:white;
-padding:10px;
-margin-bottom:10px;
-border-radius:10px;
-box-shadow:0 3px 10px rgba(0,0,0,0.08);
-}
-
-.sub-icon img{
-width:35px;
-height:35px;
+/* PROFILE */
+.profile{
+width:42px;
+height:42px;
 border-radius:50%;
-}
-
-.sub-btn{
-flex:1;
-padding:10px;
-border:none;
-border-radius:8px;
+overflow:hidden;
+border:2px solid #38bdf8;
 cursor:pointer;
-color:white;
-text-align:left;
-font-weight:600;
 }
 
-.academic{background:#1976d2}
-.creative{background:#e91e63}
-.skill{background:#ff9800}
-.sports{background:#4caf50}
+.profile img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
 
 </style>
 </head>
 
 <body>
 
+<!-- NAV -->
 <nav>
+
 <div class="logo">GURU<span>LINK</span></div>
 
 <div class="menu">
+
 <a href="index.html">Home</a>
-<a href="#" onclick="toggleBox('findBox')">Find Teachers</a>
-<a href="#" onclick="toggleBox('regBox')">Register</a>
+
+<a href="teacher-dashboard.html">Dashboard</a>
+
+<!-- FIND -->
+<div class="dropdown">
+<a href="#" onclick="toggleMenu('findMenu')">Find Teacher ▼</a>
+<div id="findMenu" class="dropdown-content">
+<a href="academic-profile.html">Academic</a>
+<a href="creative-profile.html">Creative</a>
+<a href="skill-profile.html">Skill</a>
+<a href="sport-profile.html">Sports</a>
 </div>
-
-<div class="profile" onclick="toggleProfile()">
-<img id="profileImg" src="https://i.ibb.co/placeholder/profile.png">
-</div>
-</nav>
-
-<!-- PROFILE MENU -->
-<div id="profileMenu" class="profile-menu">
-
-<div class="profile-header">
-<img id="menuImg">
-<div id="menuName">Guest</div>
-<div class="badge" id="menuRole">Not Logged In</div>
-</div>
-
-<a href="teacher-dashboard.html">Teacher Dashboard</a>
-<a href="student-dashboard.html">Student Dashboard</a>
-<a href="institute-dashboard.html">Institute Dashboard</a>
-
-<hr>
-
-<a href="settings.html">Settings</a>
-<a href="mailto:gurulinkindia@gmail.com">Email Developer</a>
-<a href="tel:+919999999999">Customer Care</a>
-
-<hr>
-
-<a href="#" onclick="logout()" style="color:red;">Logout</a>
-</div>
-
-<!-- HERO -->
-<div class="hero">
-<h1>GURULINK INDIA</h1>
-<p>Smart Education Platform</p>
-
-<a class="btn" href="academic-profile.html">Explore Teachers</a>
-<a class="btn" href="academic-profile.html">Find Teachers</a>
-</div>
-
-<!-- FIND TEACHERS -->
-<div class="section">
-<button class="toggle-btn" onclick="toggleBox('findBox')">Find Teachers ▼</button>
-
-<div id="findBox" class="box">
-
-<h3>Find Teachers</h3>
-
-<div class="sub-wrap">
-<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
-<button class="sub-btn academic" onclick="location.href='academic-profile.html'">Academic Teachers</button>
-</div>
-
-<div class="sub-wrap">
-<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
-<button class="sub-btn creative" onclick="location.href='creative-profile.html'">Creative Teachers</button>
-</div>
-
-<div class="sub-wrap">
-<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
-<button class="sub-btn skill" onclick="location.href='skill-profile.html'">Skill Teachers</button>
-</div>
-
-<div class="sub-wrap">
-<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
-<button class="sub-btn sports" onclick="location.href='sport-profile.html'">Sports Teachers</button>
-</div>
-
 </div>
 
 <!-- REGISTER -->
-<button class="toggle-btn" onclick="toggleBox('regBox')">Register ▼</button>
+<div class="dropdown">
+<a href="#" onclick="toggleMenu('regMenu')">Register ▼</a>
+<div id="regMenu" class="dropdown-content">
 
-<div id="regBox" class="box">
+<a href="academic-teacher.html">Teacher Register</a>
+<a href="skill-teacher.html">Teacher Register</a>
+<a href="creative-teacher.html">Teacher Register</a>
+<a href="sport-teacher.html">Teacher Register</a>
 
-<h3>Teacher Registration</h3>
+<hr>
 
-<div class="sub-wrap">
-<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
-<button class="sub-btn academic" onclick="location.href='academic-teacher.html'">Academic Teacher</button>
+<a href="academic-institute.html">Institute Register</a>
+<a href="skill-institute.html">Institute Register</a>
+<a href="creative-institute.html">Institute Register</a>
+<a href="sport-institution.html">Institute Register</a>
+
 </div>
-
-<div class="sub-wrap">
-<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
-<button class="sub-btn creative" onclick="location.href='creative-teacher.html'">Creative Teacher</button>
-</div>
-
-<div class="sub-wrap">
-<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
-<button class="sub-btn skill" onclick="location.href='skill-teacher.html'">Skill Teacher</button>
-</div>
-
-<div class="sub-wrap">
-<div class="sub-icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
-<button class="sub-btn sports" onclick="location.href='sport-teacher.html'">Sports Teacher</button>
 </div>
 
 </div>
 
-</div>
+</nav>
 
-<script type="module">
+<!-- HERO -->
+<section class="hero">
+<h1>GURULINK INDIA</h1>
+<p>Smart Education Platform</p>
+</section>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+<script>
 
-const firebaseConfig = {
-apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-authDomain:"gurulink-59cc7.firebaseapp.com",
-databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"gurulink-59cc7",
-storageBucket:"gurulink-59cc7.appspot.com",
-messagingSenderId:"112148672399",
-appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-};
+/* AUTO CLOSE DROPDOWN (ONLY ONE OPEN) */
+function toggleMenu(id){
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
+let menus = document.querySelectorAll(".dropdown-content");
 
-const uid = localStorage.getItem("uid");
-const role = localStorage.getItem("role") || "guest";
-const profileId = localStorage.getItem("profileId");
-
-async function loadProfile(){
-
-if(!profileId) return;
-
-const path =
-role === "teacher"
-? "teachers/"+profileId
-: role === "institution"
-? "institutions/"+profileId
-: "students/"+profileId;
-
-const snap = await get(ref(db,path));
-if(!snap.exists()) return;
-
-const d = snap.val();
-
-const img = d.photo || d.logo || "https://i.ibb.co/placeholder/profile.png";
-
-document.getElementById("profileImg").src = img;
-document.getElementById("menuImg").src = img;
-document.getElementById("menuName").innerText = d.name || "User";
-document.getElementById("menuRole").innerText = role.toUpperCase();
+menus.forEach(m => {
+if(m.id !== id){
+m.style.display = "none";
 }
+});
 
-loadProfile();
-
-window.toggleProfile = function(){
-let m = document.getElementById("profileMenu");
-m.style.display = m.style.display === "block" ? "none" : "block";
-}
-
-window.toggleBox = function(id){
 let el = document.getElementById(id);
-el.style.display = el.style.display === "block" ? "none" : "block";
+
+el.style.display = (el.style.display === "block") ? "none" : "block";
 }
 
-window.logout = async function(){
-await signOut(auth);
-localStorage.clear();
-window.location.href = "login.html";
+/* CLOSE OUTSIDE */
+document.addEventListener("click",(e)=>{
+if(!e.target.closest(".dropdown")){
+document.querySelectorAll(".dropdown-content").forEach(m=>{
+m.style.display="none";
+});
 }
+});
 
 </script>
 
