@@ -148,6 +148,65 @@ cursor:pointer;
 text-decoration:none;
 }
 
+/* FIND PANEL */
+.find-panel{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.65);
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:9999;
+padding:20px;
+}
+
+.find-panel h3{
+color:white;
+margin-bottom:20px;
+font-size:28px;
+}
+
+.sub-wrap{
+display:flex;
+align-items:center;
+gap:12px;
+background:white;
+padding:10px;
+margin:10px;
+border-radius:12px;
+width:280px;
+}
+
+.sub-icon img{
+width:40px;
+height:40px;
+border-radius:50%;
+}
+
+.sub-btn{
+flex:1;
+padding:10px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-weight:600;
+}
+
+.academic{background:#1976d2;color:white;}
+.creative{background:#e91e63;color:white;}
+.skill{background:#ff9800;color:white;}
+.sports{background:#4caf50;color:white;}
+
+.back{
+margin-top:15px;
+padding:10px 15px;
+background:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
 </style>
 </head>
 
@@ -161,7 +220,9 @@ text-decoration:none;
 <div class="menu">
 
 <a href="index.html">Home</a>
-<a href="academic-profile.html">Find Teachers</a>
+
+<a href="#" onclick="openFind()">Find Teachers</a>
+
 <a href="teacher-dashboard.html">Dashboard</a>
 
 <!-- PROFILE -->
@@ -201,10 +262,58 @@ text-decoration:none;
 
 <!-- HERO -->
 <section class="hero">
+
 <h1>GURULINK INDIA</h1>
 <p>Smart Education Platform</p>
-<a class="btn" href="academic-profile.html">Explore Teachers</a>
+
+<a class="btn" onclick="openFind()">Find Teachers</a>
+
 </section>
+
+<!-- FIND TEACHER PANEL -->
+<div id="findPanel" class="find-panel">
+
+<h3>Find Teachers</h3>
+
+<div class="sub-wrap">
+<div class="sub-icon">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
+</div>
+<button class="sub-btn academic" onclick="location.href='academic-profile.html'">
+Academic Teachers
+</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
+</div>
+<button class="sub-btn creative" onclick="location.href='creative-profile.html'">
+Creative Teachers
+</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
+</div>
+<button class="sub-btn skill" onclick="location.href='skill-profile.html'">
+Skill Teachers
+</button>
+</div>
+
+<div class="sub-wrap">
+<div class="sub-icon">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
+</div>
+<button class="sub-btn sports" onclick="location.href='sport-profile.html'">
+Sports Teachers
+</button>
+</div>
+
+<button class="back" onclick="closeFind()">← Back</button>
+
+</div>
 
 <script type="module">
 
@@ -226,18 +335,11 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-/* SESSION */
 const uid = localStorage.getItem("uid");
 const role = localStorage.getItem("role") || "guest";
 const profileId = localStorage.getItem("profileId");
 
-/* AUTO REDIRECT IF NOT LOGGED */
-if(!uid){
-document.getElementById("menuRole").innerText = "Guest";
-document.getElementById("menuName").innerText = "Not Logged In";
-}
-
-/* LOAD PROFILE */
+/* PROFILE LOAD */
 async function loadProfile(){
 
 if(!profileId) return;
@@ -249,48 +351,47 @@ role === "teacher"
 ? "institutions/"+profileId
 : "students/"+profileId;
 
-const snap = await get(ref(db, path));
-
+const snap = await get(ref(db,path));
 if(!snap.exists()) return;
 
-const data = snap.val();
+const d = snap.val();
 
-const img = data.photo || data.logo || "https://i.ibb.co/placeholder/profile.png";
+const img = d.photo || d.logo || "https://i.ibb.co/placeholder/profile.png";
 
 document.getElementById("profileImg").src = img;
 document.getElementById("menuImg").src = img;
-
-document.getElementById("menuName").innerText =
-data.name || "User";
-
-document.getElementById("menuRole").innerText =
-role.toUpperCase();
+document.getElementById("menuName").innerText = d.name || "User";
+document.getElementById("menuRole").innerText = role.toUpperCase();
 }
 
 loadProfile();
 
-/* MENU */
+/* PROFILE MENU */
 window.toggleProfileMenu = function(){
-const menu = document.getElementById("profileMenu");
-menu.style.display = menu.style.display === "block" ? "none" : "block";
+const m = document.getElementById("profileMenu");
+m.style.display = m.style.display === "block" ? "none" : "block";
 }
 
-/* CLOSE OUTSIDE */
 document.addEventListener("click",(e)=>{
 if(!e.target.closest(".profile")){
-document.getElementById("profileMenu").style.display = "none";
+document.getElementById("profileMenu").style.display="none";
 }
 });
 
+/* FIND PANEL */
+window.openFind = () => {
+document.getElementById("findPanel").style.display="flex";
+}
+
+window.closeFind = () => {
+document.getElementById("findPanel").style.display="none";
+}
+
 /* LOGOUT */
 window.logout = async function(){
-
-try{
-await signOut(auth);
-}catch(e){}
-
+try{ await signOut(auth); }catch(e){}
 localStorage.clear();
-window.location.href = "login.html";
+window.location.href="login.html";
 }
 
 </script>
