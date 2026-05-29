@@ -7,7 +7,6 @@
 <title>Academic Profile - GURULINK</title>
 
 <style>
-
 *{
 margin:0;
 padding:0;
@@ -67,13 +66,8 @@ border:1px solid #ddd;
 position:relative;
 }
 
-.card.institution{
-border-left:6px solid #e91e63;
-}
-
-.card.teacher{
-border-left:6px solid #1976d2;
-}
+.card.institution{border-left:6px solid #e91e63;}
+.card.teacher{border-left:6px solid #1976d2;}
 
 .top{
 display:flex;
@@ -129,39 +123,28 @@ padding:20px;
 background:#fff;
 border-radius:15px;
 }
-
 </style>
 </head>
 
 <body>
 
 <header>
-
 <h1>Academic Profile</h1>
-
-<p>
-Find Teachers & Institutes
-</p>
-
+<p>Find Teachers & Institutes</p>
 </header>
 
 <div class="container">
 
 <div class="filters">
 
-<input
-id="search"
-placeholder="Search teacher, location">
+<input id="search" placeholder="Search teacher, location">
 
 <select id="classFilter">
-
 <option value="">All Classes</option>
-
 <option>Play Group</option>
 <option>Nursery</option>
 <option>LKG</option>
 <option>UKG</option>
-
 <option>Class 1</option>
 <option>Class 2</option>
 <option>Class 3</option>
@@ -174,10 +157,8 @@ placeholder="Search teacher, location">
 <option>Class 10</option>
 <option>Class 11</option>
 <option>Class 12</option>
-
 <option>IIT JEE</option>
 <option>NEET</option>
-
 </select>
 
 </div>
@@ -188,344 +169,162 @@ placeholder="Search teacher, location">
 
 <script type="module">
 
-import {
-initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
-import {
-getDatabase,
-ref,
-onValue
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-/* FIREBASE */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
-
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-
 authDomain:"gurulink-59cc7.firebaseapp.com",
-
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-
 projectId:"gurulink-59cc7",
-
 storageBucket:"gurulink-59cc7.appspot.com",
-
 messagingSenderId:"112148672399",
-
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getDatabase(app);
 
 let teachers = [];
 let institutes = [];
 
 /* LOAD TEACHERS */
-
 onValue(ref(db,"teachers"),snap=>{
-
 teachers = [];
 
 snap.forEach(c=>{
-
 const d = c.val();
 
-/* SHOW APPROVED ACADEMIC */
-
-if(
-
-d.status === "approved"
-
-&&
-
-(
-
-!d.category ||
-
-(d.category || "").toLowerCase() === "academic"
-
-)
-
-){
+if(d.status === "approved" &&
+(!d.category || d.category.toLowerCase() === "academic")){
 
 teachers.push({
-
 ...d,
 id:c.key,
 type:"Teacher"
-
 });
 
 }
-
 });
 
 render();
-
 });
 
-
 /* LOAD INSTITUTIONS */
-
 onValue(ref(db,"institutions"),snap=>{
-
 institutes = [];
 
 snap.forEach(c=>{
-
 const d = c.val();
 
-/* SHOW APPROVED ACADEMIC */
-
-if(
-
-d.status === "approved"
-
-&&
-
-(
-
-!d.category ||
-
-(d.category || "").toLowerCase() === "academic"
-
-)
-
-){
+if(d.status === "approved" &&
+(!d.category || d.category.toLowerCase() === "academic")){
 
 institutes.push({
-
 ...d,
 id:c.key,
 type:"Institution"
-
 });
 
 }
-
 });
 
 render();
-
 });
 
-
 function getAll(){
-
 return [...teachers,...institutes];
-
 }
 
-
-/* VIEW DETAILS */
-
+/* UNIVERSAL VIEW CLICK HANDLER */
 document.addEventListener("click",(e)=>{
 
 const btn = e.target.closest(".view");
-
 if(!btn) return;
 
+const profileId = btn.dataset.id;
 
+/* ANY LOGIN TYPE CHECK */
+const uid =
+localStorage.getItem("uid") ||
+localStorage.getItem("studentUid") ||
+localStorage.getItem("teacherUid") ||
+localStorage.getItem("adminUid") ||
+localStorage.getItem("institutionId");
 
+/* NOT LOGGED IN */
+if(!uid){
 
+localStorage.setItem(
+"redirectAfterLogin",
+"profile-view.html?id=" + profileId
+);
 
-const studentUid = localStorage.getItem("studentUid");
+if(confirm("Please login to continue")){
 
-if(!studentUid){
+window.location.href = "login.html";
 
-  // store where user wanted to go
-  localStorage.setItem("redirectAfterLogin",
-    "profile-view.html?id=" + btn.dataset.id
-  );
-
-  const goLogin = confirm(
-    "Please login or register as student to view full profile details."
-  );
-
-  if(goLogin){
-    window.location.href = "student-login.html";
-  }
-
-  return;
 }
 
+return;
+}
 
-
-
-/* OPEN PROFILE */
-
+/* OPEN PROFILE DIRECTLY */
 window.location.href =
-"profile-view.html?id=" + btn.dataset.id;
+"profile-view.html?id=" + profileId;
 
 });
 
-
-/* SEARCH EVENTS */
-
-document
-.getElementById("search")
-.addEventListener("input",render);
-
-document
-.getElementById("classFilter")
-.addEventListener("change",render);
-
-
-/* CLASS MATCH */
+/* SEARCH */
+document.getElementById("search").addEventListener("input",render);
+document.getElementById("classFilter").addEventListener("change",render);
 
 function classMatch(userClass,selectedClass){
-
-if(!selectedClass)
-return true;
-
-if(!userClass)
-return false;
-
-return userClass
-.toLowerCase()
-.includes(
-selectedClass.toLowerCase()
-);
-
+if(!selectedClass) return true;
+if(!userClass) return false;
+return userClass.toLowerCase().includes(selectedClass.toLowerCase());
 }
-
-
-/* TYPO FRIENDLY SEARCH */
 
 function similar(a,b){
-
-a = a.toLowerCase();
-b = b.toLowerCase();
-
-if(a.includes(b))
-return true;
-
-let count = 0;
-
-for(
-let i=0;
-i<Math.min(a.length,b.length);
-i++
-){
-
-if(a[i] === b[i]){
-count++;
+a = (a||"").toLowerCase();
+b = (b||"").toLowerCase();
+return a.includes(b);
 }
-
-}
-
-return count >= 5;
-
-}
-
-
-/* RENDER */
 
 function render(){
 
 const all = getAll();
 
 const search =
-
-document
-.getElementById("search")
-.value
-.trim()
-.toLowerCase();
+document.getElementById("search").value.trim().toLowerCase();
 
 const cls =
-
-document
-.getElementById("classFilter")
-.value;
-
-
-/* FILTER */
+document.getElementById("classFilter").value;
 
 const filtered = all.filter(x=>{
 
-const name =
+const name = (x.name||"").toLowerCase();
+const location = (x.location || x.address || "").toLowerCase();
 
-(x.name || "")
-.toString()
-.trim()
-.toLowerCase();
-
-const location =
-
-(x.location || x.address || "")
-.toString()
-.trim()
-.toLowerCase();
-
-
-/* SEARCH */
-
-if(
-
-search
-
-&&
-
-!(
-
-similar(name,search)
-
-||
-
-similar(location,search)
-
-)
-
-){
-
+/* search */
+if(search && !(similar(name,search) || similar(location,search))){
 return false;
-
 }
 
-
-/* CLASS */
-
-if(
-
-!classMatch(x.class,cls)
-
-){
-
+/* class */
+if(!classMatch(x.class,cls)){
 return false;
-
 }
 
 return true;
-
 });
 
-
-const grid =
-document.getElementById("grid");
-
-
-/* EMPTY */
+const grid = document.getElementById("grid");
 
 if(!filtered.length){
-
-grid.innerHTML =
-
-"<div class='empty'>No Academic Profiles Found</div>";
-
+grid.innerHTML = "<div class='empty'>No Academic Profiles Found</div>";
 return;
-
 }
-
-
-/* CARDS */
 
 grid.innerHTML = filtered.map(x=>`
 
@@ -533,31 +332,22 @@ grid.innerHTML = filtered.map(x=>`
 
 <div class="top">
 
-<img
-class="photo"
+<img class="photo"
 src="${x.photo || x.logo || 'https://via.placeholder.com/100'}">
 
 <div>
 
-<h3>
-${x.name || "-"}
-</h3>
+<h3>${x.name || "-"}</h3>
 
-<div class="badge">
-${x.type}
-</div>
+<div class="badge">${x.type}</div>
 
 <div class="badge ${x.verified ? 'verify' : ''}">
 ${x.verified ? 'Verified' : 'Not Verified'}
 </div>
 
-<div class="stars">
-★★★★★
-</div>
+<div class="stars">★★★★★</div>
 
-<button
-class="btn view"
-data-id="${x.id}">
+<button class="btn view" data-id="${x.id}">
 View Details
 </button>
 
@@ -568,38 +358,20 @@ View Details
 <div class="details">
 
 <b>Subject:</b>
-
-${
-Array.isArray(x.subjects)
-? x.subjects.join(", ")
-: (x.subjects || "-")
-}
+${Array.isArray(x.subjects) ? x.subjects.join(", ") : (x.subjects || "-")}
 
 <br>
 
-<b>Class:</b>
-${x.class || "-"}
+<b>Class:</b> ${x.class || "-"}
 
 <br>
 
 <b>Mode:</b>
-
-${
-
-(x.teachingModes || x.modes || [])
-
-.join(", ")
-
-||
-
-"-"
-
-}
+${(x.teachingModes || x.modes || []).join(", ") || "-"}
 
 <br>
 
 <b>Location:</b>
-
 ${x.location || x.address || "-"}
 
 </div>
@@ -607,7 +379,6 @@ ${x.location || x.address || "-"}
 </div>
 
 `).join("");
-
 }
 
 </script>
