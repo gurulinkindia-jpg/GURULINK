@@ -1,1 +1,554 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width,initial-scale=1"> <title>Academic Profile - GURULINK</title> <style> *{ margin:0; padding:0; box-sizing:border-box; font-family:Arial; } body{ background:linear-gradient(135deg,#d9efff,#f4f9ff,#fff); padding-bottom:40px; } header{ padding:30px; text-align:center; background:rgba(255,255,255,.4); backdrop-filter:blur(20px); border-bottom:1px solid rgba(255,255,255,.6); } .container{ width:95%; max-width:1300px; margin:auto; padding:20px; } .filters{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:15px; padding:20px; background:rgba(255,255,255,.45); border-radius:20px; margin-bottom:20px; } .filters input, .filters select{ padding:12px; border:none; border-radius:10px; outline:none; } .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:20px; } .card{ background:rgba(255,255,255,.45); border-radius:20px; padding:15px; border:1px solid #ddd; position:relative; } .card.institution{border-left:6px solid #e91e63;} .card.teacher{border-left:6px solid #1976d2;} .top{ display:flex; gap:15px; } .photo{ width:70px; height:70px; border-radius:50%; object-fit:cover; } .badge{ background:#fff; padding:5px 10px; border-radius:20px; font-size:12px; margin:3px; display:inline-block; } .verify{ background:#2196f3; color:#fff; } .stars{ color:orange; font-size:13px; margin-top:5px; } .btn{ margin-top:10px; padding:7px 12px; border:none; background:#1976d2; color:#fff; border-radius:8px; cursor:pointer; } .details{ margin-top:10px; font-size:14px; line-height:1.6; } .empty{ text-align:center; padding:20px; background:#fff; border-radius:15px; } </style> </head> <body> <header> <h1>Academic Profile</h1> <p>Find Teachers & Institutes</p> </header> <div class="container"> <div class="filters"> <input id="search" placeholder="Search teacher, location"> <select id="classFilter"> <option value="">All Classes</option> <option>Play Group</option> <option>Nursery</option> <option>LKG</option> <option>UKG</option> <option>Class 1</option> <option>Class 2</option> <option>Class 3</option> <option>Class 4</option> <option>Class 5</option> <option>Class 6</option> <option>Class 7</option> <option>Class 8</option> <option>Class 9</option> <option>Class 10</option> <option>Class 11</option> <option>Class 12</option> <option>IIT JEE</option> <option>NEET</option> </select> </div> <div id="grid" class="grid"></div> </div> <script type="module"> import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js"; import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js"; const firebaseConfig = { apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk", authDomain:"gurulink-59cc7.firebaseapp.com", databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app", projectId:"gurulink-59cc7", storageBucket:"gurulink-59cc7.appspot.com", messagingSenderId:"112148672399", appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa" }; const app = initializeApp(firebaseConfig); const db = getDatabase(app); let teachers = []; let institutes = []; /* LOAD TEACHERS */ onValue(ref(db,"teachers"),snap=>{ teachers = []; snap.forEach(c=>{ const d = c.val(); if(d.status === "approved" && (!d.category || d.category.toLowerCase() === "academic")){ teachers.push({ ...d, id:c.key, type:"Teacher" }); } }); render(); }); /* LOAD INSTITUTIONS */ onValue(ref(db,"institutions"),snap=>{ institutes = []; snap.forEach(c=>{ const d = c.val(); if(d.status === "approved" && (!d.category || d.category.toLowerCase() === "academic")){ institutes.push({ ...d, id:c.key, type:"Institution" }); } }); render(); }); function getAll(){ return [...teachers,...institutes]; } /* UNIVERSAL VIEW CLICK HANDLER */ document.addEventListener("click",(e)=>{ const btn = e.target.closest(".view"); if(!btn) return; const profileId = btn.dataset.id; /* ✅ FIXED LOGIN CHECK */ const uid = localStorage.getItem("uid") || localStorage.getItem("studentUid") || localStorage.getItem("teacherUid") || localStorage.getItem("adminUid") || localStorage.getItem("institutionId"); /* NOT LOGGED IN */ if(!uid){ /* IMPORTANT FIX: correct key */ localStorage.setItem( "redirectAfterLogin", "profile-view.html?id=" + profileId ); alert("Please login first"); window.location.href = "student-login.html"; return; } /* OPEN PROFILE */ window.location.href = "profile-view.html?id=" + profileId; }); /* SEARCH */ document.getElementById("search").addEventListener("input",render); document.getElementById("classFilter").addEventListener("change",render); function classMatch(userClass,selectedClass){ if(!selectedClass) return true; if(!userClass) return false; return userClass.toLowerCase().includes(selectedClass.toLowerCase()); } function similar(a,b){ a = (a||"").toLowerCase(); b = (b||"").toLowerCase(); return a.includes(b); } function render(){ const all = getAll(); const search = document.getElementById("search").value.trim().toLowerCase(); const cls = document.getElementById("classFilter").value; const filtered = all.filter(x=>{ const name = (x.name||"").toLowerCase(); const location = (x.location || x.address || "").toLowerCase(); if(search && !(similar(name,search) || similar(location,search))){ return false; } if(!classMatch(x.class,cls)){ return false; } return true; }); const grid = document.getElementById("grid"); if(!filtered.length){ grid.innerHTML = "<div class='empty'>No Academic Profiles Found</div>"; return; } grid.innerHTML = filtered.map(x=> <div class="card ${x.type.toLowerCase()}"> <div class="top"> <img class="photo" src="${x.photo || x.logo || 'https://via.placeholder.com/100'}"> <div> <h3>${x.name || "-"}</h3> <div class="badge">${x.type}</div> <div class="badge ${x.verified ? 'verify' : ''}"> ${x.verified ? 'Verified' : 'Not Verified'} </div> <div class="stars">★★★★★</div> <button class="btn view" data-id="${x.id}"> View Details </button> </div> </div> <div class="details"> <b>Subject:</b> ${Array.isArray(x.subjects) ? x.subjects.join(", ") : (x.subjects || "-")} <br> <b>Class:</b> ${x.class || "-"} <br> <b>Mode:</b> ${(x.teachingModes || x.modes || []).join(", ") || "-"} <br> <b>Location:</b> ${x.location || x.address || "-"} </div> </div> ).join(""); } </script> </body> </html>
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Academic Profile - GURULINK</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #d9efff, #f4f9ff, #ffffff);
+      padding-bottom: 40px;
+    }
+
+    header {
+      padding: 30px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .container {
+      width: 95%;
+      max-width: 1300px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    /* FILTER SECTION */
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+
+      padding: 20px;
+      margin-bottom: 20px;
+
+      background: rgba(255, 255, 255, 0.45);
+      border-radius: 20px;
+    }
+
+    .filters input,
+    .filters select {
+      padding: 12px;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      font-size: 14px;
+    }
+
+    /* GRID */
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    /* CARD */
+
+    .card {
+      background: rgba(255, 255, 255, 0.45);
+      border-radius: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      position: relative;
+    }
+
+    .card.teacher {
+      border-left: 6px solid #1976d2;
+    }
+
+    .card.institution {
+      border-left: 6px solid #e91e63;
+    }
+
+    .top {
+      display: flex;
+      gap: 15px;
+    }
+
+    .photo {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .badge {
+      display: inline-block;
+      margin: 3px;
+      padding: 5px 10px;
+
+      background: #ffffff;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    .verify {
+      background: #2196f3;
+      color: white;
+    }
+
+    .stars {
+      color: orange;
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    .btn {
+      margin-top: 10px;
+      padding: 7px 12px;
+
+      border: none;
+      border-radius: 8px;
+
+      background: #1976d2;
+      color: white;
+
+      cursor: pointer;
+    }
+
+    .details {
+      margin-top: 10px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 20px;
+      background: white;
+      border-radius: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header>
+    <h1>Academic Profile</h1>
+    <p>Find Teachers & Institutes</p>
+  </header>
+
+  <div class="container">
+
+    <!-- FILTERS -->
+
+    <div class="filters">
+
+      <input
+        type="text"
+        id="search"
+        placeholder="Search teacher, location"
+      />
+
+      <select id="classFilter">
+
+        <option value="">All Classes</option>
+
+        <option>Play Group</option>
+        <option>Nursery</option>
+        <option>LKG</option>
+        <option>UKG</option>
+
+        <option>Class 1</option>
+        <option>Class 2</option>
+        <option>Class 3</option>
+        <option>Class 4</option>
+        <option>Class 5</option>
+
+        <option>Class 6</option>
+        <option>Class 7</option>
+        <option>Class 8</option>
+        <option>Class 9</option>
+        <option>Class 10</option>
+
+        <option>Class 11</option>
+        <option>Class 12</option>
+
+        <option>IIT JEE</option>
+        <option>NEET</option>
+
+      </select>
+
+    </div>
+
+    <!-- GRID -->
+
+    <div id="grid" class="grid"></div>
+
+  </div>
+
+  <script type="module">
+
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+    import {
+      getDatabase,
+      ref,
+      onValue
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+    /* FIREBASE CONFIG */
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+      authDomain: "gurulink-59cc7.firebaseapp.com",
+      databaseURL: "https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "gurulink-59cc7",
+      storageBucket: "gurulink-59cc7.appspot.com",
+      messagingSenderId: "112148672399",
+      appId: "1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+    };
+
+    /* INITIALIZE FIREBASE */
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    let teachers = [];
+    let institutes = [];
+
+    /* =========================
+       LOAD TEACHERS
+    ========================= */
+
+    onValue(ref(db, "teachers"), (snapshot) => {
+
+      teachers = [];
+
+      snapshot.forEach((child) => {
+
+        const data = child.val();
+
+        if (
+          data.status === "approved" &&
+          (
+            !data.category ||
+            data.category.toLowerCase() === "academic"
+          )
+        ) {
+
+          teachers.push({
+            ...data,
+            id: child.key,
+            type: "Teacher"
+          });
+
+        }
+
+      });
+
+      render();
+
+    });
+
+    /* =========================
+       LOAD INSTITUTIONS
+    ========================= */
+
+    onValue(ref(db, "institutions"), (snapshot) => {
+
+      institutes = [];
+
+      snapshot.forEach((child) => {
+
+        const data = child.val();
+
+        if (
+          data.status === "approved" &&
+          (
+            !data.category ||
+            data.category.toLowerCase() === "academic"
+          )
+        ) {
+
+          institutes.push({
+            ...data,
+            id: child.key,
+            type: "Institution"
+          });
+
+        }
+
+      });
+
+      render();
+
+    });
+
+    /* GET ALL DATA */
+
+    function getAllProfiles() {
+      return [...teachers, ...institutes];
+    }
+
+    /* =========================
+       VIEW BUTTON HANDLER
+    ========================= */
+
+    document.addEventListener("click", (event) => {
+
+      const button = event.target.closest(".view");
+
+      if (!button) return;
+
+      const profileId = button.dataset.id;
+
+      /* LOGIN CHECK */
+
+      const uid =
+        localStorage.getItem("uid") ||
+        localStorage.getItem("studentUid") ||
+        localStorage.getItem("teacherUid") ||
+        localStorage.getItem("adminUid") ||
+        localStorage.getItem("institutionId");
+
+      /* NOT LOGGED IN */
+
+      if (!uid) {
+
+        localStorage.setItem(
+          "redirectAfterLogin",
+          "profile-view.html?id=" + profileId
+        );
+
+        alert("Please login first");
+
+        window.location.href = "student-login.html";
+
+        return;
+      }
+
+      /* OPEN PROFILE */
+
+      window.location.href =
+        "profile-view.html?id=" + profileId;
+
+    });
+
+    /* SEARCH EVENTS */
+
+    document
+      .getElementById("search")
+      .addEventListener("input", render);
+
+    document
+      .getElementById("classFilter")
+      .addEventListener("change", render);
+
+    /* =========================
+       CLASS MATCH
+    ========================= */
+
+    function classMatch(userClass, selectedClass) {
+
+      if (!selectedClass) return true;
+
+      if (!userClass) return false;
+
+      return userClass
+        .toLowerCase()
+        .includes(selectedClass.toLowerCase());
+
+    }
+
+    /* TEXT MATCH */
+
+    function similar(a, b) {
+
+      a = (a || "").toLowerCase();
+      b = (b || "").toLowerCase();
+
+      return a.includes(b);
+
+    }
+
+    /* =========================
+       RENDER FUNCTION
+    ========================= */
+
+    function render() {
+
+      const allProfiles = getAllProfiles();
+
+      const searchText =
+        document
+          .getElementById("search")
+          .value
+          .trim()
+          .toLowerCase();
+
+      const selectedClass =
+        document
+          .getElementById("classFilter")
+          .value;
+
+      /* FILTER DATA */
+
+      const filtered = allProfiles.filter((item) => {
+
+        const name =
+          (item.name || "").toLowerCase();
+
+        const location =
+          (
+            item.location ||
+            item.address ||
+            ""
+          ).toLowerCase();
+
+        /* SEARCH FILTER */
+
+        if (
+          searchText &&
+          !(
+            similar(name, searchText) ||
+            similar(location, searchText)
+          )
+        ) {
+          return false;
+        }
+
+        /* CLASS FILTER */
+
+        if (
+          !classMatch(item.class, selectedClass)
+        ) {
+          return false;
+        }
+
+        return true;
+
+      });
+
+      const grid =
+        document.getElementById("grid");
+
+      /* EMPTY */
+
+      if (!filtered.length) {
+
+        grid.innerHTML = `
+          <div class="empty">
+            No Academic Profiles Found
+          </div>
+        `;
+
+        return;
+      }
+
+      /* RENDER CARDS */
+
+      grid.innerHTML = filtered.map((item) => `
+
+        <div class="card ${item.type.toLowerCase()}">
+
+          <div class="top">
+
+            <img
+              class="photo"
+              src="${item.photo || item.logo || 'https://via.placeholder.com/100'}"
+            >
+
+            <div>
+
+              <h3>${item.name || "-"}</h3>
+
+              <div class="badge">
+                ${item.type}
+              </div>
+
+              <div class="badge ${item.verified ? 'verify' : ''}">
+                ${item.verified ? 'Verified' : 'Not Verified'}
+              </div>
+
+              <div class="stars">
+                ★★★★★
+              </div>
+
+              <button
+                class="btn view"
+                data-id="${item.id}"
+              >
+                View Details
+              </button>
+
+            </div>
+
+          </div>
+
+          <div class="details">
+
+            <b>Subject:</b>
+
+            ${
+              Array.isArray(item.subjects)
+                ? item.subjects.join(", ")
+                : (item.subjects || "-")
+            }
+
+            <br>
+
+            <b>Class:</b>
+            ${item.class || "-"}
+
+            <br>
+
+            <b>Mode:</b>
+
+            ${
+              (
+                item.teachingModes ||
+                item.modes ||
+                []
+              ).join(", ") || "-"
+            }
+
+            <br>
+
+            <b>Location:</b>
+
+            ${item.location || item.address || "-"}
+
+          </div>
+
+        </div>
+
+      `).join("");
+
+    }
+
+  </script>
+
+</body>
+
+</html>
+```
