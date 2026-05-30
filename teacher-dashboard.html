@@ -50,17 +50,7 @@ cursor:pointer;
 font-size:15px;
 }
 
-button.logout{
-background:red;
-}
-
-.preview img{
-width:90px;
-height:90px;
-object-fit:cover;
-border-radius:8px;
-margin:5px;
-}
+button.logout{background:red}
 
 .section{
 margin-top:15px;
@@ -69,24 +59,29 @@ border:1px solid #ddd;
 border-radius:8px;
 }
 
-#content{display:none}
+.preview img{
+width:80px;
+height:80px;
+border-radius:10px;
+object-fit:cover;
+}
 
 .roleBadge{
 display:inline-block;
 padding:5px 12px;
-background:#1565c0;
+background:#0d47a1;
 color:white;
 border-radius:20px;
 font-size:13px;
 margin-top:5px;
 }
 
-.viewBox{
-background:#f5f7ff;
+.studentCard{
+background:#f9f9f9;
 padding:10px;
-margin-top:10px;
 border-radius:8px;
-border-left:4px solid #1976d2;
+margin-top:10px;
+border-left:4px solid #1565c0;
 }
 </style>
 </head>
@@ -100,25 +95,26 @@ border-left:4px solid #1976d2;
 
 <div class="container">
 
-<div id="loading">Loading your profile...</div>
+<div id="loading">Loading...</div>
 
-<div id="content">
+<div id="content" style="display:none">
 
-<!-- PROFILE FIELDS -->
+<h3>Edit Profile</h3>
+
 <input id="name" placeholder="Name">
 <input id="phone" placeholder="Phone">
 <input id="email" placeholder="Email">
-<input id="experience" placeholder="Experience / Established Year">
-<input id="location" placeholder="Location / Address">
+<input id="experience" placeholder="Experience / Established">
+<input id="location" placeholder="Location">
 <textarea id="description" placeholder="About"></textarea>
 
 <div class="section">
-<h4>Subjects (comma separated)</h4>
+<h4>Subjects</h4>
 <input id="subjects">
 </div>
 
 <div class="section">
-<h4>Teaching Modes (comma separated)</h4>
+<h4>Teaching Modes</h4>
 <input id="modes">
 </div>
 
@@ -128,19 +124,18 @@ border-left:4px solid #1976d2;
 </div>
 
 <div class="section">
-<h4>Profile Photo / Logo</h4>
-<div id="photoPreview" class="preview"></div>
+<h4>Profile Photo</h4>
+<div class="preview" id="photoPreview"></div>
 <input type="file" id="photo">
 </div>
 
 <button onclick="saveData()">Save Changes</button>
-
 <button class="logout" onclick="logout()">Logout</button>
 
-<!-- 👁 PROFILE VIEWS -->
+<!-- 🔥 NEW: VIEWERS SECTION -->
 <div class="section">
-<h3>👁 Students Who Viewed Your Profile</h3>
-<div id="viewsBox">Loading views...</div>
+<h3>👀 Students Who Viewed Your Profile</h3>
+<div id="viewers">Loading...</div>
 </div>
 
 </div>
@@ -150,17 +145,10 @@ border-left:4px solid #1976d2;
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import {
-getDatabase,
-ref,
-get,
-update,
-onValue
+getDatabase, ref, get, update, onValue
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-import {
-getAuth,
-signOut
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 /* FIREBASE */
 const firebaseConfig = {
@@ -177,22 +165,22 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-/* USER */
+/* USER DATA */
 const uid = localStorage.getItem("uid");
 const role = localStorage.getItem("role");
 const profileId = localStorage.getItem("profileId");
 
-document.getElementById("roleText").innerText = role || "User";
-
-if(!uid || !role || !profileId){
-alert("Access Denied");
-location.href = "login.html";
+if(!uid){
+alert("Login required");
+location.href="login.html";
 }
 
-/* DB PATH */
-const dbPath = role === "teacher"
-? "teachers/" + profileId
-: "institutions/" + profileId;
+document.getElementById("roleText").innerText = role;
+
+/* PATH */
+const dbPath = role==="teacher"
+? "teachers/"+profileId
+: "institutions/"+profileId;
 
 /* LOAD PROFILE */
 async function loadProfile(){
@@ -206,23 +194,28 @@ return;
 
 const d = snap.val();
 
-name.value = d.name || "";
-phone.value = d.phone || "";
-email.value = d.email || "";
-experience.value = d.experience || d.establishedDate || "";
-location.value = d.location || d.address || "";
-description.value = d.description || "";
+document.getElementById("name").value = d.name || "";
+document.getElementById("phone").value = d.phone || "";
+document.getElementById("email").value = d.email || "";
+document.getElementById("experience").value = d.experience || d.establishedDate || "";
+document.getElementById("location").value = d.location || "";
+document.getElementById("description").value = d.description || "";
 
-subjects.value = Array.isArray(d.subjects) ? d.subjects.join(", ") : "";
-modes.value = Array.isArray(d.teachingModes) ? d.teachingModes.join(", ") : "";
-fee.value = d.fee || "";
+document.getElementById("subjects").value =
+Array.isArray(d.subjects) ? d.subjects.join(", ") : "";
 
-if(d.photo || d.logo){
-photoPreview.innerHTML = `<img src="${d.photo || d.logo}">`;
+document.getElementById("modes").value =
+Array.isArray(d.teachingModes) ? d.teachingModes.join(", ") : "";
+
+document.getElementById("fee").value = d.fee || "";
+
+if(d.photo){
+document.getElementById("photoPreview").innerHTML =
+`<img src="${d.photo}">`;
 }
 
-loading.style.display = "none";
-content.style.display = "block";
+document.getElementById("loading").style.display="none";
+document.getElementById("content").style.display="block";
 }
 
 loadProfile();
@@ -243,12 +236,10 @@ let data = await res.json();
 return data?.data?.url || "";
 }
 
-/* SAVE PROFILE */
+/* SAVE */
 window.saveData = async function(){
 
-try{
-
-let file = photo.files[0];
+let file = document.getElementById("photo").files[0];
 let photoUrl = "";
 
 if(file){
@@ -262,66 +253,53 @@ email: email.value,
 experience: experience.value,
 location: location.value,
 description: description.value,
-subjects: subjects.value.split(",").map(x=>x.trim()).filter(Boolean),
-teachingModes: modes.value.split(",").map(x=>x.trim()).filter(Boolean),
+subjects: subjects.value.split(",").map(x=>x.trim()),
+teachingModes: modes.value.split(",").map(x=>x.trim()),
 fee: fee.value
 };
 
-if(photoUrl){
-updateData.photo = photoUrl;
-}
+if(photoUrl) updateData.photo = photoUrl;
 
 await update(ref(db, dbPath), updateData);
 
-alert("Profile Updated Successfully");
-
-}catch(err){
-alert(err.message);
-}
+alert("Updated!");
 };
 
-/* PROFILE VIEWS */
-function loadProfileViews(){
+/* 🔥 VIEWERS LIST (NEW FEATURE) */
+function loadViewers(){
 
-const viewsRef = ref(db, `profileViews/${profileId}`);
-
-onValue(viewsRef,(snap)=>{
-
-if(!snap.exists()){
-viewsBox.innerHTML = "No views yet";
-return;
-}
+onValue(ref(db, `profileViews/${profileId}`), (snap)=>{
 
 let html = "";
 
-snap.forEach(v=>{
+snap.forEach(child=>{
 
-let d = v.val();
+let v = child.val();
 
 html += `
-<div class="viewBox">
-<b>${d.name || "Student"}</b><br>
-📧 ${d.email || "-"}<br>
-📞 ${d.phone || "-"}<br>
-🕒 ${new Date(d.time).toLocaleString()}
+<div class="studentCard">
+<b>${v.name || "Student"}</b><br>
+📧 ${v.email || "-"}<br>
+📱 ${v.phone || "-"}<br>
+<small>${new Date(v.time).toLocaleString()}</small>
 </div>
 `;
 
 });
 
-viewsBox.innerHTML = html;
+document.getElementById("viewers").innerHTML =
+html || "No views yet";
 
 });
-
 }
 
-loadProfileViews();
+loadViewers();
 
 /* LOGOUT */
 window.logout = async function(){
 await signOut(auth);
 localStorage.clear();
-location.href = "login.html";
+location.href="login.html";
 };
 
 </script>
