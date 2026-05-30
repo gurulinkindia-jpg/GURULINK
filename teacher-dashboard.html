@@ -220,6 +220,11 @@ messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
+
+
+
+
+
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
@@ -228,11 +233,28 @@ const uid = localStorage.getItem("uid");
 const role = localStorage.getItem("role");
 const profileId = localStorage.getItem("profileId");
 
-document.getElementById("roleText").innerText = role.toUpperCase();
+console.log("uid =", uid);
+console.log("role =", role);
+console.log("profileId =", profileId);
+
+alert(
+"uid = " + uid +
+"\nrole = " + role +
+"\nprofileId = " + profileId
+);
+
+document.getElementById("roleText").innerText =
+(role || "guest").toUpperCase();
+
+
+
+
+
 
 const dbPath = role==="teacher"
 ? "teachers/"+profileId
 : "institutions/"+profileId;
+alert("DB PATH = " + dbPath);
 
 const el = (id)=>document.getElementById(id);
 
