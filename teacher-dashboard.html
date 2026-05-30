@@ -26,7 +26,6 @@ margin:20px auto;
 background:white;
 padding:20px;
 border-radius:10px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
 }
 
 input,textarea{
@@ -35,22 +34,22 @@ padding:10px;
 margin:8px 0;
 border:1px solid #ccc;
 border-radius:6px;
-box-sizing:border-box;
 }
 
 button{
-padding:12px;
 width:100%;
+padding:12px;
 margin-top:10px;
 background:#1565c0;
 color:white;
 border:none;
 border-radius:8px;
 cursor:pointer;
-font-size:15px;
 }
 
-button.logout{background:red}
+button.logout{
+background:red;
+}
 
 .section{
 margin-top:15px;
@@ -66,22 +65,12 @@ border-radius:10px;
 object-fit:cover;
 }
 
-.roleBadge{
-display:inline-block;
-padding:5px 12px;
-background:#0d47a1;
-color:white;
-border-radius:20px;
-font-size:13px;
-margin-top:5px;
-}
-
 .studentCard{
-background:#f9f9f9;
+background:#f9f9ff;
 padding:10px;
-border-radius:8px;
-margin-top:10px;
+margin-top:8px;
 border-left:4px solid #1565c0;
+border-radius:8px;
 }
 </style>
 </head>
@@ -90,7 +79,7 @@ border-left:4px solid #1565c0;
 
 <header>
 <h2>Dashboard</h2>
-<div class="roleBadge" id="roleText">Loading...</div>
+<div id="roleText">Loading...</div>
 </header>
 
 <div class="container">
@@ -104,18 +93,19 @@ border-left:4px solid #1565c0;
 <input id="name" placeholder="Name">
 <input id="phone" placeholder="Phone">
 <input id="email" placeholder="Email">
-<input id="experience" placeholder="Experience / Established">
+<input id="experience" placeholder="Experience / Year">
 <input id="location" placeholder="Location">
-<textarea id="description" placeholder="About"></textarea>
+
+<textarea id="description" placeholder="Description"></textarea>
 
 <div class="section">
 <h4>Subjects</h4>
-<input id="subjects">
+<input id="subjects" placeholder="Math, Physics">
 </div>
 
 <div class="section">
 <h4>Teaching Modes</h4>
-<input id="modes">
+<input id="modes" placeholder="Online, Offline">
 </div>
 
 <div class="section">
@@ -124,31 +114,39 @@ border-left:4px solid #1565c0;
 </div>
 
 <div class="section">
-<h4>Profile Photo</h4>
+<h4>Photo</h4>
 <div class="preview" id="photoPreview"></div>
 <input type="file" id="photo">
 </div>
 
 <button onclick="saveData()">Save Changes</button>
+
 <button class="logout" onclick="logout()">Logout</button>
 
-<!-- 🔥 NEW: VIEWERS SECTION -->
-<div class="section">
+<hr>
+
 <h3>👀 Students Who Viewed Your Profile</h3>
-<div id="viewers">Loading...</div>
-</div>
+<div id="views">Loading views...</div>
 
 </div>
+
 </div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import {
-getDatabase, ref, get, update, onValue
+getDatabase,
+ref,
+get,
+update,
+onValue
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import {
+getAuth,
+signOut
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 /* FIREBASE */
 const firebaseConfig = {
@@ -170,17 +168,15 @@ const uid = localStorage.getItem("uid");
 const role = localStorage.getItem("role");
 const profileId = localStorage.getItem("profileId");
 
-if(!uid){
+if(!uid || !role){
 alert("Login required");
 location.href="login.html";
 }
 
-document.getElementById("roleText").innerText = role;
-
-/* PATH */
-const dbPath = role==="teacher"
-? "teachers/"+profileId
-: "institutions/"+profileId;
+const dbPath =
+role === "teacher"
+? "teachers/" + profileId
+: "institutions/" + profileId;
 
 /* LOAD PROFILE */
 async function loadProfile(){
@@ -194,28 +190,25 @@ return;
 
 const d = snap.val();
 
-document.getElementById("name").value = d.name || "";
-document.getElementById("phone").value = d.phone || "";
-document.getElementById("email").value = d.email || "";
-document.getElementById("experience").value = d.experience || d.establishedDate || "";
-document.getElementById("location").value = d.location || "";
-document.getElementById("description").value = d.description || "";
+name.value = d.name || "";
+phone.value = d.phone || "";
+email.value = d.email || "";
+experience.value = d.experience || d.establishedDate || "";
+location.value = d.location || "";
+description.value = d.description || "";
 
-document.getElementById("subjects").value =
-Array.isArray(d.subjects) ? d.subjects.join(", ") : "";
-
-document.getElementById("modes").value =
-Array.isArray(d.teachingModes) ? d.teachingModes.join(", ") : "";
-
-document.getElementById("fee").value = d.fee || "";
+subjects.value = (d.subjects || []).join(", ");
+modes.value = (d.teachingModes || []).join(", ");
+fee.value = d.fee || "";
 
 if(d.photo){
-document.getElementById("photoPreview").innerHTML =
-`<img src="${d.photo}">`;
+photoPreview.innerHTML = `<img src="${d.photo}">`;
 }
 
-document.getElementById("loading").style.display="none";
-document.getElementById("content").style.display="block";
+loading.style.display="none";
+content.style.display="block";
+
+loadViews();
 }
 
 loadProfile();
@@ -229,17 +222,17 @@ fd.append("image", file);
 
 let res = await fetch(
 `https://api.imgbb.com/1/upload?key=${API_KEY}`,
-{method:"POST", body:fd}
+{ method:"POST", body:fd }
 );
 
 let data = await res.json();
 return data?.data?.url || "";
 }
 
-/* SAVE */
+/* SAVE PROFILE */
 window.saveData = async function(){
 
-let file = document.getElementById("photo").files[0];
+let file = photo.files[0];
 let photoUrl = "";
 
 if(file){
@@ -247,53 +240,51 @@ photoUrl = await upload(file);
 }
 
 let updateData = {
-name: name.value,
-phone: phone.value,
-email: email.value,
-experience: experience.value,
-location: location.value,
-description: description.value,
-subjects: subjects.value.split(",").map(x=>x.trim()),
-teachingModes: modes.value.split(",").map(x=>x.trim()),
-fee: fee.value
+name:name.value,
+phone:phone.value,
+email:email.value,
+experience:experience.value,
+location:location.value,
+description:description.value,
+subjects:subjects.value.split(",").map(x=>x.trim()).filter(Boolean),
+teachingModes:modes.value.split(",").map(x=>x.trim()).filter(Boolean),
+fee:fee.value
 };
 
-if(photoUrl) updateData.photo = photoUrl;
+if(photoUrl){
+updateData.photo = photoUrl;
+}
 
 await update(ref(db, dbPath), updateData);
 
 alert("Updated!");
 };
 
-/* 🔥 VIEWERS LIST (NEW FEATURE) */
-function loadViewers(){
+/* LOAD STUDENT VIEWS */
+function loadViews(){
 
-onValue(ref(db, `profileViews/${profileId}`), (snap)=>{
+onValue(ref(db, "profileViews/" + profileId), (snap)=>{
 
 let html = "";
 
 snap.forEach(child=>{
 
-let v = child.val();
+let d = child.val();
 
 html += `
 <div class="studentCard">
-<b>${v.name || "Student"}</b><br>
-📧 ${v.email || "-"}<br>
-📱 ${v.phone || "-"}<br>
-<small>${new Date(v.time).toLocaleString()}</small>
+<b>${d.name || "Unknown"}</b><br>
+📧 ${d.email || "-"}<br>
+📞 ${d.phone || "-"}
 </div>
 `;
 
 });
 
-document.getElementById("viewers").innerHTML =
-html || "No views yet";
+views.innerHTML = html || "No views yet";
 
 });
 }
-
-loadViewers();
 
 /* LOGOUT */
 window.logout = async function(){
