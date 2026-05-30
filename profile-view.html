@@ -170,6 +170,7 @@ text-align:center;
 font-size:20px;
 padding:50px;
 }
+
 /* FLOATING BUTTONS */
 .floatingBtn{
 position:fixed;
@@ -187,32 +188,21 @@ box-shadow:0 5px 15px rgba(0,0,0,0.2);
 z-index:9999;
 }
 
-.homeBtn{
-bottom:90px;
-background:#1976d2;
-}
+.homeBtn{bottom:90px;background:#1976d2;}
+.dashboardBtn{bottom:20px;background:#4caf50;}
 
-.dashboardBtn{
-bottom:20px;
-background:#4caf50;
-}
 </style>
 </head>
 
 <body>
 
 <div class="box" id="profile">
-
-<div class="loading">
-Loading Profile...
-</div>
-
+<div class="loading">Loading Profile...</div>
 </div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
 import {
 getDatabase,
 ref,
@@ -220,14 +210,11 @@ get,
 child,
 onValue,
 push,
-set   // 👈 ADD THIS
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+set
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-/* FIREBASE */
-
+/* FIREBASE CONFIG */
 const firebaseConfig = {
-
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -235,511 +222,236 @@ projectId:"gurulink-59cc7",
 storageBucket:"gurulink-59cc7.appspot.com",
 messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getDatabase(app);
 
 const profile = document.getElementById("profile");
-
 const id = new URLSearchParams(location.search).get("id");
-const studentId = localStorage.getItem("uid");
-const teacherId = id; // profile owner
-
-async function markView(){
-
-const studentId = localStorage.getItem("uid");
-const teacherId = id;
-
-if(!studentId || !teacherId) return;
-
-try{
-
-await set(
-
-
-
-
-import { set, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-const studentId = localStorage.getItem("uid");
-const teacherId = id;
-
-if(studentId && teacherId){
-
-// first fetch student data from users/students OR users node
-const snap = await get(ref(db, "users/" + studentId));
-
-let studentData = {};
-
-if(snap.exists()){
-    studentData = snap.val();
-}
-
-set(
-ref(db, `profileViews/${teacherId}/${studentId}`),
-{
-studentId,
-name: studentData.name || "",
-email: studentData.email || "",
-phone: studentData.phone || "",
-time: Date.now()
-}
-);
-
-}
-
-
-
-
-
-
-}catch(err){
-console.log("View not saved", err);
-}
-
-}
 
 let data = null;
 let type = "";
 
-/* LOAD PROFILE */
+/* MARK VIEW */
+async function markView() {
+  const studentId = localStorage.getItem("uid");
+  const teacherId = id;
 
+  if (!studentId || !teacherId) return;
+
+  try {
+    const snap = await get(ref(db, "students/" + studentId));
+
+    let studentData = { name:"", email:"", phone:"" };
+
+    if (snap.exists()) {
+      studentData = snap.val();
+    }
+
+    await set(
+      ref(db, `profileViews/${teacherId}/${studentId}`),
+      {
+        studentId,
+        name: studentData.name || "",
+        email: studentData.email || "",
+        phone: studentData.phone || "",
+        time: Date.now()
+      }
+    );
+
+  } catch (err) {
+    console.log("View not saved", err);
+  }
+}
+
+/* LOAD PROFILE */
 async function load(){
 
 if(!id){
-
 profile.innerHTML = "<h2>No ID Found</h2>";
 return;
-
 }
+
 /* SAVE VIEW */
-markView();   // 👈 ADD THIS HERE
+markView();
 
-/* CHECK TEACHER */
-
-let snap = await get(
-child(ref(db),"teachers/"+id)
-);
+/* TEACHER */
+let snap = await get(child(ref(db),"teachers/"+id));
 
 if(snap.exists()){
-
 data = snap.val();
 type = "Teacher";
-
 }
 
-/* CHECK INSTITUTION */
-
+/* INSTITUTION */
 if(!data){
-
-let snap2 = await get(
-child(ref(db),"institutions/"+id)
-);
+let snap2 = await get(child(ref(db),"institutions/"+id));
 
 if(snap2.exists()){
-
 data = snap2.val();
 type = "Institution";
-
 }
-
 }
 
 /* NOT FOUND */
-
 if(!data){
-
 profile.innerHTML = "<h2>Profile Not Found</h2>";
 return;
-
 }
 
 renderProfile();
-
 loadReviews();
-
 }
 
-/* RENDER */
-
+/* RENDER PROFILE */
 function renderProfile(){
 
-const subjects = Array.isArray(data.subjects)
-? data.subjects
-: [];
+const subjects = Array.isArray(data.subjects) ? data.subjects : [];
 
 const modes = [];
 
-/* FEES */
-
-if(data.homeFee)
-modes.push(`🏠 Home Tuition - ₹${data.homeFee}`);
-
-if(data.groupFee)
-modes.push(`👨‍🏫 Group Tuition - ₹${data.groupFee}`);
-
-if(data.onlineFee)
-modes.push(`💻 Online - ₹${data.onlineFee}`);
-
-if(data.individualFee)
-modes.push(`👤 Individual - ₹${data.individualFee}`);
-
-if(data.offlineFee)
-modes.push(`🏫 Offline Classroom - ₹${data.offlineFee}`);
-
-if(data.hybridFee)
-modes.push(`🔄 Hybrid - ₹${data.hybridFee}`);
-
-/* MAP */
+if(data.homeFee) modes.push(`🏠 Home Tuition - ₹${data.homeFee}`);
+if(data.groupFee) modes.push(`👨‍🏫 Group Tuition - ₹${data.groupFee}`);
+if(data.onlineFee) modes.push(`💻 Online - ₹${data.onlineFee}`);
+if(data.individualFee) modes.push(`👤 Individual - ₹${data.individualFee}`);
+if(data.offlineFee) modes.push(`🏫 Offline Classroom - ₹${data.offlineFee}`);
+if(data.hybridFee) modes.push(`🔄 Hybrid - ₹${data.hybridFee}`);
 
 let mapHTML = "";
 
 if(data.mapLink){
-
 mapHTML = `
-
 <div class="section">
-
 <h3>📍 Google Map</h3>
-
-<a href="${data.mapLink}" target="_blank">
-Open Location
-</a>
-
+<a href="${data.mapLink}" target="_blank">Open Location</a>
 <iframe src="${data.mapLink}"></iframe>
-
 </div>
-
 `;
-
 }
 
-/* MAIN */
-
 profile.innerHTML = `
-
 <div class="header">
-
-<img 
-class="mainPhoto"
-src="${data.photo || data.logo || 'https://via.placeholder.com/120'}">
+<img class="mainPhoto" src="${data.photo || data.logo || 'https://via.placeholder.com/120'}">
 
 <div>
-
 <h2>${data.name || "-"}</h2>
 
 <div>
-
 <span class="badge">${type}</span>
-
-<span class="badge">
-${data.category || "-"}
-</span>
-
+<span class="badge">${data.category || "-"}</span>
 </div>
 
-${type==="Teacher" ? `
-
-<p>
-<b>Qualification:</b>
-${data.qualification || "-"}
-</p>
-
-<p>
-<b>Experience:</b>
-${data.experience || "-"}
-</p>
-
-` : `
-
-<p>
-<b>Owner:</b>
-${data.ownerName || "-"}
-</p>
-
-<p>
-<b>Established:</b>
-${data.establishedDate || "-"}
-</p>
-
-`}
-
 </div>
-
 </div>
 
 <div class="section">
-
-<p>
-<b>Subjects:</b>
-${subjects.join(", ") || "-"}
-</p>
-
-<p>
-<b>Phone:</b>
-${data.phone || "-"}
-</p>
-
-<p>
-<b>Email:</b>
-${data.email || "-"}
-</p>
-
-<p>
-<b>Location:</b>
-${data.location || data.address || data.area || "-"}
-</p>
-
-<p>
-<b>Description:</b>
-${data.description || "-"}
-</p>
-
+<p><b>Subjects:</b> ${subjects.join(", ") || "-"}</p>
+<p><b>Phone:</b> ${data.phone || "-"}</p>
+<p><b>Email:</b> ${data.email || "-"}</p>
+<p><b>Location:</b> ${data.location || data.address || "-"}</p>
+<p><b>Description:</b> ${data.description || "-"}</p>
 </div>
 
 <div class="actions">
-
-<a class="call"
-href="tel:${data.phone || ''}">
-📞 Call
-</a>
-
-<a class="whatsapp"
-target="_blank"
-href="https://wa.me/${data.phone || ''}">
-💬 WhatsApp
-</a>
-
-${data.website ? `
-
-<a class="website"
-target="_blank"
-href="${data.website}">
-🌐 Website
-</a>
-
-` : ""}
-
+<a class="call" href="tel:${data.phone || ''}">📞 Call</a>
+<a class="whatsapp" target="_blank" href="https://wa.me/${data.phone || ''}">💬 WhatsApp</a>
+${data.website ? `<a class="website" target="_blank" href="${data.website}">🌐 Website</a>` : ""}
 </div>
 
 ${mapHTML}
 
-${modes.length ? `
+<div class="section">
+<h3>💰 Teaching Modes</h3>
+${modes.map(m=>`<div class="modeBox">${m}</div>`).join("")}
+</div>
 
 <div class="section">
-
-<h3>💰 Teaching Modes & Fees</h3>
-
-${modes.map(m=>`
-<div class="modeBox">
-${m}
-</div>
-`).join("")}
-
-</div>
-
-` : ""}
-
-${data.gallery && data.gallery.length ? `
-
-<div class="section">
-
-<h3>📸 Gallery</h3>
-
-<div class="gallery">
-
-${data.gallery.map(img=>`
-
-<img 
-src="${img}"
-onclick="window.open('${img}','_blank')">
-
-`).join("")}
-
-</div>
-
-</div>
-
-` : ""}
-
-<div class="section">
-
 <div class="ratingCard">
-
-<div class="bigRating" id="avgRating">
-0.0
-</div>
-
-<div class="starText">
-⭐⭐⭐⭐⭐
-</div>
-
-<div id="totalReviews">
-0 Reviews
-</div>
-
+<div class="bigRating" id="avgRating">0.0</div>
+<div class="starText">⭐⭐⭐⭐⭐</div>
+<div id="totalReviews">0 Reviews</div>
 </div>
 
 <div class="reviewForm">
-
 <h3>✍️ Write Review</h3>
-
-<input
-id="rname"
-placeholder="Your Name">
-
+<input id="rname" placeholder="Your Name">
 <select id="rrating">
-
-<option value="5">
-⭐⭐⭐⭐⭐ Excellent
-</option>
-
-<option value="4">
-⭐⭐⭐⭐ Very Good
-</option>
-
-<option value="3">
-⭐⭐⭐ Good
-</option>
-
-<option value="2">
-⭐⭐ Average
-</option>
-
-<option value="1">
-⭐ Poor
-</option>
-
+<option value="5">⭐⭐⭐⭐⭐</option>
+<option value="4">⭐⭐⭐⭐</option>
+<option value="3">⭐⭐⭐</option>
+<option value="2">⭐⭐</option>
+<option value="1">⭐</option>
 </select>
-
-<textarea
-id="rtext"
-placeholder="Write your review"></textarea>
-
-<button onclick="submitReview()">
-Submit Review
-</button>
-
+<textarea id="rtext" placeholder="Write review"></textarea>
+<button onclick="submitReview()">Submit Review</button>
 </div>
 
-<div style="margin-top:20px;">
-
-<h3>💬 Reviews</h3>
-
-<div id="reviews">
-No Reviews Yet
+<div id="reviews">No Reviews Yet</div>
 </div>
-
-</div>
-
-</div>
-
 `;
-
 }
 
-/* SUBMIT REVIEW */
-
-window.submitReview = async function(){
-
-const name = document.getElementById("rname").value;
-const rating = Number(document.getElementById("rrating").value);
-const text = document.getElementById("rtext").value;
-
-if(!name || !text){
-
-alert("Please fill all fields");
-return;
-
-}
-
-await push(
-ref(db,`reviews/${type.toLowerCase()}s/${id}`),
-{
-name,
-rating,
-text,
-time:Date.now()
-}
-);
-
-alert("Review Submitted");
-
-document.getElementById("rname").value="";
-document.getElementById("rtext").value="";
-
-};
-
-/* LOAD REVIEWS */
-
+/* REVIEWS */
 function loadReviews(){
 
-onValue(
-ref(db,`reviews/${type.toLowerCase()}s/${id}`),
+onValue(ref(db,`reviews/${type.toLowerCase()}s/${id}`),(snap)=>{
 
-(snapshot)=>{
+let total=0,count=0,html="";
 
-let total = 0;
-let count = 0;
-let html = "";
-
-snapshot.forEach((item)=>{
-
-const d = item.val();
-
-total += d.rating;
+snap.forEach(item=>{
+const d=item.val();
+total+=d.rating;
 count++;
 
-html += `
-
+html+=`
 <div class="reviewItem">
-
 <b>${d.name}</b>
-
-<div>
-${"⭐".repeat(d.rating)}
-</div>
-
+<div>${"⭐".repeat(d.rating)}</div>
 <p>${d.text}</p>
-
-</div>
-
-`;
-
+</div>`;
 });
 
-const avg = count
-? (total/count).toFixed(1)
-: "0.0";
+document.getElementById("avgRating").innerText =
+count ? (total/count).toFixed(1) : "0.0";
 
-document.getElementById("avgRating").innerHTML = avg;
-
-document.getElementById("totalReviews").innerHTML =
+document.getElementById("totalReviews").innerText =
 count + " Reviews";
 
 document.getElementById("reviews").innerHTML =
 html || "No Reviews Yet";
 
 });
-
 }
 
-/* START */
+/* SUBMIT REVIEW */
+window.submitReview = async function(){
 
+const name=document.getElementById("rname").value;
+const rating=Number(document.getElementById("rrating").value);
+const text=document.getElementById("rtext").value;
+
+if(!name||!text){
+alert("Fill all fields");
+return;
+}
+
+await push(ref(db,`reviews/${type.toLowerCase()}s/${id}`),{
+name,rating,text,time:Date.now()
+});
+
+alert("Review submitted");
+document.getElementById("rname").value="";
+document.getElementById("rtext").value="";
+};
+
+/* START */
 load();
 
 </script>
-<!-- FLOATING HOME BUTTON -->
-<a href="index.html" class="floatingBtn homeBtn" title="Home">
-🏠
-</a>
 
-<!-- FLOATING DASHBOARD BUTTON -->
-<a href="student-dashboard.html" class="floatingBtn dashboardBtn" title="Dashboard">
-📊
-</a>
+<a href="index.html" class="floatingBtn homeBtn">🏠</a>
+<a href="student-dashboard.html" class="floatingBtn dashboardBtn">📊</a>
+
 </body>
 </html>
