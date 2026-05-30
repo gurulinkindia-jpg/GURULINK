@@ -47,6 +47,7 @@ color:white;
 border:none;
 border-radius:8px;
 cursor:pointer;
+font-size:15px;
 }
 
 button.logout{
@@ -60,6 +61,14 @@ border:1px solid #ddd;
 border-radius:8px;
 }
 
+.viewerCard{
+padding:10px;
+border:1px solid #ddd;
+border-radius:8px;
+margin-top:8px;
+background:#f9f9ff;
+}
+
 .preview img{
 width:90px;
 height:90px;
@@ -67,22 +76,16 @@ object-fit:cover;
 border-radius:8px;
 }
 
+#content{display:none}
+
 .roleBadge{
 display:inline-block;
 padding:5px 12px;
-background:#1565c0;
+background:#0d47a1;
 color:white;
 border-radius:20px;
 font-size:13px;
 margin-top:5px;
-}
-
-.card{
-background:#f9f9ff;
-padding:10px;
-border-radius:8px;
-margin-top:10px;
-border-left:4px solid #1565c0;
 }
 </style>
 </head>
@@ -98,24 +101,30 @@ border-left:4px solid #1565c0;
 
 <div id="loading">Loading profile...</div>
 
-<div id="content" style="display:none">
+<div id="content">
 
-<h3>Edit Profile</h3>
+<!-- 👁 VIEWERS -->
+<div class="section">
+<h3>👀 Profile Views</h3>
+<div id="viewers">Loading...</div>
+</div>
 
+<!-- PROFILE FIELDS -->
 <input id="name" placeholder="Name">
 <input id="phone" placeholder="Phone">
 <input id="email" placeholder="Email">
-<input id="experience" placeholder="Experience / Year">
+<input id="experience" placeholder="Experience / Established Year">
 <input id="location" placeholder="Location">
+
 <textarea id="description" placeholder="About"></textarea>
 
 <div class="section">
-<h4>Subjects</h4>
+<h4>Subjects (comma separated)</h4>
 <input id="subjects">
 </div>
 
 <div class="section">
-<h4>Teaching Modes</h4>
+<h4>Teaching Modes (comma separated)</h4>
 <input id="modes">
 </div>
 
@@ -125,20 +134,13 @@ border-left:4px solid #1565c0;
 </div>
 
 <div class="section">
-<h4>Photo</h4>
+<h4>Profile Photo</h4>
 <div class="preview" id="photoPreview"></div>
 <input type="file" id="photo">
 </div>
 
 <button onclick="saveData()">Save Changes</button>
-
 <button class="logout" onclick="logout()">Logout</button>
-
-<!-- 👇 PROFILE VIEWERS -->
-<div class="section">
-<h3>👀 Students Who Viewed Your Profile</h3>
-<div id="views">Loading...</div>
-</div>
 
 </div>
 </div>
@@ -146,6 +148,7 @@ border-left:4px solid #1565c0;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
 import {
 getDatabase,
 ref,
@@ -174,20 +177,22 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-/* USER DATA */
+/* LOCAL STORAGE */
 const uid = localStorage.getItem("uid");
-const role = localStorage.getItem("role");   // teacher / institution
+const role = localStorage.getItem("role");
 const profileId = localStorage.getItem("profileId");
 
-if(!uid || !role || !profileId){
+/* SECURITY CHECK */
+if(!uid || (role !== "teacher" && role !== "institution")){
 alert("Access Denied");
-location.href="login.html";
+window.location.href = "login.html";
 }
 
 /* DB PATH */
-const dbPath = role==="teacher"
-? "teachers/"+profileId
-: "institutions/"+profileId;
+const dbPath =
+role === "teacher"
+? "teachers/" + profileId
+: "institutions/" + profileId;
 
 /* LOAD PROFILE */
 async function loadProfile(){
@@ -204,8 +209,8 @@ const d = snap.val();
 document.getElementById("name").value = d.name || "";
 document.getElementById("phone").value = d.phone || "";
 document.getElementById("email").value = d.email || "";
-document.getElementById("experience").value = d.experience || "";
-document.getElementById("location").value = d.location || "";
+document.getElementById("experience").value = d.experience || d.establishedDate || "";
+document.getElementById("location").value = d.location || d.address || "";
 document.getElementById("description").value = d.description || "";
 
 document.getElementById("subjects").value =
@@ -214,35 +219,77 @@ Array.isArray(d.subjects) ? d.subjects.join(", ") : "";
 document.getElementById("modes").value =
 Array.isArray(d.teachingModes) ? d.teachingModes.join(", ") : "";
 
-document.getElementById("fee").value = d.fee || "";
+document.getElementById("fee").value =
+d.fee || d.homeFee || "";
 
 if(d.photo){
 document.getElementById("photoPreview").innerHTML =
 `<img src="${d.photo}">`;
 }
 
-document.getElementById("loading").style.display="none";
-document.getElementById("content").style.display="block";
+document.getElementById("loading").style.display = "none";
+document.getElementById("content").style.display = "block";
 }
 
 loadProfile();
 
+/* =========================
+   👁 VIEWERS SECTION
+========================= */
+
+function loadViewers(){
+
+const viewerRef = ref(db, `profileViews/${profileId}`);
+
+onValue(viewerRef, (snap)=>{
+
+let html = "";
+let count = 0;
+
+snap.forEach(child=>{
+
+const v = child.val();
+count++;
+
+html += `
+<div class="viewerCard">
+<b>${v.name || "Student"}</b><br>
+📧 ${v.email || "-"}<br>
+📞 ${v.phone || "-"}<br>
+🕒 ${new Date(v.time).toLocaleString()}
+</div>
+`;
+});
+
+document.getElementById("viewers").innerHTML =
+count ? html : "No views yet";
+
+});
+
+}
+
+loadViewers();
+
 /* IMAGE UPLOAD */
+const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
+
 async function upload(file){
-const fd = new FormData();
+let fd = new FormData();
 fd.append("image", file);
 
-const res = await fetch(
-"https://api.imgbb.com/1/upload?key=31f729ff855eb2e42c00ee508a8647ea",
+let res = await fetch(
+`https://api.imgbb.com/1/upload?key=${API_KEY}`,
 {method:"POST", body:fd}
 );
 
-const data = await res.json();
+let data = await res.json();
 return data?.data?.url || "";
 }
 
-/* SAVE */
+/* SAVE PROFILE */
 window.saveData = async function(){
+
+try{
 
 let updateData = {
 name: name.value,
@@ -251,12 +298,20 @@ email: email.value,
 experience: experience.value,
 location: location.value,
 description: description.value,
-subjects: subjects.value.split(",").map(x=>x.trim()).filter(Boolean),
-teachingModes: modes.value.split(",").map(x=>x.trim()).filter(Boolean),
+
+subjects: subjects.value
+? subjects.value.split(",").map(x=>x.trim())
+: [],
+
+teachingModes: modes.value
+? modes.value.split(",").map(x=>x.trim())
+: [],
+
 fee: fee.value
 };
 
 const file = document.getElementById("photo").files[0];
+
 if(file){
 updateData.photo = await upload(file);
 }
@@ -264,48 +319,20 @@ updateData.photo = await upload(file);
 await update(ref(db, dbPath), updateData);
 
 alert("Profile Updated");
+
+}catch(err){
+console.log(err);
+alert("Error updating profile");
+}
+
 };
 
 /* LOGOUT */
 window.logout = async function(){
 await signOut(auth);
 localStorage.clear();
-location.href="login.html";
+window.location.href = "login.html";
 };
-
-/* =========================
-   👀 PROFILE VIEWERS FIXED
-========================= */
-
-function loadViews(){
-
-onValue(ref(db,"profileViews/"+profileId),(snap)=>{
-
-let html="";
-
-snap.forEach(child=>{
-
-const v = child.val();
-
-html += `
-<div class="card">
-<b>${v.name || "Unknown"}</b><br>
-📧 ${v.email || "-"}<br>
-📞 ${v.phone || "-"}<br>
-🕒 ${new Date(v.time).toLocaleString()}
-</div>
-`;
-
-});
-
-document.getElementById("views").innerHTML =
-html || "No views yet";
-
-});
-
-}
-
-loadViews();
 
 </script>
 
