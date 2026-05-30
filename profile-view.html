@@ -258,13 +258,43 @@ if(!studentId || !teacherId) return;
 try{
 
 await set(
+
+
+
+
+import { set, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const studentId = localStorage.getItem("uid");
+const teacherId = id;
+
+if(studentId && teacherId){
+
+// first fetch student data from users/students OR users node
+const snap = await get(ref(db, "users/" + studentId));
+
+let studentData = {};
+
+if(snap.exists()){
+    studentData = snap.val();
+}
+
+set(
 ref(db, `profileViews/${teacherId}/${studentId}`),
 {
 studentId,
-teacherId,
+name: studentData.name || "",
+email: studentData.email || "",
+phone: studentData.phone || "",
 time: Date.now()
 }
 );
+
+}
+
+
+
+
+
 
 }catch(err){
 console.log("View not saved", err);
