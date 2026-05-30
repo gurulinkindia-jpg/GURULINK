@@ -167,6 +167,29 @@ Profile Photo / Logo
 
 </div>
 
+
+
+
+
+
+
+
+<div class="section">
+
+<h3>👀 Interested Students</h3>
+
+<div id="studentList">
+Loading students...
+</div>
+
+</div>
+
+
+
+
+
+
+
 <button onclick="saveData()">
 Save Changes
 </button>
@@ -191,7 +214,8 @@ import {
 getDatabase,
 ref,
 get,
-update
+update,
+onValue   // 👈 ADD THIS
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 import {
@@ -269,6 +293,51 @@ document.getElementById("content").style.display = "block";
 }
 
 loadProfile();
+
+function loadInterestedStudents(){
+
+const list = document.getElementById("studentList");
+
+onValue(ref(db, "profileViews/" + profileId), async (snap)=>{
+
+if(!snap.exists()){
+list.innerHTML = "No interested students yet";
+return;
+}
+
+let html = "";
+
+for(const studentId in snap.val()){
+
+const studentSnap = await get(
+ref(db, "students/" + studentId)
+);
+
+if(studentSnap.exists()){
+
+const s = studentSnap.val();
+
+html += `
+<div style="padding:10px;border:1px solid #ddd;margin:10px 0;border-radius:8px">
+
+<b>${s.name || "Unknown"}</b><br>
+📧 ${s.email || "No Email"}<br>
+📞 ${s.phone || "No Phone"}<br>
+
+</div>
+`;
+
+}
+
+}
+
+list.innerHTML = html;
+
+});
+
+}
+
+loadInterestedStudents();
 
 /* IMAGE UPLOAD */
 const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
