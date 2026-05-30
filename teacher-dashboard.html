@@ -3,11 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Dashboard - GURULINK</title>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial;
@@ -71,9 +69,7 @@ border:1px solid #ddd;
 border-radius:8px;
 }
 
-#content{
-display:none;
-}
+#content{display:none}
 
 .roleBadge{
 display:inline-block;
@@ -85,6 +81,13 @@ font-size:13px;
 margin-top:5px;
 }
 
+.viewBox{
+background:#f5f7ff;
+padding:10px;
+margin-top:10px;
+border-radius:8px;
+border-left:4px solid #1976d2;
+}
 </style>
 </head>
 
@@ -101,21 +104,21 @@ margin-top:5px;
 
 <div id="content">
 
+<!-- PROFILE FIELDS -->
 <input id="name" placeholder="Name">
 <input id="phone" placeholder="Phone">
 <input id="email" placeholder="Email">
 <input id="experience" placeholder="Experience / Established Year">
 <input id="location" placeholder="Location / Address">
-
 <textarea id="description" placeholder="About"></textarea>
 
 <div class="section">
-<h4>Subjects</h4>
+<h4>Subjects (comma separated)</h4>
 <input id="subjects">
 </div>
 
 <div class="section">
-<h4>Teaching Modes</h4>
+<h4>Teaching Modes (comma separated)</h4>
 <input id="modes">
 </div>
 
@@ -125,19 +128,20 @@ margin-top:5px;
 </div>
 
 <div class="section">
-<h4>Profile Photo</h4>
-<div id="photoPreview"></div>
+<h4>Profile Photo / Logo</h4>
+<div id="photoPreview" class="preview"></div>
 <input type="file" id="photo">
 </div>
 
-<!-- ✅ FIXED STUDENT SECTION -->
-<div class="section">
-<h3>👀 Interested Students</h3>
-<div id="studentList">Loading students...</div>
-</div>
-
 <button onclick="saveData()">Save Changes</button>
+
 <button class="logout" onclick="logout()">Logout</button>
+
+<!-- 👁 PROFILE VIEWS -->
+<div class="section">
+<h3>👁 Students Who Viewed Your Profile</h3>
+<div id="viewsBox">Loading views...</div>
+</div>
 
 </div>
 </div>
@@ -178,15 +182,15 @@ const uid = localStorage.getItem("uid");
 const role = localStorage.getItem("role");
 const profileId = localStorage.getItem("profileId");
 
-/* SECURITY */
-if(!uid || !profileId){
+document.getElementById("roleText").innerText = role || "User";
+
+if(!uid || !role || !profileId){
 alert("Access Denied");
-window.location.href = "login.html";
+location.href = "login.html";
 }
 
 /* DB PATH */
-const dbPath =
-role === "teacher"
+const dbPath = role === "teacher"
 ? "teachers/" + profileId
 : "institutions/" + profileId;
 
@@ -202,65 +206,54 @@ return;
 
 const d = snap.val();
 
-document.getElementById("name").value = d.name || "";
-document.getElementById("phone").value = d.phone || "";
-document.getElementById("email").value = d.email || "";
-document.getElementById("experience").value = d.experience || "";
-document.getElementById("location").value = d.location || "";
-document.getElementById("description").value = d.description || "";
+name.value = d.name || "";
+phone.value = d.phone || "";
+email.value = d.email || "";
+experience.value = d.experience || d.establishedDate || "";
+location.value = d.location || d.address || "";
+description.value = d.description || "";
 
-document.getElementById("loading").style.display = "none";
-document.getElementById("content").style.display = "block";
+subjects.value = Array.isArray(d.subjects) ? d.subjects.join(", ") : "";
+modes.value = Array.isArray(d.teachingModes) ? d.teachingModes.join(", ") : "";
+fee.value = d.fee || "";
 
-loadInterestedStudents(); // ✅ IMPORTANT FIX
+if(d.photo || d.logo){
+photoPreview.innerHTML = `<img src="${d.photo || d.logo}">`;
+}
+
+loading.style.display = "none";
+content.style.display = "block";
 }
 
 loadProfile();
 
-/* ✅ FIXED INTERESTED STUDENTS */
-function loadInterestedStudents(){
+/* IMAGE UPLOAD */
+const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
 
-const list = document.getElementById("studentList");
+async function upload(file){
+let fd = new FormData();
+fd.append("image", file);
 
-onValue(ref(db, "profileViews/" + profileId), async (snap)=>{
+let res = await fetch(
+`https://api.imgbb.com/1/upload?key=${API_KEY}`,
+{method:"POST", body:fd}
+);
 
-if(!snap.exists()){
-list.innerHTML = "No interested students yet";
-return;
+let data = await res.json();
+return data?.data?.url || "";
 }
 
-const data = snap.val();
-let html = "";
-
-for(const studentId in data){
+/* SAVE PROFILE */
+window.saveData = async function(){
 
 try{
-const studentSnap = await get(ref(db, "students/" + studentId));
 
-if(studentSnap.exists()){
-const s = studentSnap.val();
+let file = photo.files[0];
+let photoUrl = "";
 
-html += `
-<div style="padding:10px;border:1px solid #ddd;margin:10px 0;border-radius:8px">
-<b>${s.name || "Unknown"}</b><br>
-📧 ${s.email || "No Email"}<br>
-📞 ${s.phone || "No Phone"}<br>
-</div>
-`;
+if(file){
+photoUrl = await upload(file);
 }
-}catch(e){
-console.log(e);
-}
-
-}
-
-list.innerHTML = html || "No valid students found";
-});
-
-}
-
-/* SAVE */
-window.saveData = async function(){
 
 let updateData = {
 name: name.value,
@@ -269,21 +262,66 @@ email: email.value,
 experience: experience.value,
 location: location.value,
 description: description.value,
-subjects: subjects.value.split(",").map(x=>x.trim()),
-teachingModes: modes.value.split(",").map(x=>x.trim()),
+subjects: subjects.value.split(",").map(x=>x.trim()).filter(Boolean),
+teachingModes: modes.value.split(",").map(x=>x.trim()).filter(Boolean),
 fee: fee.value
 };
 
+if(photoUrl){
+updateData.photo = photoUrl;
+}
+
 await update(ref(db, dbPath), updateData);
 
-alert("Updated");
+alert("Profile Updated Successfully");
+
+}catch(err){
+alert(err.message);
+}
 };
+
+/* PROFILE VIEWS */
+function loadProfileViews(){
+
+const viewsRef = ref(db, `profileViews/${profileId}`);
+
+onValue(viewsRef,(snap)=>{
+
+if(!snap.exists()){
+viewsBox.innerHTML = "No views yet";
+return;
+}
+
+let html = "";
+
+snap.forEach(v=>{
+
+let d = v.val();
+
+html += `
+<div class="viewBox">
+<b>${d.name || "Student"}</b><br>
+📧 ${d.email || "-"}<br>
+📞 ${d.phone || "-"}<br>
+🕒 ${new Date(d.time).toLocaleString()}
+</div>
+`;
+
+});
+
+viewsBox.innerHTML = html;
+
+});
+
+}
+
+loadProfileViews();
 
 /* LOGOUT */
 window.logout = async function(){
 await signOut(auth);
 localStorage.clear();
-location.href="login.html";
+location.href = "login.html";
 };
 
 </script>
