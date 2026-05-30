@@ -91,131 +91,66 @@ margin-top:5px;
 <body>
 
 <header>
-
-<h2 id="dashboardTitle">
-Dashboard
-</h2>
-
-<div class="roleBadge" id="roleText">
-Loading...
-</div>
-
+<h2>Dashboard</h2>
+<div class="roleBadge" id="roleText">Loading...</div>
 </header>
 
 <div class="container">
 
-<div id="loading">
-Loading your profile...
-</div>
+<div id="loading">Loading your profile...</div>
 
 <div id="content">
 
 <input id="name" placeholder="Name">
-
 <input id="phone" placeholder="Phone">
-
 <input id="email" placeholder="Email">
-
 <input id="experience" placeholder="Experience / Established Year">
-
 <input id="location" placeholder="Location / Address">
 
-<textarea
-id="description"
-placeholder="About">
-</textarea>
+<textarea id="description" placeholder="About"></textarea>
 
 <div class="section">
-
-<h4>
-Subjects (comma separated)
-</h4>
-
+<h4>Subjects</h4>
 <input id="subjects">
-
 </div>
 
 <div class="section">
-
-<h4>
-Teaching Modes (comma separated)
-</h4>
-
+<h4>Teaching Modes</h4>
 <input id="modes">
-
 </div>
 
 <div class="section">
-
-<h4>
-Fee
-</h4>
-
+<h4>Fee</h4>
 <input id="fee">
-
 </div>
 
 <div class="section">
-
-<h4>
-Profile Photo / Logo
-</h4>
-
-<div id="photoPreview" class="preview"></div>
-
+<h4>Profile Photo</h4>
+<div id="photoPreview"></div>
 <input type="file" id="photo">
-
 </div>
 
-
-
-
-
-
-
-
+<!-- ✅ FIXED STUDENT SECTION -->
 <div class="section">
-
 <h3>👀 Interested Students</h3>
-
-<div id="studentList">
-Loading students...
+<div id="studentList">Loading students...</div>
 </div>
 
-</div>
-
-
-
-
-
-
-
-<button onclick="saveData()">
-Save Changes
-</button>
-
-<button
-class="logout"
-onclick="logout()">
-Logout
-</button>
+<button onclick="saveData()">Save Changes</button>
+<button class="logout" onclick="logout()">Logout</button>
 
 </div>
-
 </div>
 
 <script type="module">
 
-import {
-initializeApp
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import {
 getDatabase,
 ref,
 get,
 update,
-onValue   // 👈 ADD THIS
+onValue
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 import {
@@ -238,13 +173,13 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-/* LOCAL STORAGE */
+/* USER */
 const uid = localStorage.getItem("uid");
 const role = localStorage.getItem("role");
 const profileId = localStorage.getItem("profileId");
 
 /* SECURITY */
-if(!uid || (role !== "teacher" && role !== "institution")){
+if(!uid || !profileId){
 alert("Access Denied");
 window.location.href = "login.html";
 }
@@ -255,8 +190,9 @@ role === "teacher"
 ? "teachers/" + profileId
 : "institutions/" + profileId;
 
-/* LOAD */
+/* LOAD PROFILE */
 async function loadProfile(){
+
 const snap = await get(ref(db, dbPath));
 
 if(!snap.exists()){
@@ -269,32 +205,19 @@ const d = snap.val();
 document.getElementById("name").value = d.name || "";
 document.getElementById("phone").value = d.phone || "";
 document.getElementById("email").value = d.email || "";
-document.getElementById("experience").value = d.experience || d.establishedDate || "";
-document.getElementById("location").value = d.location || d.address || d.area || "";
+document.getElementById("experience").value = d.experience || "";
+document.getElementById("location").value = d.location || "";
 document.getElementById("description").value = d.description || "";
-
-document.getElementById("subjects").value =
-Array.isArray(d.subjects) ? d.subjects.join(", ") : "";
-
-document.getElementById("modes").value =
-Array.isArray(d.teachingModes) ? d.teachingModes.join(", ") : "";
-
-document.getElementById("fee").value =
-d.fee || d.homeFee || d.groupFee || d.onlineFee || "";
-
-const photo = d.photo || d.logo || "";
-if(photo){
-document.getElementById("photoPreview").innerHTML =
-`<img src="${photo}">`;
-}
 
 document.getElementById("loading").style.display = "none";
 document.getElementById("content").style.display = "block";
+
+loadInterestedStudents(); // ✅ IMPORTANT FIX
 }
 
 loadProfile();
-loadInterestedStudents();
 
+/* ✅ FIXED INTERESTED STUDENTS */
 function loadInterestedStudents(){
 
 const list = document.getElementById("studentList");
@@ -306,110 +229,62 @@ list.innerHTML = "No interested students yet";
 return;
 }
 
+const data = snap.val();
 let html = "";
 
-for(const studentId in snap.val()){
+for(const studentId in data){
 
-const studentSnap = await get(
-ref(db, "students/" + studentId)
-);
+try{
+const studentSnap = await get(ref(db, "students/" + studentId));
 
 if(studentSnap.exists()){
-
 const s = studentSnap.val();
 
 html += `
 <div style="padding:10px;border:1px solid #ddd;margin:10px 0;border-radius:8px">
-
 <b>${s.name || "Unknown"}</b><br>
 📧 ${s.email || "No Email"}<br>
 📞 ${s.phone || "No Phone"}<br>
-
 </div>
 `;
-
+}
+}catch(e){
+console.log(e);
 }
 
 }
 
-list.innerHTML = html;
-
+list.innerHTML = html || "No valid students found";
 });
 
 }
 
-
-
-/* IMAGE UPLOAD */
-const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
-
-async function upload(file){
-let fd = new FormData();
-fd.append("image", file);
-
-let res = await fetch(
-`https://api.imgbb.com/1/upload?key=${API_KEY}`,
-{ method:"POST", body:fd }
-);
-
-let data = await res.json();
-return data?.data?.url || "";
-}
-
-/* SAFE UPDATE FUNCTION */
+/* SAVE */
 window.saveData = async function(){
 
-try{
-
 let updateData = {
-name: document.getElementById("name").value || "",
-phone: document.getElementById("phone").value || "",
-email: document.getElementById("email").value || "",
-experience: document.getElementById("experience").value || "",
-location: document.getElementById("location").value || "",
-description: document.getElementById("description").value || "",
-
-subjects: document.getElementById("subjects").value
-? document.getElementById("subjects").value.split(",").map(x=>x.trim()).filter(Boolean)
-: [],
-
-teachingModes: document.getElementById("modes").value
-? document.getElementById("modes").value.split(",").map(x=>x.trim()).filter(Boolean)
-: [],
-
-fee: document.getElementById("fee").value || ""
+name: name.value,
+phone: phone.value,
+email: email.value,
+experience: experience.value,
+location: location.value,
+description: description.value,
+subjects: subjects.value.split(",").map(x=>x.trim()),
+teachingModes: modes.value.split(",").map(x=>x.trim()),
+fee: fee.value
 };
 
-/* PHOTO SAFE HANDLING */
-const file = document.getElementById("photo").files[0];
-
-if(file){
-const photoUrl = await upload(file);
-if(photoUrl){
-updateData.photo = photoUrl; // ONLY if valid
-}
-}
-
-/* FINAL UPDATE */
 await update(ref(db, dbPath), updateData);
 
-alert("Profile Updated Successfully");
-
-}
-catch(err){
-console.log(err);
-alert(err.message);
-}
+alert("Updated");
 };
 
 /* LOGOUT */
 window.logout = async function(){
 await signOut(auth);
 localStorage.clear();
-window.location.href = "login.html";
+location.href="login.html";
 };
-
-
 
 </script>
 
