@@ -200,24 +200,57 @@ const uid = user.uid;
 
 /* GET USER DATA */
 
-const snap = await get(
-ref(db,"users/"+uid)
-);
+/* CHECK TEACHERS */
 
-/* CHECK */
+let snap = await get(ref(db,"teachers/"+uid));
 
-if(!snap.exists()){
+if(snap.exists()){
 
-msg.style.color="red";
+const userData = snap.val();
 
-msg.innerHTML =
-"User profile not found.";
+localStorage.setItem("uid",uid);
+localStorage.setItem("profileId",uid);
+localStorage.setItem("role","teacher");
 
+window.location.href="teacher-dashboard.html";
 return;
 
 }
 
+/* CHECK INSTITUTIONS */
+
+snap = await get(ref(db,"institutions/"+uid));
+
+if(snap.exists()){
+
 const userData = snap.val();
+
+localStorage.setItem("uid",uid);
+localStorage.setItem("profileId",uid);
+localStorage.setItem("role","institution");
+
+window.location.href="teacher-dashboard.html";
+return;
+
+}
+
+/* CHECK ADMINS */
+
+snap = await get(ref(db,"admins/"+uid));
+
+if(snap.exists()){
+
+localStorage.setItem("uid",uid);
+localStorage.setItem("profileId",uid);
+localStorage.setItem("role","admin");
+
+window.location.href="admin.html";
+return;
+
+}
+
+msg.style.color="red";
+msg.innerHTML="User profile not found.";
 
 /* SAVE SESSION */
 
