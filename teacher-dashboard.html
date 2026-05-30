@@ -69,6 +69,22 @@ margin-top:8px;
 background:#f9f9ff;
 }
 
+.preview img{
+width:90px;
+height:90px;
+object-fit:cover;
+border-radius:8px;
+margin-right:8px;
+}
+
+.galleryPreview img{
+width:80px;
+height:80px;
+object-fit:cover;
+border-radius:8px;
+margin:5px;
+}
+
 #content{display:none}
 
 .roleBadge{
@@ -81,8 +97,19 @@ font-size:13px;
 margin-top:5px;
 }
 
-small{
-color:gray;
+.analyticsBox{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.card{
+flex:1;
+min-width:150px;
+background:#eef3ff;
+padding:10px;
+border-radius:10px;
+text-align:center;
 }
 </style>
 </head>
@@ -99,6 +126,22 @@ color:gray;
 <div id="loading">Loading profile...</div>
 
 <div id="content">
+
+<!-- 📊 ANALYTICS -->
+<div class="section">
+<h3>📊 Analytics</h3>
+<div class="analyticsBox">
+<div class="card">
+<h2 id="totalViews">0</h2>
+<p>Total Views</p>
+</div>
+
+<div class="card">
+<h2 id="recentViews">0</h2>
+<p>Recent (24h)</p>
+</div>
+</div>
+</div>
 
 <!-- 👁 VIEWERS -->
 <div class="section">
@@ -128,6 +171,15 @@ color:gray;
 <div class="section">
 <h4>Fee</h4>
 <input id="fee">
+</div>
+
+<!-- 📸 GALLERY -->
+<div class="section">
+<h4>Gallery Upload</h4>
+
+<div class="galleryPreview" id="galleryPreview"></div>
+
+<input type="file" id="gallery" multiple>
 </div>
 
 <div class="section">
@@ -176,11 +228,6 @@ const uid = localStorage.getItem("uid");
 const role = localStorage.getItem("role");
 const profileId = localStorage.getItem("profileId");
 
-if(!uid || !role || !profileId){
-alert("Access Denied");
-location.href="login.html";
-}
-
 document.getElementById("roleText").innerText = role.toUpperCase();
 
 const dbPath = role==="teacher"
@@ -208,11 +255,17 @@ el("subjects").value = Array.isArray(d.subjects)?d.subjects.join(","):"";
 el("modes").value = Array.isArray(d.teachingModes)?d.teachingModes.join(","):"";
 el("fee").value = d.fee||"";
 
+/* gallery preview */
+if(d.gallery){
+el("galleryPreview").innerHTML =
+d.gallery.map(img=>`<img src="${img}">`).join("");
+}
+
 el("loading").style.display="none";
 el("content").style.display="block";
 }
 
-/* ✅ FIXED VIEWERS */
+/* 👁 VIEWERS + ANALYTICS FIX */
 function loadViewers(){
 
 const viewerRef = ref(db, `profileViews/${profileId}`);
@@ -220,36 +273,58 @@ const viewerRef = ref(db, `profileViews/${profileId}`);
 onValue(viewerRef, (snap)=>{
 
 let html="";
-let count=0;
+let total=0;
+let recent=0;
+let now=Date.now();
 
 snap.forEach(child=>{
 
 const v = child.val();
-count++;
+total++;
+
+if(v.time && now - v.time < 86400000){
+recent++;
+}
 
 html += `
 <div class="viewerCard">
 <b>${v.name || "Student"}</b><br>
-<small>${v.email || ""}</small><br>
-<small>${v.phone || ""}</small><br>
-<small>${v.time ? new Date(v.time).toLocaleString() : ""}</small>
+📧 ${v.email || "-"}<br>
+📞 ${v.phone || "-"}<br>
+🕒 ${new Date(v.time).toLocaleString()}
 </div>
 `;
 });
 
-el("viewers").innerHTML =
-count ? html : "No profile views yet";
+el("viewers").innerHTML = total?html:"No views yet";
+el("totalViews").innerText = total;
+el("recentViews").innerText = recent;
 
 });
 
 }
 
-/* SAVE PROFILE */
+/* IMAGE UPLOAD */
+async function upload(file){
+let fd = new FormData();
+fd.append("image", file);
+
+let res = await fetch(
+`https://api.imgbb.com/1/upload?key=31f729ff855eb2e42c00ee508a8647ea`,
+{method:"POST", body:fd}
+);
+
+let data = await res.json();
+return data?.data?.url || "";
+}
+
+/* SAVE */
 window.saveData = async function(){
 
-try{
+const file = el("photo").files[0];
+const galleryFiles = el("gallery").files;
 
-let data = {
+let updateData = {
 name: el("name").value,
 phone: el("phone").value,
 email: el("email").value,
@@ -261,14 +336,23 @@ teachingModes: el("modes").value.split(",").map(x=>x.trim()).filter(Boolean),
 fee: el("fee").value
 };
 
-await update(ref(db, dbPath), data);
-
-alert("Profile Updated");
-
-}catch(e){
-alert("Error: "+e.message);
+if(file){
+updateData.photo = await upload(file);
 }
+
+/* 📸 MULTI GALLERY */
+if(galleryFiles.length){
+let urls=[];
+for(let f of galleryFiles){
+urls.push(await upload(f));
 }
+updateData.gallery = urls;
+}
+
+await update(ref(db, dbPath), updateData);
+
+alert("Profile Updated Successfully");
+};
 
 /* LOGOUT */
 window.logout = async function(){
