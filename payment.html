@@ -70,10 +70,25 @@ Continue To Payment
 
 <script>
 
+
+
+
 const params = new URLSearchParams(window.location.search);
 
-const type = params.get("type") || "teacher";
-const id = params.get("id");
+const type = params.get("type") || localStorage.getItem("lastType");
+
+const id =
+  params.get("id") ||
+  (type === "institution"
+    ? localStorage.getItem("institutionId")
+    : localStorage.getItem("teacherId"));
+
+/* ✅ ADD THIS HERE (RIGHT PLACE) */
+localStorage.setItem("lastType", type);
+localStorage.setItem("lastId", id);
+
+
+
 
 let amount = 1;
 let paymentLink = "";
