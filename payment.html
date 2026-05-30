@@ -70,26 +70,10 @@ Continue To Payment
 
 <script>
 
-
-
-
 const params = new URLSearchParams(window.location.search);
 
-let type =
-  params.get("type") || localStorage.getItem("lastType") || "teacher";
-
-let id =
-  params.get("id") ||
-  localStorage.getItem("institutionId") ||
-  localStorage.getItem("teacherId") ||
-  localStorage.getItem("lastId");
-
-/* ✅ SAFE STORAGE (AFTER CLEAN VALUE) */
-localStorage.setItem("lastType", type);
-localStorage.setItem("lastId", id);
-
-
-
+const type = params.get("type") || "teacher";
+const id = params.get("id");
 
 let amount = 1;
 let paymentLink = "";
