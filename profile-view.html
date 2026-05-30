@@ -248,16 +248,27 @@ const id = new URLSearchParams(location.search).get("id");
 const studentId = localStorage.getItem("uid");
 const teacherId = id; // profile owner
 
-if(studentId && teacherId){
+async function markView(){
 
-set(
+const studentId = localStorage.getItem("uid");
+const teacherId = id;
+
+if(!studentId || !teacherId) return;
+
+try{
+
+await set(
 ref(db, `profileViews/${teacherId}/${studentId}`),
 {
-studentId: studentId,
-teacherId: teacherId,
+studentId,
+teacherId,
 time: Date.now()
 }
 );
+
+}catch(err){
+console.log("View not saved", err);
+}
 
 }
 
@@ -274,6 +285,8 @@ profile.innerHTML = "<h2>No ID Found</h2>";
 return;
 
 }
+/* SAVE VIEW */
+markView();   // 👈 ADD THIS HERE
 
 /* CHECK TEACHER */
 
