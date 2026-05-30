@@ -75,15 +75,16 @@ Continue To Payment
 
 const params = new URLSearchParams(window.location.search);
 
-const type = params.get("type") || localStorage.getItem("lastType");
+let type =
+  params.get("type") || localStorage.getItem("lastType") || "teacher";
 
-const id =
+let id =
   params.get("id") ||
-  (type === "institution"
-    ? localStorage.getItem("institutionId")
-    : localStorage.getItem("teacherId"));
+  localStorage.getItem("institutionId") ||
+  localStorage.getItem("teacherId") ||
+  localStorage.getItem("lastId");
 
-/* ✅ ADD THIS HERE (RIGHT PLACE) */
+/* ✅ SAFE STORAGE (AFTER CLEAN VALUE) */
 localStorage.setItem("lastType", type);
 localStorage.setItem("lastId", id);
 
