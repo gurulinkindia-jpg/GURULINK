@@ -386,10 +386,21 @@ msg.innerHTML =
 
 /* IMPORTANT FIX */
 
+
+
+
+
+
+
+
 const redirectPage =
 sessionStorage.getItem(
 "redirectAfterLogin"
 );
+
+
+
+
 
 setTimeout(()=>{
 
@@ -420,6 +431,13 @@ window.location.href =
 }
 
 },1500);
+
+
+
+
+
+
+
 
 }
 catch(err){
@@ -541,20 +559,19 @@ msg.style.color = "green";
 msg.innerHTML =
 "Login Successful";
 
+
+
+
+
+
+
+
 setTimeout(()=>{
-
-/* STUDENT */
-
-if(role === "student"){
-
-/* IMPORTANT FIX */
 
 const redirectPage =
 sessionStorage.getItem(
 "redirectAfterLogin"
 );
-
-/* GO TO PROFILE */
 
 if(
 redirectPage &&
@@ -571,56 +588,25 @@ redirectPage;
 
 }
 
-/* NORMAL HOME */
 
-else{
 
-window.location.href =
-"index.html";
-
-}
-
-}
-
-/* TEACHER */
-
-else if(role === "teacher"){
-
-window.location.href =
-"teacher-dashboard.html";
-
-}
-
-/* INSTITUTION */
-
-else if(role === "institution"){
-
-window.location.href =
-"teacher-dashboard.html";
-
-}
-
-/* ADMIN */
-
-else if(role === "admin"){
-
-window.location.href =
-"admin.html";
-
-}
-
-/* UNKNOWN */
 
 else{
 
 msg.style.color = "red";
 
 msg.innerHTML =
-"Unknown role";
+"No profile selected. Please go back and click View Details again.";
 
 }
 
 },1000);
+
+
+
+
+
+
 
 }
 catch(err){
