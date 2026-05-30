@@ -220,6 +220,7 @@ get,
 child,
 onValue,
 push
+set   // 👈 ADD THIS
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
@@ -244,6 +245,21 @@ const db = getDatabase(app);
 const profile = document.getElementById("profile");
 
 const id = new URLSearchParams(location.search).get("id");
+const studentId = localStorage.getItem("uid");
+const teacherId = id; // profile owner
+
+if(studentId && teacherId){
+
+set(
+ref(db, `profileViews/${teacherId}/${studentId}`),
+{
+studentId: studentId,
+teacherId: teacherId,
+time: Date.now()
+}
+);
+
+}
 
 let data = null;
 let type = "";
