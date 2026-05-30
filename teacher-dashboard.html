@@ -50,9 +50,7 @@ cursor:pointer;
 font-size:15px;
 }
 
-button.logout{
-background:red;
-}
+button.logout{background:red;}
 
 .section{
 margin-top:15px;
@@ -74,6 +72,7 @@ width:90px;
 height:90px;
 object-fit:cover;
 border-radius:8px;
+margin:5px;
 }
 
 #content{display:none}
@@ -86,6 +85,21 @@ color:white;
 border-radius:20px;
 font-size:13px;
 margin-top:5px;
+}
+
+.analyticsBox{
+padding:10px;
+background:#eef3ff;
+border-radius:8px;
+margin-top:10px;
+}
+
+.galleryPreview img{
+width:80px;
+height:80px;
+object-fit:cover;
+border-radius:8px;
+margin:5px;
 }
 </style>
 </head>
@@ -106,7 +120,13 @@ margin-top:5px;
 <!-- VIEWERS -->
 <div class="section">
 <h3>👀 Profile Views</h3>
-<div id="viewers">Loading...</div>
+<div id="viewers"></div>
+</div>
+
+<!-- ANALYTICS -->
+<div class="section">
+<h3>📊 Analytics</h3>
+<div id="analytics" class="analyticsBox"></div>
 </div>
 
 <!-- PROFILE FORM -->
@@ -119,12 +139,12 @@ margin-top:5px;
 <textarea id="description" placeholder="About"></textarea>
 
 <div class="section">
-<h4>Subjects (comma separated)</h4>
+<h4>Subjects</h4>
 <input id="subjects">
 </div>
 
 <div class="section">
-<h4>Teaching Modes (comma separated)</h4>
+<h4>Teaching Modes</h4>
 <input id="modes">
 </div>
 
@@ -133,10 +153,18 @@ margin-top:5px;
 <input id="fee">
 </div>
 
+<!-- PROFILE PHOTO -->
 <div class="section">
 <h4>Profile Photo</h4>
 <div class="preview" id="photoPreview"></div>
 <input type="file" id="photo">
+</div>
+
+<!-- GALLERY -->
+<div class="section">
+<h4>Image Gallery</h4>
+<input type="file" id="galleryInput" multiple>
+<div class="galleryPreview" id="galleryPreview"></div>
 </div>
 
 <button onclick="saveData()">Save Changes</button>
@@ -149,21 +177,16 @@ margin-top:5px;
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import {
-getDatabase,
-ref,
-get,
-update,
-onValue
+getDatabase, ref, get, update, onValue, push
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 import {
-getAuth,
-signOut
+getAuth, signOut
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 /* FIREBASE */
 const firebaseConfig = {
-apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+apiKey:"AIzaSyBK0Q...",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"gurulink-59cc7",
@@ -176,146 +199,145 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-/* STORAGE */
 const uid = localStorage.getItem("uid");
 const role = localStorage.getItem("role");
 const profileId = localStorage.getItem("profileId");
 
 if(!uid || !role || !profileId){
 alert("Access Denied");
-location.href = "login.html";
+location.href="login.html";
 }
 
-document.getElementById("roleText").innerText = role.toUpperCase();
+roleText.innerText = role.toUpperCase();
 
-/* DB PATH */
-const dbPath =
-role === "teacher"
-? "teachers/" + profileId
-: "institutions/" + profileId;
-
-/* ELEMENTS */
-const el = (id)=>document.getElementById(id);
+const dbPath = role==="teacher"
+? "teachers/"+profileId
+: "institutions/"+profileId;
 
 /* LOAD PROFILE */
 async function loadProfile(){
 
-const snap = await get(ref(db, dbPath));
-
-if(!snap.exists()){
-alert("Profile not found");
-return;
-}
-
+const snap = await get(ref(db,dbPath));
 const d = snap.val();
 
-el("name").value = d.name || "";
-el("phone").value = d.phone || "";
-el("email").value = d.email || "";
-el("experience").value = d.experience || "";
-el("location").value = d.location || "";
-el("description").value = d.description || "";
+name.value=d.name||"";
+phone.value=d.phone||"";
+email.value=d.email||"";
+experience.value=d.experience||"";
+location.value=d.location||"";
+description.value=d.description||"";
 
-el("subjects").value = Array.isArray(d.subjects) ? d.subjects.join(", ") : "";
-el("modes").value = Array.isArray(d.teachingModes) ? d.teachingModes.join(", ") : "";
-el("fee").value = d.fee || "";
+subjects.value=(d.subjects||[]).join(",");
+modes.value=(d.teachingModes||[]).join(",");
+fee.value=d.fee||"";
 
 if(d.photo){
-el("photoPreview").innerHTML = `<img src="${d.photo}">`;
+photoPreview.innerHTML=`<img src="${d.photo}">`;
 }
 
-el("loading").style.display = "none";
-el("content").style.display = "block";
+if(d.gallery){
+galleryPreview.innerHTML = d.gallery.map(img=>`<img src="${img}">`).join("");
 }
 
+loading.style.display="none";
+content.style.display="block";
+}
 loadProfile();
 
 /* VIEWERS */
 function loadViewers(){
 
-const viewerRef = ref(db, `profileViews/${profileId}`);
+onValue(ref(db,"profileViews/"+profileId),(snap)=>{
 
-onValue(viewerRef, (snap)=>{
+let html="";
+let count=0;
+let today=0;
+let week=0;
+let now=Date.now();
 
-let html = "";
-let count = 0;
-
-snap.forEach(child=>{
-
-const v = child.val();
+snap.forEach(v=>{
+let data=v.val();
 count++;
 
-html += `
+let diff = now - data.time;
+if(diff < 86400000) today++;
+if(diff < 7*86400000) week++;
+
+html+=`
 <div class="viewerCard">
-<b>${v.name || "Student"}</b><br>
-📧 ${v.email || "-"}<br>
-📞 ${v.phone || "-"}<br>
-🕒 ${new Date(v.time).toLocaleString()}
-</div>
-`;
+<b>${data.name}</b><br>
+${data.email}<br>
+${new Date(data.time).toLocaleString()}
+</div>`;
 });
 
-el("viewers").innerHTML = count ? html : "No views yet";
+viewers.innerHTML = html || "No views yet";
+
+analytics.innerHTML=`
+Total Views: ${count}<br>
+Today: ${today}<br>
+This Week: ${week}
+`;
 
 });
 
 }
-
 loadViewers();
 
 /* IMAGE UPLOAD */
 async function upload(file){
-let fd = new FormData();
-fd.append("image", file);
+let fd=new FormData();
+fd.append("image",file);
 
-let res = await fetch(
-`https://api.imgbb.com/1/upload?key=31f729ff855eb2e42c00ee508a8647ea`,
-{method:"POST", body:fd}
-);
+let res=await fetch(
+"https://api.imgbb.com/1/upload?key=31f729ff855eb2e42c00ee508a8647ea",
+{method:"POST",body:fd});
 
-let data = await res.json();
-return data?.data?.url || "";
+let data=await res.json();
+return data?.data?.url||"";
 }
 
 /* SAVE */
 window.saveData = async function(){
 
-try{
+let file=photo.files[0];
+let galleryFiles=galleryInput.files;
 
-const file = el("photo").files[0];
-
-let updateData = {
-name: el("name").value,
-phone: el("phone").value,
-email: el("email").value,
-experience: el("experience").value,
-location: el("location").value,
-description: el("description").value,
-subjects: el("subjects").value.split(",").map(x=>x.trim()).filter(Boolean),
-teachingModes: el("modes").value.split(",").map(x=>x.trim()).filter(Boolean),
-fee: el("fee").value
+let data={
+name:name.value,
+phone:phone.value,
+email:email.value,
+experience:experience.value,
+location:location.value,
+description:description.value,
+subjects:subjects.value.split(",").map(x=>x.trim()),
+teachingModes:modes.value.split(",").map(x=>x.trim()),
+fee:fee.value,
+gallery:[]
 };
 
 if(file){
-updateData.photo = await upload(file);
+data.photo=await upload(file);
 }
 
-await update(ref(db, dbPath), updateData);
+/* GALLERY UPLOAD */
+if(galleryFiles.length){
+for(let f of galleryFiles){
+let url=await upload(f);
+data.gallery.push(url);
+}
+}
+
+await update(ref(db,dbPath),data);
 
 alert("Profile Updated Successfully");
-
-}catch(err){
-console.log(err);
-alert("Error updating profile: " + err.message);
-}
-
 };
 
 /* LOGOUT */
-window.logout = async function(){
+window.logout=async()=>{
 await signOut(auth);
 localStorage.clear();
-location.href = "login.html";
+location.href="login.html";
 };
 
 </script>
