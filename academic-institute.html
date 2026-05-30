@@ -134,21 +134,6 @@ id="password"
 placeholder="Create Password"
 required>
 
-
-
-
-
-
-<!-- ADD THIS INPUT RIGHT BELOW PASSWORD INPUT -->
-<input
-type="password"
-id="confirmPassword"
-placeholder="Confirm Password"
-required>
-
-
-
-
 <input id="website" placeholder="Website URL if available">
 
 <input id="address" placeholder="Full Address">
@@ -550,31 +535,9 @@ document.getElementById("email")
 .trim()
 .toLowerCase();
 
-
-
-
-
-
-
-
-const password = document.getElementById("password").value;
-const confirmPassword = document.getElementById("confirmPassword").value;
-
-// 🔴 PASSWORD MATCH VALIDATION (MUST BE FIRST)
-if (password !== confirmPassword) {
-  alert("Password and Confirm Password do not match.");
-  submitBtn.disabled = false;
-  submitBtn.innerText = "Continue To Payment";
-  return;
-}
-
-// optional safety
-if (password.length < 6) {
-  alert("Password must be at least 6 characters.");
-  submitBtn.disabled = false;
-  submitBtn.innerText = "Continue To Payment";
-  return;
-}
+const password =
+document.getElementById("password")
+.value;
 
 
 
