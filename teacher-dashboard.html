@@ -233,15 +233,7 @@ const uid = localStorage.getItem("uid");
 const role = localStorage.getItem("role");
 const profileId = localStorage.getItem("profileId");
 
-console.log("uid =", uid);
-console.log("role =", role);
-console.log("profileId =", profileId);
 
-alert(
-"uid = " + uid +
-"\nrole = " + role +
-"\nprofileId = " + profileId
-);
 
 document.getElementById("roleText").innerText =
 (role || "guest").toUpperCase();
@@ -254,7 +246,7 @@ document.getElementById("roleText").innerText =
 const dbPath = role==="teacher"
 ? "teachers/"+profileId
 : "institutions/"+profileId;
-alert("DB PATH = " + dbPath);
+
 
 const el = (id)=>document.getElementById(id);
 
