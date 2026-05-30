@@ -3,116 +3,239 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Academic Teacher Registration</title>
 
 <style>
+
 body{
 margin:0;
-font-family:Arial;
+font-family:Arial,sans-serif;
 background:#eef2f7;
 }
 
 header{
-background:#0d47a1;
+background:#1565c0;
 color:white;
 padding:18px;
 text-align:center;
 }
 
 .container{
-max-width:900px;
+width:90%;
+max-width:800px;
 margin:20px auto;
 background:white;
-padding:20px;
-border-radius:12px;
+padding:25px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 
 input,select,textarea{
 width:100%;
-padding:10px;
-margin:8px 0;
+padding:12px;
+margin:10px 0;
 border:1px solid #ccc;
 border-radius:8px;
+box-sizing:border-box;
+}
+
+textarea{
+height:100px;
+resize:none;
 }
 
 button{
 width:100%;
-padding:12px;
-background:#0d47a1;
+padding:14px;
+background:#1565c0;
 color:white;
 border:none;
-border-radius:8px;
+border-radius:10px;
+font-size:16px;
 cursor:pointer;
+}
+
+button:disabled{
+opacity:.7;
+cursor:not-allowed;
+}
+
+.preview{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-top:10px;
+}
+
+.preview img{
+width:90px;
+height:90px;
+border-radius:10px;
+object-fit:cover;
+border:1px solid #ddd;
+}
+
+.modeBox{
+padding:15px;
+border:1px solid #ddd;
+border-radius:10px;
 }
 
 .row{
 display:flex;
-gap:10px;
 align-items:center;
-margin:8px 0;
+gap:10px;
+margin:10px 0;
 }
 
-.preview img{
-width:80px;
-height:80px;
-object-fit:cover;
-border-radius:10px;
-margin:5px;
+.row input[type=checkbox]{
+width:auto;
+transform:scale(1.2);
 }
+
+.modeFee{
+display:none;
+padding:10px;
+background:#f4f4f4;
+border-radius:10px;
+margin-bottom:10px;
+}
+
 </style>
 </head>
 
 <body>
 
 <header>
-<h2>Academic Teacher Registration</h2>
-<p>Secure Login-Based System</p>
+<h1>Academic Teacher Registration</h1>
+<p>Registration Fee ₹100</p>
 </header>
 
 <div class="container">
 
 <form id="form">
 
-<h3>Login Details</h3>
+<!-- TEACHER NAME -->
+<input id="name" placeholder="Teacher Name" required>
 
-<input id="email" type="email" placeholder="Email" required>
-<input id="password" type="password" placeholder="Password" required>
+<!-- EXPERIENCE -->
+<input id="experience" placeholder="Experience (e.g. 5 Years)" required>
 
-<h3>Basic Info</h3>
+<input id="phone" placeholder="Contact Number" required>
+<input id="alternatePhone" placeholder="Alternate Phone Number">
 
-<input id="name" placeholder="Full Name" required>
-<input id="phone" placeholder="Phone Number" required>
-<input id="qualification" placeholder="Qualification">
+<input type="email" id="email" placeholder="Email" required>
+
+<input type="password" id="password" placeholder="Create Password" required>
+
+<input id="website" placeholder="Website URL if available">
+<input id="address" placeholder="Full Address">
+<input id="area" placeholder="Area / City / State">
+<input id="mapLink" placeholder="Google Map Location Link">
 
 <h3>Subjects</h3>
 
-<div class="row"><input type="checkbox" value="Physics" class="sub"> Physics</div>
-<div class="row"><input type="checkbox" value="Chemistry" class="sub"> Chemistry</div>
-<div class="row"><input type="checkbox" value="Maths" class="sub"> Maths</div>
-<div class="row"><input type="checkbox" value="Biology" class="sub"> Biology</div>
-<div class="row"><input type="checkbox" value="English" class="sub"> English</div>
+<div class="modeBox">
 
-<textarea id="address" placeholder="Address"></textarea>
+<div class="row"><input type="checkbox" value="Physics" class="subjectCheck"> Physics</div>
+<div class="row"><input type="checkbox" value="Chemistry" class="subjectCheck"> Chemistry</div>
+<div class="row"><input type="checkbox" value="Mathematics" class="subjectCheck"> Mathematics</div>
+<div class="row"><input type="checkbox" value="Biology" class="subjectCheck"> Biology</div>
+<div class="row"><input type="checkbox" value="English" class="subjectCheck"> English</div>
+<div class="row"><input type="checkbox" value="Hindi" class="subjectCheck"> Hindi</div>
 
-<button type="submit">Register & Continue</button>
+<div class="row">
+<input type="checkbox" id="otherCheck"> Other
+</div>
+
+<input id="otherSubject" placeholder="Write Other Subject" style="display:none;">
+
+<p id="subjectError" style="color:red;display:none;">
+Select at least one subject
+</p>
+
+</div>
+
+<input id="class" placeholder="Classes (1-12 / JEE / NEET)" required>
+
+<h3>Teaching Modes</h3>
+
+<div class="modeBox">
+
+<div class="row">
+<input type="checkbox" class="mode" value="Individual Coaching" onchange="toggleFee('individualFeeBox')">
+Individual Coaching
+</div>
+<div id="individualFeeBox" class="modeFee">
+<input id="individualFee" placeholder="Enter Fee">
+</div>
+
+<div class="row">
+<input type="checkbox" class="mode" value="Home Tuition" onchange="toggleFee('homeFeeBox')">
+Home Tuition
+</div>
+<div id="homeFeeBox" class="modeFee">
+<input id="homeFee" placeholder="Enter Fee">
+</div>
+
+<div class="row">
+<input type="checkbox" class="mode" value="Group Coaching" onchange="toggleFee('groupFeeBox')">
+Group Coaching
+</div>
+<div id="groupFeeBox" class="modeFee">
+<input id="groupFee" placeholder="Enter Fee">
+</div>
+
+<div class="row">
+<input type="checkbox" class="mode" value="Online" onchange="toggleFee('onlineFeeBox')">
+Online
+</div>
+<div id="onlineFeeBox" class="modeFee">
+<input id="onlineFee" placeholder="Enter Fee">
+</div>
+
+</div>
+
+<h3>Profile Picture</h3>
+<input type="file" id="logo" accept="image/*" required>
+<div id="logoPreview" class="preview"></div>
+
+<h3>ID Proof</h3>
+<select id="idType" required>
+<option value="">Select</option>
+<option>Aadhaar</option>
+<option>PAN</option>
+<option>License</option>
+</select>
+
+<input type="file" id="idUpload" accept="image/*" required>
+<div id="idPreview" class="preview"></div>
+
+<h3>Gallery</h3>
+<input type="file" id="gallery" multiple accept="image/*">
+<div id="galleryPreview" class="preview"></div>
+
+<textarea id="description" placeholder="About Teacher"></textarea>
+
+<button type="submit">Continue To Payment</button>
 
 </form>
 
 </div>
 
+<script>
+function toggleFee(id){
+const box=document.getElementById(id);
+box.style.display=box.style.display==="block"?"none":"block";
+}
+</script>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import {
-getAuth,
-createUserWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-
-import {
-getDatabase,
-ref,
-set
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -125,59 +248,147 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getDatabase(app);
+const auth = getAuth(app);
 
-document.getElementById("form").addEventListener("submit", async (e)=>{
-e.preventDefault();
+const form = document.getElementById("form");
+const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
 
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
-
-const name = document.getElementById("name").value;
-const phone = document.getElementById("phone").value;
-const qualification = document.getElementById("qualification").value;
-const address = document.getElementById("address").value;
-
-const subjects = [];
-document.querySelectorAll(".sub:checked").forEach(s=>{
-subjects.push(s.value);
+/* OTHER SUBJECT */
+document.getElementById("otherCheck").addEventListener("change",(e)=>{
+document.getElementById("otherSubject").style.display =
+e.target.checked ? "block" : "none";
 });
 
-try {
+/* IMAGE UPLOAD */
+async function upload(file){
+let fd = new FormData();
+fd.append("image",file);
 
-// 1. CREATE AUTH USER
-const userCred = await createUserWithEmailAndPassword(auth, email, password);
-const uid = userCred.user.uid;
+let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`,{
+method:"POST",
+body:fd
+});
 
-// 2. SAVE TEACHER PROFILE
-await set(ref(db, "teachers/" + uid), {
+let data = await res.json();
+return data.data.url;
+}
+
+/* PREVIEW */
+function preview(input,box){
+input.addEventListener("change",()=>{
+box.innerHTML="";
+if(input.files[0]){
+let img=document.createElement("img");
+img.src=URL.createObjectURL(input.files[0]);
+box.appendChild(img);
+}
+});
+}
+
+preview(document.getElementById("logo"),document.getElementById("logoPreview"));
+preview(document.getElementById("idUpload"),document.getElementById("idPreview"));
+
+let galleryFiles=[];
+document.getElementById("gallery").addEventListener("change",function(){
+galleryFiles=Array.from(this.files);
+document.getElementById("galleryPreview").innerHTML =
+galleryFiles.map(f=>`<img src="${URL.createObjectURL(f)}">`).join("");
+});
+
+/* SUBMIT */
+form.addEventListener("submit",async(e)=>{
+e.preventDefault();
+
+const submitBtn=form.querySelector("button");
+submitBtn.disabled=true;
+submitBtn.innerText="Processing...";
+
+try{
+
+const email=document.getElementById("email").value.trim().toLowerCase();
+const password=document.getElementById("password").value;
+
+if(!document.getElementById("declaration")?.checked){}
+
+const userCred = await createUserWithEmailAndPassword(auth,email,password);
+const uid=userCred.user.uid;
+
+/* LOCAL STORAGE */
+localStorage.setItem("uid",uid);
+localStorage.setItem("teacherId",uid);
+localStorage.setItem("lastId",uid);
+localStorage.setItem("lastType","teacher");
+
+/* IMAGE UPLOAD */
+let logoUrl="";
+if(document.getElementById("logo").files[0]){
+logoUrl=await upload(document.getElementById("logo").files[0]);
+}
+
+let idProofUrl="";
+if(document.getElementById("idUpload").files[0]){
+idProofUrl=await upload(document.getElementById("idUpload").files[0]);
+}
+
+/* GALLERY */
+let gallery=[];
+for(let f of galleryFiles){
+gallery.push(await upload(f));
+}
+
+/* SUBJECTS */
+let subjects=[];
+document.querySelectorAll(".subjectCheck:checked").forEach(i=>{
+subjects.push(i.value);
+});
+
+if(document.getElementById("otherCheck").checked){
+subjects.push(document.getElementById("otherSubject").value);
+}
+
+/* MODES */
+let teachingModes=[];
+document.querySelectorAll(".mode:checked").forEach(i=>{
+teachingModes.push(i.value);
+});
+
+/* SAVE TEACHER */
+await set(ref(db,"teachers/"+uid),{
 uid,
-name,
-phone,
+name:document.getElementById("name").value,
+experience:document.getElementById("experience").value,
+phone:document.getElementById("phone").value,
+alternatePhone:document.getElementById("alternatePhone").value,
 email,
-qualification,
+website:document.getElementById("website").value,
+address:document.getElementById("address").value,
+area:document.getElementById("area").value,
+mapLink:document.getElementById("mapLink").value,
 subjects,
-address,
+class:document.getElementById("class").value,
+teachingModes,
+individualFee:document.getElementById("individualFee").value,
+homeFee:document.getElementById("homeFee").value,
+groupFee:document.getElementById("groupFee").value,
+onlineFee:document.getElementById("onlineFee").value,
+logo:logoUrl,
+gallery,
+idType:document.getElementById("idType").value,
+idProof:idProofUrl,
+description:document.getElementById("description").value,
 role:"teacher",
+category:"academic",
 status:"pending",
 createdAt:Date.now()
 });
 
-// 3. SAVE USER ROLE
-await set(ref(db, "users/" + uid), {
-uid,
-role:"teacher",
-profileId:uid
-});
+window.location.href="payment.html?type=teacher&id="+uid;
 
-// 4. REDIRECT
-alert("Registration Successful");
-window.location.href = "payment.html?type=teacher&id=" + uid;
-
-}
-catch(err){
+}catch(err){
 alert(err.message);
+submitBtn.disabled=false;
+submitBtn.innerText="Continue To Payment";
 }
 
 });
