@@ -50,14 +50,15 @@ cursor:pointer;
 font-size:15px;
 }
 
-button.logout{background:red;}
+button.logout{
+background:red;
+}
 
 .section{
 margin-top:15px;
 padding:10px;
 border:1px solid #ddd;
 border-radius:8px;
-background:#fafbff;
 }
 
 .viewerCard{
@@ -66,22 +67,6 @@ border:1px solid #ddd;
 border-radius:8px;
 margin-top:8px;
 background:#f9f9ff;
-}
-
-.preview img{
-width:90px;
-height:90px;
-object-fit:cover;
-border-radius:8px;
-margin:5px;
-}
-
-.galleryPreview img{
-width:80px;
-height:80px;
-object-fit:cover;
-border-radius:8px;
-margin:5px;
 }
 
 #content{display:none}
@@ -96,26 +81,8 @@ font-size:13px;
 margin-top:5px;
 }
 
-.analyticsBox{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-}
-
-.analyticsCard{
-flex:1;
-min-width:120px;
-background:white;
-padding:10px;
-border-radius:10px;
-box-shadow:0 2px 8px rgba(0,0,0,0.05);
-text-align:center;
-}
-
-.big{
-font-size:20px;
-font-weight:bold;
-color:#1565c0;
+small{
+color:gray;
 }
 </style>
 </head>
@@ -133,31 +100,10 @@ color:#1565c0;
 
 <div id="content">
 
-<!-- 👀 VIEWERS -->
+<!-- 👁 VIEWERS -->
 <div class="section">
 <h3>👀 Profile Views</h3>
-<div class="analyticsBox">
-<div class="analyticsCard">
-<div class="big" id="totalViews">0</div>
-Total Views
-</div>
-<div class="analyticsCard">
-<div class="big" id="todayViews">0</div>
-Today
-</div>
-<div class="analyticsCard">
-<div class="big" id="weekViews">0</div>
-Weekly
-</div>
-</div>
-
-<div id="viewers"></div>
-</div>
-
-<!-- 🔔 NOTIFICATIONS -->
-<div class="section">
-<h3>🔔 Notifications</h3>
-<div id="notifications">No notifications</div>
+<div id="viewers">Loading...</div>
 </div>
 
 <!-- PROFILE -->
@@ -175,7 +121,7 @@ Weekly
 </div>
 
 <div class="section">
-<h4>Modes</h4>
+<h4>Teaching Modes</h4>
 <input id="modes">
 </div>
 
@@ -184,18 +130,9 @@ Weekly
 <input id="fee">
 </div>
 
-<!-- 📸 MAIN PHOTO -->
 <div class="section">
 <h4>Profile Photo</h4>
-<div class="preview" id="photoPreview"></div>
 <input type="file" id="photo">
-</div>
-
-<!-- 📸 GALLERY (NEW) -->
-<div class="section">
-<h4>Gallery Upload</h4>
-<div class="galleryPreview" id="galleryPreview"></div>
-<input type="file" id="gallery" multiple>
 </div>
 
 <button onclick="saveData()">Save Changes</button>
@@ -212,8 +149,7 @@ getDatabase,
 ref,
 get,
 update,
-onValue,
-push
+onValue
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 import {
@@ -223,7 +159,7 @@ signOut
 
 /* FIREBASE */
 const firebaseConfig = {
-apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+apiKey:"AIzaSyBK0Q...",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"gurulink-59cc7",
@@ -255,144 +191,96 @@ const el = (id)=>document.getElementById(id);
 
 /* LOAD PROFILE */
 async function loadProfile(){
-const snap = await get(ref(db,dbPath));
+
+const snap = await get(ref(db, dbPath));
 if(!snap.exists()) return;
 
 const d = snap.val();
 
-el("name").value=d.name||"";
-el("phone").value=d.phone||"";
-el("email").value=d.email||"";
-el("experience").value=d.experience||"";
-el("location").value=d.location||"";
-el("description").value=d.description||"";
-el("subjects").value=(d.subjects||[]).join(", ");
-el("modes").value=(d.teachingModes||[]).join(", ");
-el("fee").value=d.fee||"";
+el("name").value = d.name||"";
+el("phone").value = d.phone||"";
+el("email").value = d.email||"";
+el("experience").value = d.experience||"";
+el("location").value = d.location||"";
+el("description").value = d.description||"";
 
-if(d.photo) el("photoPreview").innerHTML=`<img src="${d.photo}">`;
-
-if(d.gallery){
-el("galleryPreview").innerHTML =
-d.gallery.map(g=>`<img src="${g}">`).join("");
-}
+el("subjects").value = Array.isArray(d.subjects)?d.subjects.join(","):"";
+el("modes").value = Array.isArray(d.teachingModes)?d.teachingModes.join(","):"";
+el("fee").value = d.fee||"";
 
 el("loading").style.display="none";
 el("content").style.display="block";
 }
 
-/* VIEWERS + ANALYTICS */
-function loadAnalytics(){
+/* ✅ FIXED VIEWERS */
+function loadViewers(){
 
-const refV = ref(db,"profileViews/"+profileId);
+const viewerRef = ref(db, `profileViews/${profileId}`);
 
-onValue(refV,(snap)=>{
+onValue(viewerRef, (snap)=>{
 
-let total=0;
-let today=0;
-let week=0;
 let html="";
+let count=0;
 
-const now = Date.now();
+snap.forEach(child=>{
 
-snap.forEach(v=>{
+const v = child.val();
+count++;
 
-const d = v.val();
-total++;
-
-const diff = now - d.time;
-
-if(diff < 86400000) today++;
-if(diff < 7*86400000) week++;
-
-html += `<div class="viewerCard">
-<b>${d.name}</b><br>
-${d.email}
-</div>`;
+html += `
+<div class="viewerCard">
+<b>${v.name || "Student"}</b><br>
+<small>${v.email || ""}</small><br>
+<small>${v.phone || ""}</small><br>
+<small>${v.time ? new Date(v.time).toLocaleString() : ""}</small>
+</div>
+`;
 });
 
-el("totalViews").innerText=total;
-el("todayViews").innerText=today;
-el("weekViews").innerText=week;
-
-el("viewers").innerHTML=html||"No views";
+el("viewers").innerHTML =
+count ? html : "No profile views yet";
 
 });
+
 }
 
-/* NOTIFICATIONS */
-function loadNotifications(){
+/* SAVE PROFILE */
+window.saveData = async function(){
 
-const r1 = ref(db,"profileViews/"+profileId);
-onValue(r1,(snap)=>{
-let html="";
-snap.forEach(v=>{
-html+=`<div>👁 New profile view from ${v.val().name}</div>`;
-});
-el("notifications").innerHTML=html||"No notifications";
-});
-}
+try{
 
-/* UPLOAD */
-async function upload(file){
-let fd=new FormData();
-fd.append("image",file);
-let res=await fetch(
-`https://api.imgbb.com/1/upload?key=31f729ff855eb2e42c00ee508a8647ea`,
-{method:"POST",body:fd}
-);
-let data=await res.json();
-return data.data.url;
-}
-
-/* SAVE */
-window.saveData=async function(){
-
-const file=el("photo").files[0];
-const galleryFiles=el("gallery").files;
-
-let galleryUrls=[];
-
-for(let f of galleryFiles){
-let url=await upload(f);
-galleryUrls.push(url);
-}
-
-let updateData={
-name:el("name").value,
-phone:el("phone").value,
-email:el("email").value,
-experience:el("experience").value,
-location:el("location").value,
-description:el("description").value,
-subjects:el("subjects").value.split(",").map(x=>x.trim()),
-teachingModes:el("modes").value.split(",").map(x=>x.trim()),
-fee:el("fee").value
+let data = {
+name: el("name").value,
+phone: el("phone").value,
+email: el("email").value,
+experience: el("experience").value,
+location: el("location").value,
+description: el("description").value,
+subjects: el("subjects").value.split(",").map(x=>x.trim()).filter(Boolean),
+teachingModes: el("modes").value.split(",").map(x=>x.trim()).filter(Boolean),
+fee: el("fee").value
 };
 
-if(file){
-updateData.photo=await upload(file);
+await update(ref(db, dbPath), data);
+
+alert("Profile Updated");
+
+}catch(e){
+alert("Error: "+e.message);
+}
 }
 
-if(galleryUrls.length){
-updateData.gallery=galleryUrls;
-}
-
-await update(ref(db,dbPath),updateData);
-
-alert("Updated Successfully");
-};
-
-window.logout=async()=>{
+/* LOGOUT */
+window.logout = async function(){
 await signOut(auth);
 localStorage.clear();
 location.href="login.html";
 };
 
 loadProfile();
-loadAnalytics();
-loadNotifications();
+loadViewers();
 
 </script>
+
 </body>
 </html>
