@@ -134,6 +134,14 @@ id="password"
 placeholder="Create Password"
 required>
 
+
+<input
+type="password"
+id="confirmPassword"
+placeholder="Confirm Password"
+required>
+
+
 <input id="website" placeholder="Website URL if available">
 
 <input id="address" placeholder="Full Address">
@@ -287,9 +295,7 @@ placeholder="About Institution"></textarea>
 
 <!-- KEEP EVERYTHING SAME ABOVE -->
 
-<textarea
-id="description"
-placeholder="About Institution"></textarea>
+
 
 
 <!-- ✅ DECLARATION START -->
@@ -538,8 +544,18 @@ document.getElementById("email")
 .toLowerCase();
 
 const password =
-document.getElementById("password")
-.value;
+document.getElementById("password").value;
+
+const confirmPassword =
+document.getElementById("confirmPassword").value;
+
+// ⭐ NEW VALIDATION
+if(password !== confirmPassword){
+alert("Password and Confirm Password do not match.");
+submitBtn.disabled = false;
+submitBtn.innerText = "Continue To Payment";
+return;
+}
 
 
 
