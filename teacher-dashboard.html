@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard - GURULINK</title>
+<title>GURULINK Dashboard</title>
 
 <style>
 body{
@@ -50,9 +50,7 @@ cursor:pointer;
 font-size:15px;
 }
 
-button.logout{
-background:red;
-}
+button.logout{background:red}
 
 .section{
 margin-top:15px;
@@ -103,28 +101,26 @@ margin-top:5px;
 
 <div id="content">
 
-<!-- 👁 VIEWERS -->
+<!-- VIEWERS -->
 <div class="section">
-<h3>👀 Profile Views</h3>
+<h3>👁 Profile Views</h3>
 <div id="viewers">Loading...</div>
 </div>
 
-<!-- PROFILE FIELDS -->
 <input id="name" placeholder="Name">
 <input id="phone" placeholder="Phone">
 <input id="email" placeholder="Email">
-<input id="experience" placeholder="Experience / Established Year">
+<input id="experience" placeholder="Experience / Year">
 <input id="location" placeholder="Location">
-
 <textarea id="description" placeholder="About"></textarea>
 
 <div class="section">
-<h4>Subjects (comma separated)</h4>
+<h4>Subjects</h4>
 <input id="subjects">
 </div>
 
 <div class="section">
-<h4>Teaching Modes (comma separated)</h4>
+<h4>Teaching Modes</h4>
 <input id="modes">
 </div>
 
@@ -134,7 +130,7 @@ margin-top:5px;
 </div>
 
 <div class="section">
-<h4>Profile Photo</h4>
+<h4>Profile Image</h4>
 <div class="preview" id="photoPreview"></div>
 <input type="file" id="photo">
 </div>
@@ -148,22 +144,15 @@ margin-top:5px;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
 import {
-getDatabase,
-ref,
-get,
-update,
-onValue
+getDatabase, ref, get, update, onValue
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
 import {
-getAuth,
-signOut
+getAuth, signOut
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 /* FIREBASE */
-const firebaseConfig = {
+const app = initializeApp({
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -171,24 +160,22 @@ projectId:"gurulink-59cc7",
 storageBucket:"gurulink-59cc7.appspot.com",
 messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-};
+});
 
-const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-/* LOCAL STORAGE */
+/* SAFE IDS */
 const uid = localStorage.getItem("uid");
 const role = localStorage.getItem("role");
-const profileId = localStorage.getItem("profileId");
+const profileId =
+localStorage.getItem("profileId") || uid;
 
-/* SECURITY CHECK */
-if(!uid || (role !== "teacher" && role !== "institution")){
-alert("Access Denied");
-window.location.href = "login.html";
+if(!uid){
+alert("Login required");
+location.href="login.html";
 }
 
-/* DB PATH */
 const dbPath =
 role === "teacher"
 ? "teachers/" + profileId
@@ -206,63 +193,50 @@ return;
 
 const d = snap.val();
 
-document.getElementById("name").value = d.name || "";
-document.getElementById("phone").value = d.phone || "";
-document.getElementById("email").value = d.email || "";
-document.getElementById("experience").value = d.experience || d.establishedDate || "";
-document.getElementById("location").value = d.location || d.address || "";
-document.getElementById("description").value = d.description || "";
+name.value = d.name || "";
+phone.value = d.phone || "";
+email.value = d.email || "";
+experience.value = d.experience || "";
+location.value = d.location || "";
+description.value = d.description || "";
 
-document.getElementById("subjects").value =
-Array.isArray(d.subjects) ? d.subjects.join(", ") : "";
-
-document.getElementById("modes").value =
-Array.isArray(d.teachingModes) ? d.teachingModes.join(", ") : "";
-
-document.getElementById("fee").value =
-d.fee || d.homeFee || "";
+subjects.value = Array.isArray(d.subjects) ? d.subjects.join(", ") : "";
+modes.value = Array.isArray(d.teachingModes) ? d.teachingModes.join(", ") : "";
+fee.value = d.fee || "";
 
 if(d.photo){
-document.getElementById("photoPreview").innerHTML =
-`<img src="${d.photo}">`;
+photoPreview.innerHTML = `<img src="${d.photo}">`;
 }
 
-document.getElementById("loading").style.display = "none";
-document.getElementById("content").style.display = "block";
+loading.style.display="none";
+content.style.display="block";
 }
 
 loadProfile();
 
-/* =========================
-   👁 VIEWERS SECTION
-========================= */
-
+/* VIEWERS */
 function loadViewers(){
 
-const viewerRef = ref(db, `profileViews/${profileId}`);
+onValue(ref(db,`profileViews/${profileId}`),(snap)=>{
 
-onValue(viewerRef, (snap)=>{
+let html="";
+let count=0;
 
-let html = "";
-let count = 0;
-
-snap.forEach(child=>{
-
-const v = child.val();
+snap.forEach(v=>{
+const d=v.val();
 count++;
 
-html += `
+html+=`
 <div class="viewerCard">
-<b>${v.name || "Student"}</b><br>
-📧 ${v.email || "-"}<br>
-📞 ${v.phone || "-"}<br>
-🕒 ${new Date(v.time).toLocaleString()}
+<b>${d.name || "Student"}</b><br>
+📧 ${d.email || "-"}<br>
+📞 ${d.phone || "-"}<br>
+🕒 ${new Date(d.time).toLocaleString()}
 </div>
 `;
 });
 
-document.getElementById("viewers").innerHTML =
-count ? html : "No views yet";
+viewers.innerHTML = count ? html : "No views yet";
 
 });
 
@@ -271,58 +245,47 @@ count ? html : "No views yet";
 loadViewers();
 
 /* IMAGE UPLOAD */
-const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
-
 async function upload(file){
-let fd = new FormData();
-fd.append("image", file);
+let fd=new FormData();
+fd.append("image",file);
 
-let res = await fetch(
-`https://api.imgbb.com/1/upload?key=${API_KEY}`,
-{method:"POST", body:fd}
+let res=await fetch(
+"https://api.imgbb.com/1/upload?key=31f729ff855eb2e42c00ee508a8647ea",
+{method:"POST",body:fd}
 );
 
-let data = await res.json();
+let data=await res.json();
 return data?.data?.url || "";
 }
 
-/* SAVE PROFILE */
+/* SAVE */
 window.saveData = async function(){
 
 try{
 
-let updateData = {
-name: name.value,
-phone: phone.value,
-email: email.value,
-experience: experience.value,
-location: location.value,
-description: description.value,
-
-subjects: subjects.value
-? subjects.value.split(",").map(x=>x.trim())
-: [],
-
-teachingModes: modes.value
-? modes.value.split(",").map(x=>x.trim())
-: [],
-
-fee: fee.value
+let data={
+name:name.value,
+phone:phone.value,
+email:email.value,
+experience:experience.value,
+location:location.value,
+description:description.value,
+subjects:subjects.value.split(",").map(x=>x.trim()).filter(Boolean),
+teachingModes:modes.value.split(",").map(x=>x.trim()).filter(Boolean),
+fee:fee.value
 };
 
-const file = document.getElementById("photo").files[0];
-
+const file=photo.files[0];
 if(file){
-updateData.photo = await upload(file);
+data.photo=await upload(file);
 }
 
-await update(ref(db, dbPath), updateData);
+await update(ref(db,dbPath),data);
 
 alert("Profile Updated");
 
-}catch(err){
-console.log(err);
-alert("Error updating profile");
+}catch(e){
+alert(e.message);
 }
 
 };
@@ -331,7 +294,7 @@ alert("Error updating profile");
 window.logout = async function(){
 await signOut(auth);
 localStorage.clear();
-window.location.href = "login.html";
+location.href="login.html";
 };
 
 </script>
