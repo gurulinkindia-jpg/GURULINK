@@ -218,6 +218,51 @@ Online
 
 <textarea id="description" placeholder="About Teacher"></textarea>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ✅ DECLARATION START -->
+<div style="margin-top:15px;padding:10px;border:1px solid #ddd;border-radius:10px;background:#fafafa;">
+
+<label for="declaration" style="font-size:12px;line-height:1.5;display:block;margin-bottom:8px;">
+
+I hereby declare that all the information provided by me in this form is true and correct to the best of my knowledge and belief. I understand that if any information is found to be false or incorrect, my application may be rejected or necessary action may be taken against me. I also agree to follow all the rules, regulations, and responsibilities assigned by the GURULINK, powered by G10 Group.
+
+</label>
+
+<div style="display:flex;align-items:center;gap:10px;">
+<input type="checkbox" id="declaration" required>
+<label for="declaration" style="font-size:13px;">
+I Agree
+</label>
+</div>
+
+</div>
+<!-- ✅ DECLARATION END -->
+
+
+
+
+
+
+
+
+
+
+
+
+
 <button type="submit">Continue To Payment</button>
 
 </form>
@@ -304,12 +349,37 @@ const submitBtn=form.querySelector("button");
 submitBtn.disabled=true;
 submitBtn.innerText="Processing...";
 
+
+
+
+
+
+
+
+
+
+/* ✅ ADD THIS HERE */
+if (!document.getElementById("declaration").checked) {
+    alert("Please accept the declaration before submitting.");
+    submitBtn.disabled = false;
+    submitBtn.innerText = "Continue To Payment";
+    return;
+}
+
+
+
+
+
+
+
+
+
 try{
 
 const email=document.getElementById("email").value.trim().toLowerCase();
 const password=document.getElementById("password").value;
 
-if(!document.getElementById("declaration")?.checked){}
+
 
 const userCred = await createUserWithEmailAndPassword(auth,email,password);
 const uid=userCred.user.uid;
