@@ -31,9 +31,7 @@ border-radius:15px;
 box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 
-input,
-select,
-textarea{
+input,select,textarea{
 width:100%;
 padding:12px;
 margin:10px 0;
@@ -105,35 +103,30 @@ margin-bottom:10px;
 }
 
 </style>
-
 </head>
 
 <body>
 
 <header>
 <h1>Creative Teacher Registration</h1>
-<p>Music • Dance • Art • Design • Acting</p>
+<p>Registration Fee ₹100</p>
 </header>
 
 <div class="container">
 
 <form id="form">
 
-<h3>Login Details</h3>
-
-<input type="email" id="email" placeholder="Email Address" required>
-
-<input type="password" id="password" placeholder="Create Password" required>
-
-<h3>Basic Information</h3>
-
-<input id="name" placeholder="Full Name" required>
+<input id="name" placeholder="Teacher Name" required>
 
 <input id="experience" placeholder="Experience (e.g. 5 Years)" required>
 
 <input id="phone" placeholder="Contact Number" required>
 
 <input id="alternatePhone" placeholder="Alternate Phone Number">
+
+<input type="email" id="email" placeholder="Email" required>
+
+<input type="password" id="password" placeholder="Create Password" required>
 
 <input id="website" placeholder="Website URL if available">
 
@@ -148,43 +141,39 @@ margin-bottom:10px;
 <div class="modeBox">
 
 <div class="row">
-<input type="checkbox" value="Music" class="skillCheck">
-Music
+<input type="checkbox" value="Music" class="skillCheck"> Music
 </div>
 
 <div class="row">
-<input type="checkbox" value="Dance" class="skillCheck">
-Dance
+<input type="checkbox" value="Dance" class="skillCheck"> Dance
 </div>
 
 <div class="row">
-<input type="checkbox" value="Painting" class="skillCheck">
-Painting
+<input type="checkbox" value="Painting" class="skillCheck"> Painting
 </div>
 
 <div class="row">
-<input type="checkbox" value="Photography" class="skillCheck">
-Photography
+<input type="checkbox" value="Photography" class="skillCheck"> Photography
 </div>
 
 <div class="row">
-<input type="checkbox" value="Graphic Design" class="skillCheck">
-Graphic Design
+<input type="checkbox" value="Graphic Design" class="skillCheck"> Graphic Design
 </div>
 
 <div class="row">
-<input type="checkbox" value="Fashion Design" class="skillCheck">
-Fashion Design
+<input type="checkbox" value="Fashion Design" class="skillCheck"> Fashion Design
 </div>
 
 <div class="row">
-<input type="checkbox" value="Acting" class="skillCheck">
-Acting
+<input type="checkbox" value="Acting" class="skillCheck"> Acting
 </div>
 
 <div class="row">
-<input type="checkbox" id="otherCheck">
-Other
+<input type="checkbox" value="Craft" class="skillCheck"> Craft
+</div>
+
+<div class="row">
+<input type="checkbox" id="otherCheck"> Other
 </div>
 
 <input
@@ -193,7 +182,7 @@ placeholder="Write Other Skill"
 style="display:none;"
 >
 
-<p id="skillError" style="display:none;color:red;">
+<p id="skillError" style="color:red;display:none;">
 Select at least one skill
 </p>
 
@@ -302,9 +291,10 @@ accept="image/*"
 <div id="galleryPreview" class="preview"></div>
 
 <textarea
-id="bio"
-placeholder="About Creative Teacher"
+id="description"
+placeholder="About Teacher"
 ></textarea>
+
 <!-- DECLARATION -->
 
 <div style="margin-top:15px;padding:10px;border:1px solid #ddd;border-radius:10px;background:#fafafa;">
@@ -320,19 +310,22 @@ I hereby declare that all the information provided by me in this form is true an
 
 <div style="display:flex;align-items:center;gap:10px;">
 <input type="checkbox" id="declaration" required>
-<label for="declaration">I Agree</label>
+<label for="declaration" style="font-size:13px;">
+I Agree
+</label>
 </div>
 
 </div>
 
-<button type="submit">Continue To Payment</button>
+<button type="submit">
+Continue To Payment
+</button>
 
 </form>
 
 </div>
 
 <script>
-
 function toggleFee(id){
 const box=document.getElementById(id);
 box.style.display=
@@ -340,26 +333,12 @@ box.style.display==="block"
 ? "none"
 : "block";
 }
-
 </script>
-
 <script type="module">
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
-import {
-getAuth,
-createUserWithEmailAndPassword
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-
-import {
-getDatabase,
-ref,
-set
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -372,18 +351,16 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getDatabase(app);
-
-const API_KEY =
-"31f729ff855eb2e42c00ee508a8647ea";
+const auth = getAuth(app);
 
 const form = document.getElementById("form");
 
+const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
+
 /* OTHER SKILL */
 
-document.getElementById("otherCheck")
-.addEventListener("change",(e)=>{
+document.getElementById("otherCheck").addEventListener("change",(e)=>{
 
 document.getElementById("otherSkill").style.display =
 e.target.checked ? "block" : "none";
@@ -412,7 +389,7 @@ return data.data.url;
 
 }
 
-/* IMAGE PREVIEW */
+/* PREVIEW */
 
 function preview(input,box){
 
@@ -424,8 +401,7 @@ if(input.files[0]){
 
 let img=document.createElement("img");
 
-img.src =
-URL.createObjectURL(input.files[0]);
+img.src=URL.createObjectURL(input.files[0]);
 
 box.appendChild(img);
 
@@ -449,18 +425,19 @@ document.getElementById("idPreview")
 
 let galleryFiles=[];
 
-document
-.getElementById("gallery")
+document.getElementById("gallery")
 .addEventListener("change",function(){
 
-galleryFiles = Array.from(this.files);
+galleryFiles=Array.from(this.files);
 
-document.getElementById("galleryPreview").innerHTML =
-galleryFiles.map(
-f=>`<img src="${URL.createObjectURL(f)}">`
-).join("");
+document.getElementById("galleryPreview").innerHTML=
+galleryFiles
+.map(f=>`<img src="${URL.createObjectURL(f)}">`)
+.join("");
 
 });
+
+
 
 /* SUBMIT */
 
@@ -468,21 +445,16 @@ form.addEventListener("submit",async(e)=>{
 
 e.preventDefault();
 
-const submitBtn =
-form.querySelector("button");
+const submitBtn=form.querySelector("button");
 
 submitBtn.disabled=true;
 submitBtn.innerText="Processing...";
 
 /* DECLARATION */
 
-if(
-!document.getElementById("declaration").checked
-){
+if(!document.getElementById("declaration").checked){
 
-alert(
-"Please accept the declaration before submitting."
-);
+alert("Please accept the declaration before submitting.");
 
 submitBtn.disabled=false;
 submitBtn.innerText="Continue To Payment";
@@ -493,14 +465,17 @@ return;
 
 try{
 
-const email =
+const email=
 document.getElementById("email")
-.value.trim()
+.value
+.trim()
 .toLowerCase();
 
-const password =
+const password=
 document.getElementById("password")
 .value;
+
+/* CREATE AUTH USER */
 
 const userCred =
 await createUserWithEmailAndPassword(
@@ -509,33 +484,47 @@ email,
 password
 );
 
-const uid = userCred.user.uid;
+const uid=userCred.user.uid;
 
 /* LOCAL STORAGE */
 
 localStorage.setItem("uid",uid);
-localStorage.setItem("creativeTeacherId",uid);
-localStorage.setItem("lastId",uid);
-localStorage.setItem("lastType","creative_teacher");
 
-/* IMAGE UPLOAD */
+localStorage.setItem(
+"creativeTeacherId",
+uid
+);
+
+localStorage.setItem(
+"lastId",
+uid
+);
+
+localStorage.setItem(
+"lastType",
+"creative_teacher"
+);
+
+/* PROFILE IMAGE */
 
 let logoUrl="";
 
 if(document.getElementById("logo").files[0]){
 
-logoUrl =
+logoUrl=
 await upload(
 document.getElementById("logo").files[0]
 );
 
 }
 
+/* ID PROOF */
+
 let idProofUrl="";
 
 if(document.getElementById("idUpload").files[0]){
 
-idProofUrl =
+idProofUrl=
 await upload(
 document.getElementById("idUpload").files[0]
 );
@@ -566,9 +555,7 @@ skills.push(i.value);
 
 });
 
-if(
-document.getElementById("otherCheck").checked
-){
+if(document.getElementById("otherCheck").checked){
 
 skills.push(
 document.getElementById("otherSkill").value
@@ -576,7 +563,18 @@ document.getElementById("otherSkill").value
 
 }
 
-/* TEACHING MODES */
+if(skills.length===0){
+
+alert("Select at least one skill");
+
+submitBtn.disabled=false;
+submitBtn.innerText="Continue To Payment";
+
+return;
+
+}
+
+/* MODES */
 
 let teachingModes=[];
 
@@ -588,11 +586,12 @@ teachingModes.push(i.value);
 
 });
 
-/* SAVE PROFILE */
+/* SAVE CREATIVE TEACHER */
 
 await set(
 ref(db,"creative_teachers/"+uid),
 {
+
 uid,
 
 name:
@@ -646,18 +645,21 @@ document.getElementById("idType").value,
 
 idProof:idProofUrl,
 
-bio:
-document.getElementById("bio").value,
+description:
+document.getElementById("description").value,
 
 role:"creative_teacher",
+
+category:"creative",
 
 status:"pending",
 
 createdAt:Date.now()
+
 }
 );
 
-/* USER ROLE */
+/* OPTIONAL USER ROLE ENTRY */
 
 await set(
 ref(db,"users/"+uid),
@@ -668,13 +670,12 @@ profileId:uid
 }
 );
 
-/* PAYMENT */
+/* PAYMENT PAGE */
 
 window.location.href =
 "payment.html?type=creative_teacher&id="+uid;
 
-}
-catch(err){
+}catch(err){
 
 alert(err.message);
 
