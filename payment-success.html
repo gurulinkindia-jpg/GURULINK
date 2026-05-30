@@ -78,18 +78,12 @@ const db = getDatabase(app);
 
 /* URL PARAMS */
 const params = new URLSearchParams(window.location.search);
+const type = params.get("type") || "teacher";
+let id = params.get("id");
 
-const type =
-  params.get("type") ||
-  localStorage.getItem("lastType") ||
-  "teacher";
-
-let id =
-  params.get("id") ||
-  localStorage.getItem("lastId");
-
+/* SAFE FALLBACK */
 if (!id || id === "null" || id === "undefined") {
-    id = localStorage.getItem("lastId");
+    id = localStorage.getItem(type + "Id");
 }
 
 /* FINAL CHECK */
