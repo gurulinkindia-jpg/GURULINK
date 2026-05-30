@@ -15,7 +15,7 @@ background:#eef2f7;
 }
 
 header{
-background:#7b1fa2;
+background:#1565c0;
 color:white;
 padding:18px;
 text-align:center;
@@ -48,7 +48,7 @@ resize:none;
 button{
 width:100%;
 padding:14px;
-background:#7b1fa2;
+background:#1565c0;
 color:white;
 border:none;
 border-radius:10px;
@@ -116,12 +116,13 @@ margin-bottom:10px;
 
 <form id="form">
 
+<!-- TEACHER NAME -->
 <input id="name" placeholder="Teacher Name" required>
 
+<!-- EXPERIENCE -->
 <input id="experience" placeholder="Experience (e.g. 5 Years)" required>
 
 <input id="phone" placeholder="Contact Number" required>
-
 <input id="alternatePhone" placeholder="Alternate Phone Number">
 
 <input type="email" id="email" placeholder="Email" required>
@@ -129,121 +130,73 @@ margin-bottom:10px;
 <input type="password" id="password" placeholder="Create Password" required>
 
 <input id="website" placeholder="Website URL if available">
-
 <input id="address" placeholder="Full Address">
-
 <input id="area" placeholder="Area / City / State">
-
 <input id="mapLink" placeholder="Google Map Location Link">
 
 <h3>Creative Skills</h3>
 
 <div class="modeBox">
 
-<div class="row">
-<input type="checkbox" value="Music" class="skillCheck"> Music
-</div>
-
-<div class="row">
-<input type="checkbox" value="Dance" class="skillCheck"> Dance
-</div>
-
-<div class="row">
-<input type="checkbox" value="Painting" class="skillCheck"> Painting
-</div>
-
-<div class="row">
-<input type="checkbox" value="Photography" class="skillCheck"> Photography
-</div>
-
-<div class="row">
-<input type="checkbox" value="Graphic Design" class="skillCheck"> Graphic Design
-</div>
-
-<div class="row">
-<input type="checkbox" value="Fashion Design" class="skillCheck"> Fashion Design
-</div>
-
-<div class="row">
-<input type="checkbox" value="Acting" class="skillCheck"> Acting
-</div>
-
-<div class="row">
-<input type="checkbox" value="Craft" class="skillCheck"> Craft
-</div>
+<div class="row"><input type="checkbox" value="Drawing" class="subjectCheck"> Drawing</div>
+<div class="row"><input type="checkbox" value="Painting" class="subjectCheck"> Painting</div>
+<div class="row"><input type="checkbox" value="Sketching" class="subjectCheck"> Sketching</div>
+<div class="row"><input type="checkbox" value="Craft" class="subjectCheck"> Craft</div>
+<div class="row"><input type="checkbox" value="Dance" class="subjectCheck"> Dance</div>
+<div class="row"><input type="checkbox" value="Music" class="subjectCheck"> Music</div>
+<div class="row"><input type="checkbox" value="Singing" class="subjectCheck"> Singing</div>
+<div class="row"><input type="checkbox" value="Guitar" class="subjectCheck"> Guitar</div>
+<div class="row"><input type="checkbox" value="Keyboard" class="subjectCheck"> Keyboard</div>
+<div class="row"><input type="checkbox" value="Photography" class="subjectCheck"> Photography</div>
+<div class="row"><input type="checkbox" value="Calligraphy" class="subjectCheck"> Calligraphy</div>
+<div class="row"><input type="checkbox" value="Acting" class="subjectCheck"> Acting</div>
 
 <div class="row">
 <input type="checkbox" id="otherCheck"> Other
 </div>
 
-<input
-id="otherSkill"
-placeholder="Write Other Skill"
-style="display:none;"
->
+<input id="otherSubject" placeholder="Write Other Skill" style="display:none;">
 
-<p id="skillError" style="color:red;display:none;">
+<p id="subjectError" style="color:red;display:none;">
 Select at least one skill
 </p>
 
 </div>
+
+<input id="class" placeholder="Age Group / Level (Children / Beginner / Intermediate / Advanced)" required>
 
 <h3>Teaching Modes</h3>
 
 <div class="modeBox">
 
 <div class="row">
-<input
-type="checkbox"
-class="mode"
-value="Individual Coaching"
-onchange="toggleFee('individualFeeBox')"
->
+<input type="checkbox" class="mode" value="Individual Coaching" onchange="toggleFee('individualFeeBox')">
 Individual Coaching
 </div>
-
 <div id="individualFeeBox" class="modeFee">
 <input id="individualFee" placeholder="Enter Fee">
 </div>
 
 <div class="row">
-<input
-type="checkbox"
-class="mode"
-value="Home Tuition"
-onchange="toggleFee('homeFeeBox')"
->
+<input type="checkbox" class="mode" value="Home Tuition" onchange="toggleFee('homeFeeBox')">
 Home Tuition
 </div>
-
 <div id="homeFeeBox" class="modeFee">
 <input id="homeFee" placeholder="Enter Fee">
 </div>
 
 <div class="row">
-<input
-type="checkbox"
-class="mode"
-value="Group Coaching"
-onchange="toggleFee('groupFeeBox')"
->
+<input type="checkbox" class="mode" value="Group Coaching" onchange="toggleFee('groupFeeBox')">
 Group Coaching
 </div>
-
 <div id="groupFeeBox" class="modeFee">
 <input id="groupFee" placeholder="Enter Fee">
 </div>
 
 <div class="row">
-<input
-type="checkbox"
-class="mode"
-value="Online"
-onchange="toggleFee('onlineFeeBox')"
->
+<input type="checkbox" class="mode" value="Online" onchange="toggleFee('onlineFeeBox')">
 Online
 </div>
-
 <div id="onlineFeeBox" class="modeFee">
 <input id="onlineFee" placeholder="Enter Fee">
 </div>
@@ -251,18 +204,10 @@ Online
 </div>
 
 <h3>Profile Picture</h3>
-
-<input
-type="file"
-id="logo"
-accept="image/*"
-required
->
-
+<input type="file" id="logo" accept="image/*" required>
 <div id="logoPreview" class="preview"></div>
 
 <h3>ID Proof</h3>
-
 <select id="idType" required>
 <option value="">Select</option>
 <option>Aadhaar</option>
@@ -270,39 +215,33 @@ required
 <option>License</option>
 </select>
 
-<input
-type="file"
-id="idUpload"
-accept="image/*"
-required
->
-
+<input type="file" id="idUpload" accept="image/*" required>
 <div id="idPreview" class="preview"></div>
 
 <h3>Gallery</h3>
-
-<input
-type="file"
-id="gallery"
-multiple
-accept="image/*"
->
-
+<input type="file" id="gallery" multiple accept="image/*">
 <div id="galleryPreview" class="preview"></div>
 
-<textarea
-id="description"
-placeholder="About Teacher"
-></textarea>
+<textarea id="description" placeholder="About Teacher"></textarea>
 
-<!-- DECLARATION -->
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- ✅ DECLARATION START -->
 <div style="margin-top:15px;padding:10px;border:1px solid #ddd;border-radius:10px;background:#fafafa;">
 
-<label
-for="declaration"
-style="font-size:12px;line-height:1.5;display:block;margin-bottom:8px;"
->
+<label for="declaration" style="font-size:12px;line-height:1.5;display:block;margin-bottom:8px;">
 
 I hereby declare that all the information provided by me in this form is true and correct to the best of my knowledge and belief. I understand that if any information is found to be false or incorrect, my application may be rejected or necessary action may be taken against me. I also agree to follow all the rules, regulations, and responsibilities assigned by the GURULINK, powered by G10 Group.
 
@@ -316,10 +255,21 @@ I Agree
 </div>
 
 </div>
+<!-- ✅ DECLARATION END -->
 
-<button type="submit">
-Continue To Payment
-</button>
+
+
+
+
+
+
+
+
+
+
+
+
+<button type="submit">Continue To Payment</button>
 
 </form>
 
@@ -328,12 +278,10 @@ Continue To Payment
 <script>
 function toggleFee(id){
 const box=document.getElementById(id);
-box.style.display=
-box.style.display==="block"
-? "none"
-: "block";
+box.style.display=box.style.display==="block"?"none":"block";
 }
 </script>
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
@@ -355,335 +303,168 @@ const db = getDatabase(app);
 const auth = getAuth(app);
 
 const form = document.getElementById("form");
-
 const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
 
-/* OTHER SKILL */
-
+/* OTHER SUBJECT */
 document.getElementById("otherCheck").addEventListener("change",(e)=>{
-
-document.getElementById("otherSkill").style.display =
+document.getElementById("otherSubject").style.display =
 e.target.checked ? "block" : "none";
-
 });
 
 /* IMAGE UPLOAD */
-
 async function upload(file){
-
 let fd = new FormData();
-
 fd.append("image",file);
 
-let res = await fetch(
-`https://api.imgbb.com/1/upload?key=${API_KEY}`,
-{
+let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`,{
 method:"POST",
 body:fd
-}
-);
+});
 
 let data = await res.json();
-
 return data.data.url;
-
 }
 
 /* PREVIEW */
-
 function preview(input,box){
-
 input.addEventListener("change",()=>{
-
 box.innerHTML="";
-
 if(input.files[0]){
-
 let img=document.createElement("img");
-
 img.src=URL.createObjectURL(input.files[0]);
-
 box.appendChild(img);
-
 }
-
 });
-
 }
 
-preview(
-document.getElementById("logo"),
-document.getElementById("logoPreview")
-);
-
-preview(
-document.getElementById("idUpload"),
-document.getElementById("idPreview")
-);
-
-/* GALLERY */
+preview(document.getElementById("logo"),document.getElementById("logoPreview"));
+preview(document.getElementById("idUpload"),document.getElementById("idPreview"));
 
 let galleryFiles=[];
-
-document.getElementById("gallery")
-.addEventListener("change",function(){
-
+document.getElementById("gallery").addEventListener("change",function(){
 galleryFiles=Array.from(this.files);
-
-document.getElementById("galleryPreview").innerHTML=
-galleryFiles
-.map(f=>`<img src="${URL.createObjectURL(f)}">`)
-.join("");
-
+document.getElementById("galleryPreview").innerHTML =
+galleryFiles.map(f=>`<img src="${URL.createObjectURL(f)}">`).join("");
 });
 
-
-
 /* SUBMIT */
-
 form.addEventListener("submit",async(e)=>{
-
 e.preventDefault();
 
 const submitBtn=form.querySelector("button");
-
 submitBtn.disabled=true;
 submitBtn.innerText="Processing...";
 
-/* DECLARATION */
 
-if(!document.getElementById("declaration").checked){
 
-alert("Please accept the declaration before submitting.");
 
-submitBtn.disabled=false;
-submitBtn.innerText="Continue To Payment";
 
-return;
 
+
+
+
+
+/* ✅ ADD THIS HERE */
+if (!document.getElementById("declaration").checked) {
+    alert("Please accept the declaration before submitting.");
+    submitBtn.disabled = false;
+    submitBtn.innerText = "Continue To Payment";
+    return;
 }
+
+
+
+
+
+
+
+
 
 try{
 
-const email=
-document.getElementById("email")
-.value
-.trim()
-.toLowerCase();
+const email=document.getElementById("email").value.trim().toLowerCase();
+const password=document.getElementById("password").value;
 
-const password=
-document.getElementById("password")
-.value;
 
-/* CREATE AUTH USER */
 
-const userCred =
-await createUserWithEmailAndPassword(
-auth,
-email,
-password
-);
-
+const userCred = await createUserWithEmailAndPassword(auth,email,password);
 const uid=userCred.user.uid;
 
 /* LOCAL STORAGE */
-
 localStorage.setItem("uid",uid);
+localStorage.setItem("teacherId",uid);
+localStorage.setItem("lastId",uid);
+localStorage.setItem("lastType","teacher");
 
-localStorage.setItem(
-"creativeTeacherId",
-uid
-);
-
-localStorage.setItem(
-"lastId",
-uid
-);
-
-localStorage.setItem(
-"lastType",
-"creative_teacher"
-);
-
-/* PROFILE IMAGE */
-
+/* IMAGE UPLOAD */
 let logoUrl="";
-
 if(document.getElementById("logo").files[0]){
-
-logoUrl=
-await upload(
-document.getElementById("logo").files[0]
-);
-
+logoUrl=await upload(document.getElementById("logo").files[0]);
 }
 
-/* ID PROOF */
-
 let idProofUrl="";
-
 if(document.getElementById("idUpload").files[0]){
-
-idProofUrl=
-await upload(
-document.getElementById("idUpload").files[0]
-);
-
+idProofUrl=await upload(document.getElementById("idUpload").files[0]);
 }
 
 /* GALLERY */
-
 let gallery=[];
-
 for(let f of galleryFiles){
-
-gallery.push(
-await upload(f)
-);
-
+gallery.push(await upload(f));
 }
 
-/* SKILLS */
-
-let skills=[];
-
-document
-.querySelectorAll(".skillCheck:checked")
-.forEach(i=>{
-
-skills.push(i.value);
-
+/* SUBJECTS */
+let subjects=[];
+document.querySelectorAll(".subjectCheck:checked").forEach(i=>{
+subjects.push(i.value);
 });
 
 if(document.getElementById("otherCheck").checked){
-
-skills.push(
-document.getElementById("otherSkill").value
-);
-
-}
-
-if(skills.length===0){
-
-alert("Select at least one skill");
-
-submitBtn.disabled=false;
-submitBtn.innerText="Continue To Payment";
-
-return;
-
+subjects.push(document.getElementById("otherSubject").value);
 }
 
 /* MODES */
-
 let teachingModes=[];
-
-document
-.querySelectorAll(".mode:checked")
-.forEach(i=>{
-
+document.querySelectorAll(".mode:checked").forEach(i=>{
 teachingModes.push(i.value);
-
 });
 
-/* SAVE CREATIVE TEACHER */
-
-await set(
-ref(db,"creative_teachers/"+uid),
-{
-
+/* SAVE TEACHER */
+await set(ref(db,"teachers/"+uid),{
 uid,
-
-name:
-document.getElementById("name").value,
-
-experience:
-document.getElementById("experience").value,
-
-phone:
-document.getElementById("phone").value,
-
-alternatePhone:
-document.getElementById("alternatePhone").value,
-
+name:document.getElementById("name").value,
+experience:document.getElementById("experience").value,
+phone:document.getElementById("phone").value,
+alternatePhone:document.getElementById("alternatePhone").value,
 email,
-
-website:
-document.getElementById("website").value,
-
-address:
-document.getElementById("address").value,
-
-area:
-document.getElementById("area").value,
-
-mapLink:
-document.getElementById("mapLink").value,
-
-skills,
-
+website:document.getElementById("website").value,
+address:document.getElementById("address").value,
+area:document.getElementById("area").value,
+mapLink:document.getElementById("mapLink").value,
+subjects,
+class:document.getElementById("class").value,
 teachingModes,
-
-individualFee:
-document.getElementById("individualFee").value,
-
-homeFee:
-document.getElementById("homeFee").value,
-
-groupFee:
-document.getElementById("groupFee").value,
-
-onlineFee:
-document.getElementById("onlineFee").value,
-
+individualFee:document.getElementById("individualFee").value,
+homeFee:document.getElementById("homeFee").value,
+groupFee:document.getElementById("groupFee").value,
+onlineFee:document.getElementById("onlineFee").value,
 logo:logoUrl,
-
 gallery,
-
-idType:
-document.getElementById("idType").value,
-
+idType:document.getElementById("idType").value,
 idProof:idProofUrl,
-
-description:
-document.getElementById("description").value,
-
-role:"creative_teacher",
-
+description:document.getElementById("description").value,
+role:"teacher",
 category:"creative",
-
 status:"pending",
-
 createdAt:Date.now()
+});
 
-}
-);
-
-/* OPTIONAL USER ROLE ENTRY */
-
-await set(
-ref(db,"users/"+uid),
-{
-uid,
-role:"creative_teacher",
-profileId:uid
-}
-);
-
-/* PAYMENT PAGE */
-
-window.location.href =
-"payment.html?type=creative_teacher&id="+uid;
+window.location.href="payment.html?type=teacher&id="+uid;
 
 }catch(err){
-
 alert(err.message);
-
 submitBtn.disabled=false;
-
-submitBtn.innerText=
-"Continue To Payment";
-
+submitBtn.innerText="Continue To Payment";
 }
 
 });
