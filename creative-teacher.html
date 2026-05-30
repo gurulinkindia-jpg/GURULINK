@@ -3,12 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Creative Teacher Registration</title>
 
 <style>
+
 body{
 margin:0;
-font-family:Arial;
+font-family:Arial,sans-serif;
 background:#eef2f7;
 }
 
@@ -20,46 +22,97 @@ text-align:center;
 }
 
 .container{
-max-width:900px;
+width:90%;
+max-width:800px;
 margin:20px auto;
 background:white;
-padding:20px;
-border-radius:12px;
+padding:25px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
 }
 
-input,textarea{
+input,
+select,
+textarea{
 width:100%;
-padding:10px;
-margin:8px 0;
+padding:12px;
+margin:10px 0;
 border:1px solid #ccc;
 border-radius:8px;
+box-sizing:border-box;
+}
+
+textarea{
+height:100px;
+resize:none;
 }
 
 button{
 width:100%;
-padding:12px;
+padding:14px;
 background:#7b1fa2;
 color:white;
 border:none;
-border-radius:8px;
-cursor:pointer;
+border-radius:10px;
 font-size:16px;
+cursor:pointer;
+}
+
+button:disabled{
+opacity:.7;
+cursor:not-allowed;
+}
+
+.preview{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-top:10px;
+}
+
+.preview img{
+width:90px;
+height:90px;
+border-radius:10px;
+object-fit:cover;
+border:1px solid #ddd;
+}
+
+.modeBox{
+padding:15px;
+border:1px solid #ddd;
+border-radius:10px;
 }
 
 .row{
 display:flex;
 align-items:center;
 gap:10px;
-margin:6px 0;
+margin:10px 0;
 }
+
+.row input[type=checkbox]{
+width:auto;
+transform:scale(1.2);
+}
+
+.modeFee{
+display:none;
+padding:10px;
+background:#f4f4f4;
+border-radius:10px;
+margin-bottom:10px;
+}
+
 </style>
+
 </head>
 
 <body>
 
 <header>
-<h2>Creative Teacher Registration</h2>
-<p>Music • Dance • Art • Design</p>
+<h1>Creative Teacher Registration</h1>
+<p>Music • Dance • Art • Design • Acting</p>
 </header>
 
 <div class="container">
@@ -67,46 +120,246 @@ margin:6px 0;
 <form id="form">
 
 <h3>Login Details</h3>
-<input id="email" type="email" placeholder="Email" required>
-<input id="password" type="password" placeholder="Password" required>
+
+<input type="email" id="email" placeholder="Email Address" required>
+
+<input type="password" id="password" placeholder="Create Password" required>
 
 <h3>Basic Information</h3>
+
 <input id="name" placeholder="Full Name" required>
-<input id="phone" placeholder="Phone Number" required>
-<input id="experience" placeholder="Experience (Years)">
-<input id="address" placeholder="Address">
+
+<input id="experience" placeholder="Experience (e.g. 5 Years)" required>
+
+<input id="phone" placeholder="Contact Number" required>
+
+<input id="alternatePhone" placeholder="Alternate Phone Number">
+
+<input id="website" placeholder="Website URL if available">
+
+<input id="address" placeholder="Full Address">
+
+<input id="area" placeholder="Area / City / State">
+
+<input id="mapLink" placeholder="Google Map Location Link">
 
 <h3>Creative Skills</h3>
 
-<div class="row"><input type="checkbox" value="Music" class="skill"> Music</div>
-<div class="row"><input type="checkbox" value="Dance" class="skill"> Dance</div>
-<div class="row"><input type="checkbox" value="Painting" class="skill"> Painting</div>
-<div class="row"><input type="checkbox" value="Photography" class="skill"> Photography</div>
-<div class="row"><input type="checkbox" value="Graphic Design" class="skill"> Graphic Design</div>
-<div class="row"><input type="checkbox" value="Fashion Design" class="skill"> Fashion Design</div>
-<div class="row"><input type="checkbox" value="Acting" class="skill"> Acting</div>
+<div class="modeBox">
 
-<textarea id="bio" placeholder="Short Bio"></textarea>
+<div class="row">
+<input type="checkbox" value="Music" class="skillCheck">
+Music
+</div>
 
-<button type="submit">Register & Continue</button>
+<div class="row">
+<input type="checkbox" value="Dance" class="skillCheck">
+Dance
+</div>
+
+<div class="row">
+<input type="checkbox" value="Painting" class="skillCheck">
+Painting
+</div>
+
+<div class="row">
+<input type="checkbox" value="Photography" class="skillCheck">
+Photography
+</div>
+
+<div class="row">
+<input type="checkbox" value="Graphic Design" class="skillCheck">
+Graphic Design
+</div>
+
+<div class="row">
+<input type="checkbox" value="Fashion Design" class="skillCheck">
+Fashion Design
+</div>
+
+<div class="row">
+<input type="checkbox" value="Acting" class="skillCheck">
+Acting
+</div>
+
+<div class="row">
+<input type="checkbox" id="otherCheck">
+Other
+</div>
+
+<input
+id="otherSkill"
+placeholder="Write Other Skill"
+style="display:none;"
+>
+
+<p id="skillError" style="display:none;color:red;">
+Select at least one skill
+</p>
+
+</div>
+
+<h3>Teaching Modes</h3>
+
+<div class="modeBox">
+
+<div class="row">
+<input
+type="checkbox"
+class="mode"
+value="Individual Coaching"
+onchange="toggleFee('individualFeeBox')"
+>
+Individual Coaching
+</div>
+
+<div id="individualFeeBox" class="modeFee">
+<input id="individualFee" placeholder="Enter Fee">
+</div>
+
+<div class="row">
+<input
+type="checkbox"
+class="mode"
+value="Home Tuition"
+onchange="toggleFee('homeFeeBox')"
+>
+Home Tuition
+</div>
+
+<div id="homeFeeBox" class="modeFee">
+<input id="homeFee" placeholder="Enter Fee">
+</div>
+
+<div class="row">
+<input
+type="checkbox"
+class="mode"
+value="Group Coaching"
+onchange="toggleFee('groupFeeBox')"
+>
+Group Coaching
+</div>
+
+<div id="groupFeeBox" class="modeFee">
+<input id="groupFee" placeholder="Enter Fee">
+</div>
+
+<div class="row">
+<input
+type="checkbox"
+class="mode"
+value="Online"
+onchange="toggleFee('onlineFeeBox')"
+>
+Online
+</div>
+
+<div id="onlineFeeBox" class="modeFee">
+<input id="onlineFee" placeholder="Enter Fee">
+</div>
+
+</div>
+
+<h3>Profile Picture</h3>
+
+<input
+type="file"
+id="logo"
+accept="image/*"
+required
+>
+
+<div id="logoPreview" class="preview"></div>
+
+<h3>ID Proof</h3>
+
+<select id="idType" required>
+<option value="">Select</option>
+<option>Aadhaar</option>
+<option>PAN</option>
+<option>License</option>
+</select>
+
+<input
+type="file"
+id="idUpload"
+accept="image/*"
+required
+>
+
+<div id="idPreview" class="preview"></div>
+
+<h3>Gallery</h3>
+
+<input
+type="file"
+id="gallery"
+multiple
+accept="image/*"
+>
+
+<div id="galleryPreview" class="preview"></div>
+
+<textarea
+id="bio"
+placeholder="About Creative Teacher"
+></textarea>
+<!-- DECLARATION -->
+
+<div style="margin-top:15px;padding:10px;border:1px solid #ddd;border-radius:10px;background:#fafafa;">
+
+<label
+for="declaration"
+style="font-size:12px;line-height:1.5;display:block;margin-bottom:8px;"
+>
+
+I hereby declare that all the information provided by me in this form is true and correct to the best of my knowledge and belief. I understand that if any information is found to be false or incorrect, my application may be rejected or necessary action may be taken against me. I also agree to follow all the rules, regulations, and responsibilities assigned by the GURULINK, powered by G10 Group.
+
+</label>
+
+<div style="display:flex;align-items:center;gap:10px;">
+<input type="checkbox" id="declaration" required>
+<label for="declaration">I Agree</label>
+</div>
+
+</div>
+
+<button type="submit">Continue To Payment</button>
 
 </form>
 
 </div>
 
+<script>
+
+function toggleFee(id){
+const box=document.getElementById(id);
+box.style.display=
+box.style.display==="block"
+? "none"
+: "block";
+}
+
+</script>
+
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
 import {
 getAuth,
 createUserWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 import {
 getDatabase,
 ref,
 set
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -122,64 +375,314 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-document.getElementById("form").addEventListener("submit", async (e)=>{
-e.preventDefault();
+const API_KEY =
+"31f729ff855eb2e42c00ee508a8647ea";
 
-const email = emailInput.value;
-const password = passwordInput.value;
+const form = document.getElementById("form");
 
-const name = document.getElementById("name").value;
-const phone = document.getElementById("phone").value;
-const experience = document.getElementById("experience").value;
-const address = document.getElementById("address").value;
-const bio = document.getElementById("bio").value;
+/* OTHER SKILL */
 
-const skills = [];
-document.querySelectorAll(".skill:checked").forEach(s=>{
-skills.push(s.value);
+document.getElementById("otherCheck")
+.addEventListener("change",(e)=>{
+
+document.getElementById("otherSkill").style.display =
+e.target.checked ? "block" : "none";
+
 });
 
-if(skills.length === 0){
-alert("Select at least one skill");
-return;
+/* IMAGE UPLOAD */
+
+async function upload(file){
+
+let fd = new FormData();
+
+fd.append("image",file);
+
+let res = await fetch(
+`https://api.imgbb.com/1/upload?key=${API_KEY}`,
+{
+method:"POST",
+body:fd
+}
+);
+
+let data = await res.json();
+
+return data.data.url;
+
 }
 
-try {
+/* IMAGE PREVIEW */
 
-// 1. CREATE AUTH USER
-const userCred = await createUserWithEmailAndPassword(auth, email, password);
-const uid = userCred.user.uid;
+function preview(input,box){
 
-// 2. SAVE PROFILE (UID BASED)
-await set(ref(db, "creative_teachers/" + uid), {
-uid,
-name,
-phone,
-email,
-experience,
-address,
-skills,
-bio,
-role:"creative_teacher",
-status:"pending",
-createdAt:Date.now()
+input.addEventListener("change",()=>{
+
+box.innerHTML="";
+
+if(input.files[0]){
+
+let img=document.createElement("img");
+
+img.src =
+URL.createObjectURL(input.files[0]);
+
+box.appendChild(img);
+
+}
+
 });
 
-// 3. ROLE MAPPING (IMPORTANT FOR LOGIN SYSTEM)
-await set(ref(db, "users/" + uid), {
+}
+
+preview(
+document.getElementById("logo"),
+document.getElementById("logoPreview")
+);
+
+preview(
+document.getElementById("idUpload"),
+document.getElementById("idPreview")
+);
+
+/* GALLERY */
+
+let galleryFiles=[];
+
+document
+.getElementById("gallery")
+.addEventListener("change",function(){
+
+galleryFiles = Array.from(this.files);
+
+document.getElementById("galleryPreview").innerHTML =
+galleryFiles.map(
+f=>`<img src="${URL.createObjectURL(f)}">`
+).join("");
+
+});
+
+/* SUBMIT */
+
+form.addEventListener("submit",async(e)=>{
+
+e.preventDefault();
+
+const submitBtn =
+form.querySelector("button");
+
+submitBtn.disabled=true;
+submitBtn.innerText="Processing...";
+
+/* DECLARATION */
+
+if(
+!document.getElementById("declaration").checked
+){
+
+alert(
+"Please accept the declaration before submitting."
+);
+
+submitBtn.disabled=false;
+submitBtn.innerText="Continue To Payment";
+
+return;
+
+}
+
+try{
+
+const email =
+document.getElementById("email")
+.value.trim()
+.toLowerCase();
+
+const password =
+document.getElementById("password")
+.value;
+
+const userCred =
+await createUserWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+const uid = userCred.user.uid;
+
+/* LOCAL STORAGE */
+
+localStorage.setItem("uid",uid);
+localStorage.setItem("creativeTeacherId",uid);
+localStorage.setItem("lastId",uid);
+localStorage.setItem("lastType","creative_teacher");
+
+/* IMAGE UPLOAD */
+
+let logoUrl="";
+
+if(document.getElementById("logo").files[0]){
+
+logoUrl =
+await upload(
+document.getElementById("logo").files[0]
+);
+
+}
+
+let idProofUrl="";
+
+if(document.getElementById("idUpload").files[0]){
+
+idProofUrl =
+await upload(
+document.getElementById("idUpload").files[0]
+);
+
+}
+
+/* GALLERY */
+
+let gallery=[];
+
+for(let f of galleryFiles){
+
+gallery.push(
+await upload(f)
+);
+
+}
+
+/* SKILLS */
+
+let skills=[];
+
+document
+.querySelectorAll(".skillCheck:checked")
+.forEach(i=>{
+
+skills.push(i.value);
+
+});
+
+if(
+document.getElementById("otherCheck").checked
+){
+
+skills.push(
+document.getElementById("otherSkill").value
+);
+
+}
+
+/* TEACHING MODES */
+
+let teachingModes=[];
+
+document
+.querySelectorAll(".mode:checked")
+.forEach(i=>{
+
+teachingModes.push(i.value);
+
+});
+
+/* SAVE PROFILE */
+
+await set(
+ref(db,"creative_teachers/"+uid),
+{
+uid,
+
+name:
+document.getElementById("name").value,
+
+experience:
+document.getElementById("experience").value,
+
+phone:
+document.getElementById("phone").value,
+
+alternatePhone:
+document.getElementById("alternatePhone").value,
+
+email,
+
+website:
+document.getElementById("website").value,
+
+address:
+document.getElementById("address").value,
+
+area:
+document.getElementById("area").value,
+
+mapLink:
+document.getElementById("mapLink").value,
+
+skills,
+
+teachingModes,
+
+individualFee:
+document.getElementById("individualFee").value,
+
+homeFee:
+document.getElementById("homeFee").value,
+
+groupFee:
+document.getElementById("groupFee").value,
+
+onlineFee:
+document.getElementById("onlineFee").value,
+
+logo:logoUrl,
+
+gallery,
+
+idType:
+document.getElementById("idType").value,
+
+idProof:idProofUrl,
+
+bio:
+document.getElementById("bio").value,
+
+role:"creative_teacher",
+
+status:"pending",
+
+createdAt:Date.now()
+}
+);
+
+/* USER ROLE */
+
+await set(
+ref(db,"users/"+uid),
+{
 uid,
 role:"creative_teacher",
 profileId:uid
-});
+}
+);
 
-alert("Registration Successful");
+/* PAYMENT */
 
-// 4. PAYMENT REDIRECT
-window.location.href = "payment.html?type=creative_teacher&id=" + uid;
+window.location.href =
+"payment.html?type=creative_teacher&id="+uid;
 
 }
 catch(err){
+
 alert(err.message);
+
+submitBtn.disabled=false;
+
+submitBtn.innerText=
+"Continue To Payment";
+
 }
 
 });
