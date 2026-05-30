@@ -161,7 +161,8 @@ document.getElementById("msg").innerHTML =
 '<span class="success">Payment successful! Redirecting...</span>';
 
 setTimeout(() => {
-window.location.href = "profile-view.html?id=" + id;
+window.location.href =
+"profile-view.html?type=" + type + "&id=" + id;
 }, 2000);
 
 } catch (err) {
