@@ -385,10 +385,14 @@ const userCred = await createUserWithEmailAndPassword(auth,email,password);
 const uid=userCred.user.uid;
 
 /* LOCAL STORAGE */
+/* LOCAL STORAGE */
 localStorage.setItem("uid",uid);
 localStorage.setItem("teacherId",uid);
 localStorage.setItem("lastId",uid);
 localStorage.setItem("lastType","teacher");
+
+localStorage.setItem("role","teacher");
+localStorage.setItem("profileId",uid);
 
 /* IMAGE UPLOAD */
 let logoUrl="";
