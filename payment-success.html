@@ -94,11 +94,19 @@ if (!id || id === "null" || id === "undefined") {
 }
 
 /* FINAL CHECK */
+let type = new URLSearchParams(window.location.search).get("type");
+let id = new URLSearchParams(window.location.search).get("id");
+
+/* FALLBACK (VERY IMPORTANT) */
+if (!type) type = localStorage.getItem("pendingType");
+if (!id) id = localStorage.getItem("pendingId");
+
+/* FINAL CHECK */
 if (!id) {
-    document.getElementById("loader").style.display = "none";
-    document.getElementById("msg").innerHTML =
-        '<span class="error">Profile ID missing.</span>';
-    throw new Error("Profile ID Missing");
+  document.getElementById("loader").style.display = "none";
+  document.getElementById("msg").innerHTML =
+    '<span class="error">Profile ID missing</span>';
+  throw new Error("Missing ID");
 }
 
 /* PAYMENT AMOUNT */
