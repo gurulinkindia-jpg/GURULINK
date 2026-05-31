@@ -146,6 +146,10 @@ border-radius:15px;
 </style>
 </head>
 
+
+
+
+
 <body>
 
 <header>
@@ -198,324 +202,255 @@ All Modes
 
 </div>
 
+
+
+
+
+
+
+
+
+
 <script type="module">
 
-import {
-initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
-import {
-getDatabase,
-ref,
-onValue
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 /* FIREBASE */
-
 const firebaseConfig = {
-
-apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-
-authDomain:"gurulink-59cc7.firebaseapp.com",
-
-databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-
-projectId:"gurulink-59cc7",
-
-storageBucket:"gurulink-59cc7.appspot.com",
-
-messagingSenderId:"112148672399",
-
-appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
+  apiKey: "AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+  authDomain: "gurulink-59cc7.firebaseapp.com",
+  databaseURL: "https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "gurulink-59cc7",
+  storageBucket: "gurulink-59cc7.appspot.com",
+  messagingSenderId: "112148672399",
+  appId: "1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getDatabase(app);
 
 let teachers = [];
 let institutions = [];
 
 /* LOAD TEACHERS */
+onValue(ref(db, "teachers"), (snap) => {
 
-onValue(ref(db,"teachers"),snap=>{
+  teachers = [];
 
-teachers = [];
+  snap.forEach((c) => {
 
-snap.forEach(c=>{
+    const d = c.val();
 
-const d = c.val();
+    if (
+      d.status === "approved" &&
+      (d.category || "").toLowerCase() === "creative"
+    ) {
+      teachers.push({
+        ...d,
+        id: c.key,
+        type: "Teacher"
+      });
+    }
 
-if(
-d.status==="approved" &&
-(d.category || "").toLowerCase()==="creative"
-){
+  });
 
-teachers.push({
-...d,
-id:c.key,
-type:"Teacher"
-});
-
-}
-
-});
-
-render();
-
+  render();
 });
 
 /* LOAD INSTITUTIONS */
+onValue(ref(db, "institutions"), (snap) => {
 
-onValue(ref(db,"institutions"),snap=>{
+  institutions = [];
 
-institutions = [];
+  snap.forEach((c) => {
 
-snap.forEach(c=>{
+    const d = c.val();
 
-const d = c.val();
+    if (
+      d.status === "approved" &&
+      (d.category || "").toLowerCase() === "creative"
+    ) {
+      institutions.push({
+        ...d,
+        id: c.key,
+        type: "Institution"
+      });
+    }
 
-if(
-d.status==="approved" &&
-(d.category || "").toLowerCase()==="creative"
-){
+  });
 
-institutions.push({
-...d,
-id:c.key,
-type:"Institution"
+  render();
 });
 
+/* GET ALL */
+function getAllProfiles() {
+  return [...teachers, ...institutions];
 }
 
-});
-
-render();
-
-});
-
-/* COMBINE */
-
-function getAll(){
-
-return [
-...teachers,
-...institutions
-];
-
+/* SEARCH HELP */
+function similar(a, b) {
+  return (a || "").toLowerCase().includes((b || "").toLowerCase());
 }
+
+/* CLASS-LIKE SUBJECT MATCH */
+function subjectMatch(userSubject, selectedSubject) {
+  if (!selectedSubject) return true;
+  if (!userSubject) return false;
+
+  if (Array.isArray(userSubject)) {
+    return userSubject.some(s =>
+      s.toLowerCase().includes(selectedSubject.toLowerCase())
+    );
+  }
+
+  return userSubject
+    .toLowerCase()
+    .includes(selectedSubject.toLowerCase());
+}
+
+/* MODE MATCH */
+function modeMatch(modes, selectedMode) {
+  if (!selectedMode) return true;
+
+  const list = modes || [];
+
+  return list.includes(selectedMode);
+}
+
+/* =========================
+   VIEW BUTTON (LIKE ACADEMIC)
+========================= */
+
+document.addEventListener("click", (e) => {
+
+  const btn = e.target.closest(".view");
+  if (!btn) return;
+
+  const id = btn.dataset.id;
+
+  const uid =
+    localStorage.getItem("uid") ||
+    localStorage.getItem("studentUid") ||
+    localStorage.getItem("teacherUid") ||
+    localStorage.getItem("adminUid") ||
+    localStorage.getItem("institutionId");
+
+  if (!uid) {
+
+    const redirectURL = "profile-view.html?id=" + id;
+
+    sessionStorage.setItem("redirectAfterLogin", redirectURL);
+
+    alert("Please login first");
+
+    window.location.href = "student-login.html";
+    return;
+  }
+
+  window.location.href = "profile-view.html?id=" + id;
+});
 
 /* FILTER EVENTS */
-
-document.getElementById("search")
-.addEventListener("input",render);
-
-document.getElementById("subjectFilter")
-.addEventListener("change",render);
-
-document.getElementById("modeFilter")
-.addEventListener("change",render);
-
-/* OPEN PROFILE */
-
-window.openProfile = function(id){
-
-if(!id) return;
-
-/* CHECK STUDENT LOGIN */
-
-const studentUid =
-localStorage.getItem("studentUid");
-
-if(!studentUid){
-
-/* SAVE REDIRECT DATA */
-
-localStorage.setItem(
-"redirectProfileId",
-id
-);
-
-localStorage.setItem(
-"redirectPage",
-"profile-view.html"
-);
-
-/* REDIRECT LOGIN */
-
-window.location.href =
-"student-login.html";
-
-return;
-
-}
-
-/* OPEN PROFILE */
-
-window.location.href =
-"profile-view.html?id=" + id;
-
-};
+document.getElementById("search").addEventListener("input", render);
+document.getElementById("subjectFilter").addEventListener("change", render);
+document.getElementById("modeFilter").addEventListener("change", render);
 
 /* RENDER */
+function render() {
 
-function render(){
+  const all = getAllProfiles();
 
-const all = getAll();
+  const search = document.getElementById("search").value.trim().toLowerCase();
+  const subject = document.getElementById("subjectFilter").value;
+  const mode = document.getElementById("modeFilter").value;
 
-const search =
-document.getElementById("search")
-.value
-.toLowerCase();
+  const filtered = all.filter((x) => {
 
-const subject =
-document.getElementById("subjectFilter")
-.value;
+    const name = (x.name || "").toLowerCase();
+    const location = (x.location || x.address || "").toLowerCase();
 
-const mode =
-document.getElementById("modeFilter")
-.value;
+    /* SEARCH */
+    if (search && !(similar(name, search) || similar(location, search))) {
+      return false;
+    }
 
-const filtered = all.filter(x=>{
+    /* SUBJECT */
+    if (!subjectMatch(x.subjects || x.subject, subject)) {
+      return false;
+    }
 
-const name =
-(x.name || "")
-.toLowerCase();
+    /* MODE */
+    if (!modeMatch(x.teachingModes || x.modes, mode)) {
+      return false;
+    }
 
-const location =
-(x.location || x.address || "")
-.toLowerCase();
+    return true;
+  });
 
-/* SEARCH */
+  const grid = document.getElementById("grid");
 
-if(
-search &&
-!(
-name.includes(search) ||
-location.includes(search)
-)
-){
+  if (!filtered.length) {
+    grid.innerHTML = `
+      <div class="empty">
+        No Creative Profiles Found
+      </div>
+    `;
+    return;
+  }
 
-return false;
+  grid.innerHTML = filtered.map((x) => `
 
-}
+    <div class="card ${x.type.toLowerCase()}">
 
-/* SUBJECT */
+      <div class="top">
 
-if(
-subject &&
-(x.subject || "") !== subject
-){
+        <img
+          class="photo"
+          src="${x.photo || x.logo || 'https://via.placeholder.com/100'}"
+        >
 
-return false;
+        <div>
 
-}
+          <h3>${x.name || "-"}</h3>
 
-/* MODE */
+          <div class="badge">${x.type}</div>
 
-const modes =
-x.teachingModes ||
-x.modes ||
-[];
+          <div class="badge">${x.category || "creative"}</div>
 
-if(
-mode &&
-!modes.includes(mode)
-){
+          <div class="badge ${x.verified ? 'verify' : ''}">
+            ${x.verified ? "Verified" : "Not Verified"}
+          </div>
 
-return false;
+          <button
+            class="btn view"
+            data-id="${x.id}"
+          >
+            View Details
+          </button>
 
-}
+        </div>
 
-return true;
+      </div>
 
-});
+      <div class="details">
 
-const grid =
-document.getElementById("grid");
+        <b>Subject:</b>
+        ${Array.isArray(x.subjects) ? x.subjects.join(", ") : (x.subject || "-")}
+        <br>
 
-/* EMPTY */
+        <b>Location:</b>
+        ${x.location || x.address || "-"}
+        <br>
 
-if(!filtered.length){
+        <b>Modes:</b>
+        ${(x.teachingModes || x.modes || []).join(", ") || "-"}
 
-grid.innerHTML = `
+      </div>
 
-<div class="empty">
+    </div>
 
-No Creative Profiles Found
-
-</div>
-
-`;
-
-return;
-
-}
-
-/* CARDS */
-
-grid.innerHTML = filtered.map(x=>`
-
-<div class="card ${x.type.toLowerCase()}">
-
-<div class="top">
-
-<img
-class="photo"
-src="${x.photo || x.logo || 'https://via.placeholder.com/100'}">
-
-<div>
-
-<h3>
-${x.name || "-"}
-</h3>
-
-<div class="badge">
-${x.type}
-</div>
-
-<div class="badge">
-${x.category || "creative"}
-</div>
-
-<div class="badge verify">
-Verified
-</div>
-
-<button
-class="btn"
-onclick="openProfile('${x.id}')">
-
-View Details
-
-</button>
-
-</div>
-
-</div>
-
-<div class="details">
-
-<b>Subject:</b>
-${x.subject || "-"}
-<br>
-
-<b>Location:</b>
-${x.location || x.address || "-"}
-<br>
-
-<b>Modes:</b>
-${(x.teachingModes || x.modes || []).join(", ") || "-"}
-
-</div>
-
-</div>
-
-`).join("");
-
+  `).join("");
 }
 
 </script>
