@@ -77,6 +77,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 /* URL PARAMS */
+alert(window.location.href);
 const params = new URLSearchParams(window.location.search);
 const type = params.get("type") || "teacher";
 let id = params.get("id");
