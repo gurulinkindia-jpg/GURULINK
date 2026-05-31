@@ -76,10 +76,10 @@ object-fit:cover;
 border:1px solid #ddd;
 }
 
-.modeBox{
-padding:15px;
-border:1px solid #ddd;
-border-radius:10px;
+.subjectGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px 20px;
 }
 
 .row{
@@ -107,510 +107,252 @@ margin-bottom:10px;
 
 <body>
 
-<header>
 
+
+
+
+<header>
 <h1>Skill Teacher Registration</h1>
 <p>Registration Fee ₹100</p>
-
 </header>
+
+
+
+
 
 <div class="container">
 
-<form id="teacherForm">
+
+
+<form id="form">
+
+<input id="name" placeholder="Teacher Name" required>
+
+
+
+<label>Experience (in Years)</label>
+<input type="number" id="experience" placeholder="Example: 2, 5, 10 years" required>
+
+<input id="phone" placeholder="Contact Number" required>
+
+<input id="qualification" placeholder="Qualification (B.Ed, M.Sc, etc.)">
+
+<input id="alternatePhone" placeholder="Alternate Phone Number">
+
+<input type="email" id="email" placeholder="Email" required>
 
 <input
-id="name"
-placeholder="Full Name"
+type="password"
+id="password"
+placeholder="Create Password (this will be used for login)"
 required>
 
-<input
-id="phone"
-placeholder="Phone Number"
-required>
+<input id="website" placeholder="Website URL (if available)">
 
-<input
-id="alternatePhone"
-placeholder="Alternate Phone Number">
+<input id="address" placeholder=" Teacher area of Work Location: Guwahati/Delhi">
 
-<input
-type="email"
-id="email"
-placeholder="Email">
+<input id="area" placeholder="City / State">
 
-<input
-id="website"
-placeholder="Website / Social Link">
-
-<input
-id="qualification"
-placeholder="Qualification / Certification">
-
-<input
-id="experience"
-placeholder="Experience: 5 Years, 6 Months">
-
-<input
-id="location"
-placeholder="Preferred Teaching Area. Example: Guwahati, Delhi, Mumbai etc."
-required>
-
-<input
-id="mapLink"
-placeholder="Google Map Location Link (Paste URL if available)">
+<input id="mapLink" placeholder="Google Map Location Link (if available)">
 
 
 
-<h3>
-Skills / Subjects (More than one can be selected)
-<span style="color:red">*</span>
-</h3>
 
-<div class="modeBox">
+
+
+<h3>Creative Skills</h3>
+
+<div class="subjectGrid">
 
 <div class="row">
-<input type="checkbox" value="Computer" class="skillCheck"> Computer
+<input type="checkbox" value="Music" class="subjectCheck"> Music
 </div>
 
 <div class="row">
-<input type="checkbox" value="Coding" class="skillCheck"> Coding
+<input type="checkbox" value="Dance" class="subjectCheck"> Dance
 </div>
 
 <div class="row">
-<input type="checkbox" value="Programming" class="skillCheck"> Programming
+<input type="checkbox" value="Drawing" class="subjectCheck"> Drawing
 </div>
 
 <div class="row">
-<input type="checkbox" value="Web Development" class="skillCheck"> Web Development
+<input type="checkbox" value="Painting" class="subjectCheck"> Painting
 </div>
 
 <div class="row">
-<input type="checkbox" value="App Development" class="skillCheck"> App Development
+<input type="checkbox" value="Sketching" class="subjectCheck"> Sketching
 </div>
 
 <div class="row">
-<input type="checkbox" value="AI & Machine Learning" class="skillCheck"> AI & Machine Learning
+<input type="checkbox" value="Singing" class="subjectCheck"> Singing (Vocal)
 </div>
 
 <div class="row">
-<input type="checkbox" value="Data Science" class="skillCheck"> Data Science
+<input type="checkbox" value="Instrumental Music" class="subjectCheck"> Instrumental Music
 </div>
 
 <div class="row">
-<input type="checkbox" value="Digital Marketing" class="skillCheck"> Digital Marketing
+<input type="checkbox" value="Guitar" class="subjectCheck"> Guitar
 </div>
 
 <div class="row">
-<input type="checkbox" value="Graphic Design" class="skillCheck"> Graphic Design
+<input type="checkbox" value="Piano / Keyboard" class="subjectCheck"> Piano / Keyboard
 </div>
 
 <div class="row">
-<input type="checkbox" value="Video Editing" class="skillCheck"> Video Editing
+<input type="checkbox" value="Tabla" class="subjectCheck"> Tabla
 </div>
 
 <div class="row">
-<input type="checkbox" value="Animation" class="skillCheck"> Animation
+<input type="checkbox" value="Yoga" class="subjectCheck"> Yoga & Wellness
 </div>
 
 <div class="row">
-<input type="checkbox" value="Photography" class="skillCheck"> Photography
+<input type="checkbox" value="Acting / Drama" class="subjectCheck"> Acting / Drama
 </div>
 
 <div class="row">
-<input type="checkbox" value="Content Writing" class="skillCheck"> Content Writing
+<input type="checkbox" value="Craft" class="subjectCheck"> Craft / Handmade Art
 </div>
 
 <div class="row">
-<input type="checkbox" value="Spoken English" class="skillCheck"> Spoken English
+<input type="checkbox" value="Photography" class="subjectCheck"> Photography
 </div>
 
 <div class="row">
-<input type="checkbox" value="Public Speaking" class="skillCheck"> Public Speaking
+<input type="checkbox" value="Graphic Design" class="subjectCheck"> Graphic Design
 </div>
 
 <div class="row">
-<input type="checkbox" value="Personality Development" class="skillCheck"> Personality Development
-</div>
-
-<div class="row">
-<input type="checkbox" value="Hand Craft" class="skillCheck"> Hand Craft
-</div>
-
-<div class="row">
-<input type="checkbox" value="Embroidery" class="skillCheck"> Embroidery
-</div>
-
-<div class="row">
-<input type="checkbox" value="Tailoring" class="skillCheck"> Tailoring
-</div>
-
-<div class="row">
-<input type="checkbox" value="Fashion Designing" class="skillCheck"> Fashion Designing
-</div>
-
-<div class="row">
-<input type="checkbox" value="Beautician" class="skillCheck"> Beautician
-</div>
-
-<div class="row">
-<input type="checkbox" value="Hair Styling" class="skillCheck"> Hair Styling
-</div>
-
-<div class="row">
-<input type="checkbox" value="Makeup Artist" class="skillCheck"> Makeup Artist
-</div>
-
-<div class="row">
-<input type="checkbox" value="Cooking" class="skillCheck"> Cooking
-</div>
-
-<div class="row">
-<input type="checkbox" value="Cake Making" class="skillCheck"> Cake Making
-</div>
-
-<div class="row">
-<input type="checkbox" value="Bakery" class="skillCheck"> Bakery
-</div>
-
-<div class="row">
-<input type="checkbox" value="Yoga" class="skillCheck"> Yoga
-</div>
-
-<div class="row">
-<input type="checkbox" value="Fitness Training" class="skillCheck"> Fitness Training
-</div>
-
-<div class="row">
-<input type="checkbox" value="Gym Training" class="skillCheck"> Gym Training
-</div>
-
-<div class="row">
-<input type="checkbox" value="Martial Arts" class="skillCheck"> Martial Arts
-</div>
-
-<div class="row">
-<input type="checkbox" value="Driving" class="skillCheck"> Driving
-</div>
-
-<div class="row">
-<input type="checkbox" value="Electrician" class="skillCheck"> Electrician
-</div>
-
-<div class="row">
-<input type="checkbox" value="Plumbing" class="skillCheck"> Plumbing
-</div>
-
-<div class="row">
-<input type="checkbox" value="Carpentry" class="skillCheck"> Carpentry
-</div>
-
-<div class="row">
-<input type="checkbox" value="Mobile Repairing" class="skillCheck"> Mobile Repairing
-</div>
-
-<div class="row">
-<input type="checkbox" value="Computer Hardware" class="skillCheck"> Computer Hardware
-</div>
-
-<div class="row">
-<input type="checkbox" value="AC Repairing" class="skillCheck"> AC Repairing
-</div>
-
-<div class="row">
-<input type="checkbox" value="CCTV Installation" class="skillCheck"> CCTV Installation
-</div>
-
-<div class="row">
-<input type="checkbox" value="Interior Design" class="skillCheck"> Interior Design
-</div>
-
-<div class="row">
-<input type="checkbox" value="Event Management" class="skillCheck"> Event Management
-</div>
-
-<div class="row">
-<input type="checkbox" value="Business Training" class="skillCheck"> Business Training
-</div>
-
-<div class="row">
-<input type="checkbox" value="Stock Market" class="skillCheck"> Stock Market
-</div>
-
-<div class="row">
-<input type="checkbox" value="Trading" class="skillCheck"> Trading
-</div>
-
-<div class="row">
-<input type="checkbox" value="other" id="otherCheck"> Other
+<input type="checkbox" id="otherCheck"> Other Skill
 </div>
 
 <input
-id="otherSkill"
-placeholder="Write Other Skill"
-style="display:none;margin-top:10px">
+id="otherSubject"
+placeholder="Write Other Creative Skill"
+style="display:none;">
 
-<p
-id="skillError"
-style="color:red;display:none;">
-
+<p id="subjectError" style="color:red;display:none;">
 Please select at least one skill
-
 </p>
 
 </div>
 
 
 
-<h3>Teaching Modes</h3>
+
+
+
+
+
+
+<input
+id="class"
+placeholder="Skill Level: Beginner / Intermediate / Advanced / All Levels"
+required>
+
+
+
+
+
+
+
+
+
+<h3>Skill Training Modes</h3>
 
 <div class="modeBox">
 
 <div class="row">
-<input
-type="checkbox"
-value="Individual Coaching"
-id="individualCheck"
-onchange="toggleFee('individual')">
-
-<label>
-Individual Coaching
-</label>
+<input type="checkbox" class="mode" value="Workshop / Group Session" onchange="toggleFee('groupFeeBox')">
+Workshop / Group Session
 </div>
 
-<div id="individual" class="modeFee">
-
-<input
-id="individualFee"
-placeholder="Enter Individual Coaching Fee">
-
+<div id="groupFeeBox" class="modeFee">
+<input id="groupFee" placeholder="Enter Workshop Fee">
 </div>
-
 
 
 <div class="row">
-<input
-type="checkbox"
-value="Home Tuition"
-id="homeCheck"
-onchange="toggleFee('home')">
-
-<label>
-Home Tuition
-</label>
+<input type="checkbox" class="mode" value="Personal Training" onchange="toggleFee('individualFeeBox')">
+Personal Training (1-to-1)
 </div>
 
-<div id="home" class="modeFee">
-
-<input
-id="homeFee"
-placeholder="Enter Home Tuition Fee">
-
+<div id="individualFeeBox" class="modeFee">
+<input id="individualFee" placeholder="Enter Personal Training Fee">
 </div>
-
 
 
 <div class="row">
-<input
-type="checkbox"
-value="Group Coaching"
-id="groupCheck"
-onchange="toggleFee('group')">
-
-<label>
-Group Coaching
-</label>
+<input type="checkbox" class="mode" value="Home Practice Session" onchange="toggleFee('homeFeeBox')">
+Home Practice Session
 </div>
 
-<div id="group" class="modeFee">
-
-<input
-id="groupFee"
-placeholder="Enter Group Coaching Fee">
-
+<div id="homeFeeBox" class="modeFee">
+<input id="homeFee" placeholder="Enter Home Session Fee">
 </div>
-
 
 
 <div class="row">
-<input
-type="checkbox"
-value="Dual Coaching"
-id="dualCheck"
-onchange="toggleFee('dual')">
-
-<label>
-Dual Coaching
-</label>
+<input type="checkbox" class="mode" value="Online Training" onchange="toggleFee('onlineFeeBox')">
+Online Training
 </div>
 
-<div id="dual" class="modeFee">
-
-<input
-id="dualFee"
-placeholder="Enter Dual Coaching Fee">
-
-</div>
-
-
-
-<div class="row">
-<input
-type="checkbox"
-value="Super/Special Group Coaching"
-id="superCheck"
-onchange="toggleFee('superGroup')">
-
-<label>
-Super/Special Group Coaching
-</label>
-</div>
-
-<div id="superGroup" class="modeFee">
-
-<input
-id="superGroupFee"
-placeholder="Enter Super/Special Group Coaching Fee">
-
-</div>
-
-
-
-<div class="row">
-<input
-type="checkbox"
-value="Online Individual"
-id="onlineIndividualCheck"
-onchange="toggleFee('onlineIndividual')">
-
-<label>
-Online Individual
-</label>
-</div>
-
-<div id="onlineIndividual" class="modeFee">
-
-<input
-id="onlineIndividualFee"
-placeholder="Enter Online Individual Fee">
-
-</div>
-
-
-
-<div class="row">
-<input
-type="checkbox"
-value="Online Group"
-id="onlineGroupCheck"
-onchange="toggleFee('onlineGroup')">
-
-<label>
-Online Group
-</label>
-</div>
-
-<div id="onlineGroup" class="modeFee">
-
-<input
-id="onlineGroupFee"
-placeholder="Enter Online Group Fee">
-
-</div>
-
-
-
-<div class="row">
-<input
-type="checkbox"
-value="Demo Class Reg. Fee"
-id="demoCheck"
-onchange="toggleFee('demo')">
-
-<label>
-Demo Class Reg. Fee
-</label>
-</div>
-
-<div id="demo" class="modeFee">
-
-<input
-id="demoFee"
-placeholder="Enter Demo Class Registration Fee">
-
-</div>
-
-
-
-<div class="row">
-<input
-type="checkbox"
-value="Other"
-id="otherModeCheck"
-onchange="toggleFee('otherMode')">
-
-<label>
-Other
-</label>
-</div>
-
-<div id="otherMode" class="modeFee">
-
-<input
-id="otherModeFee"
-placeholder="Enter Other Fee / Details">
-
+<div id="onlineFeeBox" class="modeFee">
+<input id="onlineFee" placeholder="Enter Online Training Fee">
 </div>
 
 </div>
 
 
 
-<h3>Profile Photo</h3>
+
+
+
+
+
+
+
+<h3>Logo/Profile Pic</h3>
 
 <input
 type="file"
-id="photo"
+id="logo"
 accept="image/*"
 required>
 
-<div
-id="photoPreview"
-class="preview"></div>
+<div id="logoPreview" class="preview"></div>
 
 
 
-<h3>Identity Proof (Upload any one) <span style="color:red">*</span></h3>
+
+
+
+
+<h3>ID Proof</h3>
 
 <select id="idType" required>
 
-<option value="">
-Select ID Type
-</option>
+<option value="">Select</option>
 
-<option value="Aadhaar">
-Aadhaar Card
-</option>
+<option value="Owner PAN"> PAN</option>
+<option value="Owner Aadhaar"> Aadhaar</option>
 
-<option value="Driving License">
-Driving License
-</option>
 
-<option value="Voter ID">
-Voter ID
-</option>
 
-<option value="PAN">
-PAN Card
-</option>
+<option value="Electricity Bill">Electricity Bill</option>
+<option value="NGO Certificate">NGO Certificate</option>
 
-<option value="Passport">
-Passport
-</option>
-
-<option value="Other">
-Other
-</option>
+<option value="Other">Other</option>
 
 </select>
+
+<!-- ✅ MUST BE OUTSIDE SELECT -->
+<input
+id="otherIdProof"
+placeholder="Specify Other ID Proof"
+style="display:none; margin-top:10px;">
 
 <input
 type="file"
@@ -618,57 +360,64 @@ id="idUpload"
 accept="image/*"
 required>
 
-<div
-class="preview"
-id="idPreview"></div>
+<div id="idPreview" class="preview"></div>
 
-
-
-<h3>Gallery Photos (Max 5)</h3>
+<h3>Gallery</h3>
 
 <input
 type="file"
 id="gallery"
-accept="image/*"
 multiple
-style="display:none">
+accept="image/*">
 
-<button
-type="button"
-onclick="document.getElementById('gallery').click()">
-
-📸 Add Gallery Images
-
-</button>
-
-<div
-id="galleryPreview"
-class="preview"></div>
+<div id="galleryPreview" class="preview"></div>
 
 
 
-<div style="margin-top:20px;padding:15px;background:#f5f5f5;border-radius:10px;">
 
-<input
-type="checkbox"
-id="declaration"
-required>
 
-<label
-for="declaration"
-style="font-size:14px;line-height:1.5;">
+
+
+
+
+<!-- KEEP EVERYTHING SAME ABOVE -->
+
+<textarea
+id="description"
+placeholder="About Teacher"></textarea>
+
+
+
+
+
+
+
+
+
+<!-- ✅ DECLARATION START -->
+<div style="margin-top:15px;padding:10px;border:1px solid #ddd;border-radius:10px;background:#fafafa;">
+
+<label for="declaration" style="font-size:12px;line-height:1.5;display:block;margin-bottom:8px;">
 
 I hereby declare that all the information provided by me in this form is true and correct to the best of my knowledge and belief. I understand that if any information is found to be false or incorrect, my application may be rejected or necessary action may be taken against me. I also agree to follow all the rules, regulations, and responsibilities assigned by the GURULINK, powered by G10 Group.
 
 </label>
 
+<div style="display:flex;align-items:center;gap:10px;">
+<input type="checkbox" id="declaration" required>
+<label for="declaration" style="font-size:13px;">
+I Agree
+</label>
 </div>
 
+</div>
+<!-- ✅ DECLARATION END -->
 
 
-<textarea
-id="description"
-placeholder="About Teacher"></textarea>
+
+
+
+
 
 
 
@@ -682,8 +431,22 @@ Continue To Payment
 
 </div>
 
+<script>
 
+function toggleFee(id){
 
+const box=document.getElementById(id);
+
+box.style.display=
+box.style.display==="block"
+?
+"none"
+:
+"block";
+
+}
+
+</script>
 
 <script type="module">
 
@@ -695,12 +458,17 @@ from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import {
 getDatabase,
 ref,
-push
+set
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
+import {
+getAuth,
+createUserWithEmailAndPassword
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-const firebaseConfig={
+const firebaseConfig = {
 
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
@@ -712,275 +480,342 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
 
-const app=initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-const db=getDatabase(app);
+const db = getDatabase(app);
 
-const API_KEY=
+const auth = getAuth(app);
+
+const form = document.getElementById("form");
+
+
+
+
+/* 🔥 ID PROOF "OTHER" HANDLER */
+document.getElementById("idType").addEventListener("change",(e)=>{
+
+document.getElementById("otherIdProof").style.display =
+e.target.value === "Other" ? "block" : "none";
+
+});
+
+
+
+
+const API_KEY =
 "31f729ff855eb2e42c00ee508a8647ea";
 
+/* SUBJECT OTHER */
 
-const form=document.getElementById("teacherForm");
+document
+.getElementById("otherCheck")
+.addEventListener("change",(e)=>{
 
-const photo=
-document.getElementById("photo");
+document.getElementById(
+"otherSubject"
+).style.display =
 
-const photoPreview=
-document.getElementById("photoPreview");
+e.target.checked
+?
+"block"
+:
+"none";
 
-const gallery=
-document.getElementById("gallery");
+});
 
-const galleryPreview=
-document.getElementById("galleryPreview");
-
-const idUpload=
-document.getElementById("idUpload");
-
-const idPreview=
-document.getElementById("idPreview");
-
-const idTypeSelect=
-document.getElementById("idType");
-
+/* IMAGE UPLOAD */
 
 async function upload(file){
 
-let fd=new FormData();
+let fd = new FormData();
 
 fd.append("image",file);
 
-let res=await fetch(
+let res = await fetch(
+
 `https://api.imgbb.com/1/upload?key=${API_KEY}`,
+
 {
 method:"POST",
 body:fd
 }
+
 );
 
-let data=await res.json();
+let data = await res.json();
 
 return data.data.url;
 
 }
 
+/* PREVIEW */
 
+function preview(input, box){
 
-/* SKILL */
+input.addEventListener("change",()=>{
 
-const otherCheck=
-document.getElementById("otherCheck");
+box.innerHTML="";
 
-const otherSkill=
-document.getElementById("otherSkill");
+if(input.files[0]){
 
-otherCheck.addEventListener("change",()=>{
-
-if(otherCheck.checked){
-
-otherSkill.style.display="block";
-otherSkill.required=true;
-
-}else{
-
-otherSkill.style.display="none";
-otherSkill.required=false;
-otherSkill.value="";
-
-}
-
-});
-
-
-
-/* PHOTO PREVIEW */
-
-photo.addEventListener(
-"change",
-function(){
-
-photoPreview.innerHTML="";
-
-if(this.files.length>0){
-
-let img=document.createElement("img");
-
-img.src=
-URL.createObjectURL(
-this.files[0]
-);
-
-photoPreview.appendChild(img);
-
-}
-
-}
-);
-
-
-
-/* ID PREVIEW */
-
-idUpload.addEventListener(
-"change",
-function(){
-
-idPreview.innerHTML="";
-
-if(this.files.length>0){
-
-let img=document.createElement("img");
-
-img.src=
-URL.createObjectURL(
-this.files[0]
-);
-
-idPreview.appendChild(img);
-
-}
-
-}
-);
-
-
-
-/* GALLERY */
-
-let selectedFiles=[];
-
-gallery.addEventListener(
-"change",
-function(){
-
-let newFiles=
-Array.from(this.files);
-
-if(
-selectedFiles.length +
-newFiles.length > 5
-){
-
-alert(
-"Maximum 5 photos allowed"
-);
-
-return;
-
-}
-
-selectedFiles.push(...newFiles);
-
-renderPreview();
-
-this.value="";
-
-}
-);
-
-function renderPreview(){
-
-galleryPreview.innerHTML="";
-
-selectedFiles.forEach(file=>{
-
-let img=
+let img =
 document.createElement("img");
 
-img.src=
-URL.createObjectURL(file);
+img.src =
+URL.createObjectURL(
+input.files[0]
+);
 
-galleryPreview.appendChild(img);
+box.appendChild(img);
+
+}
 
 });
 
 }
 
+preview(
+document.getElementById("logo"),
+document.getElementById("logoPreview")
+);
 
+preview(
+document.getElementById("idUpload"),
+document.getElementById("idPreview")
+);
+
+let galleryFiles=[];
+
+document
+.getElementById("gallery")
+.addEventListener("change",function(){
+
+galleryFiles =
+Array.from(this.files);
+
+document.getElementById(
+"galleryPreview"
+).innerHTML =
+
+galleryFiles.map(f=>
+
+`<img src="${URL.createObjectURL(f)}">`
+
+).join("");
+
+});
 
 /* SUBMIT */
 
 form.addEventListener(
 "submit",
-async function(e){
+async (e)=>{
 
 e.preventDefault();
 
-let checked=
-document.querySelectorAll(
-".skillCheck:checked"
-).length;
-
-if(
-checked===0 &&
-!otherCheck.checked
-){
-
-document.getElementById(
-"skillError"
-).style.display="block";
-
-return;
-
-}else{
-
-document.getElementById(
-"skillError"
-).style.display="none";
-
-}
-
-const submitBtn=
-form.querySelector(
-'button[type="submit"]'
-);
+const submitBtn =
+form.querySelector("button");
 
 submitBtn.disabled=true;
 submitBtn.innerText="Processing...";
 
+
+
+
+
+
+
+
+
+
+
+
+
 try{
 
-let photoUrl="";
+let checked =
+document.querySelectorAll(
+".subjectCheck:checked"
+).length;
 
-if(photo.files[0]){
+if(
+checked===0 &&
+!document.getElementById("otherCheck").checked
+){
 
-photoUrl=
-await upload(
-photo.files[0]
-);
+document.getElementById(
+"subjectError"
+).style.display="block";
+
+submitBtn.disabled=false;
+submitBtn.innerText=
+"Continue To Payment";
+
+return;
 
 }
 
 
-let idUrl="";
 
-if(idUpload.files[0]){
 
-idUrl=
-await upload(
-idUpload.files[0]
+
+
+
+
+
+document.getElementById(
+"subjectError"
+).style.display="none";
+
+const email =
+document.getElementById("email")
+.value
+.trim()
+.toLowerCase();
+
+const password =
+document.getElementById("password")
+.value;
+
+
+
+
+
+
+
+
+
+
+if(!document.getElementById("declaration").checked){
+alert("Please accept the declaration before submitting.");
+submitBtn.disabled=false;
+submitBtn.innerText="Continue To Payment";
+return;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* CREATE AUTH */
+
+const userCred =
+
+await createUserWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+const uid =
+userCred.user.uid;
+await auth.currentUser.getIdToken(true);
+
+/* LOCAL STORAGE */
+
+localStorage.setItem(
+"uid",
+uid
+);
+
+localStorage.setItem(
+"profileId",
+uid
+);
+
+
+
+
+
+
+
+localStorage.setItem(
+"role",
+"teacher"
+);
+
+
+
+
+
+
+
+
+/* IMAGE UPLOAD */
+
+let logoUrl="";
+
+if(
+document.getElementById("logo").files[0]
+){
+
+logoUrl = await upload(
+document.getElementById("logo").files[0]
 );
 
 }
 
+let idProofUrl="";
 
-let galleryUrls=[];
+if(
+document.getElementById("idUpload").files[0]
+){
 
-for(let file of selectedFiles){
+idProofUrl = await upload(
+document.getElementById("idUpload").files[0]
+);
 
-galleryUrls.push(
+}
+
+let gallery=[];
+
+for(let file of galleryFiles){
+
+gallery.push(
 await upload(file)
 );
 
 }
 
+/* SUBJECTS */
+
+let subjects=[];
+
+document
+.querySelectorAll(
+".subjectCheck:checked"
+)
+.forEach(item=>{
+
+subjects.push(item.value);
+
+});
+
+if(
+document.getElementById("otherCheck").checked &&
+document.getElementById("otherSubject").value.trim()!==""
+){
+
+subjects.push(
+document.getElementById("otherSubject").value
+);
+
+}
+
+/* MODES */
 
 let teachingModes=[];
 
 document
-.querySelectorAll(
-'input[type="checkbox"]:checked'
-)
+.querySelectorAll(".mode:checked")
 .forEach(item=>{
 
 teachingModes.push(
@@ -989,49 +824,33 @@ item.value
 
 });
 
+/* SAVE Teacher */
 
-let skills=[];
-
-document
-.querySelectorAll(
-".skillCheck:checked"
-)
-.forEach(item=>{
-
-if(item.value!=="other"){
-
-skills.push(
-item.value
-);
-
-}
-
-});
-
-
-if(
-otherCheck.checked &&
-otherSkill.value.trim()!==""
-){
-
-skills.push(
-otherSkill.value
-);
-
-}
+await set(
 
 
 
-let newRef=
 
-await push(
 
-ref(db,"teachers"),
+
+ref(db,"teachers/"+uid),
 
 {
 
+
+
+
+
+
+
+uid:uid,
+
 name:
 document.getElementById("name").value,
+
+qualification: document.getElementById("qualification").value,
+
+experience: document.getElementById("experience").value,
 
 phone:
 document.getElementById("phone").value,
@@ -1039,26 +858,26 @@ document.getElementById("phone").value,
 alternatePhone:
 document.getElementById("alternatePhone").value,
 
-email:
-document.getElementById("email").value,
+email:email,
 
 website:
 document.getElementById("website").value,
 
-qualification:
-document.getElementById("qualification").value,
+address:
+document.getElementById("address").value,
 
-experience:
-document.getElementById("experience").value,
-
-skills,
+area:
+document.getElementById("area").value,
 
 mapLink:
 document.getElementById("mapLink").value,
 
-location:
-document.getElementById("location").value,
+subjects:subjects,
 
+class:
+document.getElementById("class").value,
+
+teachingModes:
 teachingModes,
 
 individualFee:
@@ -1070,75 +889,147 @@ document.getElementById("homeFee").value,
 groupFee:
 document.getElementById("groupFee").value,
 
-dualFee:
-document.getElementById("dualFee").value,
+onlineFee:
+document.getElementById("onlineFee").value,
 
-superGroupFee:
-document.getElementById("superGroupFee").value,
+logo:logoUrl,
 
-onlineIndividualFee:
-document.getElementById("onlineIndividualFee").value,
-
-onlineGroupFee:
-document.getElementById("onlineGroupFee").value,
-
-demoFee:
-document.getElementById("demoFee").value,
-
-otherModeFee:
-document.getElementById("otherModeFee").value,
-
-photo:
-photoUrl,
-
-gallery:
-galleryUrls,
+gallery:gallery,
 
 idType:
-idTypeSelect.value,
+document.getElementById("idType").value,
 
-idProof:
-idUrl,
-
-declarationAccepted:
-document.getElementById("declaration").checked,
+idProof:idProofUrl,
 
 description:
 document.getElementById("description").value,
 
+
+
+
+
+
+
+
 category:"skill",
 
-status:"pending"
+role:"teacher",
+
+
+
+
+
+status:"pending",
+
+
+
+
+
+
+createdAt:Date.now()
 
 }
 
 );
 
 
-const teacherId=
-newRef.key;
 
-localStorage.setItem(
-"teacherId",
-teacherId
+
+
+
+
+/* USER ROLE */
+
+await set(
+ref(db,"users/"+uid),
+{
+uid:uid,
+name:document.getElementById("name").value,
+email:email,
+
+
+
+
+
+
+role:"teacher",
+
+
+
+
+
+profileId:uid,
+createdAt:Date.now()
+}
 );
 
-setTimeout(()=>{
 
-window.location.href=
-"payment.html?type=teacher";
 
-},300);
 
-}
-catch(error){
 
-console.log(error);
+
+
+
+
+
+
+localStorage.setItem("uid", uid);
+localStorage.setItem("profileId", uid);
+localStorage.setItem("teacherId", uid);
+localStorage.setItem("institutionId", uid); // optiona
+
+
+
 
 alert(
-"Error:\n"+
-error.message
+"Registration Successful, ⚠ Do not refresh or go back. Complete payment to finish registration."
 );
+
+
+
+
+
+
+
+
+window.location.href =
+"payment.html?type=teacher&id=" + uid;
+
+
+
+
+
+
+
+
+}
+catch(err){
+
+console.log(err);
+
+if(
+err.code==="auth/email-already-in-use"
+){
+
+alert(
+"This email already exists.\nPlease login instead."
+);
+
+}
+else if(
+err.code==="auth/weak-password"
+){
+
+alert(
+"Password must be minimum 6 characters."
+);
+
+}
+else{
+
+alert(err.message);
+
+}
 
 submitBtn.disabled=false;
 
@@ -1149,31 +1040,6 @@ submitBtn.innerText=
 
 }
 );
-
-</script>
-
-
-
-<script>
-
-function toggleFee(id){
-
-let box=
-document.getElementById(id);
-
-box.style.display=
-
-box.style.display==="block"
-
-?
-
-"none"
-
-:
-
-"block";
-
-}
 
 </script>
 
