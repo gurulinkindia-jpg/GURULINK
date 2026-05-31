@@ -15,34 +15,26 @@ background:#eef2f7;
 header{
 background:#0d47a1;
 color:white;
-padding:15px;
+padding:12px;
 text-align:center;
-position:relative;
 }
 
-header h2{
-margin:0;
-}
-
-.headerBtns{
-position:absolute;
-right:15px;
-top:12px;
+.header-actions{
 display:flex;
-gap:8px;
+justify-content:space-between;
+align-items:center;
+padding:10px 15px;
+background:#1565c0;
+color:white;
 }
 
-.headerBtns button{
+.header-actions button{
 padding:6px 10px;
 border:none;
 border-radius:6px;
 cursor:pointer;
-font-size:12px;
-color:white;
+margin-left:5px;
 }
-
-.homeBtn{background:#4caf50;}
-.logoutBtn{background:#e53935;}
 
 .container{
 width:95%;
@@ -84,7 +76,7 @@ font-size:12px;
 .delete{background:#444;}
 .view{background:#1565c0;}
 .edit{background:#ff9800;}
-.renew{background:#6a1b9a;}
+.renew{background:#9c27b0;}
 
 .badge{
 display:inline-block;
@@ -95,8 +87,22 @@ font-size:11px;
 margin:3px;
 }
 
-.expired{background:red;color:white;}
-.active{background:green;color:white;}
+.stats{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
+padding:10px;
+max-width:1400px;
+margin:auto;
+}
+
+.stat{
+background:white;
+padding:10px;
+border-radius:10px;
+text-align:center;
+box-shadow:0 3px 8px rgba(0,0,0,0.1);
+}
 </style>
 </head>
 
@@ -104,14 +110,28 @@ margin:3px;
 
 <header>
 <h2>GURULINK ADMIN PANEL</h2>
+</header>
 
-<!-- ✅ NEW BUTTONS -->
-<div class="headerBtns">
-<button class="homeBtn" onclick="goHome()">Home</button>
-<button class="logoutBtn" onclick="logout()">Logout</button>
+<div class="header-actions">
+<div>
+<button onclick="location.href='index.html'">Home</button>
+<button onclick="logout()">Logout</button>
 </div>
 
-</header>
+<input id="search" placeholder="Search name / email / phone" oninput="renderAll()">
+
+</div>
+
+<!-- STATS -->
+<div class="stats">
+<div class="stat">Teachers: <span id="tCount">0</span></div>
+<div class="stat">Institutes: <span id="iCount">0</span></div>
+<div class="stat">Academic: <span id="aCount">0</span></div>
+<div class="stat">Skill: <span id="sCount">0</span></div>
+<div class="stat">Sport: <span id="spCount">0</span></div>
+<div class="stat">Creative: <span id="cCount">0</span></div>
+<div class="stat">Payments ₹: <span id="pTotal">0</span></div>
+</div>
 
 <div class="container">
 
@@ -156,157 +176,196 @@ alert("Access Denied!");
 window.location.href = "login.html";
 }
 
-/* ================= LOGOUT + HOME ================= */
-window.logout = ()=>{
-localStorage.removeItem("uid");
-localStorage.removeItem("role");
-window.location.href = "login.html";
-};
+/* DATA */
+let teachers=[], inst=[], payments=[];
 
-window.goHome = ()=>{
-window.location.href = "index.html";
-};
-
-/* ================= EVERYTHING ELSE SAME ================= */
-
-function getExpiryInfo(approvedAt){
-if(!approvedAt) return {days:"N/A", expired:false};
-const diff = approvedAt + (366*24*60*60*1000) - Date.now();
-return {
-days: Math.max(0, Math.ceil(diff/(24*60*60*1000))),
-expired: diff <= 0
-};
+/* DAYS */
+function isExpired(t){
+if(!t) return false;
+return Date.now() > t + (365*24*60*60*1000);
 }
 
-/* Teachers */
+function remainingDays(t){
+if(!t) return "-";
+let diff = (t + 365*24*60*60*1000) - Date.now();
+return Math.max(0, Math.ceil(diff / (1000*60*60*24)));
+}
+
+/* LOAD */
 function loadTeachers(){
 onValue(ref(db,"teachers"),snap=>{
+teachers=[];
 let html="";
+
 snap.forEach(c=>{
-let d=c.val(); let id=c.key;
-const exp = getExpiryInfo(d.approvedAt);
+let d=c.val();
+d.id=c.key;
+teachers.push(d);
 
-html+=`
-<div class="card">
-<h3>${d.name || "No Name"}</h3>
-<span class="badge">${d.status || "pending"}</span>
-
-${d.approvedAt ? `
-<span class="badge ${exp.expired ? "expired" : "active"}">
-${exp.expired ? "EXPIRED" : "Days Left: " + exp.days}
-</span>` : ""}
-
-<p>${d.email||"-"}</p>
-<p>${d.phone||"-"}</p>
-
-<img src="${d.logo||d.photo||'https://via.placeholder.com/100'}">
-
-<div>
-<button class="approve" onclick="approveTeacher('${id}')">Approve</button>
-<button class="reject" onclick="rejectTeacher('${id}')">Reject</button>
-<button class="delete" onclick="deleteTeacher('${id}')">Delete</button>
-<button class="edit" onclick="editTeacher('${id}')">Edit</button>
-<button class="renew" onclick="renewTeacher('${id}')">Renew</button>
-<button class="view" onclick="viewProfile('${id}','teacher')">View</button>
-</div>
-</div>`;
+html+=card(d,"teacher");
 });
+
 document.getElementById("teachers").innerHTML=html;
+renderStats();
 });
 }
 
-/* Institutions */
 function loadInstitutions(){
 onValue(ref(db,"institutions"),snap=>{
+inst=[];
 let html="";
+
 snap.forEach(c=>{
-let d=c.val(); let id=c.key;
-const exp = getExpiryInfo(d.approvedAt);
+let d=c.val();
+d.id=c.key;
+inst.push(d);
 
-html+=`
-<div class="card">
-<h3>${d.name||"No Name"}</h3>
-<span class="badge">${d.status||"pending"}</span>
-
-${d.approvedAt ? `
-<span class="badge ${exp.expired ? "expired" : "active"}">
-${exp.expired ? "EXPIRED" : "Days Left: " + exp.days}
-</span>` : ""}
-
-<p>${d.email||"-"}</p>
-<p>${d.phone||"-"}</p>
-
-<img src="${d.logo||d.photo||'https://via.placeholder.com/100'}">
-
-<div>
-<button class="approve" onclick="approveInst('${id}')">Approve</button>
-<button class="reject" onclick="rejectInst('${id}')">Reject</button>
-<button class="delete" onclick="deleteInst('${id}')">Delete</button>
-<button class="edit" onclick="editInst('${id}')">Edit</button>
-<button class="renew" onclick="renewInst('${id}')">Renew</button>
-<button class="view" onclick="viewProfile('${id}','institution')">View</button>
-</div>
-</div>`;
+html+=card(d,"institution");
 });
+
 document.getElementById("institutions").innerHTML=html;
+renderStats();
 });
 }
 
-/* Payments */
 function loadPayments(){
 onValue(ref(db,"payments"),snap=>{
+payments=[];
 let html="";
+let total=0;
+
 snap.forEach(c=>{
-let d=c.val(); let id=c.key;
+let d=c.val();
+payments.push(d);
+
+total += Number(d.amount||0);
 
 html+=`
 <div class="card">
-<h3>Payment</h3>
-<p>${d.name||"-"}</p>
+<h4>${d.name||"-"}</h4>
 <p>${d.phone||"-"}</p>
 <p>₹${d.amount||0}</p>
 <p>${d.status||"pending"}</p>
-<button class="delete" onclick="deletePayment('${id}')">Delete</button>
-</div>`;
+<button class="delete" onclick="deletePayment('${c.key}')">Delete</button>
+</div>
+`;
 });
+
 document.getElementById("payments").innerHTML=html;
+document.getElementById("pTotal").innerText=total;
+
+renderStats();
 });
 }
 
-/* ACTIONS (UNCHANGED) */
-window.approveTeacher=async(id)=>{
-await update(ref(db,"teachers/"+id),{status:"approved",approvedAt:Date.now()});
-};
-window.rejectTeacher=async(id)=>{
-await update(ref(db,"teachers/"+id),{status:"rejected"});
-};
-window.deleteTeacher=async(id)=>{
-await remove(ref(db,"teachers/"+id));
-};
-window.approveInst=async(id)=>{
-await update(ref(db,"institutions/"+id),{status:"approved",approvedAt:Date.now()});
-};
-window.rejectInst=async(id)=>{
-await update(ref(db,"institutions/"+id),{status:"rejected"});
-};
-window.deleteInst=async(id)=>{
-await remove(ref(db,"institutions/"+id));
-};
-window.deletePayment=async(id)=>{
-await remove(ref(db,"payments/"+id));
+/* CARD */
+function card(d,type){
+
+let expired = isExpired(d.approvedAt);
+let rem = remainingDays(d.approvedAt);
+
+let cat = (d.category||"").toLowerCase();
+
+return `
+<div class="card">
+
+<h3>${d.name||"-"}</h3>
+
+<span class="badge">${d.status||"pending"}</span>
+<span class="badge">${cat}</span>
+
+<p>Email: ${d.email||"-"}</p>
+<p>Phone: ${d.phone||"-"}</p>
+
+<p>Days left: ${rem}</p>
+${expired?`<span class="badge" style="background:red;color:white">EXPIRED</span>`:""}
+
+<img src="${d.photo||d.logo||d.idProof||'https://via.placeholder.com/100'}">
+
+<button class="approve" onclick="approve('${type}','${d.id}')">Approve</button>
+<button class="reject" onclick="reject('${type}','${d.id}')">Reject</button>
+<button class="delete" onclick="del('${type}','${d.id}')">Delete</button>
+<button class="renew" onclick="renew('${type}','${d.id}')">Renew</button>
+<button class="edit" onclick="edit('${type}','${d.id}')">Edit</button>
+
+</div>
+`;
+}
+
+/* ACTIONS */
+window.approve=(type,id)=>{
+update(ref(db,`${type}s/${id}`),{
+status:"approved",
+approvedAt:Date.now()
+});
 };
 
-window.renewTeacher=async(id)=>{
-await update(ref(db,"teachers/"+id),{approvedAt:Date.now(),status:"approved"});
-};
-window.renewInst=async(id)=>{
-await update(ref(db,"institutions/"+id),{approvedAt:Date.now(),status:"approved"});
+window.reject=(type,id)=>{
+update(ref(db,`${type}s/${id}`),{status:"rejected"});
 };
 
-window.viewProfile=(id,type)=>{
-window.open("profile-view.html?id="+id+"&type="+type);
+window.del=(type,id)=>{
+remove(ref(db,`${type}s/${id}`));
 };
 
+window.renew=(type,id)=>{
+update(ref(db,`${type}s/${id}`),{
+approvedAt:Date.now(),
+status:"approved"
+});
+};
+
+/* SEARCH + STATS */
+window.renderAll=function(){
+
+let q=(document.getElementById("search").value||"").toLowerCase();
+
+function match(d){
+return (
+(d.name||"").toLowerCase().includes(q) ||
+(d.email||"").toLowerCase().includes(q) ||
+(d.phone||"").toLowerCase().includes(q)
+);
+}
+
+document.getElementById("teachers").innerHTML =
+teachers.filter(match).map(d=>card(d,"teacher")).join("");
+
+document.getElementById("institutions").innerHTML =
+inst.filter(match).map(d=>card(d,"institution")).join("");
+
+};
+
+/* STATS */
+function renderStats(){
+
+let count = (arr,cat)=>
+arr.filter(x=>(x.category||"").toLowerCase()===cat).length;
+
+document.getElementById("tCount").innerText=teachers.length;
+document.getElementById("iCount").innerText=inst.length;
+
+document.getElementById("aCount").innerText =
+count([...teachers,...inst],"academic");
+
+document.getElementById("sCount").innerText =
+count([...teachers,...inst],"skill");
+
+document.getElementById("spCount").innerText =
+count([...teachers,...inst],"sport");
+
+document.getElementById("cCount").innerText =
+count([...teachers,...inst],"creative");
+
+}
+
+/* LOGOUT */
+window.logout=()=>{
+localStorage.clear();
+window.location.href="login.html";
+};
+
+/* INIT */
 loadTeachers();
 loadInstitutions();
 loadPayments();
