@@ -1,48 +1,349 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Admin Login</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Login - GURULINK</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#eef2f7;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.box{
+width:350px;
+background:white;
+padding:25px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+h2{
+text-align:center;
+margin-top:0;
+margin-bottom:20px;
+color:#1565c0;
+}
+
+input{
+width:100%;
+padding:12px;
+margin:10px 0;
+border:1px solid #ccc;
+border-radius:8px;
+box-sizing:border-box;
+font-size:15px;
+}
+
+button{
+width:100%;
+padding:12px;
+background:#1565c0;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-size:16px;
+margin-top:10px;
+}
+
+button:hover{
+background:#0d47a1;
+}
+
+#msg{
+margin-top:15px;
+text-align:center;
+font-size:14px;
+color:#d32f2f;
+word-break:break-word;
+}
+
+.link{
+text-align:center;
+margin-top:15px;
+font-size:14px;
+}
+
+.link a{
+color:#1565c0;
+text-decoration:none;
+font-weight:bold;
+}
+
+</style>
 </head>
+
 <body>
 
-<input id="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<button onclick="login()">Login</button>
+<div class="box">
+
+<h2>Login</h2>
+
+<input
+id="email"
+type="email"
+placeholder="Enter Email"
+required>
+
+<input
+id="password"
+type="password"
+placeholder="Enter Password"
+required>
+
+<button onclick="loginUser()">
+Login
+</button>
 
 <p id="msg"></p>
 
+<div class="link">
+Don't have account?
+<a href="register.html">
+Register
+</a>
+</div>
+
+</div>
+
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import {
+initializeApp
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+getAuth,
+signInWithEmailAndPassword
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+import {
+getDatabase,
+ref,
+get
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+/* FIREBASE CONFIG */
 
 const firebaseConfig = {
+
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+
 authDomain:"gurulink-59cc7.firebaseapp.com",
+
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
 projectId:"gurulink-59cc7",
+
 storageBucket:"gurulink-59cc7.appspot.com",
+
 messagingSenderId:"112148672399",
+
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
 };
 
+/* INITIALIZE */
+
 const app = initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
 
-window.login = async () => {
+const db = getDatabase(app);
 
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
+/* LOGIN */
 
-try {
-await signInWithEmailAndPassword(auth, email, password);
+window.loginUser = async function(){
 
-document.getElementById("msg").innerText = "Login success";
+const email =
+document.getElementById("email")
+.value
+.trim()
+.toLowerCase();
 
-window.location.href = "admin.html";
+const password =
+document.getElementById("password")
+.value;
 
-} catch (e) {
-document.getElementById("msg").innerText = e.message;
+const msg =
+document.getElementById("msg");
+
+msg.style.color="#1565c0";
+msg.innerHTML="Logging in...";
+
+try{
+
+/* LOGIN AUTH */
+
+const userCred =
+await signInWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+const user = userCred.user;
+
+const uid = user.uid;
+
+/* GET USER DATA */
+
+/* CHECK TEACHERS */
+
+let snap = await get(ref(db,"teachers/"+uid));
+
+if(snap.exists()){
+
+const userData = snap.val();
+
+localStorage.setItem("uid",uid);
+localStorage.setItem("profileId",uid);
+localStorage.setItem("role","teacher");
+
+window.location.href="teacher-dashboard.html";
+return;
+
+}
+
+/* CHECK INSTITUTIONS */
+
+snap = await get(ref(db,"institutions/"+uid));
+
+if(snap.exists()){
+
+const userData = snap.val();
+
+localStorage.setItem("uid",uid);
+localStorage.setItem("profileId",uid);
+localStorage.setItem("role","institution");
+
+window.location.href="teacher-dashboard.html";
+return;
+
+}
+
+/* CHECK ADMINS */
+
+snap = await get(ref(db,"admins/"+uid));
+
+if(snap.exists()){
+
+localStorage.setItem("uid",uid);
+localStorage.setItem("profileId",uid);
+localStorage.setItem("role","admin");
+
+window.location.href="admin.html";
+return;
+
+}
+
+msg.style.color="red";
+msg.innerHTML="User profile not found.";
+
+/* SAVE SESSION */
+
+localStorage.setItem(
+"uid",
+uid
+);
+
+localStorage.setItem(
+"profileId",
+userData.profileId || uid
+);
+
+localStorage.setItem(
+"role",
+userData.role
+);
+
+/* REDIRECT */
+
+if(userData.role==="teacher"){
+
+window.location.href =
+"teacher-dashboard.html";
+
+}
+else if(userData.role==="institution"){
+
+window.location.href =
+"teacher-dashboard.html";
+
+}
+else if(userData.role==="admin"){
+
+window.location.href =
+"admin.html";
+
+}
+
+
+else if(userData.role==="student"){
+
+window.location.href =
+"student-dashboard.html";
+
+}
+else{
+
+msg.style.color="red";
+
+msg.innerHTML =
+"Unknown role: " + userData.role;
+
+}
+
+}
+catch(err){
+
+console.log(err);
+
+msg.style.color="red";
+
+if(
+err.code==="auth/invalid-credential"
+){
+
+msg.innerHTML =
+"Invalid email or password.";
+
+}
+else if(
+err.code==="auth/user-not-found"
+){
+
+msg.innerHTML =
+"User not found.";
+
+}
+else if(
+err.code==="auth/wrong-password"
+){
+
+msg.innerHTML =
+"Wrong password.";
+
+}
+else{
+
+msg.innerHTML =
+err.message;
+
+}
+
 }
 
 };
