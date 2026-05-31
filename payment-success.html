@@ -95,6 +95,11 @@ if (!id) {
     throw new Error("Profile ID Missing");
 }
 
+
+
+
+
+/* PAYMENT AMOUNT */
 /* PAYMENT AMOUNT */
 const amount = type === "institution" ? 200 : 100;
 
@@ -103,13 +108,26 @@ async function savePayment() {
 
 try {
 
+alert("TYPE = " + type);
+alert("ID = " + id);
+
 const profilePath =
 type === "institution"
 ? "institutions/" + id
 : "teachers/" + id;
 
+alert("PATH = " + profilePath);
+
 /* GET PROFILE */
 const snap = await get(ref(db, profilePath));
+
+alert("EXISTS = " + snap.exists());
+
+
+
+
+
+
 
 if (!snap.exists()) {
     throw new Error("Profile not found in database");
