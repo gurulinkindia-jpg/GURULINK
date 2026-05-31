@@ -19,7 +19,7 @@ padding:12px;
 text-align:center;
 }
 
-.header-actions{
+.topbar{
 display:flex;
 justify-content:space-between;
 align-items:center;
@@ -28,7 +28,7 @@ background:#1565c0;
 color:white;
 }
 
-.header-actions button{
+.topbar button{
 padding:6px 10px;
 border:none;
 border-radius:6px;
@@ -36,10 +36,34 @@ cursor:pointer;
 margin-left:5px;
 }
 
+.topbar input{
+width:250px;
+padding:6px;
+border-radius:6px;
+border:none;
+outline:none;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:8px;
+padding:10px;
+}
+
+.stat{
+background:white;
+padding:10px;
+border-radius:10px;
+text-align:center;
+font-size:13px;
+box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
 .container{
 width:95%;
 max-width:1400px;
-margin:20px auto;
+margin:10px auto;
 display:grid;
 grid-template-columns:1fr 1fr 1fr;
 gap:15px;
@@ -48,9 +72,9 @@ gap:15px;
 .card{
 background:white;
 padding:12px;
-margin-bottom:12px;
 border-radius:10px;
 box-shadow:0 3px 8px rgba(0,0,0,0.1);
+margin-bottom:10px;
 }
 
 img{
@@ -62,13 +86,13 @@ margin:5px 0;
 }
 
 button{
-padding:6px 8px;
+padding:5px 7px;
 margin:3px;
 border:none;
 border-radius:6px;
 cursor:pointer;
 color:white;
-font-size:12px;
+font-size:11px;
 }
 
 .approve{background:green;}
@@ -76,32 +100,15 @@ font-size:12px;
 .delete{background:#444;}
 .view{background:#1565c0;}
 .edit{background:#ff9800;}
-.renew{background:#9c27b0;}
+.renew{background:#8e24aa;}
 
 .badge{
 display:inline-block;
-padding:4px 8px;
+padding:3px 6px;
 background:#eee;
 border-radius:6px;
-font-size:11px;
-margin:3px;
-}
-
-.stats{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:10px;
-padding:10px;
-max-width:1400px;
-margin:auto;
-}
-
-.stat{
-background:white;
-padding:10px;
-border-radius:10px;
-text-align:center;
-box-shadow:0 3px 8px rgba(0,0,0,0.1);
+font-size:10px;
+margin:2px;
 }
 </style>
 </head>
@@ -112,7 +119,8 @@ box-shadow:0 3px 8px rgba(0,0,0,0.1);
 <h2>GURULINK ADMIN PANEL</h2>
 </header>
 
-<div class="header-actions">
+<div class="topbar">
+
 <div>
 <button onclick="location.href='index.html'">Home</button>
 <button onclick="logout()">Logout</button>
@@ -124,13 +132,13 @@ box-shadow:0 3px 8px rgba(0,0,0,0.1);
 
 <!-- STATS -->
 <div class="stats">
-<div class="stat">Teachers: <span id="tCount">0</span></div>
-<div class="stat">Institutes: <span id="iCount">0</span></div>
-<div class="stat">Academic: <span id="aCount">0</span></div>
-<div class="stat">Skill: <span id="sCount">0</span></div>
-<div class="stat">Sport: <span id="spCount">0</span></div>
-<div class="stat">Creative: <span id="cCount">0</span></div>
-<div class="stat">Payments ₹: <span id="pTotal">0</span></div>
+<div class="stat">Teachers <div id="tCount">0</div></div>
+<div class="stat">Institutes <div id="iCount">0</div></div>
+<div class="stat">Academic <div id="aCount">0</div></div>
+<div class="stat">Skill <div id="sCount">0</div></div>
+<div class="stat">Sport <div id="spCount">0</div></div>
+<div class="stat">Creative <div id="cCount">0</div></div>
+<div class="stat">Payments ₹ <div id="pTotal">0</div></div>
 </div>
 
 <div class="container">
@@ -173,25 +181,23 @@ const db = getDatabase(app);
 /* ADMIN CHECK */
 if(localStorage.getItem("role") !== "admin"){
 alert("Access Denied!");
-window.location.href = "login.html";
+location.href="login.html";
 }
 
 /* DATA */
 let teachers=[], inst=[], payments=[];
 
-/* DAYS */
-function isExpired(t){
-if(!t) return false;
-return Date.now() > t + (365*24*60*60*1000);
+/* VALIDITY */
+function expired(t){
+return t && Date.now() > t + (365*24*60*60*1000);
 }
 
-function remainingDays(t){
+function remain(t){
 if(!t) return "-";
-let diff = (t + 365*24*60*60*1000) - Date.now();
-return Math.max(0, Math.ceil(diff / (1000*60*60*24)));
+return Math.max(0,Math.ceil((t+(365*24*60*60*1000)-Date.now())/86400000));
 }
 
-/* LOAD */
+/* LOAD TEACHERS */
 function loadTeachers(){
 onValue(ref(db,"teachers"),snap=>{
 teachers=[];
@@ -206,10 +212,11 @@ html+=card(d,"teacher");
 });
 
 document.getElementById("teachers").innerHTML=html;
-renderStats();
+updateStats();
 });
 }
 
+/* LOAD INSTITUTIONS */
 function loadInstitutions(){
 onValue(ref(db,"institutions"),snap=>{
 inst=[];
@@ -224,10 +231,11 @@ html+=card(d,"institution");
 });
 
 document.getElementById("institutions").innerHTML=html;
-renderStats();
+updateStats();
 });
 }
 
+/* LOAD PAYMENTS */
 function loadPayments(){
 onValue(ref(db,"payments"),snap=>{
 payments=[];
@@ -238,7 +246,7 @@ snap.forEach(c=>{
 let d=c.val();
 payments.push(d);
 
-total += Number(d.amount||0);
+total+=Number(d.amount||0);
 
 html+=`
 <div class="card">
@@ -246,7 +254,7 @@ html+=`
 <p>${d.phone||"-"}</p>
 <p>₹${d.amount||0}</p>
 <p>${d.status||"pending"}</p>
-<button class="delete" onclick="deletePayment('${c.key}')">Delete</button>
+<button class="delete" onclick="delPay('${c.key}')">Delete</button>
 </div>
 `;
 });
@@ -254,17 +262,15 @@ html+=`
 document.getElementById("payments").innerHTML=html;
 document.getElementById("pTotal").innerText=total;
 
-renderStats();
+updateStats();
 });
 }
 
 /* CARD */
 function card(d,type){
 
-let expired = isExpired(d.approvedAt);
-let rem = remainingDays(d.approvedAt);
-
-let cat = (d.category||"").toLowerCase();
+let exp = expired(d.approvedAt);
+let rem = remain(d.approvedAt);
 
 return `
 <div class="card">
@@ -272,13 +278,13 @@ return `
 <h3>${d.name||"-"}</h3>
 
 <span class="badge">${d.status||"pending"}</span>
-<span class="badge">${cat}</span>
+<span class="badge">${d.category||"-"}</span>
 
 <p>Email: ${d.email||"-"}</p>
 <p>Phone: ${d.phone||"-"}</p>
+<p>Days: ${rem}</p>
 
-<p>Days left: ${rem}</p>
-${expired?`<span class="badge" style="background:red;color:white">EXPIRED</span>`:""}
+${exp?`<span class="badge" style="background:red;color:white">EXPIRED</span>`:""}
 
 <img src="${d.photo||d.logo||d.idProof||'https://via.placeholder.com/100'}">
 
@@ -293,38 +299,20 @@ ${expired?`<span class="badge" style="background:red;color:white">EXPIRED</span>
 }
 
 /* ACTIONS */
-window.approve=(type,id)=>{
-update(ref(db,`${type}s/${id}`),{
-status:"approved",
-approvedAt:Date.now()
-});
-};
+window.approve=(t,id)=>update(ref(db,`${t}s/${id}`),{status:"approved",approvedAt:Date.now()});
+window.reject=(t,id)=>update(ref(db,`${t}s/${id}`),{status:"rejected"});
+window.del=(t,id)=>remove(ref(db,`${t}s/${id}`));
+window.renew=(t,id)=>update(ref(db,`${t}s/${id}`),{approvedAt:Date.now(),status:"approved"});
 
-window.reject=(type,id)=>{
-update(ref(db,`${type}s/${id}`),{status:"rejected"});
-};
-
-window.del=(type,id)=>{
-remove(ref(db,`${type}s/${id}`));
-};
-
-window.renew=(type,id)=>{
-update(ref(db,`${type}s/${id}`),{
-approvedAt:Date.now(),
-status:"approved"
-});
-};
-
-/* SEARCH + STATS */
+/* SEARCH (FIXED) */
 window.renderAll=function(){
+let q=document.getElementById("search").value.toLowerCase();
 
-let q=(document.getElementById("search").value||"").toLowerCase();
-
-function match(d){
+function match(x){
 return (
-(d.name||"").toLowerCase().includes(q) ||
-(d.email||"").toLowerCase().includes(q) ||
-(d.phone||"").toLowerCase().includes(q)
+(x.name||"").toLowerCase().includes(q) ||
+(x.email||"").toLowerCase().includes(q) ||
+(x.phone||"").toLowerCase().includes(q)
 );
 }
 
@@ -333,36 +321,33 @@ teachers.filter(match).map(d=>card(d,"teacher")).join("");
 
 document.getElementById("institutions").innerHTML =
 inst.filter(match).map(d=>card(d,"institution")).join("");
-
 };
 
-/* STATS */
-function renderStats(){
+/* PAY DELETE */
+window.delPay=(id)=>remove(ref(db,"payments/"+id));
 
-let count = (arr,cat)=>
-arr.filter(x=>(x.category||"").toLowerCase()===cat).length;
+/* STATS */
+function updateStats(){
 
 document.getElementById("tCount").innerText=teachers.length;
 document.getElementById("iCount").innerText=inst.length;
 
-document.getElementById("aCount").innerText =
-count([...teachers,...inst],"academic");
+let all=[...teachers,...inst];
 
-document.getElementById("sCount").innerText =
-count([...teachers,...inst],"skill");
+function c(cat){
+return all.filter(x=>(x.category||"").toLowerCase()===cat).length;
+}
 
-document.getElementById("spCount").innerText =
-count([...teachers,...inst],"sport");
-
-document.getElementById("cCount").innerText =
-count([...teachers,...inst],"creative");
-
+document.getElementById("aCount").innerText=c("academic");
+document.getElementById("sCount").innerText=c("skill");
+document.getElementById("spCount").innerText=c("sport");
+document.getElementById("cCount").innerText=c("creative");
 }
 
 /* LOGOUT */
 window.logout=()=>{
 localStorage.clear();
-window.location.href="login.html";
+location.href="login.html";
 };
 
 /* INIT */
