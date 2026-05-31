@@ -289,360 +289,289 @@ class="grid">
 </div>
 
 
+
+
+
+
+
 <script type="module">
 
-import{
-initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-import{
-getDatabase,
-ref,
-onValue
-}
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-
-const firebaseConfig={
-
-apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-authDomain:"gurulink-59cc7.firebaseapp.com",
-databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"gurulink-59cc7",
-storageBucket:"gurulink-59cc7.appspot.com",
-messagingSenderId:"112148672399",
-appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
+/* FIREBASE */
+const firebaseConfig = {
+  apiKey: "AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+  authDomain: "gurulink-59cc7.firebaseapp.com",
+  databaseURL: "https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "gurulink-59cc7",
+  storageBucket: "gurulink-59cc7.appspot.com",
+  messagingSenderId: "112148672399",
+  appId: "1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
-const app=
-initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-const db=
-getDatabase(app);
+let all = [];
 
-let all=[];
+/* =========================
+   LOAD DATA (FIXED STRUCTURE)
+========================= */
 
-const category=
-document.getElementById(
-"category"
-);
+function loadData() {
 
-const dynamic=
-document.getElementById(
-"dynamicFilters"
-);
+  onValue(ref(db, "teachers"), (snap) => {
 
+    snap.forEach((c) => {
 
-category.addEventListener(
-"change",
-showFilters
-);
+      const d = c.val();
 
+      if (d.status === "approved") {
+        all.push({
+          ...d,
+          id: c.key,
+          type: "Teacher"
+        });
+      }
 
-function showFilters(){
+    });
 
-let html="";
+    render();
+  });
 
-if(category.value==="academic"){
+  onValue(ref(db, "institutions"), (snap) => {
 
-html=`
+    snap.forEach((c) => {
 
-<select id="classFilter">
+      const d = c.val();
 
-<option value="">
-All Classes
-</option>
+      if (d.status === "approved") {
+        all.push({
+          ...d,
+          id: c.key,
+          type: "Institution"
+        });
+      }
 
-<option>Class 1-5</option>
-<option>Class 6-8</option>
-<option>Class 9-10</option>
-<option>Class 11-12</option>
+    });
 
-</select>
-
-<select id="subjectFilter">
-
-<option value="">
-All Subjects
-</option>
-
-<option>Mathematics</option>
-<option>Physics</option>
-<option>Chemistry</option>
-<option>Biology</option>
-
-</select>
-
-`;
-
+    render();
+  });
 }
 
-else if(category.value==="creative"){
+loadData();
 
-html=`
+/* =========================
+   HELPERS
+========================= */
 
-<select id="subjectFilter">
-
-<option value="">
-Creative Subject
-</option>
-
-<option>Music</option>
-<option>Dance</option>
-<option>Drawing</option>
-
-</select>
-
-`;
-
+function similar(a, b) {
+  return (a || "").toLowerCase().includes((b || "").toLowerCase());
 }
 
-else if(category.value==="skill"){
+/* =========================
+   CATEGORY CHANGE → RESET FILTERS
+========================= */
 
-html=`
+const category = document.getElementById("category");
+const dynamic = document.getElementById("dynamicFilters");
 
-<select id="subjectFilter">
+category.addEventListener("change", showFilters);
 
-<option value="">
-Skill Subject
-</option>
+function showFilters() {
 
-<option>Computer</option>
-<option>Embroidery</option>
-<option>Cake Making</option>
+  let html = "";
 
-</select>
+  if (category.value === "academic") {
+    html = `
+      <select id="classFilter">
+        <option value="">All Classes</option>
+        <option>Class 1-5</option>
+        <option>Class 6-8</option>
+        <option>Class 9-10</option>
+        <option>Class 11-12</option>
+      </select>
 
-`;
+      <select id="subjectFilter">
+        <option value="">All Subjects</option>
+        <option>Mathematics</option>
+        <option>Physics</option>
+        <option>Chemistry</option>
+        <option>Biology</option>
+      </select>
+    `;
+  }
 
-}
+  else if (category.value === "creative") {
+    html = `
+      <select id="subjectFilter">
+        <option value="">All Creative Subjects</option>
+        <option>Music</option>
+        <option>Dance</option>
+        <option>Drawing</option>
+      </select>
+    `;
+  }
 
-dynamic.innerHTML=html;
+  else if (category.value === "skill") {
+    html = `
+      <select id="subjectFilter">
+        <option value="">All Skills</option>
+        <option>Computer</option>
+        <option>Embroidery</option>
+        <option>Cake Making</option>
+      </select>
+    `;
+  }
 
-document.querySelectorAll(
-"select,input"
-)
-.forEach(el=>{
+  dynamic.innerHTML = html;
 
-el.oninput=render;
-el.onchange=render;
-
-});
-
+  document.querySelectorAll("select, input").forEach(el => {
+    el.oninput = render;
+    el.onchange = render;
+  });
 }
 
 showFilters();
 
+/* =========================
+   VIEW PROFILE (LOGIN SAFE)
+========================= */
 
-onValue(
-ref(db,"teachers"),
-snap=>{
+document.addEventListener("click", (e) => {
 
-all=[];
+  const card = e.target.closest(".card");
+  if (!card) return;
 
-snap.forEach(c=>{
+  const id = card.dataset.id;
+  if (!id) return;
 
-let d=c.val();
+  const uid =
+    localStorage.getItem("uid") ||
+    localStorage.getItem("studentUid") ||
+    localStorage.getItem("teacherUid") ||
+    localStorage.getItem("adminUid") ||
+    localStorage.getItem("institutionId");
 
-if(d.status==="approved"){
+  if (!uid) {
 
-all.push({
-...d,
-type:"Teacher"
+    sessionStorage.setItem(
+      "redirectAfterLogin",
+      "profile-view.html?id=" + id
+    );
+
+    alert("Please login first");
+
+    window.location.href = "student-login.html";
+    return;
+  }
+
+  window.location.href = "profile-view.html?id=" + id;
 });
 
-}
+/* =========================
+   RENDER
+========================= */
 
-});
+function render() {
 
-onValue(
-ref(db,"institutions"),
-s=>{
+  const grid = document.getElementById("grid");
 
-s.forEach(c=>{
+  const search = document.getElementById("search").value.trim().toLowerCase();
+  const cat = category.value;
 
-let d=c.val();
+  const subjectFilter = document.getElementById("subjectFilter")?.value || "";
+  const classFilter = document.getElementById("classFilter")?.value || "";
 
-if(d.status==="approved"){
+  const filtered = all.filter((x) => {
 
-all.push({
-...d,
-type:"Institution"
-});
+    /* CATEGORY */
+    if (cat && x.category !== cat) return false;
 
-}
+    /* SEARCH */
+    if (
+      search &&
+      !(similar(x.name, search) ||
+        similar(x.location, search) ||
+        similar(x.address, search))
+    ) {
+      return false;
+    }
 
-});
+    /* SUBJECT */
+    const subject =
+      x.subject ||
+      x.skillType ||
+      x.creativeType ||
+      "";
 
-render();
+    if (subjectFilter && subject !== subjectFilter) {
+      return false;
+    }
 
-});
+    /* CLASS */
+    if (classFilter && x.class !== classFilter) {
+      return false;
+    }
 
-});
+    return true;
+  });
 
+  if (!filtered.length) {
+    grid.innerHTML = `
+      <div class="empty">
+        No Results Found
+      </div>
+    `;
+    return;
+  }
 
-function render(){
+  grid.innerHTML = filtered.map((x) => `
 
-let search=
-document.getElementById(
-"search"
-).value.toLowerCase();
+    <div class="card" data-id="${x.id}">
 
-let cat=
-category.value;
+      <div class="top">
 
-let subjectFilter=
-document.getElementById(
-"subjectFilter"
-)?.value||"";
+        <img
+          class="photo"
+          src="${x.photo || x.logo || 'https://via.placeholder.com/100'}"
+        >
 
-let classFilter=
-document.getElementById(
-"classFilter"
-)?.value||"";
+        <div>
 
+          <h2>${x.name || "-"}</h2>
 
-let filtered=
-all.filter(x=>{
+          <div class="badges">
 
-if(cat&&x.category!==cat)
-return false;
+            <span class="badge">${x.type}</span>
+            <span class="badge">${x.category}</span>
+            <span class="badge verify">Verified</span>
 
-if(
-search &&
-!(
-(x.name||"")
-.toLowerCase()
-.includes(search)
-||
-(x.location||"")
-.toLowerCase()
-.includes(search)
-||
-(x.address||"")
-.toLowerCase()
-.includes(search)
-)
-)
-return false;
+          </div>
 
+        </div>
 
-let subject=
+      </div>
 
-x.subject||
-x.skillType||
-x.creativeType||
-"";
+      <div class="details">
 
-if(
-subjectFilter &&
-subject!==subjectFilter
-)
-return false;
+        <b>Subject:</b>
+        ${x.subject || x.skillType || x.creativeType || "-"}
+        <br>
 
-if(
-classFilter &&
-x.class!==classFilter
-)
-return false;
+        <b>Location:</b>
+        ${x.location || x.address || "-"}
+        <br>
 
-return true;
+        <b>Phone:</b>
+        ${x.phone || "-"}
 
-});
+      </div>
 
+    </div>
 
-if(filtered.length===0){
-
-grid.innerHTML=
-`<div class="empty">
-No Results Found
-</div>`;
-
-return;
-
-}
-
-
-let html="";
-
-filtered.forEach(x=>{
-
-let subject=
-
-x.subject||
-x.skillType||
-x.creativeType||
-"-";
-
-html+=`
-
-<div class="card">
-
-<div class="top">
-
-<img
-class="photo"
-src="${
-x.photo||
-x.logo||
-'https://via.placeholder.com/100'
-}">
-
-<div>
-
-<h2>
-${x.name||"-"}
-</h2>
-
-<div class="badges">
-
-<span class="badge">
-${x.type}
-</span>
-
-<span class="badge">
-${x.category}
-</span>
-
-<span class="badge verify">
-Verified
-</span>
-
-</div>
-
-</div>
-
-</div>
-
-
-<div class="details">
-
-<b>Subject:</b>
-${subject}
-<br>
-
-<b>Location:</b>
-${x.location||x.address||"-"}
-
-<br>
-
-<b>Phone:</b>
-${x.phone||"-"}
-
-</div>
-
-</div>
-
-`;
-
-});
-
-grid.innerHTML=html;
-
+  `).join("");
 }
 
 </script>
