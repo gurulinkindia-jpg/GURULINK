@@ -423,7 +423,36 @@ Continue To Payment
 
 </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
 <script>
+
+
+
+
+localStorage.removeItem("uid");
+localStorage.removeItem("profileId");
+localStorage.removeItem("teacherId");
+localStorage.removeItem("institutionId");
+localStorage.removeItem("paymentProfileId");
+localStorage.removeItem("paymentType");
+
+
+
+
+
+
+
 
 function toggleFee(id){
 
@@ -437,6 +466,14 @@ box.style.display==="block"
 "block";
 
 }
+
+
+
+
+
+
+
+
 
 </script>
 
@@ -965,10 +1002,12 @@ createdAt:Date.now()
 
 
 
-localStorage.setItem("uid", uid);
 localStorage.setItem("profileId", uid);
-localStorage.setItem("teacherId", uid);
-localStorage.setItem("institutionId", uid); // optiona
+localStorage.setItem("paymentProfileId", uid);
+localStorage.setItem("paymentType", "creative"); // OR teacher/institution/sport
+
+
+
 
 
 
