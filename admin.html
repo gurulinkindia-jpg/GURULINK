@@ -1,3 +1,5 @@
+<!-- ONLY CHANGED PARTS ARE MARKED: RENEW BUTTON + ACTION -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,6 +61,7 @@ font-size:12px;
 .delete{background:#444;}
 .view{background:#1565c0;}
 .edit{background:#ff9800;}
+.renew{background:#6a1b9a;}
 
 .badge{
 display:inline-block;
@@ -117,13 +120,12 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* ADMIN CHECK */
 if(localStorage.getItem("role") !== "admin"){
 alert("Access Denied!");
 window.location.href = "login.html";
 }
 
-/* ===== EXPIRY CALC ===== */
+/* EXPIRY */
 function getExpiryInfo(approvedAt){
 if(!approvedAt) return {days:"N/A", expired:false};
 
@@ -166,7 +168,6 @@ ${exp.expired ? "EXPIRED" : "Days Left: " + exp.days}
 
 <p><b>Email:</b> ${d.email || "-"}</p>
 <p><b>Phone:</b> ${d.phone || "-"}</p>
-<p><b>Subject:</b> ${d.subjects || d.subject || "-"}</p>
 
 <img src="${d.logo||d.photo||d.idProof||'https://via.placeholder.com/100'}">
 
@@ -174,6 +175,8 @@ ${exp.expired ? "EXPIRED" : "Days Left: " + exp.days}
 <button class="approve" onclick="approveTeacher('${id}')">Approve</button>
 <button class="reject" onclick="rejectTeacher('${id}')">Reject</button>
 <button class="delete" onclick="deleteTeacher('${id}')">Delete</button>
+<button class="edit" onclick="editTeacher('${id}')">Edit</button>
+<button class="renew" onclick="renewTeacher('${id}')">Renew</button>
 <button class="view" onclick="viewProfile('${id}','teacher')">View</button>
 </div>
 
@@ -219,6 +222,8 @@ ${exp.expired ? "EXPIRED" : "Days Left: " + exp.days}
 <button class="approve" onclick="approveInst('${id}')">Approve</button>
 <button class="reject" onclick="rejectInst('${id}')">Reject</button>
 <button class="delete" onclick="deleteInst('${id}')">Delete</button>
+<button class="edit" onclick="editInst('${id}')">Edit</button>
+<button class="renew" onclick="renewInst('${id}')">Renew</button>
 <button class="view" onclick="viewProfile('${id}','institution')">View</button>
 </div>
 
@@ -260,7 +265,8 @@ document.getElementById("payments").innerHTML = html;
 });
 }
 
-/* ACTIONS */
+/* ================= ACTIONS ================= */
+
 window.approveTeacher=async(id)=>{
 await update(ref(db,"teachers/"+id),{
 status:"approved",
@@ -293,6 +299,22 @@ await remove(ref(db,"institutions/"+id));
 
 window.deletePayment=async(id)=>{
 await remove(ref(db,"payments/"+id));
+};
+
+/* ================= RENEW ================= */
+
+window.renewTeacher = async(id)=>{
+await update(ref(db,"teachers/"+id),{
+approvedAt: Date.now(),
+status:"approved"
+});
+};
+
+window.renewInst = async(id)=>{
+await update(ref(db,"institutions/"+id),{
+approvedAt: Date.now(),
+status:"approved"
+});
 };
 
 window.viewProfile=(id,type)=>{
