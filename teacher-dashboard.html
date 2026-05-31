@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard - GURULINK</title>
+<title>GURULINK Teacher Dashboard</title>
 
 <style>
 body{
@@ -93,11 +93,8 @@ border-radius:8px;
 <body>
 
 <header>
-
-
-
-<h2>Dashboard</h2>
-<div class="roleBadge" id="roleText">Loading...</div>
+<h2>GURULINK DASHBOARD</h2>
+<div class="roleBadge" id="roleText">GUEST</div>
 </header>
 
 <div class="container">
@@ -106,7 +103,7 @@ border-radius:8px;
 
 <div id="content">
 
-<div class="expiryBox" id="expiryBox"></div>
+<div class="expiryBox" id="expiryBox">Loading expiry...</div>
 
 <div class="section">
 <h3>📊 Analytics</h3>
@@ -126,8 +123,8 @@ border-radius:8px;
 <input id="location" placeholder="Location">
 <textarea id="description" placeholder="About"></textarea>
 
-<input id="subjects" placeholder="Subjects">
-<input id="modes" placeholder="Modes">
+<input id="subjects" placeholder="Subjects (comma separated)">
+<input id="modes" placeholder="Modes (comma separated)">
 <input id="fee" placeholder="Fee">
 
 <button onclick="saveData()">Save Changes</button>
@@ -138,10 +135,6 @@ border-radius:8px;
 
 </div>
 </div>
-
-
-
-
 
 <script type="module">
 
@@ -168,40 +161,32 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-const profileId = localStorage.getItem("profileId");
-const role = localStorage.getItem("role");
+/* ======================
+   SAFE SESSION FIX
+====================== */
 
-const dbPath = role==="teacher"
+let profileId = localStorage.getItem("profileId");
+let role = localStorage.getItem("role");
+
+document.getElementById("roleText").innerText = (role || "GUEST").toUpperCase();
+
+/* If opened directly without login */
+if(!profileId || !role){
+document.getElementById("loading").innerHTML =
+"❌ Please login first. Redirecting...";
+setTimeout(()=>location.href="login.html",2000);
+throw new Error("No session");
+}
+
+const dbPath = (role==="teacher")
 ? "teachers/"+profileId
 : "institutions/"+profileId;
 
 const el = (id)=>document.getElementById(id);
 
-document.getElementById("roleText").innerText =
-(role||"GUEST").toUpperCase();
-
-/* FIX: DO NOT FORCE LOGIN LOOP */
-onAuthStateChanged(auth,(user)=>{
-
-// If Firebase not loaded yet → wait, DO NOT redirect immediately
-if(user === undefined) return;
-
-// If user logged out manually
-if(user === null){
-console.log("No firebase session, but localStorage may exist");
-}
-
-// STILL allow dashboard using localStorage
-loadProfile();
-loadViews();
-});
-
-
-
-
-
-
-
+/* ======================
+   EXPIRY SYSTEM (365 DAYS)
+====================== */
 
 function getExpiryText(start){
 if(!start) return "Not Approved Yet";
@@ -212,14 +197,20 @@ const end = start + (365*24*60*60*1000);
 if(now > end) return "❌ Expired";
 
 const days = Math.ceil((end-now)/(1000*60*60*24));
-return "⏳ " + days + " days left";
+return "⏳ " + days + " days remaining";
 }
 
-/* LOAD PROFILE */
+/* ======================
+   LOAD PROFILE
+====================== */
+
 async function loadProfile(){
 
 const snap = await get(ref(db, dbPath));
-if(!snap.exists()) return;
+if(!snap.exists()){
+el("loading").innerHTML="Profile not found";
+return;
+}
 
 const d = snap.val();
 
@@ -242,14 +233,14 @@ el("loading").style.display="none";
 el("content").style.display="block";
 }
 
-/* VIEWS */
-
-
-
-
+/* ======================
+   VIEW ANALYTICS
+====================== */
 
 function loadViews(){
+
 onValue(ref(db,`profileViews/${profileId}`),(snap)=>{
+
 let html="";
 let total=0;
 
@@ -265,13 +256,16 @@ ${new Date(v.time).toLocaleString()}
 </div>`;
 });
 
-el("viewers").innerHTML=html;
-el("totalViews").innerText=total;
+el("viewers").innerHTML = html;
+el("totalViews").innerText = total;
+
 });
+
 }
 
-/* SAVE */
-
+/* ======================
+   SAVE PROFILE
+====================== */
 
 window.saveData = async function(){
 
@@ -287,28 +281,43 @@ teachingModes:el("modes").value.split(","),
 fee:el("fee").value
 });
 
-alert("Saved");
+alert("Saved Successfully");
 };
 
-/* RENEW */
-
-
+/* ======================
+   RENEW SYSTEM (FIXED)
+====================== */
 
 window.renewProfile = function(){
-window.location.href = "payment.html?profileId="+profileId;
+
+if(!profileId){
+alert("Profile ID missing. Please login again.");
+location.href="login.html";
+return;
+}
+
+/* SEND TO YOUR EXISTING PAYMENT PAGE */
+window.location.href =
+"payment.html?profileId=" + profileId + "&role=" + role;
+
 };
 
-/* LOGOUT FIX */
+/* ======================
+   LOGOUT FIXED
+====================== */
+
 window.logout = async function(){
+try{
 await signOut(auth);
+}catch(e){}
+
 localStorage.clear();
 location.href="login.html";
 };
 
-
-
-
-
+/* INIT */
+loadProfile();
+loadViews();
 
 </script>
 
