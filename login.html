@@ -3,11 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Login - GURULINK</title>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial,sans-serif;
@@ -28,7 +26,6 @@ box-shadow:0 5px 15px rgba(0,0,0,.1);
 
 h2{
 text-align:center;
-margin-top:0;
 margin-bottom:20px;
 color:#1565c0;
 }
@@ -39,8 +36,6 @@ padding:12px;
 margin:10px 0;
 border:1px solid #ccc;
 border-radius:8px;
-box-sizing:border-box;
-font-size:15px;
 }
 
 button{
@@ -51,299 +46,135 @@ color:white;
 border:none;
 border-radius:8px;
 cursor:pointer;
-font-size:16px;
-margin-top:10px;
-}
-
-button:hover{
-background:#0d47a1;
 }
 
 #msg{
-margin-top:15px;
+margin-top:10px;
 text-align:center;
 font-size:14px;
-color:#d32f2f;
-word-break:break-word;
+color:red;
 }
 
 .link{
 text-align:center;
 margin-top:15px;
-font-size:14px;
 }
-
-.link a{
-color:#1565c0;
-text-decoration:none;
-font-weight:bold;
-}
-
 </style>
 </head>
 
 <body>
 
 <div class="box">
-
 <h2>Login</h2>
 
-<input
-id="email"
-type="email"
-placeholder="Enter Email"
-required>
+<input id="email" type="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
 
-<input
-id="password"
-type="password"
-placeholder="Enter Password"
-required>
-
-<button onclick="loginUser()">
-Login
-</button>
+<button onclick="loginUser()">Login</button>
 
 <p id="msg"></p>
 
 <div class="link">
-Don't have account?
-<a href="register.html">
-Register
-</a>
+<a href="register.html">Create Account</a>
 </div>
-
 </div>
 
 <script type="module">
 
-import {
-initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
-import {
-getAuth,
-signInWithEmailAndPassword
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-
-import {
-getDatabase,
-ref,
-get
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-/* FIREBASE CONFIG */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
-
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-
 authDomain:"gurulink-59cc7.firebaseapp.com",
-
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-
 projectId:"gurulink-59cc7",
-
 storageBucket:"gurulink-59cc7.appspot.com",
-
 messagingSenderId:"112148672399",
-
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
 };
 
-/* INITIALIZE */
-
 const app = initializeApp(firebaseConfig);
-
 const auth = getAuth(app);
-
 const db = getDatabase(app);
-
-/* LOGIN */
 
 window.loginUser = async function(){
 
-const email =
-document.getElementById("email")
-.value
-.trim()
-.toLowerCase();
+const email = document.getElementById("email").value.trim();
+const password = document.getElementById("password").value;
+const msg = document.getElementById("msg");
 
-const password =
-document.getElementById("password")
-.value;
-
-const msg =
-document.getElementById("msg");
-
-msg.style.color="#1565c0";
-msg.innerHTML="Logging in...";
+msg.innerText = "Logging in...";
 
 try{
 
-/* LOGIN AUTH */
+// 1. AUTH LOGIN
+const cred = await signInWithEmailAndPassword(auth, email, password);
+const uid = cred.user.uid;
 
-const userCred =
-await signInWithEmailAndPassword(
-auth,
-email,
-password
-);
+// 2. CHECK ROLE IN DB (ONLY ONE SOURCE OF TRUTH)
+let role = null;
+let profileId = uid;
 
-const user = userCred.user;
-
-const uid = user.uid;
-
-/* GET USER DATA */
-
-/* CHECK TEACHERS */
-
+// teacher
 let snap = await get(ref(db,"teachers/"+uid));
-
 if(snap.exists()){
-
-const userData = snap.val();
-
-localStorage.setItem("uid",uid);
-localStorage.setItem("profileId",uid);
-localStorage.setItem("role","teacher");
-
-window.location.href="teacher-dashboard.html";
-return;
-
+role = "teacher";
 }
 
-/* CHECK INSTITUTIONS */
-
+// institution
+if(!role){
 snap = await get(ref(db,"institutions/"+uid));
-
 if(snap.exists()){
-
-const userData = snap.val();
-
-localStorage.setItem("uid",uid);
-localStorage.setItem("profileId",uid);
-localStorage.setItem("role","institution");
-
-window.location.href="teacher-dashboard.html";
-return;
-
+role = "institution";
+}
 }
 
-/* CHECK ADMINS */
+// admin (IMPORTANT FIX)
+if(!role){
+snap = await get(ref(db,"users/"+uid));
+if(snap.exists() && snap.val().role === "admin"){
+role = "admin";
+}
+}
 
-snap = await get(ref(db,"admins/"+uid));
-
+// student (optional)
+if(!role){
+snap = await get(ref(db,"students/"+uid));
 if(snap.exists()){
+role = "student";
+}
+}
 
-localStorage.setItem("uid",uid);
-localStorage.setItem("profileId",uid);
-localStorage.setItem("role","admin");
-
-window.location.href="admin.html";
+// 3. IF NO ROLE
+if(!role){
+msg.innerText = "No profile found!";
 return;
-
 }
 
-msg.style.color="red";
-msg.innerHTML="User profile not found.";
+// 4. SAVE SESSION CLEANLY
+localStorage.setItem("uid", uid);
+localStorage.setItem("role", role);
+localStorage.setItem("profileId", profileId);
 
-/* SAVE SESSION */
-
-localStorage.setItem(
-"uid",
-uid
-);
-
-localStorage.setItem(
-"profileId",
-userData.profileId || uid
-);
-
-localStorage.setItem(
-"role",
-userData.role
-);
-
-/* REDIRECT */
-
-if(userData.role==="teacher"){
-
-window.location.href =
-"teacher-dashboard.html";
-
-}
-else if(userData.role==="institution"){
-
-window.location.href =
-"teacher-dashboard.html";
-
-}
-else if(userData.role==="admin"){
-
-window.location.href =
-"admin.html";
-
+// 5. REDIRECT
+if(role === "teacher" || role === "institution"){
+window.location.href = "teacher-dashboard.html";
 }
 
-
-else if(userData.role==="student"){
-
-window.location.href =
-"student-dashboard.html";
-
+else if(role === "admin"){
+window.location.href = "admin.html";
 }
-else{
 
-msg.style.color="red";
-
-msg.innerHTML =
-"Unknown role: " + userData.role;
-
+else if(role === "student"){
+window.location.href = "student-dashboard.html";
 }
 
 }
 catch(err){
-
 console.log(err);
-
-msg.style.color="red";
-
-if(
-err.code==="auth/invalid-credential"
-){
-
-msg.innerHTML =
-"Invalid email or password.";
-
-}
-else if(
-err.code==="auth/user-not-found"
-){
-
-msg.innerHTML =
-"User not found.";
-
-}
-else if(
-err.code==="auth/wrong-password"
-){
-
-msg.innerHTML =
-"Wrong password.";
-
-}
-else{
-
-msg.innerHTML =
-err.message;
-
-}
-
+msg.innerText = err.message;
 }
 
 };
