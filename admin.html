@@ -33,13 +33,17 @@ border-radius:10px;
 box-shadow:0 3px 8px rgba(0,0,0,0.1);
 }
 
-h3{
-margin:0 0 10px;
+img{
+width:70px;
+height:70px;
+border-radius:8px;
+object-fit:cover;
+margin:5px;
 }
 
 button{
-padding:8px 12px;
-margin:5px;
+padding:7px 10px;
+margin:4px;
 border:none;
 border-radius:6px;
 cursor:pointer;
@@ -51,17 +55,13 @@ color:white;
 .delete{background:#444;}
 .view{background:#1565c0;}
 
-.grid{
-display:grid;
-grid-template-columns:1fr;
-gap:10px;
-}
-
-img{
-width:60px;
-height:60px;
-object-fit:cover;
+.badge{
+display:inline-block;
+padding:4px 8px;
+background:#eee;
 border-radius:6px;
+font-size:12px;
+margin:3px;
 }
 </style>
 </head>
@@ -109,26 +109,54 @@ alert("Access Denied!");
 window.location.href = "login.html";
 }
 
-/* LOAD TEACHERS */
+/* =========================
+   366 DAYS VALIDITY CHECK
+========================= */
+function isExpired(approvedAt){
+if(!approvedAt) return false;
+
+const now = Date.now();
+const expiry = approvedAt + (366 * 24 * 60 * 60 * 1000);
+
+return now > expiry;
+}
+
+/* =========================
+   TEACHERS
+========================= */
 function loadTeachers(){
 onValue(ref(db,"teachers"),(snap)=>{
+
 let html = "";
 
 snap.forEach(child=>{
 let d = child.val();
 let id = child.key;
 
+let expired = isExpired(d.approvedAt);
+
 html += `
 <div class="card">
+
 <h3>${d.name || "No Name"}</h3>
-<p>Phone: ${d.phone || ""}</p>
-<p>Status: ${d.status || "pending"}</p>
+
+<span class="badge">${d.status || "pending"}</span>
+${expired ? `<span class="badge" style="background:red;color:white">EXPIRED</span>` : ""}
+
+<p>Email: ${d.email || "-"}</p>
+<p>Phone: ${d.phone || "-"}</p>
+<p>Subject: ${d.subject || "-"}</p>
+<p>Location: ${d.location || "-"}</p>
 
 <img src="${d.photo || ''}">
 
+<div>
 <button class="approve" onclick="approveTeacher('${id}')">Approve</button>
 <button class="reject" onclick="rejectTeacher('${id}')">Reject</button>
 <button class="delete" onclick="deleteTeacher('${id}')">Delete</button>
+<button class="view" onclick="viewProfile('${id}','teacher')">View</button>
+</div>
+
 </div>
 `;
 });
@@ -137,26 +165,41 @@ document.getElementById("teachers").innerHTML = html;
 });
 }
 
-/* LOAD INSTITUTIONS */
+/* =========================
+   INSTITUTIONS
+========================= */
 function loadInstitutions(){
 onValue(ref(db,"institutions"),(snap)=>{
+
 let html = "";
 
 snap.forEach(child=>{
 let d = child.val();
 let id = child.key;
 
+let expired = isExpired(d.approvedAt);
+
 html += `
 <div class="card">
+
 <h3>${d.name || "No Name"}</h3>
-<p>Owner: ${d.ownerName || ""}</p>
-<p>Status: ${d.status || "pending"}</p>
+
+<span class="badge">${d.status || "pending"}</span>
+${expired ? `<span class="badge" style="background:red;color:white">EXPIRED</span>` : ""}
+
+<p>Owner: ${d.ownerName || "-"}</p>
+<p>Email: ${d.email || "-"}</p>
+<p>Phone: ${d.phone || "-"}</p>
 
 <img src="${d.logo || ''}">
 
+<div>
 <button class="approve" onclick="approveInst('${id}')">Approve</button>
 <button class="reject" onclick="rejectInst('${id}')">Reject</button>
 <button class="delete" onclick="deleteInst('${id}')">Delete</button>
+<button class="view" onclick="viewProfile('${id}','institution')">View</button>
+</div>
+
 </div>
 `;
 });
@@ -165,20 +208,29 @@ document.getElementById("institutions").innerHTML = html;
 });
 }
 
-/* LOAD PAYMENTS */
+/* =========================
+   PAYMENTS
+========================= */
 function loadPayments(){
 onValue(ref(db,"payments"),(snap)=>{
+
 let html = "";
 
 snap.forEach(child=>{
 let d = child.val();
+let id = child.key;
 
 html += `
 <div class="card">
+
 <h3>Payment</h3>
-<p>User: ${d.name || "N/A"}</p>
+
+<p>User: ${d.name || "-"}</p>
 <p>Amount: ₹${d.amount || 0}</p>
 <p>Status: ${d.status || "pending"}</p>
+
+<button class="delete" onclick="deletePayment('${id}')">Delete</button>
+
 </div>
 `;
 });
@@ -187,14 +239,21 @@ document.getElementById("payments").innerHTML = html;
 });
 }
 
-/* ACTIONS */
+/* =========================
+   ACTIONS
+========================= */
 
 window.approveTeacher = async (id)=>{
-await update(ref(db,"teachers/"+id),{status:"approved"});
+await update(ref(db,"teachers/"+id),{
+status:"approved",
+approvedAt: Date.now()
+});
 };
 
 window.rejectTeacher = async (id)=>{
-await update(ref(db,"teachers/"+id),{status:"rejected"});
+await update(ref(db,"teachers/"+id),{
+status:"rejected"
+});
 };
 
 window.deleteTeacher = async (id)=>{
@@ -202,15 +261,29 @@ await remove(ref(db,"teachers/"+id));
 };
 
 window.approveInst = async (id)=>{
-await update(ref(db,"institutions/"+id),{status:"approved"});
+await update(ref(db,"institutions/"+id),{
+status:"approved",
+approvedAt: Date.now()
+});
 };
 
 window.rejectInst = async (id)=>{
-await update(ref(db,"institutions/"+id),{status:"rejected"});
+await update(ref(db,"institutions/"+id),{
+status:"rejected"
+});
 };
 
 window.deleteInst = async (id)=>{
 await remove(ref(db,"institutions/"+id));
+};
+
+window.deletePayment = async (id)=>{
+await remove(ref(db,"payments/"+id));
+};
+
+/* VIEW PROFILE */
+window.viewProfile = (id,type)=>{
+window.open("profile-view.html?id="+id+"&type="+type);
 };
 
 /* INIT */
