@@ -19,22 +19,6 @@ padding:15px;
 text-align:center;
 }
 
-.searchBox{
-width:95%;
-max-width:1400px;
-margin:10px auto;
-display:flex;
-gap:10px;
-}
-
-.searchBox input{
-width:100%;
-padding:10px;
-border-radius:8px;
-border:1px solid #ccc;
-outline:none;
-}
-
 .container{
 width:95%;
 max-width:1400px;
@@ -84,14 +68,9 @@ border-radius:6px;
 font-size:11px;
 margin:3px;
 }
-.expired{
-background:red;
-color:white;
-}
-.active{
-background:green;
-color:white;
-}
+
+.expired{background:red;color:white;}
+.active{background:green;color:white;}
 </style>
 </head>
 
@@ -100,11 +79,6 @@ color:white;
 <header>
 <h2>GURULINK ADMIN PANEL</h2>
 </header>
-
-<!-- 🔍 SEARCH FILTER -->
-<div class="searchBox">
-<input id="search" placeholder="Search by name / email / phone">
-</div>
 
 <div class="container">
 
@@ -149,31 +123,65 @@ alert("Access Denied!");
 window.location.href = "login.html";
 }
 
-/* EXPIRY */
-function isExpired(time){
-if(!time) return false;
-return Date.now() > time + (366*24*60*60*1000);
+/* ===== EXPIRY CALC ===== */
+function getExpiryInfo(approvedAt){
+if(!approvedAt) return {days:"N/A", expired:false};
+
+const total = 366 * 24 * 60 * 60 * 1000;
+const now = Date.now();
+
+const diff = approvedAt + total - now;
+const days = Math.ceil(diff / (24 * 60 * 60 * 1000));
+
+return {
+days: days > 0 ? days : 0,
+expired: diff <= 0
+};
 }
-
-/* SEARCH */
-document.getElementById("search").addEventListener("input",render);
-
-let teachersData = [];
-let instData = [];
 
 /* ================= TEACHERS ================= */
 function loadTeachers(){
 onValue(ref(db,"teachers"),snap=>{
 
-teachersData = [];
+let html="";
 
 snap.forEach(c=>{
 let d=c.val();
 let id=c.key;
-teachersData.push({id,...d});
+
+const exp = getExpiryInfo(d.approvedAt);
+
+html+=`
+<div class="card">
+
+<h3>${d.name || "No Name"}</h3>
+
+<span class="badge">${d.status || "pending"}</span>
+
+${d.approvedAt ? `
+<span class="badge ${exp.expired ? "expired" : "active"}">
+${exp.expired ? "EXPIRED" : "Days Left: " + exp.days}
+</span>
+` : ""}
+
+<p><b>Email:</b> ${d.email || "-"}</p>
+<p><b>Phone:</b> ${d.phone || "-"}</p>
+<p><b>Subject:</b> ${d.subjects || d.subject || "-"}</p>
+
+<img src="${d.logo||d.photo||d.idProof||'https://via.placeholder.com/100'}">
+
+<div>
+<button class="approve" onclick="approveTeacher('${id}')">Approve</button>
+<button class="reject" onclick="rejectTeacher('${id}')">Reject</button>
+<button class="delete" onclick="deleteTeacher('${id}')">Delete</button>
+<button class="view" onclick="viewProfile('${id}','teacher')">View</button>
+</div>
+
+</div>
+`;
 });
 
-render();
+document.getElementById("teachers").innerHTML = html;
 });
 }
 
@@ -181,95 +189,45 @@ render();
 function loadInstitutions(){
 onValue(ref(db,"institutions"),snap=>{
 
-instData = [];
+let html="";
 
 snap.forEach(c=>{
 let d=c.val();
 let id=c.key;
-instData.push({id,...d});
-});
 
-render();
-});
-}
+const exp = getExpiryInfo(d.approvedAt);
 
-/* ================= FILTER + RENDER ================= */
-function render(){
-
-let search = document.getElementById("search").value.toLowerCase();
-
-function match(x){
-return (
-(x.name||"").toLowerCase().includes(search) ||
-(x.email||"").toLowerCase().includes(search) ||
-(x.phone||"").toLowerCase().includes(search)
-);
-}
-
-/* ===== TEACHERS ===== */
-document.getElementById("teachers").innerHTML =
-teachersData.filter(match).map(d=>{
-
-let expired = isExpired(d.approvedAt);
-
-return `
+html+=`
 <div class="card">
 
-<h3>${d.name||"No Name"}</h3>
+<h3>${d.name || "No Name"}</h3>
 
-<span class="badge">${d.status||"pending"}</span>
-<span class="badge ${expired ? "expired":"active"}">
-${expired ? "EXPIRED" : "ACTIVE"}
+<span class="badge">${d.status || "pending"}</span>
+
+${d.approvedAt ? `
+<span class="badge ${exp.expired ? "expired" : "active"}">
+${exp.expired ? "EXPIRED" : "Days Left: " + exp.days}
 </span>
+` : ""}
 
-<p>${d.email||"-"}</p>
-<p>${d.phone||"-"}</p>
-
-<img src="${d.photo||d.logo||d.idProof||'https://via.placeholder.com/100'}">
-
-<div>
-<button class="approve" onclick="approveTeacher('${d.id}')">Approve</button>
-<button class="reject" onclick="rejectTeacher('${d.id}')">Reject</button>
-<button class="delete" onclick="deleteTeacher('${d.id}')">Delete</button>
-<button class="edit" onclick="editTeacher('${d.id}')">Edit</button>
-<button class="view" onclick="viewProfile('${d.id}','teacher')">View</button>
-</div>
-
-</div>`;
-}).join("");
-
-/* ===== INSTITUTIONS ===== */
-document.getElementById("institutions").innerHTML =
-instData.filter(match).map(d=>{
-
-let expired = isExpired(d.approvedAt);
-
-return `
-<div class="card">
-
-<h3>${d.name||"No Name"}</h3>
-
-<span class="badge">${d.status||"pending"}</span>
-<span class="badge ${expired ? "expired":"active"}">
-${expired ? "EXPIRED" : "ACTIVE"}
-</span>
-
-<p>${d.email||"-"}</p>
-<p>${d.phone||"-"}</p>
+<p><b>Email:</b> ${d.email || "-"}</p>
+<p><b>Phone:</b> ${d.phone || "-"}</p>
 
 <img src="${d.logo||d.photo||'https://via.placeholder.com/100'}">
 
 <div>
-<button class="approve" onclick="approveInst('${d.id}')">Approve</button>
-<button class="reject" onclick="rejectInst('${d.id}')">Reject</button>
-<button class="delete" onclick="deleteInst('${d.id}')">Delete</button>
-<button class="edit" onclick="editInst('${d.id}')">Edit</button>
-<button class="view" onclick="viewProfile('${d.id}','institution')">View</button>
+<button class="approve" onclick="approveInst('${id}')">Approve</button>
+<button class="reject" onclick="rejectInst('${id}')">Reject</button>
+<button class="delete" onclick="deleteInst('${id}')">Delete</button>
+<button class="view" onclick="viewProfile('${id}','institution')">View</button>
 </div>
 
-</div>`;
-}).join("");
+</div>
+`;
+});
 
+document.getElementById("institutions").innerHTML = html;
+});
 }
 
 /* ================= PAYMENTS ================= */
@@ -280,75 +238,67 @@ let html="";
 
 snap.forEach(c=>{
 let d=c.val();
+let id=c.key;
 
 html+=`
 <div class="card">
 
 <h3>Payment</h3>
 
-<p><b>Name:</b> ${d.name||"-"}</p>
-<p><b>Phone:</b> ${d.phone||"-"}</p>
-<p><b>Amount:</b> ₹${d.amount||0}</p>
-<p><b>Status:</b> ${d.status||"pending"}</p>
+<p><b>Name:</b> ${d.name || "-"}</p>
+<p><b>Phone:</b> ${d.phone || "-"}</p>
+<p><b>Amount:</b> ₹${d.amount || 0}</p>
+<p><b>Status:</b> ${d.status || "pending"}</p>
 
-<button class="delete" onclick="deletePayment('${c.key}')">Delete</button>
+<button class="delete" onclick="deletePayment('${id}')">Delete</button>
 
-</div>`;
+</div>
+`;
 });
 
-document.getElementById("payments").innerHTML=html;
+document.getElementById("payments").innerHTML = html;
 });
 }
 
 /* ACTIONS */
-window.approveTeacher=(id)=>{
-update(ref(db,"teachers/"+id),{status:"approved",approvedAt:Date.now()});
+window.approveTeacher=async(id)=>{
+await update(ref(db,"teachers/"+id),{
+status:"approved",
+approvedAt:Date.now()
+});
 };
 
-window.rejectTeacher=(id)=>{
-update(ref(db,"teachers/"+id),{status:"rejected"});
+window.rejectTeacher=async(id)=>{
+await update(ref(db,"teachers/"+id),{status:"rejected"});
 };
 
-window.deleteTeacher=(id)=>{
-remove(ref(db,"teachers/"+id));
+window.deleteTeacher=async(id)=>{
+await remove(ref(db,"teachers/"+id));
 };
 
-window.approveInst=(id)=>{
-update(ref(db,"institutions/"+id),{status:"approved",approvedAt:Date.now()});
+window.approveInst=async(id)=>{
+await update(ref(db,"institutions/"+id),{
+status:"approved",
+approvedAt:Date.now()
+});
 };
 
-window.rejectInst=(id)=>{
-update(ref(db,"institutions/"+id),{status:"rejected"});
+window.rejectInst=async(id)=>{
+await update(ref(db,"institutions/"+id),{status:"rejected"});
 };
 
-window.deleteInst=(id)=>{
-remove(ref(db,"institutions/"+id));
+window.deleteInst=async(id)=>{
+await remove(ref(db,"institutions/"+id));
 };
 
-window.deletePayment=(id)=>{
-remove(ref(db,"payments/"+id));
-};
-
-window.editTeacher=(id)=>{
-let n=prompt("Name");
-let p=prompt("Phone");
-let s=prompt("Subject");
-let l=prompt("Location");
-update(ref(db,"teachers/"+id),{name:n,phone:p,subjects:s,location:l});
-};
-
-window.editInst=(id)=>{
-let n=prompt("Name");
-let p=prompt("Phone");
-let l=prompt("Location");
-update(ref(db,"institutions/"+id),{name:n,phone:p,location:l});
+window.deletePayment=async(id)=>{
+await remove(ref(db,"payments/"+id));
 };
 
 window.viewProfile=(id,type)=>{
 window.open("profile-view.html?id="+id+"&type="+type);
 };
 
-/* INIT */
 loadTeachers();
 loadInstitutions();
 loadPayments();
