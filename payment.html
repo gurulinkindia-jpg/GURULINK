@@ -115,9 +115,11 @@ document.getElementById("feeText").innerHTML =
 /* BUTTON CLICK */
 document.getElementById("payBtn").onclick = () => {
 
-  localStorage.setItem("pendingType", type);
-  localStorage.setItem("pendingId", id);
-  localStorage.setItem("paymentStarted", "true");
+
+localStorage.setItem("paymentProfileId", id);
+localStorage.setItem("paymentType", type);
+
+
 
   window.location.href = paymentLink;
 };
