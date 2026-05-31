@@ -122,7 +122,7 @@ margin-bottom:10px;
 
 <input id="ownerName" placeholder="Owner / Director Name" required>
 
-<input type="date" id="establishedDate" required>
+<input type="date" id="establishedDate" placeholder="Established Date" required>
 
 <input id="phone" placeholder="Contact Number" required>
 
@@ -133,21 +133,22 @@ margin-bottom:10px;
 <input
 type="password"
 id="password"
-placeholder="Create Password"
+placeholder="Create Password (this will be used for login)"
 required>
 
-<input id="website" placeholder="Website URL if available">
+<input id="website" placeholder="Website URL (if available)">
 
-<input id="address" placeholder="Full Address">
+<input id="address" placeholder=" Institute Location: Guwahati/Delhi">
 
 <input id="area" placeholder="Area / City / State">
 
-<input id="mapLink" placeholder="Google Map Location Link">
+<input id="mapLink" placeholder="Google Map Location Link (if available)">
 
 <h3>Subjects</h3>
 
 <div class="modeBox">
 
+<div class="row">
 <div class="row">
 <input type="checkbox" value="Physics" class="subjectCheck"> Physics
 </div>
@@ -173,6 +174,58 @@ required>
 </div>
 
 <div class="row">
+<input type="checkbox" value="Sanskrit" class="subjectCheck"> Sanskrit
+</div>
+
+<div class="row">
+<input type="checkbox" value="Assamese" class="subjectCheck"> Assamese
+</div>
+
+<div class="row">
+<input type="checkbox" value="Science" class="subjectCheck"> Science (General)
+</div>
+
+<div class="row">
+<input type="checkbox" value="Social Science" class="subjectCheck"> Social Science
+</div>
+
+<div class="row">
+<input type="checkbox" value="Computer Science" class="subjectCheck"> Computer Science
+</div>
+
+<div class="row">
+<input type="checkbox" value="Information Technology" class="subjectCheck"> Information Technology
+</div>
+
+<div class="row">
+<input type="checkbox" value="Economics" class="subjectCheck"> Economics
+</div>
+
+<div class="row">
+<input type="checkbox" value="Accountancy" class="subjectCheck"> Accountancy
+</div>
+
+<div class="row">
+<input type="checkbox" value="Business Studies" class="subjectCheck"> Business Studies
+</div>
+
+<div class="row">
+<input type="checkbox" value="History" class="subjectCheck"> History
+</div>
+
+<div class="row">
+<input type="checkbox" value="Geography" class="subjectCheck"> Geography
+</div>
+
+<div class="row">
+<input type="checkbox" value="Political Science" class="subjectCheck"> Political Science
+</div>
+
+<div class="row">
+<input type="checkbox" value="EVS" class="subjectCheck"> Environmental Science (EVS)
+</div>
+
+<div class="row">
 <input type="checkbox" id="otherCheck"> Other
 </div>
 
@@ -193,12 +246,30 @@ Select at least one subject
 
 <input
 id="class"
-placeholder="Classes (1-12 / JEE / NEET)"
+placeholder="Class UKG,LKG,1,2,3,4.5.6.7,9,9,10,11,12,JEE,NEET"
 required>
 
 <h3>Teaching Modes</h3>
 
 <div class="modeBox">
+
+<div class="row">
+<input type="checkbox" class="mode" value="Group Coaching" onchange="toggleFee('groupFeeBox')">
+Group Coaching
+</div>
+
+<div id="groupFeeBox" class="modeFee">
+<input id="groupFee" placeholder="Enter Group Coaching Fee">
+</div>
+
+<div class="row">
+<input type="checkbox" class="mode" value="Super Group Coaching" onchange="toggleFee('groupFeeBox')">
+Super Group Coaching
+</div>
+
+<div id="groupFeeBox" class="modeFee">
+<input id="groupFee" placeholder="Enter Super Group Coaching Fee">
+</div>
 
 <div class="row">
 <input type="checkbox" class="mode" value="Individual Coaching" onchange="toggleFee('individualFeeBox')">
@@ -218,14 +289,6 @@ Home Tuition
 <input id="homeFee" placeholder="Enter Home Tuition Fee">
 </div>
 
-<div class="row">
-<input type="checkbox" class="mode" value="Group Coaching" onchange="toggleFee('groupFeeBox')">
-Group Coaching
-</div>
-
-<div id="groupFeeBox" class="modeFee">
-<input id="groupFee" placeholder="Enter Group Coaching Fee">
-</div>
 
 <div class="row">
 <input type="checkbox" class="mode" value="Online" onchange="toggleFee('onlineFeeBox')">
@@ -253,11 +316,25 @@ required>
 <select id="idType" required>
 
 <option value="">Select</option>
-<option>Aadhaar</option>
-<option>PAN</option>
-<option>License</option>
+
+<option value="Owner PAN">Owner PAN</option>
+<option value="Owner Aadhaar">Owner Aadhaar</option>
+
+<option value="Trading License">Trading License</option>
+<option value="GST Certificate">GST Certificate</option>
+
+<option value="Electricity Bill">Electricity Bill</option>
+<option value="NGO Certificate">NGO Certificate</option>
+
+<option value="Other">Other</option>
 
 </select>
+
+<!-- ✅ MUST BE OUTSIDE SELECT -->
+<input
+id="otherIdProof"
+placeholder="Specify Other ID Proof"
+style="display:none; margin-top:10px;">
 
 <input
 type="file"
@@ -386,6 +463,20 @@ const auth = getAuth(app);
 
 const form = document.getElementById("form");
 
+
+
+
+/* 🔥 ID PROOF "OTHER" HANDLER */
+document.getElementById("idType").addEventListener("change",(e)=>{
+
+document.getElementById("otherIdProof").style.display =
+e.target.value === "Other" ? "block" : "none";
+
+});
+
+
+
+
 const API_KEY =
 "31f729ff855eb2e42c00ee508a8647ea";
 
@@ -508,8 +599,7 @@ submitBtn.innerText="Processing...";
 
 
 
-/* SHOW WARNING BOX HERE ✅ */
-document.getElementById("warningBox").style.display = "block";
+
 
 
 
