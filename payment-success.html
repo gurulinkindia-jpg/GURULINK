@@ -79,13 +79,21 @@ const db = getDatabase(app);
 /* URL PARAMS */
 
 const params = new URLSearchParams(window.location.search);
-const type = params.get("type") || "teacher";
 
-
+let type = params.get("type") || "teacher";
 let id = params.get("id");
 
+/* fallback only if URL missing */
 if (!id) {
-    id = localStorage.getItem("paymentProfileId");
+    id =
+        localStorage.getItem("institutionId") ||
+        localStorage.getItem("teacherId");
+}
+
+/* safety check */
+if (!id) {
+    alert("Profile ID missing. Please complete registration & payment.");
+    throw new Error("Missing ID");
 }
 
 /* SAFE FALLBACK */
