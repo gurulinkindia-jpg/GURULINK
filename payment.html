@@ -106,6 +106,12 @@ document.getElementById("feeText").innerHTML =
 
 /* BUTTON CLICK */
 document.getElementById("payBtn").onclick = () => {
+
+
+localStorage.setItem("paymentProfileId", id);
+localStorage.setItem("paymentType", type);
+
+
 alert(paymentLink);
   window.location.href = paymentLink;
 };
