@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Login - GURULINK</title>
 
 <style>
@@ -101,37 +102,33 @@ const db = getDatabase(app);
 
 window.loginUser = async function(){
 
-const email = document.getElementById("email").value.trim();
+const email = document.getElementById("email").value.trim().toLowerCase();
 const password = document.getElementById("password").value;
 const msg = document.getElementById("msg");
 
+msg.style.color = "#1565c0";
 msg.innerText = "Logging in...";
 
 try{
 
-// 1. AUTH LOGIN
+// 1. Firebase Auth Login
 const cred = await signInWithEmailAndPassword(auth, email, password);
 const uid = cred.user.uid;
 
-// 2. CHECK ROLE IN DB (ONLY ONE SOURCE OF TRUTH)
+// 2. Detect role (ONLY ONE SOURCE)
 let role = null;
-let profileId = uid;
 
 // teacher
 let snap = await get(ref(db,"teachers/"+uid));
-if(snap.exists()){
-role = "teacher";
-}
+if(snap.exists()) role = "teacher";
 
 // institution
 if(!role){
 snap = await get(ref(db,"institutions/"+uid));
-if(snap.exists()){
-role = "institution";
-}
+if(snap.exists()) role = "institution";
 }
 
-// admin (IMPORTANT FIX)
+// admin (FIXED PATH)
 if(!role){
 snap = await get(ref(db,"users/"+uid));
 if(snap.exists() && snap.val().role === "admin"){
@@ -139,28 +136,31 @@ role = "admin";
 }
 }
 
-// student (optional)
+// student
 if(!role){
 snap = await get(ref(db,"students/"+uid));
-if(snap.exists()){
-role = "student";
-}
+if(snap.exists()) role = "student";
 }
 
-// 3. IF NO ROLE
+// 3. If no role
 if(!role){
+msg.style.color = "red";
 msg.innerText = "No profile found!";
 return;
 }
 
-// 4. SAVE SESSION CLEANLY
+// 4. SAVE SESSION (CLEAN)
 localStorage.setItem("uid", uid);
 localStorage.setItem("role", role);
-localStorage.setItem("profileId", profileId);
+localStorage.setItem("profileId", uid);
 
-// 5. REDIRECT
-if(role === "teacher" || role === "institution"){
+// 5. REDIRECT (FIXED SEPARATION)
+if(role === "teacher"){
 window.location.href = "teacher-dashboard.html";
+}
+
+else if(role === "institution"){
+window.location.href = "institution-dashboard.html";
 }
 
 else if(role === "admin"){
@@ -174,6 +174,7 @@ window.location.href = "student-dashboard.html";
 }
 catch(err){
 console.log(err);
+msg.style.color = "red";
 msg.innerText = err.message;
 }
 
