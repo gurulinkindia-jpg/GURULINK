@@ -74,7 +74,15 @@ const params = new URLSearchParams(window.location.search);
 
 const type = params.get("type") || "teacher";
 const id = params.get("id");
-alert("TYPE = " + type + "\nID = " + id);
+
+
+
+
+
+
+
+
+
 
 let amount = 1;
 let paymentLink = "";
@@ -112,7 +120,7 @@ localStorage.setItem("paymentProfileId", id);
 localStorage.setItem("paymentType", type);
 
 
-alert(paymentLink);
+
   window.location.href = paymentLink;
 };
 
