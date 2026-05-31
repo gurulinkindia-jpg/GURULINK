@@ -110,6 +110,21 @@ border-radius:6px;
 font-size:10px;
 margin:2px;
 }
+.homeBtn{
+background:#2e7d32;   /* green */
+color:white;
+}
+
+.logoutBtn{
+background:#c62828;   /* red */
+color:white;
+}
+
+.topbar button:hover{
+opacity:0.85;
+transform:scale(1.03);
+transition:0.2s;
+}
 </style>
 </head>
 
@@ -122,8 +137,8 @@ margin:2px;
 <div class="topbar">
 
 <div>
-<button onclick="location.href='index.html'">Home</button>
-<button onclick="logout()">Logout</button>
+<button class="homeBtn" onclick="location.href='index.html'">Home</button>
+<button class="logoutBtn" onclick="logout()">Logout</button>
 </div>
 
 <input id="search" placeholder="Search name / email / phone" oninput="renderAll()">
