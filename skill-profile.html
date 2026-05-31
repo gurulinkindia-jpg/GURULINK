@@ -215,356 +215,251 @@ Online Group
 
 </div>
 
+
+
+
+
+
+
+
+
 <script type="module">
 
-import {
-initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
-import {
-getDatabase,
-ref,
-onValue
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 /* FIREBASE */
-
 const firebaseConfig = {
-
-apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-
-authDomain:"gurulink-59cc7.firebaseapp.com",
-
-databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-
-projectId:"gurulink-59cc7",
-
-storageBucket:"gurulink-59cc7.appspot.com",
-
-messagingSenderId:"112148672399",
-
-appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
+  apiKey: "AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+  authDomain: "gurulink-59cc7.firebaseapp.com",
+  databaseURL: "https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "gurulink-59cc7",
+  storageBucket: "gurulink-59cc7.appspot.com",
+  messagingSenderId: "112148672399",
+  appId: "1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getDatabase(app);
 
 let teachers = [];
-
 let institutions = [];
 
-/* LOAD DATA */
+/* LOAD TEACHERS */
+onValue(ref(db, "teachers"), (snap) => {
 
-function loadData(){
+  teachers = [];
 
-onValue(ref(db,"teachers"),snap=>{
+  snap.forEach((c) => {
 
-teachers = [];
+    const d = c.val();
 
-snap.forEach(c=>{
+    if (
+      d.status === "approved" &&
+      (d.category || "").toLowerCase() === "skill"
+    ) {
+      teachers.push({
+        ...d,
+        id: c.key,
+        type: "Teacher"
+      });
+    }
 
-const d = c.val();
+  });
 
-if(
-d.status==="approved"
-&&
-(d.category||"").toLowerCase()==="skill"
-){
-
-teachers.push({
-
-...d,
-
-id:c.key,
-
-type:"Teacher"
-
+  render();
 });
 
-}
+/* LOAD INSTITUTIONS */
+onValue(ref(db, "institutions"), (snap) => {
 
+  institutions = [];
+
+  snap.forEach((c) => {
+
+    const d = c.val();
+
+    if (
+      d.status === "approved" &&
+      (d.category || "").toLowerCase() === "skill"
+    ) {
+      institutions.push({
+        ...d,
+        id: c.key,
+        type: "Institution"
+      });
+    }
+
+  });
+
+  render();
 });
 
-render();
+/* COMBINE */
+function getAll() {
+  return [...teachers, ...institutions];
+}
 
+/* SEARCH HELP */
+function similar(a, b) {
+  return (a || "").toLowerCase().includes((b || "").toLowerCase());
+}
+
+/* SUBJECT MATCH */
+function subjectMatch(userSubject, selectedSubject) {
+
+  if (!selectedSubject) return true;
+  if (!userSubject) return false;
+
+  if (Array.isArray(userSubject)) {
+    return userSubject.some(s =>
+      s.toLowerCase().includes(selectedSubject.toLowerCase())
+    );
+  }
+
+  return userSubject
+    .toLowerCase()
+    .includes(selectedSubject.toLowerCase());
+}
+
+/* MODE MATCH */
+function modeMatch(modes, selectedMode) {
+  if (!selectedMode) return true;
+  return (modes || []).includes(selectedMode);
+}
+
+/* =========================
+   VIEW BUTTON HANDLER
+========================= */
+
+document.addEventListener("click", (e) => {
+
+  const btn = e.target.closest(".view");
+  if (!btn) return;
+
+  const id = btn.dataset.id;
+
+  const uid =
+    localStorage.getItem("uid") ||
+    localStorage.getItem("studentUid") ||
+    localStorage.getItem("teacherUid") ||
+    localStorage.getItem("adminUid") ||
+    localStorage.getItem("institutionId");
+
+  if (!uid) {
+
+    sessionStorage.setItem(
+      "redirectAfterLogin",
+      "profile-view.html?id=" + id
+    );
+
+    alert("Please login first");
+
+    window.location.href = "student-login.html";
+    return;
+  }
+
+  window.location.href = "profile-view.html?id=" + id;
 });
 
-onValue(ref(db,"institutions"),snap=>{
-
-institutions = [];
-
-snap.forEach(c=>{
-
-const d = c.val();
-
-if(
-d.status==="approved"
-&&
-(d.category||"").toLowerCase()==="skill"
-){
-
-institutions.push({
-
-...d,
-
-id:c.key,
-
-type:"Institution"
-
-});
-
-}
-
-});
-
-render();
-
-});
-
-}
-
-loadData();
-
-/* ALL DATA */
-
-function getAll(){
-
-return [
-
-...teachers,
-
-...institutions
-
-];
-
-}
-
-/* SEARCH FILTER */
-
-document
-.getElementById("search")
-.addEventListener("input",render);
-
-document
-.getElementById("subjectFilter")
-.addEventListener("change",render);
-
-document
-.getElementById("modeFilter")
-.addEventListener("change",render);
-
-/* CHECK LOGIN */
-
-window.checkStudentLogin = function(id){
-
-const uid =
-localStorage.getItem("uid");
-
-const role =
-localStorage.getItem("role");
-
-/* NOT LOGGED IN */
-
-if(!uid){
-
-localStorage.setItem(
-"redirectProfileId",
-id
-);
-
-window.location.href =
-"student-login.html";
-
-return;
-
-}
-
-/* ONLY STUDENT */
-
-if(role !== "student"){
-
-alert(
-"Please login as student"
-);
-
-localStorage.setItem(
-"redirectProfileId",
-id
-);
-
-window.location.href =
-"student-login.html";
-
-return;
-
-}
-
-/* OPEN PROFILE */
-
-window.location.href =
-"profile-view.html?id=" + id;
-
-};
+/* FILTER EVENTS */
+document.getElementById("search").addEventListener("input", render);
+document.getElementById("subjectFilter").addEventListener("change", render);
+document.getElementById("modeFilter").addEventListener("change", render);
 
 /* RENDER */
+function render() {
 
-function render(){
+  const all = getAll();
 
-const all = getAll();
+  const search = document.getElementById("search").value.trim().toLowerCase();
+  const subject = document.getElementById("subjectFilter").value;
+  const mode = document.getElementById("modeFilter").value;
 
-const search =
-document
-.getElementById("search")
-.value
-.toLowerCase();
+  const filtered = all.filter((x) => {
 
-const subject =
-document
-.getElementById("subjectFilter")
-.value;
+    const name = (x.name || "").toLowerCase();
+    const location = (x.location || x.address || "").toLowerCase();
 
-const mode =
-document
-.getElementById("modeFilter")
-.value;
+    /* SEARCH */
+    if (search && !(similar(name, search) || similar(location, search))) {
+      return false;
+    }
 
-const filtered = all.filter(x=>{
+    /* SUBJECT */
+    if (!subjectMatch(x.subject || x.subjects, subject)) {
+      return false;
+    }
 
-const name =
-(x.name||"")
-.toLowerCase();
+    /* MODE */
+    if (!modeMatch(x.teachingModes || x.modes, mode)) {
+      return false;
+    }
 
-const location =
-(x.location||x.address||"")
-.toLowerCase();
+    return true;
+  });
 
-/* SEARCH */
+  const grid = document.getElementById("grid");
 
-if(
-search &&
-!(
-name.includes(search)
-||
-location.includes(search)
-)
-){
-return false;
-}
+  if (!filtered.length) {
+    grid.innerHTML = `
+      <div class="empty">
+        No Skill Profiles Found
+      </div>
+    `;
+    return;
+  }
 
-/* SUBJECT */
+  grid.innerHTML = filtered.map((x) => `
 
-if(
-subject &&
-(x.subject||"") !== subject
-){
-return false;
-}
+    <div class="card ${x.type.toLowerCase()}">
 
-/* MODE */
+      <div class="top">
 
-const modes =
-x.teachingModes
-||
-x.modes
-||
-[];
+        <img
+          class="photo"
+          src="${x.photo || x.logo || 'https://via.placeholder.com/100'}"
+        >
 
-if(
-mode &&
-!modes.includes(mode)
-){
-return false;
-}
+        <div>
 
-return true;
+          <h3>${x.name || "-"}</h3>
 
-});
+          <div class="badge">${x.type}</div>
 
-const grid =
-document.getElementById("grid");
+          <div class="badge verify">
+            ${x.verified ? "Verified" : "Not Verified"}
+          </div>
 
-/* EMPTY */
+        </div>
 
-if(filtered.length===0){
+      </div>
 
-grid.innerHTML =
+      <div class="details">
 
-`<div class="empty">
+        <b>Skill:</b>
+        ${x.subject || x.subjects || "-"}
+        <br>
 
-No Skill Profiles Found
+        <b>Location:</b>
+        ${x.location || x.address || "-"}
+        <br>
 
-</div>`;
+        <b>Mode:</b>
+        ${(x.teachingModes || x.modes || []).join(", ") || "-"}
 
-return;
+      </div>
 
-}
+      <button
+        class="btn view"
+        data-id="${x.id}"
+      >
+        View Details
+      </button>
 
-/* CARDS */
+    </div>
 
-grid.innerHTML =
-
-filtered.map(x=>`
-
-<div class="card ${x.type==="Institution"?"institution":"teacher"}">
-
-<div class="top">
-
-<img
-class="photo"
-src="${x.photo || x.logo || 'https://via.placeholder.com/100'}">
-
-<div>
-
-<h3>
-${x.name || "-"}
-</h3>
-
-<div class="badge">
-${x.type}
-</div>
-
-<div class="badge verify">
-Verified
-</div>
-
-</div>
-
-</div>
-
-<div class="details">
-
-<b>Skill:</b>
-${x.subject || "-"}
-
-<br>
-
-<b>Location:</b>
-${x.location || x.address || "-"}
-
-<br>
-
-<b>Mode:</b>
-
-${(x.teachingModes || x.modes || []).join(", ") || "-"}
-
-</div>
-
-<button
-class="btn"
-onclick="checkStudentLogin('${x.id}')">
-
-View Details
-
-</button>
-
-</div>
-
-`).join("");
-
+  `).join("");
 }
 
 </script>
