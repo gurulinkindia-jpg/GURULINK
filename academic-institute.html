@@ -102,16 +102,6 @@ border-radius:10px;
 margin-bottom:10px;
 }
 
-.subjectGrid{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-}
-
-.subjectGrid .row{
-margin:0;
-}
-
 </style>
 </head>
 
@@ -132,8 +122,7 @@ margin:0;
 
 <input id="ownerName" placeholder="Owner / Director Name" required>
 
-<label>Established Date</label>
-<input type="date" id="establishedDate" required>
+<input type="date" id="establishedDate" placeholder="Established Date" required>
 
 <input id="phone" placeholder="Contact Number" required>
 
@@ -155,102 +144,99 @@ required>
 
 <input id="mapLink" placeholder="Google Map Location Link (if available)">
 
+
+
+
+
+
 <h3>Subjects</h3>
 
-<div class="modeBox">
+<div class="modeBox subjectGrid">
 
+  <div class="row">
+    <input type="checkbox" value="Physics" class="subjectCheck"> Physics
+  </div>
 
-<div class="row">
-<input type="checkbox" value="Physics" class="subjectCheck"> Physics
+  <div class="row">
+    <input type="checkbox" value="Chemistry" class="subjectCheck"> Chemistry
+  </div>
+
+  <div class="row">
+    <input type="checkbox" value="Mathematics" class="subjectCheck"> Mathematics
+  </div>
+
+  <div class="row">
+    <input type="checkbox" value="Biology" class="subjectCheck"> Biology
+  </div>
+
+  <div class="row">
+    <input type="checkbox" value="English" class="subjectCheck"> English
+  </div>
+
+  <div class="row">
+    <input type="checkbox" value="Hindi" class="subjectCheck"> Hindi
+  </div>
+
+  <div class="row">
+    <input type="checkbox" value="Sanskrit" class="subjectCheck"> Sanskrit
+  </div>
+
+  <div class="row">
+    <input type="checkbox" value="Assamese" class="subjectCheck"> Assamese
+  </div>
+
+  <div class="row">
+    <input type="checkbox" value="Science" class="subjectCheck"> Science (General)
+  </div>
+
+  <div class="row">
+    <input type="checkbox" value="Social Science" class="subjectCheck"> Social Science
+  </div>
+
+  <div class="row">
+    <input type="checkbox" value="Computer Science" class="subjectCheck"> Computer Science
+  </div>
+
+  <div class="row">
+    <input type="checkbox" value="Economics" class="subjectCheck"> Economics
+  </div>
+
+  <div class="row">
+    <input type="checkbox" value="Accountancy" class="subjectCheck"> Accountancy
+  </div>
+
+  <div class="row">
+    <input type="checkbox" value="Business Studies" class="subjectCheck"> Business Studies
+  </div>
+
+  <div class="row">
+    <input type="checkbox" value="History" class="subjectCheck"> History
+  </div>
+
+  <div class="row">
+    <input type="checkbox" value="Geography" class="subjectCheck"> Geography
+  </div>
+
+  <div class="row">
+    <input type="checkbox" value="Political Science" class="subjectCheck"> Political Science
+  </div>
+
+  <div class="row">
+    <input type="checkbox" value="EVS" class="subjectCheck"> EVS
+  </div>
+
+  <div class="row">
+    <input type="checkbox" id="otherCheck"> Other
+  </div>
+
 </div>
 
-<div class="row">
-<input type="checkbox" value="Chemistry" class="subjectCheck"> Chemistry
-</div>
+<input id="otherSubject"
+       placeholder="Write Other Subject"
+       style="display:none;">
 
-<div class="row">
-<input type="checkbox" value="Mathematics" class="subjectCheck"> Mathematics
-</div>
-
-<div class="row">
-<input type="checkbox" value="Biology" class="subjectCheck"> Biology
-</div>
-
-<div class="row">
-<input type="checkbox" value="English" class="subjectCheck"> English
-</div>
-
-<div class="row">
-<input type="checkbox" value="Hindi" class="subjectCheck"> Hindi
-</div>
-
-<div class="row">
-<input type="checkbox" value="Sanskrit" class="subjectCheck"> Sanskrit
-</div>
-
-<div class="row">
-<input type="checkbox" value="Assamese" class="subjectCheck"> Assamese
-</div>
-
-<div class="row">
-<input type="checkbox" value="Science" class="subjectCheck"> Science (General)
-</div>
-
-<div class="row">
-<input type="checkbox" value="Social Science" class="subjectCheck"> Social Science
-</div>
-
-<div class="row">
-<input type="checkbox" value="Computer Science" class="subjectCheck"> Computer Science
-</div>
-
-<div class="row">
-<input type="checkbox" value="Information Technology" class="subjectCheck"> Information Technology
-</div>
-
-<div class="row">
-<input type="checkbox" value="Economics" class="subjectCheck"> Economics
-</div>
-
-<div class="row">
-<input type="checkbox" value="Accountancy" class="subjectCheck"> Accountancy
-</div>
-
-<div class="row">
-<input type="checkbox" value="Business Studies" class="subjectCheck"> Business Studies
-</div>
-
-<div class="row">
-<input type="checkbox" value="History" class="subjectCheck"> History
-</div>
-
-<div class="row">
-<input type="checkbox" value="Geography" class="subjectCheck"> Geography
-</div>
-
-<div class="row">
-<input type="checkbox" value="Political Science" class="subjectCheck"> Political Science
-</div>
-
-<div class="row">
-<input type="checkbox" value="EVS" class="subjectCheck"> Environmental Science (EVS)
-</div>
-
-<div class="row">
-<input type="checkbox" id="otherCheck"> Other
-</div>
-
-<input
-id="otherSubject"
-placeholder="Write Other Subject"
-style="display:none;">
-
-<p
-id="subjectError"
-style="color:red;display:none;">
-
+<p id="subjectError" style="color:red;display:none;">
 Select at least one subject
-
 </p>
 
 </div>
