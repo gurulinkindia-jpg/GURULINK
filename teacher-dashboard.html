@@ -294,24 +294,15 @@ alert("Saved");
 
 
 
-window.renewProfile = function () {
+window.renewProfile = function(){
+window.location.href = "payment.html?profileId="+profileId;
+};
 
-const profileId = localStorage.getItem("profileId");
-const role = localStorage.getItem("role");
-
-if (!profileId || !role) {
-alert("Session expired. Please login again.");
-window.location.href = "login.html";
-return;
-}
-
-/* STORE RENEW CONTEXT */
-localStorage.setItem("paymentMode", "renew");
-localStorage.setItem("paymentProfileId", profileId);
-localStorage.setItem("paymentRole", role);
-
-/* GO TO YOUR EXISTING PAYMENT PAGE */
-window.location.href = "payment.html";
+/* LOGOUT FIX */
+window.logout = async function(){
+await signOut(auth);
+localStorage.clear();
+location.href="login.html";
 };
 
 
