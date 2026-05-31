@@ -107,10 +107,18 @@ margin-bottom:10px;
 
 <body>
 
+
+
+
+
 <header>
 <h1>Creative Teacher Registration</h1>
 <p>Registration Fee ₹100</p>
 </header>
+
+
+
+
 
 <div class="container">
 
@@ -241,7 +249,7 @@ Select at least one subject
 
 <input
 id="class"
-placeholder="Class UKG,LKG,1,2,3,4.5.6.7,9,9,10,11,12,JEE,NEET"
+placeholder="Age Group: Kids / Teens / Adults / All Ages"
 required>
 
 
@@ -252,7 +260,7 @@ required>
 
 
 
-<h3>Teaching Modes</h3>
+<h3>Creative Teaching Modes</h3>
 
 <div class="modeBox">
 
@@ -423,36 +431,7 @@ Continue To Payment
 
 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
 <script>
-
-
-
-
-localStorage.removeItem("uid");
-localStorage.removeItem("profileId");
-localStorage.removeItem("teacherId");
-localStorage.removeItem("institutionId");
-localStorage.removeItem("paymentProfileId");
-localStorage.removeItem("paymentType");
-
-
-
-
-
-
-
 
 function toggleFee(id){
 
@@ -466,14 +445,6 @@ box.style.display==="block"
 "block";
 
 }
-
-
-
-
-
-
-
-
 
 </script>
 
@@ -1002,12 +973,10 @@ createdAt:Date.now()
 
 
 
+localStorage.setItem("uid", uid);
 localStorage.setItem("profileId", uid);
-localStorage.setItem("paymentProfileId", uid);
-localStorage.setItem("paymentType", "teacher"); // OR teacher/institution/sport
-
-
-
+localStorage.setItem("teacherId", uid);
+localStorage.setItem("institutionId", uid); // optiona
 
 
 
