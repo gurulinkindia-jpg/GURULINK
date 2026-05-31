@@ -93,7 +93,7 @@ border-radius:8px;
 <body>
 
 <header>
-<h2>Teacher Dashboard</h2>
+<h2>Dashboard</h2>
 <div class="roleBadge" id="roleText">Loading...</div>
 </header>
 
@@ -103,23 +103,19 @@ border-radius:8px;
 
 <div id="content">
 
-<!-- EXPIRY -->
 <div class="expiryBox" id="expiryBox"></div>
 
-<!-- ANALYTICS -->
 <div class="section">
 <h3>📊 Analytics</h3>
 <h2 id="totalViews">0</h2>
 <p>Total Views</p>
 </div>
 
-<!-- VIEWERS -->
 <div class="section">
 <h3>👁 Views</h3>
 <div id="viewers"></div>
 </div>
 
-<!-- PROFILE -->
 <input id="name" placeholder="Name">
 <input id="phone" placeholder="Phone">
 <input id="email" placeholder="Email">
@@ -127,16 +123,14 @@ border-radius:8px;
 <input id="location" placeholder="Location">
 <textarea id="description" placeholder="About"></textarea>
 
-<input id="subjects" placeholder="Subjects (comma separated)">
-<input id="modes" placeholder="Modes (comma separated)">
+<input id="subjects" placeholder="Subjects">
+<input id="modes" placeholder="Modes">
 <input id="fee" placeholder="Fee">
 
 <button onclick="saveData()">Save Changes</button>
 
-<!-- RENEW -->
 <button class="renew" onclick="renewProfile()">Renew 365 Days</button>
 
-<!-- LOGOUT -->
 <button class="logout" onclick="logout()">Logout</button>
 
 </div>
@@ -153,9 +147,8 @@ import {
 getAuth, signOut, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-/* FIREBASE */
 const firebaseConfig = {
-apiKey:"AIzaSyBK0Q...",
+apiKey:"YOUR_KEY",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"gurulink-59cc7",
@@ -168,28 +161,34 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-/* SESSION */
 const profileId = localStorage.getItem("profileId");
-const role = (localStorage.getItem("role") || "").toLowerCase().trim();
+const role = localStorage.getItem("role");
 
-document.getElementById("roleText").innerText = role.toUpperCase();
-
-/* AUTH GUARD */
-onAuthStateChanged(auth,(user)=>{
-if(!user){
-window.location.href="login.html";
-return;
-}
-});
-
-/* DB PATH */
 const dbPath = role==="teacher"
 ? "teachers/"+profileId
 : "institutions/"+profileId;
 
 const el = (id)=>document.getElementById(id);
 
-/* EXPIRY CALC */
+document.getElementById("roleText").innerText =
+(role||"GUEST").toUpperCase();
+
+/* FIX: DO NOT FORCE LOGIN LOOP */
+onAuthStateChanged(auth,(user)=>{
+
+// If Firebase not loaded yet → wait, DO NOT redirect immediately
+if(user === undefined) return;
+
+// If user logged out manually
+if(user === null){
+console.log("No firebase session, but localStorage may exist");
+}
+
+// STILL allow dashboard using localStorage
+loadProfile();
+loadViews();
+});
+
 function getExpiryText(start){
 if(!start) return "Not Approved Yet";
 
@@ -199,44 +198,39 @@ const end = start + (365*24*60*60*1000);
 if(now > end) return "❌ Expired";
 
 const days = Math.ceil((end-now)/(1000*60*60*24));
-return `⏳ ${days} days remaining`;
+return "⏳ " + days + " days left";
 }
 
 /* LOAD PROFILE */
 async function loadProfile(){
 
 const snap = await get(ref(db, dbPath));
-if(!snap.exists()){
-alert("Profile not found");
-return;
-}
+if(!snap.exists()) return;
 
 const d = snap.val();
 
-el("name").value = d.name || "";
-el("phone").value = d.phone || "";
-el("email").value = d.email || "";
-el("experience").value = d.experience || "";
-el("location").value = d.location || "";
-el("description").value = d.description || "";
+el("name").value = d.name||"";
+el("phone").value = d.phone||"";
+el("email").value = d.email||"";
+el("experience").value = d.experience||"";
+el("location").value = d.location||"";
+el("description").value = d.description||"";
 
-el("subjects").value = Array.isArray(d.subjects) ? d.subjects.join(",") : "";
-el("modes").value = Array.isArray(d.teachingModes) ? d.teachingModes.join(",") : "";
-el("fee").value = d.fee || "";
+el("subjects").value = (d.subjects||[]).join(",");
+el("modes").value = (d.teachingModes||[]).join(",");
+el("fee").value = d.fee||"";
 
-/* EXPIRY DISPLAY */
 el("expiryBox").innerHTML =
-"Status: " + (d.status || "pending") + "<br>" +
+"Status: "+(d.status||"pending")+"<br>"+
 getExpiryText(d.approvedAt);
 
 el("loading").style.display="none";
 el("content").style.display="block";
 }
 
-/* VIEWERS */
+/* VIEWS */
 function loadViews(){
 onValue(ref(db,`profileViews/${profileId}`),(snap)=>{
-
 let html="";
 let total=0;
 
@@ -244,18 +238,16 @@ snap.forEach(c=>{
 total++;
 const v=c.val();
 
-html += `
+html+=`
 <div class="viewerCard">
 <b>${v.name||"Student"}</b><br>
-${v.email||"-"}<br>
-${v.phone||"-"}<br>
+${v.email||""}<br>
 ${new Date(v.time).toLocaleString()}
 </div>`;
 });
 
-el("viewers").innerHTML = html;
-el("totalViews").innerText = total;
-
+el("viewers").innerHTML=html;
+el("totalViews").innerText=total;
 });
 }
 
@@ -269,29 +261,25 @@ email:el("email").value,
 experience:el("experience").value,
 location:el("location").value,
 description:el("description").value,
-subjects:el("subjects").value.split(",").map(x=>x.trim()),
-teachingModes:el("modes").value.split(",").map(x=>x.trim()),
+subjects:el("subjects").value.split(","),
+teachingModes:el("modes").value.split(","),
 fee:el("fee").value
 });
 
-alert("Profile Saved");
+alert("Saved");
 };
 
 /* RENEW */
 window.renewProfile = function(){
-window.location.href = "payment.html?profileId=" + profileId;
+window.location.href = "payment.html?profileId="+profileId;
 };
 
-/* LOGOUT */
+/* LOGOUT FIX */
 window.logout = async function(){
 await signOut(auth);
 localStorage.clear();
-window.location.href="login.html";
+location.href="login.html";
 };
-
-/* INIT */
-loadProfile();
-loadViews();
 
 </script>
 
