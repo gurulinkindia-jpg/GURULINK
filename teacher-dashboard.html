@@ -290,15 +290,24 @@ alert("Saved Successfully");
 
 window.renewProfile = function(){
 
+const profileId =
+localStorage.getItem("profileId");
+
+const role =
+localStorage.getItem("role");
+
 if(!profileId){
 alert("Profile ID missing. Please login again.");
-location.href="login.html";
 return;
 }
 
-/* SEND TO YOUR EXISTING PAYMENT PAGE */
+const type =
+role === "institution"
+? "institution"
+: "teacher";
+
 window.location.href =
-"payment.html?profileId=" + profileId + "&role=" + role;
+`payment.html?type=${type}&id=${profileId}&renew=true`;
 
 };
 
