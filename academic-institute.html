@@ -114,6 +114,11 @@ margin-bottom:10px;
 
 <div class="container">
 
+<!-- 🔥 ADD HERE -->
+<div id="warningBox" style="display:none;background:#ffcc00;padding:10px;margin:10px 0;border-radius:8px;">
+⚠ Do not refresh or go back. Complete payment to finish registration.
+</div>
+
 <form id="form">
 
 <input id="name" placeholder="Institution Name" required>
@@ -500,6 +505,7 @@ form.querySelector("button");
 
 submitBtn.disabled=true;
 submitBtn.innerText="Processing...";
+document.getElementById("warningBox").style.display = "block";
 
 try{
 
