@@ -80,7 +80,13 @@ const db = getDatabase(app);
 alert(window.location.href);
 const params = new URLSearchParams(window.location.search);
 const type = params.get("type") || "teacher";
+
+
 let id = params.get("id");
+
+if (!id) {
+    id = localStorage.getItem("paymentProfileId");
+}
 
 /* SAFE FALLBACK */
 if (!id || id === "null" || id === "undefined") {
