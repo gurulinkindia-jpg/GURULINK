@@ -230,44 +230,71 @@ location.href="login.html";
 // Teachers
 try {
 
-const t = await get(ref(db,"teachers"));
+const teacherSnap = await get(ref(db,"teachers"));
 
-console.log("Teachers Exists:", t.exists());
-console.log("Teachers Data:", t.val());
+let teacherCount = 0;
 
-let tc = 0;
+if(teacherSnap.exists()){
 
-if(t.exists()){
-t.forEach(child=>{
-tc++;
+teacherSnap.forEach(child=>{
+
+teacherCount++;
+
+const data = child.val();
+
+searchData.push({
+id: child.key,
+type: "teacher",
+name: data.name || "",
+subjects: Array.isArray(data.subjects)
+? data.subjects.join(" ")
+: "",
+location: data.location || "",
+description: data.description || ""
 });
+
+});
+
 }
 
-console.log("Teacher Count =", tc);
+document.getElementById("teacherCount").textContent = teacherCount;
 
-document.getElementById("teacherCount").textContent = tc;
+const instituteSnap = await get(ref(db,"institutions"));
 
-const i = await get(ref(db,"institutions"));
+let instituteCount = 0;
 
-let ic = 0;
+if(instituteSnap.exists()){
 
-if(i.exists()){
-i.forEach(child=>{
-ic++;
+instituteSnap.forEach(child=>{
+
+instituteCount++;
+
+const data = child.val();
+
+searchData.push({
+id: child.key,
+type: "institution",
+name: data.name || "",
+subjects: Array.isArray(data.subjects)
+? data.subjects.join(" ")
+: "",
+location: data.location || "",
+description: data.description || ""
 });
+
+});
+
 }
 
-console.log("Institute Count =", ic);
+document.getElementById("instCount").textContent = instituteCount;
 
-document.getElementById("instCount").textContent = ic;
+console.log("Teachers =", teacherCount);
+console.log("Institutes =", instituteCount);
 
 }
 catch(err){
 console.error(err);
 }
-
-
-
 
 const pages=[
 ["Academic Teachers","academic-profile.html"],
@@ -338,6 +365,10 @@ window.searchSite = function(){
 const q =
 document.getElementById("searchInput")
 .value.toLowerCase().trim();
+if(!q){
+document.getElementById("results").style.display="none";
+return;
+}
 
 const r =
 document.getElementById("results");
@@ -396,6 +427,18 @@ r.style.display = "block";
 document
 .getElementById("searchInput")
 .addEventListener("input", searchSite);
+
+
+document.addEventListener("click",(e)=>{
+
+const profile =
+document.querySelector(".profile");
+
+if(!profile.contains(e.target)){
+document.getElementById("menu").style.display="none";
+}
+
+});
 </script>
 </body>
 </html>
