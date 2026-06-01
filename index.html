@@ -228,65 +228,43 @@ location.href="login.html";
 try{
 
 // Teachers
-const teacherSnap = await get(ref(db,"teachers"));
+try {
 
-let teacherCount = 0;
+const t = await get(ref(db,"teachers"));
 
-if(teacherSnap.exists()){
+console.log("Teachers Exists:", t.exists());
+console.log("Teachers Data:", t.val());
 
-teacherSnap.forEach(child=>{
+let tc = 0;
 
-teacherCount++;
-
-const data = child.val();
-
-searchData.push({
-id: child.key,
-type: "teacher",
-name: data.name || "",
-subjects: Array.isArray(data.subjects)
-? data.subjects.join(" ")
-: ""
+if(t.exists()){
+t.forEach(child=>{
+tc++;
 });
-
-});
-
 }
 
-document.getElementById("teacherCount").textContent =
-teacherCount;
+console.log("Teacher Count =", tc);
 
+document.getElementById("teacherCount").textContent = tc;
 
-const instituteSnap =
-await get(ref(db,"institutions"));
+const i = await get(ref(db,"institutions"));
 
-let instituteCount = 0;
+let ic = 0;
 
-if(instituteSnap.exists()){
-
-instituteSnap.forEach(child=>{
-
-instituteCount++;
-
-const data = child.val();
-
-searchData.push({
-id: child.key,
-type: "institution",
-name: data.name || "",
-subjects: Array.isArray(data.subjects)
-? data.subjects.join(" ")
-: "",
-location: data.location || "",
-description: data.description || ""
+if(i.exists()){
+i.forEach(child=>{
+ic++;
 });
-
-});
-
 }
 
-document.getElementById("instCount").textContent =
-instituteCount;
+console.log("Institute Count =", ic);
+
+document.getElementById("instCount").textContent = ic;
+
+}
+catch(err){
+console.error(err);
+}
 
 
 try{
