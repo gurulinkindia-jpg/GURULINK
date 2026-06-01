@@ -100,8 +100,16 @@ display:inline;
 
 }
 </style>
+
 </head>
+
+
+
+
+
 <body>
+
+
 <header>
 <div class="logo" onclick="location.href='index.html'">
 
@@ -169,11 +177,13 @@ class="logoImg">
 </div>
 
 <footer>
-<p>© GURULINK Educational Platform</p>
+<p>© GURULINK Powred By G10 Group</p>
 <p>Connecting Students & Teachers</p>
 </footer>
 
 <script type="module">
+let searchData = [];
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
@@ -216,6 +226,51 @@ location.href="login.html";
 };
 
 try{
+
+// Teachers
+const teacherSnap = await get(ref(db,"teachers"));
+
+if(teacherSnap.exists()){
+
+teacherSnap.forEach(child=>{
+
+const data = child.val();
+
+searchData.push({
+name:data.name || "",
+id:child.key,
+type:"teacher"
+});
+
+});
+
+}
+
+// Institutes
+const instituteSnap = await get(ref(db,"institutions"));
+
+if(instituteSnap.exists()){
+
+instituteSnap.forEach(child=>{
+
+const data = child.val();
+
+searchData.push({
+name:data.name || "",
+id:child.key,
+type:"institution"
+});
+
+});
+
+}
+
+}catch(err){
+console.log(err);
+}
+
+
+try{
 const t=await get(ref(db,"teachers"));
 let tc=0;if(t.exists()) t.forEach(()=>tc++);
 document.getElementById("teacherCount").textContent=tc;
@@ -241,14 +296,61 @@ const pages=[
 ["Customer Care","ask.html"]
 ];
 
-window.searchSite=function(){
-const q=document.getElementById("searchInput").value.toLowerCase();
-const r=document.getElementById("results");
-let html="";
-pages.forEach(p=>{if(p[0].toLowerCase().includes(q)) html+=`<a href="${p[1]}">${p[0]}</a>`;});
-r.innerHTML=html||"<a>No results found</a>";
-r.style.display="block";
+window.searchSite = function(){
+
+const q =
+document.getElementById("searchInput")
+.value.toLowerCase().trim();
+
+const r =
+document.getElementById("results");
+
+let html = "";
+
+/* Search pages */
+
+pages.forEach(p=>{
+
+if(p[0].toLowerCase().includes(q)){
+
+html += `
+<a href="${p[1]}">
+📄 ${p[0]}
+</a>`;
+
 }
+
+});
+
+/* Search teachers & institutes */
+
+searchData.forEach(item=>{
+
+if(item.name.toLowerCase().includes(q)){
+
+html += `
+<a href="profile-view.html?id=${item.id}">
+👤 ${item.name}
+</a>`;
+
+}
+
+});
+
+if(!html){
+html = "<a>No results found</a>";
+}
+
+r.innerHTML = html;
+r.style.display = "block";
+
+};   // <-- searchSite function ends here
+
+// ADD THIS BELOW THE FUNCTION
+
+document
+.getElementById("searchInput")
+.addEventListener("input", searchSite);
 </script>
 </body>
 </html>
