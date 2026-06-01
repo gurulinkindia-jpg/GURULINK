@@ -237,9 +237,12 @@ teacherSnap.forEach(child=>{
 const data = child.val();
 
 searchData.push({
-name:data.name || "",
-id:child.key,
-type:"teacher"
+id: child.key,
+type: "teacher",
+name: data.name || "",
+subjects: (data.subjects || []).join(" "),
+location: data.location || "",
+description: data.description || ""
 });
 
 });
@@ -256,9 +259,12 @@ instituteSnap.forEach(child=>{
 const data = child.val();
 
 searchData.push({
-name:data.name || "",
-id:child.key,
-type:"institution"
+id: child.key,
+type: "institution",
+name: data.name || "",
+subjects: (data.subjects || []).join(" "),
+location: data.location || "",
+description: data.description || ""
 });
 
 });
@@ -326,11 +332,19 @@ html += `
 
 searchData.forEach(item=>{
 
-if(item.name.toLowerCase().includes(q)){
+const searchableText = `
+${item.name}
+${item.subjects}
+${item.location}
+${item.description}
+`.toLowerCase();
+
+if(searchableText.includes(q)){
 
 html += `
 <a href="profile-view.html?id=${item.id}">
-👤 ${item.name}
+👤 ${item.name}<br>
+<small>${item.subjects}</small>
 </a>`;
 
 }
