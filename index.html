@@ -33,12 +33,53 @@ header{background:#1565c0;color:#fff;padding:14px 20px;display:flex;justify-cont
 #results a{display:block;padding:12px;text-decoration:none;color:#222;border-bottom:1px solid #eee}
 footer{background:#0d47a1;color:#fff;text-align:center;padding:25px;margin-top:30px}
 @media(max-width:768px){.hero h1{font-size:30px}}
+
+.logo{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+}
+
+.logoImg{
+width:50px;
+height:50px;
+object-fit:contain;
+margin-bottom:4px;
+}
+
+.logoText{
+font-size:28px;
+font-weight:bold;
+line-height:1;
+}
+
+.guru{
+color:#2196f3;   /* Blue */
+}
+
+.link{
+color:#4caf50;   /* Green */
+}
 </style>
 </head>
 <body>
 <header>
-<div class="logo">GURULINK</div>
+<div class="logo" onclick="location.href='index.html'">
+
+<img
+src="YOUR_LOGO_IMAGE_URL"
+alt="GURULINK Logo"
+class="logoImg">
+
+<div class="logoText">
+<span class="guru">GURU</span><span class="link">LINK</span>
+</div>
+
+</div>
 <div class="header-right">
+<a href="register.html" class="dashboardBtn">📝 Register as Teacher / Institute</a>
 <a href="#" id="dashboardBtn" class="dashboardBtn">📊 Dashboard</a>
 <div class="profile">
 <button class="profile-btn" id="profileBtn">👤</button>
@@ -66,7 +107,6 @@ footer{background:#0d47a1;color:#fff;text-align:center;padding:25px;margin-top:3
 <div id="results"></div>
 <div class="quick">
 <a href="find-teacher.html">Find Teacher</a>
-<a href="register.html">Register</a>
 <a href="profile.html">All Profiles</a>
 </div>
 </section>
