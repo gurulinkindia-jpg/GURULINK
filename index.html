@@ -3,302 +3,172 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>GURULINK INDIA</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
+<title>GURULINK - Home</title>
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
-
-body{
-background:#f4f7fb;
-}
-
-/* NAV */
-nav{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:15px 5%;
-background:#0f172a;
-color:white;
-position:sticky;
-top:0;
-z-index:1000;
-flex-wrap:wrap;
-}
-
-.logo{
-font-size:22px;
-font-weight:700;
-}
-
-.logo span{color:#38bdf8}
-
-/* LEFT ACTION BUTTONS */
-.left-actions{
-display:flex;
-gap:10px;
-align-items:center;
-}
-
-.left-actions a{
-background:#38bdf8;
-color:white;
-padding:7px 10px;
-border-radius:6px;
-font-size:12px;
-text-decoration:none;
-}
-
-/* MENU */
-.menu{
-display:flex;
-gap:15px;
-align-items:center;
-flex-wrap:wrap;
-}
-
-.menu a{
-color:white;
-text-decoration:none;
-font-size:14px;
-}
-
-/* DROPDOWN */
-.dropdown{
-position:relative;
-}
-
-.dropdown-content{
-display:none;
-position:absolute;
-top:35px;
-background:white;
-min-width:240px;
-border-radius:10px;
-overflow:hidden;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
-z-index:1000;
-}
-
-.dropdown-content a{
-display:block;
-padding:10px;
-color:black;
-text-decoration:none;
-font-size:13px;
-}
-
-.dropdown-content a:hover{
-background:#f2f2f2;
-}
-
-/* PROFILE */
-.profile{
-width:40px;
-height:40px;
-border-radius:50%;
-background:#38bdf8;
-overflow:hidden;
-cursor:pointer;
-margin-left:10px;
-}
-
-.profile img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-/* HERO */
-.hero{
-height:85vh;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-text-align:center;
-background:linear-gradient(135deg,#0f172a,#1e293b);
-color:white;
-padding:20px;
-}
-
-.hero h1{font-size:40px;}
-
-.hero p{
-margin-top:10px;
-color:#cbd5e1;
-}
-
-.btn{
-margin-top:20px;
-padding:12px 20px;
-background:#38bdf8;
-color:white;
-border:none;
-border-radius:8px;
-cursor:pointer;
-text-decoration:none;
-display:inline-block;
-}
-
-/* FOOTER */
-footer{
-background:#0f172a;
-color:white;
-text-align:center;
-padding:30px;
-margin-top:40px;
-}
-
-/* MOBILE FIX */
-@media(max-width:768px){
-nav{
-padding:10px 4%;
-font-size:12px;
-}
-.hero h1{
-font-size:26px;
-}
-.menu a{
-font-size:12px;
-}
-}
-
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#eef2f7;color:#222}
+header{background:#1565c0;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:1000}
+.logo{font-size:28px;font-weight:bold}
+.header-right{display:flex;align-items:center;gap:10px}
+.dashboardBtn{background:#fff;color:#1565c0;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:bold}
+.profile{position:relative}
+.profile-btn{width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;font-size:20px}
+.dropdown{display:none;position:absolute;right:0;top:50px;background:#fff;min-width:220px;border-radius:10px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.dropdown a{display:block;padding:12px;text-decoration:none;color:#222;border-bottom:1px solid #eee}
+.dropdown a:hover{background:#f5f5f5}
+.hero{background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;padding:70px 20px;text-align:center}
+.hero h1{font-size:42px;margin-bottom:12px}
+.hero p{max-width:800px;margin:auto;font-size:18px}
+.search-box{max-width:700px;margin:25px auto;background:#fff;padding:10px;border-radius:12px;display:flex;gap:10px}
+.search-box input{flex:1;border:none;outline:none;padding:12px;font-size:16px}
+.search-box button{padding:12px 18px;border:none;background:#1565c0;color:#fff;border-radius:8px;cursor:pointer}
+.quick{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:20px}
+.quick a{background:#fff;color:#1565c0;text-decoration:none;padding:12px 18px;border-radius:8px;font-weight:bold}
+.section-title{text-align:center;padding:30px 15px 15px;font-size:30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;padding:20px}
+.card,.stat{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08);text-align:center}
+.card a{display:inline-block;margin-top:10px;text-decoration:none;background:#1565c0;color:#fff;padding:10px 14px;border-radius:8px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;padding:20px}
+#results{max-width:700px;margin:10px auto;background:#fff;border-radius:10px;display:none}
+#results a{display:block;padding:12px;text-decoration:none;color:#222;border-bottom:1px solid #eee}
+footer{background:#0d47a1;color:#fff;text-align:center;padding:25px;margin-top:30px}
+@media(max-width:768px){.hero h1{font-size:30px}}
 </style>
 </head>
-
 <body>
-
-<!-- NAV -->
-<nav>
-
-<div class="logo">GURU<span>LINK</span></div>
-
-<!-- LEFT BUTTONS -->
-<div class="left-actions">
-<a href="teacher-register.html">Teacher Reg</a>
-<a href="institution-register.html">Institute Reg</a>
-</div>
-
-<div class="menu">
-
-<a href="index.html">Home</a>
-
-<!-- FIND -->
-<div class="dropdown">
-<a href="#" onclick="toggle('d1')">Find / Explore ▼</a>
-<div id="d1" class="dropdown-content">
-<a href="academic-profile.html">Academic Teachers</a>
-<a href="skill-profile.html">Skill Teachers</a>
-<a href="creative-profile.html">Creative Teachers</a>
-<a href="sport-profile.html">Sports Teachers</a>
-</div>
-</div>
-
-<!-- REGISTER -->
-<div class="dropdown">
-<a href="#" onclick="toggle('d2')">Register ▼</a>
-<div id="d2" class="dropdown-content">
-<a href="academic-teacher.html">Teacher Academic</a>
-<a href="skill-teacher.html">Teacher Skill</a>
-<a href="creative-teacher.html">Teacher Creative</a>
-<a href="sport-teacher.html">Teacher Sports</a>
-<hr>
-<a href="academic-institute.html">Institute Academic</a>
-<a href="skill-institute.html">Institute Skill</a>
-<a href="creative-institute.html">Institute Creative</a>
-<a href="sport-institution.html">Institute Sports</a>
-</div>
-</div>
-
-<!-- SUPPORT -->
-<div class="dropdown">
-<a href="#" onclick="toggle('d3')">Support ▼</a>
-<div id="d3" class="dropdown-content">
-
-<a href="mailto:gurulinkindia@gmail.com">Email Developer</a>
-<a href="tel:+919999999999">Customer Care</a>
+<header>
+<div class="logo">GURULINK</div>
+<div class="header-right">
+<a href="#" id="dashboardBtn" class="dashboardBtn">📊 Dashboard</a>
+<div class="profile">
+<button class="profile-btn" id="profileBtn">👤</button>
+<div class="dropdown" id="menu">
+<a href="login.html">Login</a>
+<a href="register.html">Register</a>
+<a href="#" id="menuDashboard">📊 Dashboard</a>
 <a href="settings.html">Settings</a>
-
+<a href="find-teacher.html">Find Teacher</a>
+<a href="ask.html">Customer Care</a>
+<a href="mailto:gurulinkindia@gmail.com">Email Developer</a>
+<a href="#" id="logoutBtn">Logout</a>
 </div>
 </div>
-
-<a href="teacher-dashboard.html">Dashboard</a>
-<a href="student-login.html">Student</a>
-<a href="admin.html">Admin</a>
-
-<!-- PROFILE -->
-<div class="profile" onclick="goProfile()">
-<img src="https://i.ibb.co/placeholder/profile.png">
 </div>
+</header>
 
-</div>
-
-</nav>
-
-<!-- HERO -->
 <section class="hero">
-
-<h1>India’s Smart Teacher Discovery Platform</h1>
-
-<p>Find Teachers • Institutes • Courses • Skills Across India</p>
-
-<a class="btn" href="academic-profile.html">
-Find Teachers
-</a>
-
+<h1>Find the Right Teacher for Every Subject</h1>
+<p>Academic • Skill • Creative • Sports • Institutes</p>
+<div class="search-box">
+<input id="searchInput" placeholder="Search pages, teachers, institutes, dashboard...">
+<button onclick="searchSite()">Search</button>
+</div>
+<div id="results"></div>
+<div class="quick">
+<a href="find-teacher.html">Find Teacher</a>
+<a href="register.html">Register</a>
+<a href="profile.html">All Profiles</a>
+</div>
 </section>
 
+<h2 class="section-title">Categories</h2>
+<div class="grid">
+<div class="card"><h3>📚 Academic Teachers</h3><a href="academic-profile.html">Open</a></div>
+<div class="card"><h3>💻 Skill Teachers</h3><a href="skill-profile.html">Open</a></div>
+<div class="card"><h3>🎨 Creative Teachers</h3><a href="creative-profile.html">Open</a></div>
+<div class="card"><h3>🏏 Sports Teachers</h3><a href="sport-profile.html">Open</a></div>
+<div class="card"><h3>🏫 All Teachers & Institutes</h3><a href="profile.html">Open</a></div>
+</div>
+
+<h2 class="section-title">GURULINK Statistics</h2>
+<div class="stats">
+<div class="stat"><h2 id="teacherCount">0</h2><p>Teachers</p></div>
+<div class="stat"><h2 id="instCount">0</h2><p>Institutes</p></div>
+<div class="stat"><h2>100+</h2><p>Subjects</p></div>
+<div class="stat"><h2>24×7</h2><p>Access</p></div>
+</div>
+
 <footer>
-<h3>GURULINK INDIA</h3>
-<p>Connecting Teachers, Institutes & Students</p>
+<p>© GURULINK Educational Platform</p>
+<p>Connecting Students & Teachers</p>
 </footer>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-function toggle(id){
-let el = document.getElementById(id);
-el.style.display = el.style.display === "block" ? "none" : "block";
+const firebaseConfig={
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getDatabase(app);
+
+document.getElementById("profileBtn").onclick=()=>{
+const m=document.getElementById("menu");
+m.style.display=m.style.display==="block"?"none":"block";
+};
+
+function openDashboard(){
+const role=localStorage.getItem("role");
+if(role==="teacher") location.href="teacher-dashboard.html";
+else if(role==="institution") location.href="institute-dashboard.html";
+else if(role==="student") location.href="student-dashboard.html";
+else location.href="login.html";
 }
 
-/* CLOSE OUTSIDE */
-document.addEventListener("click",(e)=>{
-if(!e.target.closest(".dropdown")){
-document.querySelectorAll(".dropdown-content")
-.forEach(d=>d.style.display="none");
-}
-});
+document.getElementById("dashboardBtn").onclick=(e)=>{e.preventDefault();openDashboard();};
+document.getElementById("menuDashboard").onclick=(e)=>{e.preventDefault();openDashboard();};
 
-/* PROFILE ROUTE */
-function goProfile(){
+document.getElementById("logoutBtn").onclick=async(e)=>{
+e.preventDefault();
+await signOut(auth);
+localStorage.clear();
+location.href="login.html";
+};
 
-let role = localStorage.getItem("role");
+try{
+const t=await get(ref(db,"teachers"));
+let tc=0;if(t.exists()) t.forEach(()=>tc++);
+document.getElementById("teacherCount").textContent=tc;
 
-if(role === "teacher"){
-window.location.href = "teacher-dashboard.html";
-}
-else if(role === "institution"){
-window.location.href = "institute-dashboard.html";
-}
-else if(localStorage.getItem("studentUid")){
-window.location.href = "student-dashboard.html";
-}
-else{
-window.location.href = "login.html";
-}
+const i=await get(ref(db,"institutions"));
+let ic=0;if(i.exists()) i.forEach(()=>ic++);
+document.getElementById("instCount").textContent=ic;
+}catch(err){console.log(err);}
 
-}
+const pages=[
+["Academic Teachers","academic-profile.html"],
+["Skill Teachers","skill-profile.html"],
+["Creative Teachers","creative-profile.html"],
+["Sports Teachers","sport-profile.html"],
+["All Profiles","profile.html"],
+["Find Teacher","find-teacher.html"],
+["Teacher Dashboard","teacher-dashboard.html"],
+["Institute Dashboard","institute-dashboard.html"],
+["Student Dashboard","student-dashboard.html"],
+["Settings","settings.html"],
+["Login","login.html"],
+["Register","register.html"],
+["Customer Care","ask.html"]
+];
 
+window.searchSite=function(){
+const q=document.getElementById("searchInput").value.toLowerCase();
+const r=document.getElementById("results");
+let html="";
+pages.forEach(p=>{if(p[0].toLowerCase().includes(q)) html+=`<a href="${p[1]}">${p[0]}</a>`;});
+r.innerHTML=html||"<a>No results found</a>";
+r.style.display="block";
+}
 </script>
-
 </body>
 </html>
