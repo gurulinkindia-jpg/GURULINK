@@ -62,6 +62,19 @@ color:#2196f3;   /* Blue */
 .link{
 color:#4caf50;   /* Green */
 }
+@media (max-width: 768px){
+
+.header-right{
+gap:5px;
+}
+
+.dashboardBtn{
+padding:6px 10px;
+font-size:12px;
+border-radius:6px;
+}
+
+}
 </style>
 </head>
 <body>
@@ -70,7 +83,7 @@ color:#4caf50;   /* Green */
 
 <img
 src="YOUR_LOGO_IMAGE_URL"
-alt="GURULINK Logo"
+alt="GL"
 class="logoImg">
 
 <div class="logoText">
@@ -78,9 +91,10 @@ class="logoImg">
 </div>
 
 </div>
-<div class="header-right">
-<a href="register.html" class="dashboardBtn">📝 Register as Teacher / Institute</a>
-<a href="#" id="dashboardBtn" class="dashboardBtn">📊 Dashboard</a>
+<a href="register.html" class="dashboardBtn registerBtn">
+📝 <span class="desktopText">Register as Teacher / Institute</span>
+<span class="mobileText">Reg. as Teacher/institute</span>
+</a>
 <div class="profile">
 <button class="profile-btn" id="profileBtn">👤</button>
 <div class="dropdown" id="menu">
