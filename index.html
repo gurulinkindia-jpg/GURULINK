@@ -392,6 +392,9 @@ html += `
 
 /* Search teachers & institutes */
 
+let teacherResults = "";
+let instituteResults = "";
+
 searchData.forEach(item=>{
 
 const searchableText = `
@@ -403,15 +406,38 @@ ${item.description}
 
 if(searchableText.includes(q)){
 
-html += `
+const card = `
 <a href="${getProfilePage(item)}">
 👤 ${item.name}<br>
 <small>${item.subjects}</small>
 </a>`;
 
+if(item.type === "teacher"){
+teacherResults += card;
+}else if(item.type === "institution"){
+instituteResults += card;
+}
+
 }
 
 });
+
+if(teacherResults){
+html += `
+<div style="padding:10px;background:#e3f2fd;font-weight:bold">
+👨‍🏫 Teachers
+</div>
+${teacherResults}`;
+}
+
+if(instituteResults){
+html += `
+<div style="padding:10px;background:#e8f5e9;font-weight:bold">
+🏫 Institutes
+</div>
+${instituteResults}`;
+}
+
 
 if(!html){
 html = "<a>No results found</a>";
