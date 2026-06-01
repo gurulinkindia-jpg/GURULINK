@@ -75,6 +75,21 @@ border-radius:6px;
 }
 
 }
+.mobileText{
+display:none;
+}
+
+@media (max-width:768px){
+
+.desktopText{
+display:none;
+}
+
+.mobileText{
+display:inline;
+}
+
+}
 </style>
 </head>
 <body>
@@ -91,10 +106,12 @@ class="logoImg">
 </div>
 
 </div>
+<div class="header-right">
 <a href="register.html" class="dashboardBtn registerBtn">
 📝 <span class="desktopText">Register as Teacher / Institute</span>
-<span class="mobileText">Reg. as Teacher/institute</span>
+<span class="mobileText">Register</span>
 </a>
+<a href="#" id="dashboardBtn" class="dashboardBtn">📊 Dashboard</a>
 <div class="profile">
 <button class="profile-btn" id="profileBtn">👤</button>
 <div class="dropdown" id="menu">
