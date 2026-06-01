@@ -532,17 +532,21 @@ function render() {
     /* SUBJECT */
 const subject =
 
-Array.isArray(x.subjects)
-? x.subjects.join(", ")
+x.subjects
+? (
+    Array.isArray(x.subjects)
+    ? x.subjects.join(", ")
+    : Object.values(x.subjects).join(", ")
+  )
+: (
+    x.subject ||
+    x.skillType ||
+    x.creativeType ||
+    x.course ||
+    "Not Mentioned"
+  );
 
-: x.subjects ||
 
-x.subject ||
-x.skillType ||
-x.creativeType ||
-x.course ||
-
-"Not Mentioned";
 
     if (subjectFilter && subject !== subjectFilter) {
       return false;
