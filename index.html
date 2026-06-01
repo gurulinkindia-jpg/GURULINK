@@ -240,9 +240,7 @@ searchData.push({
 id: child.key,
 type: "teacher",
 name: data.name || "",
-subjects: (data.subjects || []).join(" "),
-location: data.location || "",
-description: data.description || ""
+subjects: (data.subjects || []).join(" ")
 });
 
 });
@@ -302,6 +300,54 @@ const pages=[
 ["Customer Care","ask.html"]
 ];
 
+
+
+function getProfilePage(item){
+
+const s = (item.subjects || "").toLowerCase();
+
+if(
+s.includes("physics") ||
+s.includes("chemistry") ||
+s.includes("biology") ||
+s.includes("mathematics") ||
+s.includes("english")
+){
+return "academic-profile.html";
+}
+
+if(
+s.includes("computer") ||
+s.includes("programming") ||
+s.includes("coding")
+){
+return "skill-profile.html";
+}
+
+if(
+s.includes("music") ||
+s.includes("dance") ||
+s.includes("drawing") ||
+s.includes("painting")
+){
+return "creative-profile.html";
+}
+
+if(
+s.includes("cricket") ||
+s.includes("football") ||
+s.includes("badminton")
+){
+return "sport-profile.html";
+}
+
+return "profile.html";
+
+}
+
+
+
+
 window.searchSite = function(){
 
 const q =
@@ -342,7 +388,7 @@ ${item.description}
 if(searchableText.includes(q)){
 
 html += `
-<a href="profile-view.html?id=${item.id}">
+<a href="${getProfilePage(item)}">
 👤 ${item.name}<br>
 <small>${item.subjects}</small>
 </a>`;
