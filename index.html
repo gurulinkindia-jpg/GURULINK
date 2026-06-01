@@ -230,9 +230,13 @@ try{
 // Teachers
 const teacherSnap = await get(ref(db,"teachers"));
 
+let teacherCount = 0;
+
 if(teacherSnap.exists()){
 
 teacherSnap.forEach(child=>{
+
+teacherCount++;
 
 const data = child.val();
 
@@ -240,19 +244,29 @@ searchData.push({
 id: child.key,
 type: "teacher",
 name: data.name || "",
-subjects: (data.subjects || []).join(" ")
+subjects: Array.isArray(data.subjects)
+? data.subjects.join(" ")
+: ""
 });
 
 });
 
 }
 
-// Institutes
-const instituteSnap = await get(ref(db,"institutions"));
+document.getElementById("teacherCount").textContent =
+teacherCount;
+
+
+const instituteSnap =
+await get(ref(db,"institutions"));
+
+let instituteCount = 0;
 
 if(instituteSnap.exists()){
 
 instituteSnap.forEach(child=>{
+
+instituteCount++;
 
 const data = child.val();
 
@@ -260,7 +274,9 @@ searchData.push({
 id: child.key,
 type: "institution",
 name: data.name || "",
-subjects: (data.subjects || []).join(" "),
+subjects: Array.isArray(data.subjects)
+? data.subjects.join(" ")
+: "",
 location: data.location || "",
 description: data.description || ""
 });
@@ -269,9 +285,8 @@ description: data.description || ""
 
 }
 
-}catch(err){
-console.log(err);
-}
+document.getElementById("instCount").textContent =
+instituteCount;
 
 
 try{
