@@ -470,6 +470,34 @@ document.addEventListener("click", (e) => {
   window.location.href = "profile-view.html?id=" + id;
 });
 
+
+function viewProfile(id){
+
+const uid =
+localStorage.getItem("uid") ||
+localStorage.getItem("studentUid") ||
+localStorage.getItem("teacherUid") ||
+localStorage.getItem("adminUid") ||
+localStorage.getItem("institutionId");
+
+if(!uid){
+
+sessionStorage.setItem(
+"redirectAfterLogin",
+"profile-view.html?id=" + id
+);
+
+alert("Please login first");
+
+window.location.href = "student-login.html";
+return;
+}
+
+window.location.href =
+"profile-view.html?id=" + id;
+
+}
+
 /* =========================
    RENDER
 ========================= */
@@ -609,7 +637,7 @@ ${x.qualification || x.education || "-"}
 <div style="margin-top:15px;">
 
 <button
-onclick="event.stopPropagation();window.location.href='profile-view.html?id=${x.id}'"
+onclick="event.stopPropagation();viewProfile('${x.id}')"
 style="
 width:100%;
 padding:12px;
