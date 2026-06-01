@@ -233,7 +233,47 @@ border-radius:20px;
 background:white;
 
 }
+.floating-buttons{
+position:fixed;
+right:15px;
+bottom:15px;
+display:flex;
+flex-direction:column;
+gap:10px;
+z-index:99999;
+}
 
+.float-btn{
+width:55px;
+height:55px;
+border:none;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+text-decoration:none;
+font-size:24px;
+cursor:pointer;
+box-shadow:0 4px 12px rgba(0,0,0,.25);
+}
+
+.home-btn{
+background:#1976d2;
+color:#fff;
+}
+
+.back-btn{
+background:#4caf50;
+color:#fff;
+}
+
+@media(max-width:768px){
+.float-btn{
+width:50px;
+height:50px;
+font-size:22px;
+}
+}
 </style>
 </head>
 
@@ -733,6 +773,17 @@ View Details
 }
 
 </script>
+<!-- Floating Buttons -->
+<div class="floating-buttons">
 
+<a href="index.html" class="float-btn home-btn">
+🏠
+</a>
+
+<button class="float-btn back-btn" onclick="history.back()">
+⬅️
+</button>
+
+</div>
 </body>
 </html>
