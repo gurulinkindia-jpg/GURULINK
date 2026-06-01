@@ -202,10 +202,17 @@ const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getDatabase(app);
 
+
+
+
+
 document.getElementById("profileBtn").onclick=()=>{
 const m=document.getElementById("menu");
 m.style.display=m.style.display==="block"?"none":"block";
 };
+
+
+
 
 function openDashboard(){
 const role=localStorage.getItem("role");
@@ -360,111 +367,48 @@ return "profile.html";
 
 
 
+
+
+
 window.searchSite = function(){
 
 const q =
 document.getElementById("searchInput")
-.value.toLowerCase().trim();
+.value
+.trim();
+
 if(!q){
-document.getElementById("results").style.display="none";
+alert("Enter subject, teacher name or institute name");
 return;
 }
 
-const r =
-document.getElementById("results");
+window.location.href =
+"profile.html?search=" +
+encodeURIComponent(q);
 
-let html = "";
-
-/* Search pages */
-
-pages.forEach(p=>{
-
-if(p[0].toLowerCase().includes(q)){
-
-html += `
-<a href="${p[1]}">
-📄 ${p[0]}
-</a>`;
-
-}
-
-});
-
-/* Search teachers & institutes */
-
-let teacherResults = "";
-let instituteResults = "";
-
-searchData.forEach(item=>{
-
-const searchableText = `
-${item.name}
-${item.subjects}
-${item.location}
-${item.description}
-`.toLowerCase();
-
-if(searchableText.includes(q)){
-
-const card = `
-<a href="${getProfilePage(item)}">
-👤 ${item.name}<br>
-<small>${item.subjects}</small>
-</a>`;
-
-if(item.type === "teacher"){
-teacherResults += card;
-}else if(item.type === "institution"){
-instituteResults += card;
-}
-
-}
-
-});
-
-if(teacherResults){
-html += `
-<div style="padding:10px;background:#e3f2fd;font-weight:bold">
-👨‍🏫 Teachers
-</div>
-${teacherResults}`;
-}
-
-if(instituteResults){
-html += `
-<div style="padding:10px;background:#e8f5e9;font-weight:bold">
-🏫 Institutes
-</div>
-${instituteResults}`;
-}
-
-
-if(!html){
-html = "<a>No results found</a>";
-}
-
-r.innerHTML = html;
-r.style.display = "block";
-
-};   // <-- searchSite function ends here
-
-// ADD THIS BELOW THE FUNCTION
+};
 
 document
 .getElementById("searchInput")
-.addEventListener("input", searchSite);
+.addEventListener("keypress",(e)=>{
 
+if(e.key==="Enter"){
+searchSite();
+}
+
+});
 
 document.addEventListener("click",(e)=>{
 
 const profile =
 document.querySelector(".profile");
 
-if(!profile.contains(e.target)){
+if(profile && !profile.contains(e.target)){
 document.getElementById("menu").style.display="none";
 }
 
 });
 </script>
+
 </body>
 </html>
