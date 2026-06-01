@@ -575,12 +575,31 @@ x.subjects
   
 grid.innerHTML = filtered.map((x) => {
 
-const subject =
-x.subject ||
-x.skillType ||
-x.creativeType ||
-x.course ||
-"-";
+let subject = "Not Mentioned";
+
+if(x.subjects){
+
+  if(Array.isArray(x.subjects)){
+    subject = x.subjects.join(", ");
+  }
+  else if(typeof x.subjects === "object"){
+    subject = Object.values(x.subjects).join(", ");
+  }
+  else{
+    subject = x.subjects;
+  }
+
+}
+else{
+
+  subject =
+  x.subject ||
+  x.skillType ||
+  x.creativeType ||
+  x.course ||
+  "Not Mentioned";
+
+}
 
 const extraField =
 x.type === "Teacher"
