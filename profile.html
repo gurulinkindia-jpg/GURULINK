@@ -527,51 +527,112 @@ function render() {
     return;
   }
 
-  grid.innerHTML = filtered.map((x) => `
+  
+  
+  
+  
+grid.innerHTML = filtered.map((x) => {
 
-    <div class="card" data-id="${x.id}">
+const subject =
+x.subject ||
+x.skillType ||
+x.creativeType ||
+x.course ||
+"-";
 
-      <div class="top">
+const extraField =
+x.type === "Teacher"
+?
+`<b>Experience:</b> ${x.experience || x.teachingExperience || x.exp || "-"} Years`
+:
+`<b>Established:</b> ${x.established || x.estd || x.establishmentYear || "-"} `;
 
-        <img
-          class="photo"
-          src="${x.photo || x.logo || 'https://via.placeholder.com/100'}"
-        >
+return `
 
-        <div>
+<div class="card" data-id="${x.id}">
 
-          <h2>${x.name || "-"}</h2>
+<div class="top">
 
-          <div class="badges">
+<img
+class="photo"
+src="${x.photo || x.logo || 'https://via.placeholder.com/100'}"
+>
 
-            <span class="badge">${x.type}</span>
-            <span class="badge">${x.category}</span>
-            <span class="badge verify">Verified</span>
+<div>
 
-          </div>
+<h2>${x.name || "-"}</h2>
 
-        </div>
+<div class="badges">
 
-      </div>
+<span class="badge">${x.type}</span>
 
-      <div class="details">
+<span class="badge">
+${x.category || "-"}
+</span>
 
-        <b>Subject:</b>
-        ${x.subject || x.skillType || x.creativeType || "-"}
-        <br>
+<span class="badge verify">
+Verified
+</span>
 
-        <b>Location:</b>
-        ${x.location || x.address || "-"}
-        <br>
+</div>
 
-        <b>Phone:</b>
-        ${x.phone || "-"}
+</div>
 
-      </div>
+</div>
 
-    </div>
+<div class="details">
 
-  `).join("");
+<b style="color:red;">
+Subject:
+</b>
+
+<span style="color:red;font-weight:bold;">
+${subject}
+</span>
+
+<br><br>
+
+${extraField}
+
+<br>
+
+<b>Location:</b>
+${x.location || x.address || "-"}
+
+<br>
+
+<b>Qualification:</b>
+${x.qualification || x.education || "-"}
+
+</div>
+
+<div style="margin-top:15px;">
+
+<button
+onclick="event.stopPropagation();window.location.href='profile-view.html?id=${x.id}'"
+style="
+width:100%;
+padding:12px;
+border:none;
+border-radius:12px;
+background:#1976d2;
+color:white;
+font-size:15px;
+font-weight:bold;
+cursor:pointer;
+">
+
+View Details
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}).join("");
 }
 
 </script>
