@@ -376,8 +376,29 @@ function similar(a, b) {
 
 const category = document.getElementById("category");
 const dynamic = document.getElementById("dynamicFilters");
+const urlParams =
+new URLSearchParams(window.location.search);
+
+const searchFromHome =
+urlParams.get("search");
+
+if(searchFromHome){
+
+document.getElementById("search").value =
+searchFromHome;
+
+}
 
 category.addEventListener("change", showFilters);
+
+
+
+
+
+
+
+
+
 
 function showFilters() {
 
@@ -519,15 +540,32 @@ function render() {
     /* CATEGORY */
     if (cat && x.category !== cat) return false;
 
-    /* SEARCH */
-    if (
-      search &&
-      !(similar(x.name, search) ||
-        similar(x.location, search) ||
-        similar(x.address, search))
-    ) {
-      return false;
-    }
+   
+
+
+const searchableText = `
+${x.name || ""}
+${x.location || ""}
+${x.address || ""}
+${x.subject || ""}
+${x.skillType || ""}
+${x.creativeType || ""}
+${x.course || ""}
+${Array.isArray(x.subjects)
+? x.subjects.join(" ")
+: Object.values(x.subjects || {}).join(" ")
+}
+`.toLowerCase();
+
+if(
+search &&
+!searchableText.includes(search)
+){
+return false;
+}
+	
+	
+	
 
     /* SUBJECT */
 const subject =
