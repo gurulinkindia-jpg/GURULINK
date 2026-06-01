@@ -498,6 +498,8 @@ window.location.href =
 
 }
 
+window.viewProfile = viewProfile;
+
 /* =========================
    RENDER
 ========================= */
@@ -528,11 +530,19 @@ function render() {
     }
 
     /* SUBJECT */
-    const subject =
-      x.subject ||
-      x.skillType ||
-      x.creativeType ||
-      "";
+const subject =
+
+Array.isArray(x.subjects)
+? x.subjects.join(", ")
+
+: x.subjects ||
+
+x.subject ||
+x.skillType ||
+x.creativeType ||
+x.course ||
+
+"Not Mentioned";
 
     if (subjectFilter && subject !== subjectFilter) {
       return false;
@@ -571,9 +581,9 @@ x.course ||
 const extraField =
 x.type === "Teacher"
 ?
-`<b>Experience:</b> ${x.experience || x.teachingExperience || x.exp || "-"} Years`
+`<b>Experience:</b> ${x.experience || "-"} Years`
 :
-`<b>Established:</b> ${x.established || x.estd || x.establishmentYear || "-"} `;
+`<b>Established:</b> ${x.established || x.estd || x.establishmentYear || "-"}`;
 
 return `
 
@@ -637,7 +647,7 @@ ${x.qualification || x.education || "-"}
 <div style="margin-top:15px;">
 
 <button
-onclick="event.stopPropagation();viewProfile('${x.id}')"
+onclick="event.stopPropagation();window.viewProfile('${x.id}')"
 style="
 width:100%;
 padding:12px;
@@ -649,9 +659,7 @@ font-size:15px;
 font-weight:bold;
 cursor:pointer;
 ">
-
 View Details
-
 </button>
 
 </div>
