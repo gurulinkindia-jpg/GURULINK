@@ -112,10 +112,11 @@ from
 import {
 getDatabase,
 ref,
-get,
-push,
-set
+get
 }
+
+
+
 from
 "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
@@ -200,17 +201,21 @@ return;
 profileData=
 snap.val();
 
-document.getElementById(
-"name"
-).innerText=
-profileData.name || "";
 
-document.getElementById(
-"roleText"
-).innerText=
-role.toUpperCase();
 
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 loadProfile();
 
@@ -334,8 +339,81 @@ new Razorpay(
 options
 );
 
+document.getElementById(
+"payBtn"
+).onclick=function(){
+
+var options={
+
+"key":
+"rzp_live_SwAMX5YRz3G7MB",
+
+"amount":
+100,
+
+"currency":
+"INR",
+
+"name":
+"GURULINK",
+
+"description":
+"365 Days Membership Renewal",
+
+"prefill":{
+
+"name":
+profileData.name || "",
+
+"email":
+profileData.email || "",
+
+"contact":
+profileData.phone || ""
+
+},
+
+"handler":
+function(response){
+
+alert(
+"Payment Successful\n\n" +
+response.razorpay_payment_id
+);
+
+localStorage.setItem(
+"razorpayPaymentId",
+response.razorpay_payment_id
+);
+
+window.location.href=
+"payment-success2.html";
+
+},
+
+"modal":{
+
+"ondismiss":
+function(){
+
+console.log(
+"Payment Closed"
+);
+
+}
+
+}
+
+};
+
+var rzp=
+new Razorpay(
+options
+);
+
 rzp.open();
 
+};
 };
 
 </script>
