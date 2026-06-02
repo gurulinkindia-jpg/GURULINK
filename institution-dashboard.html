@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>GURULINK Dashboard</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef2f7;
+}
+
+/* HEADER */
+
+header{
+background:linear-gradient(
+135deg,
+#1565c0,
+#0d47a1
+);
+color:white;
+padding:25px;
+}
+
+.topBar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:15px;
+}
+
+.profileInfo h1{
+font-size:28px;
+margin-bottom:8px;
+}
+
+.profileInfo h3{
+font-size:20px;
+font-weight:normal;
+}
+
+.profileInfo p{
+font-size:14px;
+opacity:.9;
+margin-top:5px;
+}
+
+.subscriptionBox{
+background:white;
+color:#222;
+padding:15px;
+border-radius:12px;
+min-width:250px;
+text-align:center;
+box-shadow:0 4px 10px rgba(0,0,0,.15);
+}
+
+.subscriptionBox h3{
+margin-bottom:10px;
+}
+
+.renewBtn{
+background:#43a047;
+color:white;
+border:none;
+padding:10px 15px;
+border-radius:8px;
+cursor:pointer;
+font-size:15px;
+width:100%;
+}
+
+.container{
+width:95%;
+max-width:1200px;
+margin:20px auto;
+}
+
+/* PROFILE CARD */
+
+.profileCard{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+display:flex;
+gap:20px;
+align-items:center;
+margin-bottom:20px;
+}
+
+.profileImage{
+width:90px;
+height:90px;
+border-radius:50%;
+background:#ddd;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:40px;
+}
+
+.profileDetails h2{
+margin-bottom:5px;
+}
+
+.profileDetails p{
+color:#555;
+}
+
+/* STATS */
+
+.statsGrid{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
+margin-bottom:20px;
+}
+
+.statCard{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+text-align:center;
+}
+
+.statCard h2{
+font-size:35px;
+color:#1565c0;
+margin-bottom:10px;
+}
+
+/* SECTION */
+
+.section{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+margin-bottom:20px;
+}
+
+.sectionTitle{
+font-size:22px;
+margin-bottom:15px;
+}
+
+/* BUTTONS */
+
+.mainBtns{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(200px,1fr));
+gap:10px;
+}
+
+.mainBtns button{
+border:none;
+padding:12px;
+border-radius:10px;
+cursor:pointer;
+color:white;
+font-size:15px;
+}
+
+.editBtn{
+background:#1976d2;
+}
+
+.supportBtn{
+background:#ff9800;
+}
+
+.logoutBtn{
+background:#e53935;
+}
+
+
+
+
+
+
+
+
+.leadCard{
+background:white;
+border-radius:15px;
+padding:20px;
+margin-bottom:15px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+
+.leadHeader{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+flex-wrap:wrap;
+}
+
+.leadName{
+font-size:20px;
+font-weight:bold;
+}
+
+.statusBadge{
+padding:6px 12px;
+border-radius:20px;
+color:white;
+font-size:12px;
+}
+
+.pendingBadge{
+background:#ff9800;
+}
+
+.enrolledBadge{
+background:#4caf50;
+}
+
+.leadInfo{
+margin:5px 0;
+color:#555;
+}
+
+.leadActions{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(120px,1fr));
+gap:10px;
+margin-top:15px;
+}
+
+.whatsappBtn{
+background:#25D366;
+}
+
+.enrollBtn{
+background:#4caf50;
+}
+
+.pendingBtn{
+background:#ff9800;
+}
+
+.deleteBtn{
+background:#e53935;
+}
+
+.leadActions button{
+border:none;
+padding:10px;
+border-radius:8px;
+color:white;
+cursor:pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.loading{
+padding:40px;
+text-align:center;
+font-size:18px;
+}
+
+
+
+
+
+.renewBtn{
+background:#43a047;
+}
+
+
+
+
+
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="topBar">
+
+<div class="profileInfo">
+
+<h1>GURULINK DASHBOARD</h1>
+
+<h3 id="profileTitle">
+Loading...
+</h3>
+
+<p id="profileIdText">
+Loading...
+</p>
+
+</div>
+
+<div class="subscriptionBox">
+
+<h3 id="expiryText">
+Loading...
+</h3>
+
+<button
+class="renewBtn"
+onclick="renewProfile()">
+Renew ₹399
+</button>
+
+</div>
+
+</div>
+
+</header>
+
+<div class="container">
+
+<div id="loading"
+class="loading">
+Loading Dashboard...
+</div>
+
+<div id="content"
+style="display:none;">
+
+<div class="profileCard">
+
+<div class="profileImage">
+👤
+</div>
+
+<div class="profileDetails">
+
+<h2 id="displayName">
+Loading...
+</h2>
+
+<p id="displayEmail"></p>
+
+<p id="displayPhone"></p>
+
+</div>
+
+</div>
+
+<div class="statsGrid">
+
+<div class="statCard">
+<h2 id="totalViews">0</h2>
+<p>Total Leads</p>
+</div>
+
+<div class="statCard">
+<h2 id="pendingCount">0</h2>
+<p>Pending</p>
+</div>
+
+<div class="statCard">
+<h2 id="enrolledCount">0</h2>
+<p>Enrolled</p>
+</div>
+
+</div>
+
+<div class="section">
+
+<h2 class="sectionTitle">
+Quick Actions
+</h2>
+
+
+
+
+
+
+
+
+<div class="mainBtns">
+
+<button
+class="editBtn"
+onclick="editProfile()">
+✏ Edit Profile
+</button>
+
+<button
+class="supportBtn"
+onclick="contactDeveloper()">
+🛠 Developer Support
+</button>
+
+<button
+class="renewBtn"
+onclick="renewProfile()">
+💳 Renew ₹399
+</button>
+
+<button
+class="logoutBtn"
+onclick="logout()">
+🚪 Logout
+</button>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+<button
+class="editBtn"
+onclick="editProfile()">
+Edit Profile
+</button>
+
+<button
+class="supportBtn"
+onclick="contactDeveloper()">
+Developer Support
+</button>
+
+<button
+class="logoutBtn"
+onclick="logout()">
+Logout
+</button>
+
+</div>
+
+</div>
+
+<!-- PART 2 WILL ADD LEADS HERE -->
+
+<div id="leadsSection"></div>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+
+
+
+
+import {
+getDatabase,
+ref,
+get,
+update,
+remove,
+onValue
+}
+
+
+
+
+
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+import {
+getAuth,
+signOut
+}
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+const firebaseConfig={
+
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+
+authDomain:
+"gurulink-59cc7.firebaseapp.com",
+
+databaseURL:
+"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:"gurulink-59cc7",
+
+storageBucket:
+"gurulink-59cc7.appspot.com",
+
+messagingSenderId:
+"112148672399",
+
+appId:
+"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
+};
+
+const app=
+initializeApp(firebaseConfig);
+
+const db=
+getDatabase(app);
+
+const auth=
+getAuth(app);
+
+const profileId=
+localStorage.getItem("profileId");
+
+const role=
+localStorage.getItem("role");
+
+if(!profileId || !role){
+
+alert("Please Login");
+
+location.href="login.html";
+
+}
+
+const dbPath=
+role==="teacher"
+?
+"teachers/"+profileId
+:
+"institutions/"+profileId;
+
+
+
+
+function getExpiryInfo(start){
+
+if(!start){
+
+return {
+text:"Pending Approval",
+color:"#9e9e9e"
+};
+
+}
+
+const now=Date.now();
+
+const end=
+start+(365*24*60*60*1000);
+
+if(now>end){
+
+return {
+text:"Expired",
+color:"#e53935"
+};
+
+}
+
+const days=Math.ceil(
+(end-now)/(1000*60*60*24)
+);
+
+if(days<=30){
+
+return {
+text:days+" Days Remaining",
+color:"#e53935"
+};
+
+}
+
+if(days<=90){
+
+return {
+text:days+" Days Remaining",
+color:"#ff9800"
+};
+
+}
+
+return {
+text:days+" Days Remaining",
+color:"#43a047"
+};
+
+}
+
+
+
+async function loadProfile(){
+
+const snap=
+await get(
+ref(db,dbPath)
+);
+
+if(!snap.exists()){
+
+document.getElementById(
+"loading"
+).innerHTML=
+"Profile Not Found";
+
+return;
+}
+
+const d=snap.val();
+
+if(role==="teacher"){
+
+document.getElementById(
+"profileTitle"
+).innerText=
+"Teacher : "+
+(d.name||"");
+
+}else{
+
+document.getElementById(
+"profileTitle"
+).innerText=
+"Institute : "+
+(d.name||"");
+
+}
+
+document.getElementById(
+"profileIdText"
+).innerText=
+"Profile ID : "+
+profileId;
+
+document.getElementById(
+"displayName"
+).innerText=
+d.name||"";
+
+document.getElementById(
+"displayEmail"
+).innerText=
+d.email||"";
+
+document.getElementById(
+"displayPhone"
+).innerText=
+d.phone||"";
+
+
+
+
+
+
+const expiry=
+getExpiryInfo(
+d.approvedAt
+);
+
+const expiryEl=
+document.getElementById(
+"expiryText"
+);
+
+expiryEl.innerText=
+expiry.text;
+
+expiryEl.style.color=
+expiry.color;
+
+
+
+
+
+
+
+document.getElementById(
+"loading"
+).style.display=
+"none";
+
+document.getElementById(
+"content"
+).style.display=
+"block";
+
+}
+
+loadProfile();
+
+
+
+
+
+
+
+
+
+
+
+
+function loadLeads(){
+
+onValue(
+
+ref(db,
+`profileViews/${profileId}`),
+
+(snapshot)=>{
+
+let html=`
+<div class="section">
+
+<h2 class="sectionTitle">
+Student Enquiries
+</h2>
+`;
+
+let total=0;
+let pending=0;
+let enrolled=0;
+
+snapshot.forEach((child)=>{
+
+total++;
+
+const id=child.key;
+
+const lead=child.val();
+
+const status=
+lead.status || "pending";
+
+if(status==="enrolled"){
+enrolled++;
+}else{
+pending++;
+}
+
+html+=`
+
+<div class="leadCard">
+
+<div class="leadHeader">
+
+<div class="leadName">
+${lead.name || "Student"}
+</div>
+
+<div class="statusBadge
+${status==="enrolled"
+?
+"enrolledBadge"
+:
+"pendingBadge"
+}">
+
+${status.toUpperCase()}
+
+</div>
+
+</div>
+
+<div class="leadInfo">
+📞 ${lead.phone || "N/A"}
+</div>
+
+<div class="leadInfo">
+📧 ${lead.email || "N/A"}
+</div>
+
+<div class="leadInfo">
+🕒 ${
+lead.time
+?
+new Date(
+lead.time
+).toLocaleString()
+:
+"N/A"
+}
+</div>
+
+<div class="leadActions">
+
+<button
+class="whatsappBtn"
+onclick="contactLead(
+'${lead.phone || ""}'
+)">
+WhatsApp
+</button>
+
+<button
+class="enrollBtn"
+onclick="changeStatus(
+'${id}',
+'enrolled'
+)">
+Enroll
+</button>
+
+<button
+class="pendingBtn"
+onclick="changeStatus(
+'${id}',
+'pending'
+)">
+Pending
+</button>
+
+<button
+class="deleteBtn"
+onclick="deleteLead(
+'${id}'
+)">
+Delete
+</button>
+
+</div>
+
+</div>
+`;
+
+});
+
+html+="</div>";
+
+document.getElementById(
+"leadsSection"
+).innerHTML=html;
+
+document.getElementById(
+"totalViews"
+).innerText=total;
+
+document.getElementById(
+"pendingCount"
+).innerText=pending;
+
+document.getElementById(
+"enrolledCount"
+).innerText=enrolled;
+
+});
+
+}
+
+
+
+
+
+
+
+
+
+
+
+window.changeStatus=
+async function(
+leadId,
+status
+){
+
+await update(
+
+ref(
+db,
+`profileViews/${profileId}/${leadId}`
+),
+
+{
+status:status
+}
+
+);
+
+};
+
+
+
+
+
+
+
+
+
+window.deleteLead=
+async function(
+leadId
+){
+
+if(
+!confirm(
+"Delete this enquiry?"
+)
+){
+return;
+}
+
+await remove(
+
+ref(
+db,
+`profileViews/${profileId}/${leadId}`
+)
+
+);
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+loadLeads();
+
+
+
+
+
+
+window.editProfile=function(){
+
+location.href=
+"edit-profile.html";
+
+};
+
+
+
+
+
+
+window.renewProfile=function(){
+
+localStorage.setItem(
+"renewProfileId",
+profileId
+);
+
+localStorage.setItem(
+"renewRole",
+role
+);
+
+location.href=
+"payment2.html";
+
+};
+
+
+
+
+window.contactDeveloper=function(){
+
+const choice=
+confirm(
+"Press OK for WhatsApp.\nPress Cancel for Email."
+);
+
+if(choice){
+
+window.open(
+"https://wa.me/919706380357",
+"_blank"
+);
+
+}else{
+
+window.location.href=
+"mailto:gurulinkindiahelp@gmail.com";
+
+}
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+window.logout=async function(){
+
+try{
+
+await signOut(auth);
+
+}catch(e){}
+
+localStorage.removeItem(
+"profileId"
+);
+
+localStorage.removeItem(
+"role"
+);
+
+localStorage.removeItem(
+"renewProfileId"
+);
+
+localStorage.removeItem(
+"renewRole"
+);
+
+location.href=
+"login.html";
+
+};
+
+
+
+
+</script>
+
+</body>
+</html>
