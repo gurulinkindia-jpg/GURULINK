@@ -209,13 +209,16 @@ color:"#1565c0"
 
 handler:function(response){
 
-localStorage.setItem(
-"razorpayPaymentId",
+console.log("HANDLER FIRED");
+console.log(response);
+
+alert(
+"Payment Successful!\n\n" +
 response.razorpay_payment_id
 );
 
-alert(
-"Payment Successful!\n\nPayment ID:\n" +
+localStorage.setItem(
+"razorpayPaymentId",
 response.razorpay_payment_id
 );
 
@@ -224,7 +227,15 @@ window.location.href =
 
 },
 
+modal:{
 
+ondismiss:function(){
+
+console.log("Payment Closed");
+
+}
+
+}
 };
 console.log("Opening Razorpay", options);
 var rzp = new Razorpay(options);
