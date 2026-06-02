@@ -2,322 +2,1054 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GURULINK Teacher Dashboard</title>
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>GURULINK Dashboard</title>
 
 <style>
-body{
+
+*{
 margin:0;
-font-family:Arial;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
 background:#eef2f7;
 }
 
+/* HEADER */
+
 header{
-background:#1565c0;
+background:linear-gradient(
+135deg,
+#1565c0,
+#0d47a1
+);
 color:white;
+padding:25px;
+}
+
+.topBar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:15px;
+}
+
+.profileInfo h1{
+font-size:28px;
+margin-bottom:8px;
+}
+
+.profileInfo h3{
+font-size:20px;
+font-weight:normal;
+}
+
+.profileInfo p{
+font-size:14px;
+opacity:.9;
+margin-top:5px;
+}
+
+.subscriptionBox{
+background:white;
+color:#222;
 padding:15px;
+border-radius:12px;
+min-width:250px;
 text-align:center;
+box-shadow:0 4px 10px rgba(0,0,0,.15);
+}
+
+.subscriptionBox h3{
+margin-bottom:10px;
+}
+
+.renewBtn{
+background:#43a047;
+color:white;
+border:none;
+padding:10px 15px;
+border-radius:8px;
+cursor:pointer;
+font-size:15px;
+width:100%;
 }
 
 .container{
 width:95%;
-max-width:900px;
+max-width:1200px;
 margin:20px auto;
+}
+
+/* PROFILE CARD */
+
+.profileCard{
 background:white;
 padding:20px;
-border-radius:10px;
-box-shadow:0 4px 10px rgba(0,0,0,0.1);
+border-radius:15px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+display:flex;
+gap:20px;
+align-items:center;
+margin-bottom:20px;
 }
 
-input,textarea{
-width:100%;
-padding:10px;
-margin:8px 0;
-border:1px solid #ccc;
-border-radius:6px;
-box-sizing:border-box;
+.profileImage{
+width:90px;
+height:90px;
+border-radius:50%;
+background:#ddd;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:40px;
 }
 
-button{
-padding:12px;
-width:100%;
-margin-top:10px;
-background:#1565c0;
-color:white;
+.profileDetails h2{
+margin-bottom:5px;
+}
+
+.profileDetails p{
+color:#555;
+}
+
+/* STATS */
+
+.statsGrid{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
+margin-bottom:20px;
+}
+
+.statCard{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+text-align:center;
+}
+
+.statCard h2{
+font-size:35px;
+color:#1565c0;
+margin-bottom:10px;
+}
+
+/* SECTION */
+
+.section{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+margin-bottom:20px;
+}
+
+.sectionTitle{
+font-size:22px;
+margin-bottom:15px;
+}
+
+/* BUTTONS */
+
+.mainBtns{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(200px,1fr));
+gap:10px;
+}
+
+.mainBtns button{
 border:none;
-border-radius:8px;
+padding:12px;
+border-radius:10px;
 cursor:pointer;
+color:white;
 font-size:15px;
 }
 
-button.logout{background:red;}
-button.renew{background:green;}
-
-.section{
-margin-top:15px;
-padding:10px;
-border:1px solid #ddd;
-border-radius:8px;
+.editBtn{
+background:#1976d2;
 }
 
-.viewerCard{
-padding:10px;
-border:1px solid #ddd;
-border-radius:8px;
-margin-top:8px;
-background:#f9f9ff;
+.supportBtn{
+background:#ff9800;
 }
 
-#content{display:none}
+.logoutBtn{
+background:#e53935;
+}
 
-.roleBadge{
-display:inline-block;
-padding:5px 12px;
-background:#0d47a1;
-color:white;
+
+
+
+
+
+
+
+.leadCard{
+background:white;
+border-radius:15px;
+padding:20px;
+margin-bottom:15px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+
+.leadHeader{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+flex-wrap:wrap;
+}
+
+.leadName{
+font-size:20px;
+font-weight:bold;
+}
+
+.statusBadge{
+padding:6px 12px;
 border-radius:20px;
-font-size:13px;
-margin-top:5px;
+color:white;
+font-size:12px;
 }
 
-.expiryBox{
-padding:10px;
-margin-top:10px;
-background:#fff3cd;
-border:1px solid #ffeeba;
-border-radius:8px;
+.pendingBadge{
+background:#ff9800;
 }
+
+.enrolledBadge{
+background:#4caf50;
+}
+
+.leadInfo{
+margin:5px 0;
+color:#555;
+}
+
+.leadActions{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(120px,1fr));
+gap:10px;
+margin-top:15px;
+}
+
+.whatsappBtn{
+background:#25D366;
+}
+
+.enrollBtn{
+background:#4caf50;
+}
+
+.pendingBtn{
+background:#ff9800;
+}
+
+.deleteBtn{
+background:#e53935;
+}
+
+.leadActions button{
+border:none;
+padding:10px;
+border-radius:8px;
+color:white;
+cursor:pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.loading{
+padding:40px;
+text-align:center;
+font-size:18px;
+}
+
+
+
+
+
+.renewBtn{
+background:#43a047;
+}
+
+
+
+
+
+
 </style>
 </head>
 
 <body>
 
 <header>
-<h2>GURULINK DASHBOARD</h2>
-<div class="roleBadge" id="roleText">GUEST</div>
+
+<div class="topBar">
+
+<div class="profileInfo">
+
+<h1>GURULINK DASHBOARD</h1>
+
+<h3 id="profileTitle">
+Loading...
+</h3>
+
+<p id="profileIdText">
+Loading...
+</p>
+
+</div>
+
+<div class="subscriptionBox">
+
+<h3 id="expiryText">
+Loading...
+</h3>
+
+<button
+class="renewBtn"
+onclick="renewProfile()">
+Renew ₹399
+</button>
+
+</div>
+
+</div>
+
 </header>
 
 <div class="container">
 
-<div id="loading">Loading profile...</div>
+<div id="loading"
+class="loading">
+Loading Dashboard...
+</div>
 
-<div id="content">
+<div id="content"
+style="display:none;">
 
-<div class="expiryBox" id="expiryBox">Loading expiry...</div>
+<div class="profileCard">
 
-<div class="section">
-<h3>📊 Analytics</h3>
+<div class="profileImage">
+👤
+</div>
+
+<div class="profileDetails">
+
+<h2 id="displayName">
+Loading...
+</h2>
+
+<p id="displayEmail"></p>
+
+<p id="displayPhone"></p>
+
+</div>
+
+</div>
+
+<div class="statsGrid">
+
+<div class="statCard">
 <h2 id="totalViews">0</h2>
-<p>Total Views</p>
+<p>Total Leads</p>
+</div>
+
+<div class="statCard">
+<h2 id="pendingCount">0</h2>
+<p>Pending</p>
+</div>
+
+<div class="statCard">
+<h2 id="enrolledCount">0</h2>
+<p>Enrolled</p>
+</div>
+
 </div>
 
 <div class="section">
-<h3>👁 Views</h3>
-<div id="viewers"></div>
+
+<h2 class="sectionTitle">
+Quick Actions
+</h2>
+
+
+
+
+
+
+
+
+<div class="mainBtns">
+
+<button
+class="editBtn"
+onclick="editProfile()">
+✏ Edit Profile
+</button>
+
+<button
+class="supportBtn"
+onclick="contactDeveloper()">
+🛠 Developer Support
+</button>
+
+<button
+class="renewBtn"
+onclick="renewProfile()">
+💳 Renew ₹399
+</button>
+
+<button
+class="logoutBtn"
+onclick="logout()">
+🚪 Logout
+</button>
+
 </div>
 
-<input id="name" placeholder="Name">
-<input id="phone" placeholder="Phone">
-<input id="email" placeholder="Email">
-<input id="experience" placeholder="Experience">
-<input id="location" placeholder="Location">
-<textarea id="description" placeholder="About"></textarea>
 
-<input id="subjects" placeholder="Subjects (comma separated)">
-<input id="modes" placeholder="Modes (comma separated)">
-<input id="fee" placeholder="Fee">
 
-<button onclick="saveData()">Save Changes</button>
 
-<button class="renew" onclick="renewProfile()">Renew 365 Days</button>
 
-<button class="logout" onclick="logout()">Logout</button>
+
+
+
+
+
+<button
+class="editBtn"
+onclick="editProfile()">
+Edit Profile
+</button>
+
+<button
+class="supportBtn"
+onclick="contactDeveloper()">
+Developer Support
+</button>
+
+<button
+class="logoutBtn"
+onclick="logout()">
+Logout
+</button>
 
 </div>
+
+</div>
+
+<!-- PART 2 WILL ADD LEADS HERE -->
+
+<div id="leadsSection"></div>
+
+</div>
+
 </div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import {
-getDatabase, ref, get, update, onValue
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { initializeApp }
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+
+
+
 
 import {
-getAuth, signOut, onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+getDatabase,
+ref,
+get,
+update,
+remove,
+onValue
+}
 
-const firebaseConfig = {
-apiKey:"YOUR_KEY",
-authDomain:"gurulink-59cc7.firebaseapp.com",
-databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+
+
+
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+import {
+getAuth,
+signOut
+}
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+const firebaseConfig={
+
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+
+authDomain:
+"gurulink-59cc7.firebaseapp.com",
+
+databaseURL:
+"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
 projectId:"gurulink-59cc7",
-storageBucket:"gurulink-59cc7.appspot.com",
-messagingSenderId:"112148672399",
-appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
+storageBucket:
+"gurulink-59cc7.appspot.com",
+
+messagingSenderId:
+"112148672399",
+
+appId:
+"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
+const app=
+initializeApp(firebaseConfig);
 
-/* ======================
-   SAFE SESSION FIX
-====================== */
+const db=
+getDatabase(app);
 
-let profileId = localStorage.getItem("profileId");
-let role = localStorage.getItem("role");
+const auth=
+getAuth(app);
 
-document.getElementById("roleText").innerText = (role || "GUEST").toUpperCase();
+const profileId=
+localStorage.getItem("profileId");
 
-/* If opened directly without login */
+const role=
+localStorage.getItem("role");
+
 if(!profileId || !role){
-document.getElementById("loading").innerHTML =
-"❌ Please login first. Redirecting...";
-setTimeout(()=>location.href="login.html",2000);
-throw new Error("No session");
+
+alert("Please Login");
+
+location.href="login.html";
+
 }
 
-const dbPath = (role==="teacher")
-? "teachers/"+profileId
-: "institutions/"+profileId;
+const dbPath=
+role==="teacher"
+?
+"teachers/"+profileId
+:
+"institutions/"+profileId;
 
-const el = (id)=>document.getElementById(id);
 
-/* ======================
-   EXPIRY SYSTEM (365 DAYS)
-====================== */
 
-function getExpiryText(start){
-if(!start) return "Not Approved Yet";
 
-const now = Date.now();
-const end = start + (365*24*60*60*1000);
+function getExpiryInfo(start){
 
-if(now > end) return "❌ Expired";
+if(!start){
 
-const days = Math.ceil((end-now)/(1000*60*60*24));
-return "⏳ " + days + " days remaining";
+return {
+text:"Pending Approval",
+color:"#9e9e9e"
+};
+
 }
 
-/* ======================
-   LOAD PROFILE
-====================== */
+const now=Date.now();
+
+const end=
+start+(365*24*60*60*1000);
+
+if(now>end){
+
+return {
+text:"Expired",
+color:"#e53935"
+};
+
+}
+
+const days=Math.ceil(
+(end-now)/(1000*60*60*24)
+);
+
+if(days<=30){
+
+return {
+text:days+" Days Remaining",
+color:"#e53935"
+};
+
+}
+
+if(days<=90){
+
+return {
+text:days+" Days Remaining",
+color:"#ff9800"
+};
+
+}
+
+return {
+text:days+" Days Remaining",
+color:"#43a047"
+};
+
+}
+
+
 
 async function loadProfile(){
 
-const snap = await get(ref(db, dbPath));
+const snap=
+await get(
+ref(db,dbPath)
+);
+
 if(!snap.exists()){
-el("loading").innerHTML="Profile not found";
+
+document.getElementById(
+"loading"
+).innerHTML=
+"Profile Not Found";
+
 return;
 }
 
-const d = snap.val();
+const d=snap.val();
 
-el("name").value = d.name||"";
-el("phone").value = d.phone||"";
-el("email").value = d.email||"";
-el("experience").value = d.experience||"";
-el("location").value = d.location||"";
-el("description").value = d.description||"";
+if(role==="teacher"){
 
-el("subjects").value = (d.subjects||[]).join(",");
-el("modes").value = (d.teachingModes||[]).join(",");
-el("fee").value = d.fee||"";
+document.getElementById(
+"profileTitle"
+).innerText=
+"Teacher : "+
+(d.name||"");
 
-el("expiryBox").innerHTML =
-"Status: "+(d.status||"pending")+"<br>"+
-getExpiryText(d.approvedAt);
+}else{
 
-el("loading").style.display="none";
-el("content").style.display="block";
+document.getElementById(
+"profileTitle"
+).innerText=
+"Institute : "+
+(d.name||"");
+
 }
 
-/* ======================
-   VIEW ANALYTICS
-====================== */
+document.getElementById(
+"profileIdText"
+).innerText=
+"Profile ID : "+
+profileId;
 
-function loadViews(){
+document.getElementById(
+"displayName"
+).innerText=
+d.name||"";
 
-onValue(ref(db,`profileViews/${profileId}`),(snap)=>{
+document.getElementById(
+"displayEmail"
+).innerText=
+d.email||"";
 
-let html="";
+document.getElementById(
+"displayPhone"
+).innerText=
+d.phone||"";
+
+
+
+
+
+
+const expiry=
+getExpiryInfo(
+d.approvedAt
+);
+
+const expiryEl=
+document.getElementById(
+"expiryText"
+);
+
+expiryEl.innerText=
+expiry.text;
+
+expiryEl.style.color=
+expiry.color;
+
+
+
+
+
+
+
+document.getElementById(
+"loading"
+).style.display=
+"none";
+
+document.getElementById(
+"content"
+).style.display=
+"block";
+
+}
+
+loadProfile();
+
+
+
+
+
+
+
+
+
+
+
+
+function loadLeads(){
+
+onValue(
+
+ref(db,
+`profileViews/${profileId}`),
+
+(snapshot)=>{
+
+let html=`
+<div class="section">
+
+<h2 class="sectionTitle">
+Student Enquiries
+</h2>
+`;
+
 let total=0;
+let pending=0;
+let enrolled=0;
 
-snap.forEach(c=>{
+snapshot.forEach((child)=>{
+
 total++;
-const v=c.val();
+
+const id=child.key;
+
+const lead=child.val();
+
+const status=
+lead.status || "pending";
+
+if(status==="enrolled"){
+enrolled++;
+}else{
+pending++;
+}
 
 html+=`
-<div class="viewerCard">
-<b>${v.name||"Student"}</b><br>
-${v.email||""}<br>
-${new Date(v.time).toLocaleString()}
-</div>`;
+
+<div class="leadCard">
+
+<div class="leadHeader">
+
+<div class="leadName">
+${lead.name || "Student"}
+</div>
+
+<div class="statusBadge
+${status==="enrolled"
+?
+"enrolledBadge"
+:
+"pendingBadge"
+}">
+
+${status.toUpperCase()}
+
+</div>
+
+</div>
+
+<div class="leadInfo">
+📞 ${lead.phone || "N/A"}
+</div>
+
+<div class="leadInfo">
+📧 ${lead.email || "N/A"}
+</div>
+
+<div class="leadInfo">
+🕒 ${
+lead.time
+?
+new Date(
+lead.time
+).toLocaleString()
+:
+"N/A"
+}
+</div>
+
+<div class="leadActions">
+
+<button
+class="whatsappBtn"
+onclick="contactLead(
+'${lead.phone || ""}'
+)">
+WhatsApp
+</button>
+
+<button
+class="enrollBtn"
+onclick="changeStatus(
+'${id}',
+'enrolled'
+)">
+Enroll
+</button>
+
+<button
+class="pendingBtn"
+onclick="changeStatus(
+'${id}',
+'pending'
+)">
+Pending
+</button>
+
+<button
+class="deleteBtn"
+onclick="deleteLead(
+'${id}'
+)">
+Delete
+</button>
+
+</div>
+
+</div>
+`;
+
 });
 
-el("viewers").innerHTML = html;
-el("totalViews").innerText = total;
+html+="</div>";
+
+document.getElementById(
+"leadsSection"
+).innerHTML=html;
+
+document.getElementById(
+"totalViews"
+).innerText=total;
+
+document.getElementById(
+"pendingCount"
+).innerText=pending;
+
+document.getElementById(
+"enrolledCount"
+).innerText=enrolled;
 
 });
 
 }
 
-/* ======================
-   SAVE PROFILE
-====================== */
 
-window.saveData = async function(){
 
-await update(ref(db, dbPath),{
-name:el("name").value,
-phone:el("phone").value,
-email:el("email").value,
-experience:el("experience").value,
-location:el("location").value,
-description:el("description").value,
-subjects:el("subjects").value.split(","),
-teachingModes:el("modes").value.split(","),
-fee:el("fee").value
-});
 
-alert("Saved Successfully");
+
+
+
+
+
+
+
+window.changeStatus=
+async function(
+leadId,
+status
+){
+
+await update(
+
+ref(
+db,
+`profileViews/${profileId}/${leadId}`
+),
+
+{
+status:status
+}
+
+);
+
 };
 
-/* ======================
-   RENEW SYSTEM (FIXED)
-====================== */
 
-window.renewProfile = function(){
 
-if(!profileId){
-alert("Profile ID missing. Please login again.");
-location.href="login.html";
+
+
+
+
+
+
+window.deleteLead=
+async function(
+leadId
+){
+
+if(
+!confirm(
+"Delete this enquiry?"
+)
+){
 return;
 }
 
-/* SEND TO YOUR EXISTING PAYMENT PAGE */
-window.location.href =
-"payment.html?profileId=" + profileId + "&role=" + role;
+await remove(
+
+ref(
+db,
+`profileViews/${profileId}/${leadId}`
+)
+
+);
 
 };
 
-/* ======================
-   LOGOUT FIXED
-====================== */
 
-window.logout = async function(){
+
+
+
+
+
+
+
+
+
+
+
+
+loadLeads();
+
+
+
+
+
+
+window.editProfile=function(){
+
+location.href=
+"edit-profile.html";
+
+};
+
+
+
+
+
+
+window.renewProfile=function(){
+
+localStorage.setItem(
+"renewProfileId",
+profileId
+);
+
+localStorage.setItem(
+"renewRole",
+role
+);
+
+location.href=
+"payment2.html";
+
+};
+
+
+
+
+window.contactDeveloper=function(){
+
+const choice=
+confirm(
+"Press OK for WhatsApp.\nPress Cancel for Email."
+);
+
+if(choice){
+
+window.open(
+"https://wa.me/919706380357",
+"_blank"
+);
+
+}else{
+
+window.location.href=
+"mailto:gurulinkindiahelp@gmail.com";
+
+}
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+window.logout=async function(){
+
 try{
+
 await signOut(auth);
+
 }catch(e){}
 
-localStorage.clear();
-location.href="login.html";
+localStorage.removeItem(
+"profileId"
+);
+
+localStorage.removeItem(
+"role"
+);
+
+localStorage.removeItem(
+"renewProfileId"
+);
+
+localStorage.removeItem(
+"renewRole"
+);
+
+location.href=
+"login.html";
+
 };
 
-/* INIT */
-loadProfile();
-loadViews();
+
+
 
 </script>
 
