@@ -90,29 +90,32 @@ if (!id) {
 }
 
 /* 💰 Set amount + payment link */
-let amount = 1;
+let amount = 3;
+
+
+
+
 let paymentLink = "";
 
 if (type === "teacher") {
 
-  amount = 1;
+  amount = 3;
 
-  paymentLink =
-    "https://rzp.io/rzp/6jCbwy7?redirect=true&redirect_url=" +
-    encodeURIComponent(
-      "https://gurulink.onrender.com/payment-success2.html?type=teacher&id=" + id
-    );
 
-} 
-else if (type === "institution") {
 
-  amount = 2;
 
-  paymentLink =
-    "https://rzp.io/rzp/6jCbwy7?redirect=true&redirect_url=" +
-    encodeURIComponent(
-      "https://gurulink.onrender.com/payment-success2.html?type=institution&id=" + id
-    );
+paymentLink =
+"https://rzp.io/rzp/6jCbwy7?redirect=true&redirect_url=" +
+encodeURIComponent(
+"https://gurulink.onrender.com/payment-success2.html?type=" +
+type +
+"&id=" +
+id
+);
+
+
+
+
 }
 
 /* 📌 Show fee on page */
