@@ -1,216 +1,105 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
-
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<meta name="viewport"
-
-content="width=device-width,initial-scale=1.0">
-
-
-
-<title>Renew Membership</title>
-
-
+<title>Renew Membership - GURULINK</title>
 
 <style>
 
-
-
 body{
-
 margin:0;
-
 font-family:Arial,sans-serif;
-
 background:#eef2f7;
-
 }
-
-
 
 .container{
-
 max-width:600px;
-
 margin:40px auto;
-
 background:white;
-
 padding:25px;
-
 border-radius:15px;
-
 box-shadow:0 4px 10px rgba(0,0,0,.1);
-
 }
-
-
 
 h2{
-
 text-align:center;
-
 color:#1565c0;
-
+margin-bottom:20px;
 }
-
-
 
 .info{
-
 padding:15px;
-
 background:#f5f5f5;
-
 border-radius:10px;
-
 margin-top:15px;
-
 }
-
-
 
 .row{
-
-margin-bottom:10px;
-
+margin-bottom:12px;
 }
-
-
 
 .payBtn{
-
 width:100%;
-
 padding:15px;
-
 border:none;
-
 background:#43a047;
-
 color:white;
-
 font-size:18px;
-
 border-radius:10px;
-
 cursor:pointer;
-
 margin-top:20px;
-
 }
-
-
 
 .payBtn:hover{
-
 opacity:.9;
-
 }
 
-
-
 </style>
-
-
-
 </head>
-
-
 
 <body>
 
-
-
 <div class="container">
 
-
-
-<h2>
-
-Renew Membership
-
-</h2>
-
-
+<h2>Renew Membership</h2>
 
 <div class="info">
 
-
-
 <div class="row">
-
 <b>Profile Name:</b>
-
 <span id="name">Loading...</span>
-
 </div>
 
-
-
 <div class="row">
-
 <b>Role:</b>
-
 <span id="roleText">Loading...</span>
-
 </div>
 
-
-
 <div class="row">
-
 <b>Plan:</b>
-
-365 Days
-
+365 Days Membership
 </div>
-
-
 
 <div class="row">
-
 <b>Amount:</b>
-
 ₹399
-
 </div>
 
-
-
 </div>
-
-
 
 <button
-
 class="payBtn"
-
 id="payBtn">
-
 Pay ₹399
-
 </button>
 
-
-
 </div>
-
-
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-
-
 <script type="module">
-
-
 
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
@@ -225,11 +114,17 @@ from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 const firebaseConfig = {
 
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+
 authDomain:"gurulink-59cc7.firebaseapp.com",
+
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
 projectId:"gurulink-59cc7",
+
 storageBucket:"gurulink-59cc7.appspot.com",
+
 messagingSenderId:"112148672399",
+
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
@@ -246,6 +141,7 @@ localStorage.getItem("renewRole");
 if(!profileId || !role){
 
 alert("Renewal Session Expired");
+
 location.href="login.html";
 
 }
@@ -257,7 +153,7 @@ role==="teacher"
 :
 "institutions/"+profileId;
 
-let profileData={};
+let profileData = {};
 
 async function loadProfile(){
 
@@ -274,7 +170,7 @@ return;
 profileData = snap.val();
 
 document.getElementById("name").innerText =
-profileData.name || "";
+profileData.name || "Unknown";
 
 document.getElementById("roleText").innerText =
 role.toUpperCase();
@@ -284,7 +180,6 @@ role.toUpperCase();
 loadProfile();
 
 document.getElementById("payBtn").onclick = function(){
-alert("PAY BUTTON CLICKED");
 
 var options = {
 
@@ -308,10 +203,14 @@ contact:profileData.phone || ""
 
 },
 
+theme:{
+color:"#1565c0"
+},
+
 handler:function(response){
 
 alert(
-"Payment Successful\n\nPayment ID: " +
+"Payment Successful!\n\nPayment ID:\n" +
 response.razorpay_payment_id
 );
 
@@ -343,12 +242,7 @@ rzp.open();
 
 };
 
-
-
 </script>
 
-
-
 </body>
-
 </html>
