@@ -248,47 +248,51 @@ profileData.phone || ""
 
 },
 
+
+
+
+
 "handler":
 async function(response){
+
+alert("Payment Success Handler Called");
+
+console.log(response);
+
+try{
 
 const paymentRef=
 push(
 ref(db,"paymentsrenu")
 );
 
+alert("Payment Ref Created");
+
 await set(
 paymentRef,
 {
 
-profileId:
-profileId,
+profileId:profileId,
+role:role,
 
-role:
-role,
+name:profileData.name || "",
 
-name:
-profileData.name || "",
+phone:profileData.phone || "",
 
-phone:
-profileData.phone || "",
+email:profileData.email || "",
 
-email:
-profileData.email || "",
+amount:399,
 
-amount:
-399,
+paymentDate:Date.now(),
 
-paymentDate:
-Date.now(),
-
-validityDays:
-365,
+validityDays:365,
 
 razorpayPaymentId:
 response.razorpay_payment_id
 
-}
-);
+});
+
+alert("Firebase Saved");
 
 localStorage.setItem(
 "paymentId",
@@ -297,6 +301,16 @@ paymentRef.key
 
 window.location.href=
 "payment-success2.html";
+
+}catch(err){
+
+console.error(err);
+
+alert(
+"ERROR: " + err.message
+);
+
+}
 
 },
 
