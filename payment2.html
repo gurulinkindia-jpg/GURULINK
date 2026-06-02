@@ -119,12 +119,24 @@ else if (type === "institution") {
 document.getElementById("feeText").innerText =
   "Registration Fee ₹" + amount;
 
-/* 🟢 Payment button click */
+
+
+
+
+
+
+
+
 document.getElementById("payBtn").onclick = () => {
 
-  window.location.href = paymentLink;
+  localStorage.setItem("paymentProfileId", id);
+  localStorage.setItem("paymentType", type);
 
+  window.location.href = paymentLink;
 };
+
+
+
 
 </script>
 
