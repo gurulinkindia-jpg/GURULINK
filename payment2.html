@@ -4,7 +4,7 @@
 
 <meta charset="UTF-8">
 
-<title>GURULINK Payment</title>
+<title>GURULINK Payment2</title>
 
 <style>
 
@@ -68,41 +68,28 @@ Continue To Payment
 </div>
 
 
+
+
+
+
+
+
+
+
 <script>
-
-
-
-
-
-
 
 const params = new URLSearchParams(window.location.search);
 
-const type = params.get("type") || "teacher";
+const id = params.get("id");
+const type = params.get("type");
 
-/* ✅ FIX: safe fallback for missing id */
-let id = params.get("id");
-
+/* ❗ STOP if ID missing */
 if (!id) {
-  id = localStorage.getItem("profileId") 
-     || localStorage.getItem("teacherId") 
-     || localStorage.getItem("institutionId");
+  alert("Profile ID missing. Please go back to dashboard.");
+  throw new Error("Missing profileId");
 }
 
-if (!id) {
-  alert("Profile ID missing. Please complete registration first.");
-  throw new Error("Missing Profile ID");
-}
-
-
-
-
-
-
-
-
-
-
+/* 💰 Set amount + payment link */
 let amount = 1;
 let paymentLink = "";
 
@@ -116,7 +103,8 @@ if (type === "teacher") {
       "https://gurulink.onrender.com/payment-success.html?type=teacher&id=" + id
     );
 
-} else if (type === "institution") {
+} 
+else if (type === "institution") {
 
   amount = 2;
 
@@ -127,20 +115,15 @@ if (type === "teacher") {
     );
 }
 
-/* SHOW AMOUNT */
-document.getElementById("feeText").innerHTML =
-  `Registration Fee ₹${amount}`;
+/* 📌 Show fee on page */
+document.getElementById("feeText").innerText =
+  "Registration Fee ₹" + amount;
 
-/* BUTTON CLICK */
+/* 🟢 Payment button click */
 document.getElementById("payBtn").onclick = () => {
 
-
-localStorage.setItem("paymentProfileId", id);
-localStorage.setItem("paymentType", type);
-
-
-
   window.location.href = paymentLink;
+
 };
 
 </script>
