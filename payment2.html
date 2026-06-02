@@ -1,179 +1,256 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
 
+
+
 <meta charset="UTF-8">
+
 <meta name="viewport"
+
 content="width=device-width,initial-scale=1.0">
+
+
 
 <title>Renew Membership</title>
 
+
+
 <style>
 
+
+
 body{
+
 margin:0;
+
 font-family:Arial,sans-serif;
+
 background:#eef2f7;
+
 }
+
+
 
 .container{
+
 max-width:600px;
+
 margin:40px auto;
+
 background:white;
+
 padding:25px;
+
 border-radius:15px;
+
 box-shadow:0 4px 10px rgba(0,0,0,.1);
+
 }
+
+
 
 h2{
+
 text-align:center;
+
 color:#1565c0;
+
 }
+
+
 
 .info{
+
 padding:15px;
+
 background:#f5f5f5;
+
 border-radius:10px;
+
 margin-top:15px;
+
 }
+
+
 
 .row{
+
 margin-bottom:10px;
+
 }
+
+
 
 .payBtn{
+
 width:100%;
+
 padding:15px;
+
 border:none;
+
 background:#43a047;
+
 color:white;
+
 font-size:18px;
+
 border-radius:10px;
+
 cursor:pointer;
+
 margin-top:20px;
+
 }
 
+
+
 .payBtn:hover{
+
 opacity:.9;
+
 }
+
+
 
 </style>
 
+
+
 </head>
+
+
 
 <body>
 
+
+
 <div class="container">
 
+
+
 <h2>
+
 Renew Membership
+
 </h2>
+
+
 
 <div class="info">
 
+
+
 <div class="row">
+
 <b>Profile Name:</b>
+
 <span id="name">Loading...</span>
+
 </div>
 
+
+
 <div class="row">
+
 <b>Role:</b>
+
 <span id="roleText">Loading...</span>
+
 </div>
 
+
+
 <div class="row">
+
 <b>Plan:</b>
+
 365 Days
+
 </div>
+
+
 
 <div class="row">
+
 <b>Amount:</b>
+
 ₹399
-</div>
 
 </div>
+
+
+
+</div>
+
+
 
 <button
+
 class="payBtn"
+
 id="payBtn">
+
 Pay ₹399
+
 </button>
 
+
+
 </div>
+
+
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
+
+
 <script type="module">
 
+
+
 import { initializeApp }
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
 getDatabase,
 ref,
 get
 }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-
-
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-const firebaseConfig={
+const firebaseConfig = {
 
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-
-authDomain:
-"gurulink-59cc7.firebaseapp.com",
-
-databaseURL:
-"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"gurulink-59cc7",
-
-storageBucket:
-"gurulink-59cc7.appspot.com",
-
-messagingSenderId:
-"112148672399",
-
-appId:
-"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
 
-const app=
-initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-const db=
-getDatabase(app);
+const profileId =
+localStorage.getItem("renewProfileId");
 
-const profileId=
-localStorage.getItem(
-"renewProfileId"
-);
+const role =
+localStorage.getItem("renewRole");
 
-const role=
-localStorage.getItem(
-"renewRole"
-);
+if(!profileId || !role){
 
-if(
-!profileId ||
-!role
-){
-
-alert(
-"Renewal Session Expired"
-);
-
-location.href=
-"login.html";
+alert("Renewal Session Expired");
+location.href="login.html";
 
 }
 
-const dbPath=
+const dbPath =
 role==="teacher"
 ?
 "teachers/"+profileId
@@ -184,200 +261,56 @@ let profileData={};
 
 async function loadProfile(){
 
-const snap=
-await get(
-ref(db,dbPath)
-);
+const snap =
+await get(ref(db,dbPath));
 
 if(!snap.exists()){
 
-alert(
-"Profile Not Found"
-);
-
+alert("Profile Not Found");
 return;
+
 }
 
-profileData=
-snap.val();
+profileData = snap.val();
 
+document.getElementById("name").innerText =
+profileData.name || "";
 
+document.getElementById("roleText").innerText =
+role.toUpperCase();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
 
 loadProfile();
 
-document.getElementById(
-"payBtn"
-).onclick=function(){
+document.getElementById("payBtn").onclick = function(){
 
-var options={
+var options = {
 
-"key":
-"rzp_live_SwAMX5YRz3G7MB",
+key:"rzp_live_SwAMX5YRz3G7MB",
 
-"amount":
-100,
+amount:100,
 
-"currency":
-"INR",
+currency:"INR",
 
-"name":
-"GURULINK",
+name:"GURULINK",
 
-"description":
-"365 Days Membership Renewal",
+description:"365 Days Membership Renewal",
 
-"prefill":{
-
-"name":
-profileData.name || "",
-
-"email":
-profileData.email || "",
-
-"contact":
-profileData.phone || ""
-
-},
-
-
-
-
-
-"handler":
-async function(response){
-
-alert("Payment Success Handler Called");
-
-console.log(response);
-
-try{
-
-const paymentRef=
-push(
-ref(db,"paymentsrenu")
-);
-
-alert("Payment Ref Created");
-
-await set(
-paymentRef,
-{
-
-profileId:profileId,
-role:role,
+prefill:{
 
 name:profileData.name || "",
 
-phone:profileData.phone || "",
-
 email:profileData.email || "",
 
-amount:399,
-
-paymentDate:Date.now(),
-
-validityDays:365,
-
-razorpayPaymentId:
-response.razorpay_payment_id
-
-});
-
-alert("Firebase Saved");
-
-localStorage.setItem(
-"paymentId",
-paymentRef.key
-);
-
-window.location.href=
-"payment-success2.html";
-
-}catch(err){
-
-console.error(err);
-
-alert(
-"ERROR: " + err.message
-);
-
-}
+contact:profileData.phone || ""
 
 },
 
-"modal":{
-
-"ondismiss":
-function(){
-
-console.log(
-"Payment Closed"
-);
-
-}
-
-}
-
-};
-
-var rzp=
-new Razorpay(
-options
-);
-
-document.getElementById(
-"payBtn"
-).onclick=function(){
-
-var options={
-
-"key":
-"rzp_live_SwAMX5YRz3G7MB",
-
-"amount":
-100,
-
-"currency":
-"INR",
-
-"name":
-"GURULINK",
-
-"description":
-"365 Days Membership Renewal",
-
-"prefill":{
-
-"name":
-profileData.name || "",
-
-"email":
-profileData.email || "",
-
-"contact":
-profileData.phone || ""
-
-},
-
-"handler":
-function(response){
+handler:function(response){
 
 alert(
-"Payment Successful\n\n" +
+"Payment Successful\n\nPayment ID: " +
 response.razorpay_payment_id
 );
 
@@ -386,19 +319,16 @@ localStorage.setItem(
 response.razorpay_payment_id
 );
 
-window.location.href=
+window.location.href =
 "payment-success2.html";
 
 },
 
-"modal":{
+modal:{
 
-"ondismiss":
-function(){
+ondismiss:function(){
 
-console.log(
-"Payment Closed"
-);
+console.log("Payment Closed");
 
 }
 
@@ -406,17 +336,18 @@ console.log(
 
 };
 
-var rzp=
-new Razorpay(
-options
-);
+var rzp = new Razorpay(options);
 
 rzp.open();
 
 };
-};
+
+
 
 </script>
 
+
+
 </body>
+
 </html>
