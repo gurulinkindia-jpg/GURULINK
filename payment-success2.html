@@ -81,14 +81,24 @@ const db = getDatabase(app);
 const params = new URLSearchParams(window.location.search);
 
 let type = params.get("type") || "teacher";
-let id = params.get("id");
 
-/* fallback only if URL missing */
+
+
+
+
+
 if (!id) {
     id =
-        localStorage.getItem("institutionId") ||
-        localStorage.getItem("teacherId");
+        localStorage.getItem("paymentProfileId") ||
+        localStorage.getItem("profileId") ||
+        localStorage.getItem("teacherId") ||
+        localStorage.getItem("institutionId");
 }
+
+
+
+
+
 
 /* safety check */
 if (!id) {
@@ -139,44 +149,70 @@ if (!snap.exists()) {
 
 const user = snap.val();
 
+
+
+
+
+
 /* PAYMENT RECORD */
-const paymentRef = push(ref(db, "payments"));
+const paymentRef = push(ref(db, "payment2"));
+
+
+
+
+
 
 await set(paymentRef, {
+
 paymentId: paymentRef.key,
 profileId: id,
 uid: id,
 type: type,
 
+renewal: true,
+
 name: user.name || "",
 ownerName: user.ownerName || "",
+
 email: user.email || "",
 phone: user.phone || "",
-alternatePhone: user.alternatePhone || "",
-address: user.address || "",
-area: user.area || "",
-website: user.website || "",
-mapLink: user.mapLink || "",
-
-subjects: user.subjects || [],
-class: user.class || "",
-teachingModes: user.teachingModes || [],
-
-individualFee: user.individualFee || "",
-homeFee: user.homeFee || "",
-groupFee: user.groupFee || "",
-onlineFee: user.onlineFee || "",
 
 amount: amount,
 status: "paid",
+
 date: new Date().toLocaleString(),
 createdAt: Date.now()
+
 });
 
+
+
+
+
+
+
 /* UPDATE PROFILE */
+
+
+
+
 await update(ref(db, profilePath), {
-paymentStatus: "paid"
+
+    paymentStatus: "paid",
+
+    approvedAt: Date.now(),
+
+    lastRenewalDate: Date.now(),
+
+    renewalStatus: "active"
+
 });
+
+
+
+
+
+
 
 /* SUCCESS */
 document.getElementById("loader").style.display = "none";
@@ -184,7 +220,19 @@ document.getElementById("msg").innerHTML =
 '<span class="success">Payment successful! Redirecting...</span>';
 
 setTimeout(() => {
-window.location.href = "profile-view.html?id=" + id;
+
+
+
+
+
+
+window.location.href = "dashboard.html";
+
+
+
+
+
+
 }, 2000);
 
 } catch (err) {
