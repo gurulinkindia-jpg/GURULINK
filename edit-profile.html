@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
+
+<title>Edit Profile</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#eef2f7;
+}
+
+header{
+background:#1565c0;
+color:white;
+padding:18px;
+text-align:center;
+}
+
+.container{
+width:95%;
+max-width:800px;
+margin:20px auto;
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+
+input,
+textarea{
+width:100%;
+padding:12px;
+margin:8px 0;
+border:1px solid #ccc;
+border-radius:8px;
+box-sizing:border-box;
+}
+
+textarea{
+height:120px;
+resize:vertical;
+}
+
+.saveBtn{
+width:100%;
+padding:14px;
+background:#43a047;
+color:white;
+border:none;
+border-radius:10px;
+font-size:16px;
+cursor:pointer;
+}
+
+.backBtn{
+width:100%;
+padding:14px;
+background:#1565c0;
+color:white;
+border:none;
+border-radius:10px;
+font-size:16px;
+cursor:pointer;
+margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h2>Edit Profile</h2>
+</header>
+
+<div class="container">
+
+<input
+id="name"
+placeholder="Name">
+
+<input
+id="phone"
+placeholder="Phone">
+
+<input
+id="email"
+placeholder="Email">
+
+<input
+id="experience"
+placeholder="Experience">
+
+<input
+id="location"
+placeholder="Location">
+
+<input
+id="fee"
+placeholder="Fee">
+
+<input
+id="subjects"
+placeholder="Subjects (comma separated)">
+
+<input
+id="modes"
+placeholder="Teaching Modes (comma separated)">
+
+<textarea
+id="description"
+placeholder="About Yourself">
+</textarea>
+
+<button
+class="saveBtn"
+onclick="saveProfile()">
+Save Profile
+</button>
+
+<button
+class="backBtn"
+onclick="goBack()">
+Back To Dashboard
+</button>
+
+</div>
+
+<script type="module">
+
+
+
+
+import { initializeApp }
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+update
+}
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+
+authDomain:
+"gurulink-59cc7.firebaseapp.com",
+
+databaseURL:
+"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:"gurulink-59cc7",
+
+storageBucket:
+"gurulink-59cc7.appspot.com",
+
+messagingSenderId:
+"112148672399",
+
+appId:
+"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
+};
+
+const app=
+initializeApp(firebaseConfig);
+
+const db=
+getDatabase(app);
+
+const profileId=
+localStorage.getItem(
+"profileId"
+);
+
+const role=
+localStorage.getItem(
+"role"
+);
+
+if(
+!profileId ||
+!role
+){
+
+alert(
+"Please Login Again"
+);
+
+location.href=
+"login.html";
+
+}
+
+const dbPath=
+role==="teacher"
+?
+"teachers/"+profileId
+:
+"institutions/"+profileId;
+
+const el=(id)=>
+document.getElementById(id);
+
+
+
+
+async function loadProfile(){
+
+const snap=
+await get(
+ref(db,dbPath)
+);
+
+if(!snap.exists()){
+
+alert(
+"Profile Not Found"
+);
+
+return;
+}
+
+const d=snap.val();
+
+el("name").value=
+d.name || "";
+
+el("phone").value=
+d.phone || "";
+
+el("email").value=
+d.email || "";
+
+el("experience").value=
+d.experience || "";
+
+el("location").value=
+d.location || "";
+
+el("fee").value=
+d.fee || "";
+
+el("subjects").value=
+(d.subjects || [])
+.join(",");
+
+el("modes").value=
+(d.teachingModes || [])
+.join(",");
+
+el("description").value=
+d.description || "";
+
+}
+
+loadProfile();
+
+
+window.saveProfile=
+async function(){
+
+await update(
+
+ref(db,dbPath),
+
+{
+
+name:
+el("name").value,
+
+phone:
+el("phone").value,
+
+email:
+el("email").value,
+
+experience:
+el("experience").value,
+
+location:
+el("location").value,
+
+fee:
+el("fee").value,
+
+subjects:
+el("subjects")
+.value
+.split(","),
+
+teachingModes:
+el("modes")
+.value
+.split(","),
+
+description:
+el("description").value
+
+}
+
+);
+
+alert(
+"Profile Updated Successfully"
+);
+
+location.href=
+"teacher-dashboard.html";
+
+};
+
+
+window.goBack=function(){
+
+location.href=
+"teacher-dashboard.html";
+
+};
+
+</script>
+
+</body>
+</html>
