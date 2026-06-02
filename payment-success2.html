@@ -1,15 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Payment Successful</title>
+<title>Payment Success</title>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial,sans-serif;
@@ -20,206 +17,189 @@ align-items:center;
 height:100vh;
 }
 
-.card{
+.box{
+width:90%;
+max-width:400px;
 background:white;
 padding:30px;
 border-radius:15px;
-box-shadow:0 4px 10px rgba(0,0,0,.1);
 text-align:center;
-max-width:500px;
-width:90%;
+box-shadow:0 5px 15px rgba(0,0,0,.15);
 }
 
-.successIcon{
-font-size:70px;
-color:#43a047;
-}
+h2{color:#1565c0;margin-top:0;}
 
-h2{
-color:#43a047;
-}
-
-.info{
-margin-top:15px;
-padding:15px;
-background:#f5f5f5;
-border-radius:10px;
-text-align:left;
-}
+p{font-size:15px;line-height:1.6;}
 
 .loader{
-margin-top:20px;
-color:#1565c0;
-font-weight:bold;
+width:50px;
+height:50px;
+border:5px solid #ddd;
+border-top:5px solid #1565c0;
+border-radius:50%;
+margin:20px auto;
+animation:spin 1s linear infinite;
 }
 
-</style>
+@keyframes spin{
+100%{transform:rotate(360deg);}
+}
 
+.success{color:green;font-weight:bold;}
+.error{color:red;font-weight:bold;}
+</style>
 </head>
 
 <body>
 
-<div class="card">
-
-<div class="successIcon">
-✅
-</div>
-
-<h2>
-Payment Successful
-</h2>
-
-<p>
-Your Membership Has Been Renewed
-For 365 Days.
-</p>
-
-<div class="info">
-
-<p>
-<b>Payment ID:</b>
-<span id="paymentId">
-Loading...
-</span>
-</p>
-
-<p>
-<b>Profile ID:</b>
-<span id="profileId">
-Loading...
-</span>
-</p>
-
-<p>
-<b>Plan:</b>
-365 Days
-</p>
-
-<p>
-<b>Amount:</b>
-₹399
-</p>
-
-</div>
-
-<div class="loader">
-
-Updating Membership...
-
-</div>
-
+<div class="box">
+<h2>Payment Processing</h2>
+<div class="loader" id="loader"></div>
+<p id="msg">Saving payment details...</p>
 </div>
 
 <script type="module">
 
-import { initializeApp }
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, push, get, set, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-import {
-getDatabase,
-ref,
-update
-}
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-const firebaseConfig={
-
+const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-
-authDomain:
-"gurulink-59cc7.firebaseapp.com",
-
-databaseURL:
-"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"gurulink-59cc7",
-
-storageBucket:
-"gurulink-59cc7.appspot.com",
-
-messagingSenderId:
-"112148672399",
-
-appId:
-"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
-const app=
-initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-const db=
-getDatabase(app);
+/* URL PARAMS */
 
-const profileId=
-localStorage.getItem(
-"renewProfileId"
-);
+const params = new URLSearchParams(window.location.search);
 
-const role=
-localStorage.getItem(
-"renewRole"
-);
+let type = params.get("type") || "teacher";
+let id = params.get("id");
 
-const paymentId=
-localStorage.getItem(
-"paymentId"
-);
+/* fallback only if URL missing */
+if (!id) {
+    id =
+        localStorage.getItem("institutionId") ||
+        localStorage.getItem("teacherId");
+}
 
-document.getElementById(
-"profileId"
-).innerText=
-profileId || "";
+/* safety check */
+if (!id) {
+    alert("Profile ID missing. Please complete registration & payment.");
+    throw new Error("Missing ID");
+}
 
-document.getElementById(
-"paymentId"
-).innerText=
-paymentId || "";
+/* SAFE FALLBACK */
+if (!id || id === "null" || id === "undefined") {
+    id = localStorage.getItem(type + "Id");
+}
 
-if(
-profileId &&
-role
-){
+/* FINAL CHECK */
+if (!id) {
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("msg").innerHTML =
+        '<span class="error">Profile ID missing.</span>';
+    throw new Error("Profile ID Missing");
+}
 
-const dbPath=
-role==="teacher"
-?
-"teachers/"+profileId
-:
-"institutions/"+profileId;
+/* PAYMENT AMOUNT */
+/* PAYMENT AMOUNT */
+/* PAYMENT AMOUNT */
+const amount = type === "institution" ? 200 : 100;
 
-await update(
+/* MAIN */
+async function savePayment() {
 
-ref(db,dbPath),
+try {
 
-{
 
-approvedAt:
-Date.now(),
 
-lastRenewal:
-Date.now(),
+const profilePath =
+type === "institution"
+? "institutions/" + id
+: "teachers/" + id;
 
-renewalAmount:
-399,
 
-membershipStatus:
-"active"
+
+/* GET PROFILE */
+const snap = await get(ref(db, profilePath));
+
+
+
+if (!snap.exists()) {
+    throw new Error("Profile not found in database");
+}
+
+const user = snap.val();
+
+/* PAYMENT RECORD */
+const paymentRef = push(ref(db, "payments"));
+
+await set(paymentRef, {
+paymentId: paymentRef.key,
+profileId: id,
+uid: id,
+type: type,
+
+name: user.name || "",
+ownerName: user.ownerName || "",
+email: user.email || "",
+phone: user.phone || "",
+alternatePhone: user.alternatePhone || "",
+address: user.address || "",
+area: user.area || "",
+website: user.website || "",
+mapLink: user.mapLink || "",
+
+subjects: user.subjects || [],
+class: user.class || "",
+teachingModes: user.teachingModes || [],
+
+individualFee: user.individualFee || "",
+homeFee: user.homeFee || "",
+groupFee: user.groupFee || "",
+onlineFee: user.onlineFee || "",
+
+amount: amount,
+status: "paid",
+date: new Date().toLocaleString(),
+createdAt: Date.now()
+});
+
+/* UPDATE PROFILE */
+await update(ref(db, profilePath), {
+paymentStatus: "paid"
+});
+
+/* SUCCESS */
+document.getElementById("loader").style.display = "none";
+document.getElementById("msg").innerHTML =
+'<span class="success">Payment successful! Redirecting...</span>';
+
+setTimeout(() => {
+window.location.href = "profile-view.html?id=" + id;
+}, 2000);
+
+} catch (err) {
+
+console.log(err);
+
+document.getElementById("loader").style.display = "none";
+document.getElementById("msg").innerHTML =
+'<span class="error">Payment failed.</span><br><br>' + err.message;
 
 }
 
-);
-
 }
 
-setTimeout(()=>{
-
-location.href=
-"teacher-dashboard.html";
-
-},5000);
+savePayment();
 
 </script>
 
