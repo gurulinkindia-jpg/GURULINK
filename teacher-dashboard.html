@@ -783,7 +783,7 @@ html+=`
 
 <div class="leadName">
 ${lead.viewerRole === "student"
-  ? (lead.name || "Student")
+  ? lead.name
   : (lead.viewerRole === "teacher"
       ? "Teacher"
       : "Institute"
