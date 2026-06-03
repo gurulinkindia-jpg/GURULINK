@@ -854,12 +854,13 @@ html+=`
 <div class="leadHeader">
 
 <div class="leadName">
-${lead.viewerRole === "student"
-  ? lead.name
-  : (lead.viewerRole === "teacher"
-      ? "Teacher"
-      : "Institute"
-    )
+${
+  lead.viewerRole === "student"
+    ? (lead.viewerName || lead.name || "Student")
+    : (lead.viewerRole === "teacher"
+        ? "Teacher"
+        : "Institute"
+      )
 }
 </div>
 
