@@ -316,7 +316,9 @@ font-size:30px;
 font-weight:bold;
 color:#1565c0;
 }
-
+.callBtn{
+background:#1976d2;
+}
 </style>
 </head>
 
@@ -797,9 +799,20 @@ ${status.toUpperCase()}
 
 </div>
 
-<div class="leadInfo">
-📞 ${lead.phone || "N/A"}
-</div>
+
+
+
+${lead.viewerRole === "student" ? `
+  <div class="leadInfo">
+    📞 ${lead.phone || "N/A"}
+  </div>
+` : `
+  <div class="leadInfo">
+    🏫 Registered User (Contact via platform)
+  </div>
+`}
+
+
 
 <div class="leadInfo">
 📧 ${lead.email || "N/A"}
@@ -826,6 +839,18 @@ onclick="contactLead(
 )">
 WhatsApp
 </button>
+
+
+
+${lead.phone ? `
+<button
+class="callBtn"
+onclick="callLead('${lead.phone}')">
+📞 Call
+</button>
+` : ``}
+
+
 
 <button
 class="enrollBtn"
@@ -1065,6 +1090,16 @@ window.contactLead = function(phone) {
     "https://wa.me/" + phone,
     "_blank"
   );
+};
+
+
+
+window.callLead = function(phone) {
+  if (!phone) {
+    alert("No phone number available");
+    return;
+  }
+  window.location.href = "tel:" + phone;
 };
 
 </script>
