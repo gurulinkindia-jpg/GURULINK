@@ -220,11 +220,6 @@ placeholder="Search teacher, institute, subject...">
 
 <select id="modeFilter" onchange="searchSite()">
 <option value="">🏠 All Teaching Modes</option>
-<option value="online">Online</option>
-<option value="home">Home Tuition</option>
-<option value="individual">Individual Coaching</option>
-<option value="group">Group Coaching</option>
-<option value="classroom">Institute Classroom</option>
 </select>
 
 </div>
@@ -503,14 +498,36 @@ return "profile.html";
 function loadFilters(){
 
 const locationSet = new Set();
+const modeSet = new Set();
 
 searchData.forEach(item=>{
 
+// Location
 if(item.area){
 locationSet.add(item.area);
 }
 
+// Teaching Modes
+if(item.teachingModes){
+
+const modes =
+item.teachingModes.split(",");
+
+modes.forEach(mode=>{
+
+if(mode.trim()){
+
+modeSet.add(mode.trim());
+
+}
+
 });
+
+}
+
+});
+
+// Location Dropdown
 
 const locationFilter =
 document.getElementById("locationFilter");
@@ -519,6 +536,18 @@ locationSet.forEach(loc=>{
 
 locationFilter.innerHTML +=
 `<option value="${loc.toLowerCase()}">${loc}</option>`;
+
+});
+
+// Teaching Mode Dropdown
+
+const modeFilter =
+document.getElementById("modeFilter");
+
+modeSet.forEach(mode=>{
+
+modeFilter.innerHTML +=
+`<option value="${mode.toLowerCase()}">${mode}</option>`;
 
 });
 
