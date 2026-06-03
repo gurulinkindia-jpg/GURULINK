@@ -780,7 +780,14 @@ html+=`
 <div class="leadHeader">
 
 <div class="leadName">
-${lead.name || "Student"}
+${
+  (lead.viewerRole || "").toLowerCase() === "student"
+    ? (lead.name || lead.viewerName || "Student")
+    : (lead.viewerRole === "teacher"
+        ? "Teacher"
+        : "Institute"
+      )
+}
 </div>
 
 <div class="statusBadge
