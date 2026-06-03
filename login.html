@@ -150,9 +150,42 @@ return;
 }
 
 // 4. SAVE SESSION (CLEAN)
+// 4. SAVE SESSION (CLEAN)
+
 localStorage.setItem("uid", uid);
 localStorage.setItem("role", role);
 localStorage.setItem("profileId", uid);
+
+let profilePhoto = "";
+
+// teacher
+if(role === "teacher"){
+const teacherData =
+(await get(ref(db,"teachers/"+uid))).val();
+
+profilePhoto = teacherData.logo || "";
+}
+
+// institution
+else if(role === "institution"){
+const instData =
+(await get(ref(db,"institutions/"+uid))).val();
+
+profilePhoto = instData.logo || "";
+}
+
+// student
+else if(role === "student"){
+const studentData =
+(await get(ref(db,"students/"+uid))).val();
+
+profilePhoto =
+studentData.photo ||
+studentData.logo ||
+"";
+}
+
+localStorage.setItem("profilePhoto", profilePhoto);
 
 // 5. REDIRECT (FIXED SEPARATION)
 if(role === "teacher"){
