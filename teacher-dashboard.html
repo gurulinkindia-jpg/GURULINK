@@ -641,7 +641,8 @@ const img = document.getElementById("profileLogo");
 img.src = logoURL;
 
 img.onerror = function () {
-  img.src = "default.png";
+  this.onerror = null;
+  this.src = "default.png";
 };
 
 if(role==="teacher"){
@@ -779,14 +780,23 @@ html+=`
 
 <div class="leadHeader">
 
-const displayName =
-  role === "student"
-    ? (lead.name || "Student")
-    : (role === "teacher" ? "Teacher" : "Institute");
+
+
+
 
 <div class="leadName">
-${displayName}
+${
+  lead.role === "teacher"
+    ? (lead.name || "Teacher")
+    : lead.role === "institution"
+      ? (lead.name || "Institute")
+      : (lead.name || "Student")
+}
 </div>
+
+
+
+
 
 <div class="statusBadge
 ${status==="enrolled"
