@@ -263,11 +263,7 @@ searchData.push({
 id: child.key,
 type: "teacher",
 name: data.name || "",
-photo:
-data.photo ||
-data.profileImage ||
-data.image ||
-"",
+photo: data.logo || "",
 
 subjects:
 Array.isArray(data.subjects)
@@ -313,11 +309,7 @@ searchData.push({
 id: child.key,
 type: "institution",
 name: data.name || "",
-photo:
-data.logo ||
-data.photo ||
-data.image ||
-"",
+photo: data.logo || "",
 
 subjects:
 Array.isArray(data.subjects)
