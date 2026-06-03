@@ -99,6 +99,45 @@ display:inline;
 }
 
 }
+
+.filter-bar{
+max-width:700px;
+margin:15px auto;
+display:flex;
+gap:12px;
+}
+
+.filter-bar select{
+flex:1;
+height:48px;
+padding:0 15px;
+border:none;
+border-radius:12px;
+background:#fff;
+font-size:15px;
+font-weight:500;
+color:#333;
+outline:none;
+cursor:pointer;
+box-shadow:0 2px 8px rgba(0,0,0,.12);
+transition:.3s;
+}
+
+.filter-bar select:hover{
+box-shadow:0 5px 15px rgba(0,0,0,.18);
+}
+
+.filter-bar select:focus{
+border:2px solid #1565c0;
+}
+
+@media(max-width:768px){
+
+.filter-bar{
+flex-direction:column;
+}
+
+}
 </style>
 
 </head>
@@ -173,21 +212,14 @@ placeholder="Search teacher, institute, subject...">
 
 </div>
 
-<div style="
-max-width:700px;
-margin:auto;
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-justify-content:center;
-">
+<div class="filter-bar">
 
 <select id="locationFilter" onchange="searchSite()">
-<option value="">All Locations</option>
+<option value="">📍 All Locations</option>
 </select>
 
 <select id="modeFilter" onchange="searchSite()">
-<option value="">All Teaching Modes</option>
+<option value="">🏠 All Teaching Modes</option>
 <option value="online">Online</option>
 <option value="home">Home Tuition</option>
 <option value="individual">Individual Coaching</option>
@@ -197,9 +229,10 @@ justify-content:center;
 
 </div>
 
-
-
 <div id="results"></div>
+
+
+
 <div class="quick">
 <a href="find-teacher.html">Find Teacher</a>
 <a href="profile.html">All Profiles</a>
