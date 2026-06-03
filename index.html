@@ -149,7 +149,16 @@ class="logoImg">
 <h1>Find the Right Teacher for Every Subject</h1>
 <p>Academic • Skill • Creative • Sports • Institutes</p>
 <div class="search-box">
-<input id="searchInput" placeholder="Search pages, teachers name, institutes name,subject Eg. chemistry, dashboard...">
+
+
+
+<input
+id="searchInput"
+oninput="searchSite()"
+placeholder="Search pages, teachers name, institutes name,subject Eg. chemistry, dashboard...">
+
+
+
 <button onclick="searchSite()">Search</button>
 </div>
 <div id="results"></div>
@@ -296,7 +305,7 @@ const data = child.val();
 
 searchData.push({
 id: child.key,
-type: "teacher",
+type: "institution",
 name: data.name || "",
 
 subjects:
@@ -525,6 +534,25 @@ r.innerHTML = html;
 r.style.display = "block";
 
 };
+
+
+document.addEventListener("click",(e)=>{
+
+const searchBox =
+document.querySelector(".search-box");
+
+const results =
+document.getElementById("results");
+
+if(
+!searchBox.contains(e.target) &&
+!results.contains(e.target)
+){
+results.style.display = "none";
+}
+
+});
+
 </script>
 
 </body>
