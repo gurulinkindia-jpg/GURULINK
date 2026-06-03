@@ -263,11 +263,7 @@ searchData.push({
 id: child.key,
 type: "teacher",
 name: data.name || "",
-photo:
-data.logo ||
-data.profileImage ||
-data.image ||
-"",
+photo: data.logo || "",
 
 subjects:
 Array.isArray(data.subjects)
@@ -313,11 +309,7 @@ searchData.push({
 id: child.key,
 type: "institution",
 name: data.name || "",
-photo:
-data.logo ||
-data.photo ||
-data.image ||
-"",
+photo: data.logo || "",
 
 
 
@@ -550,7 +542,8 @@ matches.push({
 score,
 
 html:`
-<a href="profile.html?search=${encodeURIComponent(item.name)}"
+<a
+href="profile.html?search=${encodeURIComponent(item.name)}"
 style="
 display:flex;
 align-items:center;
@@ -558,13 +551,15 @@ gap:10px;
 ">
 
 <img
-src="${item.photo || 'https://via.placeholder.com/50'}"
+src="${item.photo || 'https://i.ibb.co/4pDNDk1/user.png'}"
+alt=""
 style="
-width:50px;
-height:50px;
+width:45px;
+height:45px;
 border-radius:50%;
 object-fit:cover;
 border:1px solid #ddd;
+flex-shrink:0;
 ">
 
 <div>
@@ -578,6 +573,7 @@ ${item.subjects}
 </div>
 
 </a>
+`
 `
 `
 
