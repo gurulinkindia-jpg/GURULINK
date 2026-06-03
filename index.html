@@ -597,9 +597,14 @@ document.getElementById("moreResultsBtn");
 
 if(moreBtn){
 
+
+
+
+
 moreBtn.addEventListener("click",(e)=>{
 
 e.preventDefault();
+e.stopPropagation();
 
 let allHtml = "";
 
@@ -608,6 +613,7 @@ allHtml += x.html;
 });
 
 r.innerHTML = allHtml;
+r.style.display = "block";
 
 });
 
