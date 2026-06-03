@@ -295,8 +295,27 @@ background:#43a047;
 
 
 
+.profileImage{
+width:90px;
+height:90px;
+border-radius:50%;
+overflow:hidden;
+background:#ddd;
+display:flex;
+align-items:center;
+justify-content:center;
+}
 
-
+.profileImage img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+.profileImage{
+font-size:30px;
+font-weight:bold;
+color:#1565c0;
+}
 
 </style>
 </head>
@@ -352,7 +371,7 @@ style="display:none;">
 <div class="profileCard">
 
 <div class="profileImage">
-👤
+  <img id="profileLogo" src="default.png" alt="Logo">
 </div>
 
 <div class="profileDetails">
@@ -612,7 +631,18 @@ document.getElementById(
 return;
 }
 
-const d=snap.val();
+
+const d = snap.val();
+
+/* ✅ ADD LOGO CODE HERE */
+const logoURL = d.logo || "default.png";
+const img = document.getElementById("profileLogo");
+
+img.src = logoURL;
+
+img.onerror = function () {
+  img.src = "default.png";
+};
 
 if(role==="teacher"){
 
