@@ -221,21 +221,12 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getDatabase(app);
-const savedPhoto =
-localStorage.getItem("profilePhoto");
+
+
+const savedPhoto = localStorage.getItem("profilePhoto");
 
 if(savedPhoto){
-
-document.getElementById("headerProfilePic").src =
-savedPhoto;
-
-}
-const savedPhoto =
-localStorage.getItem("profilePhoto");
-
-if(savedPhoto){
-document.getElementById("headerProfilePic").src =
-savedPhoto;
+document.getElementById("headerProfilePic").src = savedPhoto;
 }
 
 
