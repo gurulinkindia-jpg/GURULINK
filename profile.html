@@ -419,6 +419,10 @@ const dynamic = document.getElementById("dynamicFilters");
 const urlParams =
 new URLSearchParams(window.location.search);
 
+
+
+
+
 const searchFromHome =
 urlParams.get("search");
 
@@ -427,7 +431,13 @@ if(searchFromHome){
 document.getElementById("search").value =
 searchFromHome;
 
+setTimeout(render,500);
+
 }
+
+
+
+
 
 category.addEventListener("change", showFilters);
 
