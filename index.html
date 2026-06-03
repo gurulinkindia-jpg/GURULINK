@@ -253,12 +253,24 @@ searchData.push({
 id: child.key,
 type: "teacher",
 name: data.name || "",
-subjects: Array.isArray(data.subjects)
+
+
+
+
+subjects:
+Array.isArray(data.subjects)
 ? data.subjects.join(" ")
-: "",
-location: data.location || "",
-description: data.description || ""
-});
+:
+typeof data.subjects === "object"
+? Object.values(data.subjects).join(" ")
+: (
+data.subjects ||
+data.subject ||
+data.skillType ||
+data.creativeType ||
+data.course ||
+""
+),
 
 });
 
@@ -278,16 +290,31 @@ instituteCount++;
 
 const data = child.val();
 
+
+
+
+
 searchData.push({
 id: child.key,
 type: "institution",
 name: data.name || "",
-subjects: Array.isArray(data.subjects)
+
+
+subjects:
+Array.isArray(data.subjects)
 ? data.subjects.join(" ")
-: "",
-location: data.location || "",
-description: data.description || ""
-});
+:
+typeof data.subjects === "object"
+? Object.values(data.subjects).join(" ")
+: (
+data.subjects ||
+data.subject ||
+data.skillType ||
+data.creativeType ||
+data.course ||
+""
+),
+
 
 });
 
@@ -375,39 +402,128 @@ window.searchSite = function(){
 const q =
 document.getElementById("searchInput")
 .value
+.toLowerCase()
 .trim();
 
+const r =
+document.getElementById("results");
+
 if(!q){
-alert("Enter subject, teacher name or institute name");
+r.style.display="none";
 return;
 }
 
-window.location.href =
-"profile.html?search=" +
-encodeURIComponent(q);
+let matches = [];
+
+/* PAGES */
+
+pages.forEach(p=>{
+
+let score = 0;
+
+if(p[0].toLowerCase() === q)
+score = 100;
+
+else if(p[0].toLowerCase().includes(q))
+score = 50;
+
+if(score>0){
+
+matches.push({
+score,
+html:`
+<a href="${p[1]}">
+📄 ${p[0]}
+</a>`
+});
+
+}
+
+});
+
+/* TEACHERS + INSTITUTES */
+
+searchData.forEach(item=>{
+
+const text = `
+${item.name}
+${item.subjects}
+${item.location}
+${item.description}
+`.toLowerCase();
+
+let score = 0;
+
+/* exact teacher/institute name */
+if(item.name.toLowerCase() === q)
+score += 100;
+
+/* name contains search */
+else if(item.name.toLowerCase().includes(q))
+score += 80;
+
+/* subject match */
+if(item.subjects.toLowerCase().includes(q))
+score += 60;
+
+/* location match */
+if(item.location.toLowerCase().includes(q))
+score += 30;
+
+/* description match */
+if(item.description.toLowerCase().includes(q))
+score += 10;
+
+/* words like teacher, institute */
+if(q.includes("teacher") && item.type==="teacher")
+score += 20;
+
+if(q.includes("institute") && item.type==="institution")
+score += 20;
+
+/* home tuition */
+if(q.includes("home"))
+score += 10;
+
+if(score>0){
+
+matches.push({
+
+score,
+
+html:`
+<a href="profile-view.html?id=${item.id}">
+👤 ${item.name}
+<br>
+<small>
+${item.subjects}
+</small>
+</a>`
+
+});
+
+}
+
+});
+
+/* sort highest score first */
+
+matches.sort((a,b)=>b.score-a.score);
+
+let html = "";
+
+matches.slice(0,20).forEach(x=>{
+html += x.html;
+});
+
+if(!html){
+html = "<a>No Results Found</a>";
+}
+
+r.innerHTML = html;
+r.style.display = "block";
 
 };
-
-document
-.getElementById("searchInput")
-.addEventListener("keypress",(e)=>{
-
-if(e.key==="Enter"){
-searchSite();
-}
-
-});
-
-document.addEventListener("click",(e)=>{
-
-const profile =
-document.querySelector(".profile");
-
-if(profile && !profile.contains(e.target)){
-document.getElementById("menu").style.display="none";
-}
-
-});
 </script>
 
 </body>
