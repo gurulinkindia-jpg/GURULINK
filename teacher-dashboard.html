@@ -840,13 +840,13 @@ lead.time
 
 <button
 class="whatsappBtn"
-onclick="contactWhatsApp(${JSON.stringify(lead.phone || "")})">
+onclick="contactWhatsApp('${(lead.phone || "").replace(/\D/g,'')}')"
 WhatsApp
 </button>
 
 <button
 class="callBtn"
-onclick="callLead(${JSON.stringify(lead.phone || "")})">
+onclick="callLead('${(lead.phone || "").replace(/\D/g,'')}')"
 Call
 </button>
 
