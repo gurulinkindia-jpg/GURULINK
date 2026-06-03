@@ -492,13 +492,7 @@ onclick="logout()">
 
 <script type="module">
 
-import { initializeApp }
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
-
-
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
 getDatabase,
@@ -507,21 +501,23 @@ get,
 update,
 remove,
 onValue
-}
-
-
-
-
-
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 import {
 getAuth,
 signOut
-}
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+import {
+getStorage,
+ref as sRef,
+uploadBytes,
+getDownloadURL
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+
+
+
+
 
 const firebaseConfig={
 
@@ -632,6 +628,37 @@ color:"#43a047"
 };
 
 }
+
+
+
+
+
+const storage = getStorage(app);
+
+document.getElementById("uploadLogo").addEventListener("change", async (e) => {
+
+  const file = e.target.files[0];
+  if (!file) return;
+
+ const fileRef = sRef(storage, `profileImages/${profileId}_${Date.now()}`);
+
+  await uploadBytes(fileRef, file);
+
+  const url = await getDownloadURL(fileRef);
+
+  // update DB
+  await update(ref(db, dbPath), {
+    logo: url
+  });
+
+  // update UI instantly
+  document.getElementById("profileLogo").src = url;
+
+  alert("Profile image updated successfully!");
+
+});
+
+
 
 
 
@@ -800,48 +827,35 @@ html+=`
 
 <div class="leadHeader">
 
+  <div class="leadName">
+    ${lead.viewerRole === "student"
+      ? (lead.viewerName || "Student")
+      : (lead.viewerName || "Institute / Teacher")}
+  </div>
 
-
-
-
-
-
-
-
-
-
-
-
-<div class="leadName">
-${lead.viewerName || "Unknown Visitor"}
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div class="statusBadge
-${status==="enrolled"
-?
-"enrolledBadge"
-:
-"pendingBadge"
-}">
-
-${status.toUpperCase()}
+  <div class="statusBadge ${
+    status === "enrolled" ? "enrolledBadge" : "pendingBadge"
+  }">
+    ${status.toUpperCase()}
+  </div>
 
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 </div>
 
@@ -889,23 +903,21 @@ lead.time
 
 <div class="leadActions">
 
-<button
-class="whatsappBtn"
-onclick="contactLead(
-'${lead.phone || ""}'
-)">
+${lead.phone ? `
+<button class="whatsappBtn"
+onclick="contactLead('${lead.phone}')">
 WhatsApp
 </button>
 
-
-
-${lead.phone ? `
-<button
-class="callBtn"
+<button class="callBtn"
 onclick="callLead('${lead.phone}')">
 Call
 </button>
 ` : ``}
+
+
+
+
 
 
 <button
