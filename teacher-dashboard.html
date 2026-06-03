@@ -781,12 +781,9 @@ html+=`
 
 <div class="leadName">
 ${
-  (lead.viewerRole || "").toLowerCase() === "student"
-    ? (lead.name || lead.viewerName || "Student")
-    : (lead.viewerRole === "teacher"
-        ? "Teacher"
-        : "Institute"
-      )
+  role === "teacher"
+    ? "Student"
+    : (lead.name || "Student")
 }
 </div>
 
