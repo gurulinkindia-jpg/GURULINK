@@ -633,30 +633,45 @@ color:"#43a047"
 
 
 
+
 const storage = getStorage(app);
 
+// 👇 ADD HERE (replace old one)
 document.getElementById("uploadLogo").addEventListener("change", async (e) => {
+  try {
+    console.log("UPLOAD STARTED");
 
-  const file = e.target.files[0];
-  if (!file) return;
+    const file = e.target.files[0];
+    if (!file) {
+      console.log("No file selected");
+      return;
+    }
 
- const fileRef = sRef(storage, `profileImages/${profileId}_${Date.now()}`);
+    const fileRef = sRef(storage, `profileImages/${profileId}_${Date.now()}`);
 
-  await uploadBytes(fileRef, file);
+    console.log("Uploading...");
 
-  const url = await getDownloadURL(fileRef);
+    await uploadBytes(fileRef, file);
 
-  // update DB
-  await update(ref(db, dbPath), {
-    logo: url
-  });
+    console.log("Upload done");
 
-  // update UI instantly
-  document.getElementById("profileLogo").src = url;
+    const url = await getDownloadURL(fileRef);
 
-  alert("Profile image updated successfully!");
+    console.log("URL:", url);
 
+    await update(ref(db, dbPath), {
+      logo: url
+    });
+
+    document.getElementById("profileLogo").src = url;
+
+    alert("Profile image updated!");
+  } catch (err) {
+    console.error("UPLOAD ERROR:", err);
+    alert("Upload failed → check console");
+  }
 });
+
 
 
 
