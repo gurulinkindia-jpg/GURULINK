@@ -838,15 +838,14 @@ lead.time
 
 <div class="leadActions">
 
-<button
 class="whatsappBtn"
-onclick="contactWhatsApp('${(lead.phone || "").replace(/\D/g,'')}')"
+onclick="contactWhatsApp('${(lead.phone || "").replace(/\D/g,'')}')">
 WhatsApp
 </button>
 
 <button
 class="callBtn"
-onclick="callLead('${(lead.phone || "").replace(/\D/g,'')}')"
+onclick="callLead('${(lead.phone || "").replace(/\D/g,'')}')">
 Call
 </button>
 
