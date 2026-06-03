@@ -259,8 +259,14 @@ required>
 
 <div class="modeBox">
 
+
+
+
 <div class="row">
-<input type="checkbox" class="mode" value="Group Coaching" onchange="toggleFee('groupFeeBox')">
+<input type="checkbox"
+       class="mode"
+       value="Group Coaching"
+       onchange="toggleFee('groupFeeBox')">
 Group Coaching
 </div>
 
@@ -268,14 +274,21 @@ Group Coaching
 <input id="groupFee" placeholder="Enter Group Coaching Fee">
 </div>
 
+
 <div class="row">
-<input type="checkbox" class="mode" value="Super Group Coaching" onchange="toggleFee('groupFeeBox')">
+<input type="checkbox"
+       class="mode"
+       value="Super Group Coaching"
+       onchange="toggleFee('superGroupFeeBox')">
 Super Group Coaching
 </div>
 
-<div id="groupFeeBox" class="modeFee">
-<input id="groupFee" placeholder="Enter Super Group Coaching Fee">
+<div id="superGroupFeeBox" class="modeFee">
+<input id="superGroupFee" placeholder="Enter Super Group Coaching Fee">
 </div>
+
+
+
 
 <div class="row">
 <input type="checkbox" class="mode" value="Individual Coaching" onchange="toggleFee('individualFeeBox')">
@@ -847,6 +860,9 @@ document.getElementById("homeFee").value,
 
 groupFee:
 document.getElementById("groupFee").value,
+
+superGroupFee:
+document.getElementById("superGroupFee").value,
 
 onlineFee:
 document.getElementById("onlineFee").value,
