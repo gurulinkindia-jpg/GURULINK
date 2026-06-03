@@ -316,7 +316,13 @@ font-size:30px;
 font-weight:bold;
 color:#1565c0;
 }
+.callBtn{
+background:#1e88e5;
+}
 
+.callBtn:hover{
+background:#1565c0;
+}
 </style>
 </head>
 
@@ -834,11 +840,17 @@ lead.time
 
 <button
 class="whatsappBtn"
-onclick="contactLead(
-'${lead.phone || ""}'
-)">
+onclick="contactWhatsApp(${JSON.stringify(lead.phone || "")})">
 WhatsApp
 </button>
+
+<button
+class="callBtn"
+onclick="callLead(${JSON.stringify(lead.phone || "")})">
+Call
+</button>
+
+
 
 <button
 class="enrollBtn"
@@ -1067,19 +1079,36 @@ location.href=
 };
 
 
-window.contactLead = function(phone) {
+
+
+
+
+
+
+window.callLead = function(phone) {
 
   if (!phone) {
     alert("No phone number available");
     return;
   }
 
-  window.open(
-    "https://wa.me/" + phone,
-    "_blank"
-  );
+  window.location.href = "tel:" + phone;
 };
 
+
+
+
+window.contactWhatsApp = function(phone) {
+
+  if (!phone) {
+    alert("No phone number available");
+    return;
+  }
+
+  const cleanPhone = phone.replace(/\D/g, ""); // remove +, spaces, symbols
+
+  window.open("https://wa.me/" + cleanPhone, "_blank");
+};
 </script>
 
 </body>
