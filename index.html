@@ -570,7 +570,7 @@ if(matches.length > 6){
 
 html += `
 <a href="#"
-onclick="showMoreResults(event)"
+id="moreResultsBtn"
 style="
 font-weight:bold;
 text-align:center;
@@ -592,12 +592,33 @@ html = "<a>No Results Found</a>";
 r.innerHTML = html;
 r.style.display = "block";
 
+const moreBtn =
+document.getElementById("moreResultsBtn");
+
+if(moreBtn){
+
+moreBtn.addEventListener("click",(e)=>{
+
+e.preventDefault();
+
+let allHtml = "";
+
+matches.forEach(x=>{
+allHtml += x.html;
+});
+
+r.innerHTML = allHtml;
+
+});
+
+}
+
 };
 
 
 
 
-window.showMoreResults = function(e){
+globalThis.showMoreResults = function(e){
 
 e.preventDefault();
 
