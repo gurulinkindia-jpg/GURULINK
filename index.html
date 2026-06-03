@@ -192,6 +192,7 @@ placeholder="Search pages, teachers name, institutes name,subject Eg. chemistry,
 
 <script type="module">
 let searchData = [];
+let matches = [];
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
@@ -435,7 +436,7 @@ r.style.display="none";
 return;
 }
 
-let matches = [];
+matches = [];
 
 /* PAGES */
 
