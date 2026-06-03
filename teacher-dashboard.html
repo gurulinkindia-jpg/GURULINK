@@ -786,11 +786,9 @@ html+=`
 
 <div class="leadName">
 ${
-  lead.role === "teacher"
-    ? (lead.name || "Teacher")
-    : lead.role === "institution"
-      ? (lead.name || "Institute")
-      : (lead.name || "Student")
+  (lead.name ?? "").toString().trim()
+    ? lead.name
+    : "Teacher/Institute"
 }
 </div>
 
