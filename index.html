@@ -254,9 +254,6 @@ id: child.key,
 type: "teacher",
 name: data.name || "",
 
-
-
-
 subjects:
 Array.isArray(data.subjects)
 ? data.subjects.join(" ")
@@ -270,6 +267,10 @@ data.skillType ||
 data.creativeType ||
 data.course ||
 ""
+),
+
+location: data.location || data.address || "",
+description: data.description || ""
 });
 
 })
@@ -294,9 +295,8 @@ const data = child.val();
 
 searchData.push({
 id: child.key,
-type: "institution",
+type: "teacher",
 name: data.name || "",
-
 
 subjects:
 Array.isArray(data.subjects)
@@ -311,6 +311,10 @@ data.skillType ||
 data.creativeType ||
 data.course ||
 ""
+),
+
+location: data.location || data.address || "",
+description: data.description || ""
 });
 
 })
