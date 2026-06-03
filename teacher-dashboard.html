@@ -779,12 +779,13 @@ html+=`
 
 <div class="leadHeader">
 
-<div class="leadName">
-${
+const displayName =
   role === "student"
     ? (lead.name || "Student")
-    : "Teacher/Institute"
-}
+    : (role === "teacher" ? "Teacher" : "Institute");
+
+<div class="leadName">
+${displayName}
 </div>
 
 <div class="statusBadge
