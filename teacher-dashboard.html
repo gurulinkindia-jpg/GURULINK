@@ -855,12 +855,12 @@ html+=`
 
 <div class="leadName">
 ${
-  lead.viewerRole === "student"
-    ? (lead.viewerName || lead.name || "Student")
-    : (lead.viewerRole === "teacher"
-        ? "Teacher"
-        : "Institute"
-      )
+${
+  role === "student"
+    ? name
+    : role === "teacher"
+      ? "Teacher"
+      : "Institute"
 }
 </div>
 
@@ -881,7 +881,7 @@ ${status.toUpperCase()}
 
 
 
-${lead.viewerRole === "student" ? `
+${role === "student" ? `
   <div class="leadInfo">
     📞 ${lead.phone || "N/A"}
   </div>
