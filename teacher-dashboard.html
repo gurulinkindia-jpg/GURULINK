@@ -325,7 +325,9 @@ font-size:30px;
 font-weight:bold;
 color:#1565c0;
 }
-
+.callBtn{
+background:#1976d2;
+}
 </style>
 </head>
 
@@ -798,9 +800,36 @@ html+=`
 
 <div class="leadHeader">
 
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="leadName">
-${lead.name || "Student"}
+${lead.viewerName || "Unknown Visitor"}
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <div class="statusBadge
 ${status==="enrolled"
@@ -816,13 +845,35 @@ ${status.toUpperCase()}
 
 </div>
 
-<div class="leadInfo">
-📞 ${lead.phone || "N/A"}
-</div>
 
-<div class="leadInfo">
-📧 ${lead.email || "N/A"}
-</div>
+
+
+
+
+${lead.viewerRole === "student" ? `
+  <div class="leadInfo">
+    📞 ${lead.phone ? lead.phone : "No phone"}
+  </div>
+
+  <div class="leadInfo">
+    📧 ${lead.email ? lead.email : "No email"}
+  </div>
+` : `
+  <div class="leadInfo">
+    🏫 ${lead.viewerName ? lead.viewerName : "Teacher / Institute"}
+  </div>
+`}
+
+
+
+
+
+
+
+
+
+
+
 
 <div class="leadInfo">
 🕒 ${
@@ -845,6 +896,17 @@ onclick="contactLead(
 )">
 WhatsApp
 </button>
+
+
+
+${lead.phone ? `
+<button
+class="callBtn"
+onclick="callLead('${lead.phone}')">
+Call
+</button>
+` : ``}
+
 
 <button
 class="enrollBtn"
@@ -1086,6 +1148,18 @@ window.contactLead = function(phone) {
   );
 };
 
+
+
+window.callLead = function(phone) {
+
+  if (!phone) {
+    alert("No phone number available");
+    return;
+  }
+
+  window.location.href = "tel:" + phone;
+
+};
 </script>
 
 </body>
