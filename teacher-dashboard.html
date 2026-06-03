@@ -781,9 +781,9 @@ html+=`
 
 <div class="leadName">
 ${
-  role === "teacher"
-    ? "Student"
-    : (lead.name || "Student")
+  role === "student"
+    ? (lead.name || "Student")
+    : "Teacher/Institute"
 }
 </div>
 
