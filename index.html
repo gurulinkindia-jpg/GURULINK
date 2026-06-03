@@ -597,22 +597,7 @@ r.style.display = "block";
 
 
 
-window.showMoreResults = function(e){
 
-e.preventDefault();
-
-const r =
-document.getElementById("results");
-
-let html = "";
-
-matches.forEach(x=>{
-html += x.html;
-});
-
-r.innerHTML = html;
-
-};
 
 
 
