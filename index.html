@@ -158,19 +158,47 @@ object-fit:cover;
 <section class="hero">
 <h1>Find the Right Teacher for Every Subject</h1>
 <p>Academic • Skill • Creative • Sports • Institutes</p>
+
+
+
+
 <div class="search-box">
-
-
 
 <input
 id="searchInput"
 oninput="searchSite()"
-placeholder="Search pages, teachers name, institutes name,subject Eg. chemistry, dashboard...">
-
-
+placeholder="Search teacher, institute, subject...">
 
 <button onclick="searchSite()">Search</button>
+
 </div>
+
+<div style="
+max-width:700px;
+margin:auto;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+justify-content:center;
+">
+
+<select id="locationFilter" onchange="searchSite()">
+<option value="">All Locations</option>
+</select>
+
+<select id="modeFilter" onchange="searchSite()">
+<option value="">All Teaching Modes</option>
+<option value="online">Online</option>
+<option value="home">Home Tuition</option>
+<option value="individual">Individual Coaching</option>
+<option value="group">Group Coaching</option>
+<option value="classroom">Institute Classroom</option>
+</select>
+
+</div>
+
+
+
 <div id="results"></div>
 <div class="quick">
 <a href="find-teacher.html">Find Teacher</a>
@@ -280,6 +308,11 @@ id: child.key,
 type: "teacher",
 name: data.name || "",
 photo: data.logo || "",
+area: data.area || "",
+teachingModes:
+Array.isArray(data.teachingModes)
+? data.teachingModes.join(" ")
+: (data.teachingModes || ""),
 
 subjects:
 Array.isArray(data.subjects)
@@ -326,6 +359,12 @@ id: child.key,
 type: "institution",
 name: data.name || "",
 photo: data.logo || "",
+area: data.area || "",
+
+teachingModes:
+Array.isArray(data.teachingModes)
+? data.teachingModes.join(" ")
+: (data.teachingModes || ""),
 
 
 
@@ -354,6 +393,7 @@ description: data.description || ""
 } // <-- MISSING
 
 document.getElementById("instCount").textContent = instituteCount;
+loadFilters();
 
 console.log("Teachers =", teacherCount);
 console.log("Institutes =", instituteCount);
@@ -427,6 +467,32 @@ return "profile.html";
 
 
 
+function loadFilters(){
+
+const locationSet = new Set();
+
+searchData.forEach(item=>{
+
+if(item.area){
+locationSet.add(item.area);
+}
+
+});
+
+const locationFilter =
+document.getElementById("locationFilter");
+
+locationSet.forEach(loc=>{
+
+locationFilter.innerHTML +=
+`<option value="${loc.toLowerCase()}">${loc}</option>`;
+
+});
+
+}
+
+
+
 
 
 
@@ -441,6 +507,15 @@ document.getElementById("searchInput")
 .value
 .toLowerCase()
 .trim();
+const selectedLocation =
+document.getElementById("locationFilter")
+.value
+.toLowerCase();
+
+const selectedMode =
+document.getElementById("modeFilter")
+.value
+.toLowerCase();
 
 const words =
 q.split(/\s+/);
@@ -491,6 +566,23 @@ html:`
 /* TEACHERS + INSTITUTES */
 
 searchData.forEach(item=>{
+if(
+selectedLocation &&
+!(item.area || "")
+.toLowerCase()
+.includes(selectedLocation)
+){
+return;
+}
+
+if(
+selectedMode &&
+!(item.teachingModes || "")
+.toLowerCase()
+.includes(selectedMode)
+){
+return;
+}
 
 const text = `
 ${item.name}
