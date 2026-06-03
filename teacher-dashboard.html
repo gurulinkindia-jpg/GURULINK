@@ -319,78 +319,6 @@ color:#1565c0;
 .callBtn{
 background:#1976d2;
 }
-@media (max-width: 600px) {
-
-.profileCard{
-  flex-direction: column;
-  text-align: center;
-  padding: 15px;
-  gap: 10px;
-}
-
-.profileImage{
-  width: 70px;
-  height: 70px;
-  font-size: 30px;
-}
-
-.profileDetails h2{
-  font-size: 18px;
-}
-
-.profileDetails p{
-  font-size: 13px;
-}
-
-}
-@media (max-width: 600px) {
-
-.statCard{
-  padding: 12px;
-}
-
-.statCard h2{
-  font-size: 26px;
-}
-
-.statCard p{
-  font-size: 13px;
-}
-
-.statsGrid{
-  gap: 10px;
-}
-
-}
-@media (max-width: 600px) {
-
-.subscriptionBox{
-  min-width: 100%;
-  padding: 12px;
-}
-
-.renewBtn{
-  font-size: 13px;
-  padding: 8px;
-}
-
-.profileInfo h1{
-  font-size: 20px;
-}
-
-.profileInfo h3{
-  font-size: 16px;
-}
-
-}
-@media (max-width: 600px) {
-
-.topBar{
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-}
 </style>
 </head>
 
@@ -854,12 +782,12 @@ html+=`
 <div class="leadHeader">
 
 <div class="leadName">
-${
-  (lead.viewerRole === "student")
-    ? (lead.name || lead.viewerName || "Student")
-    : (lead.viewerRole === "teacher")
+${lead.viewerRole === "student"
+  ? lead.name
+  : (lead.viewerRole === "teacher"
       ? "Teacher"
       : "Institute"
+    )
 }
 </div>
 
@@ -880,7 +808,7 @@ ${status.toUpperCase()}
 
 
 
-${role === "student" ? `
+${lead.viewerRole === "student" ? `
   <div class="leadInfo">
     📞 ${lead.phone || "N/A"}
   </div>
