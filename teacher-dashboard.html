@@ -782,7 +782,13 @@ html+=`
 <div class="leadHeader">
 
 <div class="leadName">
-${lead.name || "Student"}
+${lead.viewerRole === "student"
+  ? (lead.name || "Student")
+  : (lead.viewerRole === "teacher"
+      ? "Teacher"
+      : "Institute"
+    )
+}
 </div>
 
 <div class="statusBadge
