@@ -552,11 +552,37 @@ html:`
 
 matches.sort((a,b)=>b.score-a.score);
 
+
+
+
+
+
 let html = "";
 
-matches.slice(0,20).forEach(x=>{
+const visibleResults = matches.slice(0,6);
+
+visibleResults.forEach(x=>{
 html += x.html;
 });
+
+if(matches.length > 6){
+
+html += `
+<a href="#"
+onclick="showMoreResults(event)"
+style="
+font-weight:bold;
+text-align:center;
+background:#f5f5f5;
+">
+More Results... (${matches.length-6} more)
+</a>
+`;
+
+}
+
+
+
 
 if(!html){
 html = "<a>No Results Found</a>";
@@ -566,6 +592,31 @@ r.innerHTML = html;
 r.style.display = "block";
 
 };
+
+
+
+
+window.showMoreResults = function(e){
+
+e.preventDefault();
+
+const r =
+document.getElementById("results");
+
+let html = "";
+
+matches.forEach(x=>{
+html += x.html;
+});
+
+r.innerHTML = html;
+
+};
+
+
+
+
+
 
 
 document.addEventListener("click",(e)=>{
