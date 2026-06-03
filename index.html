@@ -657,7 +657,8 @@ document.getElementById("results");
 
 if(
 !searchBox.contains(e.target) &&
-!results.contains(e.target)
+!results.contains(e.target) &&
+e.target.id !== "moreResultsBtn"
 ){
 results.style.display = "none";
 }
