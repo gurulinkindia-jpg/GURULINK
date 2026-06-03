@@ -438,25 +438,7 @@ onclick="logout()">
 
 
 
-<button
-class="editBtn"
-onclick="editProfile()">
-Edit Profile
-</button>
 
-<button
-class="supportBtn"
-onclick="contactDeveloper()">
-Developer Support
-</button>
-
-<button
-class="logoutBtn"
-onclick="logout()">
-Logout
-</button>
-
-</div>
 
 </div>
 
@@ -965,21 +947,14 @@ location.href=
 
 
 
-window.renewProfile=function(){
+window.renewProfile = function () {
 
-localStorage.setItem(
-"renewProfileId",
-profileId
-);
+  const id = profileId;   // already from localStorage
+  const type = role;      // teacher or institution
 
-localStorage.setItem(
-"renewRole",
-role
-);
-
-location.href=
-"payment2.html";
-
+  window.location.href =
+    "payment2.html?id=" + encodeURIComponent(id) +
+    "&type=" + encodeURIComponent(type);
 };
 
 
@@ -1049,7 +1024,18 @@ location.href=
 };
 
 
+window.contactLead = function(phone) {
 
+  if (!phone) {
+    alert("No phone number available");
+    return;
+  }
+
+  window.open(
+    "https://wa.me/" + phone,
+    "_blank"
+  );
+};
 
 </script>
 
