@@ -230,14 +230,12 @@ document.getElementById("headerProfilePic").src =
 savedPhoto;
 
 }
-const userPhoto =
-localStorage.getItem("userPhoto");
+const savedPhoto =
+localStorage.getItem("profilePhoto");
 
-if(userPhoto){
-
-document.getElementById("profileImage").src =
-userPhoto;
-
+if(savedPhoto){
+document.getElementById("headerProfilePic").src =
+savedPhoto;
 }
 
 
