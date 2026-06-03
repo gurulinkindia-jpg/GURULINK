@@ -409,11 +409,23 @@ return "profile.html";
 
 window.searchSite = function(){
 
+
+
+
+
 const q =
 document.getElementById("searchInput")
 .value
 .toLowerCase()
 .trim();
+
+const words =
+q.split(/\s+/);
+
+
+
+
+
 
 const r =
 document.getElementById("results");
@@ -453,6 +465,8 @@ html:`
 
 /* TEACHERS + INSTITUTES */
 
+/* TEACHERS + INSTITUTES */
+
 searchData.forEach(item=>{
 
 const text = `
@@ -464,36 +478,55 @@ ${item.description}
 
 let score = 0;
 
-/* exact teacher/institute name */
-if(item.name.toLowerCase() === q)
+const words = q.split(/\s+/);
+
+/* score every word separately */
+
+words.forEach(word=>{
+
+if(!word) return;
+
+/* exact name */
+if(item.name.toLowerCase() === word)
 score += 100;
 
-/* name contains search */
-else if(item.name.toLowerCase().includes(q))
+/* name contains */
+if(item.name.toLowerCase().includes(word))
 score += 80;
 
-/* subject match */
-if(item.subjects.toLowerCase().includes(q))
-score += 60;
+/* subject contains */
+if(item.subjects.toLowerCase().includes(word))
+score += 100;
 
-/* location match */
-if(item.location.toLowerCase().includes(q))
+/* location contains */
+if(item.location.toLowerCase().includes(word))
 score += 30;
 
-/* description match */
-if(item.description.toLowerCase().includes(q))
+/* description contains */
+if(item.description.toLowerCase().includes(word))
 score += 10;
 
-/* words like teacher, institute */
-if(q.includes("teacher") && item.type==="teacher")
+/* teacher */
+if(word==="teacher" && item.type==="teacher")
 score += 20;
 
-if(q.includes("institute") && item.type==="institution")
+/* institute */
+if(word==="institute" && item.type==="institution")
 score += 20;
 
 /* home tuition */
-if(q.includes("home"))
+if(
+word==="home" ||
+word==="tuition" ||
+word==="online"
+)
 score += 10;
+
+});
+
+/* bonus if full query matches */
+if(text.includes(q))
+score += 150;
 
 if(score>0){
 
@@ -505,10 +538,9 @@ html:`
 <a href="profile.html?search=${encodeURIComponent(item.name)}">
 👤 ${item.name}
 <br>
-<small>
-${item.subjects}
-</small>
-</a>`
+<small>${item.subjects}</small>
+</a>
+`
 
 });
 
