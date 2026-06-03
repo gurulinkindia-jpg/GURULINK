@@ -547,7 +547,9 @@ href="profile.html?search=${encodeURIComponent(item.name)}"
 style="
 display:flex;
 align-items:center;
-gap:10px;
+gap:8px;
+text-align:left;
+justify-content:flex-start;
 ">
 
 <img
@@ -562,14 +564,25 @@ border:1px solid #ddd;
 flex-shrink:0;
 ">
 
-<div>
-<div style="font-weight:bold;">
+<div style="
+text-align:left;
+flex:1;
+">
+
+<div style="
+font-weight:bold;
+text-align:left;
+">
 ${item.name}
 </div>
 
-<small>
+<small style="
+display:block;
+text-align:left;
+">
 ${item.subjects}
 </small>
+
 </div>
 
 </a>
