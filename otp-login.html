@@ -115,7 +115,7 @@ Verify OTP
 <div id="recaptcha-container"></div>
 
 <div class="small">
-Use test numbers configured in Firebase during development.
+Enter your mobile number and verify OTP.
 </div>
 
 </div>
@@ -145,22 +145,27 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+/* ROLE */
+
 const role =
 localStorage.getItem("selectedRole") || "student";
 
 document.getElementById("roleText").textContent =
-role === "teacher"
+
+role === "teacher_institute"
+
 ? "Teacher / Institute Login"
+
 : "Parent / Student Login";
 
-/* Invisible reCAPTCHA */
+/* RECAPTCHA */
 
 window.recaptchaVerifier =
 new RecaptchaVerifier(
 auth,
 "recaptcha-container",
 {
-size:"invisible"
+size:"normal"
 }
 );
 
@@ -187,14 +192,11 @@ return;
 const phoneNumber =
 "+91" + mobile;
 
-const appVerifier =
-window.recaptchaVerifier;
-
 const confirmationResult =
 await signInWithPhoneNumber(
 auth,
 phoneNumber,
-appVerifier
+window.recaptchaVerifier
 );
 
 window.confirmationResult =
@@ -204,12 +206,15 @@ document
 .getElementById("otpSection")
 .style.display = "block";
 
-alert("OTP Sent");
+alert("OTP Sent Successfully");
 
 }catch(err){
 
 console.error(err);
-alert(err.message);
+
+alert(
+err.message
+);
 
 }
 
@@ -240,7 +245,10 @@ await window
 .confirmationResult
 .confirm(code);
 
-const user = result.user;
+const user =
+result.user;
+
+/* SAVE LOGIN DATA */
 
 localStorage.setItem(
 "phone",
@@ -248,33 +256,54 @@ user.phoneNumber
 );
 
 localStorage.setItem(
-"role",
-role
-);
-
-localStorage.setItem(
 "uid",
 user.uid
 );
 
-/* Redirect */
+/* STUDENT / PARENT */
 
-if(role === "teacher"){
+if(role === "student"){
+
+localStorage.setItem(
+"role",
+"student"
+);
+
+location.href =
+"index.html";
+
+return;
+
+}
+
+/* TEACHER / INSTITUTE */
+
+if(role === "teacher_institute"){
+
+localStorage.setItem(
+"role",
+"teacher_institute"
+);
 
 location.href =
 "teacher-check.html";
 
-}else{
-
-location.href =
-"student-dashboard.html";
+return;
 
 }
+
+/* FALLBACK */
+
+location.href =
+"index.html";
 
 }catch(err){
 
 console.error(err);
-alert("Invalid OTP");
+
+alert(
+"Invalid OTP"
+);
 
 }
 
