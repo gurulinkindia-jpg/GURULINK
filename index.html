@@ -440,11 +440,17 @@ else location.href="login.html";
 document.getElementById("dashboardBtn").onclick=(e)=>{e.preventDefault();openDashboard();};
 document.getElementById("menuDashboard").onclick=(e)=>{e.preventDefault();openDashboard();};
 
-document.getElementById("logoutBtn").onclick=async(e)=>{
-e.preventDefault();
-await signOut(auth);
-localStorage.clear();
-location.href="login.html";
+document.getElementById("logoutBtn").onclick = async (e) => {
+    e.preventDefault();
+
+    try {
+        await signOut(auth);
+    } catch(err) {
+        console.error(err);
+    }
+
+    localStorage.clear();
+    window.location.replace("index.html");
 };
 
 
