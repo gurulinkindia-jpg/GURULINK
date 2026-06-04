@@ -126,11 +126,7 @@ const db = getDatabase(app);
 /* ROLE */
 const role = localStorage.getItem("selectedRole");
 
-if (!role) {
-alert("Role not selected");
-location.href = "role-select.html";
-return;
-}
+
 
 if (!role) {
 alert("Role not selected");
