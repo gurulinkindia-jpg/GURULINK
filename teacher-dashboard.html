@@ -540,6 +540,11 @@ getDatabase(app);
 const auth=
 getAuth(app);
 
+
+
+
+
+
 const profileId=
 localStorage.getItem("profileId");
 
@@ -554,12 +559,18 @@ location.href="login.html";
 
 }
 
-const dbPath=
-role==="teacher"
-?
-"teachers/"+profileId
-:
-"institutions/"+profileId;
+
+
+
+
+
+const dbPath =
+role === "teacher" || role === "teacher_institute"
+  ? "teachers/" + profileId
+  : "institutions/" + profileId;
+
+
+
 
 
 
