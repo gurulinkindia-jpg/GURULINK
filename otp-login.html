@@ -191,19 +191,16 @@ localStorage.setItem("uid", uid);
 localStorage.setItem("role", role);
 
 /* SAVE TO FIREBASE */
-const path = role === "teacher_institute"
-? 
-: "students";
-
-const data = {
+await set(ref(db, "students/" + uid), {
 uid: uid,
 phone: phone,
-name: role === "student" ? "Student" : "Teacher",
-role: role === "student" ? "student" : "institution",
+role: "student",
 createdAt: Date.now()
-};
+});
 
-await set(ref(db, path + "/" + uid), data);
+
+
+
 
 /* FINAL REDIRECT */
 if (role === "student") {
