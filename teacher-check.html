@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Checking Account</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#eef2f7;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.box{
+background:white;
+padding:30px;
+border-radius:15px;
+width:90%;
+max-width:400px;
+text-align:center;
+box-shadow:0 5px 20px rgba(0,0,0,.15);
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:10px;
+border:none;
+border-radius:10px;
+font-size:16px;
+cursor:pointer;
+}
+
+.register{
+background:#1565c0;
+color:white;
+}
+
+.later{
+background:#e0e0e0;
+}
+</style>
+</head>
+<body>
+
+<div class="box">
+
+<h2 id="title">
+Checking Account...
+</h2>
+
+<div id="content">
+Please wait...
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get
+}
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const phone =
+(localStorage.getItem("phone") || "")
+.replace("+91","")
+.replace(/\s/g,"");
+
+const title =
+document.getElementById("title");
+
+const content =
+document.getElementById("content");
+
+async function checkTeacher(){
+
+try{
+
+/* CHECK TEACHERS */
+
+const teacherSnap =
+await get(ref(db,"teachers"));
+
+if(teacherSnap.exists()){
+
+let found = false;
+
+teacherSnap.forEach(child=>{
+
+const d = child.val();
+
+const dbPhone =
+String(
+d.phone ||
+d.mobile ||
+d.alternatePhone ||
+""
+)
+.replace(/\s/g,"");
+
+if(dbPhone === phone){
+
+found = true;
+
+localStorage.setItem(
+"role",
+"teacher"
+);
+
+localStorage.setItem(
+"teacherId",
+child.key
+);
+
+location.href =
+"teacher-dashboard.html";
+
+}
+
+});
+
+if(found) return;
+
+}
+
+/* CHECK INSTITUTIONS */
+
+const instSnap =
+await get(ref(db,"institutions"));
+
+if(instSnap.exists()){
+
+let found = false;
+
+instSnap.forEach(child=>{
+
+const d = child.val();
+
+const dbPhone =
+String(
+d.phone ||
+d.mobile ||
+d.alternatePhone ||
+""
+)
+.replace(/\s/g,"");
+
+if(dbPhone === phone){
+
+found = true;
+
+localStorage.setItem(
+"role",
+"institution"
+);
+
+localStorage.setItem(
+"institutionId",
+child.key
+);
+
+location.href =
+"institute-dashboard.html";
+
+}
+
+});
+
+if(found) return;
+
+}
+
+/* NOT FOUND */
+
+title.textContent =
+"Teacher / Institute Not Registered";
+
+content.innerHTML = `
+
+<p>
+This mobile number is not registered.
+</p>
+
+<button
+class="register"
+onclick="location.href='register.html'">
+Register Now
+</button>
+
+<button
+class="later"
+onclick="location.href='index.html'">
+Register Later
+</button>
+
+`;
+
+}catch(err){
+
+console.error(err);
+
+title.textContent =
+"Error";
+
+content.innerHTML =
+err.message;
+
+}
+
+}
+
+checkTeacher();
+
+</script>
+
+</body>
+</html>
