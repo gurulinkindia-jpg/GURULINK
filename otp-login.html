@@ -26,15 +26,8 @@ box-shadow:0 5px 20px rgba(0,0,0,.15);
 text-align:center;
 }
 
-h2{
-margin-bottom:10px;
-color:#1565c0;
-}
-
-p{
-color:#666;
-margin-bottom:20px;
-}
+h2{color:#1565c0;margin-bottom:10px;}
+p{color:#666;margin-bottom:20px;}
 
 input{
 width:100%;
@@ -43,7 +36,6 @@ margin-bottom:12px;
 border:1px solid #ddd;
 border-radius:10px;
 font-size:16px;
-box-sizing:border-box;
 }
 
 button{
@@ -58,13 +50,9 @@ cursor:pointer;
 margin-bottom:10px;
 }
 
-button:hover{
-background:#0d47a1;
-}
+button:hover{background:#0d47a1;}
 
-#otpSection{
-display:none;
-}
+#otpSection{display:none;}
 
 .role{
 font-weight:bold;
@@ -89,50 +77,40 @@ color:#888;
 
 <p>Login with Mobile OTP</p>
 
-<input
-type="tel"
-id="phone"
-placeholder="Enter Mobile Number"
-maxlength="10">
+<input type="tel" id="phone" placeholder="Enter Mobile Number" maxlength="10">
 
-<button id="sendOtpBtn">
-Send OTP
-</button>
+<button id="sendOtpBtn">Send OTP</button>
 
 <div id="otpSection">
 
-<input
-type="text"
-id="otp"
-placeholder="Enter OTP">
-
-<button id="verifyBtn">
-Verify OTP
-</button>
+<input type="text" id="otp" placeholder="Enter OTP">
+<button id="verifyBtn">Verify OTP</button>
 
 </div>
 
 <div id="recaptcha-container"></div>
 
-<div class="small">
-Enter your mobile number and verify OTP.
-</div>
+<div class="small">Enter your mobile number and verify OTP.</div>
 
 </div>
 
 <script type="module">
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import {
 getAuth,
 RecaptchaVerifier,
 signInWithPhoneNumber
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-const firebaseConfig={
+import {
+getDatabase,
+ref,
+set
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+/* FIREBASE */
+const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -144,169 +122,99 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getDatabase(app);
 
 /* ROLE */
-
-const role =
-localStorage.getItem("selectedRole") || "student";
+const role = localStorage.getItem("selectedRole") || "student";
 
 document.getElementById("roleText").textContent =
-
 role === "teacher_institute"
-
 ? "Teacher / Institute Login"
-
 : "Parent / Student Login";
 
 /* RECAPTCHA */
-
-window.recaptchaVerifier =
-new RecaptchaVerifier(
-auth,
-"recaptcha-container",
-{
+window.recaptchaVerifier = new RecaptchaVerifier(auth,"recaptcha-container",{
 size:"normal"
-}
-);
+});
 
 /* SEND OTP */
+document.getElementById("sendOtpBtn").onclick = async () => {
+try {
+const mobile = document.getElementById("phone").value.trim();
 
-document
-.getElementById("sendOtpBtn")
-.onclick = async ()=>{
-
-try{
-
-const mobile =
-document.getElementById("phone")
-.value
-.trim();
-
-if(mobile.length !== 10){
-
+if (mobile.length !== 10) {
 alert("Enter valid mobile number");
 return;
-
 }
 
-const phoneNumber =
-"+91" + mobile;
+const phoneNumber = "+91" + mobile;
 
-const confirmationResult =
-await signInWithPhoneNumber(
+const confirmationResult = await signInWithPhoneNumber(
 auth,
 phoneNumber,
 window.recaptchaVerifier
 );
 
-window.confirmationResult =
-confirmationResult;
+window.confirmationResult = confirmationResult;
 
-document
-.getElementById("otpSection")
-.style.display = "block";
+document.getElementById("otpSection").style.display = "block";
 
 alert("OTP Sent Successfully");
 
-}catch(err){
-
+} catch (err) {
 console.error(err);
-
-alert(
-err.message
-);
-
+alert(err.message);
 }
-
 };
 
 /* VERIFY OTP */
+document.getElementById("verifyBtn").onclick = async () => {
+try {
 
-document
-.getElementById("verifyBtn")
-.onclick = async ()=>{
+const code = document.getElementById("otp").value.trim();
 
-try{
-
-const code =
-document.getElementById("otp")
-.value
-.trim();
-
-if(!code){
-
+if (!code) {
 alert("Enter OTP");
 return;
-
 }
 
-const result =
-await window
-.confirmationResult
-.confirm(code);
+const result = await window.confirmationResult.confirm(code);
+const user = result.user;
 
-const user =
-result.user;
+const phone = user.phoneNumber.replace("+91", "");
+const uid = user.uid;
 
-/* SAVE LOGIN DATA */
+/* SAVE LOCAL */
+localStorage.setItem("phone", phone);
+localStorage.setItem("uid", uid);
+localStorage.setItem("role", role);
 
-localStorage.setItem(
-"phone",
-user.phoneNumber
-);
+/* SAVE TO FIREBASE */
+const path = role === "teacher_institute"
+? "institutions"
+: "students";
 
-localStorage.setItem(
-"uid",
-user.uid
-);
+const data = {
+uid: uid,
+phone: phone,
+name: role === "student" ? "Student" : "Teacher",
+role: role === "student" ? "student" : "institution",
+createdAt: Date.now()
+};
 
-/* STUDENT / PARENT */
+await set(ref(db, path + "/" + uid), data);
 
-if(role === "student"){
-
-localStorage.setItem(
-"role",
-"student"
-);
-
-location.href =
-"index.html";
-
-return;
-
+/* REDIRECT RULE */
+if (role === "student") {
+location.href = "index.html";
+} else {
+location.href = "teacher-check.html";
 }
 
-/* TEACHER / INSTITUTE */
-
-if(role === "teacher_institute"){
-
-localStorage.setItem(
-"role",
-"teacher_institute"
-);
-
-location.href =
-"teacher-check.html";
-
-return;
-
-}
-
-/* FALLBACK */
-
-location.href =
-"index.html";
-
-}catch(err){
-
+} catch (err) {
 console.error(err);
-
-alert(
-"Invalid OTP"
-);
-
+alert("Invalid OTP");
 }
-
 };
 
 </script>
