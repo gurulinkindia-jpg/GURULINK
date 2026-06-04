@@ -138,6 +138,39 @@ flex-direction:column;
 }
 
 }
+
+#loginOverlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.6);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:99999;
+}
+
+.loginBox{
+background:white;
+padding:30px;
+border-radius:15px;
+text-align:center;
+width:320px;
+}
+
+.loginBox button{
+width:100%;
+padding:14px;
+margin-top:12px;
+border:none;
+border-radius:10px;
+background:#1565c0;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
 </style>
 
 </head>
@@ -147,7 +180,63 @@ flex-direction:column;
 
 
 <body>
+<div id="loginOverlay" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:white;
+z-index:99999;
+display:flex;
+justify-content:center;
+align-items:center;
+">
 
+<div style="
+width:90%;
+max-width:400px;
+background:#fff;
+padding:25px;
+border-radius:15px;
+box-shadow:0 5px 20px rgba(0,0,0,.2);
+text-align:center;
+">
+
+<h2>Welcome to GURULINK</h2>
+
+<p style="margin:15px 0;">
+Select Your Role
+</p>
+
+<button id="studentBtn" style="
+width:100%;
+padding:15px;
+margin-bottom:10px;
+background:#1565c0;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+">
+👨‍👩‍👧 Parent / Student
+</button>
+
+<button id="teacherBtn" style="
+width:100%;
+padding:15px;
+background:#2e7d32;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+">
+👨‍🏫 Teacher / Institute
+</button>
+
+</div>
+
+</div>
 
 <header>
 <div class="logo" onclick="location.href='index.html'">
@@ -274,16 +363,60 @@ messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
+
+
+
+
+
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getDatabase(app);
 
+if(
+localStorage.getItem("role") &&
+localStorage.getItem("phone")
+){
+
+document.getElementById("loginOverlay").style.display="none";
+
+}else{
+
+document.getElementById("loginOverlay").style.display="flex";
+
+}
+
+document.getElementById("studentBtn").onclick=()=>{
+
+localStorage.setItem("selectedRole","student");
+
+location.href="otp-login.html";
+
+};
+
+document.getElementById("teacherBtn").onclick=()=>{
+
+
+
+localStorage.setItem(
+"selectedRole",
+"teacher_institute"
+);
+
+
+
+location.href="otp-login.html";
+
+};
 
 const savedPhoto = localStorage.getItem("profilePhoto");
 
 if(savedPhoto){
 document.getElementById("headerProfilePic").src = savedPhoto;
 }
+
+
+
+
 
 
 
