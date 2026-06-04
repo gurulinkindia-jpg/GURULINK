@@ -169,10 +169,6 @@ alert(err.message);
 };
 
 /* VERIFY OTP */
-
-
-
-/* VERIFY OTP */
 document.getElementById("verifyBtn").onclick = async () => {
 try {
 
@@ -196,7 +192,7 @@ localStorage.setItem("role", role);
 
 /* SAVE TO FIREBASE */
 const path = role === "teacher_institute"
-? "institutions"
+? 
 : "students";
 
 const data = {
@@ -216,14 +212,60 @@ return;
 }
 
 /* teacher / institute flow */
-location.href = "teacher-check.html";
-return;
+await checkTeacherFlow(phone, uid);
 
 } catch (err) {
 console.error(err);
 alert("Invalid OTP");
 }
 };
+
+/* CHECK TEACHER / INSTITUTE */
+async function checkTeacherFlow(phone, uid) {
+
+let found = false;
+
+/* CHECK TEACHERS */
+const teacherSnap = await get(ref(db, "teachers"));
+
+teacherSnap.forEach(child => {
+const d = child.val();
+const dbPhone = String(d.phone || "").replace(/\s/g, "");
+
+if (dbPhone === phone) {
+found = true;
+
+localStorage.setItem("role", "teacher");
+localStorage.setItem("profileId", child.key);
+
+location.href = "teacher-dashboard.html";
+}
+});
+
+if (found) return;
+
+/* CHECK INSTITUTIONS */
+const instSnap = await get(ref(db, "institutions"));
+
+instSnap.forEach(child => {
+const d = child.val();
+const dbPhone = String(d.phone || "").replace(/\s/g, "");
+
+if (dbPhone === phone) {
+found = true;
+
+localStorage.setItem("role", "institution");
+localStorage.setItem("profileId", child.key);
+
+location.href = "institute-dashboard.html";
+}
+});
+
+if (found) return;
+
+/* NOT REGISTERED */
+location.href = "teacher-check.html";
+}
 
 </script>
 
