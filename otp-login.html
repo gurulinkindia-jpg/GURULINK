@@ -124,7 +124,12 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 
 /* ROLE */
-const role = localStorage.getItem("selectedRole") || "student";
+const role = localStorage.getItem("selectedRole");
+
+if (!role) {
+alert("Role not selected");
+location.href = "role-select.html";
+}
 
 document.getElementById("roleText").textContent =
 role === "teacher_institute"
@@ -191,12 +196,19 @@ localStorage.setItem("uid", uid);
 localStorage.setItem("role", role);
 
 /* SAVE TO FIREBASE */
-await set(ref(db, "students/" + uid), {
+const path = role === "teacher_institute"
+? "institutions"
+: "students";
+
+const data = {
 uid: uid,
 phone: phone,
-role: "student",
+name: role === "student" ? "Student" : "Teacher",
+role: role === "student" ? "student" : "institution",
 createdAt: Date.now()
-});
+};
+
+await set(ref(db, path + "/" + uid), data);
 
 
 
