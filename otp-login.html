@@ -82,10 +82,8 @@ color:#888;
 <button id="sendOtpBtn">Send OTP</button>
 
 <div id="otpSection">
-
 <input type="text" id="otp" placeholder="Enter OTP">
 <button id="verifyBtn">Verify OTP</button>
-
 </div>
 
 <div id="recaptcha-container"></div>
@@ -106,7 +104,8 @@ signInWithPhoneNumber
 import {
 getDatabase,
 ref,
-set
+set,
+get
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 /* FIREBASE */
@@ -133,9 +132,11 @@ role === "teacher_institute"
 : "Parent / Student Login";
 
 /* RECAPTCHA */
-window.recaptchaVerifier = new RecaptchaVerifier(auth,"recaptcha-container",{
-size:"normal"
-});
+window.recaptchaVerifier = new RecaptchaVerifier(
+auth,
+"recaptcha-container",
+{ size: "normal" }
+);
 
 /* SEND OTP */
 document.getElementById("sendOtpBtn").onclick = async () => {
@@ -204,18 +205,67 @@ createdAt: Date.now()
 
 await set(ref(db, path + "/" + uid), data);
 
-/* REDIRECT RULE */
+/* FINAL REDIRECT */
 if (role === "student") {
 location.href = "index.html";
-} else {
-location.href = "teacher-check.html";
+return;
 }
+
+/* teacher / institute flow */
+await checkTeacherFlow(phone, uid);
 
 } catch (err) {
 console.error(err);
 alert("Invalid OTP");
 }
 };
+
+/* CHECK TEACHER / INSTITUTE */
+async function checkTeacherFlow(phone, uid) {
+
+let found = false;
+
+/* CHECK TEACHERS */
+const teacherSnap = await get(ref(db, "teachers"));
+
+teacherSnap.forEach(child => {
+const d = child.val();
+const dbPhone = String(d.phone || "").replace(/\s/g, "");
+
+if (dbPhone === phone) {
+found = true;
+
+localStorage.setItem("role", "teacher");
+localStorage.setItem("profileId", child.key);
+
+location.href = "teacher-dashboard.html";
+}
+});
+
+if (found) return;
+
+/* CHECK INSTITUTIONS */
+const instSnap = await get(ref(db, "institutions"));
+
+instSnap.forEach(child => {
+const d = child.val();
+const dbPhone = String(d.phone || "").replace(/\s/g, "");
+
+if (dbPhone === phone) {
+found = true;
+
+localStorage.setItem("role", "institution");
+localStorage.setItem("profileId", child.key);
+
+location.href = "institute-dashboard.html";
+}
+});
+
+if (found) return;
+
+/* NOT REGISTERED */
+location.href = "teacher-check.html";
+}
 
 </script>
 
