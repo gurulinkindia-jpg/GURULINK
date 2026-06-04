@@ -129,6 +129,12 @@ const role = localStorage.getItem("selectedRole");
 if (!role) {
 alert("Role not selected");
 location.href = "role-select.html";
+return;
+}
+
+if (!role) {
+alert("Role not selected");
+location.href = "role-select.html";
 }
 
 document.getElementById("roleText").textContent =
@@ -196,19 +202,16 @@ localStorage.setItem("uid", uid);
 localStorage.setItem("role", role);
 
 /* SAVE TO FIREBASE */
-const path = role === "teacher_institute"
-? "institutions"
-: "students";
+if (role === "student") {
 
-const data = {
-uid: uid,
-phone: phone,
-name: role === "student" ? "Student" : "Teacher",
-role: role === "student" ? "student" : "institution",
-createdAt: Date.now()
-};
+  await set(ref(db, "students/" + uid), {
+    uid: uid,
+    phone: phone,
+    role: "student",
+    createdAt: Date.now()
+  });
 
-await set(ref(db, path + "/" + uid), data);
+}
 
 
 
@@ -216,9 +219,11 @@ await set(ref(db, path + "/" + uid), data);
 
 /* FINAL REDIRECT */
 if (role === "student") {
-location.href = "index.html";
-return;
+  location.href = "index.html";
+} else {
+  location.href = "teacher-check.html";
 }
+return;
 
 /* teacher / institute flow */
 await checkTeacherFlow(phone, uid);
