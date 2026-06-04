@@ -323,6 +323,9 @@ background:#1e88e5;
 .callBtn:hover{
 background:#1565c0;
 }
+.homeBtn{
+background:#673ab7;
+}
 </style>
 </head>
 
@@ -444,6 +447,10 @@ onclick="contactDeveloper()">
 class="renewBtn"
 onclick="renewProfile()">
 💳 Renew ₹399
+</button>
+
+<button class="homeBtn" onclick="goHome()">
+🏠 Home
 </button>
 
 <button
@@ -1075,7 +1082,7 @@ localStorage.removeItem(
 );
 
 location.href=
-"login.html";
+"index.html";
 
 };
 
@@ -1126,7 +1133,9 @@ window.toggleStatus = async function (leadId, currentStatus) {
 
 };
 
-
+window.goHome = function() {
+  location.href = "index.html";
+};
 </script>
 
 </body>
