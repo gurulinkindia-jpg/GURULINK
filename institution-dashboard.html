@@ -295,9 +295,37 @@ background:#43a047;
 
 
 
+.profileImage{
+width:90px;
+height:90px;
+border-radius:50%;
+overflow:hidden;
+background:#ddd;
+display:flex;
+align-items:center;
+justify-content:center;
+}
 
+.profileImage img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+.profileImage{
+font-size:30px;
+font-weight:bold;
+color:#1565c0;
+}
+.callBtn{
+background:#1e88e5;
+}
 
-
+.callBtn:hover{
+background:#1565c0;
+}
+.homeBtn{
+background:#673ab7;
+}
 </style>
 </head>
 
@@ -352,7 +380,7 @@ style="display:none;">
 <div class="profileCard">
 
 <div class="profileImage">
-👤
+  <img id="profileLogo" src="default.png" alt="Logo">
 </div>
 
 <div class="profileDetails">
@@ -419,6 +447,10 @@ onclick="contactDeveloper()">
 class="renewBtn"
 onclick="renewProfile()">
 💳 Renew ₹399
+</button>
+
+<button class="homeBtn" onclick="goHome()">
+🏠 Home
 </button>
 
 <button
@@ -515,6 +547,11 @@ getDatabase(app);
 const auth=
 getAuth(app);
 
+
+
+
+
+
 const profileId=
 localStorage.getItem("profileId");
 
@@ -529,12 +566,18 @@ location.href="login.html";
 
 }
 
-const dbPath=
-role==="teacher"
-?
-"teachers/"+profileId
-:
-"institutions/"+profileId;
+
+
+
+
+
+const dbPath =
+role === "teacher" || role === "teacher_institute"
+  ? "teachers/" + profileId
+  : "institutions/" + profileId;
+
+
+
 
 
 
@@ -612,7 +655,19 @@ document.getElementById(
 return;
 }
 
-const d=snap.val();
+
+const d = snap.val();
+
+/* ✅ ADD LOGO CODE HERE */
+const logoURL = d.logo || "default.png";
+const img = document.getElementById("profileLogo");
+
+img.src = logoURL;
+
+img.onerror = function () {
+  this.onerror = null;
+  this.src = "default.png";
+};
 
 if(role==="teacher"){
 
@@ -749,9 +804,21 @@ html+=`
 
 <div class="leadHeader">
 
+
+
+
+
 <div class="leadName">
-${lead.name || "Student"}
+${
+  (lead.name ?? "").toString().trim()
+    ? lead.name
+    : "Teacher/Institute"
+}
 </div>
+
+
+
+
 
 <div class="statusBadge
 ${status==="enrolled"
@@ -791,28 +858,24 @@ lead.time
 
 <button
 class="whatsappBtn"
-onclick="contactLead(
-'${lead.phone || ""}'
-)">
+onclick="contactWhatsApp('${(lead.phone || "").replace(/\D/g,'')}')">
 WhatsApp
 </button>
 
 <button
-class="enrollBtn"
-onclick="changeStatus(
-'${id}',
-'enrolled'
-)">
-Enroll
+class="callBtn"
+onclick="callLead('${(lead.phone || "").replace(/\D/g,'')}')">
+Call
 </button>
 
+
+
 <button
-class="pendingBtn"
-onclick="changeStatus(
-'${id}',
-'pending'
-)">
-Pending
+class="${status === 'enrolled' ? 'pendingBtn' : 'enrollBtn'}"
+onclick="toggleStatus('${id}', '${status}')">
+
+${status === 'enrolled' ? 'Mark Pending' : 'Mark Enrolled'}
+
 </button>
 
 <button
@@ -1019,24 +1082,60 @@ localStorage.removeItem(
 );
 
 location.href=
-"login.html";
+"index.html";
 
 };
 
 
-window.contactLead = function(phone) {
+
+
+
+
+
+
+window.callLead = function(phone) {
 
   if (!phone) {
     alert("No phone number available");
     return;
   }
 
-  window.open(
-    "https://wa.me/" + phone,
-    "_blank"
-  );
+  window.location.href = "tel:" + phone;
 };
 
+
+
+
+window.contactWhatsApp = function(phone) {
+
+  if (!phone) {
+    alert("No phone number available");
+    return;
+  }
+
+  const cleanPhone = phone.replace(/\D/g, ""); // remove +, spaces, symbols
+
+  window.open("https://wa.me/" + cleanPhone, "_blank");
+};
+
+
+window.toggleStatus = async function (leadId, currentStatus) {
+
+  const newStatus =
+    currentStatus === "enrolled" ? "pending" : "enrolled";
+
+  await update(
+    ref(db, `profileViews/${profileId}/${leadId}`),
+    {
+      status: newStatus
+    }
+  );
+
+};
+
+window.goHome = function() {
+  location.href = "index.html";
+};
 </script>
 
 </body>
