@@ -819,8 +819,8 @@ html+=`
 
 <div class="leadName">
 ${
-  (lead.name ?? "").toString().trim()
-    ? lead.name
+  (lead.phone && lead.phone.toString().trim())
+    ? "Student"
     : "Teacher/Institute"
 }
 </div>
