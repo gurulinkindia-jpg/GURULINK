@@ -320,18 +320,39 @@ if(data.hybridFee) modes.push(`🔄 Hybrid - ₹${data.hybridFee}`);
 
 let galleryHTML = "";
 
-if (Array.isArray(data.gallery) && data.gallery.length > 0) {
+
+
+
+
+
+
+
+
+let galleryHTML = "";
+
+let gallery = data.gallery;
+
+// Convert Firebase object (0,1,2,3...) → array
+if (gallery && typeof gallery === "object") {
+  gallery = Object.values(gallery);
+}
+
+if (Array.isArray(gallery) && gallery.length > 0) {
   galleryHTML = `
     <div class="section">
       <h3>🖼️ Gallery</h3>
       <div class="gallery">
-        ${data.gallery.map(img => `
+        ${gallery.map(img => `
           <img src="${img}" onclick="window.open('${img}','_blank')">
         `).join("")}
       </div>
     </div>
   `;
 }
+
+
+
+
 
 
 
