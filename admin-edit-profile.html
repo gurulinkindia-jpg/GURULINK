@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Edit Profile</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef2f7;
+}
+
+header{
+background:#1565c0;
+color:white;
+padding:18px;
+text-align:center;
+}
+
+.container{
+width:95%;
+max-width:1000px;
+margin:20px auto;
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+
+.previewBox{
+margin-bottom:20px;
+}
+
+.previewBox h3{
+margin-bottom:10px;
+}
+
+.logoPreview{
+width:120px;
+height:120px;
+border-radius:12px;
+object-fit:cover;
+border:1px solid #ddd;
+}
+
+.galleryGrid{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.galleryGrid img{
+width:100px;
+height:100px;
+object-fit:cover;
+border-radius:10px;
+border:1px solid #ddd;
+}
+
+.field{
+margin-bottom:15px;
+}
+
+.field label{
+display:block;
+font-weight:bold;
+margin-bottom:6px;
+}
+
+.field input,
+.field textarea{
+width:100%;
+padding:12px;
+border:1px solid #ccc;
+border-radius:8px;
+box-sizing:border-box;
+}
+
+.field textarea{
+min-height:100px;
+resize:vertical;
+}
+
+.uploadBox{
+background:#f5f5f5;
+padding:15px;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+.saveBtn{
+width:100%;
+padding:14px;
+background:#43a047;
+color:white;
+border:none;
+border-radius:10px;
+font-size:16px;
+cursor:pointer;
+margin-top:10px;
+}
+
+.backBtn{
+width:100%;
+padding:14px;
+background:#1565c0;
+color:white;
+border:none;
+border-radius:10px;
+font-size:16px;
+cursor:pointer;
+margin-top:10px;
+}
+
+.loading{
+text-align:center;
+padding:40px;
+font-size:18px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+<h2>Edit Profile</h2>
+</header>
+
+<div class="container">
+
+<div id="loading" class="loading">
+Loading Profile...
+</div>
+
+<div id="mainContent" style="display:none;">
+
+<div class="previewBox">
+
+<h3>Current Logo</h3>
+
+<img
+id="logoPreview"
+class="logoPreview"
+src=""
+alt="Logo">
+
+</div>
+
+<div class="uploadBox">
+
+<h3>Replace Logo</h3>
+
+<input
+type="file"
+id="newLogo"
+accept="image/*">
+
+</div>
+
+<div class="previewBox">
+
+<h3>Current Gallery</h3>
+
+<div
+id="galleryPreview"
+class="galleryGrid">
+</div>
+
+</div>
+
+<div class="uploadBox">
+
+<h3>Add Gallery Images</h3>
+
+<input
+type="file"
+id="newGallery"
+multiple
+accept="image/*">
+
+</div>
+
+<div id="dynamicFields">
+</div>
+
+<button
+class="saveBtn"
+onclick="saveProfile()">
+Save Profile
+</button>
+
+<button
+class="backBtn"
+onclick="goBack()">
+Back To Dashboard
+</button>
+
+</div>
+
+</div>
+
+<script type="module">
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+get,
+update
+}
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig={
+
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+
+authDomain:
+"gurulink-59cc7.firebaseapp.com",
+
+databaseURL:
+"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+projectId:"gurulink-59cc7",
+
+storageBucket:
+"gurulink-59cc7.appspot.com",
+
+messagingSenderId:
+"112148672399",
+
+appId:
+"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getDatabase(app);
+
+const API_KEY =
+"31f729ff855eb2e42c00ee508a8647ea";
+
+const profileId =
+localStorage.getItem("profileId");
+
+const role =
+localStorage.getItem("role");
+
+if(
+!profileId ||
+!role
+){
+alert("Please Login Again");
+location.href="login.html";
+}
+
+const dbPath =
+role==="teacher" ||
+role==="teacher_institute"
+?
+"teachers/"+profileId
+:
+"institutions/"+profileId;
+
+let profileData = {};
+
+const hiddenFields = [];
+
+const readOnlyFields = [
+"uid",
+"createdAt"
+];
+
+async function uploadImage(file){
+
+const fd = new FormData();
+
+fd.append("image",file);
+
+const res =
+await fetch(
+`https://api.imgbb.com/1/upload?key=${API_KEY}`,
+{
+method:"POST",
+body:fd
+}
+);
+
+const data =
+await res.json();
+
+return data.data.url;
+
+}
+
+function createField(key,value){
+
+const wrapper =
+document.createElement("div");
+
+wrapper.className="field";
+
+const label =
+document.createElement("label");
+
+label.innerText=key;
+
+wrapper.appendChild(label);
+
+if(
+typeof value === "object" &&
+value !== null
+){
+
+const textarea =
+document.createElement("textarea");
+
+textarea.id=key;
+
+textarea.value=
+JSON.stringify(
+value,
+null,
+2
+);
+
+wrapper.appendChild(textarea);
+
+}
+else{
+
+const input =
+document.createElement("input");
+
+input.id=key;
+
+input.value=value ?? "";
+
+wrapper.appendChild(input);
+
+}
+
+document
+.getElementById("dynamicFields")
+.appendChild(wrapper);
+
+}
+
+async function loadProfile(){
+
+const snap =
+await get(
+ref(db,dbPath)
+);
+
+if(!snap.exists()){
+
+alert("Profile Not Found");
+
+return;
+
+}
+
+profileData =
+snap.val();
+
+document.getElementById(
+"logoPreview"
+).src =
+profileData.logo || "";
+
+const gallery =
+profileData.gallery || [];
+
+const galleryBox =
+document.getElementById(
+"galleryPreview"
+);
+
+galleryBox.innerHTML="";
+
+gallery.forEach(img=>{
+
+galleryBox.innerHTML +=
+`
+<img src="${img}">
+`;
+
+});
+
+for(
+const key in profileData
+){
+
+if(
+hiddenFields.includes(key)
+){
+continue;
+}
+
+if(
+key==="logo" ||
+key==="gallery"
+){
+continue;
+}
+
+createField(
+key,
+profileData[key]
+);
+
+}
+
+document.getElementById(
+"loading"
+).style.display="none";
+
+document.getElementById(
+"mainContent"
+).style.display="block";
+
+}
+
+loadProfile();
+
+
+window.saveProfile = async function(){
+
+try{
+
+const saveBtn =
+document.querySelector(".saveBtn");
+
+saveBtn.disabled=true;
+saveBtn.innerText="Saving...";
+
+/* START WITH EXISTING DATA */
+
+let updateData = {...profileData};
+
+/* DYNAMIC FIELDS */
+
+for(const key in profileData){
+
+if(hiddenFields.includes(key)){
+continue;
+}
+
+if(key==="logo" || key==="gallery"){
+continue;
+}
+
+const field =
+document.getElementById(key);
+
+if(!field){
+continue;
+}
+
+let value = field.value;
+
+/* TRY JSON ARRAY / OBJECT */
+
+try{
+
+if(
+value.startsWith("[") ||
+value.startsWith("{")
+){
+
+value =
+JSON.parse(value);
+
+}
+
+}catch(e){}
+
+/* SAVE VALUE */
+
+updateData[key] = value;
+
+}
+
+/* ===========================
+   LOGO = REPLACE
+=========================== */
+
+const logoFile =
+document.getElementById("newLogo")
+.files[0];
+
+if(logoFile){
+
+saveBtn.innerText=
+"Uploading Logo...";
+
+const logoUrl =
+await uploadImage(
+logoFile
+);
+
+updateData.logo =
+logoUrl;
+
+}
+
+/* ===========================
+   GALLERY = MERGE
+=========================== */
+
+const galleryFiles =
+Array.from(
+document.getElementById("newGallery").files
+);
+
+if(galleryFiles.length){
+
+saveBtn.innerText=
+"Uploading Gallery...";
+
+const oldGallery =
+Array.isArray(
+profileData.gallery
+)
+?
+profileData.gallery
+:
+[];
+
+const newGalleryUrls=[];
+
+for(const file of galleryFiles){
+
+const url =
+await uploadImage(file);
+
+newGalleryUrls.push(url);
+
+}
+
+updateData.gallery = [
+
+...oldGallery,
+...newGalleryUrls
+
+];
+
+}
+
+/* SAVE TO FIREBASE */
+
+await update(
+
+ref(db,dbPath),
+
+updateData
+
+);
+
+/* SUCCESS */
+
+alert(
+"Profile Updated Successfully"
+);
+
+/* REFRESH PAGE */
+
+location.reload();
+
+}catch(err){
+
+console.log(err);
+
+alert(
+err.message
+);
+
+}
+
+finally{
+
+const saveBtn =
+document.querySelector(".saveBtn");
+
+saveBtn.disabled=false;
+
+saveBtn.innerText=
+"Save Profile";
+
+}
+
+};
+
+/* ===========================
+   BACK BUTTON
+=========================== */
+
+window.goBack=function(){
+
+if(
+role==="teacher" ||
+role==="teacher_institute"
+){
+
+location.href=
+"teacher-dashboard.html";
+
+}
+else{
+
+location.href=
+"institution-dashboard.html";
+
+}
+
+};
+
+</script>
+
+</body>
+</html>
