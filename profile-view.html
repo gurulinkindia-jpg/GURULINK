@@ -318,7 +318,20 @@ if(data.individualFee) modes.push(`👤 Individual - ₹${data.individualFee}`);
 if(data.offlineFee) modes.push(`🏫 Offline Classroom - ₹${data.offlineFee}`);
 if(data.hybridFee) modes.push(`🔄 Hybrid - ₹${data.hybridFee}`);
 
+let galleryHTML = "";
 
+if (Array.isArray(data.gallery) && data.gallery.length > 0) {
+  galleryHTML = `
+    <div class="section">
+      <h3>🖼️ Gallery</h3>
+      <div class="gallery">
+        ${data.gallery.map(img => `
+          <img src="${img}" onclick="window.open('${img}','_blank')">
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
 
 
 
