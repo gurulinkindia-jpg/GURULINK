@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Edit Profile</title>
+<title>Admin Edit Profile</title>
 
 <style>
 
@@ -134,7 +134,7 @@ font-size:18px;
 <body>
 
 <header>
-<h2>Edit Profile</h2>
+<h2>Admin Edit Profile</h2>
 </header>
 
 <div class="container">
@@ -259,27 +259,46 @@ getDatabase(app);
 const API_KEY =
 "31f729ff855eb2e42c00ee508a8647ea";
 
-const profileId =
-localStorage.getItem("profileId");
 
-const role =
-localStorage.getItem("role");
+
+
+/* ADMIN MODE */
+
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+const profileId =
+params.get("id");
+
+const type =
+params.get("type");
 
 if(
 !profileId ||
-!role
+!type
 ){
-alert("Please Login Again");
-location.href="login.html";
+alert("Invalid Profile");
+location.href="admin.html";
 }
 
 const dbPath =
-role==="teacher" ||
-role==="teacher_institute"
+
+type === "teacher"
+
 ?
-"teachers/"+profileId
+
+"teachers/" + profileId
+
 :
-"institutions/"+profileId;
+
+"institutions/" + profileId;
+
+
+
+
+
 
 let profileData = {};
 
@@ -351,9 +370,14 @@ else{
 const input =
 document.createElement("input");
 
-input.id=key;
+input.id = key;
+input.value = value ?? "";
 
-input.value=value ?? "";
+if(
+readOnlyFields.includes(key)
+){
+input.readOnly = true;
+}
 
 wrapper.appendChild(input);
 
@@ -615,25 +639,18 @@ saveBtn.innerText=
    BACK BUTTON
 =========================== */
 
+
+
+
 window.goBack=function(){
 
-if(
-role==="teacher" ||
-role==="teacher_institute"
-){
-
-location.href=
-"teacher-dashboard.html";
-
-}
-else{
-
-location.href=
-"institution-dashboard.html";
-
-}
+location.href =
+"admin.html";
 
 };
+
+
+
 
 </script>
 
