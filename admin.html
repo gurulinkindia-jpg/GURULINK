@@ -2,10 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
 <title>GURULINK Admin Panel</title>
 
 <style>
+
 body{
 margin:0;
 font-family:Arial;
@@ -26,22 +29,33 @@ align-items:center;
 padding:10px 15px;
 background:#1565c0;
 color:white;
+flex-wrap:wrap;
+gap:10px;
 }
 
 .topbar button{
-padding:6px 10px;
+padding:8px 12px;
 border:none;
 border-radius:6px;
 cursor:pointer;
 margin-left:5px;
+color:white;
 }
 
 .topbar input{
-width:250px;
-padding:6px;
+width:280px;
+padding:8px;
 border-radius:6px;
 border:none;
 outline:none;
+}
+
+.homeBtn{
+background:#2e7d32;
+}
+
+.logoutBtn{
+background:#c62828;
 }
 
 .stats{
@@ -57,12 +71,12 @@ padding:10px;
 border-radius:10px;
 text-align:center;
 font-size:13px;
-box-shadow:0 2px 8px rgba(0,0,0,0.1);
+box-shadow:0 2px 8px rgba(0,0,0,.1);
 }
 
 .container{
 width:95%;
-max-width:1400px;
+max-width:1600px;
 margin:10px auto;
 display:grid;
 grid-template-columns:1fr 1fr 1fr;
@@ -73,11 +87,11 @@ gap:15px;
 background:white;
 padding:12px;
 border-radius:10px;
-box-shadow:0 3px 8px rgba(0,0,0,0.1);
+box-shadow:0 3px 8px rgba(0,0,0,.1);
 margin-bottom:10px;
 }
 
-img{
+.card img{
 width:70px;
 height:70px;
 border-radius:8px;
@@ -86,7 +100,7 @@ margin:5px 0;
 }
 
 button{
-padding:5px 7px;
+padding:6px 8px;
 margin:3px;
 border:none;
 border-radius:6px;
@@ -95,12 +109,29 @@ color:white;
 font-size:11px;
 }
 
-.approve{background:green;}
-.reject{background:red;}
-.delete{background:#444;}
-.view{background:#1565c0;}
-.edit{background:#ff9800;}
-.renew{background:#8e24aa;}
+.approve{
+background:green;
+}
+
+.reject{
+background:red;
+}
+
+.delete{
+background:#444;
+}
+
+.view{
+background:#1565c0;
+}
+
+.edit{
+background:#ff9800;
+}
+
+.renew{
+background:#8e24aa;
+}
 
 .badge{
 display:inline-block;
@@ -110,21 +141,15 @@ border-radius:6px;
 font-size:10px;
 margin:2px;
 }
-.homeBtn{
-background:#2e7d32;   /* green */
-color:white;
+
+.paymentCard{
+background:#fff8e1;
 }
 
-.logoutBtn{
-background:#c62828;   /* red */
-color:white;
+h3{
+margin-top:0;
 }
 
-.topbar button:hover{
-opacity:0.85;
-transform:scale(1.03);
-transition:0.2s;
-}
 </style>
 </head>
 
@@ -137,237 +162,906 @@ transition:0.2s;
 <div class="topbar">
 
 <div>
-<button class="homeBtn" onclick="location.href='index.html'">Home</button>
-<button class="logoutBtn" onclick="logout()">Logout</button>
+
+<button
+class="homeBtn"
+onclick="location.href='index.html'">
+Home
+</button>
+
+<button
+class="logoutBtn"
+onclick="logout()">
+Logout
+</button>
+
 </div>
 
-<input id="search" placeholder="Search name / email / phone" oninput="renderAll()">
+<input
+id="search"
+placeholder="Search Name / Email / Phone"
+oninput="renderAll()">
 
 </div>
 
-<!-- STATS -->
 <div class="stats">
-<div class="stat">Teachers <div id="tCount">0</div></div>
-<div class="stat">Institutes <div id="iCount">0</div></div>
-<div class="stat">Academic <div id="aCount">0</div></div>
-<div class="stat">Skill <div id="sCount">0</div></div>
-<div class="stat">Sport <div id="spCount">0</div></div>
-<div class="stat">Creative <div id="cCount">0</div></div>
-<div class="stat">Payments ₹ <div id="pTotal">0</div></div>
+
+<div class="stat">
+Teachers
+<div id="tCount">0</div>
+</div>
+
+<div class="stat">
+Institutions
+<div id="iCount">0</div>
+</div>
+
+<div class="stat">
+Academic
+<div id="aCount">0</div>
+</div>
+
+<div class="stat">
+Skill
+<div id="sCount">0</div>
+</div>
+
+<div class="stat">
+Sport
+<div id="spCount">0</div>
+</div>
+
+<div class="stat">
+Creative
+<div id="cCount">0</div>
+</div>
+
+<div class="stat">
+Revenue ₹
+<div id="pTotal">0</div>
+</div>
+
 </div>
 
 <div class="container">
 
 <div>
+
 <h3>Teachers</h3>
+
 <div id="teachers"></div>
+
 </div>
 
 <div>
+
 <h3>Institutions</h3>
+
 <div id="institutions"></div>
+
 </div>
 
 <div>
-<h3>Payments</h3>
+
+<h3>Registration Payments</h3>
+
 <div id="payments"></div>
+
+<h3 style="margin-top:20px;">
+Renewal Payments
+</h3>
+
+<div id="renewPayments"></div>
+
 </div>
 
 </div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+getDatabase,
+ref,
+onValue,
+update,
+remove
+}
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
+
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-authDomain:"gurulink-59cc7.firebaseapp.com",
-databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
+authDomain:
+"gurulink-59cc7.firebaseapp.com",
+
+databaseURL:
+"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+
 projectId:"gurulink-59cc7",
-storageBucket:"gurulink-59cc7.appspot.com",
-messagingSenderId:"112148672399",
-appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
+storageBucket:
+"gurulink-59cc7.appspot.com",
+
+messagingSenderId:
+"112148672399",
+
+appId:
+"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const app =
+initializeApp(firebaseConfig);
 
-/* ADMIN CHECK */
-if(localStorage.getItem("role") !== "admin"){
-alert("Access Denied!");
+const db =
+getDatabase(app);
+
+if(
+localStorage.getItem("role")
+!== "admin"
+){
+alert("Access Denied");
 location.href="login.html";
 }
 
-/* DATA */
-let teachers=[], inst=[], payments=[];
-
-/* VALIDITY */
+let teachers=[];
+let inst=[];
+let payments=[];
+let renewPayments=[];
 function expired(t){
-return t && Date.now() > t + (365*24*60*60*1000);
+
+return t &&
+Date.now() >
+t + (365*24*60*60*1000);
+
 }
 
 function remain(t){
+
 if(!t) return "-";
-return Math.max(0,Math.ceil((t+(365*24*60*60*1000)-Date.now())/86400000));
+
+return Math.max(
+0,
+Math.ceil(
+(
+t + (365*24*60*60*1000)
+-
+Date.now()
+)
+/86400000
+)
+);
+
 }
 
-/* LOAD TEACHERS */
+/* =========================
+   TEACHERS
+========================= */
+
 function loadTeachers(){
-onValue(ref(db,"teachers"),snap=>{
+
+onValue(
+ref(db,"teachers"),
+snap=>{
+
 teachers=[];
+
 let html="";
 
 snap.forEach(c=>{
+
 let d=c.val();
+
 d.id=c.key;
+
 teachers.push(d);
 
-html+=card(d,"teacher");
+html += card(
+d,
+"teacher"
+);
+
 });
 
-document.getElementById("teachers").innerHTML=html;
+document
+.getElementById(
+"teachers"
+).innerHTML = html;
+
 updateStats();
+
 });
+
 }
 
-/* LOAD INSTITUTIONS */
+/* =========================
+   INSTITUTIONS
+========================= */
+
 function loadInstitutions(){
-onValue(ref(db,"institutions"),snap=>{
+
+onValue(
+ref(db,"institutions"),
+snap=>{
+
 inst=[];
+
 let html="";
 
 snap.forEach(c=>{
+
 let d=c.val();
+
 d.id=c.key;
+
 inst.push(d);
 
-html+=card(d,"institution");
+html += card(
+d,
+"institution"
+);
+
 });
 
-document.getElementById("institutions").innerHTML=html;
+document
+.getElementById(
+"institutions"
+).innerHTML = html;
+
 updateStats();
+
 });
+
 }
 
-/* LOAD PAYMENTS */
+/* =========================
+   REGISTRATION PAYMENTS
+========================= */
+
 function loadPayments(){
-onValue(ref(db,"payments"),snap=>{
+
+onValue(
+ref(db,"payments"),
+snap=>{
+
 payments=[];
+
 let html="";
+
 let total=0;
 
 snap.forEach(c=>{
-let d=c.val();
+
+const d=c.val();
+
 payments.push(d);
 
-total+=Number(d.amount||0);
+total +=
+Number(
+d.amount || 0
+);
 
-html+=`
-<div class="card">
-<h4>${d.name||"-"}</h4>
-<p>${d.phone||"-"}</p>
-<p>₹${d.amount||0}</p>
-<p>${d.status||"pending"}</p>
-<button class="delete" onclick="delPay('${c.key}')">Delete</button>
+html += `
+
+<div class="card paymentCard">
+
+<h4>
+${d.name || "-"}
+</h4>
+
+<p>
+<b>Registration</b>
+</p>
+
+<p>
+${d.phone || "-"}
+</p>
+
+<p>
+₹${d.amount || 0}
+</p>
+
+<p>
+${d.status || "paid"}
+</p>
+
+<button
+class="delete"
+onclick="delPay('${c.key}')">
+
+Delete
+
+</button>
+
 </div>
+
 `;
+
 });
 
-document.getElementById("payments").innerHTML=html;
-document.getElementById("pTotal").innerText=total;
+document
+.getElementById(
+"payments"
+).innerHTML = html;
 
-updateStats();
+document
+.getElementById(
+"pTotal"
+).innerText = total;
+
 });
+
+
+
+/* =========================
+   RENEWAL PAYMENTS
+========================= */
+
+onValue(
+ref(db,"payment2"),
+snap=>{
+
+renewPayments=[];
+
+let html="";
+
+let totalRenew=0;
+
+snap.forEach(c=>{
+
+const d=c.val();
+
+renewPayments.push(d);
+
+totalRenew +=
+Number(
+d.amount || 0
+);
+
+html += `
+
+<div class="card paymentCard">
+
+<h4>
+${d.name || "-"}
+</h4>
+
+<p>
+<b>Renewal</b>
+</p>
+
+<p>
+${d.phone || "-"}
+</p>
+
+<p>
+₹${d.amount || 0}
+</p>
+
+<p>
+${d.status || "paid"}
+</p>
+
+<button
+class="delete"
+onclick="delRenewPay('${c.key}')">
+
+Delete
+
+</button>
+
+</div>
+
+`;
+
+});
+
+document
+.getElementById(
+"renewPayments"
+).innerHTML = html;
+
+const currentTotal =
+Number(
+document.getElementById(
+"pTotal"
+).innerText || 0
+);
+
+document
+.getElementById(
+"pTotal"
+).innerText =
+currentTotal +
+totalRenew;
+
+});
+
 }
 
-/* CARD */
+/* =========================
+   PROFILE CARD
+========================= */
+
 function card(d,type){
 
-let exp = expired(d.approvedAt);
-let rem = remain(d.approvedAt);
+const exp =
+expired(
+d.approvedAt
+);
+
+const rem =
+remain(
+d.approvedAt
+);
 
 return `
+
 <div class="card">
 
-<h3>${d.name||"-"}</h3>
+<h3>
+${d.name || "-"}
+</h3>
 
-<span class="badge">${d.status||"pending"}</span>
-<span class="badge">${d.category||"-"}</span>
+<span class="badge">
+${d.status || "pending"}
+</span>
 
-<p>Email: ${d.email||"-"}</p>
-<p>Phone: ${d.phone||"-"}</p>
-<p>Days: ${rem}</p>
+<span class="badge">
+${d.category || "-"}
+</span>
 
-${exp?`<span class="badge" style="background:red;color:white">EXPIRED</span>`:""}
+<br><br>
 
-<img src="${d.photo||d.logo||d.idProof||'https://via.placeholder.com/100'}">
+<p>
+<b>Email:</b>
+${d.email || "-"}
+</p>
 
-<button class="approve" onclick="approve('${type}','${d.id}')">Approve</button>
-<button class="reject" onclick="reject('${type}','${d.id}')">Reject</button>
-<button class="delete" onclick="del('${type}','${d.id}')">Delete</button>
-<button class="renew" onclick="renew('${type}','${d.id}')">Renew</button>
-<button class="edit" onclick="edit('${type}','${d.id}')">Edit</button>
+<p>
+<b>Phone:</b>
+${d.phone || "-"}
+</p>
+
+<p>
+<b>Role:</b>
+${d.role || "-"}
+</p>
+
+<p>
+<b>Payment:</b>
+${d.paymentStatus || "unpaid"}
+</p>
+
+<p>
+<b>Days Left:</b>
+${rem}
+</p>
+
+${exp
+?
+`
+<span
+class="badge"
+style="
+background:red;
+color:white;
+">
+
+EXPIRED
+
+</span>
+`
+:
+""
+}
+
+<br><br>
+
+<img
+src="${
+d.logo ||
+d.idProof ||
+'https://via.placeholder.com/100'
+}"
+onerror="
+this.src='https://via.placeholder.com/100'
+">
+
+<br>
+
+<button
+class="approve"
+onclick="approve('${type}','${d.id}')">
+
+Approve
+
+</button>
+
+<button
+class="reject"
+onclick="reject('${type}','${d.id}')">
+
+Reject
+
+</button>
+
+<button
+class="delete"
+onclick="del('${type}','${d.id}')">
+
+Delete
+
+</button>
+
+<button
+class="renew"
+onclick="renew('${type}','${d.id}')">
+
+Renew
+
+</button>
+
+<button
+class="view"
+onclick="viewProfile('${d.id}')">
+
+Profile
+
+</button>
+
+<button
+class="edit"
+onclick="editProfile('${type}','${d.id}')">
+
+Edit
+
+</button>
 
 </div>
+
 `;
+
 }
 
-/* ACTIONS */
-window.approve=(t,id)=>update(ref(db,`${t}s/${id}`),{status:"approved",approvedAt:Date.now()});
-window.reject=(t,id)=>update(ref(db,`${t}s/${id}`),{status:"rejected"});
-window.del=(t,id)=>remove(ref(db,`${t}s/${id}`));
-window.renew=(t,id)=>update(ref(db,`${t}s/${id}`),{approvedAt:Date.now(),status:"approved"});
+/* =========================
+   APPROVE
+========================= */
 
-/* SEARCH (FIXED) */
-window.renderAll=function(){
-let q=document.getElementById("search").value.toLowerCase();
+window.approve =
+function(type,id){
+
+update(
+ref(
+db,
+`${type}s/${id}`
+),
+{
+status:"approved",
+approvedAt:Date.now()
+}
+);
+
+};
+
+/* =========================
+   REJECT
+========================= */
+
+window.reject =
+function(type,id){
+
+update(
+ref(
+db,
+`${type}s/${id}`
+),
+{
+status:"rejected"
+}
+);
+
+};
+
+/* =========================
+   DELETE PROFILE
+========================= */
+
+window.del =
+function(type,id){
+
+if(
+!confirm(
+"Delete this profile?"
+)
+){
+return;
+}
+
+remove(
+ref(
+db,
+`${type}s/${id}`
+)
+);
+
+};
+
+/* =========================
+   RENEW MEMBERSHIP
+========================= */
+
+window.renew =
+function(type,id){
+
+if(
+!confirm(
+"Renew this membership?"
+)
+){
+return;
+}
+
+update(
+ref(
+db,
+`${type}s/${id}`
+),
+{
+approvedAt:Date.now(),
+renewalStatus:"active",
+lastRenewalDate:Date.now(),
+status:"approved"
+}
+);
+
+};
+
+/* =========================
+   PROFILE VIEW
+========================= */
+
+window.viewProfile =
+function(id){
+
+window.open(
+"profile-view.html?id=" + id,
+"_blank"
+);
+
+};
+
+/* =========================
+   ADMIN EDIT PROFILE
+========================= */
+
+window.editProfile =
+function(type,id){
+
+window.location.href =
+
+"admin-edit-profile.html" +
+
+"?type=" +
+encodeURIComponent(type)
+
++
+
+"&id=" +
+encodeURIComponent(id);
+
+};
+
+/* =========================
+   DELETE REGISTRATION PAYMENT
+========================= */
+
+window.delPay =
+function(id){
+
+if(
+!confirm(
+"Delete this payment?"
+)
+){
+return;
+}
+
+remove(
+ref(
+db,
+"payments/" + id
+)
+);
+
+};
+
+/* =========================
+   DELETE RENEWAL PAYMENT
+========================= */
+
+window.delRenewPay =
+function(id){
+
+if(
+!confirm(
+"Delete this renewal payment?"
+)
+){
+return;
+}
+
+remove(
+ref(
+db,
+"payment2/" + id
+)
+);
+
+};
+
+/* =========================
+   SEARCH
+========================= */
+
+window.renderAll =
+function(){
+
+const q =
+
+document
+.getElementById(
+"search"
+)
+.value
+.toLowerCase();
 
 function match(x){
+
 return (
-(x.name||"").toLowerCase().includes(q) ||
-(x.email||"").toLowerCase().includes(q) ||
-(x.phone||"").toLowerCase().includes(q)
+
+(x.name || "")
+.toLowerCase()
+.includes(q)
+
+||
+
+(x.email || "")
+.toLowerCase()
+.includes(q)
+
+||
+
+(x.phone || "")
+.toLowerCase()
+.includes(q)
+
 );
+
 }
 
-document.getElementById("teachers").innerHTML =
-teachers.filter(match).map(d=>card(d,"teacher")).join("");
+document
+.getElementById(
+"teachers"
+)
+.innerHTML =
 
-document.getElementById("institutions").innerHTML =
-inst.filter(match).map(d=>card(d,"institution")).join("");
+teachers
+.filter(match)
+.map(d=>card(d,"teacher"))
+.join("");
+
+document
+.getElementById(
+"institutions"
+)
+.innerHTML =
+
+inst
+.filter(match)
+.map(d=>card(d,"institution"))
+.join("");
+
 };
 
-/* PAY DELETE */
-window.delPay=(id)=>remove(ref(db,"payments/"+id));
+/* =========================
+   STATS
+========================= */
 
-/* STATS */
 function updateStats(){
 
-document.getElementById("tCount").innerText=teachers.length;
-document.getElementById("iCount").innerText=inst.length;
+document
+.getElementById(
+"tCount"
+).innerText =
+teachers.length;
 
-let all=[...teachers,...inst];
+document
+.getElementById(
+"iCount"
+).innerText =
+inst.length;
 
-function c(cat){
-return all.filter(x=>(x.category||"").toLowerCase()===cat).length;
+const all = [
+
+...teachers,
+...inst
+
+];
+
+function count(cat){
+
+return all.filter(
+
+x =>
+
+(x.category || "")
+.toLowerCase()
+
+===
+
+cat
+
+).length;
+
 }
 
-document.getElementById("aCount").innerText=c("academic");
-document.getElementById("sCount").innerText=c("skill");
-document.getElementById("spCount").innerText=c("sport");
-document.getElementById("cCount").innerText=c("creative");
+document
+.getElementById(
+"aCount"
+).innerText =
+count("academic");
+
+document
+.getElementById(
+"sCount"
+).innerText =
+count("skill");
+
+document
+.getElementById(
+"spCount"
+).innerText =
+count("sport");
+
+document
+.getElementById(
+"cCount"
+).innerText =
+count("creative");
+
 }
 
-/* LOGOUT */
-window.logout=()=>{
+/* =========================
+   LOGOUT
+========================= */
+
+window.logout =
+function(){
+
 localStorage.clear();
-location.href="login.html";
+
+location.href =
+"login.html";
+
 };
 
-/* INIT */
+/* =========================
+   INIT
+========================= */
+
 loadTeachers();
+
 loadInstitutions();
+
 loadPayments();
 
 </script>
