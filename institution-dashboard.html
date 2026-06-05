@@ -326,6 +326,12 @@ background:#1565c0;
 .homeBtn{
 background:#673ab7;
 }
+.shareBtn{
+background:#6a1b9a;
+}
+.shareBtn:hover{
+background:#4a148c;
+}
 </style>
 </head>
 
@@ -430,6 +436,9 @@ Quick Actions
 
 
 <div class="mainBtns">
+<button class="shareBtn" onclick="shareProfile()">
+📤 Share Profile
+</button>
 
 <button
 class="editBtn"
@@ -1135,6 +1144,41 @@ window.toggleStatus = async function (leadId, currentStatus) {
 
 window.goHome = function() {
   location.href = "index.html";
+};
+
+
+window.shareProfile = function () {
+
+  const profileId = localStorage.getItem("profileId");
+  const role = localStorage.getItem("role");
+
+  if (!profileId || !role) {
+    alert("Profile not found");
+    return;
+  }
+
+  const url = `${window.location.origin}/profile-view.html?id=${profileId}`;
+
+  const text =
+    `Check out this ${role === "teacher" ? "Teacher" : "Institute"} on GURULINK:\n` + url;
+
+  // WhatsApp share
+  const whatsappURL =
+    `https://wa.me/?text=${encodeURIComponent(text)}`;
+
+  // Try Web Share API first (mobile)
+  if (navigator.share) {
+    navigator.share({
+      title: "GURULINK Profile",
+      text: text,
+      url: url
+    }).catch(() => {
+      window.open(whatsappURL, "_blank");
+    });
+  } else {
+    // fallback WhatsApp
+    window.open(whatsappURL, "_blank");
+  }
 };
 </script>
 
