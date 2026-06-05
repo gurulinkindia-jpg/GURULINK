@@ -320,15 +320,38 @@ if(data.hybridFee) modes.push(`🔄 Hybrid - ₹${data.hybridFee}`);
 
 let mapHTML = "";
 
-if(data.mapLink){
-mapHTML = `
-<div class="section">
-<h3>📍 Google Map</h3>
-<a href="${data.mapLink}" target="_blank">Open Location</a>
-<iframe src="${data.mapLink}"></iframe>
-</div>
-`;
+
+
+
+
+let mapHTML = "";
+
+if (data.mapLink) {
+  const src = data.mapLink.match(/src="([^"]+)"/)?.[1];
+
+  if (src) {
+    mapHTML = `
+      <div class="section">
+        <h3>📍 Google Map</h3>
+
+        <a href="${src}" target="_blank">Open Location</a>
+
+        <iframe
+          src="${src}"
+          allowfullscreen
+          loading="lazy">
+        </iframe>
+      </div>
+    `;
+  }
 }
+
+
+
+
+
+
+
 
 profile.innerHTML = `
 <div class="header">
