@@ -327,12 +327,18 @@ let galleryHTML = "";
 
 let gallery = data.gallery;
 
-// Convert Firebase object (0,1,2,3...) → array
-if (gallery && typeof gallery === "object") {
+// HARD SAFE CHECK
+if (!gallery) gallery = [];
+
+// Convert object → array safely
+if (typeof gallery === "object" && !Array.isArray(gallery)) {
   gallery = Object.values(gallery);
 }
 
-if (Array.isArray(gallery) && gallery.length > 0) {
+// Remove invalid values
+gallery = gallery.filter(img => typeof img === "string" && img.length > 5);
+
+if (gallery.length > 0) {
   galleryHTML = `
     <div class="section">
       <h3>🖼️ Gallery</h3>
