@@ -2,209 +2,256 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<title>Edit Profile</title>
+<title>GURULINK Admin Panel</title>
 
 <style>
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
 body{
+margin:0;
+font-family:Arial;
 background:#eef2f7;
 }
 
 header{
-background:#1565c0;
+background:#0d47a1;
 color:white;
-padding:18px;
+padding:12px;
 text-align:center;
 }
 
-.container{
-width:95%;
-max-width:1000px;
-margin:20px auto;
-background:white;
-padding:20px;
-border-radius:15px;
-box-shadow:0 4px 10px rgba(0,0,0,.1);
-}
-
-.previewBox{
-margin-bottom:20px;
-}
-
-.previewBox h3{
-margin-bottom:10px;
-}
-
-.logoPreview{
-width:120px;
-height:120px;
-border-radius:12px;
-object-fit:cover;
-border:1px solid #ddd;
-}
-
-.galleryGrid{
+.topbar{
 display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px 15px;
+background:#1565c0;
+color:white;
 flex-wrap:wrap;
 gap:10px;
 }
 
-.galleryGrid img{
-width:100px;
-height:100px;
-object-fit:cover;
-border-radius:10px;
-border:1px solid #ddd;
-}
-
-.field{
-margin-bottom:15px;
-}
-
-.field label{
-display:block;
-font-weight:bold;
-margin-bottom:6px;
-}
-
-.field input,
-.field textarea{
-width:100%;
-padding:12px;
-border:1px solid #ccc;
-border-radius:8px;
-box-sizing:border-box;
-}
-
-.field textarea{
-min-height:100px;
-resize:vertical;
-}
-
-.uploadBox{
-background:#f5f5f5;
-padding:15px;
-border-radius:10px;
-margin-bottom:20px;
-}
-
-.saveBtn{
-width:100%;
-padding:14px;
-background:#43a047;
-color:white;
+.topbar button{
+padding:8px 12px;
 border:none;
-border-radius:10px;
-font-size:16px;
+border-radius:6px;
 cursor:pointer;
-margin-top:10px;
-}
-
-.backBtn{
-width:100%;
-padding:14px;
-background:#1565c0;
+margin-left:5px;
 color:white;
-border:none;
-border-radius:10px;
-font-size:16px;
-cursor:pointer;
-margin-top:10px;
 }
 
-.loading{
+.topbar input{
+width:280px;
+padding:8px;
+border-radius:6px;
+border:none;
+outline:none;
+}
+
+.homeBtn{
+background:#2e7d32;
+}
+
+.logoutBtn{
+background:#c62828;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:8px;
+padding:10px;
+}
+
+.stat{
+background:white;
+padding:10px;
+border-radius:10px;
 text-align:center;
-padding:40px;
-font-size:18px;
+font-size:13px;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+
+.container{
+width:95%;
+max-width:1600px;
+margin:10px auto;
+display:grid;
+grid-template-columns:1fr 1fr 1fr;
+gap:15px;
+}
+
+.card{
+background:white;
+padding:12px;
+border-radius:10px;
+box-shadow:0 3px 8px rgba(0,0,0,.1);
+margin-bottom:10px;
+}
+
+.card img{
+width:70px;
+height:70px;
+border-radius:8px;
+object-fit:cover;
+margin:5px 0;
+}
+
+button{
+padding:6px 8px;
+margin:3px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+color:white;
+font-size:11px;
+}
+
+.approve{
+background:green;
+}
+
+.reject{
+background:red;
+}
+
+.delete{
+background:#444;
+}
+
+.view{
+background:#1565c0;
+}
+
+.edit{
+background:#ff9800;
+}
+
+.renew{
+background:#8e24aa;
+}
+
+.badge{
+display:inline-block;
+padding:3px 6px;
+background:#eee;
+border-radius:6px;
+font-size:10px;
+margin:2px;
+}
+
+.paymentCard{
+background:#fff8e1;
+}
+
+h3{
+margin-top:0;
 }
 
 </style>
-
 </head>
 
 <body>
 
 <header>
-<h2>Edit Profile</h2>
+<h2>GURULINK ADMIN PANEL</h2>
 </header>
+
+<div class="topbar">
+
+<div>
+
+<button
+class="homeBtn"
+onclick="location.href='index.html'">
+Home
+</button>
+
+<button
+class="logoutBtn"
+onclick="logout()">
+Logout
+</button>
+
+</div>
+
+<input
+id="search"
+placeholder="Search Name / Email / Phone"
+oninput="renderAll()">
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+Teachers
+<div id="tCount">0</div>
+</div>
+
+<div class="stat">
+Institutions
+<div id="iCount">0</div>
+</div>
+
+<div class="stat">
+Academic
+<div id="aCount">0</div>
+</div>
+
+<div class="stat">
+Skill
+<div id="sCount">0</div>
+</div>
+
+<div class="stat">
+Sport
+<div id="spCount">0</div>
+</div>
+
+<div class="stat">
+Creative
+<div id="cCount">0</div>
+</div>
+
+<div class="stat">
+Revenue ₹
+<div id="pTotal">0</div>
+</div>
+
+</div>
 
 <div class="container">
 
-<div id="loading" class="loading">
-Loading Profile...
-</div>
+<div>
 
-<div id="mainContent" style="display:none;">
+<h3>Teachers</h3>
 
-<div class="previewBox">
-
-<h3>Current Logo</h3>
-
-<img
-id="logoPreview"
-class="logoPreview"
-src=""
-alt="Logo">
+<div id="teachers"></div>
 
 </div>
 
-<div class="uploadBox">
+<div>
 
-<h3>Replace Logo</h3>
+<h3>Institutions</h3>
 
-<input
-type="file"
-id="newLogo"
-accept="image/*">
+<div id="institutions"></div>
 
 </div>
 
-<div class="previewBox">
+<div>
 
-<h3>Current Gallery</h3>
+<h3>Registration Payments</h3>
 
-<div
-id="galleryPreview"
-class="galleryGrid">
-</div>
+<div id="payments"></div>
 
-</div>
+<h3 style="margin-top:20px;">
+Renewal Payments
+</h3>
 
-<div class="uploadBox">
-
-<h3>Add Gallery Images</h3>
-
-<input
-type="file"
-id="newGallery"
-multiple
-accept="image/*">
-
-</div>
-
-<div id="dynamicFields">
-</div>
-
-<button
-class="saveBtn"
-onclick="saveProfile()">
-Save Profile
-</button>
-
-<button
-class="backBtn"
-onclick="goBack()">
-Back To Dashboard
-</button>
+<div id="renewPayments"></div>
 
 </div>
 
@@ -221,13 +268,14 @@ from
 import {
 getDatabase,
 ref,
-get,
-update
+onValue,
+update,
+remove
 }
 from
 "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-const firebaseConfig={
+const firebaseConfig = {
 
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 
@@ -256,384 +304,765 @@ initializeApp(firebaseConfig);
 const db =
 getDatabase(app);
 
-const API_KEY =
-"31f729ff855eb2e42c00ee508a8647ea";
-
-const profileId =
-localStorage.getItem("profileId");
-
-const role =
-localStorage.getItem("role");
-
 if(
-!profileId ||
-!role
+localStorage.getItem("role")
+!== "admin"
 ){
-alert("Please Login Again");
+alert("Access Denied");
 location.href="login.html";
 }
 
-const dbPath =
-role==="teacher" ||
-role==="teacher_institute"
-?
-"teachers/"+profileId
-:
-"institutions/"+profileId;
+let teachers=[];
+let inst=[];
+let payments=[];
+let renewPayments=[];
+function expired(t){
 
-let profileData = {};
+return t &&
+Date.now() >
+t + (365*24*60*60*1000);
 
-const hiddenFields = [];
-
-const readOnlyFields = [
-"uid",
-"createdAt"
-];
-
-async function uploadImage(file){
-
-const fd = new FormData();
-
-fd.append("image",file);
-
-const res =
-await fetch(
-`https://api.imgbb.com/1/upload?key=${API_KEY}`,
-{
-method:"POST",
-body:fd
 }
+
+function remain(t){
+
+if(!t) return "-";
+
+return Math.max(
+0,
+Math.ceil(
+(
+t + (365*24*60*60*1000)
+-
+Date.now()
+)
+/86400000
+)
 );
 
-const data =
-await res.json();
-
-return data.data.url;
-
 }
 
-function createField(key,value){
+/* =========================
+   TEACHERS
+========================= */
 
-const wrapper =
-document.createElement("div");
+function loadTeachers(){
 
-wrapper.className="field";
+onValue(
+ref(db,"teachers"),
+snap=>{
 
-const label =
-document.createElement("label");
+teachers=[];
 
-label.innerText=key;
+let html="";
 
-wrapper.appendChild(label);
+snap.forEach(c=>{
 
-if(
-typeof value === "object" &&
-value !== null
-){
+let d=c.val();
 
-const textarea =
-document.createElement("textarea");
+d.id=c.key;
 
-textarea.id=key;
+teachers.push(d);
 
-textarea.value=
-JSON.stringify(
-value,
-null,
-2
+html += card(
+d,
+"teacher"
 );
 
-wrapper.appendChild(textarea);
-
-}
-else{
-
-const input =
-document.createElement("input");
-
-input.id=key;
-
-input.value=value ?? "";
-
-wrapper.appendChild(input);
-
-}
+});
 
 document
-.getElementById("dynamicFields")
-.appendChild(wrapper);
+.getElementById(
+"teachers"
+).innerHTML = html;
+
+updateStats();
+
+});
 
 }
 
-async function loadProfile(){
+/* =========================
+   INSTITUTIONS
+========================= */
 
-const snap =
-await get(
-ref(db,dbPath)
+function loadInstitutions(){
+
+onValue(
+ref(db,"institutions"),
+snap=>{
+
+inst=[];
+
+let html="";
+
+snap.forEach(c=>{
+
+let d=c.val();
+
+d.id=c.key;
+
+inst.push(d);
+
+html += card(
+d,
+"institution"
 );
 
-if(!snap.exists()){
+});
 
-alert("Profile Not Found");
+document
+.getElementById(
+"institutions"
+).innerHTML = html;
 
-return;
+updateStats();
+
+});
 
 }
 
-profileData =
-snap.val();
+/* =========================
+   REGISTRATION PAYMENTS
+========================= */
 
-document.getElementById(
-"logoPreview"
-).src =
-profileData.logo || "";
+function loadPayments(){
 
-const gallery =
-profileData.gallery || [];
+onValue(
+ref(db,"payments"),
+snap=>{
 
-const galleryBox =
-document.getElementById(
-"galleryPreview"
+payments=[];
+
+let html="";
+
+let total=0;
+
+snap.forEach(c=>{
+
+const d=c.val();
+
+payments.push(d);
+
+total +=
+Number(
+d.amount || 0
 );
 
-galleryBox.innerHTML="";
+html += `
 
-gallery.forEach(img=>{
+<div class="card paymentCard">
 
-galleryBox.innerHTML +=
-`
-<img src="${img}">
+<h4>
+${d.name || "-"}
+</h4>
+
+<p>
+<b>Registration</b>
+</p>
+
+<p>
+${d.phone || "-"}
+</p>
+
+<p>
+₹${d.amount || 0}
+</p>
+
+<p>
+${d.status || "paid"}
+</p>
+
+<button
+class="delete"
+onclick="delPay('${c.key}')">
+
+Delete
+
+</button>
+
+</div>
+
 `;
 
 });
 
-for(
-const key in profileData
-){
+document
+.getElementById(
+"payments"
+).innerHTML = html;
 
-if(
-hiddenFields.includes(key)
-){
-continue;
-}
+document
+.getElementById(
+"pTotal"
+).innerText = total;
 
-if(
-key==="logo" ||
-key==="gallery"
-){
-continue;
-}
+});
 
-createField(
-key,
-profileData[key]
+
+
+/* =========================
+   RENEWAL PAYMENTS
+========================= */
+
+onValue(
+ref(db,"payment2"),
+snap=>{
+
+renewPayments=[];
+
+let html="";
+
+let totalRenew=0;
+
+snap.forEach(c=>{
+
+const d=c.val();
+
+renewPayments.push(d);
+
+totalRenew +=
+Number(
+d.amount || 0
 );
 
-}
+html += `
 
+<div class="card paymentCard">
+
+<h4>
+${d.name || "-"}
+</h4>
+
+<p>
+<b>Renewal</b>
+</p>
+
+<p>
+${d.phone || "-"}
+</p>
+
+<p>
+₹${d.amount || 0}
+</p>
+
+<p>
+${d.status || "paid"}
+</p>
+
+<button
+class="delete"
+onclick="delRenewPay('${c.key}')">
+
+Delete
+
+</button>
+
+</div>
+
+`;
+
+});
+
+document
+.getElementById(
+"renewPayments"
+).innerHTML = html;
+
+const currentTotal =
+Number(
 document.getElementById(
-"loading"
-).style.display="none";
-
-document.getElementById(
-"mainContent"
-).style.display="block";
-
-}
-
-loadProfile();
-
-
-window.saveProfile = async function(){
-
-try{
-
-const saveBtn =
-document.querySelector(".saveBtn");
-
-saveBtn.disabled=true;
-saveBtn.innerText="Saving...";
-
-/* START WITH EXISTING DATA */
-
-let updateData = {...profileData};
-
-/* DYNAMIC FIELDS */
-
-for(const key in profileData){
-
-if(hiddenFields.includes(key)){
-continue;
-}
-
-if(key==="logo" || key==="gallery"){
-continue;
-}
-
-const field =
-document.getElementById(key);
-
-if(!field){
-continue;
-}
-
-let value = field.value;
-
-/* TRY JSON ARRAY / OBJECT */
-
-try{
-
-if(
-value.startsWith("[") ||
-value.startsWith("{")
-){
-
-value =
-JSON.parse(value);
-
-}
-
-}catch(e){}
-
-/* SAVE VALUE */
-
-updateData[key] = value;
-
-}
-
-/* ===========================
-   LOGO = REPLACE
-=========================== */
-
-const logoFile =
-document.getElementById("newLogo")
-.files[0];
-
-if(logoFile){
-
-saveBtn.innerText=
-"Uploading Logo...";
-
-const logoUrl =
-await uploadImage(
-logoFile
+"pTotal"
+).innerText || 0
 );
 
-updateData.logo =
-logoUrl;
+document
+.getElementById(
+"pTotal"
+).innerText =
+currentTotal +
+totalRenew;
+
+});
 
 }
 
-/* ===========================
-   GALLERY = MERGE
-=========================== */
+/* =========================
+   PROFILE CARD
+========================= */
 
-const galleryFiles =
-Array.from(
-document.getElementById("newGallery").files
+function card(d,type){
+
+const exp =
+expired(
+d.approvedAt
 );
 
-if(galleryFiles.length){
+const rem =
+remain(
+d.approvedAt
+);
 
-saveBtn.innerText=
-"Uploading Gallery...";
+return `
 
-const oldGallery =
-Array.isArray(
-profileData.gallery
-)
+<div class="card">
+
+<h3>
+${d.name || "-"}
+</h3>
+
+<span class="badge">
+${d.status || "pending"}
+</span>
+
+<span class="badge">
+${d.category || "-"}
+</span>
+
+<br><br>
+
+<p>
+<b>Email:</b>
+${d.email || "-"}
+</p>
+
+<p>
+<b>Phone:</b>
+${d.phone || "-"}
+</p>
+
+<p>
+<b>Role:</b>
+${d.role || "-"}
+</p>
+
+<p>
+<b>Payment:</b>
+${d.paymentStatus || "unpaid"}
+</p>
+
+<p>
+<b>Days Left:</b>
+${rem}
+</p>
+
+${exp
 ?
-profileData.gallery
+`
+<span
+class="badge"
+style="
+background:red;
+color:white;
+">
+
+EXPIRED
+
+</span>
+`
 :
-[];
+""
+}
 
-const newGalleryUrls=[];
+<br><br>
 
-for(const file of galleryFiles){
+<img
+src="${
+d.logo ||
+d.idProof ||
+'https://via.placeholder.com/100'
+}"
+onerror="
+this.src='https://via.placeholder.com/100'
+">
 
-const url =
-await uploadImage(file);
+<br>
 
-newGalleryUrls.push(url);
+<button
+class="approve"
+onclick="approve('${type}','${d.id}')">
+
+Approve
+
+</button>
+
+<button
+class="reject"
+onclick="reject('${type}','${d.id}')">
+
+Reject
+
+</button>
+
+<button
+class="delete"
+onclick="del('${type}','${d.id}')">
+
+Delete
+
+</button>
+
+<button
+class="renew"
+onclick="renew('${type}','${d.id}')">
+
+Renew
+
+</button>
+
+<button
+class="view"
+onclick="viewProfile('${d.id}')">
+
+Profile
+
+</button>
+
+<button
+class="edit"
+onclick="editProfile('${type}','${d.id}')">
+
+Edit
+
+</button>
+
+</div>
+
+`;
 
 }
 
-updateData.gallery = [
+/* =========================
+   APPROVE
+========================= */
 
-...oldGallery,
-...newGalleryUrls
+window.approve =
+function(type,id){
+
+update(
+ref(
+db,
+`${type}s/${id}`
+),
+{
+status:"approved",
+approvedAt:Date.now()
+}
+);
+
+};
+
+/* =========================
+   REJECT
+========================= */
+
+window.reject =
+function(type,id){
+
+update(
+ref(
+db,
+`${type}s/${id}`
+),
+{
+status:"rejected"
+}
+);
+
+};
+
+/* =========================
+   DELETE PROFILE
+========================= */
+
+window.del =
+function(type,id){
+
+if(
+!confirm(
+"Delete this profile?"
+)
+){
+return;
+}
+
+remove(
+ref(
+db,
+`${type}s/${id}`
+)
+);
+
+};
+
+/* =========================
+   RENEW MEMBERSHIP
+========================= */
+
+window.renew =
+function(type,id){
+
+if(
+!confirm(
+"Renew this membership?"
+)
+){
+return;
+}
+
+update(
+ref(
+db,
+`${type}s/${id}`
+),
+{
+approvedAt:Date.now(),
+renewalStatus:"active",
+lastRenewalDate:Date.now(),
+status:"approved"
+}
+);
+
+};
+
+/* =========================
+   PROFILE VIEW
+========================= */
+
+window.viewProfile =
+function(id){
+
+window.open(
+"profile-view.html?id=" + id,
+"_blank"
+);
+
+};
+
+/* =========================
+   ADMIN EDIT PROFILE
+========================= */
+
+window.editProfile =
+function(type,id){
+
+window.location.href =
+
+"admin-edit-profile.html" +
+
+"?type=" +
+encodeURIComponent(type)
+
++
+
+"&id=" +
+encodeURIComponent(id);
+
+};
+
+/* =========================
+   DELETE REGISTRATION PAYMENT
+========================= */
+
+window.delPay =
+function(id){
+
+if(
+!confirm(
+"Delete this payment?"
+)
+){
+return;
+}
+
+remove(
+ref(
+db,
+"payments/" + id
+)
+);
+
+};
+
+/* =========================
+   DELETE RENEWAL PAYMENT
+========================= */
+
+window.delRenewPay =
+function(id){
+
+if(
+!confirm(
+"Delete this renewal payment?"
+)
+){
+return;
+}
+
+remove(
+ref(
+db,
+"payment2/" + id
+)
+);
+
+};
+
+/* =========================
+   SEARCH
+========================= */
+
+window.renderAll =
+function(){
+
+const q =
+
+document
+.getElementById(
+"search"
+)
+.value
+.toLowerCase();
+
+function match(x){
+
+return (
+
+(x.name || "")
+.toLowerCase()
+.includes(q)
+
+||
+
+(x.email || "")
+.toLowerCase()
+.includes(q)
+
+||
+
+(x.phone || "")
+.toLowerCase()
+.includes(q)
+
+);
+
+}
+
+document
+.getElementById(
+"teachers"
+)
+.innerHTML =
+
+teachers
+.filter(match)
+.map(d=>card(d,"teacher"))
+.join("");
+
+document
+.getElementById(
+"institutions"
+)
+.innerHTML =
+
+inst
+.filter(match)
+.map(d=>card(d,"institution"))
+.join("");
+
+};
+
+/* =========================
+   STATS
+========================= */
+
+function updateStats(){
+
+document
+.getElementById(
+"tCount"
+).innerText =
+teachers.length;
+
+document
+.getElementById(
+"iCount"
+).innerText =
+inst.length;
+
+const all = [
+
+...teachers,
+...inst
 
 ];
 
-}
+function count(cat){
 
-/* SAVE TO FIREBASE */
+return all.filter(
 
-await update(
+x =>
 
-ref(db,dbPath),
+(x.category || "")
+.toLowerCase()
 
-updateData
+===
 
-);
+cat
 
-/* SUCCESS */
-
-alert(
-"Profile Updated Successfully"
-);
-
-/* REFRESH PAGE */
-
-location.reload();
-
-}catch(err){
-
-console.log(err);
-
-alert(
-err.message
-);
+).length;
 
 }
 
-finally{
+document
+.getElementById(
+"aCount"
+).innerText =
+count("academic");
 
-const saveBtn =
-document.querySelector(".saveBtn");
+document
+.getElementById(
+"sCount"
+).innerText =
+count("skill");
 
-saveBtn.disabled=false;
+document
+.getElementById(
+"spCount"
+).innerText =
+count("sport");
 
-saveBtn.innerText=
-"Save Profile";
+document
+.getElementById(
+"cCount"
+).innerText =
+count("creative");
 
 }
+
+/* =========================
+   LOGOUT
+========================= */
+
+window.logout =
+function(){
+
+localStorage.clear();
+
+location.href =
+"login.html";
 
 };
 
-/* ===========================
-   BACK BUTTON
-=========================== */
+/* =========================
+   INIT
+========================= */
 
-window.goBack=function(){
+loadTeachers();
 
-if(
-role==="teacher" ||
-role==="teacher_institute"
-){
+loadInstitutions();
 
-location.href=
-"teacher-dashboard.html";
-
-}
-else{
-
-location.href=
-"institution-dashboard.html";
-
-}
-
-};
+loadPayments();
 
 </script>
 
