@@ -593,56 +593,45 @@ role === "teacher" || role === "teacher_institute"
 
 function getExpiryInfo(start){
 
-if(!start){
+  if(!start){
+    return {
+      text:"Pending Approval",
+      color:"#9e9e9e"
+    };
+  }
 
-return {
-text:"Pending Approval",
-color:"#9e9e9e"
-};
+  start = Number(start); // 🔥 FIX HERE
 
-}
+  const now = Date.now();
+  const end = start + (365 * 24 * 60 * 60 * 1000);
 
-const now=Date.now();
+  if(now > end){
+    return {
+      text:"Expired",
+      color:"#e53935"
+    };
+  }
 
-const end=
-start+(365*24*60*60*1000);
+  const days = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
 
-if(now>end){
+  if(days <= 30){
+    return {
+      text: days + " Days Remaining",
+      color:"#e53935"
+    };
+  }
 
-return {
-text:"Expired",
-color:"#e53935"
-};
+  if(days <= 90){
+    return {
+      text: days + " Days Remaining",
+      color:"#ff9800"
+    };
+  }
 
-}
-
-const days=Math.ceil(
-(end-now)/(1000*60*60*24)
-);
-
-if(days<=30){
-
-return {
-text:days+" Days Remaining",
-color:"#e53935"
-};
-
-}
-
-if(days<=90){
-
-return {
-text:days+" Days Remaining",
-color:"#ff9800"
-};
-
-}
-
-return {
-text:days+" Days Remaining",
-color:"#43a047"
-};
-
+  return {
+    text: days + " Days Remaining",
+    color:"#43a047"
+  };
 }
 
 
