@@ -364,6 +364,16 @@ background:#4a148c;
   color:#333;
   line-height:1.5;
 }
+@media (max-width: 600px) {
+  .mainBtns {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .mainBtns button {
+    font-size: 14px;
+    padding: 12px 8px;
+  }
+}
 </style>
 </head>
 
@@ -469,7 +479,7 @@ Quick Actions
 
 <div class="mainBtns">
 <button class="shareBtn" onclick="shareProfile()">
-📤 Share Digigtal Business card
+📤 Share Profile
 </button>
 
 <button
