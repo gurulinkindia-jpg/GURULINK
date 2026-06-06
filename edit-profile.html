@@ -872,8 +872,16 @@ try {
 };
 
 
-profileData.gallery = profileData.gallery || [];
-renderGallery();
+function renderGallery() {
+
+const galleryBox = document.getElementById("galleryPreview");
+galleryBox.innerHTML = "";
+
+const gallery = Array.isArray(profileData.gallery)
+    ? profileData.gallery
+    : [];
+
+gallery.forEach((img, index) => {
 
 
 
