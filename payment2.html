@@ -135,9 +135,12 @@ document.getElementById("feeText").innerText =
 /* button */
 document.getElementById("payBtn").onclick = () => {
 
+  // 🔥 SAVE DATA BEFORE REDIRECT
+  localStorage.setItem("paymentProfileId", id);
+  localStorage.setItem("paymentType", type);
+
   window.location.href = paymentLink;
 };
-
 
 
 
