@@ -553,13 +553,7 @@ onclick="logout()">
 
 
 
-<div class="bankAdBox">
-  <h3>⚠ Privacy Notice</h3>
-  <p>
-    If you want or don’t want to share your bank details publicly,  
-    uncheck the option below the bank details in your Edit Profile page.
-  </p>
-</div>
+
 
 
 
@@ -1109,12 +1103,19 @@ location.href=
 
 window.renewProfile = function () {
 
-  const id = profileId;   // already from localStorage
-  const type = role;      // teacher or institution
+  const id = localStorage.getItem("profileId");
+  const type = localStorage.getItem("role");
 
-  window.location.href =
+  if (!id || !type) {
+    alert("Profile not found. Please login again.");
+    return;
+  }
+
+  const url =
     "payment2.html?id=" + encodeURIComponent(id) +
     "&type=" + encodeURIComponent(type);
+
+  window.location.href = url;
 };
 
 
