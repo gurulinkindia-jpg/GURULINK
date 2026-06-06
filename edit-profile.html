@@ -483,7 +483,12 @@ continue;
 
 if(
 key==="logo" ||
-key==="gallery"
+key==="gallery" ||
+key==="bankName" ||
+key==="accountNumber" ||
+key==="ifsc" ||
+key==="upiId" ||
+key==="qrImage"
 ){
 continue;
 }
@@ -552,7 +557,10 @@ if(hiddenFields.includes(key)){
 continue;
 }
 
-if(key==="logo" || key==="gallery"){
+if(
+key==="logo" ||
+ key==="gallery"
+ ){
 continue;
 }
 
