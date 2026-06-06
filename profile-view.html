@@ -190,7 +190,27 @@ z-index:9999;
 
 .homeBtn{bottom:90px;background:#1976d2;}
 .dashboardBtn{bottom:20px;background:#4caf50;}
+.payFee{
+background:#ff9800;
+}
 
+.bankBox{
+display:none;
+margin-top:15px;
+padding:15px;
+background:#fff8e1;
+border-radius:10px;
+border:1px solid #ffd54f;
+}
+
+.bankQr{
+width:120px;
+height:120px;
+object-fit:contain;
+border:1px solid #ddd;
+border-radius:10px;
+margin-top:10px;
+}
 </style>
 </head>
 
@@ -411,6 +431,18 @@ profile.innerHTML = `
 <a class="call" href="tel:${data.phone || ''}">📞 Call</a>
 <a class="whatsapp" target="_blank" href="https://wa.me/${data.phone || ''}">💬 WhatsApp</a>
 ${data.website ? `<a class="website" target="_blank" href="${data.website}">🌐 Website</a>` : ""}
+${(
+data.qrImage ||
+(data.accountHolderName &&
+ data.bankName &&
+ data.accountNumber)
+) ? `
+<button
+class="payFee"
+onclick="showPaymentNotice()">
+💰 Pay Fee
+</button>
+` : ""}
 </div>
 
 ${mapHTML}
@@ -500,6 +532,35 @@ document.getElementById("rtext").value="";
 };
 
 /* START */
+window.showPaymentNotice = function(){
+
+const ok = confirm(
+"IMPORTANT NOTICE\n\n" +
+"Payments made using the bank account, UPI ID, or QR code displayed on this profile are direct transactions between the sender and the receiver.\n\n" +
+"GURULINK only provides the platform for connecting students and teachers/institutions and does not process, hold, guarantee, or verify any payments.\n\n" +
+"GURULINK is not responsible for failed transactions, incorrect transfers, payment disputes, refund issues, fraudulent activities, or banking/UPI technical errors.\n\n" +
+"Please verify all payment details carefully before making any payment.\n\n" +
+"Press OK to view payment details."
+);
+
+if(ok){
+toggleBankDetails();
+}
+
+};
+
+window.toggleBankDetails = function(){
+
+const box =
+document.getElementById("bankBox");
+
+if(box.style.display === "block"){
+box.style.display = "none";
+}else{
+box.style.display = "block";
+}
+
+};
 load();
 
 </script>
