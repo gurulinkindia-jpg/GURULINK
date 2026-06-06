@@ -332,6 +332,38 @@ background:#6a1b9a;
 .shareBtn:hover{
 background:#4a148c;
 }
+
+
+.bankRow{
+  display:flex;
+  gap:15px;
+  margin-bottom:20px;
+  align-items:flex-start;
+}
+
+.bankRow .section{
+  flex:2;
+}
+
+.bankAdBox{
+  flex:1;
+  background:#fff3cd;
+  border-left:5px solid #ff9800;
+  padding:15px;
+  border-radius:15px;
+  box-shadow:0 4px 10px rgba(0,0,0,.08);
+}
+
+.bankAdBox h3{
+  margin-bottom:10px;
+  color:#e65100;
+}
+
+.bankAdBox p{
+  font-size:14px;
+  color:#333;
+  line-height:1.5;
+}
 </style>
 </head>
 
@@ -482,6 +514,50 @@ onclick="logout()">
 
 
 </div>
+
+<!-- PART 1b WILL ADD LEADS HERE -->
+
+<div class="bankRow" id="bankSectionWrapper" style="display:none;">
+
+  <!-- LEFT: BANK DETAILS -->
+  <div class="section" id="bankSection">
+    <h2 class="sectionTitle">💳 Bank & Payment Details</h2>
+
+    <p><b>Account Holder Name:</b>
+      <span id="accountHolderName">-</span>
+    </p>
+
+    <p><b>Bank Name:</b> <span id="bankName">-</span></p>
+    <p><b>Account Number:</b> <span id="accountNumber">-</span></p>
+    <p><b>IFSC:</b> <span id="ifscCode">-</span></p>
+    <p><b>UPI ID:</b> <span id="upiId">-</span></p>
+
+    <div style="margin-top:15px;text-align:left;">
+      <img id="qrImage" style="max-width:100px;border-radius:10px;">
+    </div>
+  </div>
+
+  <!-- RIGHT: PRIVACY NOTICE -->
+  <div class="bankAdBox">
+    <h3>⚠ Privacy Notice</h3>
+    <p>
+      If you want or don’t want to share your bank details publicly,  
+      uncheck the option below the bank details in your Edit Profile page.
+    </p>
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
 
 <!-- PART 2 WILL ADD LEADS HERE -->
 
@@ -655,6 +731,23 @@ return;
 
 
 const d = snap.val();
+/* BANK DETAILS */
+document.getElementById("accountHolderName").innerText =
+d.accountHolderName || "Not Added";
+document.getElementById("bankName").innerText = d.bankName || "Not Added";
+document.getElementById("accountNumber").innerText = d.accountNumber || "Not Added";
+document.getElementById("ifscCode").innerText = d.ifsc || "Not Added";
+document.getElementById("upiId").innerText = d.upiId || "Not Added";
+
+/* QR IMAGE */
+const qr = document.getElementById("qrImage");
+
+if (d.qrImage) {
+  qr.src = d.qrImage;
+  document.getElementById("bankSectionWrapper").style.display = "flex";
+} else {
+  document.getElementById("bankSectionWrapper").style.display = "none";
+}
 
 /* ✅ ADD LOGO CODE HERE */
 const logoURL = d.logo || "default.png";
