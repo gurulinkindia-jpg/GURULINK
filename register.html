@@ -3,11 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>GURULINK Registration</title>
 
 <style>
-
-/* ================= GLOBAL ================= */
 body{
 margin:0;
 font-family:Arial,sans-serif;
@@ -15,117 +14,110 @@ background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 color:white;
 }
 
-/* ================= HEADER ================= */
 header{
-padding:20px;
-text-align:center;
-font-size:22px;
-font-weight:bold;
+display:flex;
+align-items:center;
+gap:12px;
+padding:15px 20px;
 background: rgba(255,255,255,0.08);
 backdrop-filter: blur(10px);
 border-bottom:1px solid rgba(255,255,255,0.2);
 }
 
-/* ================= CONTAINER ================= */
+.header-logo{
+width:40px;
+height:40px;
+border-radius:50%;
+overflow:hidden;
+border:2px solid #00e5ff;
+}
+
+.header-logo img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.header-title{
+font-size:20px;
+font-weight:bold;
+}
+
 .container{
 max-width:1100px;
 margin:auto;
 padding:20px;
 }
 
-/* ================= NOTE BOX ================= */
-.note{
-background: rgba(255,255,255,0.08);
-backdrop-filter: blur(10px);
-padding:20px;
-border-radius:15px;
-margin-bottom:25px;
-border:1px solid rgba(255,255,255,0.2);
-box-shadow:0 10px 30px rgba(0,0,0,0.3);
-}
-
-.note h2{
-margin-top:0;
-color:#00e5ff;
-}
-
-.note p{
-color:#e0e0e0;
-line-height:1.6;
-}
-
-/* ================= GRID ================= */
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
 gap:18px;
 }
 
-/* ================= CARD STYLE ================= */
-.sub-wrap{
-display:flex;
-align-items:center;
-gap:15px;
-padding:15px;
-border-radius:15px;
+.card{
 background: rgba(255,255,255,0.07);
 backdrop-filter: blur(10px);
 border:1px solid rgba(255,255,255,0.2);
-transition:0.3s;
+border-radius:15px;
+padding:16px;
+display:flex;
+gap:15px;
+align-items:center;
 box-shadow:0 8px 25px rgba(0,0,0,0.3);
 }
 
-.sub-wrap:hover{
-transform:translateY(-5px) scale(1.02);
-border:1px solid #00e5ff;
-box-shadow:0 0 20px #00e5ff;
-}
-
-/* ================= ICON ================= */
-.sub-icon{
-width:55px;
-height:55px;
+.icon{
+width:70px;
+height:70px;
 border-radius:50%;
 overflow:hidden;
-flex-shrink:0;
-border:2px solid #00e5ff;
-box-shadow:0 0 10px #00e5ff;
+border:3px solid #00e5ff;
 }
 
-.sub-icon img{
+.icon img{
 width:100%;
 height:100%;
 object-fit:cover;
 }
 
-/* ================= BUTTON ================= */
-.sub-btn{
+.content{
 flex:1;
-padding:12px 14px;
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.sub-text{
+font-size:12px;
+opacity:0.8;
+}
+
+.title{
+font-size:16px;
+font-weight:bold;
+}
+
+.card-btn{
 border:none;
 border-radius:10px;
-font-size:14px;
-color:white;
+padding:10px;
 cursor:pointer;
 font-weight:bold;
-letter-spacing:0.3px;
-transition:0.3s;
+color:white;
+border:2px solid #ffd600;
 position:relative;
 overflow:hidden;
 }
 
-/* glowing animation border */
-.sub-btn::before{
+.card-btn::before{
 content:"";
 position:absolute;
-top:-2px;
-left:-2px;
-right:-2px;
-bottom:-2px;
+inset:-2px;
 background: linear-gradient(45deg,#00e5ff,#ff00ff,#00ff88,#00e5ff);
 background-size:400%;
-z-index:-1;
 filter:blur(6px);
+z-index:-1;
 animation: glow 6s linear infinite;
 }
 
@@ -133,153 +125,70 @@ animation: glow 6s linear infinite;
 0%{background-position:0 0;}
 100%{background-position:400% 0;}
 }
-
-/* ================= BUTTON COLORS ================= */
-.academic{ background:#1565c0; }
-.skill{ background:#6a1b9a; }
-.sports{ background:#2e7d32; }
-.creative{ background:#ef6c00; }
-.student{ background:#00838f; }
-
-/* ================= TOP BUTTONS ================= */
-.topButtons{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-margin-bottom:20px;
-}
-
-.topButtons a{
-padding:10px 14px;
-background:rgba(255,255,255,0.1);
-border:1px solid rgba(255,255,255,0.2);
-color:white;
-text-decoration:none;
-border-radius:8px;
-transition:0.3s;
-}
-
-.topButtons a:hover{
-background:#00e5ff;
-color:black;
-}
-
-/* ================= RESPONSIVE ================= */
-@media(max-width:600px){
-.sub-wrap{
-flex-direction:column;
-text-align:center;
-}
-.sub-btn{
-width:100%;
-}
-}
-
 </style>
 </head>
 
 <body>
 
 <header>
-🚀 GURULINK Registration Portal
+<div class="header-logo">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
+</div>
+<div class="header-title">GURULINK Registration Portal</div>
 </header>
 
 <div class="container">
 
-<!-- TOP BUTTONS -->
-<div class="topButtons">
-<a href="index.html">Home</a>
-<a href="find-teacher.html">Find Teacher</a>
-<a href="student-login.html">Student Login</a>
-</div>
-
-<!-- NOTE -->
-<div class="note">
-<h2>Welcome to GURULINK</h2>
-<p>
-A direct education platform connecting students and teachers without brokers.
-Build your profile and grow globally.
-</p>
-</div>
-
-<!-- GRID -->
 <div class="grid">
 
-<div class="sub-wrap">
-<div class="sub-icon">
-<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
-</div>
-<button class="sub-btn academic" onclick="location.href='academic-teacher.html'">
-Academic Teacher
+<div class="card">
+<div class="icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<div class="content">
+<div class="sub-text">School / JEE / NEET / CUET</div>
+<div class="title">Academic Teacher</div>
+<button class="card-btn" onclick="location.href='academic-teacher.html'">
+Register
 </button>
 </div>
-
-<div class="sub-wrap">
-<div class="sub-icon">
-<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
-</div>
-<button class="sub-btn academic" onclick="location.href='academic-institute.html'">
-Academic Institute
-</button>
-</div>
-
-<div class="sub-wrap">
-<div class="sub-icon">
-<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
-</div>
-<button class="sub-btn skill" onclick="location.href='skill-teacher.html'">
-Skill Teacher
-</button>
-</div>
-
-<div class="sub-wrap">
-<div class="sub-icon">
-<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
-</div>
-<button class="sub-btn skill" onclick="location.href='skill-institute.html'">
-Skill Institute
-</button>
-</div>
-
-<div class="sub-wrap">
-<div class="sub-icon">
-<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
-</div>
-<button class="sub-btn sports" onclick="location.href='sport-teacher.html'">
-Sports Teacher
-</button>
-</div>
-
-<div class="sub-wrap">
-<div class="sub-icon">
-<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
-</div>
-<button class="sub-btn sports" onclick="location.href='sport-institution.html'">
-Sports Institute
-</button>
-</div>
-
-<div class="sub-wrap">
-<div class="sub-icon">
-<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
-</div>
-<button class="sub-btn creative" onclick="location.href='creative-teacher.html'">
-Creative Teacher
-</button>
-</div>
-
-<div class="sub-wrap">
-<div class="sub-icon">
-<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
-</div>
-<button class="sub-btn creative" onclick="location.href='creative-institute.html'">
-Creative Institute
-</button>
 </div>
 
 </div>
 
 </div>
 
-</body>
-</html>
+<script type="module">
+
+/* ================= FIREBASE ================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, push } 
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+/* ================= CONFIG ================= */
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+/* ================= INIT ================= */
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+/* ================= IMG API ================= */
+const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
+
+/* ================= IMAGE UPLOAD ================= */
+async function upload(file){
+
+let fd = new FormData();
+fd.append("image", file);
+
+let res = await fetch(
+`https://api.imgbb.com/1/upload?key=${API_KEY}`,
+{
+method:"POST",
+body:
