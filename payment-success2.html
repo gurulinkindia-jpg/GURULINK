@@ -93,6 +93,11 @@ const params = new URLSearchParams(window.location.search);
 let type = params.get("type") || "teacher";
 let id = params.get("id");
 
+/* 🔥 DEBUG LOGS (ADD HERE) */
+console.log("TYPE:", type);
+console.log("ID:", id);
+console.log("FULL URL:", window.location.href);
+
 if (!id) {
     id =
         localStorage.getItem("paymentProfileId") ||
@@ -137,10 +142,19 @@ try {
 
 
 
-const profilePath =
-type === "institution"
-? "institutions/" + id
-: "teachers/" + id;
+let profilePath = "";
+
+const cleanType = (type || "").toLowerCase();
+
+if (cleanType.includes("teacher")) {
+    profilePath = "teachers/" + id;
+}
+else if (cleanType.includes("institution")) {
+    profilePath = "institutions/" + id;
+}
+else {
+    throw new Error("Invalid type: " + type);
+}
 
 
 
