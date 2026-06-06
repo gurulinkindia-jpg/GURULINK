@@ -483,6 +483,22 @@ onclick="logout()">
 
 </div>
 
+<!-- PART 1b WILL ADD LEADS HERE -->
+
+<div class="section" id="bankSection" style="display:none;">
+
+  <h2 class="sectionTitle">💳 Bank & Payment Details</h2>
+
+  <p><b>Bank Name:</b> <span id="bankName">-</span></p>
+  <p><b>Account Number:</b> <span id="accountNumber">-</span></p>
+  <p><b>IFSC:</b> <span id="ifscCode">-</span></p>
+  <p><b>UPI ID:</b> <span id="upiId">-</span></p>
+
+  <div style="margin-top:15px;text-align:center;">
+    <img id="qrImage" style="max-width:200px;border-radius:10px;">
+  </div>
+
+</div>
 <!-- PART 2 WILL ADD LEADS HERE -->
 
 <div id="leadsSection"></div>
@@ -655,6 +671,21 @@ return;
 
 
 const d = snap.val();
+/* BANK DETAILS */
+document.getElementById("bankName").innerText = d.bankName || "Not Added";
+document.getElementById("accountNumber").innerText = d.accountNumber || "Not Added";
+document.getElementById("ifscCode").innerText = d.ifsc || "Not Added";
+document.getElementById("upiId").innerText = d.upiId || "Not Added";
+
+/* QR IMAGE */
+const qr = document.getElementById("qrImage");
+
+if (d.qrImage) {
+  qr.src = d.qrImage;
+  document.getElementById("bankSection").style.display = "block";
+} else {
+  document.getElementById("bankSection").style.display = "none";
+}
 
 /* ✅ ADD LOGO CODE HERE */
 const logoURL = d.logo || "default.png";
