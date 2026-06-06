@@ -3,107 +3,176 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>Register - GURULINK</title>
+<title>GURULINK Registration</title>
 
 <style>
 
+/* ================= GLOBAL ================= */
 body{
 margin:0;
 font-family:Arial,sans-serif;
-background:#eef2f7;
-}
-
-header{
-background:#1565c0;
+background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 color:white;
-padding:18px;
-text-align:center;
-font-size:20px;
-font-weight:bold;
 }
 
+/* ================= HEADER ================= */
+header{
+padding:20px;
+text-align:center;
+font-size:22px;
+font-weight:bold;
+background: rgba(255,255,255,0.08);
+backdrop-filter: blur(10px);
+border-bottom:1px solid rgba(255,255,255,0.2);
+}
+
+/* ================= CONTAINER ================= */
 .container{
-max-width:1000px;
+max-width:1100px;
 margin:auto;
 padding:20px;
 }
 
+/* ================= NOTE BOX ================= */
 .note{
-background:white;
+background: rgba(255,255,255,0.08);
+backdrop-filter: blur(10px);
 padding:20px;
-border-radius:12px;
-box-shadow:0 4px 15px rgba(0,0,0,.1);
-margin-bottom:20px;
+border-radius:15px;
+margin-bottom:25px;
+border:1px solid rgba(255,255,255,0.2);
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
 }
 
 .note h2{
 margin-top:0;
-color:#1565c0;
+color:#00e5ff;
 }
 
 .note p{
-color:#555;
+color:#e0e0e0;
 line-height:1.6;
 }
 
+/* ================= GRID ================= */
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:18px;
+}
+
+/* ================= CARD STYLE ================= */
+.sub-wrap{
+display:flex;
+align-items:center;
 gap:15px;
+padding:15px;
+border-radius:15px;
+background: rgba(255,255,255,0.07);
+backdrop-filter: blur(10px);
+border:1px solid rgba(255,255,255,0.2);
+transition:0.3s;
+box-shadow:0 8px 25px rgba(0,0,0,0.3);
 }
 
-.card{
-background:white;
-padding:18px;
-border-radius:12px;
-text-align:center;
-box-shadow:0 4px 10px rgba(0,0,0,.08);
-transition:0.2s;
+.sub-wrap:hover{
+transform:translateY(-5px) scale(1.02);
+border:1px solid #00e5ff;
+box-shadow:0 0 20px #00e5ff;
 }
 
-.card:hover{
-transform:scale(1.03);
+/* ================= ICON ================= */
+.sub-icon{
+width:55px;
+height:55px;
+border-radius:50%;
+overflow:hidden;
+flex-shrink:0;
+border:2px solid #00e5ff;
+box-shadow:0 0 10px #00e5ff;
 }
 
-.card h3{
-margin:10px 0;
-color:#1565c0;
+.sub-icon img{
+width:100%;
+height:100%;
+object-fit:cover;
 }
 
-.card a{
-display:inline-block;
-margin-top:10px;
-padding:10px 14px;
-background:#1565c0;
-color:white;
-text-decoration:none;
-border-radius:8px;
+/* ================= BUTTON ================= */
+.sub-btn{
+flex:1;
+padding:12px 14px;
+border:none;
+border-radius:10px;
 font-size:14px;
+color:white;
+cursor:pointer;
+font-weight:bold;
+letter-spacing:0.3px;
+transition:0.3s;
+position:relative;
+overflow:hidden;
 }
 
-.card a:hover{
-background:#0d47a1;
+/* glowing animation border */
+.sub-btn::before{
+content:"";
+position:absolute;
+top:-2px;
+left:-2px;
+right:-2px;
+bottom:-2px;
+background: linear-gradient(45deg,#00e5ff,#ff00ff,#00ff88,#00e5ff);
+background-size:400%;
+z-index:-1;
+filter:blur(6px);
+animation: glow 6s linear infinite;
 }
 
+@keyframes glow{
+0%{background-position:0 0;}
+100%{background-position:400% 0;}
+}
+
+/* ================= BUTTON COLORS ================= */
+.academic{ background:#1565c0; }
+.skill{ background:#6a1b9a; }
+.sports{ background:#2e7d32; }
+.creative{ background:#ef6c00; }
+.student{ background:#00838f; }
+
+/* ================= TOP BUTTONS ================= */
 .topButtons{
 display:flex;
 gap:10px;
 flex-wrap:wrap;
-margin-bottom:15px;
+margin-bottom:20px;
 }
 
 .topButtons a{
 padding:10px 14px;
-background:#43a047;
+background:rgba(255,255,255,0.1);
+border:1px solid rgba(255,255,255,0.2);
 color:white;
 text-decoration:none;
 border-radius:8px;
-font-size:14px;
+transition:0.3s;
 }
 
-.topButtons a.back{
-background:#444;
+.topButtons a:hover{
+background:#00e5ff;
+color:black;
+}
+
+/* ================= RESPONSIVE ================= */
+@media(max-width:600px){
+.sub-wrap{
+flex-direction:column;
+text-align:center;
+}
+.sub-btn{
+width:100%;
+}
 }
 
 </style>
@@ -112,109 +181,100 @@ background:#444;
 <body>
 
 <header>
-GURULINK Registration Portal
+🚀 GURULINK Registration Portal
 </header>
 
 <div class="container">
 
 <!-- TOP BUTTONS -->
 <div class="topButtons">
-<a class="back" href="index.html">Back to Home</a>
+<a href="index.html">Home</a>
 <a href="find-teacher.html">Find Teacher</a>
 <a href="student-login.html">Student Login</a>
 </div>
 
-<!-- PLATFORM NOTE -->
+<!-- NOTE -->
 <div class="note">
-
 <h2>Welcome to GURULINK</h2>
-
 <p>
-GURULINK is a direct education connection platform where
-students, teachers, coaches, and institutions connect without any brokers.
+A direct education platform connecting students and teachers without brokers.
+Build your profile and grow globally.
 </p>
-
-<p>
-Students can explore profiles, compare educators, and directly contact teachers
-for academic, skill-based, creative, and sports learning.
-</p>
-
-<p>
-Teachers and institutions can grow globally by showcasing their expertise
-and reaching real students directly.
-</p>
-
-<p>
-✔ No middlemen<br>
-✔ Direct communication<br>
-✔ Verified profiles<br>
-✔ Global visibility<br>
-✔ One platform for all education categories
-</p>
-
 </div>
 
-<!-- REGISTRATION CARDS -->
+<!-- GRID -->
 <div class="grid">
 
-<div class="card">
-<h3>Student</h3>
-<p>Join as learner & explore teachers</p>
-<a href="student-login.html">Register</a>
+<div class="sub-wrap">
+<div class="sub-icon">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
+</div>
+<button class="sub-btn academic" onclick="location.href='academic-teacher.html'">
+Academic Teacher
+</button>
 </div>
 
-<div class="card">
-<h3>Academic Teacher</h3>
-<p>School / JEE / NEET / CUET teachers</p>
-<a href="academic-teacher.html">Register</a>
+<div class="sub-wrap">
+<div class="sub-icon">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
+</div>
+<button class="sub-btn academic" onclick="location.href='academic-institute.html'">
+Academic Institute
+</button>
 </div>
 
-<div class="card">
-<h3>Academic Institute</h3>
-<p>Schools & coaching centres</p>
-<a href="academic-institute.html">Register</a>
+<div class="sub-wrap">
+<div class="sub-icon">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
+</div>
+<button class="sub-btn skill" onclick="location.href='skill-teacher.html'">
+Skill Teacher
+</button>
 </div>
 
-<div class="card">
-<h3>Skill Teacher</h3>
-<p>Coding, spoken English, career skills</p>
-<a href="skill-teacher.html">Register</a>
+<div class="sub-wrap">
+<div class="sub-icon">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
+</div>
+<button class="sub-btn skill" onclick="location.href='skill-institute.html'">
+Skill Institute
+</button>
 </div>
 
-<div class="card">
-<h3>Skill Institute</h3>
-<p>Training centres & skill academies</p>
-<a href="skill-institute.html">Register</a>
+<div class="sub-wrap">
+<div class="sub-icon">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
+</div>
+<button class="sub-btn sports" onclick="location.href='sport-teacher.html'">
+Sports Teacher
+</button>
 </div>
 
-<div class="card">
-<h3>Sports Teacher</h3>
-<p>Coaches for all sports</p>
-<a href="sport-teacher.html">Register</a>
+<div class="sub-wrap">
+<div class="sub-icon">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
+</div>
+<button class="sub-btn sports" onclick="location.href='sport-institution.html'">
+Sports Institute
+</button>
 </div>
 
-<div class="card">
-<h3>Sports Institution</h3>
-<p>Sports academies & clubs</p>
-<a href="sport-institution.html">Register</a>
+<div class="sub-wrap">
+<div class="sub-icon">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
+</div>
+<button class="sub-btn creative" onclick="location.href='creative-teacher.html'">
+Creative Teacher
+</button>
 </div>
 
-<div class="card">
-<h3>Creative Teacher</h3>
-<p>Music, dance, art, photography</p>
-<a href="creative-teacher.html">Register</a>
+<div class="sub-wrap">
+<div class="sub-icon">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
 </div>
-
-<div class="card">
-<h3>Creative Institute</h3>
-<p>Art schools & creative academies</p>
-<a href="creative-institute.html">Register</a>
-</div>
-
-<div class="card">
-<h3>Find Teachers</h3>
-<p>Search all educators in one place</p>
-<a href="find-teacher.html">Explore</a>
+<button class="sub-btn creative" onclick="location.href='creative-institute.html'">
+Creative Institute
+</button>
 </div>
 
 </div>
