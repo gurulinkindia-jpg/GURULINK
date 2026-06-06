@@ -497,34 +497,10 @@ galleryBox.innerHTML="";
 
 
 
-gallery.forEach((img, index) => {
-  const wrapper = document.createElement("div");
-  wrapper.style.position = "relative";
-  wrapper.style.display = "inline-block";
 
-  const image = document.createElement("img");
-  image.src = img;
-
-  const btn = document.createElement("button");
-  btn.innerText = "✖";
-  btn.style.position = "absolute";
-  btn.style.top = "2px";
-  btn.style.right = "2px";
-  btn.style.background = "red";
-  btn.style.color = "white";
-  btn.style.border = "none";
-  btn.style.borderRadius = "50%";
-  btn.style.width = "22px";
-  btn.style.height = "22px";
-  btn.style.cursor = "pointer";
-
-  btn.onclick = () => {
-    // remove from array
-    profileData.gallery.splice(index, 1);
-
-    // reload UI instantly
-    loadProfile();
-  };
+  
+  
+  
 
   wrapper.appendChild(image);
   wrapper.appendChild(btn);
@@ -848,6 +824,74 @@ location.href=
 }
 
 };
+
+
+
+
+
+
+function renderGallery() {
+
+  const galleryBox = document.getElementById("galleryPreview");
+  galleryBox.innerHTML = "";
+
+  const gallery = profileData.gallery || [];
+  renderGallery();
+
+  gallery.forEach((img, index) => {
+
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "relative";
+    wrapper.style.display = "inline-block";
+
+    const image = document.createElement("img");
+    image.src = img;
+
+    const btn = document.createElement("button");
+    btn.innerText = "✖";
+
+    btn.style.position = "absolute";
+    btn.style.top = "2px";
+    btn.style.right = "2px";
+    btn.style.background = "red";
+    btn.style.color = "white";
+    btn.style.border = "none";
+    btn.style.borderRadius = "50%";
+    btn.style.width = "22px";
+    btn.style.height = "22px";
+    btn.style.cursor = "pointer";
+
+    // ✅ DELETE FUNCTION (FIXED)
+  
+
+
+btn.onclick = async () => {
+
+  // 1. remove image
+  profileData.gallery = profileData.gallery.filter((_, i) => i !== index);
+
+  // 2. update UI
+  renderGallery();
+
+  // 3. SAVE TO FIREBASE (MOST IMPORTANT)
+  await update(ref(db, dbPath), {
+    gallery: profileData.gallery
+  });
+};
+	
+	
+	
+	
+
+    wrapper.appendChild(image);
+    wrapper.appendChild(btn);
+
+    galleryBox.appendChild(wrapper);
+  });
+}
+
+
+
 
 </script>
 
