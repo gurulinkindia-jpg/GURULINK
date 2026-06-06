@@ -204,8 +204,24 @@ box-shadow:0 5px 15px rgba(0,0,0,0.2);
 z-index:9999;
 }
 
-.homeBtn{bottom:90px;background:#1976d2;}
-.dashboardBtn{bottom:20px;background:#4caf50;}
+.homeBtn{
+bottom:20px;
+background:#1976d2;
+}
+
+.backBtn{
+bottom:90px;
+background:#4caf50;
+}
+
+/* Hide Back button on mobile */
+@media(max-width:768px){
+.backBtn{
+display:none;
+}
+}
+
+
 .payFee{
 background:#ff9800;
 }
@@ -643,7 +659,12 @@ load();
 </script>
 
 <a href="index.html" class="floatingBtn homeBtn">🏠</a>
-<a href="student-dashboard.html" class="floatingBtn dashboardBtn">📊</a>
+
+<a
+href="javascript:history.back()"
+class="floatingBtn backBtn">
+⬅️
+</a>
 
 </body>
 </html>
