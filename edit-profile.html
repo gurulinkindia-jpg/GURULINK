@@ -271,12 +271,6 @@ Back To Dashboard
 
 </div>
 
-
-
-
-
-
-
 <script type="module">
 
 import {
@@ -498,35 +492,46 @@ document.getElementById(
 "galleryPreview"
 );
 
+galleryBox.innerHTML="";
 
 
-galleryBox.innerHTML = "";
+
 
 gallery.forEach((img, index) => {
+  const wrapper = document.createElement("div");
+  wrapper.style.position = "relative";
+  wrapper.style.display = "inline-block";
 
-galleryBox.innerHTML += `
-<div style="position:relative;display:inline-block;">
-    <img src="${img}" style="width:100px;height:100px;object-fit:cover;border-radius:10px;border:1px solid #ddd;">
-    
-    <button onclick="deleteGalleryImage(${index})"
-        style="
-        position:absolute;
-        top:2px;
-        right:2px;
-        background:red;
-        color:white;
-        border:none;
-        border-radius:50%;
-        width:22px;
-        height:22px;
-        cursor:pointer;
-        font-weight:bold;">
-        ×
-    </button>
-</div>
-`;
+  const image = document.createElement("img");
+  image.src = img;
 
+  const btn = document.createElement("button");
+  btn.innerText = "✖";
+  btn.style.position = "absolute";
+  btn.style.top = "2px";
+  btn.style.right = "2px";
+  btn.style.background = "red";
+  btn.style.color = "white";
+  btn.style.border = "none";
+  btn.style.borderRadius = "50%";
+  btn.style.width = "22px";
+  btn.style.height = "22px";
+  btn.style.cursor = "pointer";
+
+  btn.onclick = () => {
+    // remove from array
+    profileData.gallery.splice(index, 1);
+
+    // reload UI instantly
+    loadProfile();
+  };
+
+  wrapper.appendChild(image);
+  wrapper.appendChild(btn);
+
+  galleryBox.appendChild(wrapper);
 });
+
 
 
 
@@ -613,6 +618,8 @@ saveBtn.innerText="Saving...";
 /* START WITH EXISTING DATA */
 
 let updateData = {...profileData};
+updateData.gallery = profileData.gallery || [];   // ✅ ADD THIS LINE HERE
+
 updateData.bankName =
 document.getElementById("bankName").value;
 
@@ -841,74 +848,6 @@ location.href=
 }
 
 };
-
-
-
-window.deleteGalleryImage = async function(index) {
-
-let gallery = Array.isArray(profileData.gallery)
-    ? profileData.gallery
-    : [];
-
-// remove image
-gallery.splice(index, 1);
-
-// update local memory
-profileData.gallery = gallery;
-
-// re-render UI immediately
-renderGallery();
-
-// SAVE TO FIREBASE (IMPORTANT FIX)
-try {
-    await update(ref(db, dbPath), {
-        gallery: gallery
-    });
-} catch (err) {
-    console.log(err);
-    alert("Failed to delete image");
-}
-
-};
-
-
-function renderGallery() {
-
-const galleryBox = document.getElementById("galleryPreview");
-galleryBox.innerHTML = "";
-
-const gallery = Array.isArray(profileData.gallery)
-    ? profileData.gallery
-    : [];
-
-gallery.forEach((img, index) => {
-
-galleryBox.innerHTML += `
-<div style="position:relative;display:inline-block;">
-    <img src="${img}" style="width:100px;height:100px;object-fit:cover;border-radius:10px;border:1px solid #ddd;">
-    
-    <button onclick="deleteGalleryImage(${index})"
-        style="
-        position:absolute;
-        top:2px;
-        right:2px;
-        background:red;
-        color:white;
-        border:none;
-        border-radius:50%;
-        width:22px;
-        height:22px;
-        cursor:pointer;
-        font-weight:bold;">
-        ×
-    </button>
-</div>
-`;
-
-});
-
-}
-
 
 </script>
 
