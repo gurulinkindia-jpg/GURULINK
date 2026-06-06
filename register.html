@@ -7,6 +7,8 @@
 <title>GURULINK Registration</title>
 
 <style>
+
+/* ================= BODY ================= */
 body{
 margin:0;
 font-family:Arial,sans-serif;
@@ -14,6 +16,7 @@ background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 color:white;
 }
 
+/* ================= HEADER ================= */
 header{
 display:flex;
 align-items:center;
@@ -24,12 +27,13 @@ backdrop-filter: blur(10px);
 border-bottom:1px solid rgba(255,255,255,0.2);
 }
 
+/* LOGO */
 .header-logo{
 width:40px;
 height:40px;
 border-radius:50%;
-overflow:hidden;
 border:2px solid #00e5ff;
+overflow:hidden;
 }
 
 .header-logo img{
@@ -43,18 +47,55 @@ font-size:20px;
 font-weight:bold;
 }
 
+/* ================= CONTAINER ================= */
 .container{
 max-width:1100px;
 margin:auto;
 padding:20px;
 }
 
+/* ================= GRID ================= */
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
 gap:18px;
 }
 
+/* ================= TOP CARD ================= */
+.action-card{
+background: rgba(255,255,255,0.08);
+backdrop-filter: blur(12px);
+border:1px solid rgba(255,255,255,0.2);
+border-radius:15px;
+padding:20px;
+margin-bottom:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+.action-buttons{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.action-buttons button{
+flex:1;
+padding:10px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+background: rgba(255,255,255,0.12);
+color:white;
+transition:0.3s;
+}
+
+.action-buttons button:hover{
+background:#00e5ff;
+color:black;
+}
+
+/* ================= CARD ================= */
 .card{
 background: rgba(255,255,255,0.07);
 backdrop-filter: blur(10px);
@@ -64,9 +105,9 @@ padding:16px;
 display:flex;
 gap:15px;
 align-items:center;
-box-shadow:0 8px 25px rgba(0,0,0,0.3);
 }
 
+/* ICON */
 .icon{
 width:70px;
 height:70px;
@@ -81,6 +122,7 @@ height:100%;
 object-fit:cover;
 }
 
+/* CONTENT */
 .content{
 flex:1;
 display:flex;
@@ -98,10 +140,11 @@ font-size:16px;
 font-weight:bold;
 }
 
+/* BUTTON */
 .card-btn{
 border:none;
-border-radius:10px;
 padding:10px;
+border-radius:10px;
 cursor:pointer;
 font-weight:bold;
 color:white;
@@ -113,11 +156,14 @@ overflow:hidden;
 .card-btn::before{
 content:"";
 position:absolute;
-inset:-2px;
-background: linear-gradient(45deg,#00e5ff,#ff00ff,#00ff88,#00e5ff);
+top:-2px;
+left:-2px;
+right:-2px;
+bottom:-2px;
+background:linear-gradient(45deg,#00e5ff,#ff00ff,#00ff88,#00e5ff);
 background-size:400%;
-filter:blur(6px);
 z-index:-1;
+filter:blur(6px);
 animation: glow 6s linear infinite;
 }
 
@@ -125,6 +171,12 @@ animation: glow 6s linear infinite;
 0%{background-position:0 0;}
 100%{background-position:400% 0;}
 }
+
+.academic{background:#1565c0;}
+.skill{background:#6a1b9a;}
+.sports{background:#2e7d32;}
+.creative{background:#ef6c00;}
+
 </style>
 </head>
 
@@ -139,14 +191,120 @@ animation: glow 6s linear infinite;
 
 <div class="container">
 
+<div class="action-card">
+<h2>Welcome to GURULINK</h2>
+
+<p>
+GURULINK is a direct education connection platform where students, teachers,
+coaches, and institutions connect without brokers.
+</p>
+
+<p>
+✔ No middlemen • Direct contact • Verified profiles • Global reach
+</p>
+
+<div class="action-buttons">
+<button onclick="location.href='index.html'">Home</button>
+<button onclick="location.href='dashboard.html'">Dashboard</button>
+<button onclick="location.href='find-teacher.html'">Find Teacher</button>
+<button onclick="alert('Welcome!')">Welcome</button>
+</div>
+</div>
+
+<!-- GRID -->
 <div class="grid">
 
+<!-- Academic Teacher -->
 <div class="card">
 <div class="icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
 <div class="content">
 <div class="sub-text">School / JEE / NEET / CUET</div>
 <div class="title">Academic Teacher</div>
-<button class="card-btn" onclick="location.href='academic-teacher.html'">
+<button class="card-btn academic" onclick="location.href='academic-teacher.html'">
+Register
+</button>
+</div>
+</div>
+
+<!-- Academic Institute -->
+<div class="card">
+<div class="icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<div class="content">
+<div class="sub-text">Coaching Centres</div>
+<div class="title">Academic Institute</div>
+<button class="card-btn academic" onclick="location.href='academic-institute.html'">
+Register
+</button>
+</div>
+</div>
+
+<!-- Skill Teacher -->
+<div class="card">
+<div class="icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<div class="content">
+<div class="sub-text">Skills / Coding</div>
+<div class="title">Skill Teacher</div>
+<button class="card-btn skill" onclick="location.href='skill-teacher.html'">
+Register
+</button>
+</div>
+</div>
+
+<!-- Skill Institute -->
+<div class="card">
+<div class="icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<div class="content">
+<div class="sub-text">Training Institutes</div>
+<div class="title">Skill Institute</div>
+<button class="card-btn skill" onclick="location.href='skill-institute.html'">
+Register
+</button>
+</div>
+</div>
+
+<!-- Sports Teacher -->
+<div class="card">
+<div class="icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<div class="content">
+<div class="sub-text">Sports Coaching</div>
+<div class="title">Sports Teacher</div>
+<button class="card-btn sports" onclick="location.href='sport-teacher.html'">
+Register
+</button>
+</div>
+</div>
+
+<!-- Sports Institute -->
+<div class="card">
+<div class="icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<div class="content">
+<div class="sub-text">Sports Academies</div>
+<div class="title">Sports Institute</div>
+<button class="card-btn sports" onclick="location.href='sport-institution.html'">
+Register
+</button>
+</div>
+</div>
+
+<!-- Creative Teacher -->
+<div class="card">
+<div class="icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<div class="content">
+<div class="sub-text">Music / Dance / Art</div>
+<div class="title">Creative Teacher</div>
+<button class="card-btn creative" onclick="location.href='creative-teacher.html'">
+Register
+</button>
+</div>
+</div>
+
+<!-- Creative Institute -->
+<div class="card">
+<div class="icon"><img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"></div>
+<div class="content">
+<div class="sub-text">Creative Academies</div>
+<div class="title">Creative Institute</div>
+<button class="card-btn creative" onclick="location.href='creative-institute.html'">
 Register
 </button>
 </div>
@@ -155,15 +313,14 @@ Register
 </div>
 
 </div>
+</div>
 
+<!-- ================= FIREBASE ================= -->
 <script type="module">
 
-/* ================= FIREBASE ================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push } 
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-/* ================= CONFIG ================= */
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
@@ -174,14 +331,12 @@ messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
-/* ================= INIT ================= */
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* ================= IMG API ================= */
+/* ================= IMAGE UPLOAD ================= */
 const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
 
-/* ================= IMAGE UPLOAD ================= */
 async function upload(file){
 
 let fd = new FormData();
@@ -191,4 +346,21 @@ let res = await fetch(
 `https://api.imgbb.com/1/upload?key=${API_KEY}`,
 {
 method:"POST",
-body:
+body:fd
+}
+);
+
+let data = await res.json();
+return data.data.url;
+}
+
+/* expose for later use */
+window.db = db;
+window.ref = ref;
+window.push = push;
+window.upload = upload;
+
+</script>
+
+</body>
+</html>
