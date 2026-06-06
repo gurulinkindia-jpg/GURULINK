@@ -193,7 +193,7 @@ accept="image/*">
 
 <div class="uploadBox">
 
-<h3>Upload QR Code</h3>
+<h3>Upload Your Bank QR Code (Recive Payment)</h3>
 
 <input
 type="file"
@@ -209,7 +209,10 @@ accept="image/*">
 <label>Bank Name</label>
 <input type="text" id="bankName">
 </div>
-
+<div class="field">
+<label>Account Holder Name</label>
+<input type="text" id="accountHolderName">
+</div>
 <div class="field">
 <label>Account Number</label>
 <input type="text" id="accountNumber">
@@ -435,6 +438,9 @@ profileData.qrImage = "";
 if(profileData.bankName === undefined){
 profileData.bankName = "";
 }
+if(profileData.accountHolderName === undefined){
+profileData.accountHolderName = "";
+}
 
 if(profileData.accountNumber === undefined){
 profileData.accountNumber = "";
@@ -485,6 +491,7 @@ if(
 key==="logo" ||
 key==="gallery" ||
 key==="bankName" ||
+key==="accountHolderName" ||
 key==="accountNumber" ||
 key==="ifsc" ||
 key==="upiId" ||
@@ -502,6 +509,9 @@ profileData[key]
 
 document.getElementById("bankName").value =
 profileData.bankName || "";
+
+document.getElementById("accountHolderName").value =
+profileData.accountHolderName || "";
 
 document.getElementById("accountNumber").value =
 profileData.accountNumber || "";
@@ -539,6 +549,9 @@ saveBtn.innerText="Saving...";
 let updateData = {...profileData};
 updateData.bankName =
 document.getElementById("bankName").value;
+
+updateData.accountHolderName =
+document.getElementById("accountHolderName").value;
 
 updateData.accountNumber =
 document.getElementById("accountNumber").value;
