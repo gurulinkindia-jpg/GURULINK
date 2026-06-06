@@ -831,62 +831,54 @@ location.href=
 
 
 function renderGallery() {
-
   const galleryBox = document.getElementById("galleryPreview");
   galleryBox.innerHTML = "";
 
   const gallery = profileData.gallery || [];
 
+  gallery.forEach((img, index) => {
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "relative";
+    wrapper.style.display = "inline-block";
 
-gallery.forEach((img, index) => {
+    const image = document.createElement("img");
+    image.src = img;
+    image.style.width = "100px";
+    image.style.height = "100px";
+    image.style.objectFit = "cover";
 
-  const wrapper = document.createElement("div");
-  wrapper.style.position = "relative";
-  wrapper.style.display = "inline-block";
+    const btn = document.createElement("button");
+    btn.innerText = "✖";
 
-  const image = document.createElement("img");
-  image.src = img;
-  image.style.width = "100px";
-  image.style.height = "100px";
-  image.style.objectFit = "cover";
+    btn.style.position = "absolute";
+    btn.style.top = "2px";
+    btn.style.right = "2px";
+    btn.style.background = "red";
+    btn.style.color = "white";
+    btn.style.border = "none";
+    btn.style.borderRadius = "50%";
+    btn.style.width = "22px";
+    btn.style.height = "22px";
+    btn.style.cursor = "pointer";
 
-  const btn = document.createElement("button");
-  btn.innerText = "✖";
+    btn.onclick = async () => {
+      // 1. remove from local array
+      profileData.gallery.splice(index, 1);
 
-  btn.style.position = "absolute";
-  btn.style.top = "2px";
-  btn.style.right = "2px";
-  btn.style.background = "red";
-  btn.style.color = "white";
-  btn.style.border = "none";
-  btn.style.borderRadius = "50%";
-  btn.style.width = "22px";
-  btn.style.height = "22px";
-  btn.style.cursor = "pointer";
+      // 2. update Firebase immediately
+      await update(ref(db, dbPath), {
+        gallery: profileData.gallery
+      });
 
-  btn.onclick = () => {
-    profileData.gallery.splice(index, 1);
-    renderGallery();
-  };
-
-  wrapper.appendChild(image);
-  wrapper.appendChild(btn);
-
-  galleryBox.appendChild(wrapper);
-});
-};
-	
-	
-	
-	
+      // 3. re-render UI
+      renderGallery();
+    };
 
     wrapper.appendChild(image);
     wrapper.appendChild(btn);
-
     galleryBox.appendChild(wrapper);
   });
 }
-
 
 
 
