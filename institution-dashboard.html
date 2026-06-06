@@ -326,44 +326,6 @@ background:#1565c0;
 .homeBtn{
 background:#673ab7;
 }
-.shareBtn{
-background:#6a1b9a;
-}
-.shareBtn:hover{
-background:#4a148c;
-}
-
-
-.bankRow{
-  display:flex;
-  gap:15px;
-  margin-bottom:20px;
-  align-items:flex-start;
-}
-
-.bankRow .section{
-  flex:2;
-}
-
-.bankAdBox{
-  flex:1;
-  background:#fff3cd;
-  border-left:5px solid #ff9800;
-  padding:15px;
-  border-radius:15px;
-  box-shadow:0 4px 10px rgba(0,0,0,.08);
-}
-
-.bankAdBox h3{
-  margin-bottom:10px;
-  color:#e65100;
-}
-
-.bankAdBox p{
-  font-size:14px;
-  color:#333;
-  line-height:1.5;
-}
 </style>
 </head>
 
@@ -468,9 +430,6 @@ Quick Actions
 
 
 <div class="mainBtns">
-<button class="shareBtn" onclick="shareProfile()">
-📤 Share Profile
-</button>
 
 <button
 class="editBtn"
@@ -514,50 +473,6 @@ onclick="logout()">
 
 
 </div>
-
-<!-- PART 1b WILL ADD LEADS HERE -->
-
-<div class="bankRow" id="bankSectionWrapper" style="display:none;">
-
-  <!-- LEFT: BANK DETAILS -->
-  <div class="section" id="bankSection">
-    <h2 class="sectionTitle">💳 Bank & Payment Details</h2>
-
-    <p><b>Account Holder Name:</b>
-      <span id="accountHolderName">-</span>
-    </p>
-
-    <p><b>Bank Name:</b> <span id="bankName">-</span></p>
-    <p><b>Account Number:</b> <span id="accountNumber">-</span></p>
-    <p><b>IFSC:</b> <span id="ifscCode">-</span></p>
-    <p><b>UPI ID:</b> <span id="upiId">-</span></p>
-
-    <div style="margin-top:15px;text-align:left;">
-      <img id="qrImage" style="max-width:100px;border-radius:10px;">
-    </div>
-  </div>
-
-  <!-- RIGHT: PRIVACY NOTICE -->
-  <div class="bankAdBox">
-    <h3>⚠ Privacy Notice</h3>
-    <p>
-      If you want or don’t want to share your bank details publicly,  
-      uncheck the option below the bank details in your Edit Profile page.
-    </p>
-  </div>
-
-</div>
-
-
-
-
-
-
-
-
-
-
-
 
 <!-- PART 2 WILL ADD LEADS HERE -->
 
@@ -669,45 +584,56 @@ role === "teacher" || role === "teacher_institute"
 
 function getExpiryInfo(start){
 
-  if(!start){
-    return {
-      text:"Pending Approval",
-      color:"#9e9e9e"
-    };
-  }
+if(!start){
 
-  start = Number(start); // 🔥 FIX HERE
+return {
+text:"Pending Approval",
+color:"#9e9e9e"
+};
 
-  const now = Date.now();
-  const end = start + (365 * 24 * 60 * 60 * 1000);
+}
 
-  if(now > end){
-    return {
-      text:"Expired",
-      color:"#e53935"
-    };
-  }
+const now=Date.now();
 
-  const days = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+const end=
+start+(365*24*60*60*1000);
 
-  if(days <= 30){
-    return {
-      text: days + " Days Remaining",
-      color:"#e53935"
-    };
-  }
+if(now>end){
 
-  if(days <= 90){
-    return {
-      text: days + " Days Remaining",
-      color:"#ff9800"
-    };
-  }
+return {
+text:"Expired",
+color:"#e53935"
+};
 
-  return {
-    text: days + " Days Remaining",
-    color:"#43a047"
-  };
+}
+
+const days=Math.ceil(
+(end-now)/(1000*60*60*24)
+);
+
+if(days<=30){
+
+return {
+text:days+" Days Remaining",
+color:"#e53935"
+};
+
+}
+
+if(days<=90){
+
+return {
+text:days+" Days Remaining",
+color:"#ff9800"
+};
+
+}
+
+return {
+text:days+" Days Remaining",
+color:"#43a047"
+};
+
 }
 
 
@@ -731,23 +657,6 @@ return;
 
 
 const d = snap.val();
-/* BANK DETAILS */
-document.getElementById("accountHolderName").innerText =
-d.accountHolderName || "Not Added";
-document.getElementById("bankName").innerText = d.bankName || "Not Added";
-document.getElementById("accountNumber").innerText = d.accountNumber || "Not Added";
-document.getElementById("ifscCode").innerText = d.ifsc || "Not Added";
-document.getElementById("upiId").innerText = d.upiId || "Not Added";
-
-/* QR IMAGE */
-const qr = document.getElementById("qrImage");
-
-if (d.qrImage) {
-  qr.src = d.qrImage;
-  document.getElementById("bankSectionWrapper").style.display = "flex";
-} else {
-  document.getElementById("bankSectionWrapper").style.display = "none";
-}
 
 /* ✅ ADD LOGO CODE HERE */
 const logoURL = d.logo || "default.png";
@@ -901,8 +810,8 @@ html+=`
 
 <div class="leadName">
 ${
-  (lead.phone && lead.phone.toString().trim())
-    ? "Student"
+  (lead.name ?? "").toString().trim()
+    ? lead.name
     : "Teacher/Institute"
 }
 </div>
@@ -1103,19 +1012,12 @@ location.href=
 
 window.renewProfile = function () {
 
-  const id = localStorage.getItem("profileId");
-  const type = localStorage.getItem("role");
+  const id = profileId;   // already from localStorage
+  const type = role;      // teacher or institution
 
-  if (!id || !type) {
-    alert("Profile not found. Please login again.");
-    return;
-  }
-
-  const url =
+  window.location.href =
     "payment2.html?id=" + encodeURIComponent(id) +
     "&type=" + encodeURIComponent(type);
-
-  window.location.href = url;
 };
 
 
@@ -1233,40 +1135,6 @@ window.toggleStatus = async function (leadId, currentStatus) {
 
 window.goHome = function() {
   location.href = "index.html";
-};
-
-
-window.shareProfile = function () {
-
-  const profileId = localStorage.getItem("profileId");
-  const role = localStorage.getItem("role");
-
-  if (!profileId || !role) {
-    alert("Profile not found");
-    return;
-  }
-
-  const url = window.location.origin + "/profile-view.html?id=" + profileId;
-
-  const text =
-    `Check out this ${role === "teacher" ? "Teacher" : "Institute"} on GURULINK:\n\n` +
-    url;
-
-  const whatsappURL =
-    "https://wa.me/?text=" + encodeURIComponent(text);
-
-  // Mobile native share (best)
-  if (navigator.share) {
-    navigator.share({
-      title: "GURULINK Profile",
-      text: text,
-      url: url
-    }).catch(() => {
-      window.open(whatsappURL, "_blank");
-    });
-  } else {
-    window.open(whatsappURL, "_blank");
-  }
 };
 </script>
 
