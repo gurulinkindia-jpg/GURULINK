@@ -836,47 +836,44 @@ function renderGallery() {
   galleryBox.innerHTML = "";
 
   const gallery = profileData.gallery || [];
-  renderGallery();
-
-  gallery.forEach((img, index) => {
-
-    const wrapper = document.createElement("div");
-    wrapper.style.position = "relative";
-    wrapper.style.display = "inline-block";
-
-    const image = document.createElement("img");
-    image.src = img;
-
-    const btn = document.createElement("button");
-    btn.innerText = "✖";
-
-    btn.style.position = "absolute";
-    btn.style.top = "2px";
-    btn.style.right = "2px";
-    btn.style.background = "red";
-    btn.style.color = "white";
-    btn.style.border = "none";
-    btn.style.borderRadius = "50%";
-    btn.style.width = "22px";
-    btn.style.height = "22px";
-    btn.style.cursor = "pointer";
-
-    // ✅ DELETE FUNCTION (FIXED)
-  
 
 
-btn.onclick = async () => {
+gallery.forEach((img, index) => {
 
-  // 1. remove image
-  profileData.gallery = profileData.gallery.filter((_, i) => i !== index);
+  const wrapper = document.createElement("div");
+  wrapper.style.position = "relative";
+  wrapper.style.display = "inline-block";
 
-  // 2. update UI
-  renderGallery();
+  const image = document.createElement("img");
+  image.src = img;
+  image.style.width = "100px";
+  image.style.height = "100px";
+  image.style.objectFit = "cover";
 
-  // 3. SAVE TO FIREBASE (MOST IMPORTANT)
-  await update(ref(db, dbPath), {
-    gallery: profileData.gallery
-  });
+  const btn = document.createElement("button");
+  btn.innerText = "✖";
+
+  btn.style.position = "absolute";
+  btn.style.top = "2px";
+  btn.style.right = "2px";
+  btn.style.background = "red";
+  btn.style.color = "white";
+  btn.style.border = "none";
+  btn.style.borderRadius = "50%";
+  btn.style.width = "22px";
+  btn.style.height = "22px";
+  btn.style.cursor = "pointer";
+
+  btn.onclick = () => {
+    profileData.gallery.splice(index, 1);
+    renderGallery();
+  };
+
+  wrapper.appendChild(image);
+  wrapper.appendChild(btn);
+
+  galleryBox.appendChild(wrapper);
+});
 };
 	
 	
