@@ -1100,22 +1100,15 @@ location.href=
 
 
 
+
 window.renewProfile = function () {
 
-  const id = localStorage.getItem("profileId");
-  const role = localStorage.getItem("role");
+  const id = profileId;   // already from localStorage
+  const type = role;      // teacher or institution
 
-  if (!id || !role) {
-    alert("Profile ID missing. Please login again.");
-    window.location.href = "login.html";
-    return;
-  }
-
-  // IMPORTANT: keep OLD SYSTEM FLOW
-  localStorage.setItem("profileId", id);
-  localStorage.setItem("role", role);
-
-  window.location.href = "payment2.html";
+  window.location.href =
+    "payment2.html?id=" + encodeURIComponent(id) +
+    "&type=" + encodeURIComponent(type);
 };
 
 
