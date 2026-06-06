@@ -225,6 +225,16 @@ accept="image/*">
 <div class="field">
 <label>UPI ID</label>
 <input type="text" id="upiId">
+
+<div class="field">
+<label>
+<input
+type="checkbox"
+id="showBankDetails">
+ Show Bank Details On Public Profile
+</label>
+</div>
+
 </div>
 
 </div>
@@ -464,6 +474,11 @@ profileData.ifsc = "";
 if(profileData.upiId === undefined){
 profileData.upiId = "";
 }
+
+if(profileData.showBankDetails === undefined){
+profileData.showBankDetails = true;
+}
+
 document.getElementById(
 "logoPreview"
 ).src =
@@ -534,6 +549,9 @@ profileData.ifsc || "";
 document.getElementById("upiId").value =
 profileData.upiId || "";
 
+document.getElementById("showBankDetails").checked =
+profileData.showBankDetails !== false;
+
 if(profileData.mapUrl === undefined){
 profileData.mapUrl = "";
 }
@@ -582,6 +600,9 @@ document.getElementById("ifsc").value;
 
 updateData.upiId =
 document.getElementById("upiId").value;
+
+updateData.showBankDetails =
+document.getElementById("showBankDetails").checked;
 
 updateData.mapUrl =
 document.getElementById("mapUrl").value.trim();
