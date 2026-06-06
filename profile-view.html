@@ -51,17 +51,33 @@ margin:5px 3px;
 .actions{
 margin-top:15px;
 display:flex;
-gap:10px;
-flex-wrap:wrap;
+gap:8px;
+flex-wrap:nowrap;
 }
 
-.actions a{
-display:inline-block;
-padding:10px 14px;
+.actions a,
+.actions button{
+flex:1;
+padding:10px 5px;
 border-radius:10px;
 text-decoration:none;
 color:white;
 font-weight:bold;
+font-size:13px;
+text-align:center;
+display:flex;
+justify-content:center;
+align-items:center;
+margin:0;
+}
+@media(max-width:480px){
+
+.actions a,
+.actions button{
+font-size:12px;
+padding:10px 3px;
+}
+
 }
 
 .call{background:#4caf50}
