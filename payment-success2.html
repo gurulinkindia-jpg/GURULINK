@@ -88,22 +88,34 @@ const db = getDatabase(app);
 
 /* URL PARAMS */
 
+/* URL PARAMS */
 const params = new URLSearchParams(window.location.search);
 
-let type = params.get("type") || "teacher";
+let type = params.get("type");
 let id = params.get("id");
 
-/* 🔥 DEBUG LOGS (ADD HERE) */
-console.log("TYPE:", type);
-console.log("ID:", id);
+/* 🔥 DEBUG */
+console.log("TYPE from URL:", type);
+console.log("ID from URL:", id);
 console.log("FULL URL:", window.location.href);
 
+/* 🔥 FIX 1: fallback from localStorage */
 if (!id) {
-    id =
-        localStorage.getItem("paymentProfileId") ||
-        localStorage.getItem("profileId") ||
-        localStorage.getItem("teacherId") ||
-        localStorage.getItem("institutionId");
+    id = localStorage.getItem("paymentProfileId");
+}
+
+if (!type) {
+    type = localStorage.getItem("paymentType");
+}
+
+/* 🔥 FINAL DEBUG */
+console.log("FINAL TYPE:", type);
+console.log("FINAL ID:", id);
+
+/* safety check */
+if (!id) {
+    alert("Profile ID missing. Please complete registration & payment.");
+    throw new Error("Missing ID");
 }
 
 
