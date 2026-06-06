@@ -8,110 +8,154 @@
 
 <style>
 
+/* ================= GLOBAL ================= */
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
+font-family:Arial,sans-serif;
 }
 
 body{
-font-family:Arial,sans-serif;
-background:#eef2f7;
+background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+color:white;
 padding:20px;
 }
 
+/* ================= CONTAINER ================= */
 .container{
-max-width:900px;
+max-width:950px;
 margin:auto;
 }
 
+/* ================= HEADER ================= */
 .header{
-background:#1565c0;
-color:white;
-padding:20px;
+background: rgba(255,255,255,0.08);
+backdrop-filter: blur(10px);
+border:1px solid rgba(255,255,255,0.2);
+padding:25px;
 border-radius:15px;
 text-align:center;
 margin-bottom:20px;
 }
 
+.header h1{
+color:#00e676;
+}
+
+.header p{
+opacity:0.85;
+}
+
+/* ================= NOTE ================= */
 .note{
-background:white;
+background: rgba(255,255,255,0.08);
+backdrop-filter: blur(10px);
+border:1px solid rgba(255,255,255,0.2);
 padding:20px;
 border-radius:15px;
-box-shadow:0 3px 10px rgba(0,0,0,.1);
 margin-bottom:20px;
 line-height:1.7;
 }
 
-.note h3{
-color:#1565c0;
-margin-bottom:10px;
-}
-
+/* ================= CARDS ================= */
 .cards{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
 gap:15px;
 }
 
+/* ================= CARD ================= */
 .card{
-background:white;
-padding:25px;
+background: rgba(255,255,255,0.07);
+backdrop-filter: blur(10px);
+border:1px solid rgba(255,255,255,0.2);
+padding:20px;
 border-radius:15px;
-box-shadow:0 3px 10px rgba(0,0,0,.1);
 text-align:center;
+transition:0.3s;
+box-shadow:0 8px 20px rgba(0,0,0,0.25);
 }
 
+.card:hover{
+transform:translateY(-6px);
+border:1px solid #00e676;
+box-shadow:0 0 20px #00e676;
+}
+
+/* ================= PROFILE ICON (NEW) ================= */
+.icon{
+width:70px;
+height:70px;
+margin:auto;
+border-radius:50%;
+overflow:hidden;
+border:3px solid #00e676;
+box-shadow:0 0 12px #00e676;
+margin-bottom:12px;
+}
+
+.icon img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+/* ================= TEXT ================= */
 .card h3{
-margin-bottom:10px;
-color:#1565c0;
+color:#00e676;
+margin-bottom:8px;
 }
 
 .card p{
 font-size:14px;
-color:#666;
+opacity:0.85;
 margin-bottom:15px;
 }
 
+/* ================= BUTTON ================= */
 .card a{
 display:inline-block;
 padding:10px 18px;
-background:#1565c0;
-color:white;
+border-radius:10px;
 text-decoration:none;
-border-radius:8px;
 font-weight:bold;
+color:white;
+background:#2e7d32;
+border:2px solid #ffd600;
+transition:0.3s;
 }
 
 .card a:hover{
-background:#0d47a1;
+background:#00e676;
+color:black;
+transform:scale(1.05);
 }
 
+/* ================= NAV BUTTONS ================= */
 .buttons{
 margin-top:25px;
 display:flex;
-gap:10px;
+gap:12px;
 justify-content:center;
 flex-wrap:wrap;
 }
 
 .btn{
 padding:12px 20px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-font-size:15px;
-font-weight:bold;
+border-radius:10px;
 text-decoration:none;
+font-weight:bold;
 color:white;
+transition:0.3s;
+background: rgba(255,255,255,0.1);
+border:1px solid rgba(255,255,255,0.2);
 }
 
-.dashboard{
-background:#43a047;
-}
-
-.home{
-background:#1565c0;
+.btn:hover{
+background:#00e676;
+color:black;
+transform:scale(1.05);
 }
 
 </style>
@@ -121,14 +165,16 @@ background:#1565c0;
 
 <div class="container">
 
+<!-- HEADER -->
 <div class="header">
 <h1>Find Your Teacher</h1>
-<p>Select the category that matches your learning needs.</p>
+<p>Select the category that matches your learning needs</p>
 </div>
 
+<!-- NOTE -->
 <div class="note">
+<h3 style="color:#00e676;">Important Note</h3>
 
-<h3>Important Note for Students</h3>
 
 <p>
 Welcome to GURULINK. To connect with a teacher, coach, mentor, trainer, or institution, please browse the appropriate category below.
@@ -144,64 +190,55 @@ Choose the category that best matches your requirement and explore available edu
 
 </div>
 
+<!-- CARDS -->
 <div class="cards">
 
+<!-- Academic -->
 <div class="card">
+<div class="icon">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
+</div>
 <h3>Academic Teachers</h3>
-<p>
-School subjects, Board exams, JEE, NEET, CUET and competitive preparation.
-</p>
-<a href="academic-profile.html">
-Explore
-</a>
+<p>School, JEE, NEET, CUET & board exams</p>
+<a href="academic-profile.html">Explore</a>
 </div>
 
+<!-- Creative -->
 <div class="card">
+<div class="icon">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
+</div>
 <h3>Creative Teachers</h3>
-<p>
-Music, Dance, Drawing, Painting, Photography and other creative skills.
-</p>
-<a href="creative-profile.html">
-Explore
-</a>
+<p>Music, Dance, Art & Photography</p>
+<a href="creative-profile.html">Explore</a>
 </div>
 
+<!-- Skill -->
 <div class="card">
+<div class="icon">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
+</div>
 <h3>Skill Teachers</h3>
-<p>
-Coding, Spoken English, Personality Development and professional skills.
-</p>
-<a href="skill-profile.html">
-Explore
-</a>
+<p>Coding, English, Personality Development</p>
+<a href="skill-profile.html">Explore</a>
 </div>
 
+<!-- Sports -->
 <div class="card">
+<div class="icon">
+<img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png">
+</div>
 <h3>Sports Coaches</h3>
-<p>
-Cricket, Football, Badminton, Chess, Swimming and fitness training.
-</p>
-<a href="sport-profile.html">
-Explore
-</a>
+<p>Cricket, Football, Fitness & Training</p>
+<a href="sport-profile.html">Explore</a>
 </div>
 
 </div>
 
+<!-- BUTTONS -->
 <div class="buttons">
-
-<a
-href="student-dashboard.html"
-class="btn dashboard">
-Back to Dashboard
-</a>
-
-<a
-href="index.html"
-class="btn home">
-Home
-</a>
-
+<a href="student-dashboard.html" class="btn">Dashboard</a>
+<a href="index.html" class="btn">Home</a>
 </div>
 
 </div>
