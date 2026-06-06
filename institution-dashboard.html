@@ -488,6 +488,9 @@ onclick="logout()">
 <div class="section" id="bankSection" style="display:none;">
 
   <h2 class="sectionTitle">💳 Bank & Payment Details</h2>
+  <p><b>Account Holder Name:</b>
+<span id="accountHolderName">-</span>
+</p>
 
   <p><b>Bank Name:</b> <span id="bankName">-</span></p>
   <p><b>Account Number:</b> <span id="accountNumber">-</span></p>
@@ -672,6 +675,8 @@ return;
 
 const d = snap.val();
 /* BANK DETAILS */
+document.getElementById("accountHolderName").innerText =
+d.accountHolderName || "Not Added";
 document.getElementById("bankName").innerText = d.bankName || "Not Added";
 document.getElementById("accountNumber").innerText = d.accountNumber || "Not Added";
 document.getElementById("ifscCode").innerText = d.ifsc || "Not Added";
