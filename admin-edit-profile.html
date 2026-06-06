@@ -232,6 +232,13 @@ accept="image/*">
 
 </div>
 
+<div class="field">
+<label>Google Maps URL</label>
+<input
+type="text"
+id="mapUrl"
+placeholder="Paste Google Maps share link">
+</div>
 
 <div id="dynamicFields">
 </div>
@@ -541,6 +548,14 @@ profileData.ifsc || "";
 
 document.getElementById("upiId").value =
 profileData.upiId || "";
+
+if(profileData.mapUrl === undefined){
+profileData.mapUrl = "";
+}
+
+document.getElementById("mapUrl").value =
+profileData.mapUrl || "";
+
 document.getElementById(
 "loading"
 ).style.display="none";
@@ -585,6 +600,9 @@ document.getElementById("ifsc").value;
 updateData.upiId =
 document.getElementById("upiId").value;
 
+updateData.mapUrl =
+document.getElementById("mapUrl").value.trim();
+
 /* DYNAMIC FIELDS */
 
 for(const key in profileData){
@@ -596,12 +614,13 @@ continue;
 if(
 key==="logo" ||
 key==="gallery" ||
-key==="accountHolderName" ||
 key==="bankName" ||
+key==="accountHolderName" ||
 key==="accountNumber" ||
 key==="ifsc" ||
 key==="upiId" ||
-key==="qrImage"
+key==="qrImage" ||
+key==="mapUrl"
 ){
 continue;
 }
