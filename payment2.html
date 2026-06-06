@@ -83,57 +83,57 @@ const params = new URLSearchParams(window.location.search);
 const id = params.get("id");
 const type = params.get("type");
 
-/* ❗ STOP if ID missing */
+/* ✅ SAFE CHECK */
 if (!id) {
   alert("Profile ID missing. Please go back to dashboard.");
   throw new Error("Missing profileId");
 }
 
-/* 💰 Set amount + payment link */
-let amount = 3;
+/* 💰 DEFAULT AMOUNT */
+let amount = 399;
 
-
-
-
+/* ✅ FIX TYPE HANDLING */
 let paymentLink = "";
 
-if (type === "teacher") {
+/* Teacher / Institute both allowed */
+if (type === "teacher" || type === "teacher_institute") {
 
-  amount = 3;
+  amount = 399;
 
+  paymentLink =
+    "https://rzp.io/rzp/6jCbwy7?redirect=true&redirect_url=" +
+    encodeURIComponent(
+      "https://gurulink.onrender.com/payment-success2.html?type=" +
+      type +
+      "&id=" +
+      id
+    );
 
+} else if (type === "institution") {
 
+  amount = 399;
 
-paymentLink =
-"https://rzp.io/rzp/6jCbwy7?redirect=true&redirect_url=" +
-encodeURIComponent(
-"https://gurulink.onrender.com/payment-success2.html?type=" +
-type +
-"&id=" +
-id
-);
+  paymentLink =
+    "https://rzp.io/rzp/6jCbwy7?redirect=true&redirect_url=" +
+    encodeURIComponent(
+      "https://gurulink.onrender.com/payment-success2.html?type=" +
+      type +
+      "&id=" +
+      id
+    );
 
+} else {
 
-
-
+  alert("Invalid account type: " + type);
+  throw new Error("Invalid type");
 }
 
-/* 📌 Show fee on page */
+/* show amount */
 document.getElementById("feeText").innerText =
   "Registration Fee ₹" + amount;
 
-
-
-
-
-
-
-
-
+/* button */
 document.getElementById("payBtn").onclick = () => {
-
-  localStorage.setItem("paymentProfileId", id);
-  localStorage.setItem("paymentType", type);
 
   window.location.href = paymentLink;
 };
