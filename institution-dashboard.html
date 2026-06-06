@@ -1105,19 +1105,16 @@ window.renewProfile = function () {
   const id = localStorage.getItem("profileId");
   const role = localStorage.getItem("role");
 
-  console.log("DEBUG ID:", id, "ROLE:", role);
-
   if (!id || !role) {
     alert("Profile ID missing. Please login again.");
     window.location.href = "login.html";
     return;
   }
 
-  // ensure values exist (old system safety)
+  // IMPORTANT: keep OLD SYSTEM FLOW
   localStorage.setItem("profileId", id);
   localStorage.setItem("role", role);
 
-  // go payment
   window.location.href = "payment2.html";
 };
 
