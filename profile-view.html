@@ -481,12 +481,21 @@ profile.innerHTML = `
 <a class="call" href="tel:${data.phone || ''}">📞 Call</a>
 <a class="whatsapp" target="_blank" href="https://wa.me/${data.phone || ''}">💬 WhatsApp</a>
 ${data.website ? `<a class="website" target="_blank" href="${data.website}">🌐 Website</a>` : ""}
+
+
+
+
 ${(
+data.showBankDetails !== false &&
+(
 data.qrImage ||
 (data.accountHolderName &&
  data.bankName &&
  data.accountNumber)
-) ? `
+)
+) ? ` `
+
+
 <button
 class="payFee"
 onclick="showPaymentNotice()">
@@ -494,6 +503,8 @@ onclick="showPaymentNotice()">
 </button>
 ` : ""}
 </div>
+
+${data.showBankDetails !== false ? `
 
 <div
 id="bankBox"
@@ -534,6 +545,8 @@ alt="QR Code">
 ` : ""}
 
 </div>
+
+` : ""}
 
 ${mapHTML}
 ${galleryHTML}
