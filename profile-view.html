@@ -445,6 +445,46 @@ onclick="showPaymentNotice()">
 ` : ""}
 </div>
 
+<div
+id="bankBox"
+class="bankBox">
+
+<h3>💳 Payment Details</h3>
+
+${data.accountHolderName ? `
+<p><b>Account Holder:</b>
+${data.accountHolderName}</p>
+` : ""}
+
+${data.bankName ? `
+<p><b>Bank Name:</b>
+${data.bankName}</p>
+` : ""}
+
+${data.accountNumber ? `
+<p><b>Account Number:</b>
+${data.accountNumber}</p>
+` : ""}
+
+${data.ifsc ? `
+<p><b>IFSC Code:</b>
+${data.ifsc}</p>
+` : ""}
+
+${data.upiId ? `
+<p><b>UPI ID:</b>
+${data.upiId}</p>
+` : ""}
+
+${data.qrImage ? `
+<img
+src="${data.qrImage}"
+class="bankQr"
+alt="QR Code">
+` : ""}
+
+</div>
+
 ${mapHTML}
 ${galleryHTML}
 <div class="section">
@@ -536,10 +576,9 @@ window.showPaymentNotice = function(){
 
 const ok = confirm(
 "IMPORTANT NOTICE\n\n" +
-"Payments made using the bank account, UPI ID, or QR code displayed on this profile are direct transactions between the sender and the receiver.\n\n" +
-"GURULINK only provides the platform for connecting students and teachers/institutions and does not process, hold, guarantee, or verify any payments.\n\n" +
-"GURULINK is not responsible for failed transactions, incorrect transfers, payment disputes, refund issues, fraudulent activities, or banking/UPI technical errors.\n\n" +
-"Please verify all payment details carefully before making any payment.\n\n" +
+"Payments are made directly between the sender and receiver.\n\n" +
+"GURULINK does not process or verify payments and is not responsible for failed transactions, wrong transfers, refunds, disputes, or banking/UPI issues.\n\n" +
+"Please verify all payment details before proceeding.\n\n" +
 "Press OK to view payment details."
 );
 
@@ -554,13 +593,17 @@ window.toggleBankDetails = function(){
 const box =
 document.getElementById("bankBox");
 
-if(box.style.display === "block"){
-box.style.display = "none";
-}else{
-box.style.display = "block";
-}
+if(!box) return;
+
+box.style.display =
+box.style.display === "block"
+? "none"
+: "block";
 
 };
+
+
+
 load();
 
 </script>
