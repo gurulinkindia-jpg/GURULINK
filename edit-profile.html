@@ -484,29 +484,10 @@ document.getElementById(
 ).src =
 profileData.logo || "";
 
-const gallery =
-profileData.gallery || [];
-
-const galleryBox =
-document.getElementById(
-"galleryPreview"
-);
-
-galleryBox.innerHTML="";
 
 
-
-
-
-  
-  
-  
-
-  wrapper.appendChild(image);
-  wrapper.appendChild(btn);
-
-  galleryBox.appendChild(wrapper);
-});
+const gallery = profileData.gallery || [];
+renderGallery();
 
 
 
