@@ -84,6 +84,16 @@ padding:10px 3px;
 .whatsapp{background:#009688}
 .website{background:#1565c0}
 
+
+
+.saveContact{
+background:#ff5722;
+}
+
+
+
+
+
 .section{
 margin-top:20px;
 padding:15px;
@@ -480,6 +490,11 @@ profile.innerHTML = `
 <div class="actions">
 <a class="call" href="tel:${data.phone || ''}">📞 Call</a>
 <a class="whatsapp" target="_blank" href="https://wa.me/${data.phone || ''}">💬 WhatsApp</a>
+<button
+class="saveContact"
+onclick="saveContact()">
+💾 Save Contact
+</button>
 ${data.website ? `<a class="website" target="_blank" href="${data.website}">🌐 Website</a>` : ""}
 
 
@@ -664,6 +679,58 @@ box.style.display === "block"
 : "block";
 
 };
+
+
+
+
+
+
+window.saveContact = function(){
+
+const name =
+(data.name || "GURULINK Contact");
+
+const phone =
+(data.phone || "");
+
+const email =
+(data.email || "");
+
+const vcf = `
+BEGIN:VCARD
+VERSION:3.0
+FN:${name}
+TEL:${phone}
+EMAIL:${email}
+END:VCARD
+`;
+
+const blob = new Blob(
+[vcf],
+{type:"text/vcard"}
+);
+
+const url =
+URL.createObjectURL(blob);
+
+const a =
+document.createElement("a");
+
+a.href = url;
+a.download =
+name.replace(/\s+/g,"_") + ".vcf";
+
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+
+URL.revokeObjectURL(url);
+
+};
+
+
+
+
 
 
 
