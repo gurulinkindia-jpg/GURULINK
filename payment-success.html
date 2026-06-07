@@ -185,20 +185,11 @@ paymentStatus: "paid"
 /* SUCCESS */
 document.getElementById("loader").style.display = "none";
 document.getElementById("msg").innerHTML =
-'<span class="success">Payment successful!</span>';
+'<span class="success">Payment successful! Redirecting...</span>';
 
 setTimeout(() => {
-
-  alert(
-    "Your profile will be public after Admin/Developer approval.\n\n" +
-    "Approval may take 24 to 48 hours.\n\n" +
-    "For any query call: 9706380357"
-  );
-
-  window.location.href =
-    "profile-view.html?id=" + id;
-
-}, 1500);
+window.location.href = "profile-view.html?id=" + id;
+}, 2000);
 
 
 
