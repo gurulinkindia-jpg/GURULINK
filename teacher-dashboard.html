@@ -161,10 +161,14 @@ margin-bottom:15px;
 /* BUTTONS */
 
 .mainBtns{
-display:grid;
-grid-template-columns:
-repeat(auto-fit,minmax(200px,1fr));
-gap:10px;
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:10px;
+}
+
+/* full width button */
+.mainBtns .full{
+  grid-column: span 2;
 }
 
 .mainBtns button{
@@ -472,43 +476,30 @@ Quick Actions
 
 
 
-
-
-
-
-
 <div class="mainBtns">
-<button class="shareBtn" onclick="shareProfile()">
-📤 Share Profile
-</button>
 
-<button
-class="editBtn"
-onclick="editProfile()">
-✏ Edit Profile
-</button>
+  <!-- Row 1 -->
+  <button class="editBtn" onclick="editProfile()">
+    ✏ Edit Profile
+  </button>
 
-<button
-class="supportBtn"
-onclick="contactDeveloper()">
-🛠 Developer Support
-</button>
+  <button class="supportBtn" onclick="contactDeveloper()">
+    🛠 Developer Support
+  </button>
 
-<button
-class="renewBtn"
-onclick="renewProfile()">
-💳 Renew ₹399
-</button>
+  <!-- Row 2 -->
+  <button class="homeBtn" onclick="goHome()">
+    🏠 Home
+  </button>
 
-<button class="homeBtn" onclick="goHome()">
-🏠 Home
-</button>
+  <button class="logoutBtn" onclick="logout()">
+    🚪 Logout
+  </button>
 
-<button
-class="logoutBtn"
-onclick="logout()">
-🚪 Logout
-</button>
+  <!-- Row 3 (full width) -->
+  <button class="shareBtn full" onclick="shareProfile()">
+    📤 Share Business Card
+  </button>
 
 </div>
 
