@@ -161,19 +161,40 @@ margin-bottom:15px;
 /* BUTTONS */
 
 .mainBtns{
-display:grid;
-grid-template-columns:
-repeat(auto-fit,minmax(200px,1fr));
-gap:10px;
+  display:grid;
+  grid-template-columns: 1fr; /* PC default = single column */
+  gap:10px;
 }
 
+/* Share button full width always */
+.mainBtns .full{
+  grid-column: span 1;
+}
+
+/* MOBILE: 2 columns */
+@media (max-width: 600px) {
+  .mainBtns{
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .mainBtns .full{
+    grid-column: span 2;
+  }
+
+  .mainBtns button{
+    font-size:14px;
+    padding:12px 8px;
+  }
+}
+
+
 .mainBtns button{
-border:none;
-padding:12px;
-border-radius:10px;
-cursor:pointer;
-color:white;
-font-size:15px;
+  padding:12px;
+  border-radius:10px;
+  cursor:pointer;
+  color:white;
+  font-size:15px;
+  border:2px solid transparent; /* instead of border:0 */
 }
 
 .editBtn{
@@ -326,11 +347,15 @@ background:#1565c0;
 .homeBtn{
 background:#673ab7;
 }
+/* 🔥 SHARE BUTTON (PUT HERE) */
 .shareBtn{
-background:#6a1b9a;
-}
-.shareBtn:hover{
-background:#4a148c;
+  background:linear-gradient(135deg,#00e5ff,#2962ff);
+  border:3px solid #ffeb3b !important;
+  color:white;
+  font-weight:bold;
+  box-shadow:
+    0 0 8px rgba(255,235,59,.6),
+    0 4px 12px rgba(0,0,0,.2);
 }
 
 
@@ -472,43 +497,27 @@ Quick Actions
 
 
 
-
-
-
-
-
 <div class="mainBtns">
-<button class="shareBtn" onclick="shareProfile()">
-📤 Share Profile
-</button>
 
-<button
-class="editBtn"
-onclick="editProfile()">
-✏ Edit Profile
-</button>
+  <button class="editBtn" onclick="editProfile()">
+    ✏ Edit Profile
+  </button>
 
-<button
-class="supportBtn"
-onclick="contactDeveloper()">
-🛠 Developer Support
-</button>
+  <button class="supportBtn" onclick="contactDeveloper()">
+    🛠 Developer Support
+  </button>
 
-<button
-class="renewBtn"
-onclick="renewProfile()">
-💳 Renew ₹399
-</button>
+  <button class="homeBtn" onclick="goHome()">
+    🏠 Home
+  </button>
 
-<button class="homeBtn" onclick="goHome()">
-🏠 Home
-</button>
+  <button class="logoutBtn" onclick="logout()">
+    🚪 Logout
+  </button>
 
-<button
-class="logoutBtn"
-onclick="logout()">
-🚪 Logout
-</button>
+  <button class="shareBtn full" onclick="shareProfile()">
+    📤 Share Business Card
+  </button>
 
 </div>
 
