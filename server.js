@@ -3,23 +3,29 @@ const fetch = require("node-fetch");
 
 const app = express();
 
+/* Dynamic profile sharing page */
 app.get("/profile-view.html", async (req, res) => {
+
   const id = req.query.id;
 
   if (!id) {
-    return res.send("Profile not found");
+    return res.status(404).send("Profile not found");
   }
 
   try {
-    // Check institution first
+
+    let profile = null;
+
+    /* Check institution */
     let response = await fetch(
       `https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app/institutions/${id}.json`
     );
 
-    let profile = await response.json();
+    profile = await response.json();
 
-    // If not institution, check teacher
+    /* Check teacher if institution not found */
     if (!profile) {
+
       response = await fetch(
         `https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app/teachers/${id}.json`
       );
@@ -28,25 +34,36 @@ app.get("/profile-view.html", async (req, res) => {
     }
 
     if (!profile) {
-      return res.send("Profile not found");
+      return res.status(404).send("Profile not found");
     }
 
-    const title = profile.name || "GURULINK Profile";
-    const image = profile.logo || "https://gurulink.onrender.com/default.png";
+    const title =
+      profile.name || "GURULINK";
+
     const description =
-      profile.description || "Teacher / Institute Profile";
+      profile.description ||
+      "Teacher / Institute Profile";
+
+    const image =
+      profile.logo ||
+      "https://guru-link.onrender.com/default.png";
+
+    const profileUrl =
+      `https://guru-link.onrender.com/profile-view.html?id=${id}`;
 
     res.send(`
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+
+<meta charset="UTF-8">
 
 <title>${title}</title>
 
 <meta property="og:title" content="${title}">
 <meta property="og:description" content="${description}">
 <meta property="og:image" content="${image}">
-<meta property="og:url" content="https://gurulink.onrender.com/profile-view.html?id=${id}">
+<meta property="og:url" content="${profileUrl}">
 <meta property="og:type" content="website">
 
 <meta name="twitter:card" content="summary_large_image">
@@ -60,21 +77,32 @@ content="0; url=/profile-view-client.html?id=${id}">
 </head>
 
 <body>
+
 Redirecting...
+
 </body>
 </html>
     `);
 
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+
+    console.error(error);
+
     res.status(500).send("Server Error");
+
   }
+
 });
 
+/* Serve static files */
 app.use(express.static("."));
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
+
+  console.log(
+    "GURULINK server running on port " + PORT
+  );
+
 });
