@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profile View - GURULINK</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f5f7ff;
+padding:20px;
+margin:0;
+}
+
+.box{
+max-width:900px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+.header{
+display:flex;
+gap:15px;
+align-items:center;
+flex-wrap:wrap;
+}
+
+.mainPhoto{
+width:120px;
+height:120px;
+border-radius:50%;
+object-fit:cover;
+border:4px solid #1976d2;
+}
+
+.badge{
+display:inline-block;
+padding:5px 10px;
+background:#1976d2;
+color:white;
+border-radius:20px;
+font-size:12px;
+margin:5px 3px;
+}
+
+.actions{
+margin-top:15px;
+display:flex;
+gap:8px;
+flex-wrap:nowrap;
+}
+
+.actions a,
+.actions button{
+flex:1;
+padding:10px 5px;
+border-radius:10px;
+text-decoration:none;
+color:white;
+font-weight:bold;
+font-size:13px;
+text-align:center;
+display:flex;
+justify-content:center;
+align-items:center;
+margin:0;
+}
+@media(max-width:480px){
+
+.actions a,
+.actions button{
+font-size:12px;
+padding:10px 3px;
+}
+
+}
+
+.call{background:#4caf50}
+.whatsapp{background:#009688}
+.website{background:#1565c0}
+
+.section{
+margin-top:20px;
+padding:15px;
+background:#f9f9ff;
+border-radius:12px;
+}
+
+.reviewItem{
+padding:12px;
+background:white;
+border-radius:10px;
+margin-top:10px;
+border-left:4px solid #1976d2;
+box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+
+.gallery{
+display:flex;
+overflow-x:auto;
+gap:15px;
+padding:10px 0;
+scroll-behavior:smooth;
+}
+
+.gallery img{
+min-width:280px;
+width:280px;
+height:180px;
+border-radius:15px;
+object-fit:cover;
+box-shadow:0 5px 15px rgba(0,0,0,.15);
+cursor:pointer;
+}
+
+.modeBox{
+padding:10px;
+background:#eef3ff;
+border-radius:10px;
+margin-top:8px;
+}
+
+iframe{
+width:100%;
+height:250px;
+border:0;
+border-radius:10px;
+margin-top:10px;
+}
+
+input,textarea,select{
+width:100%;
+padding:10px;
+border:1px solid #ddd;
+border-radius:10px;
+margin-top:10px;
+box-sizing:border-box;
+}
+
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#1976d2;
+color:white;
+font-size:15px;
+cursor:pointer;
+margin-top:10px;
+}
+
+.ratingCard{
+text-align:center;
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.bigRating{
+font-size:40px;
+font-weight:bold;
+color:#1976d2;
+}
+
+.starText{
+font-size:24px;
+color:orange;
+}
+
+.reviewForm{
+background:white;
+padding:15px;
+border-radius:15px;
+margin-top:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.loading{
+text-align:center;
+font-size:20px;
+padding:50px;
+}
+
+/* FLOATING BUTTONS */
+.floatingBtn{
+position:fixed;
+right:20px;
+width:55px;
+height:55px;
+border-radius:50%;
+display:flex;
+justify-content:center;
+align-items:center;
+color:white;
+font-size:20px;
+text-decoration:none;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+z-index:9999;
+}
+
+.homeBtn{
+bottom:20px;
+background:#1976d2;
+}
+
+.backBtn{
+bottom:90px;
+background:#4caf50;
+}
+
+/* Hide Back button on mobile */
+@media(max-width:768px){
+.backBtn{
+display:none;
+}
+}
+
+
+.payFee{
+background:#ff9800;
+}
+
+.bankBox{
+display:none;
+margin-top:15px;
+padding:15px;
+background:#fff8e1;
+border-radius:10px;
+border:1px solid #ffd54f;
+}
+
+.bankQr{
+width:120px;
+height:120px;
+object-fit:contain;
+border:1px solid #ddd;
+border-radius:10px;
+margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box" id="profile">
+<div class="loading">Loading Profile...</div>
+</div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import {
+getDatabase,
+ref,
+get,
+child,
+onValue,
+push,
+set
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+/* FIREBASE CONFIG */
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const profile = document.getElementById("profile");
+const id = new URLSearchParams(location.search).get("id");
+
+let data = null;
+let type = "";
+
+/* MARK VIEW */
+async function markView() {
+  const studentId = localStorage.getItem("uid");
+  const teacherId = id;
+
+  if (!studentId || !teacherId) return;
+
+  try {
+    const snap = await get(ref(db, "students/" + studentId));
+
+    let studentData = { name:"", email:"", phone:"" };
+
+    if (snap.exists()) {
+      studentData = snap.val();
+    }
+
+    await set(
+      ref(db, `profileViews/${teacherId}/${studentId}`),
+      {
+        studentId,
+        name: studentData.name || "",
+        email: studentData.email || "",
+        phone: studentData.phone || "",
+        time: Date.now()
+      }
+    );
+
+  } catch (err) {
+    console.log("View not saved", err);
+  }
+}
+
+/* LOAD PROFILE */
+async function load(){
+
+if(!id){
+profile.innerHTML = "<h2>No ID Found</h2>";
+return;
+}
+
+/* SAVE VIEW */
+markView();
+
+/* TEACHER */
+let snap = await get(child(ref(db),"teachers/"+id));
+
+if(snap.exists()){
+data = snap.val();
+type = "Teacher";
+}
+
+/* INSTITUTION */
+if(!data){
+let snap2 = await get(child(ref(db),"institutions/"+id));
+
+if(snap2.exists()){
+data = snap2.val();
+type = "Institution";
+}
+}
+
+/* NOT FOUND */
+if(!data){
+profile.innerHTML = "<h2>Profile Not Found</h2>";
+return;
+}
+
+renderProfile();
+loadReviews();
+}
+
+/* RENDER PROFILE */
+function renderProfile(){
+
+const subjects = Array.isArray(data.subjects) ? data.subjects : [];
+
+const modes = [];
+
+if(data.homeFee) modes.push(`🏠 Home Tuition - ₹${data.homeFee}`);
+if(data.groupFee) modes.push(`👨‍🏫 Group Tuition - ₹${data.groupFee}`);
+if(data.onlineFee) modes.push(`💻 Online - ₹${data.onlineFee}`);
+if(data.individualFee) modes.push(`👤 Individual - ₹${data.individualFee}`);
+if(data.offlineFee) modes.push(`🏫 Offline Classroom - ₹${data.offlineFee}`);
+if(data.hybridFee) modes.push(`🔄 Hybrid - ₹${data.hybridFee}`);
+
+
+
+
+
+
+let galleryHTML = "";
+
+let gallery = data.gallery;
+
+// HARD SAFE CHECK
+if (!gallery) gallery = [];
+
+// Convert object → array safely
+if (typeof gallery === "object" && !Array.isArray(gallery)) {
+  gallery = Object.values(gallery);
+}
+
+// Remove invalid values
+gallery = gallery.filter(img => typeof img === "string" && img.length > 5);
+
+if (gallery.length > 0) {
+  galleryHTML = `
+    <div class="section">
+      <h3>🖼️ Gallery</h3>
+      <div class="gallery">
+        ${gallery.map(img => `
+          <img src="${img}" onclick="window.open('${img}','_blank')">
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+
+
+
+
+let mapHTML = "";
+
+if (data.mapLink) {
+  const src = data.mapLink.match(/src="([^"]+)"/)?.[1];
+
+  if (src) {
+    mapHTML = `
+      <div class="section">
+        <h3>📍 Google Map</h3>
+
+     
+${data.mapUrl && data.mapUrl.trim() ? `
+<a
+href="${data.mapUrl}"
+target="_blank"
+style="
+display:inline-block;
+padding:12px 20px;
+background:#1976d2;
+color:white;
+text-decoration:none;
+border-radius:10px;
+font-weight:bold;
+margin-bottom:10px;
+">
+📍 Open Google Maps
+</a>
+` : ""}
+
+
+        <iframe
+          src="${src}"
+          allowfullscreen
+          loading="lazy">
+        </iframe>
+      </div>
+    `;
+  }
+}
+
+
+
+
+
+
+
+
+profile.innerHTML = `
+<div class="header">
+<img class="mainPhoto" src="${data.photo || data.logo || 'https://via.placeholder.com/120'}">
+
+<div>
+<h2>${data.name || "-"}</h2>
+
+<div>
+<span class="badge">${type}</span>
+<span class="badge">${data.category || "-"}</span>
+</div>
+
+</div>
+</div>
+
+<div class="section">
+<p><b>Subjects:</b> ${subjects.join(", ") || "-"}</p>
+<p><b>Phone:</b> ${data.phone || "-"}</p>
+<p><b>Email:</b> ${data.email || "-"}</p>
+<p><b>Location:</b> ${data.location || data.address || "-"}</p>
+<p><b>Description:</b> ${data.description || "-"}</p>
+</div>
+
+<div class="actions">
+<a class="call" href="tel:${data.phone || ''}">📞 Call</a>
+<a class="whatsapp" target="_blank" href="https://wa.me/${data.phone || ''}">💬 WhatsApp</a>
+${data.website ? `<a class="website" target="_blank" href="${data.website}">🌐 Website</a>` : ""}
+
+
+
+
+${(
+data.showBankDetails !== false &&
+(
+data.qrImage ||
+(data.accountHolderName &&
+ data.bankName &&
+ data.accountNumber)
+)
+) ? ` 
+
+
+<button
+class="payFee"
+onclick="showPaymentNotice()">
+💰 Pay Fee
+</button>
+` : ""}
+</div>
+
+${data.showBankDetails !== false ? `
+
+<div
+id="bankBox"
+class="bankBox">
+
+<h3>💳 Payment Details</h3>
+
+${data.accountHolderName ? `
+<p><b>Account Holder:</b>
+${data.accountHolderName}</p>
+` : ""}
+
+${data.bankName ? `
+<p><b>Bank Name:</b>
+${data.bankName}</p>
+` : ""}
+
+${data.accountNumber ? `
+<p><b>Account Number:</b>
+${data.accountNumber}</p>
+` : ""}
+
+${data.ifsc ? `
+<p><b>IFSC Code:</b>
+${data.ifsc}</p>
+` : ""}
+
+${data.upiId ? `
+<p><b>UPI ID:</b>
+${data.upiId}</p>
+` : ""}
+
+${data.qrImage ? `
+<img
+src="${data.qrImage}"
+class="bankQr"
+alt="QR Code">
+` : ""}
+
+</div>
+
+` : ""}
+
+${mapHTML}
+${galleryHTML}
+<div class="section">
+<h3>💰 Teaching Modes</h3>
+${modes.map(m=>`<div class="modeBox">${m}</div>`).join("")}
+</div>
+
+<div class="section">
+<div class="ratingCard">
+<div class="bigRating" id="avgRating">0.0</div>
+<div class="starText">⭐⭐⭐⭐⭐</div>
+<div id="totalReviews">0 Reviews</div>
+</div>
+
+<div class="reviewForm">
+<h3>✍️ Write Review</h3>
+<input id="rname" placeholder="Your Name">
+<select id="rrating">
+<option value="5">⭐⭐⭐⭐⭐</option>
+<option value="4">⭐⭐⭐⭐</option>
+<option value="3">⭐⭐⭐</option>
+<option value="2">⭐⭐</option>
+<option value="1">⭐</option>
+</select>
+<textarea id="rtext" placeholder="Write review"></textarea>
+<button onclick="submitReview()">Submit Review</button>
+</div>
+
+<div id="reviews">No Reviews Yet</div>
+</div>
+`;
+}
+
+/* REVIEWS */
+function loadReviews(){
+
+onValue(ref(db,`reviews/${type.toLowerCase()}s/${id}`),(snap)=>{
+
+let total=0,count=0,html="";
+
+snap.forEach(item=>{
+const d=item.val();
+total+=d.rating;
+count++;
+
+html+=`
+<div class="reviewItem">
+<b>${d.name}</b>
+<div>${"⭐".repeat(d.rating)}</div>
+<p>${d.text}</p>
+</div>`;
+});
+
+document.getElementById("avgRating").innerText =
+count ? (total/count).toFixed(1) : "0.0";
+
+document.getElementById("totalReviews").innerText =
+count + " Reviews";
+
+document.getElementById("reviews").innerHTML =
+html || "No Reviews Yet";
+
+});
+}
+
+/* SUBMIT REVIEW */
+window.submitReview = async function(){
+
+const name=document.getElementById("rname").value;
+const rating=Number(document.getElementById("rrating").value);
+const text=document.getElementById("rtext").value;
+
+if(!name||!text){
+alert("Fill all fields");
+return;
+}
+
+await push(ref(db,`reviews/${type.toLowerCase()}s/${id}`),{
+name,rating,text,time:Date.now()
+});
+
+alert("Review submitted");
+document.getElementById("rname").value="";
+document.getElementById("rtext").value="";
+};
+
+/* START */
+window.showPaymentNotice = function(){
+
+const ok = confirm(
+"IMPORTANT NOTICE\n\n" +
+"Payments are made directly between the sender and receiver.\n\n" +
+"GURULINK does not process or verify payments and is not responsible for failed transactions, wrong transfers, refunds, disputes, or banking/UPI issues.\n\n" +
+"Please verify all payment details before proceeding.\n\n" +
+"Press OK to view payment details."
+);
+
+if(ok){
+toggleBankDetails();
+}
+
+};
+
+window.toggleBankDetails = function(){
+
+const box =
+document.getElementById("bankBox");
+
+if(!box) return;
+
+box.style.display =
+box.style.display === "block"
+? "none"
+: "block";
+
+};
+
+
+
+load();
+
+</script>
+
+<a href="index.html" class="floatingBtn homeBtn">🏠</a>
+
+<a
+href="javascript:history.back()"
+class="floatingBtn backBtn">
+⬅️
+</a>
+
+</body>
+</html>
