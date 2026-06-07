@@ -160,19 +160,21 @@ margin-bottom:15px;
 
 /* BUTTONS */
 
+/* PC: 5 buttons in one row */
 .mainBtns{
   display:grid;
-  grid-template-columns: 1fr; /* PC default = single column */
+  grid-template-columns: repeat(5, 1fr);
   gap:10px;
 }
 
-/* Share button full width always */
+/* Share button normal width on PC */
 .mainBtns .full{
   grid-column: span 1;
 }
 
-/* MOBILE: 2 columns */
-@media (max-width: 600px) {
+/* MOBILE: 2 + 2 + 1 layout */
+@media (max-width:600px){
+
   .mainBtns{
     grid-template-columns: repeat(2, 1fr);
   }
@@ -186,6 +188,8 @@ margin-bottom:15px;
     padding:12px 8px;
   }
 }
+
+
 
 
 .mainBtns button{
@@ -305,7 +309,6 @@ padding:40px;
 text-align:center;
 font-size:18px;
 }
-
 
 
 
