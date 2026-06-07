@@ -178,10 +178,6 @@ await update(ref(db, profilePath), {
 paymentStatus: "paid"
 });
 
-
-
-
-
 /* SUCCESS */
 document.getElementById("loader").style.display = "none";
 document.getElementById("msg").innerHTML =
@@ -190,10 +186,6 @@ document.getElementById("msg").innerHTML =
 setTimeout(() => {
 window.location.href = "profile-view.html?id=" + id;
 }, 2000);
-
-
-
-
 
 } catch (err) {
 
