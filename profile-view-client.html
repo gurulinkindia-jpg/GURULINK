@@ -687,44 +687,25 @@ box.style.display === "block"
 
 window.saveContact = function(){
 
-const name =
-(data.name || "GURULINK Contact");
-
-const phone =
-(data.phone || "");
-
-const email =
-(data.email || "");
-
 const vcf = `
 BEGIN:VCARD
 VERSION:3.0
-FN:${name}
-TEL:${phone}
-EMAIL:${email}
+FN:${data.name || ""}
+TEL:${data.phone || ""}
+EMAIL:${data.email || ""}
 END:VCARD
 `;
 
-const blob = new Blob(
-[vcf],
-{type:"text/vcard"}
-);
+const blob = new Blob([vcf], {
+type:"text/vcard"
+});
 
-const url =
-URL.createObjectURL(blob);
+const url = URL.createObjectURL(blob);
 
-const a =
-document.createElement("a");
-
+const a = document.createElement("a");
 a.href = url;
-a.download =
-name.replace(/\s+/g,"_") + ".vcf";
-
-document.body.appendChild(a);
+a.download = (data.name || "contact") + ".vcf";
 a.click();
-document.body.removeChild(a);
-
-URL.revokeObjectURL(url);
 
 };
 
