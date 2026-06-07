@@ -162,13 +162,29 @@ margin-bottom:15px;
 
 .mainBtns{
   display:grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr; /* PC default = single column */
   gap:10px;
 }
 
-/* full width button */
+/* Share button full width always */
 .mainBtns .full{
-  grid-column: span 2;
+  grid-column: span 1;
+}
+
+/* MOBILE: 2 columns */
+@media (max-width: 600px) {
+  .mainBtns{
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .mainBtns .full{
+    grid-column: span 2;
+  }
+
+  .mainBtns button{
+    font-size:14px;
+    padding:12px 8px;
+  }
 }
 
 .mainBtns button{
@@ -478,7 +494,6 @@ Quick Actions
 
 <div class="mainBtns">
 
-  <!-- Row 1 -->
   <button class="editBtn" onclick="editProfile()">
     ✏ Edit Profile
   </button>
@@ -487,7 +502,6 @@ Quick Actions
     🛠 Developer Support
   </button>
 
-  <!-- Row 2 -->
   <button class="homeBtn" onclick="goHome()">
     🏠 Home
   </button>
@@ -496,7 +510,6 @@ Quick Actions
     🚪 Logout
   </button>
 
-  <!-- Row 3 (full width) -->
   <button class="shareBtn full" onclick="shareProfile()">
     📤 Share Business Card
   </button>
