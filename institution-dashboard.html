@@ -1260,12 +1260,25 @@ window.shareProfile = function () {
     alert("Profile not found");
     return;
   }
+  
+  
+  
+  
 
-  const url = window.location.origin + "/profile-view.html?id=" + profileId;
+  const url =
+"https://guru-link.onrender.com/profile-view.html?id=" +
+profileId;
 
   const text =
-    `Check out this ${role === "teacher" ? "Teacher" : "Institute"} on GURULINK:\n\n` +
-    url;
+  `🎓 GURULINK Digital Business Card\n\n` +
+  `Check out this ${role === "teacher" ? "Teacher" : "Institute"}.\n` +
+  `📞 Click the link to view profile and get contact details.\n\n` +
+  url;
+	
+	
+	
+	
+	
 
   const whatsappURL =
     "https://wa.me/?text=" + encodeURIComponent(text);
