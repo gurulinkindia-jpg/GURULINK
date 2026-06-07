@@ -191,10 +191,12 @@ document.getElementById("msg").innerHTML =
 
 setTimeout(() => {
 
-  alert(
+  const proceed = confirm(
+    "✅ Payment Successful!\n\n" +
     "Your profile will be public after Admin/Developer approval.\n\n" +
     "Approval may take 24 to 48 hours.\n\n" +
-    "For any query call: 9706380357"
+    "For any query call: 9706380357\n\n" +
+    "Press OK to continue."
   );
 
   window.location.href =
