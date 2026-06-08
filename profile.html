@@ -145,7 +145,49 @@ transform:
 translateY(-8px);
 
 }
+/* TYPE COLORS */
 
+.card.teacher{
+border-left:6px solid #1976d2;
+}
+
+.card.institution{
+border-left:6px solid #e91e63;
+}
+
+/* CATEGORY COLORS */
+
+.card.academic{
+background:linear-gradient(
+135deg,
+rgba(25,118,210,.10),
+rgba(255,255,255,.6)
+);
+}
+
+.card.creative{
+background:linear-gradient(
+135deg,
+rgba(156,39,176,.10),
+rgba(255,255,255,.6)
+);
+}
+
+.card.skill{
+background:linear-gradient(
+135deg,
+rgba(255,152,0,.10),
+rgba(255,255,255,.6)
+);
+}
+
+.card.sport{
+background:linear-gradient(
+135deg,
+rgba(76,175,80,.10),
+rgba(255,255,255,.6)
+);
+}
 .top{
 
 display:flex;
@@ -702,7 +744,9 @@ x.type === "Teacher"
 
 return `
 
-<div class="card" data-id="${x.id}">
+<div
+class="card ${x.type.toLowerCase()} ${x.category || ''}"
+data-id="${x.id}">
 
 <div class="top">
 
