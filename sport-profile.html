@@ -434,7 +434,9 @@ ${item.experience || "-"} Years
 <br>
 ` : `
 <b>Established:</b>
-${item.establishedDate || item.establishedYear || item.established || "-"}
+${item.establishedDate
+  ? new Date(item.establishedDate).getFullYear()
+  : "-"}
 <br>
 `}
 
