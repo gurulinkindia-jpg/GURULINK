@@ -1,4 +1,4 @@
-```html
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -497,12 +497,9 @@ return;
 			  
 
               <div class="badge verify">
-  ${
-    x.verified === true ||
-    x.status === "approved"
-      ? "✅ Verified"
-      : "❌ Not Verified"
-  }
+  ${item.status === "approved"
+    ? "✅ Verified"
+    : "❌ Not Verified"}
 </div>
 			  
 			  
