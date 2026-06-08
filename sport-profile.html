@@ -428,15 +428,13 @@ ${
         ${(x.teachingModes || x.modes || []).join(", ") || "-"}
         <br>
 
-${item.type === "Teacher" ? `
+${x.type === "Teacher" ? `
 <b>Experience:</b>
-${item.experience || "-"} Years
+${x.experience || "-"} Years
 <br>
 ` : `
 <b>Established:</b>
-${item.establishedDate
-  ? new Date(item.establishedDate).getFullYear()
-  : "-"}
+${x.establishedDate || "-"}
 <br>
 `}
 
