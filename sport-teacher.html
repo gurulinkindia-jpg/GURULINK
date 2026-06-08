@@ -242,9 +242,25 @@ Dadra and Nagar Haveli and Daman and Diu
 
 </select>
 
-<input id="area" placeholder="Area/City">
+<input id="area" placeholder="Area/City or Town">
 
-<input id="mapLink" placeholder="Google Map Location Link (if available)">
+
+
+<input type="text" id="pinCode" placeholder="PIN Code" maxlength="6" pattern="[0-9]{6}" required>
+
+
+
+<h3>Location</h3>
+
+<input
+id="mapUrl"
+placeholder="Google Maps Share Link">
+
+<textarea
+id="mapLink"
+placeholder="Google Maps Embed Code (iframe)"
+style="height:120px;resize:vertical;">
+</textarea>
 
 
 
@@ -963,9 +979,25 @@ document.getElementById("address").value,
 
 area:
 document.getElementById("area").value,
+pinCode:
+document.getElementById("pinCode").value,
+
+
+
+
+
+
+mapUrl:
+document.getElementById("mapUrl").value.trim(),
 
 mapLink:
-document.getElementById("mapLink").value,
+document.getElementById("mapLink").value.trim(),
+
+
+
+
+
+
 
 subjects:subjects,
 
