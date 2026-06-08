@@ -428,6 +428,17 @@ ${
         ${(x.teachingModes || x.modes || []).join(", ") || "-"}
         <br>
 
+${item.type === "Teacher" ? `
+<b>Experience:</b>
+${item.experience || "-"} Years
+<br>
+` : `
+<b>Established:</b>
+${item.establishedDate || item.establishedYear || item.established || "-"}
+<br>
+`}
+
+
         <b>Location:</b>
         ${x.location || x.address || "-"}
 
