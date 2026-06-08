@@ -427,9 +427,13 @@ function render() {
 
           <div class="badge">${x.type}</div>
 
-          <div class="badge verify">
-            ${x.verified ? "Verified" : "Not Verified"}
-          </div>
+         <div class="badge verify">
+  ${
+    x.status === "approved"
+      ? "✅ Verified"
+      : "❌ Not Verified"
+  }
+</div>
 
         </div>
 
@@ -437,14 +441,29 @@ function render() {
 
       <div class="details">
 
-        <b>Skill:</b>
-        ${x.subject || x.subjects || "-"}
-        <br>
+       <b>Skill:</b>
+${
+  Array.isArray(x.subjects)
+    ? x.subjects.join(", ")
+    : (x.subject || x.subjects || "-")
+}
 
         <b>Location:</b>
         ${x.location || x.address || "-"}
         <br>
+<br>
 
+${x.type === "Teacher" ? `
+<b>Experience:</b>
+${x.experience || "-"} Years
+<br>
+` : `
+<b>Established:</b>
+${x.establishedDate
+  ? new Date(x.establishedDate).getFullYear()
+  : "-"}
+<br>
+`}
         <b>Mode:</b>
         ${(x.teachingModes || x.modes || []).join(", ") || "-"}
 
