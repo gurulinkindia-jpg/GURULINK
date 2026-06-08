@@ -345,9 +345,14 @@ function render() {
     }
 
     /* SPORT */
-    if (!sportMatch(x.subject || x.sport, sport)) {
-      return false;
-    }
+  const sportValue =
+  Array.isArray(x.subjects)
+    ? x.subjects.join(", ")
+    : (x.subject || x.sport || "");
+
+if (!sportMatch(sportValue, sport)) {
+  return false;
+}
 
     /* MODE */
     if (!modeMatch(x.teachingModes || x.modes, mode)) {
@@ -412,7 +417,11 @@ function render() {
       <div class="details">
 
         <b>Sport:</b>
-        ${x.subject || x.sport || "-"}
+${
+  Array.isArray(x.subjects)
+    ? x.subjects.join(", ")
+    : (x.subject || x.sport || "-")
+}
         <br>
 
         <b>Mode:</b>
