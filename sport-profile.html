@@ -389,9 +389,21 @@ function render() {
 
           <div class="badge">${x.category || "sport"}</div>
 
-          <div class="badge verify">
-            ${x.verified ? "Verified" : "Not Verified"}
-          </div>
+        
+
+
+
+		<div class="badge verify">
+  ${
+    x.verified === true ||
+    x.status === "approved"
+      ? "✅ Verified"
+      : "❌ Not Verified"
+  }
+</div>
+		  
+		  
+		  
 
         </div>
 
