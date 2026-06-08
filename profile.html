@@ -694,7 +694,11 @@ x.type === "Teacher"
 ?
 `<b>Experience:</b> ${x.experience || "-"} Years`
 :
-`<b>Established:</b> ${x.established || x.estd || x.establishmentYear || "-"}`;
+`<b>Established:</b> ${
+   x.establishedDate
+   ? new Date(x.establishedDate).getFullYear()
+   : "-"
+ }`;
 
 return `
 
