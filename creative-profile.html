@@ -418,9 +418,13 @@ function render() {
 
           <div class="badge">${x.category || "creative"}</div>
 
-          <div class="badge ${x.verified ? 'verify' : ''}">
-            ${x.verified ? "Verified" : "Not Verified"}
-          </div>
+         <div class="badge verify">
+  ${
+    x.status === "approved"
+      ? "✅ Verified"
+      : "❌ Not Verified"
+  }
+</div>
 
           <button
             class="btn view"
@@ -433,20 +437,43 @@ function render() {
 
       </div>
 
-      <div class="details">
+     
 
-        <b>Subject:</b>
-        ${Array.isArray(x.subjects) ? x.subjects.join(", ") : (x.subject || "-")}
-        <br>
 
-        <b>Location:</b>
-        ${x.location || x.address || "-"}
-        <br>
+	<div class="details">
 
-        <b>Modes:</b>
-        ${(x.teachingModes || x.modes || []).join(", ") || "-"}
+  <b>Subject:</b>
+  ${
+    Array.isArray(x.subjects)
+      ? x.subjects.join(", ")
+      : (x.subject || "-")
+  }
 
-      </div>
+  <br>
+
+  <b>Mode:</b>
+  ${(x.teachingModes || x.modes || []).join(", ") || "-"}
+
+  <br>
+
+  ${x.type === "Teacher" ? `
+  <b>Experience:</b>
+  ${x.experience || "-"} Years
+  <br>
+  ` : `
+  <b>Established:</b>
+  ${
+    x.establishedDate
+      ? new Date(x.establishedDate).getFullYear()
+      : "-"
+  }
+  <br>
+  `}
+
+  <b>Location:</b>
+  ${x.location || x.address || "-"}
+
+</div>
 
     </div>
 
