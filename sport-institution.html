@@ -101,6 +101,13 @@ background:#f4f4f4;
 border-radius:10px;
 margin-bottom:10px;
 }
+
+
+
+
+
+
+
 @keyframes blink{
 0%,100%{
 opacity:1;
@@ -109,10 +116,23 @@ opacity:1;
 opacity:0.7;
 }
 }
+
+
+
+
+
+
 </style>
 </head>
 
 <body>
+
+
+
+
+
+
+
 <div style="
 background:#d50000;
 color:white;
@@ -122,8 +142,17 @@ font-weight:bold;
 font-size:15px;
 animation:blink 1.2s infinite;
 ">
-🎉 98% Promotional Discount Going On! Use Promo Code: <b>PRO-98</b> 🎉
+🎉 Up tp 98% Promotional Discount Going On! Use Promo Code: <b>PRO-98</b> 🎉
 </div>
+
+
+
+
+
+
+
+
+
 <header>
 
 
@@ -161,6 +190,11 @@ animation:blink 1.2s infinite;
 <input type="password" id="password" placeholder="Create Password (this will be used for login)" required>
 
 <input id="website" placeholder="Website URL (if available)">
+
+
+
+
+
 
 <label>Select State</label>
 
@@ -209,9 +243,34 @@ Dadra and Nagar Haveli and Daman and Diu
 
 </select>
 
-<input id="area" placeholder="Area / City ">
 
-<input id="mapLink" placeholder="Google Map Location Link (if available)">
+
+
+
+
+<input id="area" placeholder="Area / City or Town ">
+
+
+
+<input type="text" id="pinCode" placeholder="PIN Code" maxlength="6" pattern="[0-9]{6}" required>
+
+
+
+
+
+
+
+<h3>Location</h3>
+
+<input
+id="mapUrl"
+placeholder="Google Maps Share Link">
+
+<textarea
+id="mapLink"
+placeholder="Google Maps Embed Code (iframe)"
+style="height:120px;resize:vertical;">
+</textarea>
 
 
 
@@ -436,6 +495,15 @@ accept="image/*">
 <textarea
 id="description"
 placeholder="About Institution"></textarea>
+
+
+
+
+
+
+
+
+
 
 
 <!-- ✅ DECLARATION START -->
@@ -909,10 +977,25 @@ address:
 document.getElementById("address").value,
 
 area:
-document.getElementById("area").value,
+document.getElementById("area").value
+pinCode:
+document.getElementById("pinCode").value,
+
+
+
+
+
+mapUrl:
+document.getElementById("mapUrl").value.trim(),
 
 mapLink:
-document.getElementById("mapLink").value,
+document.getElementById("mapLink").value.trim(),
+
+
+
+
+
+
 
 subjects:subjects,
 
