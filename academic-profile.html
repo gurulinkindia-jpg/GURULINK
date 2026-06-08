@@ -546,18 +546,19 @@ return;
                 []
               ).join(", ") || "-"
             }
-  <b>Experience:</b>
-  ${item.experience || "-"}
 
-  <br>
-
-  <b>Established:</b>
-  ${item.establishedYear || item.established || "-"}
-
-  <br>
             
 			<br>
 
+${item.type === "Teacher" ? `
+<b>Experience:</b>
+${item.experience || "-"} Years
+<br>
+` : `
+<b>Established:</b>
+${item.establishedYear || item.established || "-"}
+<br>
+`}
             <b>Location:</b>
 
             ${item.location || item.address || "-"}
