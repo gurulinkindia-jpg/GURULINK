@@ -744,6 +744,7 @@ function loadFilters(){
 const states = new Set();
 const categories = new Set();
 
+searchData.forEach(item=>{
 
 if(item.address)
 states.add(item.address);
@@ -751,16 +752,13 @@ states.add(item.address);
 if(item.category)
 categories.add(item.category);
 
-
-
-
-
 });
 
 fillFilter("stateFilter", states);
 fillFilter("categoryFilter", categories);
 
 }
+
 
 function fillFilter(id,set){
 
