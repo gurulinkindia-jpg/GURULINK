@@ -240,35 +240,42 @@
        LOAD TEACHERS
     ========================= */
 
-    onValue(ref(db, "teachers"), (snapshot) => {
+   onValue(ref(db, "teachers"), (snapshot) => {
 
-      teachers = [];
+  teachers = [];
 
-      snapshot.forEach((child) => {
+  snapshot.forEach((child) => {
 
-        const data = child.val();
+    const data = child.val();
 
-        if (
-          data.status === "approved" &&
-          (
-            !data.category ||
-            data.category.toLowerCase() === "academic"
-          )
-        ) {
+    console.log(
+      "TEACHER:",
+      child.key,
+      data.name,
+      data.status,
+      data.category
+    );
 
-          teachers.push({
-            ...data,
-            id: child.key,
-            type: "Teacher"
-          });
+    if (
+      data.status === "approved" &&
+      (data.category || "").toLowerCase() === "academic"
+    ) {
 
-        }
-
+      teachers.push({
+        ...data,
+        id: child.key,
+        type: "Teacher"
       });
 
-      render();
+    }
 
-    });
+  });
+
+  console.log("Academic Teachers:", teachers);
+
+  render();
+
+});
 
     /* =========================
        LOAD INSTITUTIONS
@@ -276,33 +283,40 @@
 
     onValue(ref(db, "institutions"), (snapshot) => {
 
-      institutes = [];
+  institutes = [];
 
-      snapshot.forEach((child) => {
+  snapshot.forEach((child) => {
 
-        const data = child.val();
+    const data = child.val();
 
-        if (
-          data.status === "approved" &&
-          (
-            !data.category ||
-            data.category.toLowerCase() === "academic"
-          )
-        ) {
+    console.log(
+      "INSTITUTE:",
+      child.key,
+      data.name,
+      data.status,
+      data.category
+    );
 
-          institutes.push({
-            ...data,
-            id: child.key,
-            type: "Institution"
-          });
+    if (
+      data.status === "approved" &&
+      (data.category || "").toLowerCase() === "academic"
+    ) {
 
-        }
-
+      institutes.push({
+        ...data,
+        id: child.key,
+        type: "Institution"
       });
 
-      render();
+    }
 
-    });
+  });
+
+  console.log("Academic Institutes:", institutes);
+
+  render();
+
+});
 
     /* GET ALL DATA */
 
