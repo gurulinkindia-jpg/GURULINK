@@ -1279,8 +1279,10 @@ window.shareProfile = function () {
   const text =
     `Check this ${role === "teacher" ? "Teacher" : "Institute"} on GURULINK:\n${url}`;
 
+  const whatsappURL =
+    "https://wa.me/?text=" + encodeURIComponent(text);
 
-
+  // ✅ Mobile share (works on Facebook, WhatsApp, Instagram, etc.)
   if (navigator.share) {
     navigator.share({
       title: "GURULINK Profile",
@@ -1289,7 +1291,9 @@ window.shareProfile = function () {
     }).catch(() => {
       window.open(whatsappURL, "_blank");
     });
+
   } else {
+    // ✅ PC fallback
     window.open(whatsappURL, "_blank");
   }
 };
