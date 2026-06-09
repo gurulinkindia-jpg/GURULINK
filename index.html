@@ -224,7 +224,15 @@ cursor:pointer;
 
 
 
-
+.filterBar input{
+width:100%;
+height:36px;
+font-size:12px;
+padding:0 8px;
+border:1px solid #ccc;
+border-radius:6px;
+outline:none;
+}
 
 
 
@@ -346,7 +354,7 @@ object-fit:cover;
 
 <section class="hero">
 <h1>Find the Right Teacher for Every Subject</h1>
-<p>Academic • Skill • Creative • Sports </p>
+<p>Academic • Skill • Creative • Sports • Institutes</p>
 
 
 
@@ -377,9 +385,11 @@ placeholder="Search teacher, institute, subject...">
 <option value="">Category</option>
 </select>
 
-<select id="areaFilter" onchange="searchSite()">
-<option value="">Area / PIN</option>
-</select>
+<input
+id="areaFilter"
+type="text"
+placeholder="Area / PIN"
+oninput="searchSite()">
 
 <select id="roleFilter" onchange="searchSite()">
 <option value="">Both (Teacher + Institute)</option>
@@ -733,9 +743,7 @@ function loadFilters(){
 
 const states = new Set();
 const categories = new Set();
-const areas = new Set();
 
-searchData.forEach(item=>{
 
 if(item.address)
 states.add(item.address);
@@ -743,17 +751,14 @@ states.add(item.address);
 if(item.category)
 categories.add(item.category);
 
-if(item.area)
-areas.add(item.area);
 
-if(item.pinCode)
-areas.add(item.pinCode);
+
+
 
 });
 
 fillFilter("stateFilter", states);
 fillFilter("categoryFilter", categories);
-fillFilter("areaFilter", areas);
 
 }
 
@@ -808,7 +813,10 @@ const category =
 document.getElementById("categoryFilter").value;
 
 const area =
-document.getElementById("areaFilter").value;
+document.getElementById("areaFilter")
+.value
+.toLowerCase()
+.trim();
 
 const role =
 document.getElementById("roleFilter").value;
@@ -887,8 +895,15 @@ return;
 
 if(
 area &&
-item.area !== area &&
-item.pinCode !== area
+!(
+(item.area || "")
+.toLowerCase()
+.includes(area)
+||
+(item.pinCode || "")
+.toLowerCase()
+.includes(area)
+)
 ){
 return;
 }
