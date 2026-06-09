@@ -171,6 +171,29 @@ color:white;
 font-size:16px;
 cursor:pointer;
 }
+
+
+.filterBar{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-top:10px;
+}
+
+
+
+
+.filterBar select{
+width:110px;
+height:34px;
+font-size:12px;
+padding:4px 8px;
+border-radius:6px;
+border:1px solid #ccc;
+}
+
+
+
 </style>
 
 </head>
@@ -303,13 +326,34 @@ placeholder="Search teacher, institute, subject...">
 
 <div class="filter-bar">
 
-<select id="locationFilter" onchange="searchSite()">
-<option value="">📍 All Locations</option>
+
+
+
+<div class="filterBar">
+
+<select id="stateFilter" onchange="searchSite()">
+<option value="">State</option>
 </select>
 
-<select id="modeFilter" onchange="searchSite()">
-<option value="">🏠 All Teaching Modes</option>
+<select id="categoryFilter" onchange="searchSite()">
+<option value="">Category</option>
 </select>
+
+<select id="areaFilter" onchange="searchSite()">
+<option value="">Area / PIN</option>
+</select>
+
+<select id="roleFilter" onchange="searchSite()">
+<option value="">Role</option>
+<option value="teacher">Teacher</option>
+<option value="institution">Institute</option>
+</select>
+
+</div>
+
+
+
+
 
 </div>
 
@@ -473,6 +517,11 @@ const data = child.val();
 searchData.push({
 id: child.key,
 type: "teacher",
+
+address: data.address || "",
+category: data.category || "",
+pinCode: data.pinCode || "",
+
 name: data.name || "",
 photo: data.logo || "",
 area: data.area || "",
@@ -524,6 +573,9 @@ const data = child.val();
 searchData.push({
 id: child.key,
 type: "institution",
+address: data.address || "",
+category: data.category || "",
+pinCode: data.pinCode || "",
 name: data.name || "",
 photo: data.logo || "",
 area: data.area || "",
@@ -634,63 +686,62 @@ return "profile.html";
 
 
 
+
+
+
+
+
 function loadFilters(){
 
-const locationSet = new Set();
-const modeSet = new Set();
+const states = new Set();
+const categories = new Set();
+const areas = new Set();
 
 searchData.forEach(item=>{
 
-// Location
-if(item.area){
-locationSet.add(item.area);
+if(item.address)
+states.add(item.address);
+
+if(item.category)
+categories.add(item.category);
+
+if(item.area)
+areas.add(item.area);
+
+if(item.pinCode)
+areas.add(item.pinCode);
+
+});
+
+fillFilter("stateFilter", states);
+fillFilter("categoryFilter", categories);
+fillFilter("areaFilter", areas);
+
 }
 
-// Teaching Modes
-if(item.teachingModes){
+function fillFilter(id,set){
 
-const modes =
-item.teachingModes.split(",");
+const select =
+document.getElementById(id);
 
-modes.forEach(mode=>{
+[...set]
+.sort()
+.forEach(value=>{
 
-if(mode.trim()){
+if(!value) return;
 
-modeSet.add(mode.trim());
-
-}
+select.innerHTML +=
+`<option value="${value}">
+${value}
+</option>`;
 
 });
 
 }
 
-});
 
-// Location Dropdown
 
-const locationFilter =
-document.getElementById("locationFilter");
 
-locationSet.forEach(loc=>{
-
-locationFilter.innerHTML +=
-`<option value="${loc.toLowerCase()}">${loc}</option>`;
-
-});
-
-// Teaching Mode Dropdown
-
-const modeFilter =
-document.getElementById("modeFilter");
-
-modeSet.forEach(mode=>{
-
-modeFilter.innerHTML +=
-`<option value="${mode.toLowerCase()}">${mode}</option>`;
-
-});
-
-}
 
 
 
@@ -708,15 +759,25 @@ document.getElementById("searchInput")
 .value
 .toLowerCase()
 .trim();
-const selectedLocation =
-document.getElementById("locationFilter")
-.value
-.toLowerCase();
 
-const selectedMode =
-document.getElementById("modeFilter")
-.value
-.toLowerCase();
+
+
+
+const state =
+document.getElementById("stateFilter").value;
+
+const category =
+document.getElementById("categoryFilter").value;
+
+const area =
+document.getElementById("areaFilter").value;
+
+const role =
+document.getElementById("roleFilter").value;
+
+
+
+
 
 const words =
 q.split(/\s+/);
@@ -767,23 +828,44 @@ html:`
 /* TEACHERS + INSTITUTES */
 
 searchData.forEach(item=>{
+
+
+
+
+
 if(
-selectedLocation &&
-!(item.area || "")
-.toLowerCase()
-.includes(selectedLocation)
+state &&
+item.address !== state
 ){
 return;
 }
 
 if(
-selectedMode &&
-!(item.teachingModes || "")
-.toLowerCase()
-.includes(selectedMode)
+category &&
+item.category !== category
 ){
 return;
 }
+
+if(
+area &&
+item.area !== area &&
+item.pinCode !== area
+){
+return;
+}
+
+if(
+role &&
+item.type !== role
+){
+return;
+}
+
+
+
+
+
 
 const text = `
 ${item.name}
