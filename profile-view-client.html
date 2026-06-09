@@ -419,44 +419,51 @@ if (gallery.length > 0) {
 
 let mapHTML = "";
 
-if (data.mapLink) {
-  const src = data.mapLink.match(/src="([^"]+)"/)?.[1];
+if (data.mapLink || data.mapUrl) {
 
-  if (src) {
-    mapHTML = `
-      <div class="section">
-        <h3>📍 Google Map</h3>
+  let iframeHTML = "";
 
-     
-${data.mapUrl && data.mapUrl.trim() ? `
-<a
-href="${data.mapUrl}"
-target="_blank"
-style="
-display:inline-block;
-padding:12px 20px;
-background:#1976d2;
-color:white;
-text-decoration:none;
-border-radius:10px;
-font-weight:bold;
-margin-bottom:10px;
-">
-📍 Open Google Maps
-</a>
-` : ""}
+  if (data.mapLink) {
+    const src =
+      data.mapLink.match(/src="([^"]+)"/)?.[1];
 
-
+    if (src) {
+      iframeHTML = `
         <iframe
           src="${src}"
           allowfullscreen
           loading="lazy">
         </iframe>
-      </div>
-    `;
+      `;
+    }
   }
-}
 
+  mapHTML = `
+    <div class="section">
+      <h3>📍 Google Map</h3>
+
+      ${data.mapUrl ? `
+      <a
+        href="${data.mapUrl}"
+        target="_blank"
+        style="
+          display:inline-block;
+          padding:12px 20px;
+          background:#1976d2;
+          color:white;
+          text-decoration:none;
+          border-radius:10px;
+          font-weight:bold;
+          margin-bottom:10px;
+        ">
+        📍 Open Google Maps
+      </a>
+      ` : ""}
+
+      ${iframeHTML}
+    </div>
+  `;
+}
 
 
 
@@ -687,25 +694,44 @@ box.style.display === "block"
 
 window.saveContact = function(){
 
+const name =
+(data.name || "GURULINK Contact");
+
+const phone =
+(data.phone || "");
+
+const email =
+(data.email || "");
+
 const vcf = `
 BEGIN:VCARD
 VERSION:3.0
-FN:${data.name || ""}
-TEL:${data.phone || ""}
-EMAIL:${data.email || ""}
+FN:${name}
+TEL:${phone}
+EMAIL:${email}
 END:VCARD
 `;
 
-const blob = new Blob([vcf], {
-type:"text/vcard"
-});
+const blob = new Blob(
+[vcf],
+{type:"text/vcard"}
+);
 
-const url = URL.createObjectURL(blob);
+const url =
+URL.createObjectURL(blob);
 
-const a = document.createElement("a");
+const a =
+document.createElement("a");
+
 a.href = url;
-a.download = (data.name || "contact") + ".vcf";
+a.download =
+name.replace(/\s+/g,"_") + ".vcf";
+
+document.body.appendChild(a);
 a.click();
+document.body.removeChild(a);
+
+URL.revokeObjectURL(url);
 
 };
 
