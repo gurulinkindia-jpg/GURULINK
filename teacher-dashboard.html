@@ -1260,23 +1260,13 @@ window.shareProfile = function () {
     alert("Profile not found");
     return;
   }
-  
-  
-  
-  
 
   const url =
-"https://guru-link.onrender.com/profile-view.html?id=" +
-profileId;
+    "https://guru-link.onrender.com/profile-view.html?id=" + profileId;
 
   const text =
     `Check out this ${role === "teacher" ? "Teacher" : "Institute"} on GURULINK:\n\n` +
     url;
-	
-	
-	
-	
-	
 
   const whatsappURL =
     "https://wa.me/?text=" + encodeURIComponent(text);
