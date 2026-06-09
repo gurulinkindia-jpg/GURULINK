@@ -25,7 +25,26 @@ header{background:#1565c0;color:#fff;padding:14px 20px;display:flex;justify-cont
 .search-box input{flex:1;border:none;outline:none;padding:12px;font-size:16px}
 .search-box button{padding:12px 18px;border:none;background:#1565c0;color:#fff;border-radius:8px;cursor:pointer}
 .quick{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:20px}
-.quick a{background:#fff;color:#1565c0;text-decoration:none;padding:12px 18px;border-radius:8px;font-weight:bold}
+
+.quick a{
+background:#fff;
+color:#1565c0;
+text-decoration:none;
+padding:12px 18px;
+border-radius:8px;
+font-weight:bold;
+
+border:2px solid #0d47a1;   /* Dark Blue Border */
+box-shadow:0 2px 8px rgba(13,71,161,.15);
+transition:.3s;
+}
+
+.quick a:hover{
+background:#0d47a1;
+color:#fff;
+transform:translateY(-2px);
+}
+
 .section-title{text-align:center;padding:30px 15px 15px;font-size:30px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;padding:20px}
 .card,.stat{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08);text-align:center}
@@ -350,7 +369,7 @@ object-fit:cover;
 
 <section class="hero">
 <h1>Find the Right Teacher for Every Subject</h1>
-<p>Academic • Skill • Creative • Sports • Institutes</p>
+<p>Academic • Skill • Creative • Sports</p>
 
 
 
