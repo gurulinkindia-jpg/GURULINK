@@ -834,7 +834,13 @@ q.split(/\s+/);
 const r =
 document.getElementById("results");
 
-if(!q){
+if(
+!q &&
+!state &&
+!category &&
+!area &&
+!role
+){
 r.style.display="none";
 return;
 }
