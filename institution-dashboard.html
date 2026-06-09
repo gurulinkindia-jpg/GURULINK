@@ -1273,30 +1273,26 @@ window.shareProfile = function () {
     return;
   }
 
+  const url =
+    "https://guru-link.onrender.com/profile-view.html?id=" + profileId;
 
- const text =
-  `Click the link to see the profile on GURULINK:\n\n`;
-
-const url =
-  "https://guru-link.onrender.com/profile-view.html?id=" + profileId;
+  const text =
+    `Check this ${role === "teacher" ? "Teacher" : "Institute"} on GURULINK:\n${url}`;
 
   const whatsappURL =
     "https://wa.me/?text=" + encodeURIComponent(text);
 
-  // Mobile native share (best)
-  
-  
- if (navigator.share) {
-  navigator.share({
-    title: "GURULINK Profile",
-    text: text + url,
-    url: url
-  }).catch(() => {
-    window.open("https://wa.me/?text=" + encodeURIComponent(text + url), "_blank");
-  });
-} else {
-  window.open("https://wa.me/?text=" + encodeURIComponent(text + url), "_blank");
-}
+  if (navigator.share) {
+    navigator.share({
+      title: "GURULINK Profile",
+      text: text,
+      url: url
+    }).catch(() => {
+      window.open(whatsappURL, "_blank");
+    });
+  } else {
+    window.open(whatsappURL, "_blank");
+  }
 };
 </script>
 
