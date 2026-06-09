@@ -3,11 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-
 <title>Edit Profile</title>
 
 <style>
-
 *{
 margin:0;
 padding:0;
@@ -19,37 +17,74 @@ body{
 background:#eef2f7;
 }
 
+/* HEADER */
 header{
-background:#1565c0;
+background:linear-gradient(135deg,#1565c0,#1e88e5);
 color:white;
 padding:18px;
 text-align:center;
+font-size:20px;
+font-weight:bold;
 }
 
+/* LAYOUT */
 .container{
 width:95%;
 max-width:1000px;
 margin:20px auto;
+display:flex;
+flex-direction:column;
+gap:18px;
+}
+
+/* CARD */
+.card{
 background:white;
-padding:20px;
-border-radius:15px;
-box-shadow:0 4px 10px rgba(0,0,0,.1);
+padding:18px;
+border-radius:14px;
+box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
 
-.previewBox{
-margin-bottom:20px;
+.card h3{
+margin-bottom:12px;
+color:#1565c0;
 }
 
-.previewBox h3{
-margin-bottom:10px;
+/* FIELD */
+.field{
+margin-bottom:12px;
 }
 
+.field label{
+font-weight:bold;
+display:block;
+margin-bottom:6px;
+}
+
+.field input,
+.field textarea,
+.field select{
+width:100%;
+padding:12px;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+/* UPLOAD */
+.uploadBox{
+padding:12px;
+border:2px dashed #ccc;
+border-radius:10px;
+background:#fafafa;
+}
+
+/* IMAGE */
 .logoPreview{
 width:120px;
 height:120px;
-border-radius:12px;
+border-radius:10px;
 object-fit:cover;
-border:1px solid #ddd;
+border:2px solid #ddd;
 }
 
 .galleryGrid{
@@ -58,67 +93,62 @@ flex-wrap:wrap;
 gap:10px;
 }
 
-.galleryGrid img{
-width:100px;
-height:100px;
+.galleryItem{
+position:relative;
+}
+
+.galleryItem img{
+width:90px;
+height:90px;
 object-fit:cover;
-border-radius:10px;
-border:1px solid #ddd;
-}
-
-.field{
-margin-bottom:15px;
-}
-
-.field label{
-display:block;
-font-weight:bold;
-margin-bottom:6px;
-}
-
-.field input,
-.field textarea{
-width:100%;
-padding:12px;
-border:1px solid #ccc;
 border-radius:8px;
-box-sizing:border-box;
 }
 
-.field textarea{
-min-height:100px;
-resize:vertical;
+.galleryItem button{
+position:absolute;
+top:2px;
+right:2px;
+width:20px;
+height:20px;
+border:none;
+border-radius:50%;
+background:red;
+color:white;
+cursor:pointer;
+font-size:12px;
 }
 
-.uploadBox{
-background:#f5f5f5;
-padding:15px;
-border-radius:10px;
-margin-bottom:20px;
+/* BUTTONS */
+.actions{
+position:sticky;
+bottom:0;
+background:white;
+padding:12px;
+display:flex;
+gap:10px;
+box-shadow:0 -2px 10px rgba(0,0,0,0.1);
+border-radius:12px;
 }
 
 .saveBtn{
-width:100%;
+flex:1;
 padding:14px;
 background:#43a047;
 color:white;
 border:none;
 border-radius:10px;
-font-size:16px;
 cursor:pointer;
-margin-top:10px;
+font-size:16px;
 }
 
 .backBtn{
-width:100%;
+flex:1;
 padding:14px;
 background:#1565c0;
 color:white;
 border:none;
 border-radius:10px;
-font-size:16px;
 cursor:pointer;
-margin-top:10px;
 }
 
 .loading{
@@ -126,742 +156,307 @@ text-align:center;
 padding:40px;
 font-size:18px;
 }
-
 </style>
-
 </head>
 
 <body>
 
-<header>
-<h2>Edit Profile</h2>
-</header>
+<header>Edit Profile</header>
 
 <div class="container">
 
-<div id="loading" class="loading">
-Loading Profile...
-</div>
+<div id="loading" class="loading">Loading Profile...</div>
 
 <div id="mainContent" style="display:none;">
 
-<div class="previewBox">
-
-<h3>Current Logo</h3>
-
-<img
-id="logoPreview"
-class="logoPreview"
-src=""
-alt="Logo">
-
+<!-- LOGO -->
+<div class="card">
+<h3>Profile Logo</h3>
+<img id="logoPreview" class="logoPreview">
+<div class="uploadBox">
+<input type="file" id="newLogo" accept="image/*">
 </div>
+</div>
+
+<!-- BASIC -->
+<div class="card">
+<h3>Basic Info</h3>
+
+<div class="field">
+<label>Category</label>
+<select id="category">
+<option value="">Select Category</option>
+<option value="school">School</option>
+<option value="college">College</option>
+<option value="tuition">Tuition Teacher</option>
+<option value="institute">Institute</option>
+<option value="online">Online Teacher</option>
+</select>
+</div>
+
+<div id="dynamicFields"></div>
+</div>
+
+<!-- GALLERY -->
+<div class="card">
+<h3>Gallery</h3>
+<div id="galleryPreview" class="galleryGrid"></div>
 
 <div class="uploadBox">
-
-<h3>Replace Logo</h3>
-
-<input
-type="file"
-id="newLogo"
-accept="image/*">
-
+<input type="file" id="newGallery" multiple accept="image/*">
+</div>
 </div>
 
-<div class="previewBox">
-
-<h3>Current Gallery</h3>
-
-<div
-id="galleryPreview"
-class="galleryGrid">
-</div>
-
-</div>
-
-<div class="uploadBox">
-
-<h3>Add Gallery Images</h3>
-
-<input
-type="file"
-id="newGallery"
-multiple
-accept="image/*">
-
-</div>
-
-
-<div class="uploadBox">
-
+<!-- BANK -->
+<div class="card">
 <h3>Bank Details</h3>
-<h4>Upload Your Bank QR Code (Receive Payment)</h4>
 
-<input
-type="file"
-id="newQr"
-accept="image/*">
-
-<br><br>
+<div class="uploadBox">
+<input type="file" id="newQr" accept="image/*">
+</div>
 
 <div class="field">
 <label>Bank Name</label>
-<input type="text" id="bankName">
-</div>
-<div class="field">
-<label>Account Holder Name</label>
-<input type="text" id="accountHolderName">
-</div>
-<div class="field">
-<label>Account Number</label>
-<input type="text" id="accountNumber">
+<input id="bankName">
 </div>
 
 <div class="field">
-<label>IFSC Code</label>
-<input type="text" id="ifsc">
+<label>Account Holder</label>
+<input id="accountHolderName">
+</div>
+
+<div class="field">
+<label>Account Number</label>
+<input id="accountNumber">
+</div>
+
+<div class="field">
+<label>IFSC</label>
+<input id="ifsc">
 </div>
 
 <div class="field">
 <label>UPI ID</label>
-<input type="text" id="upiId">
+<input id="upiId">
+</div>
 
 <div class="field">
 <label>
-<input
-type="checkbox"
-id="showBankDetails">
- Show Bank Details On Public Profile
+<input type="checkbox" id="showBankDetails">
+Show Bank Details Public
 </label>
 </div>
+</div>
 
+<!-- MAP -->
+<div class="card">
+<h3>Location</h3>
+<input id="mapUrl" placeholder="Google Maps URL">
+</div>
+
+<!-- ACTIONS -->
+<div class="actions">
+<button class="saveBtn" onclick="saveProfile()">Save Profile</button>
+<button class="backBtn" onclick="goBack()">Back</button>
 </div>
 
 </div>
-
-
-
-
-<div class="field">
-<label>Google Maps URL</label>
-<input
-type="text"
-id="mapUrl"
-placeholder="Paste Google Maps share link">
-</div>
-
-
-
-<div id="dynamicFields">
-</div>
-
-<button
-class="saveBtn"
-onclick="saveProfile()">
-Save Profile
-</button>
-
-<button
-class="backBtn"
-onclick="goBack()">
-Back To Dashboard
-</button>
-
-</div>
-
 </div>
 
 <script type="module">
 
-import {
-initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-import {
-getDatabase,
-ref,
-get,
-update
-}
-from
-"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-const firebaseConfig={
-
+/* Firebase */
+const app = initializeApp({
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-
-authDomain:
-"gurulink-59cc7.firebaseapp.com",
-
-databaseURL:
-"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+});
 
-storageBucket:
-"gurulink-59cc7.appspot.com",
+const db = getDatabase(app);
 
-messagingSenderId:
-"112148672399",
-
-appId:
-"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
-};
-
-const app =
-initializeApp(firebaseConfig);
-
-const db =
-getDatabase(app);
-
-const API_KEY =
-"31f729ff855eb2e42c00ee508a8647ea";
-
-const profileId =
-localStorage.getItem("profileId");
-
-const role =
-localStorage.getItem("role");
-
-if(
-!profileId ||
-!role
-){
-alert("Please Login Again");
-location.href="login.html";
-}
+/* USER */
+const profileId = localStorage.getItem("profileId");
+const role = localStorage.getItem("role");
 
 const dbPath =
-role==="teacher" ||
-role==="teacher_institute"
-?
-"teachers/"+profileId
-:
-"institutions/"+profileId;
+(role==="teacher" || role==="teacher_institute")
+? "teachers/"+profileId
+: "institutions/"+profileId;
 
 let profileData = {};
 
-const hiddenFields = [
-
-"uid",
-"createdAt",
-"status",
-"approvedAt",
-"paymentStatus",
-"idType",
-"idProof",
-"role",
-"category",
-"renewalStatus",
-"lastRenewalDate"
-
-];
-
-async function uploadImage(file){
-
-const fd = new FormData();
-
-fd.append("image",file);
-
-const res =
-await fetch(
-`https://api.imgbb.com/1/upload?key=${API_KEY}`,
-{
-method:"POST",
-body:fd
-}
-);
-
-const data =
-await res.json();
-
-return data.data.url;
-
-}
-
-function createField(key,value){
-
-const wrapper =
-document.createElement("div");
-
-wrapper.className="field";
-
-const label =
-document.createElement("label");
-
-label.innerText=key;
-
-wrapper.appendChild(label);
-
-if(
-typeof value === "object" &&
-value !== null
-){
-
-const textarea =
-document.createElement("textarea");
-
-textarea.id=key;
-
-textarea.value=
-JSON.stringify(
-value,
-null,
-2
-);
-
-wrapper.appendChild(textarea);
-
-}
-else{
-
-const input =
-document.createElement("input");
-
-input.id=key;
-
-input.value=value ?? "";
-
-wrapper.appendChild(input);
-
-}
-
-document
-.getElementById("dynamicFields")
-.appendChild(wrapper);
-
-}
-
+/* LOAD */
 async function loadProfile(){
 
-const snap =
-await get(
-ref(db,dbPath)
-);
+const snap = await get(ref(db,dbPath));
 
 if(!snap.exists()){
-
 alert("Profile Not Found");
-
 return;
-
 }
 
-profileData =
-snap.val();
+profileData = snap.val();
 
-if(profileData.qrImage === undefined){
-profileData.qrImage = "";
+/* logo */
+document.getElementById("logoPreview").src = profileData.logo || "";
+
+/* category */
+document.getElementById("category").value = profileData.category || "";
+
+/* bank */
+document.getElementById("bankName").value = profileData.bankName || "";
+document.getElementById("accountHolderName").value = profileData.accountHolderName || "";
+document.getElementById("accountNumber").value = profileData.accountNumber || "";
+document.getElementById("ifsc").value = profileData.ifsc || "";
+document.getElementById("upiId").value = profileData.upiId || "";
+document.getElementById("showBankDetails").checked = profileData.showBankDetails !== false;
+
+/* map */
+document.getElementById("mapUrl").value = profileData.mapUrl || "";
+
+/* dynamic */
+const box = document.getElementById("dynamicFields");
+box.innerHTML = "";
+
+for(const key in profileData){
+
+if([
+"logo","gallery","bankName","accountHolderName","accountNumber",
+"ifsc","upiId","mapUrl","category","qrImage"
+].includes(key)) continue;
+
+const div = document.createElement("div");
+div.className="field";
+
+div.innerHTML = `
+<label>${key}</label>
+<input id="${key}" value="${profileData[key] || ""}">
+`;
+
+box.appendChild(div);
 }
-if(profileData.bankName === undefined){
-profileData.bankName = "";
-}
-if(profileData.accountHolderName === undefined){
-profileData.accountHolderName = "";
-}
 
-if(profileData.accountNumber === undefined){
-profileData.accountNumber = "";
-}
-
-if(profileData.ifsc === undefined){
-profileData.ifsc = "";
-}
-
-if(profileData.upiId === undefined){
-profileData.upiId = "";
-}
-
-if(profileData.showBankDetails === undefined){
-profileData.showBankDetails = true;
-}
-
-document.getElementById(
-"logoPreview"
-).src =
-profileData.logo || "";
-
-
-
-const gallery = profileData.gallery || [];
+/* gallery */
 renderGallery();
 
-
-
-
-for(
-const key in profileData
-){
-
-if(
-hiddenFields.includes(key)
-){
-continue;
-}
-
-if(
-key==="logo" ||
-key==="gallery" ||
-key==="bankName" ||
-key==="accountHolderName" ||
-key==="accountNumber" ||
-key==="ifsc" ||
-key==="upiId" ||
-key==="qrImage" ||
-key==="mapUrl"
-){
-continue;
-}
-
-createField(
-key,
-profileData[key]
-);
-
-}
-
-document.getElementById("bankName").value =
-profileData.bankName || "";
-
-document.getElementById("accountHolderName").value =
-profileData.accountHolderName || "";
-
-document.getElementById("accountNumber").value =
-profileData.accountNumber || "";
-
-document.getElementById("ifsc").value =
-profileData.ifsc || "";
-
-document.getElementById("upiId").value =
-profileData.upiId || "";
-
-document.getElementById("showBankDetails").checked =
-profileData.showBankDetails !== false;
-
-if(profileData.mapUrl === undefined){
-profileData.mapUrl = "";
-}
-
-document.getElementById("mapUrl").value =
-profileData.mapUrl || "";
-
-
-document.getElementById(
-"loading"
-).style.display="none";
-
-document.getElementById(
-"mainContent"
-).style.display="block";
-
+/* show */
+document.getElementById("loading").style.display="none";
+document.getElementById("mainContent").style.display="block";
 }
 
 loadProfile();
 
-
+/* SAVE */
 window.saveProfile = async function(){
 
-try{
-
-const saveBtn =
-document.querySelector(".saveBtn");
-
-saveBtn.disabled=true;
-saveBtn.innerText="Saving...";
-
-/* START WITH EXISTING DATA */
-
 let updateData = {...profileData};
-updateData.gallery = profileData.gallery || [];   // ✅ ADD THIS LINE HERE
 
-updateData.bankName =
-document.getElementById("bankName").value;
+updateData.category = document.getElementById("category").value;
+updateData.bankName = bank("bankName");
+updateData.accountHolderName = bank("accountHolderName");
+updateData.accountNumber = bank("accountNumber");
+updateData.ifsc = bank("ifsc");
+updateData.upiId = bank("upiId");
+updateData.showBankDetails = document.getElementById("showBankDetails").checked;
+updateData.mapUrl = document.getElementById("mapUrl").value;
 
-updateData.accountHolderName =
-document.getElementById("accountHolderName").value;
+/* dynamic */
+document.querySelectorAll("#dynamicFields input").forEach(i=>{
+updateData[i.id] = i.value;
+});
 
-updateData.accountNumber =
-document.getElementById("accountNumber").value;
-
-updateData.ifsc =
-document.getElementById("ifsc").value;
-
-updateData.upiId =
-document.getElementById("upiId").value;
-
-updateData.showBankDetails =
-document.getElementById("showBankDetails").checked;
-
-updateData.mapUrl =
-document.getElementById("mapUrl").value.trim();
-
-/* DYNAMIC FIELDS */
-
-for(const key in profileData){
-
-if(hiddenFields.includes(key)){
-continue;
-}
-
-if(
-key==="logo" ||
-key==="gallery" ||
-key==="showBankDetails" ||
-key==="bankName" ||
-key==="accountHolderName" ||
-key==="accountNumber" ||
-key==="ifsc" ||
-key==="upiId" ||
-key==="mapUrl"
-){
-continue;
-}
-
-const field =
-document.getElementById(key);
-
-if(!field){
-continue;
-}
-
-let value = field.value;
-
-/* TRY JSON ARRAY / OBJECT */
-
-try{
-
-if(
-value.startsWith("[") ||
-value.startsWith("{")
-){
-
-value =
-JSON.parse(value);
-
-}
-
-}catch(e){}
-
-/* SAVE VALUE */
-
-updateData[key] = value;
-
-}
-
-/* ===========================
-   LOGO = REPLACE
-=========================== */
-
-const logoFile =
-document.getElementById("newLogo")
-.files[0];
-
+/* logo */
+const logoFile = document.getElementById("newLogo").files[0];
 if(logoFile){
-
-saveBtn.innerText=
-"Uploading Logo...";
-
-const logoUrl =
-await uploadImage(
-logoFile
-);
-
-updateData.logo =
-logoUrl;
-
+updateData.logo = await upload(logoFile);
 }
 
-/* ===========================
-   GALLERY = MERGE
-=========================== */
-
-const galleryFiles =
-Array.from(
-document.getElementById("newGallery").files
-);
-
-if(galleryFiles.length){
-
-saveBtn.innerText=
-"Uploading Gallery...";
-
-const oldGallery =
-Array.isArray(
-profileData.gallery
-)
-?
-profileData.gallery
-:
-[];
-
-const newGalleryUrls=[];
-
-for(const file of galleryFiles){
-
-const url =
-await uploadImage(file);
-
-newGalleryUrls.push(url);
-
-}
-
-updateData.gallery = [
-
-...oldGallery,
-...newGalleryUrls
-
-];
-
-}
-
-
-/* ===========================
-   QR IMAGE
-=========================== */
-
-const qrFile =
-document.getElementById("newQr")
-.files[0];
-
+/* QR */
+const qrFile = document.getElementById("newQr").files[0];
 if(qrFile){
-
-saveBtn.innerText =
-"Uploading QR...";
-
-const qrUrl =
-await uploadImage(qrFile);
-
-updateData.qrImage =
-qrUrl;
-
+updateData.qrImage = await upload(qrFile);
 }
-/* SAVE TO FIREBASE */
 
-await update(
+/* gallery */
+const files = document.getElementById("newGallery").files;
+if(files.length){
+const old = profileData.gallery || [];
+let newImgs = [];
 
-ref(db,dbPath),
+for(let f of files){
+newImgs.push(await upload(f));
+}
 
-updateData
+updateData.gallery = [...old, ...newImgs];
+}
 
-);
+await update(ref(db,dbPath), updateData);
 
-/* SUCCESS */
-
-alert(
-"Profile Updated Successfully"
-);
-
-/* REFRESH PAGE */
-
+alert("Updated Successfully");
 location.reload();
-
-}catch(err){
-
-console.log(err);
-
-alert(
-err.message
-);
-
-}
-
-finally{
-
-const saveBtn =
-document.querySelector(".saveBtn");
-
-saveBtn.disabled=false;
-
-saveBtn.innerText=
-"Save Profile";
-
-}
-
 };
 
-/* ===========================
-   BACK BUTTON
-=========================== */
+/* UPLOAD */
+async function upload(file){
+const fd = new FormData();
+fd.append("image",file);
 
-window.goBack=function(){
+const res = await fetch("https://api.imgbb.com/1/upload?key=31f729ff855eb2e42c00ee508a8647ea",{
+method:"POST",
+body:fd
+});
 
-if(
-role==="teacher" ||
-role==="teacher_institute"
-){
-
-location.href=
-"teacher-dashboard.html";
-
-}
-else{
-
-location.href=
-"institution-dashboard.html";
-
+const data = await res.json();
+return data.data.url;
 }
 
+/* GALLERY */
+function renderGallery(){
+const box = document.getElementById("galleryPreview");
+box.innerHTML="";
+
+(profileData.gallery||[]).forEach((img,i)=>{
+
+const div = document.createElement("div");
+div.className="galleryItem";
+
+div.innerHTML = `
+<img src="${img}">
+<button onclick="removeImg(${i})">✖</button>
+`;
+
+box.appendChild(div);
+});
+}
+
+window.removeImg = async function(i){
+
+profileData.gallery.splice(i,1);
+
+await update(ref(db,dbPath),{
+gallery: profileData.gallery
+});
+
+renderGallery();
 };
 
-
-
-
-
-
-function renderGallery() {
-  const galleryBox = document.getElementById("galleryPreview");
-  galleryBox.innerHTML = "";
-
-  const gallery = profileData.gallery || [];
-
-  gallery.forEach((img, index) => {
-    const wrapper = document.createElement("div");
-    wrapper.style.position = "relative";
-    wrapper.style.display = "inline-block";
-
-    const image = document.createElement("img");
-    image.src = img;
-    image.style.width = "100px";
-    image.style.height = "100px";
-    image.style.objectFit = "cover";
-
-    const btn = document.createElement("button");
-    btn.innerText = "✖";
-
-    btn.style.position = "absolute";
-    btn.style.top = "2px";
-    btn.style.right = "2px";
-    btn.style.background = "red";
-    btn.style.color = "white";
-    btn.style.border = "none";
-    btn.style.borderRadius = "50%";
-    btn.style.width = "22px";
-    btn.style.height = "22px";
-    btn.style.cursor = "pointer";
-
-    btn.onclick = async () => {
-      // 1. remove from local array
-      profileData.gallery.splice(index, 1);
-
-      // 2. update Firebase immediately
-      await update(ref(db, dbPath), {
-        gallery: profileData.gallery
-      });
-
-      // 3. re-render UI
-      renderGallery();
-    };
-
-    wrapper.appendChild(image);
-    wrapper.appendChild(btn);
-    galleryBox.appendChild(wrapper);
-  });
+/* helpers */
+function bank(id){
+return document.getElementById(id).value;
 }
 
-
+window.goBack = function(){
+location.href = role.includes("teacher")
+? "teacher-dashboard.html"
+: "institution-dashboard.html";
+};
 
 </script>
 
