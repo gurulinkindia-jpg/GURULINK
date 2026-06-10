@@ -7,22 +7,43 @@
 <title>Login - GURULINK</title>
 
 <style>
+html,
 body{
 margin:0;
+padding:0;
+width:100%;
+height:100%;
+}
+
+body{
 font-family:Arial,sans-serif;
 background:#eef2f7;
+
 display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
+
+min-height:100vh;
+min-height:100dvh;
+
+padding:15px;
+
+-webkit-text-size-adjust:100%;
 }
 
 .box{
-width:350px;
+width:100%;
+max-width:350px;
+
 background:white;
+
 padding:25px;
+
 border-radius:15px;
+
 box-shadow:0 5px 15px rgba(0,0,0,.1);
+
+box-sizing:border-box;
 }
 
 h2{
@@ -35,18 +56,28 @@ input{
 width:100%;
 padding:12px;
 margin:10px 0;
+
 border:1px solid #ccc;
 border-radius:8px;
+
+font-size:16px;
+
+box-sizing:border-box;
 }
 
 button{
 width:100%;
 padding:12px;
+
 background:#1565c0;
 color:white;
+
 border:none;
 border-radius:8px;
+
 cursor:pointer;
+
+font-size:16px;
 }
 
 #msg{
@@ -54,11 +85,39 @@ margin-top:10px;
 text-align:center;
 font-size:14px;
 color:red;
+word-break:break-word;
 }
 
 .link{
 text-align:center;
 margin-top:15px;
+}
+
+.link a{
+color:#1565c0;
+text-decoration:none;
+}
+
+.link a:hover{
+text-decoration:underline;
+}
+
+/* Mobile */
+@media(max-width:480px){
+
+.box{
+padding:20px;
+border-radius:12px;
+}
+
+h2{
+font-size:24px;
+}
+
+input,
+button{
+font-size:16px;
+}
 }
 </style>
 </head>
