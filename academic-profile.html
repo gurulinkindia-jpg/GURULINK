@@ -93,7 +93,7 @@
 
     .verify {
       background: #2196f3;
-      color: #fff;
+      color: white;
     }
 
     .btn {
@@ -136,24 +136,30 @@
 
     <select id="classFilter">
       <option value="">All Classes</option>
+
       <option value="play group">Play Group</option>
       <option value="nursery">Nursery</option>
       <option value="lkg">LKG</option>
       <option value="ukg">UKG</option>
+
       <option value="class 1">Class 1</option>
       <option value="class 2">Class 2</option>
       <option value="class 3">Class 3</option>
       <option value="class 4">Class 4</option>
       <option value="class 5">Class 5</option>
+
       <option value="class 6">Class 6</option>
       <option value="class 7">Class 7</option>
       <option value="class 8">Class 8</option>
       <option value="class 9">Class 9</option>
       <option value="class 10">Class 10</option>
+
       <option value="class 11">Class 11</option>
       <option value="class 12">Class 12</option>
+
       <option value="jee">IIT JEE</option>
       <option value="neet">NEET</option>
+
     </select>
 
   </div>
@@ -183,25 +189,38 @@ const db = getDatabase(app);
 let teachers = [];
 let institutes = [];
 
+/* 🔥 ONLY ACADEMIC DATA */
 onValue(ref(db, "teachers"), (snap) => {
   teachers = [];
+
   snap.forEach((c) => {
     const d = c.val();
-    if ((d.status || "").toLowerCase() === "approved") {
+
+    if (
+      (d.status || "").toLowerCase() === "approved" &&
+      (d.category || "").toLowerCase() === "academic"
+    ) {
       teachers.push({ ...d, id: c.key, type: "Teacher" });
     }
   });
+
   render();
 });
 
 onValue(ref(db, "institutions"), (snap) => {
   institutes = [];
+
   snap.forEach((c) => {
     const d = c.val();
-    if ((d.status || "").toLowerCase() === "approved") {
+
+    if (
+      (d.status || "").toLowerCase() === "approved" &&
+      (d.category || "").toLowerCase() === "academic"
+    ) {
       institutes.push({ ...d, id: c.key, type: "Institution" });
     }
   });
+
   render();
 });
 
@@ -209,7 +228,7 @@ function getAllProfiles() {
   return [...teachers, ...institutes];
 }
 
-/* ✅ FINAL CLASS MATCH FIX */
+/* CLASS MATCH */
 function classMatch(userClass, selectedClass) {
   if (!selectedClass) return true;
   if (!userClass) return false;
@@ -222,36 +241,16 @@ function classMatch(userClass, selectedClass) {
   return list.includes(selectedClass.toLowerCase());
 }
 
+/* SEARCH */
 function similar(a, b) {
   return (a || "").toLowerCase().includes((b || "").toLowerCase());
 }
 
+/* EVENTS */
 document.getElementById("search").addEventListener("input", render);
 document.getElementById("classFilter").addEventListener("change", render);
 
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest(".view");
-  if (!btn) return;
-
-  const uid =
-    localStorage.getItem("uid") ||
-    localStorage.getItem("studentUid") ||
-    localStorage.getItem("teacherUid") ||
-    localStorage.getItem("adminUid") ||
-    localStorage.getItem("institutionId");
-
-  const url = "profile-view.html?id=" + btn.dataset.id;
-
-  if (!uid) {
-    sessionStorage.setItem("redirectAfterLogin", url);
-    alert("Please login first");
-    window.location.href = "student-login.html";
-    return;
-  }
-
-  window.location.href = url;
-});
-
+/* RENDER */
 function render() {
 
   const all = getAllProfiles();
@@ -268,7 +267,6 @@ function render() {
       return false;
     }
 
-    /* ✅ IMPORTANT FIX */
     if (selectedClass && !classMatch(item.class, selectedClass)) {
       return false;
     }
