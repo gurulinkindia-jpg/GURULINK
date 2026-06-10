@@ -199,8 +199,18 @@ setTimeout(() => {
     "Press OK to continue."
   );
 
-  window.location.href =
-    "profile-view.html?id=" + id;
+  if (proceed) {
+
+    const isApp = /Android|iPhone|iPad/i.test(navigator.userAgent);
+
+    if (isApp) {
+      window.location.href = "gurulink://home";
+    } else {
+      window.location.href =
+        "profile-view.html?id=" + encodeURIComponent(id);
+    }
+
+  }
 
 }, 1500);
 
