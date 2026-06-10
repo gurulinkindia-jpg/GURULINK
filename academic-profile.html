@@ -375,17 +375,17 @@ return;
        CLASS MATCH
     ========================= */
 
-    function classMatch(userClass, selectedClass) {
+function classMatch(userClass, selectedClass) {
+  if (!selectedClass) return true;
+  if (!userClass) return false;
 
-      if (!selectedClass) return true;
+  const list = userClass
+    .toLowerCase()
+    .split(",")
+    .map(x => x.trim());
 
-      if (!userClass) return false;
-
-      return userClass
-        .toLowerCase()
-        .includes(selectedClass.toLowerCase());
-
-    }
+  return list.includes(selectedClass.toLowerCase());
+}
 
     /* TEXT MATCH */
 
