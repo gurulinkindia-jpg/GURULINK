@@ -254,7 +254,13 @@ setTimeout(() => {
 
 
 
-window.location.href = "login.html";
+const isApp = /Android|iPhone|iPad/i.test(navigator.userAgent);
+
+if (isApp) {
+    window.location.href = "gurulink://home";
+} else {
+    window.location.href = "login.html";
+}
 
 
 
