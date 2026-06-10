@@ -2,169 +2,168 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Academic Profile - GURULINK</title>
+<title>Academic Profile - GURULINK</title>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
 
-    body {
-      background: linear-gradient(135deg, #d9efff, #f4f9ff, #ffffff);
-      padding-bottom: 40px;
-    }
+body {
+  background: linear-gradient(135deg, #d9efff, #f4f9ff, #ffffff);
+  padding-bottom: 40px;
+}
 
-    header {
-      padding: 30px;
-      text-align: center;
-      background: rgba(255, 255, 255, 0.4);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
-    }
+header {
+  padding: 30px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+}
 
-    .container {
-      width: 95%;
-      max-width: 1300px;
-      margin: auto;
-      padding: 20px;
-    }
+.container {
+  width: 95%;
+  max-width: 1300px;
+  margin: auto;
+  padding: 20px;
+}
 
-    .filters {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      padding: 20px;
-      margin-bottom: 20px;
-      background: rgba(255, 255, 255, 0.45);
-      border-radius: 20px;
-    }
+.filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 20px;
+}
 
-    .filters input,
-    .filters select {
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      outline: none;
-      font-size: 14px;
-    }
+.filters input,
+.filters select {
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  outline: none;
+  font-size: 14px;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
-    }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
 
-    .card {
-      background: rgba(255, 255, 255, 0.45);
-      border-radius: 20px;
-      padding: 15px;
-      border: 1px solid #ddd;
-    }
+.card {
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 20px;
+  padding: 15px;
+  border: 1px solid #ddd;
+}
 
-    .card.teacher { border-left: 6px solid #1976d2; }
-    .card.institution { border-left: 6px solid #e91e63; }
+.card.teacher {
+  border-left: 6px solid #1976d2;
+}
 
-    .top {
-      display: flex;
-      gap: 15px;
-    }
+.card.institution {
+  border-left: 6px solid #e91e63;
+}
 
-    .photo {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
+.top {
+  display: flex;
+  gap: 15px;
+}
 
-    .badge {
-      display: inline-block;
-      margin: 3px;
-      padding: 5px 10px;
-      background: #fff;
-      border-radius: 20px;
-      font-size: 12px;
-    }
+.photo {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+}
 
-    .verify {
-      background: #2196f3;
-      color: white;
-    }
+.badge {
+  display: inline-block;
+  margin: 3px;
+  padding: 5px 10px;
+  background: #fff;
+  border-radius: 20px;
+  font-size: 12px;
+}
 
-    .btn {
-      margin-top: 10px;
-      padding: 7px 12px;
-      border: none;
-      border-radius: 8px;
-      background: #1976d2;
-      color: white;
-      cursor: pointer;
-    }
+.verify {
+  background: #2196f3;
+  color: white;
+}
 
-    .details {
-      margin-top: 10px;
-      font-size: 14px;
-      line-height: 1.6;
-    }
+.btn {
+  margin-top: 10px;
+  padding: 7px 12px;
+  border: none;
+  border-radius: 8px;
+  background: #1976d2;
+  color: white;
+  cursor: pointer;
+}
 
-    .empty {
-      text-align: center;
-      padding: 20px;
-      background: white;
-      border-radius: 15px;
-    }
-  </style>
+.details {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.empty {
+  text-align: center;
+  padding: 20px;
+  background: white;
+  border-radius: 15px;
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <h1>Academic Profile</h1>
-  <p>Find Teachers & Institutes</p>
+<h1>Academic Profile</h1>
+<p>Find Teachers & Institutes</p>
 </header>
 
 <div class="container">
 
-  <div class="filters">
+<div class="filters">
 
-    <input type="text" id="search" placeholder="Search teacher, location" />
+<input type="text" id="search" placeholder="Search teacher, location" />
 
-    <select id="classFilter">
-      <option value="">All Classes</option>
+<select id="classFilter">
+<option value="">All Classes</option>
+<option value="play group">Play Group</option>
+<option value="nursery">Nursery</option>
+<option value="lkg">LKG</option>
+<option value="ukg">UKG</option>
+<option value="class 1">Class 1</option>
+<option value="class 2">Class 2</option>
+<option value="class 3">Class 3</option>
+<option value="class 4">Class 4</option>
+<option value="class 5">Class 5</option>
+<option value="class 6">Class 6</option>
+<option value="class 7">Class 7</option>
+<option value="class 8">Class 8</option>
+<option value="class 9">Class 9</option>
+<option value="class 10">Class 10</option>
+<option value="class 11">Class 11</option>
+<option value="class 12">Class 12</option>
+<option value="jee">IIT JEE</option>
+<option value="neet">NEET</option>
+</select>
 
-      <option value="play group">Play Group</option>
-      <option value="nursery">Nursery</option>
-      <option value="lkg">LKG</option>
-      <option value="ukg">UKG</option>
+</div>
 
-      <option value="class 1">Class 1</option>
-      <option value="class 2">Class 2</option>
-      <option value="class 3">Class 3</option>
-      <option value="class 4">Class 4</option>
-      <option value="class 5">Class 5</option>
-
-      <option value="class 6">Class 6</option>
-      <option value="class 7">Class 7</option>
-      <option value="class 8">Class 8</option>
-      <option value="class 9">Class 9</option>
-      <option value="class 10">Class 10</option>
-
-      <option value="class 11">Class 11</option>
-      <option value="class 12">Class 12</option>
-
-      <option value="jee">IIT JEE</option>
-      <option value="neet">NEET</option>
-
-    </select>
-
-  </div>
-
-  <div id="grid" class="grid"></div>
+<div id="grid" class="grid"></div>
 
 </div>
 
@@ -174,13 +173,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebas
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-  authDomain: "gurulink-59cc7.firebaseapp.com",
-  databaseURL: "https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "gurulink-59cc7",
-  storageBucket: "gurulink-59cc7.appspot.com",
-  messagingSenderId: "112148672399",
-  appId: "1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+apiKey: "AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain: "gurulink-59cc7.firebaseapp.com",
+databaseURL: "https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId: "gurulink-59cc7",
+storageBucket: "gurulink-59cc7.appspot.com",
+messagingSenderId: "112148672399",
+appId: "1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -189,62 +188,87 @@ const db = getDatabase(app);
 let teachers = [];
 let institutes = [];
 
-/* 🔥 ONLY ACADEMIC DATA */
+/* ONLY ACADEMIC */
 onValue(ref(db, "teachers"), (snap) => {
-  teachers = [];
+teachers = [];
 
-  snap.forEach((c) => {
-    const d = c.val();
+snap.forEach((c) => {
+const d = c.val();
 
-    if (
-      (d.status || "").toLowerCase() === "approved" &&
-      (d.category || "").toLowerCase() === "academic"
-    ) {
-      teachers.push({ ...d, id: c.key, type: "Teacher" });
-    }
-  });
+if (
+(d.status || "").toLowerCase() === "approved" &&
+(d.category || "").toLowerCase() === "academic"
+) {
+teachers.push({ ...d, id: c.key, type: "Teacher" });
+}
+});
 
-  render();
+render();
 });
 
 onValue(ref(db, "institutions"), (snap) => {
-  institutes = [];
+institutes = [];
 
-  snap.forEach((c) => {
-    const d = c.val();
+snap.forEach((c) => {
+const d = c.val();
 
-    if (
-      (d.status || "").toLowerCase() === "approved" &&
-      (d.category || "").toLowerCase() === "academic"
-    ) {
-      institutes.push({ ...d, id: c.key, type: "Institution" });
-    }
-  });
+if (
+(d.status || "").toLowerCase() === "approved" &&
+(d.category || "").toLowerCase() === "academic"
+) {
+institutes.push({ ...d, id: c.key, type: "Institution" });
+}
+});
 
-  render();
+render();
 });
 
 function getAllProfiles() {
-  return [...teachers, ...institutes];
+return [...teachers, ...institutes];
 }
 
-/* CLASS MATCH */
+/* CLASS FIX */
 function classMatch(userClass, selectedClass) {
-  if (!selectedClass) return true;
-  if (!userClass) return false;
+if (!selectedClass) return true;
+if (!userClass) return false;
 
-  const list = (userClass + "")
-    .toLowerCase()
-    .split(",")
-    .map(x => x.trim());
+const list = (userClass + "")
+.toLowerCase()
+.split(",")
+.map(x => x.trim());
 
-  return list.includes(selectedClass.toLowerCase());
+return list.includes(selectedClass.toLowerCase());
 }
 
 /* SEARCH */
 function similar(a, b) {
-  return (a || "").toLowerCase().includes((b || "").toLowerCase());
+return (a || "").toLowerCase().includes((b || "").toLowerCase());
 }
+
+/* VIEW BUTTON FIX */
+document.addEventListener("click", (event) => {
+
+const button = event.target.closest(".view");
+if (!button) return;
+
+const profileId = button.dataset.id;
+
+const uid =
+localStorage.getItem("uid") ||
+localStorage.getItem("studentUid") ||
+localStorage.getItem("teacherUid") ||
+localStorage.getItem("adminUid") ||
+localStorage.getItem("institutionId");
+
+if (!uid) {
+sessionStorage.setItem("redirectAfterLogin", "profile-view.html?id=" + profileId);
+alert("Please login first");
+window.location.href = "student-login.html";
+return;
+}
+
+window.location.href = "profile-view.html?id=" + profileId;
+});
 
 /* EVENTS */
 document.getElementById("search").addEventListener("input", render);
@@ -253,62 +277,65 @@ document.getElementById("classFilter").addEventListener("change", render);
 /* RENDER */
 function render() {
 
-  const all = getAllProfiles();
+const all = getAllProfiles();
 
-  const search = document.getElementById("search").value.trim().toLowerCase();
-  const selectedClass = document.getElementById("classFilter").value;
+const search = document.getElementById("search").value.trim().toLowerCase();
+const selectedClass = document.getElementById("classFilter").value;
 
-  const filtered = all.filter((item) => {
+const filtered = all.filter((item) => {
 
-    const name = (item.name || "").toLowerCase();
-    const location = (item.location || item.address || "").toLowerCase();
+const name = (item.name || "").toLowerCase();
+const location = (item.location || item.address || "").toLowerCase();
 
-    if (search && !(similar(name, search) || similar(location, search))) {
-      return false;
-    }
+if (search && !(similar(name, search) || similar(location, search))) {
+return false;
+}
 
-    if (selectedClass && !classMatch(item.class, selectedClass)) {
-      return false;
-    }
+if (selectedClass && !classMatch(item.class, selectedClass)) {
+return false;
+}
 
-    return true;
-  });
+return true;
+});
 
-  const grid = document.getElementById("grid");
+const grid = document.getElementById("grid");
 
-  if (!filtered.length) {
-    grid.innerHTML = `<div class="empty">No Academic Profiles Found</div>`;
-    return;
-  }
+if (!filtered.length) {
+grid.innerHTML = `<div class="empty">No Academic Profiles Found</div>`;
+return;
+}
 
-  grid.innerHTML = filtered.map((item) => `
-    <div class="card ${item.type.toLowerCase()}">
+grid.innerHTML = filtered.map((item) => `
+<div class="card ${item.type.toLowerCase()}">
 
-      <div class="top">
-        <img class="photo" src="${item.photo || item.logo || 'https://via.placeholder.com/100'}">
+<div class="top">
 
-        <div>
-          <h3>${item.name || "-"}</h3>
+<img class="photo" src="${item.photo || item.logo || 'https://via.placeholder.com/100'}">
 
-          <div class="badge">${item.type}</div>
+<div>
 
-          <div class="badge verify">
-            ${(item.status || "").toLowerCase() === "approved" ? "✅ Verified" : "❌ Not Verified"}
-          </div>
+<h3>${item.name || "-"}</h3>
 
-          <button class="btn view" data-id="${item.id}">
-            View Details
-          </button>
-        </div>
-      </div>
+<div class="badge">${item.type}</div>
 
-      <div class="details">
-        <b>Class:</b> ${item.class || "-"} <br>
-        <b>Location:</b> ${item.location || item.address || "-"}
-      </div>
+<div class="badge verify">
+${(item.status || "").toLowerCase() === "approved" ? "✅ Verified" : "❌ Not Verified"}
+</div>
 
-    </div>
-  `).join("");
+<button class="btn view" data-id="${item.id}">
+View Details
+</button>
+
+</div>
+</div>
+
+<div class="details">
+<b>Class:</b> ${item.class || "-"} <br>
+<b>Location:</b> ${item.location || item.address || "-"}
+</div>
+
+</div>
+`).join("");
 
 }
 
