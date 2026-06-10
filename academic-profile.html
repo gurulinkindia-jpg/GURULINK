@@ -446,11 +446,10 @@ return;
 
         /* CLASS FILTER */
 
-        if (
-          !classMatch(item.class, selectedClass)
-        ) {
-          return false;
-        }
+      // CLASS FILTER (FIXED)
+if (selectedClass && !classMatch(item.class, selectedClass)) {
+  return false;
+}
 
         return true;
 
