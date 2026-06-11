@@ -389,8 +389,13 @@ status:"open",
 time:Date.now()
 });
 
-addMsg("🎫 Ticket Created: <b>"+ticketNo+"</b>","bot");
-};
+addMsg(
+`🎫 Ticket Created Successfully<br>
+<b>Ticket No:</b> ${ticketNo}<br><br>
+⏳ Our team will review your request shortly.<br>
+📌 Response time may vary depending on traffic and workload.`,
+"bot"
+);
 
 </script>
 
