@@ -77,7 +77,12 @@ if (type === "teacher" || type === "teacher_institute" || type === "institution"
     encodeURIComponent(id);
 
   paymentLink =
-    "https://rzp.io/rzp/6jCbwy7?redirect=true&redirect_url=" +
+    "https://rzp.io/rzp/6jCbwy7?redirect=true" +
+    "&reference_id=" +
+    encodeURIComponent(id) +
+    "&notes[type]=" +
+    encodeURIComponent(type) +
+    "&redirect_url=" +
     encodeURIComponent(successUrl);
 } else {
   alert("Invalid account type: " + type);
@@ -90,6 +95,8 @@ document.getElementById("feeText").innerText =
 document.getElementById("payBtn").onclick = () => {
   localStorage.setItem("paymentProfileId", id);
   localStorage.setItem("paymentType", type);
+  sessionStorage.setItem("paymentProfileId", id);
+  sessionStorage.setItem("paymentType", type);
 
   window.location.href = paymentLink;
 };
