@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>GURULINK Helpdesk</title>
+<title>GURULINK Helpdesk & FAQ</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
 <style>
@@ -31,69 +31,58 @@ cursor:pointer;
 }
 
 .container{
-max-width:800px;
+max-width:900px;
 margin:20px auto;
 background:white;
 padding:15px;
 border-radius:10px;
-box-shadow:0 3px 10px rgba(0,0,0,.1);
 }
 
-.chatBox{
-height:400px;
-overflow-y:auto;
+.searchBox{
+width:100%;
+padding:12px;
+border:1px solid #ccc;
+border-radius:8px;
+margin-bottom:10px;
+}
+
+.faq{
 border:1px solid #ddd;
 padding:10px;
 border-radius:8px;
+margin-bottom:10px;
 background:#fafafa;
 }
 
-.msg{
-padding:10px;
-margin:8px 0;
-border-radius:10px;
-max-width:80%;
-}
-
-.user{
-background:#d1e7ff;
-margin-left:auto;
-text-align:right;
-}
-
-.bot{
-background:#e8e8e8;
-}
-
-.inputBox{
-display:flex;
-margin-top:10px;
-gap:10px;
-}
-
-input{
-flex:1;
-padding:12px;
-border-radius:8px;
-border:1px solid #ccc;
-}
-
-button{
-padding:12px;
-background:#1565c0;
-color:white;
-border:none;
-border-radius:8px;
+.q{
+font-weight:bold;
 cursor:pointer;
 }
 
-.ticketBox{
-margin-top:10px;
-padding:10px;
-background:#fff3cd;
-border-radius:8px;
+.a{
 display:none;
+margin-top:8px;
+font-size:14px;
+color:#333;
 }
+
+.actions{
+margin-top:10px;
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+
+button{
+padding:8px 10px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.ok{background:green;color:white;}
+.notok{background:#e53935;color:white;}
+.ticket{background:#1565c0;color:white;}
 </style>
 </head>
 
@@ -106,22 +95,14 @@ display:none;
 
 <div class="container">
 
-<div class="chatBox" id="chatBox"></div>
+<input class="searchBox" id="search" placeholder="Search your problem...">
 
-<div class="inputBox">
-<input id="msgInput" placeholder="Ask your question...">
-<button onclick="sendMsg()">Send</button>
-</div>
-
-<div class="ticketBox" id="ticketBox">
-⚠ Not resolved?  
-<button onclick="createTicket()">Book Ticket</button>
-<p>Email: gurulinkindia@gmail.com</p>
-</div>
+<div id="faqList"></div>
 
 </div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
@@ -138,39 +119,148 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const chatBox = document.getElementById("chatBox");
+/* =========================
+   MASTER FAQ DATABASE
+========================= */
 
-function addMsg(text, type){
-const div = document.createElement("div");
-div.className = "msg " + type;
-div.innerText = text;
-chatBox.appendChild(div);
-chatBox.scrollTop = chatBox.scrollHeight;
+const faqs = [
+
+/* LOGIN / AUTH */
+{
+q:"I cannot login to my account",
+a:"Check email/password. If still not working, reset password or contact support."
+},
+{
+q:"Email already exists error",
+a:"You already registered. Use login page instead of registration."
+},
+
+/* REGISTRATION */
+{
+q:"Registration failed or stuck on payment",
+a:"Complete all required fields and ensure internet is stable. If payment fails retry again."
+},
+{
+q:"Why registration requires payment",
+a:"Subscription is required to activate your profile on GURULINK platform."
+},
+
+/* PROFILE / EDIT */
+{
+q:"Profile not updating",
+a:"Make sure you click SAVE PROFILE and wait for upload completion."
+},
+{
+q:"Logo or image not uploading",
+a:"Check internet connection and image size. Use JPG/PNG only."
+},
+
+/* DASHBOARD */
+{
+q:"Dashboard not showing data",
+a:"Please login again or refresh session."
+},
+
+/* PAYMENT */
+{
+q:"Payment failed",
+a:"Try another method or retry after 2 minutes."
+},
+
+/* INSTITUTION */
+{
+q:"Subjects not saving",
+a:"Select at least one subject before submitting form."
+},
+
+/* TEACHER */
+{
+q:"Teacher registration issue",
+a:"Make sure experience, subject and profile image are filled properly."
+},
+
+/* GENERAL */
+{
+q:"How to contact support",
+a:"Click 'Not Resolved' or email gurulinkindia@gmail.com"
 }
 
-window.sendMsg = function(){
+];
 
-const input = document.getElementById("msgInput");
-const text = input.value.trim();
-if(!text) return;
+const list = document.getElementById("faqList");
 
-addMsg(text, "user");
-input.value = "";
+/* =========================
+   RENDER FAQ
+========================= */
 
-setTimeout(()=>{
-addMsg("We received your query. If not solved, click 'Book Ticket'.", "bot");
-document.getElementById("ticketBox").style.display="block";
-},1000);
+function render(data){
 
+list.innerHTML = "";
+
+data.forEach((f,i)=>{
+
+const div = document.createElement("div");
+div.className="faq";
+
+div.innerHTML = `
+<div class="q">❓ ${f.q}</div>
+<div class="a">${f.a}</div>
+
+<div class="actions">
+<button class="ok" onclick="resolved()">✔ Problem Solved</button>
+<button class="notok" onclick="notSolved('${f.q}')">❌ Not Solved</button>
+<button class="ticket" onclick="createTicket('${f.q}')">🎫 Book Ticket</button>
+</div>
+`;
+
+div.querySelector(".q").onclick = () => {
+const ans = div.querySelector(".a");
+ans.style.display = ans.style.display==="block" ? "none":"block";
 };
 
-window.createTicket = async function(){
+list.appendChild(div);
+
+});
+
+}
+
+render(faqs);
+
+/* =========================
+   SEARCH
+========================= */
+
+document.getElementById("search").addEventListener("input",(e)=>{
+
+const val = e.target.value.toLowerCase();
+
+const filtered = faqs.filter(f =>
+f.q.toLowerCase().includes(val)
+);
+
+render(filtered);
+
+});
+
+/* =========================
+   ACTIONS
+========================= */
+
+window.resolved = function(){
+alert("Great 👍 Glad your issue is resolved.");
+};
+
+window.notSolved = function(q){
+alert("No problem. You can book a ticket or email: gurulinkindia@gmail.com");
+};
+
+window.createTicket = async function(question){
 
 const uid = localStorage.getItem("uid") || "guest";
 
 await push(ref(db,"tickets"),{
 uid:uid,
-message:"User requested help",
+message:question,
 status:"open",
 createdAt:Date.now()
 });
