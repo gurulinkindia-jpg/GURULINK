@@ -12,6 +12,7 @@ font-family:Arial;
 background:#eef2f7;
 }
 
+/* WINDOW */
 .window{
 width:95%;
 max-width:700px;
@@ -22,6 +23,7 @@ box-shadow:0 5px 20px rgba(0,0,0,.2);
 overflow:hidden;
 }
 
+/* HEADER */
 .header{
 background:#1565c0;
 color:white;
@@ -42,6 +44,7 @@ border-radius:8px;
 cursor:pointer;
 }
 
+/* CHAT */
 .chat{
 height:420px;
 overflow-y:auto;
@@ -59,6 +62,7 @@ max-width:80%;
 .user{background:#d1e7ff;margin-left:auto;}
 .bot{background:#fff;border:1px solid #ddd;}
 
+/* INPUT */
 .inputBox{
 display:flex;
 padding:10px;
@@ -67,11 +71,11 @@ position:relative;
 }
 
 input, select{
-flex:1;
+width:100%;
 padding:10px;
 border:1px solid #ccc;
 border-radius:8px;
-margin-bottom:5px;
+margin-bottom:8px;
 }
 
 button{
@@ -85,12 +89,28 @@ cursor:pointer;
 .send{background:#1565c0;color:white;}
 .ticketBtn{background:#ff9800;color:white;}
 
-.resolvedBox{
-display:flex;
+/* CATEGORY SCREEN */
+.categoryBox{
+padding:20px;
+display:grid;
+grid-template-columns:1fr 1fr;
 gap:10px;
-margin-top:10px;
 }
 
+.cat{
+padding:15px;
+background:#e3f2fd;
+border:1px solid #90caf9;
+border-radius:10px;
+cursor:pointer;
+text-align:center;
+}
+
+.cat:hover{
+background:#bbdefb;
+}
+
+/* SUGGESTIONS */
 .suggestions{
 position:absolute;
 bottom:55px;
@@ -126,13 +146,28 @@ background:#f0f0f0;
 </div>
 
 <div class="chat" id="chatBox">
-<div class="msg bot">👋 Hello! Ask your problem, I will try to help instantly.</div>
+
+<div class="msg bot">
+👋 Welcome! Please select a category to continue.
+</div>
+
+<div class="categoryBox" id="catBox">
+<div class="cat" onclick="selectCategory('login')">Login</div>
+<div class="cat" onclick="selectCategory('registration')">Registration</div>
+<div class="cat" onclick="selectCategory('profile')">Profile</div>
+<div class="cat" onclick="selectCategory('dashboard')">Dashboard</div>
+<div class="cat" onclick="selectCategory('find teacher')">Find Teacher</div>
+<div class="cat" onclick="selectCategory('renew profile')">Renew Profile</div>
+</div>
+
 </div>
 
 <div class="inputBox">
 
-<input id="input" placeholder="Type your question..."
-oninput="showSuggestions()" onfocus="showSuggestions()">
+<input id="input"
+placeholder="Type your question..."
+oninput="showSuggestions()"
+disabled>
 
 <button class="send" onclick="sendMsg()">Send</button>
 
@@ -147,7 +182,6 @@ oninput="showSuggestions()" onfocus="showSuggestions()">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-/* FIREBASE */
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
@@ -161,17 +195,20 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* AI */
-function botReply(msg){
-msg = msg.toLowerCase();
+let currentCategory = "";
+let selectedQuestion = "";
 
-if(msg.includes("login")) return "Try reset password or check email verification.";
-if(msg.includes("payment")) return "Payment updates in 5–10 mins.";
-if(msg.includes("profile")) return "Go to Dashboard → Edit Profile.";
-if(msg.includes("dashboard")) return "Refresh or login again.";
+/* CATEGORY SELECT */
+window.selectCategory = function(cat){
 
-return "Not fully solved. You can book a ticket.";
-}
+currentCategory = cat;
+
+document.getElementById("catBox").style.display="none";
+
+addMsg("Category selected: " + cat,"bot");
+
+document.getElementById("input").disabled = false;
+};
 
 /* CHAT */
 function addMsg(text,type){
@@ -182,49 +219,71 @@ document.getElementById("chatBox").appendChild(div);
 div.scrollIntoView();
 }
 
-/* SUGGESTIONS */
-const suggestionData = [
-"Login issue",
-"Payment problem",
-"Profile not updating",
-"Dashboard issue",
-"Other issue"
-];
+/* FAQ AI BASED ON CATEGORY */
+function botReply(msg){
+
+msg = msg.toLowerCase();
+
+if(currentCategory === "login"){
+if(msg.includes("password")) return "Reset password using email link.";
+if(msg.includes("otp")) return "Check your registered mobile for OTP.";
+}
+
+if(currentCategory === "profile"){
+if(msg.includes("edit")) return "Go to profile → edit → save.";
+}
+
+if(currentCategory === "dashboard"){
+return "Refresh dashboard or logout/login again.";
+}
+
+return "Not solved. You can book a ticket.";
+}
+
+/* SUGGESTIONS BASED ON CATEGORY */
+const suggestionData = {
+login:["Login issue","Forgot password","OTP not received"],
+registration:["Sign up issue","Email not verified","Mobile issue"],
+profile:["Edit profile","Photo update","Change details"],
+dashboard:["Dashboard not loading","Data missing"],
+"find teacher":["Search teacher","Filter issue"],
+"renew profile":["Renew failed","Payment issue"]
+};
 
 window.showSuggestions = function(){
 
-const input = document.getElementById("input");
-const val = input.value.toLowerCase();
-const box = document.getElementById("suggestBox");
+const input=document.getElementById("input");
+const val=input.value.toLowerCase();
+const box=document.getElementById("suggestBox");
 
-box.innerHTML = "";
+box.innerHTML="";
 
-if(!val){
+if(!val || !currentCategory){
 box.style.display="none";
 return;
 }
 
-let filtered = suggestionData.filter(s =>
-s.toLowerCase().includes(val)
-);
+let list = suggestionData[currentCategory] || [];
 
-filtered.forEach(s=>{
-let div = document.createElement("div");
-div.innerText = s;
-div.onclick = () => {
-input.value = s;
-input.disabled = true;
+list.filter(s=>s.toLowerCase().includes(val))
+.forEach(s=>{
+let div=document.createElement("div");
+div.innerText=s;
+div.onclick=()=>{
+input.value=s;
+input.disabled=true;
 box.style.display="none";
+selectedQuestion=s;
 };
 box.appendChild(div);
 });
 
-let other = document.createElement("div");
-other.innerHTML = "✍ Other (type manually)";
-other.style.color = "red";
-other.onclick = () => {
-input.disabled = false;
-input.value = "";
+let other=document.createElement("div");
+other.innerHTML="✍ Other (type manually)";
+other.style.color="red";
+other.onclick=()=>{
+input.disabled=false;
+input.value="";
 box.style.display="none";
 };
 
@@ -232,11 +291,11 @@ box.appendChild(other);
 box.style.display="flex";
 };
 
-/* CHAT SEND */
-window.sendMsg = function(){
+/* SEND */
+window.sendMsg=function(){
 
-const input = document.getElementById("input");
-const text = input.value.trim();
+const input=document.getElementById("input");
+const text=input.value.trim();
 if(!text) return;
 
 addMsg(text,"user");
@@ -255,16 +314,14 @@ const div=document.createElement("div");
 div.className="msg bot";
 div.innerHTML=`
 <b>Is your problem resolved?</b>
-<div class="resolvedBox">
 <button onclick="resolved(true)">Yes 👍</button>
 <button onclick="resolved(false)">No ❌</button>
-</div>
 `;
 document.getElementById("chatBox").appendChild(div);
 div.scrollIntoView();
 }
 
-window.resolved = function(status){
+window.resolved=function(status){
 if(status){
 addMsg("Yes ✔","user");
 addMsg("Great 👍","bot");
@@ -275,23 +332,28 @@ showTicketBox();
 };
 
 /* TICKET */
+function generateTicket(){
+return "GURU-" + Date.now() + "-" + Math.floor(Math.random()*999);
+}
+
 function showTicketBox(){
 
 const div=document.createElement("div");
 div.className="msg bot";
 div.innerHTML=`
-<b>Book Support Ticket</b><br><br>
+<b>Book Ticket</b><br><br>
 
+<input id="tname" placeholder="Name"><br>
 <select id="role">
 <option>Student</option>
 <option>Teacher</option>
 <option>Institute</option>
 <option>Parent</option>
-</select><br><br>
+</select><br>
 
-<input id="tmsg" placeholder="Issue" style="width:100%;padding:8px"><br><br>
-<input id="tphone" placeholder="Phone" style="width:100%;padding:8px"><br><br>
-<input id="temail" placeholder="Email" style="width:100%;padding:8px"><br><br>
+<input id="tphone" placeholder="Phone"><br>
+<input id="temail" placeholder="Email"><br>
+<input id="tmsg" placeholder="Issue"><br>
 
 <button class="ticketBtn" onclick="submitTicket()">Submit Ticket</button>
 `;
@@ -300,32 +362,29 @@ document.getElementById("chatBox").appendChild(div);
 div.scrollIntoView();
 }
 
-/* TICKET ID */
-function generateTicketNumber(){
-return "GURU-" + Date.now() + "-" + Math.floor(Math.random()*999);
-}
-
-/* SAVE FIREBASE */
 window.submitTicket = async function(){
 
-const msg=document.getElementById("tmsg").value;
+const name=document.getElementById("tname").value;
+const role=document.getElementById("role").value;
 const phone=document.getElementById("tphone").value;
 const email=document.getElementById("temail").value;
-const role=document.getElementById("role").value;
+const msg=document.getElementById("tmsg").value;
 
-if(!msg || !phone || !email){
+if(!name || !phone || !email || !msg){
 alert("Fill all fields");
 return;
 }
 
-const ticketNo = generateTicketNumber();
+const ticketNo = generateTicket();
 
 await push(ref(db,"tickets"),{
 ticketNo,
+name,
 role,
-message:msg,
 phone,
 email,
+message:msg,
+category:currentCategory,
 status:"open",
 time:Date.now()
 });
