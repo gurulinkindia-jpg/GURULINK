@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>GURULINK Helpdesk & FAQ</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GURULINK Smart Helpdesk</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 body{
@@ -12,10 +12,22 @@ font-family:Arial;
 background:#eef2f7;
 }
 
-header{
+/* WINDOW */
+.window{
+width:95%;
+max-width:720px;
+margin:20px auto;
+background:white;
+border-radius:15px;
+box-shadow:0 5px 20px rgba(0,0,0,.2);
+overflow:hidden;
+}
+
+/* HEADER */
+.header{
 background:#1565c0;
 color:white;
-padding:15px;
+padding:12px;
 display:flex;
 justify-content:space-between;
 align-items:center;
@@ -23,250 +35,270 @@ align-items:center;
 
 .closeBtn{
 background:red;
-color:white;
 border:none;
-padding:6px 10px;
-border-radius:5px;
+color:white;
+font-size:18px;
+width:35px;
+height:35px;
+border-radius:8px;
 cursor:pointer;
 }
 
-.container{
-max-width:900px;
-margin:20px auto;
-background:white;
+/* CHAT */
+.chat{
+height:400px;
+overflow-y:auto;
 padding:15px;
-border-radius:10px;
+background:#f9f9f9;
 }
 
-.searchBox{
-width:100%;
-padding:12px;
+.msg{
+padding:10px;
+margin:8px 0;
+border-radius:10px;
+max-width:80%;
+}
+
+.user{
+background:#d1e7ff;
+margin-left:auto;
+text-align:right;
+}
+
+.bot{
+background:#fff;
+border:1px solid #ddd;
+}
+
+/* INPUT */
+.inputBox{
+display:flex;
+padding:10px;
+background:white;
+border-top:1px solid #ddd;
+position:relative;
+}
+
+input{
+flex:1;
+padding:10px;
 border:1px solid #ccc;
 border-radius:8px;
-margin-bottom:10px;
-}
-
-.faq{
-border:1px solid #ddd;
-padding:10px;
-border-radius:8px;
-margin-bottom:10px;
-background:#fafafa;
-}
-
-.q{
-font-weight:bold;
-cursor:pointer;
-}
-
-.a{
-display:none;
-margin-top:8px;
-font-size:14px;
-color:#333;
-}
-
-.actions{
-margin-top:10px;
-display:flex;
-gap:10px;
-flex-wrap:wrap;
 }
 
 button{
-padding:8px 10px;
+margin-left:8px;
+padding:10px 15px;
 border:none;
-border-radius:6px;
+border-radius:8px;
 cursor:pointer;
 }
 
-.ok{background:green;color:white;}
-.notok{background:#e53935;color:white;}
-.ticket{background:#1565c0;color:white;}
+.send{background:#1565c0;color:white;}
+.ticket{background:#ff9800;color:white;width:100%;margin-top:10px;}
+
+/* SUGGESTIONS */
+.suggestions{
+position:absolute;
+bottom:55px;
+left:10px;
+right:10px;
+background:white;
+border:1px solid #ddd;
+border-radius:8px;
+display:none;
+max-height:150px;
+overflow-y:auto;
+}
+
+.suggestions div{
+padding:8px;
+cursor:pointer;
+}
+
+.suggestions div:hover{
+background:#eee;
+}
 </style>
 </head>
 
 <body>
 
-<header>
-<h3>GURULINK Helpdesk</h3>
-<button class="closeBtn" onclick="window.location.href='index.html'">✕</button>
-</header>
+<div class="window">
 
-<div class="container">
+<div class="header">
+<h3>GURULINK SMART HELP DESK</h3>
+<button class="closeBtn" onclick="window.location.href='dashboard.html'">✖</button>
+</div>
 
-<input class="searchBox" id="search" placeholder="Search your problem...">
+<div class="chat" id="chatBox">
+<div class="msg bot">
+👋 Hello! I am your AI Help Assistant.<br>
+Ask your issue or select a suggestion below.
+</div>
+</div>
 
-<div id="faqList"></div>
+<div class="inputBox">
+
+<div style="width:100%">
+<input id="input" placeholder="Type your problem..." oninput="showSuggestions()">
+<div class="suggestions" id="suggestBox"></div>
+</div>
+
+<button class="send" onclick="sendMsg()">Send</button>
+</div>
+
+<div style="padding:10px">
+
+<button class="ticket" id="ticketBtn" onclick="createTicket()" disabled>
+🚨 Book Ticket (Only if not resolved)
+</button>
 
 </div>
 
-<script type="module">
+</div>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+<script>
 
-const firebaseConfig = {
-apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-authDomain:"gurulink-59cc7.firebaseapp.com",
-databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-projectId:"gurulink-59cc7",
-storageBucket:"gurulink-59cc7.appspot.com",
-messagingSenderId:"112148672399",
-appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-/* =========================
-   MASTER FAQ DATABASE
-========================= */
-
-const faqs = [
-
-/* LOGIN / AUTH */
-{
-q:"I cannot login to my account",
-a:"Check email/password. If still not working, reset password or contact support."
-},
-{
-q:"Email already exists error",
-a:"You already registered. Use login page instead of registration."
-},
-
-/* REGISTRATION */
-{
-q:"Registration failed or stuck on payment",
-a:"Complete all required fields and ensure internet is stable. If payment fails retry again."
-},
-{
-q:"Why registration requires payment",
-a:"Subscription is required to activate your profile on GURULINK platform."
-},
-
-/* PROFILE / EDIT */
-{
-q:"Profile not updating",
-a:"Make sure you click SAVE PROFILE and wait for upload completion."
-},
-{
-q:"Logo or image not uploading",
-a:"Check internet connection and image size. Use JPG/PNG only."
-},
-
-/* DASHBOARD */
-{
-q:"Dashboard not showing data",
-a:"Please login again or refresh session."
-},
-
-/* PAYMENT */
-{
-q:"Payment failed",
-a:"Try another method or retry after 2 minutes."
-},
-
-/* INSTITUTION */
-{
-q:"Subjects not saving",
-a:"Select at least one subject before submitting form."
-},
-
-/* TEACHER */
-{
-q:"Teacher registration issue",
-a:"Make sure experience, subject and profile image are filled properly."
-},
-
-/* GENERAL */
-{
-q:"How to contact support",
-a:"Click 'Not Resolved' or email gurulinkindia@gmail.com"
-}
-
+let knownIssues = [
+"login issue",
+"password reset",
+"payment problem",
+"payment failed",
+"dashboard not loading",
+"profile not updating",
+"image upload error",
+"email not verified",
+"registration issue",
+"account not opening"
 ];
 
-const list = document.getElementById("faqList");
+let issueResolved = false;
 
-/* =========================
-   RENDER FAQ
-========================= */
-
-function render(data){
-
-list.innerHTML = "";
-
-data.forEach((f,i)=>{
-
-const div = document.createElement("div");
-div.className="faq";
-
-div.innerHTML = `
-<div class="q">❓ ${f.q}</div>
-<div class="a">${f.a}</div>
-
-<div class="actions">
-<button class="ok" onclick="resolved()">✔ Problem Solved</button>
-<button class="notok" onclick="notSolved('${f.q}')">❌ Not Solved</button>
-<button class="ticket" onclick="createTicket('${f.q}')">🎫 Book Ticket</button>
-</div>
-`;
-
-div.querySelector(".q").onclick = () => {
-const ans = div.querySelector(".a");
-ans.style.display = ans.style.display==="block" ? "none":"block";
-};
-
-list.appendChild(div);
-
-});
-
+/* CHAT */
+function addMsg(text, type){
+let div = document.createElement("div");
+div.className = "msg " + type;
+div.innerHTML = text;
+document.getElementById("chatBox").appendChild(div);
+div.scrollIntoView();
 }
 
-render(faqs);
+/* AI ENGINE */
+function botReply(msg){
 
-/* =========================
-   SEARCH
-========================= */
+msg = msg.toLowerCase();
 
-document.getElementById("search").addEventListener("input",(e)=>{
+if(msg.includes("login")){
+return "✔ Try password reset or check email verification.";
+}
 
-const val = e.target.value.toLowerCase();
+if(msg.includes("payment")){
+return "✔ Wait 5–10 minutes or check Razorpay status.";
+}
 
-const filtered = faqs.filter(f =>
-f.q.toLowerCase().includes(val)
+if(msg.includes("profile")){
+return "✔ Go to Dashboard → Edit Profile → Save changes.";
+}
+
+if(msg.includes("dashboard")){
+return "✔ Refresh page or logout and login again.";
+}
+
+if(msg.includes("image")){
+return "✔ Check image size or internet connection.";
+}
+
+return "❌ I could not fully solve this. You may book a ticket.";
+}
+
+/* SEND MESSAGE */
+function sendMsg(){
+
+let input = document.getElementById("input");
+let text = input.value.trim();
+if(!text) return;
+
+addMsg(text,"user");
+
+let reply = botReply(text);
+
+setTimeout(()=>{
+
+addMsg(reply,"bot");
+
+/* if solved */
+if(!reply.includes("could not fully solve")){
+issueResolved = true;
+document.getElementById("ticketBtn").disabled = true;
+} else {
+issueResolved = false;
+document.getElementById("ticketBtn").disabled = false;
+}
+
+},500);
+
+input.value="";
+document.getElementById("suggestBox").style.display="none";
+}
+
+/* SUGGESTIONS */
+function showSuggestions(){
+
+let val = document.getElementById("input").value.toLowerCase();
+let box = document.getElementById("suggestBox");
+
+box.innerHTML="";
+
+if(!val){
+box.style.display="none";
+return;
+}
+
+let filtered = knownIssues.filter(i=>i.includes(val));
+
+if(filtered.length===0){
+box.style.display="none";
+return;
+}
+
+filtered.forEach(item=>{
+let div = document.createElement("div");
+div.innerText = item;
+div.onclick = ()=>selectSuggestion(item);
+box.appendChild(div);
+});
+
+box.style.display="block";
+}
+
+function selectSuggestion(text){
+document.getElementById("input").value = text;
+document.getElementById("suggestBox").style.display="none";
+}
+
+/* TICKET SYSTEM */
+function createTicket(){
+
+if(issueResolved){
+alert("Issue already resolved. Ticket not required.");
+return;
+}
+
+let msg = prompt("Describe your issue:");
+if(!msg) return;
+
+let email = prompt("Enter email:");
+if(!email) return;
+
+alert("Ticket created successfully!");
+
+window.open(
+"mailto:gurulinkindia@gmail.com?subject=GURULINK Ticket&body="
++ encodeURIComponent(msg + "\nEmail: " + email)
 );
 
-render(filtered);
-
-});
-
-/* =========================
-   ACTIONS
-========================= */
-
-window.resolved = function(){
-alert("Great 👍 Glad your issue is resolved.");
-};
-
-window.notSolved = function(q){
-alert("No problem. You can book a ticket or email: gurulinkindia@gmail.com");
-};
-
-window.createTicket = async function(question){
-
-const uid = localStorage.getItem("uid") || "guest";
-
-await push(ref(db,"tickets"),{
-uid:uid,
-message:question,
-status:"open",
-createdAt:Date.now()
-});
-
-alert("Ticket Created. Our team will contact you soon.");
-};
+}
 
 </script>
 
