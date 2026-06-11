@@ -198,11 +198,11 @@ addMsg("⚠ Login with registered phone number","bot");
 return;
 }
 
-checkOpenTicket(user.phoneNumber); // 🔥 REAL TIME FIX
+checkOpenTicket(user.phoneNumber);
 }
 });
 
-/* 🔥 FIXED: REAL TIME TICKET CHECK */
+/* FIXED REALTIME TICKET CHECK */
 function checkOpenTicket(phone){
 
 onValue(ref(db,"tickets"),(snap)=>{
@@ -239,7 +239,6 @@ let found=null;
 
 snap.forEach(c=>{
 let d=c.val();
-
 if(d.ticketNo===val || d.phone===val){
 found=d;
 }
@@ -283,6 +282,52 @@ if(msg.includes("profile")) return "Go to edit profile.";
 
 return "Not solved. Create ticket or check status.";
 }
+
+/* FIXED SUGGESTIONS */
+const suggestions = {
+login:["Login issue","Forgot password","OTP issue"],
+registration:["Sign up issue","Email not verified"],
+profile:["Edit profile","Photo issue"],
+dashboard:["Dashboard not loading"],
+"find teacher":["Search teacher"],
+"renew profile":["Renew failed"]
+};
+
+window.showSuggestions = function(){
+
+const input=document.getElementById("input");
+const val=input.value.toLowerCase();
+const box=document.getElementById("suggestBox");
+
+box.innerHTML="";
+
+if(!val || !currentCategory){
+box.style.display="none";
+return;
+}
+
+let list = suggestions[currentCategory] || [];
+
+let found = list.filter(s=>s.toLowerCase().includes(val));
+
+if(found.length===0){
+box.style.display="none";
+return;
+}
+
+found.forEach(s=>{
+let div=document.createElement("div");
+div.innerText=s;
+div.onclick=()=>{
+input.value=s;
+input.disabled=true;
+box.style.display="none";
+};
+box.appendChild(div);
+});
+
+box.style.display="flex";
+};
 
 /* SEND */
 window.sendMsg=function(){
