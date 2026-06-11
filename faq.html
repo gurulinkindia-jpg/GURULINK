@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>GURULINK Smart Helpdesk</title>
+<title>GURULINK AI Helpdesk</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
@@ -46,7 +46,7 @@ cursor:pointer;
 
 /* CHAT */
 .chat{
-height:400px;
+height:420px;
 overflow-y:auto;
 padding:15px;
 background:#f9f9f9;
@@ -76,7 +76,6 @@ display:flex;
 padding:10px;
 background:white;
 border-top:1px solid #ddd;
-position:relative;
 }
 
 input{
@@ -95,29 +94,21 @@ cursor:pointer;
 }
 
 .send{background:#1565c0;color:white;}
-.ticket{background:#ff9800;color:white;width:100%;margin-top:10px;}
 
-/* SUGGESTIONS */
-.suggestions{
-position:absolute;
-bottom:55px;
-left:10px;
-right:10px;
-background:white;
-border:1px solid #ddd;
-border-radius:8px;
+.ticketBox{
 display:none;
-max-height:150px;
-overflow-y:auto;
+padding:10px;
+border-top:1px solid #ddd;
+text-align:center;
 }
 
-.suggestions div{
-padding:8px;
+.ticketBtn{
+background:#ff9800;
+color:white;
+padding:10px 15px;
+border:none;
+border-radius:8px;
 cursor:pointer;
-}
-
-.suggestions div:hover{
-background:#eee;
 }
 </style>
 </head>
@@ -127,53 +118,40 @@ background:#eee;
 <div class="window">
 
 <div class="header">
-<h3>GURULINK SMART HELP DESK</h3>
+<h3>GURULINK AI HELP DESK</h3>
 <button class="closeBtn" onclick="window.location.href='dashboard.html'">✖</button>
 </div>
 
 <div class="chat" id="chatBox">
+
 <div class="msg bot">
-👋 Hello! I am your AI Help Assistant.<br>
-Ask your issue or select a suggestion below.
+👋 Hello! I am your AI Support Assistant.<br>
+Please describe your issue.
 </div>
+
 </div>
 
 <div class="inputBox">
-
-<div style="width:100%">
-<input id="input" placeholder="Type your problem..." oninput="showSuggestions()">
-<div class="suggestions" id="suggestBox"></div>
-</div>
-
+<input id="input" placeholder="Type your issue...">
 <button class="send" onclick="sendMsg()">Send</button>
 </div>
 
-<div style="padding:10px">
+<div class="ticketBox" id="ticketBox">
+<p>❓ Is your problem resolved?</p>
+<button onclick="resolved(true)" style="background:#4caf50;color:white;padding:8px 12px;border:none;border-radius:6px;">YES</button>
+<button onclick="resolved(false)" style="background:#e53935;color:white;padding:8px 12px;border:none;border-radius:6px;">NO</button>
+<br><br>
 
-<button class="ticket" id="ticketBtn" onclick="createTicket()" disabled>
-🚨 Book Ticket (Only if not resolved)
+<button class="ticketBtn" id="bookTicketBtn" onclick="createTicket()" style="display:none;">
+🚨 Book Ticket
 </button>
-
 </div>
 
 </div>
 
 <script>
 
-let knownIssues = [
-"login issue",
-"password reset",
-"payment problem",
-"payment failed",
-"dashboard not loading",
-"profile not updating",
-"image upload error",
-"email not verified",
-"registration issue",
-"account not opening"
-];
-
-let issueResolved = false;
+let lastResolvedQuestion = false;
 
 /* CHAT */
 function addMsg(text, type){
@@ -190,11 +168,11 @@ function botReply(msg){
 msg = msg.toLowerCase();
 
 if(msg.includes("login")){
-return "✔ Try password reset or check email verification.";
+return "✔ Try resetting your password or check email verification.";
 }
 
 if(msg.includes("payment")){
-return "✔ Wait 5–10 minutes or check Razorpay status.";
+return "✔ Wait 5–10 minutes or check transaction status in Razorpay.";
 }
 
 if(msg.includes("profile")){
@@ -205,11 +183,7 @@ if(msg.includes("dashboard")){
 return "✔ Refresh page or logout and login again.";
 }
 
-if(msg.includes("image")){
-return "✔ Check image size or internet connection.";
-}
-
-return "❌ I could not fully solve this. You may book a ticket.";
+return "⚠ I tried my best, please check again carefully.";
 }
 
 /* SEND MESSAGE */
@@ -221,80 +195,55 @@ if(!text) return;
 
 addMsg(text,"user");
 
-let reply = botReply(text);
-
 setTimeout(()=>{
 
+let reply = botReply(text);
 addMsg(reply,"bot");
 
-/* if solved */
-if(!reply.includes("could not fully solve")){
-issueResolved = true;
-document.getElementById("ticketBtn").disabled = true;
-} else {
-issueResolved = false;
-document.getElementById("ticketBtn").disabled = false;
-}
+/* AFTER ANSWER → ASK RESOLUTION */
+setTimeout(()=>{
+
+addMsg("❓ Is your problem resolved?","bot");
+
+document.getElementById("ticketBox").style.display="block";
+
+lastResolvedQuestion = false;
+
+},600);
 
 },500);
 
 input.value="";
-document.getElementById("suggestBox").style.display="none";
 }
 
-/* SUGGESTIONS */
-function showSuggestions(){
+/* RESOLUTION HANDLER */
+function resolved(status){
 
-let val = document.getElementById("input").value.toLowerCase();
-let box = document.getElementById("suggestBox");
-
-box.innerHTML="";
-
-if(!val){
-box.style.display="none";
-return;
+if(status){
+addMsg("✅ Glad your issue is resolved!","bot");
+document.getElementById("ticketBox").style.display="none";
+document.getElementById("bookTicketBtn").style.display="none";
+lastResolvedQuestion = true;
+}
+else{
+addMsg("⚠ Sorry for inconvenience. You can book a ticket now.","bot");
+document.getElementById("bookTicketBtn").style.display="inline-block";
+}
 }
 
-let filtered = knownIssues.filter(i=>i.includes(val));
-
-if(filtered.length===0){
-box.style.display="none";
-return;
-}
-
-filtered.forEach(item=>{
-let div = document.createElement("div");
-div.innerText = item;
-div.onclick = ()=>selectSuggestion(item);
-box.appendChild(div);
-});
-
-box.style.display="block";
-}
-
-function selectSuggestion(text){
-document.getElementById("input").value = text;
-document.getElementById("suggestBox").style.display="none";
-}
-
-/* TICKET SYSTEM */
+/* TICKET */
 function createTicket(){
-
-if(issueResolved){
-alert("Issue already resolved. Ticket not required.");
-return;
-}
 
 let msg = prompt("Describe your issue:");
 if(!msg) return;
 
-let email = prompt("Enter email:");
+let email = prompt("Enter your email:");
 if(!email) return;
 
 alert("Ticket created successfully!");
 
 window.open(
-"mailto:gurulinkindia@gmail.com?subject=GURULINK Ticket&body="
+"mailto:gurulinkindia@gmail.com?subject=GURULINK Support Ticket&body="
 + encodeURIComponent(msg + "\nEmail: " + email)
 );
 
