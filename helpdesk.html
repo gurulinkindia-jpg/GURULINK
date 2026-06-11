@@ -66,11 +66,12 @@ border-top:1px solid #ddd;
 position:relative;
 }
 
-input{
+input, select{
 flex:1;
 padding:10px;
 border:1px solid #ccc;
 border-radius:8px;
+margin-bottom:5px;
 }
 
 button{
@@ -90,7 +91,6 @@ gap:10px;
 margin-top:10px;
 }
 
-/* 🔥 SUGGESTION BOX */
 .suggestions{
 position:absolute;
 bottom:55px;
@@ -126,18 +126,16 @@ background:#f0f0f0;
 </div>
 
 <div class="chat" id="chatBox">
-<div class="msg bot">
-👋 Hello! Ask your problem, I will try to help instantly.
-</div>
+<div class="msg bot">👋 Hello! Ask your problem, I will try to help instantly.</div>
 </div>
 
 <div class="inputBox">
 
-<input id="input" placeholder="Type your question..." oninput="showSuggestions()" onfocus="showSuggestions()">
+<input id="input" placeholder="Type your question..."
+oninput="showSuggestions()" onfocus="showSuggestions()">
 
 <button class="send" onclick="sendMsg()">Send</button>
 
-<!-- suggestion dropdown -->
 <div class="suggestions" id="suggestBox"></div>
 
 </div>
@@ -149,6 +147,7 @@ background:#f0f0f0;
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
+/* FIREBASE */
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
@@ -162,7 +161,7 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* ---------- AI ---------- */
+/* AI */
 function botReply(msg){
 msg = msg.toLowerCase();
 
@@ -174,7 +173,7 @@ if(msg.includes("dashboard")) return "Refresh or login again.";
 return "Not fully solved. You can book a ticket.";
 }
 
-/* ---------- CHAT ---------- */
+/* CHAT */
 function addMsg(text,type){
 const div=document.createElement("div");
 div.className="msg "+type;
@@ -183,12 +182,12 @@ document.getElementById("chatBox").appendChild(div);
 div.scrollIntoView();
 }
 
-/* ---------- SUGGESTIONS ---------- */
+/* SUGGESTIONS */
 const suggestionData = [
 "Login issue",
 "Payment problem",
 "Profile not updating",
-"Dashboard not working",
+"Dashboard issue",
 "Other issue"
 ];
 
@@ -212,33 +211,28 @@ s.toLowerCase().includes(val)
 filtered.forEach(s=>{
 let div = document.createElement("div");
 div.innerText = s;
-div.onclick = () => selectSuggestion(s);
+div.onclick = () => {
+input.value = s;
+input.disabled = true;
+box.style.display="none";
+};
 box.appendChild(div);
 });
 
-/* ALWAYS ADD OTHER OPTION */
 let other = document.createElement("div");
 other.innerHTML = "✍ Other (type manually)";
 other.style.color = "red";
-other.onclick = () => allowFreeTyping();
-box.appendChild(other);
+other.onclick = () => {
+input.disabled = false;
+input.value = "";
+box.style.display="none";
+};
 
+box.appendChild(other);
 box.style.display="flex";
 };
 
-function selectSuggestion(text){
-document.getElementById("input").value = text;
-document.getElementById("suggestBox").style.display="none";
-document.getElementById("input").disabled = true; // lock input after selection
-}
-
-function allowFreeTyping(){
-document.getElementById("suggestBox").style.display="none";
-document.getElementById("input").disabled = false;
-document.getElementById("input").focus();
-}
-
-/* ---------- CHAT SEND ---------- */
+/* CHAT SEND */
 window.sendMsg = function(){
 
 const input = document.getElementById("input");
@@ -255,7 +249,7 @@ askResolved();
 input.value="";
 };
 
-/* ---------- RESOLVED ---------- */
+/* RESOLVED */
 function askResolved(){
 const div=document.createElement("div");
 div.className="msg bot";
@@ -274,23 +268,31 @@ window.resolved = function(status){
 if(status){
 addMsg("Yes ✔","user");
 addMsg("Great 👍","bot");
-}
-else{
+}else{
 addMsg("No ❌","user");
 showTicketBox();
 }
 };
 
-/* ---------- TICKET ---------- */
+/* TICKET */
 function showTicketBox(){
 
 const div=document.createElement("div");
 div.className="msg bot";
 div.innerHTML=`
 <b>Book Support Ticket</b><br><br>
+
+<select id="role">
+<option>Student</option>
+<option>Teacher</option>
+<option>Institute</option>
+<option>Parent</option>
+</select><br><br>
+
 <input id="tmsg" placeholder="Issue" style="width:100%;padding:8px"><br><br>
 <input id="tphone" placeholder="Phone" style="width:100%;padding:8px"><br><br>
 <input id="temail" placeholder="Email" style="width:100%;padding:8px"><br><br>
+
 <button class="ticketBtn" onclick="submitTicket()">Submit Ticket</button>
 `;
 
@@ -298,17 +300,18 @@ document.getElementById("chatBox").appendChild(div);
 div.scrollIntoView();
 }
 
-/* ---------- TICKET ID ---------- */
+/* TICKET ID */
 function generateTicketNumber(){
 return "GURU-" + Date.now() + "-" + Math.floor(Math.random()*999);
 }
 
-/* ---------- SAVE ---------- */
+/* SAVE FIREBASE */
 window.submitTicket = async function(){
 
 const msg=document.getElementById("tmsg").value;
 const phone=document.getElementById("tphone").value;
 const email=document.getElementById("temail").value;
+const role=document.getElementById("role").value;
 
 if(!msg || !phone || !email){
 alert("Fill all fields");
@@ -319,6 +322,7 @@ const ticketNo = generateTicketNumber();
 
 await push(ref(db,"tickets"),{
 ticketNo,
+role,
 message:msg,
 phone,
 email,
@@ -326,7 +330,7 @@ status:"open",
 time:Date.now()
 });
 
-addMsg("🎫 Ticket Created: " + ticketNo,"bot");
+addMsg("🎫 Ticket Created: <b>"+ticketNo+"</b>","bot");
 };
 
 </script>
