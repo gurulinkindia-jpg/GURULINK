@@ -88,6 +88,7 @@ display:flex;
 gap:10px;
 margin-top:10px;
 }
+
 .resolvedBox button{
 flex:1;
 padding:8px;
@@ -136,9 +137,7 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let lastAnswer = "";
-
-/* CHAT UI */
+/* ---------------- CHAT UI ---------------- */
 function addMsg(text,type){
 const div=document.createElement("div");
 div.className="msg "+type;
@@ -147,17 +146,17 @@ document.getElementById("chatBox").appendChild(div);
 div.scrollIntoView();
 }
 
-/* SIMPLE AI ENGINE */
+/* ---------------- SIMPLE AI ---------------- */
 function botReply(msg){
 
 msg = msg.toLowerCase();
 
 if(msg.includes("login")){
-return "Try reset password or check email verification link.";
+return "Try resetting password or check email verification link.";
 }
 
 if(msg.includes("payment")){
-return "Payment usually updates in 5–10 minutes. Check transaction status.";
+return "Payment usually updates in 5–10 minutes. Please check transaction status.";
 }
 
 if(msg.includes("profile")){
@@ -168,10 +167,10 @@ if(msg.includes("dashboard")){
 return "Try logout and login again or refresh page.";
 }
 
-return "I couldn't fully solve it automatically.";
+return "I couldn't fully solve it. You may book a support ticket.";
 }
 
-/* ASK RESOLVED */
+/* ---------------- RESOLVED ASK ---------------- */
 function askResolved(){
 const div=document.createElement("div");
 div.className="msg bot";
@@ -198,7 +197,7 @@ showTicketBox();
 }
 }
 
-/* TICKET BOX */
+/* ---------------- TICKET BOX ---------------- */
 function showTicketBox(){
 
 const div=document.createElement("div");
@@ -214,7 +213,7 @@ document.getElementById("chatBox").appendChild(div);
 div.scrollIntoView();
 }
 
-/* SAVE TO FIREBASE */
+/* ---------------- FIREBASE TICKET SAVE ---------------- */
 window.submitTicket = async function(){
 
 const msg=document.getElementById("tmsg").value;
@@ -225,6 +224,8 @@ alert("Fill all fields");
 return;
 }
 
+try{
+
 await push(ref(db,"tickets"),{
 message:msg,
 email:email,
@@ -233,9 +234,15 @@ time:Date.now()
 });
 
 addMsg("🎫 Ticket submitted successfully. Our team will contact you soon.","bot");
+
+}catch(err){
+console.log(err);
+alert("Firebase Error: " + err.message);
 }
 
-/* CHAT SEND */
+}
+
+/* ---------------- SEND CHAT ---------------- */
 window.sendMsg=function(){
 
 const input=document.getElementById("input");
@@ -245,8 +252,7 @@ if(!text) return;
 addMsg(text,"user");
 
 setTimeout(()=>{
-lastAnswer = botReply(text);
-addMsg(lastAnswer,"bot");
+addMsg(botReply(text),"bot");
 askResolved();
 },500);
 
