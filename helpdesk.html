@@ -124,7 +124,7 @@ border:1px solid #ffeeba;
 
 <div class="header">
 <h3>GURULINK HELP DESK</h3>
-<button class="closeBtn" onclick="window.location.href='dashboard.html'">✖</button>
+<button class="closeBtn" onclick="closeHelpdesk()">✖</button>
 </div>
 
 <div class="chat" id="chatBox">
@@ -446,7 +446,18 @@ addMsg(
 "bot"
 );
 };
+window.closeHelpdesk = function () {
+  const returnPage = sessionStorage.getItem("helpdeskReturn");
 
+  if (returnPage) {
+    sessionStorage.removeItem("helpdeskReturn");
+    window.location.href = returnPage;
+  } else if (document.referrer) {
+    history.back();
+  } else {
+    window.location.href = "index.html";
+  }
+};
 </script>
 
 </body>
