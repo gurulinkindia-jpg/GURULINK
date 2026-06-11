@@ -20,7 +20,7 @@ text-align:center;
 }
 
 .container{
-max-width:900px;
+max-width:950px;
 margin:20px auto;
 background:white;
 padding:15px;
@@ -29,22 +29,30 @@ border-radius:10px;
 
 .ticket{
 border:1px solid #ddd;
-padding:10px;
+padding:12px;
 margin:10px 0;
 border-radius:8px;
+background:#fff;
+}
+
+.ticket p{
+margin:5px 0;
 }
 
 button{
 margin:5px;
-padding:8px;
+padding:8px 10px;
 border:none;
 border-radius:5px;
 cursor:pointer;
+font-size:13px;
 }
 
 .resolve{background:green;color:white;}
 .reject{background:red;color:white;}
 .view{background:#1565c0;color:white;}
+.delete{background:#444;color:white;}
+.clearAll{background:#b71c1c;color:white;float:right;}
 </style>
 </head>
 
@@ -52,6 +60,7 @@ cursor:pointer;
 
 <header>
 <h2>Helpdesk Admin Panel</h2>
+<button class="clearAll" onclick="clearAllTickets()">🧨 Delete ALL Tickets</button>
 </header>
 
 <div class="container" id="tickets"></div>
@@ -59,7 +68,7 @@ cursor:pointer;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -76,6 +85,7 @@ const db = getDatabase(app);
 
 const box = document.getElementById("tickets");
 
+/* LOAD TICKETS */
 onValue(ref(db,"tickets"), snap => {
 
 box.innerHTML = "";
@@ -89,12 +99,18 @@ const div = document.createElement("div");
 div.className="ticket";
 
 div.innerHTML = `
-<p><b>User:</b> ${t.uid}</p>
+<p><b>Ticket No:</b> ${t.ticketNo || "N/A"}</p>
+<p><b>Name:</b> ${t.name || "N/A"}</p>
+<p><b>Role:</b> ${t.role || "N/A"}</p>
+<p><b>Phone:</b> ${t.phone || "N/A"}</p>
+<p><b>Email:</b> ${t.email || "N/A"}</p>
+<p><b>Category:</b> ${t.category || "N/A"}</p>
 <p><b>Message:</b> ${t.message}</p>
 <p><b>Status:</b> ${t.status}</p>
 
-<button class="resolve" onclick="resolve('${id}')">Resolve</button>
-<button class="reject" onclick="reject('${id}')">Not Resolved</button>
+<button class="resolve" onclick="resolveTicket('${id}')">Resolve</button>
+<button class="reject" onclick="rejectTicket('${id}')">Reject</button>
+<button class="delete" onclick="deleteTicket('${id}')">Delete</button>
 `;
 
 box.appendChild(div);
@@ -102,12 +118,28 @@ box.appendChild(div);
 
 });
 
-window.resolve = async function(id){
+/* RESOLVE */
+window.resolveTicket = async function(id){
 await update(ref(db,"tickets/"+id),{status:"resolved"});
 };
 
-window.reject = async function(id){
+/* REJECT */
+window.rejectTicket = async function(id){
 await update(ref(db,"tickets/"+id),{status:"not_resolved"});
+};
+
+/* DELETE SINGLE */
+window.deleteTicket = async function(id){
+if(confirm("Delete this ticket permanently?")){
+await remove(ref(db,"tickets/"+id));
+}
+};
+
+/* DELETE ALL */
+window.clearAllTickets = async function(){
+if(confirm("⚠ Delete ALL tickets from database? This cannot be undone!")){
+await remove(ref(db,"tickets"));
+}
 };
 
 </script>
