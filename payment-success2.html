@@ -81,7 +81,25 @@ const msg = document.getElementById("msg");
 
 const params = new URLSearchParams(window.location.search);
 
-let type =
+let type = "";
+let id = "";
+
+const returnData = params.get("returnData");
+
+if (returnData) {
+  try {
+    const decoded = atob(returnData);
+    const parts = decoded.split("||");
+
+    type = parts[0] || "";
+    id = parts[1] || "";
+  } catch (err) {
+    console.log("returnData decode failed:", err);
+  }
+}
+
+type =
+  type ||
   params.get("type") ||
   params.get("notes[type]") ||
   params.get("notes.type") ||
@@ -89,7 +107,8 @@ let type =
   localStorage.getItem("paymentType") ||
   "";
 
-let id =
+id =
+  id ||
   params.get("id") ||
   params.get("reference_id") ||
   params.get("razorpay_payment_link_reference_id") ||
@@ -105,6 +124,7 @@ if (type) {
 }
 
 console.log("SUCCESS2 URL:", window.location.href);
+console.log("RETURN DATA:", returnData);
 console.log("FINAL TYPE:", type);
 console.log("FINAL ID:", id);
 
