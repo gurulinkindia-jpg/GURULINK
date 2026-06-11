@@ -47,6 +47,7 @@ animation:spin 1s linear infinite;
 
 .success{color:green;font-weight:bold;}
 .error{color:red;font-weight:bold;}
+.debug{font-size:12px;color:#555;word-break:break-all;}
 </style>
 </head>
 
@@ -59,7 +60,6 @@ animation:spin 1s linear infinite;
 </div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, push, get, set, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
@@ -76,207 +76,115 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-
-
-
-
-
-
-
-
-
-
-/* URL PARAMS */
+const loader = document.getElementById("loader");
+const msg = document.getElementById("msg");
 
 const params = new URLSearchParams(window.location.search);
 
-let type = params.get("type");
-let id = params.get("id");
+let type =
+  params.get("type") ||
+  localStorage.getItem("paymentType") ||
+  "";
 
-console.log("FROM URL TYPE:", type);
-console.log("FROM URL ID:", id);
+let id =
+  params.get("id") ||
+  localStorage.getItem("paymentProfileId") ||
+  localStorage.getItem(type + "Id") ||
+  localStorage.getItem("teacherId") ||
+  localStorage.getItem("institutionId") ||
+  "";
 
-/* 🔥 PRIMARY FIX: fallback to localStorage */
-if (!id) {
-    id = localStorage.getItem("paymentProfileId");
+if (type) {
+  type = type.toLowerCase();
 }
 
-if (!type) {
-    type = localStorage.getItem("paymentType");
-}
-
+console.log("SUCCESS2 URL:", window.location.href);
 console.log("FINAL TYPE:", type);
 console.log("FINAL ID:", id);
 
-/* safety check */
-if (!id) {
-    alert("Payment failed: Profile ID missing");
-    throw new Error("Missing ID");
-}
-
-
-
-
-
-
-/* safety check */
-if (!id) {
-    alert("Profile ID missing. Please complete registration & payment.");
-    throw new Error("Missing ID");
-}
-
-/* SAFE FALLBACK */
 if (!id || id === "null" || id === "undefined") {
-    id = localStorage.getItem(type + "Id");
+  loader.style.display = "none";
+  msg.innerHTML =
+    '<span class="error">Profile ID missing.</span><br><br>' +
+    '<span class="debug">' + window.location.href + '</span>';
+  throw new Error("Profile ID Missing");
 }
 
-/* FINAL CHECK */
-if (!id) {
-    document.getElementById("loader").style.display = "none";
-    document.getElementById("msg").innerHTML =
-        '<span class="error">Profile ID missing.</span>';
-    throw new Error("Profile ID Missing");
+if (!type || type === "null" || type === "undefined") {
+  loader.style.display = "none";
+  msg.innerHTML =
+    '<span class="error">Account type missing.</span><br><br>' +
+    '<span class="debug">' + window.location.href + '</span>';
+  throw new Error("Payment Type Missing");
 }
 
-/* PAYMENT AMOUNT */
-/* PAYMENT AMOUNT */
-/* PAYMENT AMOUNT */
-const amount = type === "institution" ? 200 : 100;
+const amount = 399;
 
-/* MAIN */
 async function savePayment() {
-
-try {
-
-
-
-let profilePath = "";
-
-const cleanType = (type || "").toLowerCase();
-
-if (cleanType.includes("teacher")) {
-    profilePath = "teachers/" + id;
-}
-else if (cleanType.includes("institution")) {
-    profilePath = "institutions/" + id;
-}
-else {
-    throw new Error("Invalid type: " + type);
-}
-
-
-
-/* GET PROFILE */
-const snap = await get(ref(db, profilePath));
-
-
-
-if (!snap.exists()) {
-    throw new Error("Profile not found in database");
-}
-
-const user = snap.val();
-
-
-
-
-
-
-/* PAYMENT RECORD */
-const paymentRef = push(ref(db, "payment2"));
-
-
-
-
-
-
-await set(paymentRef, {
-
-paymentId: paymentRef.key,
-profileId: id,
-uid: id,
-type: type,
-
-renewal: true,
-
-name: user.name || "",
-ownerName: user.ownerName || "",
-
-email: user.email || "",
-phone: user.phone || "",
-
-amount: amount,
-status: "paid",
-
-date: new Date().toLocaleString(),
-createdAt: Date.now()
-
-});
-
-
-
-
-
-
-
-/* UPDATE PROFILE */
-
-
-
-
-await update(ref(db, profilePath), {
-
-    paymentStatus: "paid",
-
-    approvedAt: Date.now(),
-
-    lastRenewalDate: Date.now(),
-
-    renewalStatus: "active"
-
-});
-
-
-
-
-
-
-
-/* SUCCESS */
-document.getElementById("loader").style.display = "none";
-document.getElementById("msg").innerHTML =
-'<span class="success">Payment successful! Redirecting...</span>';
-
-setTimeout(() => {
-
-
-
-
-
-
-window.location.href = "login.html";
-
-
-
-
-
-
-}, 2000);
-
-} catch (err) {
-
-console.log(err);
-
-document.getElementById("loader").style.display = "none";
-document.getElementById("msg").innerHTML =
-'<span class="error">Payment failed.</span><br><br>' + err.message;
-
-}
-
+  try {
+    let profilePath = "";
+
+    if (type.includes("teacher")) {
+      profilePath = "teachers/" + id;
+    } else if (type.includes("institution")) {
+      profilePath = "institutions/" + id;
+    } else {
+      throw new Error("Invalid type: " + type);
+    }
+
+    const snap = await get(ref(db, profilePath));
+
+    if (!snap.exists()) {
+      throw new Error("Profile not found in database");
+    }
+
+    const user = snap.val();
+    const paymentRef = push(ref(db, "payment2"));
+
+    await set(paymentRef, {
+      paymentId: paymentRef.key,
+      profileId: id,
+      uid: id,
+      type: type,
+      renewal: true,
+      name: user.name || "",
+      ownerName: user.ownerName || "",
+      email: user.email || "",
+      phone: user.phone || "",
+      amount: amount,
+      status: "paid",
+      date: new Date().toLocaleString(),
+      createdAt: Date.now()
+    });
+
+    await update(ref(db, profilePath), {
+      paymentStatus: "paid",
+      approvedAt: Date.now(),
+      lastRenewalDate: Date.now(),
+      renewalStatus: "active"
+    });
+
+    localStorage.removeItem("paymentProfileId");
+    localStorage.removeItem("paymentType");
+
+    loader.style.display = "none";
+    msg.innerHTML =
+      '<span class="success">Payment successful! Redirecting...</span>';
+
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 2000);
+
+  } catch (err) {
+    console.log(err);
+
+    loader.style.display = "none";
+    msg.innerHTML =
+      '<span class="error">Payment failed.</span><br><br>' + err.message;
+  }
 }
 
 savePayment();
-
 </script>
 
 </body>
