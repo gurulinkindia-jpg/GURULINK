@@ -133,13 +133,11 @@ border:1px solid #ffeeba;
 👋 Welcome! Enter Ticket Number or Phone to check status OR start new request.
 </div>
 
-<!-- STATUS CHECK -->
 <div class="statusBox">
 <input id="checkInput" placeholder="Enter Ticket No OR Phone">
 <button onclick="checkStatus()" class="send">Check Status</button>
 </div>
 
-<!-- CATEGORY -->
 <div id="catBox">
 <button onclick="selectCategory('login')">Login</button>
 <button onclick="selectCategory('registration')">Registration</button>
@@ -169,7 +167,7 @@ disabled>
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, push, get, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -200,14 +198,14 @@ addMsg("⚠ Login with registered phone number","bot");
 return;
 }
 
-await checkOpenTicket(user.phoneNumber);
+checkOpenTicket(user.phoneNumber); // 🔥 REAL TIME FIX
 }
 });
 
-/* CHECK OPEN TICKET */
-async function checkOpenTicket(phone){
+/* 🔥 FIXED: REAL TIME TICKET CHECK */
+function checkOpenTicket(phone){
 
-const snap=await get(ref(db,"tickets"));
+onValue(ref(db,"tickets"),(snap)=>{
 
 let open=false;
 
@@ -218,11 +216,15 @@ open=true;
 }
 });
 
-canCreateTicket=!open;
+canCreateTicket = !open;
 
 if(open){
 addMsg("🚫 You already have an OPEN ticket.","bot");
+}else{
+addMsg("✅ You can create a new ticket now.","bot");
 }
+
+});
 }
 
 /* STATUS CHECK */
