@@ -15,7 +15,6 @@ padding:20px;
 }
 
 .container{
-
 max-width:500px;
 margin:auto;
 background:white;
@@ -23,11 +22,9 @@ padding:25px;
 border-radius:15px;
 text-align:center;
 box-shadow:0 5px 15px rgba(0,0,0,.15);
-
 }
 
 button{
-
 width:100%;
 padding:14px;
 border:none;
@@ -36,15 +33,12 @@ background:#1b5e20;
 color:white;
 font-size:16px;
 cursor:pointer;
-
 }
 
 .amount{
-
 font-size:25px;
 font-weight:bold;
 margin:20px;
-
 }
 
 </style>
@@ -60,54 +54,56 @@ margin:20px;
 <div id="feeText" class="amount"></div>
 
 <button id="payBtn">
-
 Continue To Payment
-
 </button>
 
 </div>
-
-
-
-
-
-
-
-
-
 
 <script>
 
 const params = new URLSearchParams(window.location.search);
 
-const type = params.get("type") || localStorage.getItem("paymentType") || "teacher";
+/* ✅ TYPE: URL first, then storage fallback */
+const type =
+  params.get("type") ||
+  localStorage.getItem("paymentType") ||
+  localStorage.getItem("renewRole") ||
+  localStorage.getItem("role") ||
+  "teacher";
 
+/* ✅ PROFILE ID: URL first, then all storage fallbacks */
 let id = params.get("id");
 
-/* ✅ FIX: safe fallback for missing id */
 if (!id) {
-  id = localStorage.getItem("profileId") 
-    || localStorage.getItem("teacherId") 
-    || localStorage.getItem("institutionId")
-    || localStorage.getItem("paymentProfileId");
+  id =
+    localStorage.getItem("profileId") ||
+    localStorage.getItem("teacherId") ||
+    localStorage.getItem("institutionId") ||
+    localStorage.getItem("paymentProfileId") ||
+    localStorage.getItem("renewProfileId");
 }
 
 /* ✅ SAFE CHECK */
 if (!id) {
-  alert("Profile ID missing. Please go back to dashboard.");
+  alert("Profile ID missing. Please login again and open payment from dashboard.");
   throw new Error("Missing profileId");
 }
 
-/* 💰 DEFAULT AMOUNT */
-let amount = 399;
+/* ✅ SAVE IMMEDIATELY FOR MOBILE WEBVIEW / RAZORPAY RETURN */
+localStorage.setItem("profileId", id);
+localStorage.setItem("paymentProfileId", id);
+localStorage.setItem("renewProfileId", id);
 
-/* ✅ FIX TYPE HANDLING */
+localStorage.setItem("role", type);
+localStorage.setItem("paymentType", type);
+localStorage.setItem("renewRole", type);
+
+/* 💰 AMOUNT */
+let amount = 399;
 let paymentLink = "";
 
-/* Teacher / Institute both allowed */
+/* ✅ VALID ACCOUNT TYPES */
 if (type === "teacher" || type === "teacher_institute" || type === "institution") {
-
-  amount = 399;
 
   paymentLink =
     "https://rzp.io/rzp/6jCbwy7?redirect=true&redirect_url=" +
@@ -119,21 +115,24 @@ if (type === "teacher" || type === "teacher_institute" || type === "institution"
     );
 
 } else {
-
   alert("Invalid account type: " + type);
   throw new Error("Invalid type");
 }
 
-/* show amount */
+/* SHOW AMOUNT */
 document.getElementById("feeText").innerText =
   "Registration Fee ₹" + amount;
 
-/* button */
-document.getElementById("payBtn").onclick = () => {
+/* BUTTON CLICK */
+document.getElementById("payBtn").onclick = function () {
 
-  // 🔥 SAVE DATA BEFORE REDIRECT
+  localStorage.setItem("profileId", id);
   localStorage.setItem("paymentProfileId", id);
+  localStorage.setItem("renewProfileId", id);
+
+  localStorage.setItem("role", type);
   localStorage.setItem("paymentType", type);
+  localStorage.setItem("renewRole", type);
 
   window.location.href = paymentLink;
 };
@@ -141,5 +140,4 @@ document.getElementById("payBtn").onclick = () => {
 </script>
 
 </body>
-
 </html>
