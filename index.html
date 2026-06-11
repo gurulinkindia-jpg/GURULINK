@@ -422,7 +422,7 @@ object-fit:cover;
 <a href="#" id="menuDashboard">📊 Dashboard</a>
 <a href="settings.html">Settings</a>
 <a href="find-teacher.html">Find Teacher</a>
-<a href="helpdesk.html">Helpdesk</a>
+<a href="#" onclick="openHelpdesk(event)">Helpdesk</a>
 <a href="mailto:gurulinkindia@gmail.com">Email Developer</a>
 <a href="#" id="logoutBtn">Logout</a>
 </div>
@@ -1236,7 +1236,12 @@ results.style.display = "none";
 }
 
 });
+window.openHelpdesk = function(e){
+  e.preventDefault();
 
+  sessionStorage.setItem("helpdeskReturn", window.location.href);
+  window.location.href = "helpdesk.html";
+};
 </script>
 
 </body>
