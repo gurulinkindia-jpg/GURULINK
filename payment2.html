@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <meta charset="UTF-8">
-
 <title>GURULINK Payment2</title>
 
 <style>
-
 body{
 font-family:Arial;
 background:#eef2f7;
@@ -15,7 +12,6 @@ padding:20px;
 }
 
 .container{
-
 max-width:500px;
 margin:auto;
 background:white;
@@ -23,11 +19,9 @@ padding:25px;
 border-radius:15px;
 text-align:center;
 box-shadow:0 5px 15px rgba(0,0,0,.15);
-
 }
 
 button{
-
 width:100%;
 padding:14px;
 border:none;
@@ -36,116 +30,70 @@ background:#1b5e20;
 color:white;
 font-size:16px;
 cursor:pointer;
-
 }
 
 .amount{
-
 font-size:25px;
 font-weight:bold;
 margin:20px;
-
 }
-
 </style>
-
 </head>
 
 <body>
 
 <div class="container">
-
 <h2>GURULINK Payment</h2>
-
 <div id="feeText" class="amount"></div>
-
-<button id="payBtn">
-
-Continue To Payment
-
-</button>
-
+<button id="payBtn">Continue To Payment</button>
 </div>
 
-
-
-
-
-
-
-
-
-
 <script>
-
 const params = new URLSearchParams(window.location.search);
 
 const id = params.get("id");
 const type = params.get("type");
 
-/* ✅ SAFE CHECK */
-if (!id) {
+if (!id || id === "null" || id === "undefined") {
   alert("Profile ID missing. Please go back to dashboard.");
   throw new Error("Missing profileId");
 }
 
-/* 💰 DEFAULT AMOUNT */
-let amount = 399;
+if (!type || type === "null" || type === "undefined") {
+  alert("Account type missing. Please go back to dashboard.");
+  throw new Error("Missing type");
+}
 
-/* ✅ FIX TYPE HANDLING */
+let amount = 399;
 let paymentLink = "";
 
-/* Teacher / Institute both allowed */
-if (type === "teacher" || type === "teacher_institute") {
-
+if (type === "teacher" || type === "teacher_institute" || type === "institution") {
   amount = 399;
+
+  const successUrl =
+    "https://gurulink.onrender.com/payment-success2.html?type=" +
+    encodeURIComponent(type) +
+    "&id=" +
+    encodeURIComponent(id);
 
   paymentLink =
     "https://rzp.io/rzp/6jCbwy7?redirect=true&redirect_url=" +
-    encodeURIComponent(
-      "https://gurulink.onrender.com/payment-success2.html?type=" +
-      type +
-      "&id=" +
-      id
-    );
-
-} else if (type === "institution") {
-
-  amount = 399;
-
-  paymentLink =
-    "https://rzp.io/rzp/6jCbwy7?redirect=true&redirect_url=" +
-    encodeURIComponent(
-      "https://gurulink.onrender.com/payment-success2.html?type=" +
-      type +
-      "&id=" +
-      id
-    );
-
+    encodeURIComponent(successUrl);
 } else {
-
   alert("Invalid account type: " + type);
   throw new Error("Invalid type");
 }
 
-/* show amount */
 document.getElementById("feeText").innerText =
   "Registration Fee ₹" + amount;
 
-/* button */
 document.getElementById("payBtn").onclick = () => {
-
-  // 🔥 SAVE DATA BEFORE REDIRECT
   localStorage.setItem("paymentProfileId", id);
   localStorage.setItem("paymentType", type);
 
   window.location.href = paymentLink;
 };
-
-
-
 </script>
 
 </body>
-
 </html>
