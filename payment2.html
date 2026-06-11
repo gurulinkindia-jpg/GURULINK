@@ -70,11 +70,11 @@ let paymentLink = "";
 if (type === "teacher" || type === "teacher_institute" || type === "institution") {
   amount = 399;
 
+  const returnData = btoa(type + "||" + id);
+
   const successUrl =
-    "https://gurulink.onrender.com/payment-success2.html?type=" +
-    encodeURIComponent(type) +
-    "&id=" +
-    encodeURIComponent(id);
+    "https://gurulink.onrender.com/payment-success2.html?returnData=" +
+    encodeURIComponent(returnData);
 
   paymentLink =
     "https://rzp.io/rzp/6jCbwy7?redirect=true" +
