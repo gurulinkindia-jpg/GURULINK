@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta charset="UTF-8">
+
 <title>GURULINK Payment2</title>
 
 <style>
+
 body{
 font-family:Arial;
 background:#eef2f7;
@@ -12,6 +15,7 @@ padding:20px;
 }
 
 .container{
+
 max-width:500px;
 margin:auto;
 background:white;
@@ -19,9 +23,11 @@ padding:25px;
 border-radius:15px;
 text-align:center;
 box-shadow:0 5px 15px rgba(0,0,0,.15);
+
 }
 
 button{
+
 width:100%;
 padding:14px;
 border:none;
@@ -30,77 +36,116 @@ background:#1b5e20;
 color:white;
 font-size:16px;
 cursor:pointer;
+
 }
 
 .amount{
+
 font-size:25px;
 font-weight:bold;
 margin:20px;
+
 }
+
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
+
 <h2>GURULINK Payment</h2>
+
 <div id="feeText" class="amount"></div>
-<button id="payBtn">Continue To Payment</button>
+
+<button id="payBtn">
+
+Continue To Payment
+
+</button>
+
 </div>
 
+
+
+
+
+
+
+
+
+
 <script>
+
 const params = new URLSearchParams(window.location.search);
 
 const id = params.get("id");
 const type = params.get("type");
 
-if (!id || id === "null" || id === "undefined") {
+/* ✅ SAFE CHECK */
+if (!id) {
   alert("Profile ID missing. Please go back to dashboard.");
   throw new Error("Missing profileId");
 }
 
-if (!type || type === "null" || type === "undefined") {
-  alert("Account type missing. Please go back to dashboard.");
-  throw new Error("Missing type");
-}
-
+/* 💰 DEFAULT AMOUNT */
 let amount = 399;
+
+/* ✅ FIX TYPE HANDLING */
 let paymentLink = "";
 
-if (type === "teacher" || type === "teacher_institute" || type === "institution") {
+/* Teacher / Institute both allowed */
+if (type === "teacher" || type === "teacher_institute") {
+
   amount = 399;
 
-  const returnData = btoa(type + "||" + id);
+  paymentLink =
+    "https://rzp.io/rzp/6jCbwy7?redirect=true&redirect_url=" +
+    encodeURIComponent(
+      "https://gurulink.onrender.com/payment-success2.html?type=" +
+      type +
+      "&id=" +
+      id
+    );
 
-  const successUrl =
-    "https://gurulink.onrender.com/payment-success2.html?returnData=" +
-    encodeURIComponent(returnData);
+} else if (type === "institution") {
+
+  amount = 399;
 
   paymentLink =
-    "https://rzp.io/rzp/6jCbwy7?redirect=true" +
-    "&reference_id=" +
-    encodeURIComponent(id) +
-    "&notes[type]=" +
-    encodeURIComponent(type) +
-    "&redirect_url=" +
-    encodeURIComponent(successUrl);
+    "https://rzp.io/rzp/6jCbwy7?redirect=true&redirect_url=" +
+    encodeURIComponent(
+      "https://gurulink.onrender.com/payment-success2.html?type=" +
+      type +
+      "&id=" +
+      id
+    );
+
 } else {
+
   alert("Invalid account type: " + type);
   throw new Error("Invalid type");
 }
 
+/* show amount */
 document.getElementById("feeText").innerText =
   "Registration Fee ₹" + amount;
 
+/* button */
 document.getElementById("payBtn").onclick = () => {
+
+  // 🔥 SAVE DATA BEFORE REDIRECT
   localStorage.setItem("paymentProfileId", id);
   localStorage.setItem("paymentType", type);
-  sessionStorage.setItem("paymentProfileId", id);
-  sessionStorage.setItem("paymentType", type);
 
   window.location.href = paymentLink;
 };
+
+
+
 </script>
 
 </body>
+
 </html>
