@@ -12,7 +12,6 @@ font-family:Arial;
 background:#eef2f7;
 }
 
-/* WINDOW */
 .window{
 width:95%;
 max-width:700px;
@@ -23,7 +22,6 @@ box-shadow:0 5px 20px rgba(0,0,0,.2);
 overflow:hidden;
 }
 
-/* HEADER */
 .header{
 background:#1565c0;
 color:white;
@@ -44,7 +42,6 @@ border-radius:8px;
 cursor:pointer;
 }
 
-/* CHAT */
 .chat{
 height:420px;
 overflow-y:auto;
@@ -62,7 +59,6 @@ max-width:80%;
 .user{background:#d1e7ff;margin-left:auto;}
 .bot{background:#fff;border:1px solid #ddd;}
 
-/* INPUT */
 .inputBox{
 display:flex;
 padding:10px;
@@ -89,28 +85,6 @@ cursor:pointer;
 .send{background:#1565c0;color:white;}
 .ticketBtn{background:#ff9800;color:white;}
 
-/* CATEGORY SCREEN */
-.categoryBox{
-padding:20px;
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:10px;
-}
-
-.cat{
-padding:15px;
-background:#e3f2fd;
-border:1px solid #90caf9;
-border-radius:10px;
-cursor:pointer;
-text-align:center;
-}
-
-.cat:hover{
-background:#bbdefb;
-}
-
-/* SUGGESTIONS */
 .suggestions{
 position:absolute;
 bottom:55px;
@@ -148,16 +122,16 @@ background:#f0f0f0;
 <div class="chat" id="chatBox">
 
 <div class="msg bot">
-👋 Welcome! Please select a category to continue.
+👋 Welcome! Select category to start.
 </div>
 
-<div class="categoryBox" id="catBox">
-<div class="cat" onclick="selectCategory('login')">Login</div>
-<div class="cat" onclick="selectCategory('registration')">Registration</div>
-<div class="cat" onclick="selectCategory('profile')">Profile</div>
-<div class="cat" onclick="selectCategory('dashboard')">Dashboard</div>
-<div class="cat" onclick="selectCategory('find teacher')">Find Teacher</div>
-<div class="cat" onclick="selectCategory('renew profile')">Renew Profile</div>
+<div id="catBox">
+<button onclick="selectCategory('login')">Login</button>
+<button onclick="selectCategory('registration')">Registration</button>
+<button onclick="selectCategory('profile')">Profile</button>
+<button onclick="selectCategory('dashboard')">Dashboard</button>
+<button onclick="selectCategory('find teacher')">Find Teacher</button>
+<button onclick="selectCategory('renew profile')">Renew Profile</button>
 </div>
 
 </div>
@@ -180,8 +154,10 @@ disabled>
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, push, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
+/* FIREBASE */
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
@@ -194,20 +170,54 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
 
 let currentCategory = "";
-let selectedQuestion = "";
+let currentUser = null;
+let canCreateTicket = false;
 
-/* CATEGORY SELECT */
+/* USER AUTH CHECK */
+onAuthStateChanged(auth, async (user)=>{
+if(user){
+currentUser = user;
+
+if(!user.phoneNumber){
+addMsg("⚠ Please login with registered phone number","bot");
+return;
+}
+
+await checkOpenTicket(user.phoneNumber);
+}
+});
+
+/* CHECK OPEN TICKET */
+async function checkOpenTicket(phone){
+
+const snapshot = await get(ref(db,"tickets"));
+
+let open = false;
+
+snapshot.forEach(child=>{
+const data = child.val();
+if(data.phone === phone && data.status === "open"){
+open = true;
+}
+});
+
+if(open){
+canCreateTicket = false;
+addMsg("🚫 You already have an open ticket. Wait for resolution.","bot");
+}else{
+canCreateTicket = true;
+}
+}
+
+/* CATEGORY */
 window.selectCategory = function(cat){
-
 currentCategory = cat;
-
 document.getElementById("catBox").style.display="none";
-
-addMsg("Category selected: " + cat,"bot");
-
-document.getElementById("input").disabled = false;
+addMsg("Category: "+cat,"bot");
+document.getElementById("input").disabled=false;
 };
 
 /* CHAT */
@@ -219,35 +229,25 @@ document.getElementById("chatBox").appendChild(div);
 div.scrollIntoView();
 }
 
-/* FAQ AI BASED ON CATEGORY */
+/* AI */
 function botReply(msg){
-
 msg = msg.toLowerCase();
 
-if(currentCategory === "login"){
-if(msg.includes("password")) return "Reset password using email link.";
-if(msg.includes("otp")) return "Check your registered mobile for OTP.";
+if(msg.includes("login")) return "Reset password via email.";
+if(msg.includes("otp")) return "Check your mobile OTP.";
+if(msg.includes("profile")) return "Go to edit profile.";
+
+return "Not solved. You can create a ticket.";
 }
 
-if(currentCategory === "profile"){
-if(msg.includes("edit")) return "Go to profile → edit → save.";
-}
-
-if(currentCategory === "dashboard"){
-return "Refresh dashboard or logout/login again.";
-}
-
-return "Not solved. You can book a ticket.";
-}
-
-/* SUGGESTIONS BASED ON CATEGORY */
-const suggestionData = {
-login:["Login issue","Forgot password","OTP not received"],
-registration:["Sign up issue","Email not verified","Mobile issue"],
-profile:["Edit profile","Photo update","Change details"],
-dashboard:["Dashboard not loading","Data missing"],
-"find teacher":["Search teacher","Filter issue"],
-"renew profile":["Renew failed","Payment issue"]
+/* SUGGESTIONS */
+const suggestions = {
+login:["Login issue","Forgot password","OTP issue"],
+registration:["Sign up issue","Email not verified"],
+profile:["Edit profile","Photo issue"],
+dashboard:["Dashboard not loading"],
+"find teacher":["Search teacher"],
+"renew profile":["Renew failed"]
 };
 
 window.showSuggestions = function(){
@@ -263,7 +263,7 @@ box.style.display="none";
 return;
 }
 
-let list = suggestionData[currentCategory] || [];
+let list = suggestions[currentCategory] || [];
 
 list.filter(s=>s.toLowerCase().includes(val))
 .forEach(s=>{
@@ -273,26 +273,15 @@ div.onclick=()=>{
 input.value=s;
 input.disabled=true;
 box.style.display="none";
-selectedQuestion=s;
 };
 box.appendChild(div);
 });
 
-let other=document.createElement("div");
-other.innerHTML="✍ Other (type manually)";
-other.style.color="red";
-other.onclick=()=>{
-input.disabled=false;
-input.value="";
-box.style.display="none";
-};
-
-box.appendChild(other);
 box.style.display="flex";
 };
 
 /* SEND */
-window.sendMsg=function(){
+window.sendMsg = function(){
 
 const input=document.getElementById("input");
 const text=input.value.trim();
@@ -313,9 +302,9 @@ function askResolved(){
 const div=document.createElement("div");
 div.className="msg bot";
 div.innerHTML=`
-<b>Is your problem resolved?</b>
-<button onclick="resolved(true)">Yes 👍</button>
-<button onclick="resolved(false)">No ❌</button>
+<b>Resolved?</b><br>
+<button onclick="resolved(true)">Yes</button>
+<button onclick="resolved(false)">No</button>
 `;
 document.getElementById("chatBox").appendChild(div);
 div.scrollIntoView();
@@ -333,7 +322,7 @@ showTicketBox();
 
 /* TICKET */
 function generateTicket(){
-return "GURU-" + Date.now() + "-" + Math.floor(Math.random()*999);
+return "GURU-"+Date.now()+"-"+Math.floor(Math.random()*999);
 }
 
 function showTicketBox(){
@@ -341,7 +330,7 @@ function showTicketBox(){
 const div=document.createElement("div");
 div.className="msg bot";
 div.innerHTML=`
-<b>Book Ticket</b><br><br>
+<b>Create Ticket</b><br><br>
 
 <input id="tname" placeholder="Name"><br>
 <select id="role">
@@ -355,7 +344,7 @@ div.innerHTML=`
 <input id="temail" placeholder="Email"><br>
 <input id="tmsg" placeholder="Issue"><br>
 
-<button class="ticketBtn" onclick="submitTicket()">Submit Ticket</button>
+<button class="ticketBtn" onclick="submitTicket()">Submit</button>
 `;
 
 document.getElementById("chatBox").appendChild(div);
@@ -363,6 +352,11 @@ div.scrollIntoView();
 }
 
 window.submitTicket = async function(){
+
+if(!canCreateTicket){
+alert("You already have an open ticket.");
+return;
+}
 
 const name=document.getElementById("tname").value;
 const role=document.getElementById("role").value;
@@ -372,6 +366,11 @@ const msg=document.getElementById("tmsg").value;
 
 if(!name || !phone || !email || !msg){
 alert("Fill all fields");
+return;
+}
+
+if(currentUser && phone !== currentUser.phoneNumber){
+alert("Enter registered phone number");
 return;
 }
 
@@ -389,13 +388,15 @@ status:"open",
 time:Date.now()
 });
 
+canCreateTicket = false;
+
 addMsg(
 `🎫 Ticket Created Successfully<br>
-<b>Ticket No:</b> ${ticketNo}<br><br>
-⏳ Our team will review your request shortly.<br>
-📌 Response time may vary depending on traffic and workload.`,
+<b>Ticket ID:</b> ${ticketNo}<br>
+⏳ Your ticket is under review. Please wait for resolution.`,
 "bot"
 );
+};
 
 </script>
 
