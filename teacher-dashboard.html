@@ -1124,13 +1124,36 @@ location.href=
 
 
 window.renewProfile = function () {
+  const id =
+    profileId ||
+    localStorage.getItem("profileId") ||
+    localStorage.getItem("teacherId") ||
+    localStorage.getItem("institutionId");
 
-  const id = profileId;   // already from localStorage
-  const type = role;      // teacher or institution
+  const type =
+    role ||
+    localStorage.getItem("role") ||
+    localStorage.getItem("paymentType") ||
+    "teacher";
+
+  if (!id) {
+    alert("Profile ID missing. Please login again.");
+    return;
+  }
+
+  localStorage.setItem("profileId", id);
+  localStorage.setItem("paymentProfileId", id);
+  localStorage.setItem("renewProfileId", id);
+
+  localStorage.setItem("role", type);
+  localStorage.setItem("paymentType", type);
+  localStorage.setItem("renewRole", type);
 
   window.location.href =
-    "payment2.html?id=" + encodeURIComponent(id) +
-    "&type=" + encodeURIComponent(type);
+    "https://gurulink.onrender.com/payment2.html?id=" +
+    encodeURIComponent(id) +
+    "&type=" +
+    encodeURIComponent(type);
 };
 
 
