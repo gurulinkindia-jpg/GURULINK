@@ -63,13 +63,15 @@ max-width:80%;
 display:flex;
 padding:10px;
 border-top:1px solid #ddd;
+position:relative;
 }
 
-input{
-flex:1;
+input, select{
+width:100%;
 padding:10px;
 border:1px solid #ccc;
 border-radius:8px;
+margin-bottom:8px;
 }
 
 button{
@@ -81,11 +83,37 @@ cursor:pointer;
 }
 
 .send{background:#1565c0;color:white;}
+.ticketBtn{background:#ff9800;color:white;}
 
-.ticketBox{
-padding:15px;
+.suggestions{
+position:absolute;
+bottom:55px;
+left:10px;
+right:10px;
 background:white;
-border-bottom:1px solid #ddd;
+border:1px solid #ccc;
+border-radius:8px;
+display:none;
+flex-direction:column;
+z-index:10;
+}
+
+.suggestions div{
+padding:10px;
+cursor:pointer;
+border-bottom:1px solid #eee;
+}
+
+.suggestions div:hover{
+background:#f0f0f0;
+}
+
+.statusBox{
+background:#fff3cd;
+padding:10px;
+margin:10px;
+border-radius:8px;
+border:1px solid #ffeeba;
 }
 </style>
 </head>
@@ -99,19 +127,41 @@ border-bottom:1px solid #ddd;
 <button class="closeBtn" onclick="window.location.href='dashboard.html'">✖</button>
 </div>
 
-<div class="ticketBox" id="ticketBox">
-<h4>🔎 Enter Ticket Number</h4>
-<input id="ticketInput" placeholder="GURU-xxxxx">
-<button class="send" onclick="checkTicket()">Check Status</button>
+<div class="chat" id="chatBox">
+
+<div class="msg bot">
+👋 Welcome! Enter Ticket Number or Phone to check status OR start new request.
 </div>
 
-<div class="chat" id="chatBox" style="display:none;">
-<div class="msg bot">Welcome to Helpdesk 👋</div>
+<!-- STATUS CHECK -->
+<div class="statusBox">
+<input id="checkInput" placeholder="Enter Ticket No OR Phone">
+<button onclick="checkStatus()" class="send">Check Status</button>
 </div>
 
-<div class="inputBox" style="display:none;" id="chatInput">
-<input id="input" placeholder="Type message...">
+<!-- CATEGORY -->
+<div id="catBox">
+<button onclick="selectCategory('login')">Login</button>
+<button onclick="selectCategory('registration')">Registration</button>
+<button onclick="selectCategory('profile')">Profile</button>
+<button onclick="selectCategory('dashboard')">Dashboard</button>
+<button onclick="selectCategory('find teacher')">Find Teacher</button>
+<button onclick="selectCategory('renew profile')">Renew Profile</button>
+</div>
+
+</div>
+
+<div class="inputBox">
+
+<input id="input"
+placeholder="Type your question..."
+oninput="showSuggestions()"
+disabled>
+
 <button class="send" onclick="sendMsg()">Send</button>
+
+<div class="suggestions" id="suggestBox"></div>
+
 </div>
 
 </div>
@@ -119,7 +169,8 @@ border-bottom:1px solid #ddd;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, push, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -133,10 +184,86 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
 
-let currentTicket = null;
+let currentUser=null;
+let currentCategory="";
+let canCreateTicket=false;
 
-/* UI */
+/* AUTH */
+onAuthStateChanged(auth, async (user)=>{
+if(user){
+currentUser=user;
+
+if(!user.phoneNumber){
+addMsg("⚠ Login with registered phone number","bot");
+return;
+}
+
+await checkOpenTicket(user.phoneNumber);
+}
+});
+
+/* CHECK OPEN TICKET */
+async function checkOpenTicket(phone){
+
+const snap=await get(ref(db,"tickets"));
+
+let open=false;
+
+snap.forEach(c=>{
+let d=c.val();
+if(d.phone===phone && d.status==="open"){
+open=true;
+}
+});
+
+canCreateTicket=!open;
+
+if(open){
+addMsg("🚫 You already have an OPEN ticket.","bot");
+}
+}
+
+/* STATUS CHECK */
+window.checkStatus = async function(){
+
+const val=document.getElementById("checkInput").value.trim();
+if(!val) return;
+
+const snap=await get(ref(db,"tickets"));
+
+let found=null;
+
+snap.forEach(c=>{
+let d=c.val();
+
+if(d.ticketNo===val || d.phone===val){
+found=d;
+}
+});
+
+if(found){
+addMsg(
+`🎫 Ticket: ${found.ticketNo}<br>
+📌 Status: ${found.status}<br>
+📞 Phone: ${found.phone}`,
+"bot"
+);
+}else{
+addMsg("❌ No ticket found","bot");
+}
+};
+
+/* CATEGORY */
+window.selectCategory=function(cat){
+currentCategory=cat;
+document.getElementById("catBox").style.display="none";
+document.getElementById("input").disabled=false;
+addMsg("Category: "+cat,"bot");
+};
+
+/* CHAT */
 function addMsg(text,type){
 const div=document.createElement("div");
 div.className="msg "+type;
@@ -145,63 +272,132 @@ document.getElementById("chatBox").appendChild(div);
 div.scrollIntoView();
 }
 
-/* CHECK TICKET */
-window.checkTicket = async function(){
+/* BOT */
+function botReply(msg){
+msg=msg.toLowerCase();
 
-const id = document.getElementById("ticketInput").value.trim();
-if(!id){
-alert("Enter ticket number");
-return;
+if(msg.includes("login")) return "Reset password via email.";
+if(msg.includes("profile")) return "Go to edit profile.";
+
+return "Not solved. Create ticket or check status.";
 }
 
-const snap = await get(ref(db,"tickets"));
+/* SEND */
+window.sendMsg=function(){
 
-let found = null;
-
-snap.forEach(child=>{
-if(child.val().ticketNo === id){
-found = child.val();
-}
-});
-
-if(!found){
-alert("Ticket not found");
-return;
-}
-
-currentTicket = found;
-
-/* show UI */
-document.getElementById("ticketBox").style.display="none";
-document.getElementById("chatBox").style.display="block";
-document.getElementById("chatInput").style.display="flex";
-
-addMsg(`🎫 Ticket Found<br>
-<b>Status:</b> ${found.status}<br>
-<b>Name:</b> ${found.name}<br>
-<b>Message:</b> ${found.message}`, "bot");
-
-if(found.status === "open"){
-addMsg("⏳ Your ticket is under review", "bot");
-}
-if(found.status === "resolved"){
-addMsg("✅ Your issue has been resolved", "bot");
-}
-if(found.status === "not_resolved"){
-addMsg("❌ Ticket was not resolved", "bot");
-}
-};
-
-/* CHAT (optional) */
-window.sendMsg = function(){
 const input=document.getElementById("input");
 const text=input.value.trim();
 if(!text) return;
 
 addMsg(text,"user");
-addMsg("📌 Support team will reply on your ticket update","bot");
+
+setTimeout(()=>{
+addMsg(botReply(text),"bot");
+askResolved();
+},500);
 
 input.value="";
+};
+
+/* RESOLVED */
+function askResolved(){
+const div=document.createElement("div");
+div.className="msg bot";
+div.innerHTML=`
+<b>Resolved?</b><br>
+<button onclick="resolved(true)">Yes</button>
+<button onclick="resolved(false)">No</button>
+`;
+document.getElementById("chatBox").appendChild(div);
+div.scrollIntoView();
+}
+
+window.resolved=function(status){
+if(status){
+addMsg("Yes ✔","user");
+addMsg("Great 👍","bot");
+}else{
+addMsg("No ❌","user");
+showTicketBox();
+}
+};
+
+/* TICKET */
+function generateTicket(){
+return "GURU-"+Date.now()+"-"+Math.floor(Math.random()*999);
+}
+
+function showTicketBox(){
+
+const div=document.createElement("div");
+div.className="msg bot";
+div.innerHTML=`
+<b>Create Ticket</b><br><br>
+
+<input id="tname" placeholder="Name"><br>
+<select id="role">
+<option>Student</option>
+<option>Teacher</option>
+<option>Institute</option>
+<option>Parent</option>
+</select><br>
+
+<input id="tphone" placeholder="Phone"><br>
+<input id="temail" placeholder="Email"><br>
+<input id="tmsg" placeholder="Issue"><br>
+
+<button class="ticketBtn" onclick="submitTicket()">Submit</button>
+`;
+
+document.getElementById("chatBox").appendChild(div);
+div.scrollIntoView();
+}
+
+window.submitTicket = async function(){
+
+if(!canCreateTicket){
+alert("You already have an open ticket. Wait until resolved.");
+return;
+}
+
+const name=document.getElementById("tname").value;
+const role=document.getElementById("role").value;
+const phone=document.getElementById("tphone").value;
+const email=document.getElementById("temail").value;
+const msg=document.getElementById("tmsg").value;
+
+if(!name||!phone||!email||!msg){
+alert("Fill all fields");
+return;
+}
+
+if(currentUser && phone!==currentUser.phoneNumber){
+alert("Enter registered phone number");
+return;
+}
+
+const ticketNo=generateTicket();
+
+await push(ref(db,"tickets"),{
+ticketNo,
+name,
+role,
+phone,
+email,
+message:msg,
+category:currentCategory,
+status:"open",
+time:Date.now()
+});
+
+canCreateTicket=false;
+
+addMsg(
+`🎫 Ticket Created Successfully<br>
+<b>Ticket ID:</b> ${ticketNo}<br>
+⏳ Your ticket is under review.`,
+"bot"
+);
 };
 
 </script>
