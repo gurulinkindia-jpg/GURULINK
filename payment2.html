@@ -80,8 +80,17 @@ Continue To Payment
 
 const params = new URLSearchParams(window.location.search);
 
-const id = params.get("id");
-const type = params.get("type");
+const type = params.get("type") || localStorage.getItem("paymentType") || "teacher";
+
+let id = params.get("id");
+
+/* ✅ FIX: safe fallback for missing id */
+if (!id) {
+  id = localStorage.getItem("profileId") 
+    || localStorage.getItem("teacherId") 
+    || localStorage.getItem("institutionId")
+    || localStorage.getItem("paymentProfileId");
+}
 
 /* ✅ SAFE CHECK */
 if (!id) {
@@ -96,7 +105,7 @@ let amount = 399;
 let paymentLink = "";
 
 /* Teacher / Institute both allowed */
-if (type === "teacher" || type === "teacher_institute") {
+if (type === "teacher" || type === "teacher_institute" || type === "institution") {
 
   amount = 399;
 
@@ -104,22 +113,9 @@ if (type === "teacher" || type === "teacher_institute") {
     "https://rzp.io/rzp/6jCbwy7?redirect=true&redirect_url=" +
     encodeURIComponent(
       "https://gurulink.onrender.com/payment-success2.html?type=" +
-      type +
+      encodeURIComponent(type) +
       "&id=" +
-      id
-    );
-
-} else if (type === "institution") {
-
-  amount = 399;
-
-  paymentLink =
-    "https://rzp.io/rzp/6jCbwy7?redirect=true&redirect_url=" +
-    encodeURIComponent(
-      "https://gurulink.onrender.com/payment-success2.html?type=" +
-      type +
-      "&id=" +
-      id
+      encodeURIComponent(id)
     );
 
 } else {
@@ -141,8 +137,6 @@ document.getElementById("payBtn").onclick = () => {
 
   window.location.href = paymentLink;
 };
-
-
 
 </script>
 
