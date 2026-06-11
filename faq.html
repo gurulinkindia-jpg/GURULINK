@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GURULINK Helpdesk</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#eef2f7;
+}
+
+header{
+background:#1565c0;
+color:white;
+padding:15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.closeBtn{
+background:red;
+color:white;
+border:none;
+padding:6px 10px;
+border-radius:5px;
+cursor:pointer;
+}
+
+.container{
+max-width:800px;
+margin:20px auto;
+background:white;
+padding:15px;
+border-radius:10px;
+box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+
+.chatBox{
+height:400px;
+overflow-y:auto;
+border:1px solid #ddd;
+padding:10px;
+border-radius:8px;
+background:#fafafa;
+}
+
+.msg{
+padding:10px;
+margin:8px 0;
+border-radius:10px;
+max-width:80%;
+}
+
+.user{
+background:#d1e7ff;
+margin-left:auto;
+text-align:right;
+}
+
+.bot{
+background:#e8e8e8;
+}
+
+.inputBox{
+display:flex;
+margin-top:10px;
+gap:10px;
+}
+
+input{
+flex:1;
+padding:12px;
+border-radius:8px;
+border:1px solid #ccc;
+}
+
+button{
+padding:12px;
+background:#1565c0;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+.ticketBox{
+margin-top:10px;
+padding:10px;
+background:#fff3cd;
+border-radius:8px;
+display:none;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h3>GURULINK Helpdesk</h3>
+<button class="closeBtn" onclick="window.location.href='index.html'">✕</button>
+</header>
+
+<div class="container">
+
+<div class="chatBox" id="chatBox"></div>
+
+<div class="inputBox">
+<input id="msgInput" placeholder="Ask your question...">
+<button onclick="sendMsg()">Send</button>
+</div>
+
+<div class="ticketBox" id="ticketBox">
+⚠ Not resolved?  
+<button onclick="createTicket()">Book Ticket</button>
+<p>Email: gurulinkindia@gmail.com</p>
+</div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const chatBox = document.getElementById("chatBox");
+
+function addMsg(text, type){
+const div = document.createElement("div");
+div.className = "msg " + type;
+div.innerText = text;
+chatBox.appendChild(div);
+chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+window.sendMsg = function(){
+
+const input = document.getElementById("msgInput");
+const text = input.value.trim();
+if(!text) return;
+
+addMsg(text, "user");
+input.value = "";
+
+setTimeout(()=>{
+addMsg("We received your query. If not solved, click 'Book Ticket'.", "bot");
+document.getElementById("ticketBox").style.display="block";
+},1000);
+
+};
+
+window.createTicket = async function(){
+
+const uid = localStorage.getItem("uid") || "guest";
+
+await push(ref(db,"tickets"),{
+uid:uid,
+message:"User requested help",
+status:"open",
+createdAt:Date.now()
+});
+
+alert("Ticket Created. Our team will contact you soon.");
+};
+
+</script>
+
+</body>
+</html>
