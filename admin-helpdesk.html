@@ -50,8 +50,12 @@ font-size:13px;
 
 .resolve{background:green;color:white;}
 .reject{background:red;color:white;}
-.view{background:#1565c0;color:white;}
 .delete{background:#444;color:white;}
+
+.call{background:#2e7d32;color:white;}
+.whatsapp{background:#25D366;color:white;}
+.email{background:#1565c0;color:white;}
+
 .clearAll{background:#b71c1c;color:white;float:right;}
 </style>
 </head>
@@ -85,7 +89,7 @@ const db = getDatabase(app);
 
 const box = document.getElementById("tickets");
 
-/* LOAD TICKETS */
+/* LOAD */
 onValue(ref(db,"tickets"), snap => {
 
 box.innerHTML = "";
@@ -95,6 +99,9 @@ snap.forEach(child => {
 const t = child.val();
 const id = child.key;
 
+const phone = t.phone || "";
+const email = t.email || "";
+
 const div = document.createElement("div");
 div.className="ticket";
 
@@ -102,8 +109,8 @@ div.innerHTML = `
 <p><b>Ticket No:</b> ${t.ticketNo || "N/A"}</p>
 <p><b>Name:</b> ${t.name || "N/A"}</p>
 <p><b>Role:</b> ${t.role || "N/A"}</p>
-<p><b>Phone:</b> ${t.phone || "N/A"}</p>
-<p><b>Email:</b> ${t.email || "N/A"}</p>
+<p><b>Phone:</b> ${phone}</p>
+<p><b>Email:</b> ${email}</p>
 <p><b>Category:</b> ${t.category || "N/A"}</p>
 <p><b>Message:</b> ${t.message}</p>
 <p><b>Status:</b> ${t.status}</p>
@@ -111,6 +118,10 @@ div.innerHTML = `
 <button class="resolve" onclick="resolveTicket('${id}')">Resolve</button>
 <button class="reject" onclick="rejectTicket('${id}')">Reject</button>
 <button class="delete" onclick="deleteTicket('${id}')">Delete</button>
+
+<button class="call" onclick="callUser('${phone}')">📞 Call</button>
+<button class="whatsapp" onclick="whatsappUser('${phone}')">💬 WhatsApp</button>
+<button class="email" onclick="emailUser('${email}')">📧 Email</button>
 `;
 
 box.appendChild(div);
@@ -118,28 +129,42 @@ box.appendChild(div);
 
 });
 
-/* RESOLVE */
-window.resolveTicket = async function(id){
+/* ACTIONS */
+window.resolveTicket = async (id)=>{
 await update(ref(db,"tickets/"+id),{status:"resolved"});
 };
 
-/* REJECT */
-window.rejectTicket = async function(id){
+window.rejectTicket = async (id)=>{
 await update(ref(db,"tickets/"+id),{status:"not_resolved"});
 };
 
-/* DELETE SINGLE */
-window.deleteTicket = async function(id){
-if(confirm("Delete this ticket permanently?")){
+window.deleteTicket = async (id)=>{
+if(confirm("Delete this ticket?")){
 await remove(ref(db,"tickets/"+id));
 }
 };
 
-/* DELETE ALL */
-window.clearAllTickets = async function(){
-if(confirm("⚠ Delete ALL tickets from database? This cannot be undone!")){
+window.clearAllTickets = async ()=>{
+if(confirm("Delete ALL tickets?")){
 await remove(ref(db,"tickets"));
 }
+};
+
+/* CONTACT BUTTONS */
+window.callUser = (phone)=>{
+if(!phone) return alert("No phone number");
+window.location.href = `tel:${phone}`;
+};
+
+window.whatsappUser = (phone)=>{
+if(!phone) return alert("No phone number");
+let msg = encodeURIComponent("Hello, regarding your support ticket.");
+window.open(`https://wa.me/${phone}?text=${msg}`,"_blank");
+};
+
+window.emailUser = (email)=>{
+if(!email) return alert("No email");
+window.location.href = `mailto:${email}?subject=Support%20Ticket%20Update`;
 };
 
 </script>
