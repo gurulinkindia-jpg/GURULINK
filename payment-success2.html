@@ -83,11 +83,17 @@ const params = new URLSearchParams(window.location.search);
 
 let type =
   params.get("type") ||
+  params.get("notes[type]") ||
+  params.get("notes.type") ||
+  sessionStorage.getItem("paymentType") ||
   localStorage.getItem("paymentType") ||
   "";
 
 let id =
   params.get("id") ||
+  params.get("reference_id") ||
+  params.get("razorpay_payment_link_reference_id") ||
+  sessionStorage.getItem("paymentProfileId") ||
   localStorage.getItem("paymentProfileId") ||
   localStorage.getItem(type + "Id") ||
   localStorage.getItem("teacherId") ||
@@ -166,6 +172,8 @@ async function savePayment() {
 
     localStorage.removeItem("paymentProfileId");
     localStorage.removeItem("paymentType");
+    sessionStorage.removeItem("paymentProfileId");
+    sessionStorage.removeItem("paymentType");
 
     loader.style.display = "none";
     msg.innerHTML =
