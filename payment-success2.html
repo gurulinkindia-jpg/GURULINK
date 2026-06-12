@@ -47,6 +47,7 @@ animation:spin 1s linear infinite;
 
 .success{color:green;font-weight:bold;}
 .error{color:red;font-weight:bold;}
+.debug{font-size:12px;color:#555;word-break:break-all;}
 </style>
 </head>
 
@@ -59,7 +60,6 @@ animation:spin 1s linear infinite;
 </div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, push, get, set, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
@@ -76,57 +76,101 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* URL PARAMS */
+const loader = document.getElementById("loader");
+const msg = document.getElementById("msg");
 
 const params = new URLSearchParams(window.location.search);
 
-let type =
+let type = "";
+let id = "";
+
+const returnData = params.get("returnData");
+
+if (returnData) {
+  try {
+    const decoded = atob(returnData);
+    const parts = decoded.split("||");
+    type = parts[0] || "";
+    id = parts[1] || "";
+  } catch (err) {
+    console.log("returnData decode failed:", err);
+  }
+}
+
+type =
+  type ||
   params.get("type") ||
+  params.get("notes[type]") ||
+  params.get("notes.type") ||
+  sessionStorage.getItem("paymentType") ||
+  sessionStorage.getItem("renewRole") ||
+  sessionStorage.getItem("role") ||
   localStorage.getItem("paymentType") ||
   localStorage.getItem("renewRole") ||
   localStorage.getItem("role") ||
   "teacher";
 
-let id = params.get("id");
+id =
+  id ||
+  params.get("id") ||
+  params.get("reference_id") ||
+  params.get("razorpay_payment_link_reference_id") ||
+  sessionStorage.getItem("profileId") ||
+  sessionStorage.getItem("teacherId") ||
+  sessionStorage.getItem("institutionId") ||
+  sessionStorage.getItem("paymentProfileId") ||
+  sessionStorage.getItem("renewProfileId") ||
+  localStorage.getItem("profileId") ||
+  localStorage.getItem("teacherId") ||
+  localStorage.getItem("institutionId") ||
+  localStorage.getItem("paymentProfileId") ||
+  localStorage.getItem("renewProfileId") ||
+  localStorage.getItem(type + "Id") ||
+  "";
 
-if (!id || id === "null" || id === "undefined") {
-  id =
-    localStorage.getItem("profileId") ||
-    localStorage.getItem("teacherId") ||
-    localStorage.getItem("institutionId") ||
-    localStorage.getItem("paymentProfileId") ||
-    localStorage.getItem("renewProfileId") ||
-    localStorage.getItem(type + "Id");
+if (type) {
+  type = type.toLowerCase();
 }
 
+console.log("SUCCESS2 URL:", window.location.href);
+console.log("RETURN DATA:", returnData);
 console.log("FINAL TYPE:", type);
 console.log("FINAL ID:", id);
 
-/* FINAL CHECK */
 if (!id || id === "null" || id === "undefined") {
-  document.getElementById("loader").style.display = "none";
-  document.getElementById("msg").innerHTML =
-    '<span class="error">Profile ID missing after payment.</span><br><br>Please login again or contact support.';
+  loader.style.display = "none";
+  msg.innerHTML =
+    '<span class="error">Profile ID missing after payment.</span><br><br>' +
+    '<span class="debug">' + window.location.href + '</span>';
   throw new Error("Profile ID Missing");
 }
 
-/* SAVE AGAIN FOR MOBILE WEBVIEW */
+if (!type || type === "null" || type === "undefined") {
+  loader.style.display = "none";
+  msg.innerHTML =
+    '<span class="error">Account type missing after payment.</span><br><br>' +
+    '<span class="debug">' + window.location.href + '</span>';
+  throw new Error("Payment Type Missing");
+}
+
 localStorage.setItem("profileId", id);
 localStorage.setItem("paymentProfileId", id);
 localStorage.setItem("renewProfileId", id);
-
 localStorage.setItem("role", type);
 localStorage.setItem("paymentType", type);
 localStorage.setItem("renewRole", type);
 
-/* PAYMENT AMOUNT */
+sessionStorage.setItem("profileId", id);
+sessionStorage.setItem("paymentProfileId", id);
+sessionStorage.setItem("renewProfileId", id);
+sessionStorage.setItem("role", type);
+sessionStorage.setItem("paymentType", type);
+sessionStorage.setItem("renewRole", type);
+
 const amount = 399;
 
-/* MAIN */
 async function savePayment() {
-
   try {
-
     let profilePath = "";
 
     const cleanType = (type || "").toLowerCase();
@@ -139,7 +183,6 @@ async function savePayment() {
       throw new Error("Invalid type: " + type);
     }
 
-    /* GET PROFILE */
     const snap = await get(ref(db, profilePath));
 
     if (!snap.exists()) {
@@ -147,8 +190,6 @@ async function savePayment() {
     }
 
     const user = snap.val();
-
-    /* PAYMENT RECORD */
     const paymentRef = push(ref(db, "payment2"));
 
     await set(paymentRef, {
@@ -156,23 +197,17 @@ async function savePayment() {
       profileId: id,
       uid: id,
       type: type,
-
       renewal: true,
-
       name: user.name || "",
       ownerName: user.ownerName || "",
-
       email: user.email || "",
       phone: user.phone || "",
-
       amount: amount,
       status: "paid",
-
       date: new Date().toLocaleString(),
       createdAt: Date.now()
     });
 
-    /* UPDATE PROFILE */
     await update(ref(db, profilePath), {
       paymentStatus: "paid",
       approvedAt: Date.now(),
@@ -180,27 +215,24 @@ async function savePayment() {
       renewalStatus: "active"
     });
 
-    /* SUCCESS */
-    document.getElementById("loader").style.display = "none";
-    document.getElementById("msg").innerHTML =
+    loader.style.display = "none";
+    msg.innerHTML =
       '<span class="success">Payment successful! Redirecting...</span>';
 
-setTimeout(() => { window.location.href = "login.html"; }, 2000);
+    setTimeout(() => {
+      window.location.href = "renewal-success.html";
+    }, 2000);
 
   } catch (err) {
-
     console.log(err);
 
-    document.getElementById("loader").style.display = "none";
-    document.getElementById("msg").innerHTML =
+    loader.style.display = "none";
+    msg.innerHTML =
       '<span class="error">Payment failed.</span><br><br>' + err.message;
-
   }
-
 }
 
 savePayment();
-
 </script>
 
 </body>
