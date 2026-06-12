@@ -771,28 +771,16 @@ if (d.qrImage) {
   document.getElementById("bankSectionWrapper").style.display = "none";
 }
 
-
-
-
 /* ✅ ADD LOGO CODE HERE */
+const logoURL = d.logo || "default.png";
 const img = document.getElementById("profileLogo");
 
-console.log("LOGO URL:", d.logo);
-
-img.src = d.logo ? d.logo : "default.png";
-
-img.onload = function () {
-  console.log("Logo loaded successfully");
-};
+img.src = logoURL;
 
 img.onerror = function () {
-  console.log("Logo failed, using default");
+  this.onerror = null;
   this.src = "default.png";
 };
-
-
-
-
 
 if(role==="teacher"){
 
@@ -1136,39 +1124,59 @@ location.href=
 
 
 window.renewProfile = function () {
+  const id =
+    profileId ||
+    localStorage.getItem("profileId") ||
+    localStorage.getItem("teacherId") ||
+    localStorage.getItem("institutionId") ||
+    localStorage.getItem("paymentProfileId") ||
+    localStorage.getItem("renewProfileId");
 
-  const id = profileId;   // already from localStorage
-  const type = role;      // teacher or institution
+  const type =
+    role ||
+    localStorage.getItem("role") ||
+    localStorage.getItem("paymentType") ||
+    localStorage.getItem("renewRole") ||
+    "teacher";
+
+  if (!id || id === "null" || id === "undefined") {
+    alert("Profile ID missing. Please login again.");
+    return;
+  }
+
+  if (!type || type === "null" || type === "undefined") {
+    alert("Account type missing. Please login again.");
+    return;
+  }
+
+  localStorage.setItem("profileId", id);
+  localStorage.setItem("paymentProfileId", id);
+  localStorage.setItem("renewProfileId", id);
+
+  localStorage.setItem("role", type);
+  localStorage.setItem("paymentType", type);
+  localStorage.setItem("renewRole", type);
+
+  sessionStorage.setItem("profileId", id);
+  sessionStorage.setItem("paymentProfileId", id);
+  sessionStorage.setItem("renewProfileId", id);
+
+  sessionStorage.setItem("role", type);
+  sessionStorage.setItem("paymentType", type);
+  sessionStorage.setItem("renewRole", type);
 
   window.location.href =
-    "payment2.html?id=" + encodeURIComponent(id) +
-    "&type=" + encodeURIComponent(type);
+    "https://www.gurulink.co.in/payment2.html?id=" +
+    encodeURIComponent(id) +
+    "&type=" +
+    encodeURIComponent(type);
 };
 
 
 
 
-window.contactDeveloper=function(){
-
-const choice=
-confirm(
-"Press OK for WhatsApp.\nPress Cancel for Email."
-);
-
-if(choice){
-
-window.open(
-"https://wa.me/919706380357",
-"_blank"
-);
-
-}else{
-
-window.location.href=
-"mailto:gurulinkindiahelp@gmail.com";
-
-}
-
+window.contactDeveloper = function () {
+  window.location.href = "helpdesk.html";
 };
 
 
@@ -1272,17 +1280,28 @@ window.shareProfile = function () {
     alert("Profile not found");
     return;
   }
+  
+  
+  
+  
 
   const url =
-    "https://guru-link.onrender.com/profile-view.html?id=" + profileId;
+"https://guru-link.onrender.com/profile-view.html?id=" +
+profileId;
 
   const text =
-    `Check this ${role === "teacher" ? "Teacher" : "Institute"} on GURULINK:\n${url}`;
+    `Check out this ${role === "teacher" ? "Teacher" : "Institute"} on GURULINK:\n\n` +
+    url;
+	
+	
+	
+	
+	
 
   const whatsappURL =
     "https://wa.me/?text=" + encodeURIComponent(text);
 
-  // ✅ Mobile share (works on Facebook, WhatsApp, Instagram, etc.)
+  // Mobile native share (best)
   if (navigator.share) {
     navigator.share({
       title: "GURULINK Profile",
@@ -1291,9 +1310,7 @@ window.shareProfile = function () {
     }).catch(() => {
       window.open(whatsappURL, "_blank");
     });
-
   } else {
-    // ✅ PC fallback
     window.open(whatsappURL, "_blank");
   }
 };
