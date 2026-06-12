@@ -43,7 +43,7 @@ margin:20px;
 <body>
 
 <div class="container">
-<h2>GURULINK Payment</h2>
+<h2>GURULINK Renewal Payment</h2>
 <div id="feeText" class="amount"></div>
 <button id="payBtn">Continue To Payment</button>
 </div>
@@ -58,16 +58,14 @@ const type =
   localStorage.getItem("role") ||
   "teacher";
 
-let id = params.get("id");
-
-if (!id) {
-  id =
-    localStorage.getItem("profileId") ||
-    localStorage.getItem("teacherId") ||
-    localStorage.getItem("institutionId") ||
-    localStorage.getItem("paymentProfileId") ||
-    localStorage.getItem("renewProfileId");
-}
+let id =
+  params.get("id") ||
+  localStorage.getItem("profileId") ||
+  localStorage.getItem("teacherId") ||
+  localStorage.getItem("institutionId") ||
+  localStorage.getItem("paymentProfileId") ||
+  localStorage.getItem("renewProfileId") ||
+  "";
 
 if (!id || id === "null" || id === "undefined") {
   alert("Profile ID missing. Please login again and open payment from dashboard.");
@@ -93,22 +91,30 @@ sessionStorage.setItem("role", type);
 sessionStorage.setItem("paymentType", type);
 sessionStorage.setItem("renewRole", type);
 
-let amount = 399;
+const amount = 399;
 let paymentLink = "";
 
-if (type === "teacher" || type === "teacher_institute" || type === "institution") {
-  const returnData = btoa(type + "||" + id);
+const returnData = btoa(type + "||" + id);
 
-  const successUrl =
-    "https://www.gurulink.co.in/payment-success2.html?returnData=" +
-    encodeURIComponent(returnData) +
-    "&type=" +
-    encodeURIComponent(type) +
-    "&id=" +
-    encodeURIComponent(id);
+const successUrl =
+  "https://www.gurulink.co.in/payment-success2.html?returnData=" +
+  encodeURIComponent(returnData) +
+  "&type=" +
+  encodeURIComponent(type) +
+  "&id=" +
+  encodeURIComponent(id);
 
+if (type === "teacher" || type === "teacher_institute") {
   paymentLink =
     "https://rzp.io/rzp/6jCbwy7?redirect=true" +
+    "&reference_id=" +
+    encodeURIComponent(id) +
+    "&redirect_url=" +
+    encodeURIComponent(successUrl);
+
+} else if (type === "institution") {
+  paymentLink =
+    "https://rzp.io/rzp/poQdXFn?redirect=true" +
     "&reference_id=" +
     encodeURIComponent(id) +
     "&redirect_url=" +
@@ -120,7 +126,7 @@ if (type === "teacher" || type === "teacher_institute" || type === "institution"
 }
 
 document.getElementById("feeText").innerText =
-  "Registration Fee ₹" + amount;
+  "Renewal Fee ₹" + amount;
 
 document.getElementById("payBtn").onclick = function () {
   localStorage.setItem("profileId", id);
