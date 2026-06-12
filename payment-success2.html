@@ -3,48 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
 <title>Payment Success2</title>
 
 <style>
-body{
-margin:0;
-font-family:Arial,sans-serif;
-background:#eef2f7;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-}
-
-.box{
-width:90%;
-max-width:400px;
-background:white;
-padding:30px;
-border-radius:15px;
-text-align:center;
-box-shadow:0 5px 15px rgba(0,0,0,.15);
-}
-
+body{margin:0;font-family:Arial,sans-serif;background:#eef2f7;display:flex;justify-content:center;align-items:center;height:100vh;}
+.box{width:90%;max-width:400px;background:white;padding:30px;border-radius:15px;text-align:center;box-shadow:0 5px 15px rgba(0,0,0,.15);}
 h2{color:#1565c0;margin-top:0;}
-
 p{font-size:15px;line-height:1.6;}
-
-.loader{
-width:50px;
-height:50px;
-border:5px solid #ddd;
-border-top:5px solid #1565c0;
-border-radius:50%;
-margin:20px auto;
-animation:spin 1s linear infinite;
-}
-
-@keyframes spin{
-100%{transform:rotate(360deg);}
-}
-
+.loader{width:50px;height:50px;border:5px solid #ddd;border-top:5px solid #1565c0;border-radius:50%;margin:20px auto;animation:spin 1s linear infinite;}
+@keyframes spin{100%{transform:rotate(360deg);}}
 .success{color:green;font-weight:bold;}
 .error{color:red;font-weight:bold;}
 .debug{font-size:12px;color:#555;word-break:break-all;}
@@ -52,7 +19,6 @@ animation:spin 1s linear infinite;
 </head>
 
 <body>
-
 <div class="box">
 <h2>Payment Processing</h2>
 <div class="loader" id="loader"></div>
@@ -79,65 +45,77 @@ const db = getDatabase(app);
 const loader = document.getElementById("loader");
 const msg = document.getElementById("msg");
 
+function cleanValue(value) {
+  if (!value) return "";
+  value = String(value).trim();
+
+  if (
+    value === "..." ||
+    value === "null" ||
+    value === "undefined" ||
+    value === "[object Object]" ||
+    value.includes("#") ||
+    value.includes("$") ||
+    value.includes("[") ||
+    value.includes("]")
+  ) {
+    return "";
+  }
+
+  return value;
+}
+
 const params = new URLSearchParams(window.location.search);
 
 let type = "";
 let id = "";
 
-const returnData = params.get("returnData");
+const returnData = cleanValue(params.get("returnData"));
 
 if (returnData) {
   try {
     const decoded = atob(returnData);
     const parts = decoded.split("||");
-    type = parts[0] || "";
-    id = parts[1] || "";
+    type = cleanValue(parts[0]);
+    id = cleanValue(parts[1]);
   } catch (err) {
     console.log("returnData decode failed:", err);
   }
 }
 
 type =
-  type ||
-  params.get("type") ||
-  params.get("notes[type]") ||
-  params.get("notes.type") ||
-  sessionStorage.getItem("paymentType") ||
-  sessionStorage.getItem("renewRole") ||
-  sessionStorage.getItem("role") ||
-  localStorage.getItem("paymentType") ||
-  localStorage.getItem("renewRole") ||
-  localStorage.getItem("role") ||
-  "teacher";
+  cleanValue(type) ||
+  cleanValue(params.get("type")) ||
+  cleanValue(sessionStorage.getItem("paymentType")) ||
+  cleanValue(sessionStorage.getItem("renewRole")) ||
+  cleanValue(sessionStorage.getItem("role")) ||
+  cleanValue(localStorage.getItem("paymentType")) ||
+  cleanValue(localStorage.getItem("renewRole")) ||
+  cleanValue(localStorage.getItem("role"));
 
 id =
-  id ||
-  params.get("id") ||
-  params.get("reference_id") ||
-  params.get("razorpay_payment_link_reference_id") ||
-  sessionStorage.getItem("profileId") ||
-  sessionStorage.getItem("teacherId") ||
-  sessionStorage.getItem("institutionId") ||
-  sessionStorage.getItem("paymentProfileId") ||
-  sessionStorage.getItem("renewProfileId") ||
-  localStorage.getItem("profileId") ||
-  localStorage.getItem("teacherId") ||
-  localStorage.getItem("institutionId") ||
-  localStorage.getItem("paymentProfileId") ||
-  localStorage.getItem("renewProfileId") ||
-  localStorage.getItem(type + "Id") ||
-  "";
+  cleanValue(id) ||
+  cleanValue(params.get("id")) ||
+  cleanValue(params.get("reference_id")) ||
+  cleanValue(params.get("razorpay_payment_link_reference_id")) ||
+  cleanValue(sessionStorage.getItem("profileId")) ||
+  cleanValue(sessionStorage.getItem("teacherId")) ||
+  cleanValue(sessionStorage.getItem("institutionId")) ||
+  cleanValue(sessionStorage.getItem("paymentProfileId")) ||
+  cleanValue(sessionStorage.getItem("renewProfileId")) ||
+  cleanValue(localStorage.getItem("profileId")) ||
+  cleanValue(localStorage.getItem("teacherId")) ||
+  cleanValue(localStorage.getItem("institutionId")) ||
+  cleanValue(localStorage.getItem("paymentProfileId")) ||
+  cleanValue(localStorage.getItem("renewProfileId"));
 
-if (type) {
-  type = type.toLowerCase();
-}
+type = cleanValue(type).toLowerCase();
 
 console.log("SUCCESS2 URL:", window.location.href);
-console.log("RETURN DATA:", returnData);
 console.log("FINAL TYPE:", type);
 console.log("FINAL ID:", id);
 
-if (!id || id === "null" || id === "undefined") {
+if (!id) {
   loader.style.display = "none";
   msg.innerHTML =
     '<span class="error">Profile ID missing after payment.</span><br><br>' +
@@ -145,48 +123,38 @@ if (!id || id === "null" || id === "undefined") {
   throw new Error("Profile ID Missing");
 }
 
-if (!type || type === "null" || type === "undefined") {
-  loader.style.display = "none";
-  msg.innerHTML =
-    '<span class="error">Account type missing after payment.</span><br><br>' +
-    '<span class="debug">' + window.location.href + '</span>';
-  throw new Error("Payment Type Missing");
-}
-
-localStorage.setItem("profileId", id);
-localStorage.setItem("paymentProfileId", id);
-localStorage.setItem("renewProfileId", id);
-localStorage.setItem("role", type);
-localStorage.setItem("paymentType", type);
-localStorage.setItem("renewRole", type);
-
-sessionStorage.setItem("profileId", id);
-sessionStorage.setItem("paymentProfileId", id);
-sessionStorage.setItem("renewProfileId", id);
-sessionStorage.setItem("role", type);
-sessionStorage.setItem("paymentType", type);
-sessionStorage.setItem("renewRole", type);
-
 const amount = 399;
 
 async function savePayment() {
   try {
     let profilePath = "";
+    let finalType = "";
 
-    const cleanType = (type || "").toLowerCase();
-
-    if (cleanType.includes("teacher")) {
-      profilePath = "teachers/" + id;
-    } else if (cleanType.includes("institution")) {
+    if (type.includes("institution")) {
       profilePath = "institutions/" + id;
+      finalType = "institution";
     } else {
-      throw new Error("Invalid type: " + type);
+      profilePath = "teachers/" + id;
+      finalType = "teacher";
     }
 
-    const snap = await get(ref(db, profilePath));
+    let snap = await get(ref(db, profilePath));
 
     if (!snap.exists()) {
-      throw new Error("Profile not found in database");
+      const teacherSnap = await get(ref(db, "teachers/" + id));
+      const institutionSnap = await get(ref(db, "institutions/" + id));
+
+      if (teacherSnap.exists()) {
+        snap = teacherSnap;
+        profilePath = "teachers/" + id;
+        finalType = "teacher";
+      } else if (institutionSnap.exists()) {
+        snap = institutionSnap;
+        profilePath = "institutions/" + id;
+        finalType = "institution";
+      } else {
+        throw new Error("Profile not found in database");
+      }
     }
 
     const user = snap.val();
@@ -196,7 +164,7 @@ async function savePayment() {
       paymentId: paymentRef.key,
       profileId: id,
       uid: id,
-      type: type,
+      type: finalType,
       renewal: true,
       name: user.name || "",
       ownerName: user.ownerName || "",
@@ -216,24 +184,29 @@ async function savePayment() {
     });
 
     loader.style.display = "none";
-    msg.innerHTML =
-      '<span class="success">Payment successful! Redirecting...</span>';
+    msg.innerHTML = '<span class="success">Payment successful! Redirecting...</span>';
 
     setTimeout(() => {
-      window.location.href = "renewal-success.html";
+      window.location.href =
+        "renewal-success.html?type=" +
+        encodeURIComponent(finalType) +
+        "&id=" +
+        encodeURIComponent(id);
     }, 2000);
 
   } catch (err) {
     console.log(err);
-
     loader.style.display = "none";
     msg.innerHTML =
-      '<span class="error">Payment failed.</span><br><br>' + err.message;
+      '<span class="error">Payment failed.</span><br><br>' +
+      err.message +
+      '<br><br><span class="debug">' +
+      window.location.href +
+      '</span>';
   }
 }
 
 savePayment();
 </script>
-
 </body>
 </html>
