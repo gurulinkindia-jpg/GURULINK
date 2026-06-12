@@ -2,12 +2,30 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>GURULINK - Home</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
 body{background:#eef2f7;color:#222}
-header{background:#1565c0;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:1000}
+
+header{
+background:#6a1b9a; /* Purple */
+color:#fff;
+
+padding-top:calc(env(safe-area-inset-top) + 12px);
+padding-right:20px;
+padding-bottom:12px;
+padding-left:20px;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+position:sticky;
+top:0;
+z-index:1000;
+}
 .logo{font-size:28px;font-weight:bold}
 .header-right{display:flex;align-items:center;gap:10px}
 .dashboardBtn{background:#fff;color:#1565c0;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:bold}
