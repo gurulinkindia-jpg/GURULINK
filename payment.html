@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <meta charset="UTF-8">
-
 <title>GURULINK Payment</title>
 
 <style>
-
 body{
 font-family:Arial;
 background:#eef2f7;
@@ -15,7 +12,6 @@ padding:20px;
 }
 
 .container{
-
 max-width:500px;
 margin:auto;
 background:white;
@@ -23,11 +19,9 @@ padding:25px;
 border-radius:15px;
 text-align:center;
 box-shadow:0 5px 15px rgba(0,0,0,.15);
-
 }
 
 button{
-
 width:100%;
 padding:14px;
 border:none;
@@ -36,115 +30,102 @@ background:#1b5e20;
 color:white;
 font-size:16px;
 cursor:pointer;
-
 }
 
 .amount{
-
 font-size:25px;
 font-weight:bold;
 margin:20px;
-
 }
-
 </style>
-
 </head>
 
 <body>
 
 <div class="container">
-
 <h2>GURULINK Payment</h2>
-
 <div id="feeText" class="amount"></div>
-
-<button id="payBtn">
-
-Continue To Payment
-
-</button>
-
+<button id="payBtn">Continue To Payment</button>
 </div>
 
-
 <script>
-
-
-
-
-
-
-
 const params = new URLSearchParams(window.location.search);
 
-const type = params.get("type") || "teacher";
+const type = params.get("type") || localStorage.getItem("paymentType") || "teacher";
 
-/* ✅ FIX: safe fallback for missing id */
-let id = params.get("id");
+let id =
+  params.get("id") ||
+  localStorage.getItem("paymentProfileId") ||
+  localStorage.getItem("profileId") ||
+  localStorage.getItem("teacherId") ||
+  localStorage.getItem("institutionId") ||
+  "";
 
-if (!id) {
-  id = localStorage.getItem("profileId") 
-     || localStorage.getItem("teacherId") 
-     || localStorage.getItem("institutionId");
-}
-
-if (!id) {
+if (!id || id === "null" || id === "undefined") {
   alert("Profile ID missing. Please complete registration first.");
   throw new Error("Missing Profile ID");
 }
 
+if (!type || type === "null" || type === "undefined") {
+  alert("Account type missing. Please complete registration first.");
+  throw new Error("Missing Type");
+}
 
-
-
-
-
-
-
-
+localStorage.setItem("paymentProfileId", id);
+localStorage.setItem("paymentType", type);
+sessionStorage.setItem("paymentProfileId", id);
+sessionStorage.setItem("paymentType", type);
 
 let amount = 1;
 let paymentLink = "";
 
-if (type === "teacher") {
+const returnData = btoa(type + "||" + id);
 
+const successUrl =
+  "https://www.gurulink.co.in/payment-success.html?returnData=" +
+  encodeURIComponent(returnData) +
+  "&type=" +
+  encodeURIComponent(type) +
+  "&id=" +
+  encodeURIComponent(id);
+
+if (type === "teacher") {
   amount = 1;
 
   paymentLink =
-    "https://rzp.io/rzp/gurulink?redirect=true&redirect_url=" +
-    encodeURIComponent(
-      "https://gurulink.onrender.com/payment-success.html?type=teacher&id=" + id
-    );
+    "https://rzp.io/rzp/gurulink?redirect=true" +
+    "&reference_id=" +
+    encodeURIComponent(id) +
+    "&redirect_url=" +
+    encodeURIComponent(successUrl);
 
 } else if (type === "institution") {
-
   amount = 2;
 
   paymentLink =
-    "https://rzp.io/rzp/gurulink-I?redirect=true&redirect_url=" +
-    encodeURIComponent(
-      "https://gurulink.onrender.com/payment-success.html?type=institution&id=" + id
-    );
+    "https://rzp.io/rzp/gurulink-I?redirect=true" +
+    "&reference_id=" +
+    encodeURIComponent(id) +
+    "&redirect_url=" +
+    encodeURIComponent(successUrl);
+
+} else {
+  alert("Invalid account type: " + type);
+  throw new Error("Invalid Type");
 }
 
-/* SHOW AMOUNT */
 document.getElementById("feeText").innerHTML =
-  `Registration Fee ₹${amount}`;
+  "Registration Fee ₹" + amount;
 
-/* BUTTON CLICK */
 document.getElementById("payBtn").onclick = () => {
-
-
-localStorage.setItem("paymentProfileId", id);
-localStorage.setItem("paymentType", type);
-
-
+  localStorage.setItem("paymentProfileId", id);
+  localStorage.setItem("paymentType", type);
+  sessionStorage.setItem("paymentProfileId", id);
+  sessionStorage.setItem("paymentType", type);
 
   window.location.href = paymentLink;
 };
-
 </script>
 
 </body>
-
 </html>
