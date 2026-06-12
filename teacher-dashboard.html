@@ -1128,16 +1128,24 @@ window.renewProfile = function () {
     profileId ||
     localStorage.getItem("profileId") ||
     localStorage.getItem("teacherId") ||
-    localStorage.getItem("institutionId");
+    localStorage.getItem("institutionId") ||
+    localStorage.getItem("paymentProfileId") ||
+    localStorage.getItem("renewProfileId");
 
   const type =
     role ||
     localStorage.getItem("role") ||
     localStorage.getItem("paymentType") ||
+    localStorage.getItem("renewRole") ||
     "teacher";
 
-  if (!id) {
+  if (!id || id === "null" || id === "undefined") {
     alert("Profile ID missing. Please login again.");
+    return;
+  }
+
+  if (!type || type === "null" || type === "undefined") {
+    alert("Account type missing. Please login again.");
     return;
   }
 
@@ -1149,8 +1157,16 @@ window.renewProfile = function () {
   localStorage.setItem("paymentType", type);
   localStorage.setItem("renewRole", type);
 
+  sessionStorage.setItem("profileId", id);
+  sessionStorage.setItem("paymentProfileId", id);
+  sessionStorage.setItem("renewProfileId", id);
+
+  sessionStorage.setItem("role", type);
+  sessionStorage.setItem("paymentType", type);
+  sessionStorage.setItem("renewRole", type);
+
   window.location.href =
-    "https://gurulink.onrender.com/payment2.html?id=" +
+    "https://www.gurulink.co.in/payment2.html?id=" +
     encodeURIComponent(id) +
     "&type=" +
     encodeURIComponent(type);
