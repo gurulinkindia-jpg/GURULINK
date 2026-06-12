@@ -185,9 +185,7 @@ async function savePayment() {
     document.getElementById("msg").innerHTML =
       '<span class="success">Payment successful! Redirecting...</span>';
 
-  setTimeout(() => {
-  window.location.href = "https://www.gurulink.co.in/renewal-success.html";
-}, 2000);
+setTimeout(() => { window.location.href = "login.html"; }, 2000);
 
   } catch (err) {
 
