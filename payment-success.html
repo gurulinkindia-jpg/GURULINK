@@ -61,7 +61,7 @@ animation:spin 1s linear infinite;
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push, get, set, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, push, get, set, update, remove } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -79,94 +79,222 @@ const db = getDatabase(app);
 const loader = document.getElementById("loader");
 const msg = document.getElementById("msg");
 
+function cleanValue(value) {
+  if (!value) return "";
+  value = String(value).trim();
+  if (
+    value === "..." ||
+    value === "null" ||
+    value === "undefined" ||
+    value === "[object Object]" ||
+    value.includes("#") ||
+    value.includes("$") ||
+    value.includes("[") ||
+    value.includes("]")
+  ) return "";
+  return value;
+}
+
 const params = new URLSearchParams(window.location.search);
 
-let type = "";
+let token = cleanValue(
+  params.get("token") ||
+  params.get("reference_id") ||
+  params.get("razorpay_payment_link_reference_id")
+);
+
+let type = cleanValue(params.get("type")).toLowerCase();
 let id = "";
 
-const returnData = params.get("returnData");
+if (type === "teacher_institute") {
+  type = "teacher";
+}
 
-if (returnData) {
-  try {
-    const decoded = atob(returnData);
-    const parts = decoded.split("||");
-    type = parts[0] || "";
-    id = parts[1] || "";
-  } catch (err) {
-    console.log("returnData decode failed:", err);
+async function loadPendingByToken() {
+  if (!token) return false;
+
+  const pendingSnap = await get(ref(db, "pendingPayments/" + token));
+
+  if (!pendingSnap.exists()) return false;
+
+  const pending = pendingSnap.val();
+
+  id = cleanValue(pending.profileId);
+  type = cleanValue(pending.type).toLowerCase();
+  token = cleanValue(pending.token) || token;
+
+  if (type === "teacher_institute") {
+    type = "teacher";
+  }
+
+  return !!id && !!type;
+}
+
+async function loadPendingByType() {
+  if (!type) return false;
+
+  const latestSnap = await get(ref(db, "pendingPaymentsLatestRegister/" + type));
+
+  if (!latestSnap.exists()) return false;
+
+  const pending = latestSnap.val();
+
+  const createdAt = Number(pending.createdAt || 0);
+  const age = Date.now() - createdAt;
+
+  if (age > 30 * 60 * 1000) {
+    return false;
+  }
+
+  id = cleanValue(pending.profileId);
+  type = cleanValue(pending.type).toLowerCase();
+  token = cleanValue(pending.token) || token;
+
+  if (type === "teacher_institute") {
+    type = "teacher";
+  }
+
+  return !!id && !!type;
+}
+
+function fallbackFromUrlAndStorage() {
+  const returnData = cleanValue(params.get("returnData"));
+
+  if (returnData) {
+    try {
+      const decoded = atob(returnData);
+      const parts = decoded.split("||");
+      type = cleanValue(parts[0]).toLowerCase();
+      id = cleanValue(parts[1]);
+    } catch (err) {
+      console.log("returnData decode failed:", err);
+    }
+  }
+
+  type =
+    cleanValue(type).toLowerCase() ||
+    cleanValue(params.get("type")).toLowerCase() ||
+    cleanValue(params.get("notes[type]")).toLowerCase() ||
+    cleanValue(params.get("notes.type")).toLowerCase() ||
+    cleanValue(sessionStorage.getItem("paymentType")).toLowerCase() ||
+    cleanValue(sessionStorage.getItem("role")).toLowerCase() ||
+    cleanValue(localStorage.getItem("paymentType")).toLowerCase() ||
+    cleanValue(localStorage.getItem("role")).toLowerCase() ||
+    "teacher";
+
+  if (type === "teacher_institute") {
+    type = "teacher";
+  }
+
+  id =
+    cleanValue(id) ||
+    cleanValue(params.get("id")) ||
+    cleanValue(sessionStorage.getItem("paymentProfileId")) ||
+    cleanValue(sessionStorage.getItem("profileId")) ||
+    cleanValue(sessionStorage.getItem("teacherId")) ||
+    cleanValue(sessionStorage.getItem("institutionId")) ||
+    cleanValue(localStorage.getItem("paymentProfileId")) ||
+    cleanValue(localStorage.getItem("profileId")) ||
+    cleanValue(localStorage.getItem("teacherId")) ||
+    cleanValue(localStorage.getItem("institutionId")) ||
+    cleanValue(localStorage.getItem(type + "Id"));
+}
+
+async function resolvePaymentContext() {
+  let ok = await loadPendingByToken();
+
+  if (!ok) {
+    ok = await loadPendingByType();
+  }
+
+  if (!ok) {
+    fallbackFromUrlAndStorage();
+  }
+
+  console.log("SUCCESS URL:", window.location.href);
+  console.log("TOKEN:", token);
+  console.log("FINAL TYPE:", type);
+  console.log("FINAL ID:", id);
+
+  if (!id) {
+    loader.style.display = "none";
+    msg.innerHTML =
+      '<span class="error">Profile ID missing.</span><br><br>' +
+      '<span class="debug">' + window.location.href + '</span>';
+    throw new Error("Profile ID Missing");
+  }
+
+  if (!type) {
+    loader.style.display = "none";
+    msg.innerHTML =
+      '<span class="error">Account type missing.</span><br><br>' +
+      '<span class="debug">' + window.location.href + '</span>';
+    throw new Error("Payment Type Missing");
   }
 }
 
-type =
-  type ||
-  params.get("type") ||
-  params.get("notes[type]") ||
-  params.get("notes.type") ||
-  sessionStorage.getItem("paymentType") ||
-  localStorage.getItem("paymentType") ||
-  localStorage.getItem("type") ||
-  "teacher";
+const amountMap = {
+  teacher: 1,
+  institution: 2
+};
 
-id =
-  id ||
-  params.get("id") ||
-  params.get("reference_id") ||
-  params.get("razorpay_payment_link_reference_id") ||
-  sessionStorage.getItem("paymentProfileId") ||
-  localStorage.getItem("paymentProfileId") ||
-  localStorage.getItem(type + "Id") ||
-  localStorage.getItem("teacherId") ||
-  localStorage.getItem("institutionId") ||
-  "";
+async function cleanupPending(finalType) {
+  try {
+    if (token) {
+      await remove(ref(db, "pendingPayments/" + token));
+    }
 
-if (type) {
-  type = type.toLowerCase();
+    if (finalType) {
+      await remove(ref(db, "pendingPaymentsLatestRegister/" + finalType));
+    }
+  } catch (err) {
+    console.log("Cleanup failed:", err);
+  }
 }
-
-console.log("SUCCESS URL:", window.location.href);
-console.log("RETURN DATA:", returnData);
-console.log("FINAL TYPE:", type);
-console.log("FINAL ID:", id);
-
-if (!id || id === "null" || id === "undefined") {
-  loader.style.display = "none";
-  msg.innerHTML =
-    '<span class="error">Profile ID missing.</span><br><br>' +
-    '<span class="debug">' + window.location.href + '</span>';
-  throw new Error("Profile ID Missing");
-}
-
-if (!type || type === "null" || type === "undefined") {
-  loader.style.display = "none";
-  msg.innerHTML =
-    '<span class="error">Account type missing.</span><br><br>' +
-    '<span class="debug">' + window.location.href + '</span>';
-  throw new Error("Payment Type Missing");
-}
-
-const amount = type === "institution" ? 2 : 1;
 
 async function savePayment() {
   try {
-    const profilePath =
-      type === "institution"
-        ? "institutions/" + id
-        : "teachers/" + id;
+    await resolvePaymentContext();
 
-    const snap = await get(ref(db, profilePath));
+    let profilePath = "";
+    let finalType = "";
+
+    if (type.includes("institution")) {
+      profilePath = "institutions/" + id;
+      finalType = "institution";
+    } else {
+      profilePath = "teachers/" + id;
+      finalType = "teacher";
+    }
+
+    let snap = await get(ref(db, profilePath));
 
     if (!snap.exists()) {
-      throw new Error("Profile not found in database");
+      const teacherSnap = await get(ref(db, "teachers/" + id));
+      const institutionSnap = await get(ref(db, "institutions/" + id));
+
+      if (teacherSnap.exists()) {
+        snap = teacherSnap;
+        profilePath = "teachers/" + id;
+        finalType = "teacher";
+      } else if (institutionSnap.exists()) {
+        snap = institutionSnap;
+        profilePath = "institutions/" + id;
+        finalType = "institution";
+      } else {
+        throw new Error("Profile not found in database");
+      }
     }
 
     const user = snap.val();
     const paymentRef = push(ref(db, "payments"));
+    const amount = amountMap[finalType] || 1;
 
     await set(paymentRef, {
       paymentId: paymentRef.key,
       profileId: id,
       uid: id,
-      type: type,
+      type: finalType,
 
       name: user.name || "",
       ownerName: user.ownerName || "",
@@ -190,12 +318,15 @@ async function savePayment() {
       amount: amount,
       status: "paid",
       date: new Date().toLocaleString(),
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      token: token || ""
     });
 
     await update(ref(db, profilePath), {
       paymentStatus: "paid"
     });
+
+    await cleanupPending(finalType);
 
     localStorage.removeItem("paymentProfileId");
     localStorage.removeItem("paymentType");
@@ -224,7 +355,11 @@ async function savePayment() {
 
     loader.style.display = "none";
     msg.innerHTML =
-      '<span class="error">Payment failed.</span><br><br>' + err.message;
+      '<span class="error">Payment failed.</span><br><br>' +
+      err.message +
+      '<br><br><span class="debug">' +
+      window.location.href +
+      '</span>';
   }
 }
 
