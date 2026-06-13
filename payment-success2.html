@@ -27,7 +27,7 @@ p{font-size:15px;line-height:1.6;}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push, get, set, update, remove } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, push, get, set, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -69,10 +69,14 @@ let token = cleanValue(
   params.get("razorpay_payment_link_reference_id")
 );
 
-let type = "";
+let type = cleanValue(params.get("type")).toLowerCase();
 let id = "";
 
-async function loadPendingPayment() {
+if (type === "teacher_institute") {
+  type = "teacher";
+}
+
+async function loadPendingByToken() {
   if (!token) return false;
 
   const pendingSnap = await get(ref(db, "pendingPayments/" + token));
@@ -83,11 +87,43 @@ async function loadPendingPayment() {
 
   id = cleanValue(pending.profileId);
   type = cleanValue(pending.type).toLowerCase();
+  token = cleanValue(pending.token) || token;
+
+  if (type === "teacher_institute") {
+    type = "teacher";
+  }
 
   return !!id && !!type;
 }
 
-async function fallbackFromUrlAndStorage() {
+async function loadPendingByType() {
+  if (!type) return false;
+
+  const latestSnap = await get(ref(db, "pendingPaymentsLatest/" + type));
+
+  if (!latestSnap.exists()) return false;
+
+  const pending = latestSnap.val();
+
+  const createdAt = Number(pending.createdAt || 0);
+  const age = Date.now() - createdAt;
+
+  if (age > 30 * 60 * 1000) {
+    return false;
+  }
+
+  id = cleanValue(pending.profileId);
+  type = cleanValue(pending.type).toLowerCase();
+  token = cleanValue(pending.token) || token;
+
+  if (type === "teacher_institute") {
+    type = "teacher";
+  }
+
+  return !!id && !!type;
+}
+
+function fallbackFromUrlAndStorage() {
   const returnData = cleanValue(params.get("returnData"));
 
   if (returnData) {
@@ -102,7 +138,7 @@ async function fallbackFromUrlAndStorage() {
   }
 
   type =
-    cleanValue(type) ||
+    cleanValue(type).toLowerCase() ||
     cleanValue(params.get("type")).toLowerCase() ||
     cleanValue(sessionStorage.getItem("paymentType")).toLowerCase() ||
     cleanValue(sessionStorage.getItem("renewRole")).toLowerCase() ||
@@ -110,6 +146,10 @@ async function fallbackFromUrlAndStorage() {
     cleanValue(localStorage.getItem("paymentType")).toLowerCase() ||
     cleanValue(localStorage.getItem("renewRole")).toLowerCase() ||
     cleanValue(localStorage.getItem("role")).toLowerCase();
+
+  if (type === "teacher_institute") {
+    type = "teacher";
+  }
 
   id =
     cleanValue(id) ||
@@ -127,10 +167,14 @@ async function fallbackFromUrlAndStorage() {
 }
 
 async function resolvePaymentContext() {
-  const foundPending = await loadPendingPayment();
+  let ok = await loadPendingByToken();
 
-  if (!foundPending) {
-    await fallbackFromUrlAndStorage();
+  if (!ok) {
+    ok = await loadPendingByType();
+  }
+
+  if (!ok) {
+    fallbackFromUrlAndStorage();
   }
 
   console.log("SUCCESS2 URL:", window.location.href);
@@ -216,6 +260,11 @@ async function savePayment() {
         paidAt: Date.now()
       });
     }
+
+    await update(ref(db, "pendingPaymentsLatest/" + finalType), {
+      status: "paid",
+      paidAt: Date.now()
+    });
 
     loader.style.display = "none";
     msg.innerHTML =
