@@ -41,7 +41,12 @@ const params = new URLSearchParams(window.location.search);
 function cleanValue(value) {
   if (!value) return "";
   value = String(value).trim();
-  if (value === "null" || value === "undefined" || value === "...") return "";
+  if (
+    value === "null" ||
+    value === "undefined" ||
+    value === "..." ||
+    value === "[object Object]"
+  ) return "";
   return value;
 }
 
@@ -51,7 +56,7 @@ const type = cleanValue(
   localStorage.getItem("renewRole") ||
   localStorage.getItem("role") ||
   "teacher"
-);
+).toLowerCase();
 
 let id = cleanValue(
   params.get("id") ||
@@ -73,7 +78,9 @@ if (!type) {
   throw new Error("Missing type");
 }
 
-function saveLocalPaymentData() {
+const amount = 399;
+
+function savePaymentData() {
   localStorage.setItem("profileId", id);
   localStorage.setItem("paymentProfileId", id);
   localStorage.setItem("renewProfileId", id);
@@ -93,60 +100,68 @@ function saveLocalPaymentData() {
   }
 }
 
-saveLocalPaymentData();
+function createToken() {
+  return "renew_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+}
 
-const amount = 399;
+async function createPaymentLink() {
+  const token = createToken();
+
+  await set(ref(db, "pendingPayments/" + token), {
+    token: token,
+    profileId: id,
+    type: type,
+    flow: "renewal",
+    amount: amount,
+    status: "pending",
+    createdAt: Date.now()
+  });
+
+  const successUrl =
+    "https://www.gurulink.co.in/payment-success2.html?token=" +
+    encodeURIComponent(token);
+
+  if (type === "teacher" || type === "teacher_institute") {
+    return (
+      "https://rzp.io/rzp/6jCbwy7?redirect=true" +
+      "&reference_id=" + encodeURIComponent(token) +
+      "&redirect_url=" + encodeURIComponent(successUrl)
+    );
+  }
+
+  if (type === "institution") {
+    return (
+      "https://rzp.io/rzp/poQdXFn?redirect=true" +
+      "&reference_id=" + encodeURIComponent(token) +
+      "&redirect_url=" + encodeURIComponent(successUrl)
+    );
+  }
+
+  throw new Error("Invalid type: " + type);
+}
 
 document.getElementById("feeText").innerText =
   "Renewal Fee ₹" + amount;
 
 document.getElementById("payBtn").onclick = async function () {
   try {
-    saveLocalPaymentData();
+    const btn = document.getElementById("payBtn");
+    btn.disabled = true;
+    btn.innerText = "Opening Payment...";
 
-    const token =
-      Date.now().toString() +
-      "_" +
-      Math.random().toString(36).slice(2);
+    savePaymentData();
 
-    await set(ref(db, "pendingPayments/" + token), {
-      token: token,
-      profileId: id,
-      type: type,
-      flow: "renewal",
-      amount: amount,
-      status: "pending",
-      createdAt: Date.now()
-    });
+    const paymentLink = await createPaymentLink();
 
-    const successUrl =
-      "https://www.gurulink.co.in/payment-success2.html?token=" +
-      encodeURIComponent(token);
-
-    let paymentLink = "";
-
-    if (type === "teacher" || type === "teacher_institute") {
-      paymentLink =
-        "https://rzp.io/rzp/6jCbwy7?redirect=true" +
-        "&reference_id=" + encodeURIComponent(token) +
-        "&redirect_url=" + encodeURIComponent(successUrl);
-
-    } else if (type === "institution") {
-      paymentLink =
-        "https://rzp.io/rzp/poQdXFn?redirect=true" +
-        "&reference_id=" + encodeURIComponent(token) +
-        "&redirect_url=" + encodeURIComponent(successUrl);
-
-    } else {
-      alert("Invalid account type: " + type);
-      throw new Error("Invalid type");
-    }
-
-    window.location.href = paymentLink;
+    setTimeout(function () {
+      window.location.href = paymentLink;
+    }, 300);
 
   } catch (err) {
-    console.log(err);
-    alert("Payment start failed: " + err.message);
+    alert("Unable to start payment: " + err.message);
+    const btn = document.getElementById("payBtn");
+    btn.disabled = false;
+    btn.innerText = "Continue To Payment";
   }
 };
 </script>
