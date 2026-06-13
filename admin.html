@@ -149,7 +149,14 @@ background:#fff8e1;
 h3{
 margin-top:0;
 }
+#notificationBox{
+box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
 
+#notificationBox span{
+font-weight:bold;
+color:red;
+}
 </style>
 </head>
 
@@ -170,6 +177,12 @@ Home
 </button>
 
 <button
+style="background:#ff9800;"
+onclick="openHelpdesk()">
+🎫 Helpdesk
+</button>
+
+<button
 class="logoutBtn"
 onclick="logout()">
 Logout
@@ -182,7 +195,36 @@ id="search"
 placeholder="Search Name / Email / Phone"
 oninput="renderAll()">
 
+<div id="notificationBox"
+style="
+background:white;
+color:black;
+padding:10px;
+border-radius:8px;
+font-size:13px;
+min-width:220px;
+">
+
+🔔 <b>Notifications</b>
+
+<div>
+🟢 New Registrations:
+<span id="newRegistrationCount">0</span>
 </div>
+
+<div>
+🟣 New Renewals:
+<span id="newRenewalCount">0</span>
+</div>
+
+<div>
+🟠 Helpdesk Tickets:
+<span id="newTicketCount">0</span>
+</div>
+
+</div>
+
+</div> <!-- topbar end -->
 
 <div class="stats">
 
@@ -220,7 +262,10 @@ Creative
 Revenue ₹
 <div id="pTotal">0</div>
 </div>
-
+<div class="stat">
+Helpdesk
+<div id="ticketCount">0</div>
+</div>
 </div>
 
 <div class="container">
@@ -270,7 +315,8 @@ getDatabase,
 ref,
 onValue,
 update,
-remove
+remove,
+get
 }
 from
 "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
@@ -544,18 +590,29 @@ ${d.phone || "-"}
 
 <p>
 ₹${d.amount || 0}
+
 </p>
+
+
 
 <p>
 ${d.status || "paid"}
 </p>
 
 <button
+class="renew"
+onclick="approveRenewalFromPayment(
+'${c.key}',
+'${d.profileId}',
+'${d.type}'
+)">
+Approve Renewal
+</button>
+
+<button
 class="delete"
 onclick="delRenewPay('${c.key}')">
-
 Delete
-
 </button>
 
 </div>
@@ -704,9 +761,10 @@ Delete
 
 <button
 class="renew"
-onclick="renew('${type}','${d.id}')">
+disabled
+style="opacity:.5;cursor:not-allowed;">
 
-Renew
+Renew via Payment
 
 </button>
 
@@ -799,30 +857,47 @@ db,
    RENEW MEMBERSHIP
 ========================= */
 
-window.renew =
-function(type,id){
+window.renew = async function(type,id){
 
-if(
-!confirm(
-"Renew this membership?"
-)
-){
-return;
-}
+  if(!confirm("Approve renewal for this membership?")){
+    return;
+  }
 
-update(
-ref(
-db,
-`${type}s/${id}`
-),
-{
-approvedAt:Date.now(),
-renewalStatus:"active",
-lastRenewalDate:Date.now(),
-status:"approved"
-}
-);
+  const ONE_DAY = 24 * 60 * 60 * 1000;
+  const SUB_DAYS = 366;
+  const SUB_TIME = SUB_DAYS * ONE_DAY;
+  const now = Date.now();
 
+  const path = `${type}s/${id}`;
+
+  const snap = await get(ref(db, path));
+
+  if(!snap.exists()){
+    alert("Profile not found");
+    return;
+  }
+
+  const d = snap.val();
+
+  const oldApprovedAt = Number(d.approvedAt || 0);
+  const oldExpiry = oldApprovedAt + SUB_TIME;
+
+  let newApprovedAt;
+
+  if(oldApprovedAt && oldExpiry > now){
+    newApprovedAt = oldExpiry; // remaining days + 366
+  }else{
+    newApprovedAt = now; // expired = fresh 366 days
+  }
+
+  await update(ref(db, path), {
+    approvedAt: newApprovedAt,
+    renewalStatus:"active",
+    lastRenewalDate:now,
+    status:"approved"
+  });
+
+  alert("Renewal approved successfully");
 };
 
 /* =========================
@@ -907,7 +982,16 @@ db,
 );
 
 };
+/* =========================
+   APPROVE RENEWAL PAYMENT
+========================= */
 
+window.approveRenewalFromPayment =
+async function(paymentId, profileId, type){
+
+  // We will add the full renewal logic here
+
+};
 /* =========================
    SEARCH
 ========================= */
@@ -1054,6 +1138,104 @@ location.href =
 
 };
 
+
+onValue(
+  ref(db,"tickets"),
+  snap => {
+
+    document.getElementById(
+      "ticketCount"
+    ).innerText =
+    snap.numChildren();
+
+  }
+);
+
+
+/* =========================
+   NOTIFICATIONS
+========================= */
+
+/* New Registrations */
+
+onValue(
+  ref(db,"payments"),
+  snap=>{
+
+    let count = 0;
+
+    snap.forEach(child=>{
+
+      const d = child.val();
+
+      if(
+        d.status !== "approved"
+      ){
+        count++;
+      }
+
+    });
+
+    document.getElementById(
+      "newRegistrationCount"
+    ).innerText = count;
+
+  }
+);
+
+/* New Renewals */
+
+onValue(
+  ref(db,"payment2"),
+  snap=>{
+
+    let count = 0;
+
+    snap.forEach(child=>{
+
+      const d = child.val();
+
+      if(
+        d.status !== "approved"
+      ){
+        count++;
+      }
+
+    });
+
+    document.getElementById(
+      "newRenewalCount"
+    ).innerText = count;
+
+  }
+);
+
+/* Helpdesk */
+
+onValue(
+  ref(db,"tickets"),
+  snap=>{
+
+    let count = 0;
+
+    snap.forEach(child=>{
+
+      const d = child.val();
+
+      if(
+        d.status !== "resolved"
+      ){
+        count++;
+      }
+
+    });
+
+    document.getElementById(
+      "newTicketCount"
+    ).innerText = count;
+
+  }
+);
 /* =========================
    INIT
 ========================= */
@@ -1064,6 +1246,15 @@ loadInstitutions();
 
 loadPayments();
 
+/* =========================
+   HEPL
+========================= */
+window.openHelpdesk = function(){
+
+  window.location.href =
+  "admin-helpdesk.html";
+
+};
 </script>
 
 </body>
