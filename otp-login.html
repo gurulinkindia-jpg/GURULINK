@@ -214,11 +214,10 @@ if (role === "student") {
 
 
 /* FINAL REDIRECT */
-if (role === "student") {
-  location.href = "index.html";
-} else {
-  location.href = "teacher-check.html";
-}
+/* FINAL REDIRECT */
+localStorage.setItem("otpRole", role);
+
+location.href = "teacher-check.html";
 return;
 
 /* teacher / institute flow */
