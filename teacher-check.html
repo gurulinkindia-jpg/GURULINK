@@ -141,11 +141,8 @@ messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
-const app =
-initializeApp(firebaseConfig);
-
-const db =
-getDatabase(app);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
 const phone =
 (localStorage.getItem("phone") || "")
@@ -173,8 +170,7 @@ return String(num || "")
 .replace(/\D/g,"");
 }
 
-window.goRegister =
-function(page){
+window.goRegister = function(page){
 
 const agree =
 document.getElementById("termsCheck");
@@ -188,8 +184,7 @@ location.href = page;
 
 };
 
-window.goLater =
-function(){
+window.goLater = function(){
 
 const agree =
 document.getElementById("termsCheck");
@@ -288,44 +283,67 @@ async function checkAccount(){
 try{
 
 if(!phone){
-title.textContent = "Phone Number Missing";
+
+title.textContent =
+"Phone Number Missing";
+
 content.innerHTML = `
+
 <p>Please login again with OTP.</p>
-<button class="register" style="width:100%;" onclick="location.href='otp-login.html'">
+
+<button
+class="register"
+style="width:100%;"
+onclick="location.href='otp-login.html'">
 OTP Login
 </button>
+
 `;
+
 return;
+
 }
 
-/* NEW AUTH USER */
+/* =========================
+   NEW FIREBASE AUTH USER
+========================= */
+
 if(isNewAuthUser === "true"){
 
 if(otpRole === "student"){
+
 showRegisterChoice(
 "Student / Parent Not Registered",
 "This mobile number is new. You can register now or continue later.",
 "student-registration.html"
 );
+
 return;
+
 }
 
 if(otpRole === "teacher" || otpRole === "teacher_institute"){
+
 showRegisterChoice(
 "Teacher / Institution Not Registered",
 "This mobile number is new. You can register now or continue later.",
 "register.html"
 );
+
 return;
+
 }
 
 if(otpRole === "institution"){
+
 showRegisterChoice(
 "Institution Not Registered",
 "This mobile number is new. You can register now or continue later.",
 "register.html"
 );
+
 return;
+
 }
 
 showRegisterChoice(
@@ -333,11 +351,15 @@ showRegisterChoice(
 "This mobile number is new. You can register now or continue later.",
 "register.html"
 );
+
 return;
 
 }
 
-/* EXISTING AUTH USER - STUDENT */
+/* =========================
+   OLD AUTH USER - STUDENT
+========================= */
+
 if(otpRole === "student"){
 
 const student =
@@ -349,17 +371,23 @@ localStorage.setItem("role","student");
 localStorage.setItem("studentId",student.id);
 localStorage.setItem("profileId",student.id);
 
-location.href = "student-dashboard.html";
+location.href =
+"student-dashboard.html";
+
 return;
 
 }
 
+/* Existing auth user but not in students DB */
 goHome();
 return;
 
 }
 
-/* EXISTING AUTH USER - TEACHER / INSTITUTE COMBINED */
+/* =========================
+   OLD AUTH USER - TEACHER / INSTITUTE
+========================= */
+
 if(otpRole === "teacher" || otpRole === "teacher_institute"){
 
 const teacher =
@@ -371,7 +399,9 @@ localStorage.setItem("role","teacher");
 localStorage.setItem("teacherId",teacher.id);
 localStorage.setItem("profileId",teacher.id);
 
-location.href = "teacher-dashboard.html";
+location.href =
+"teacher-dashboard.html";
+
 return;
 
 }
@@ -385,17 +415,23 @@ localStorage.setItem("role","institution");
 localStorage.setItem("institutionId",institution.id);
 localStorage.setItem("profileId",institution.id);
 
-location.href = "institution-dashboard.html";
+location.href =
+"institution-dashboard.html";
+
 return;
 
 }
 
+/* Existing auth user but not registered */
 goHome();
 return;
 
 }
 
-/* EXISTING AUTH USER - INSTITUTION */
+/* =========================
+   OLD AUTH USER - INSTITUTION
+========================= */
+
 if(otpRole === "institution"){
 
 const institution =
@@ -407,17 +443,23 @@ localStorage.setItem("role","institution");
 localStorage.setItem("institutionId",institution.id);
 localStorage.setItem("profileId",institution.id);
 
-location.href = "institution-dashboard.html";
+location.href =
+"institution-dashboard.html";
+
 return;
 
 }
 
+/* Existing auth user but not in institutions DB */
 goHome();
 return;
 
 }
 
-/* FALLBACK: CHECK ALL DATABASES */
+/* =========================
+   FALLBACK CHECK ALL DATABASES
+========================= */
+
 const student =
 await findByPhone("students",phone);
 
@@ -427,7 +469,9 @@ localStorage.setItem("role","student");
 localStorage.setItem("studentId",student.id);
 localStorage.setItem("profileId",student.id);
 
-location.href = "student-dashboard.html";
+location.href =
+"student-dashboard.html";
+
 return;
 
 }
@@ -441,7 +485,9 @@ localStorage.setItem("role","teacher");
 localStorage.setItem("teacherId",teacher.id);
 localStorage.setItem("profileId",teacher.id);
 
-location.href = "teacher-dashboard.html";
+location.href =
+"teacher-dashboard.html";
+
 return;
 
 }
@@ -455,7 +501,9 @@ localStorage.setItem("role","institution");
 localStorage.setItem("institutionId",institution.id);
 localStorage.setItem("profileId",institution.id);
 
-location.href = "institution-dashboard.html";
+location.href =
+"institution-dashboard.html";
+
 return;
 
 }
@@ -466,8 +514,11 @@ goHome();
 
 console.error(err);
 
-title.textContent = "Error";
-content.innerHTML = err.message;
+title.textContent =
+"Error";
+
+content.innerHTML =
+err.message;
 
 }
 
