@@ -27,7 +27,7 @@ p{font-size:15px;line-height:1.6;}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push, get, set, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, push, get, set, update, remove } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -48,7 +48,6 @@ const msg = document.getElementById("msg");
 function cleanValue(value) {
   if (!value) return "";
   value = String(value).trim();
-
   if (
     value === "..." ||
     value === "null" ||
@@ -58,75 +57,102 @@ function cleanValue(value) {
     value.includes("$") ||
     value.includes("[") ||
     value.includes("]")
-  ) {
-    return "";
-  }
-
+  ) return "";
   return value;
 }
 
 const params = new URLSearchParams(window.location.search);
 
+let token = cleanValue(
+  params.get("token") ||
+  params.get("reference_id") ||
+  params.get("razorpay_payment_link_reference_id")
+);
+
 let type = "";
 let id = "";
 
-const returnData = cleanValue(params.get("returnData"));
+async function loadPendingPayment() {
+  if (!token) return false;
 
-if (returnData) {
-  try {
-    const decoded = atob(returnData);
-    const parts = decoded.split("||");
-    type = cleanValue(parts[0]);
-    id = cleanValue(parts[1]);
-  } catch (err) {
-    console.log("returnData decode failed:", err);
-  }
+  const pendingSnap = await get(ref(db, "pendingPayments/" + token));
+
+  if (!pendingSnap.exists()) return false;
+
+  const pending = pendingSnap.val();
+
+  id = cleanValue(pending.profileId);
+  type = cleanValue(pending.type).toLowerCase();
+
+  return !!id && !!type;
 }
 
-type =
-  cleanValue(type) ||
-  cleanValue(params.get("type")) ||
-  cleanValue(sessionStorage.getItem("paymentType")) ||
-  cleanValue(sessionStorage.getItem("renewRole")) ||
-  cleanValue(sessionStorage.getItem("role")) ||
-  cleanValue(localStorage.getItem("paymentType")) ||
-  cleanValue(localStorage.getItem("renewRole")) ||
-  cleanValue(localStorage.getItem("role"));
+async function fallbackFromUrlAndStorage() {
+  const returnData = cleanValue(params.get("returnData"));
 
-id =
-  cleanValue(id) ||
-  cleanValue(params.get("id")) ||
-  cleanValue(params.get("reference_id")) ||
-  cleanValue(params.get("razorpay_payment_link_reference_id")) ||
-  cleanValue(sessionStorage.getItem("profileId")) ||
-  cleanValue(sessionStorage.getItem("teacherId")) ||
-  cleanValue(sessionStorage.getItem("institutionId")) ||
-  cleanValue(sessionStorage.getItem("paymentProfileId")) ||
-  cleanValue(sessionStorage.getItem("renewProfileId")) ||
-  cleanValue(localStorage.getItem("profileId")) ||
-  cleanValue(localStorage.getItem("teacherId")) ||
-  cleanValue(localStorage.getItem("institutionId")) ||
-  cleanValue(localStorage.getItem("paymentProfileId")) ||
-  cleanValue(localStorage.getItem("renewProfileId"));
+  if (returnData) {
+    try {
+      const decoded = atob(returnData);
+      const parts = decoded.split("||");
+      type = cleanValue(parts[0]).toLowerCase();
+      id = cleanValue(parts[1]);
+    } catch (err) {
+      console.log("returnData decode failed:", err);
+    }
+  }
 
-type = cleanValue(type).toLowerCase();
+  type =
+    cleanValue(type) ||
+    cleanValue(params.get("type")).toLowerCase() ||
+    cleanValue(sessionStorage.getItem("paymentType")).toLowerCase() ||
+    cleanValue(sessionStorage.getItem("renewRole")).toLowerCase() ||
+    cleanValue(sessionStorage.getItem("role")).toLowerCase() ||
+    cleanValue(localStorage.getItem("paymentType")).toLowerCase() ||
+    cleanValue(localStorage.getItem("renewRole")).toLowerCase() ||
+    cleanValue(localStorage.getItem("role")).toLowerCase();
 
-console.log("SUCCESS2 URL:", window.location.href);
-console.log("FINAL TYPE:", type);
-console.log("FINAL ID:", id);
+  id =
+    cleanValue(id) ||
+    cleanValue(params.get("id")) ||
+    cleanValue(sessionStorage.getItem("profileId")) ||
+    cleanValue(sessionStorage.getItem("teacherId")) ||
+    cleanValue(sessionStorage.getItem("institutionId")) ||
+    cleanValue(sessionStorage.getItem("paymentProfileId")) ||
+    cleanValue(sessionStorage.getItem("renewProfileId")) ||
+    cleanValue(localStorage.getItem("profileId")) ||
+    cleanValue(localStorage.getItem("teacherId")) ||
+    cleanValue(localStorage.getItem("institutionId")) ||
+    cleanValue(localStorage.getItem("paymentProfileId")) ||
+    cleanValue(localStorage.getItem("renewProfileId"));
+}
 
-if (!id) {
-  loader.style.display = "none";
-  msg.innerHTML =
-    '<span class="error">Profile ID missing after payment.</span><br><br>' +
-    '<span class="debug">' + window.location.href + '</span>';
-  throw new Error("Profile ID Missing");
+async function resolvePaymentContext() {
+  const foundPending = await loadPendingPayment();
+
+  if (!foundPending) {
+    await fallbackFromUrlAndStorage();
+  }
+
+  console.log("SUCCESS2 URL:", window.location.href);
+  console.log("TOKEN:", token);
+  console.log("FINAL TYPE:", type);
+  console.log("FINAL ID:", id);
+
+  if (!id) {
+    loader.style.display = "none";
+    msg.innerHTML =
+      '<span class="error">Profile ID missing after payment.</span><br><br>' +
+      '<span class="debug">' + window.location.href + '</span>';
+    throw new Error("Profile ID Missing");
+  }
 }
 
 const amount = 399;
 
 async function savePayment() {
   try {
+    await resolvePaymentContext();
+
     let profilePath = "";
     let finalType = "";
 
@@ -173,7 +199,8 @@ async function savePayment() {
       amount: amount,
       status: "paid",
       date: new Date().toLocaleString(),
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      token: token || ""
     });
 
     await update(ref(db, profilePath), {
@@ -183,8 +210,16 @@ async function savePayment() {
       renewalStatus: "active"
     });
 
+    if (token) {
+      await update(ref(db, "pendingPayments/" + token), {
+        status: "paid",
+        paidAt: Date.now()
+      });
+    }
+
     loader.style.display = "none";
-    msg.innerHTML = '<span class="success">Payment successful! Redirecting...</span>';
+    msg.innerHTML =
+      '<span class="success">Payment successful! Redirecting...</span>';
 
     setTimeout(() => {
       window.location.href =
