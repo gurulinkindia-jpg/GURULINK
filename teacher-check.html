@@ -6,26 +6,30 @@
 <title>Checking Account</title>
 
 <style>
+*{
+box-sizing:border-box;
+}
+
 body{
 margin:0;
 font-family:Arial,sans-serif;
-background:#eef2f7;
+background:linear-gradient(135deg,#e3f2fd,#eef2f7,#ffffff);
 display:flex;
 justify-content:center;
 align-items:center;
 min-height:100vh;
+min-height:100dvh;
 padding:15px;
-box-sizing:border-box;
 }
 
 .box{
 background:white;
 padding:25px;
-border-radius:15px;
+border-radius:18px;
 width:100%;
 max-width:420px;
 text-align:center;
-box-shadow:0 5px 20px rgba(0,0,0,.15);
+box-shadow:0 8px 25px rgba(0,0,0,.15);
 }
 
 h2{
@@ -91,7 +95,7 @@ flex:1;
 @media(max-width:480px){
 .box{
 padding:20px;
-border-radius:12px;
+border-radius:14px;
 }
 
 .btnRow{
@@ -137,17 +141,24 @@ messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getDatabase(app);
 
 const phone =
 (localStorage.getItem("phone") || "")
 .replace("+91","")
-.replace(/\s/g,"");
+.replace(/\s/g,"")
+.replace(/\D/g,"");
 
 const otpRole =
 localStorage.getItem("otpRole") ||
 localStorage.getItem("role");
+
+const isNewAuthUser =
+localStorage.getItem("isNewAuthUser");
 
 const title =
 document.getElementById("title");
@@ -162,7 +173,8 @@ return String(num || "")
 .replace(/\D/g,"");
 }
 
-window.goRegister = function(page){
+window.goRegister =
+function(page){
 
 const agree =
 document.getElementById("termsCheck");
@@ -176,7 +188,8 @@ location.href = page;
 
 };
 
-window.goLater = function(){
+window.goLater =
+function(){
 
 const agree =
 document.getElementById("termsCheck");
@@ -190,7 +203,7 @@ location.href = "index.html";
 
 };
 
-function showNotRegistered(titleText,message,registerPage){
+function showRegisterChoice(titleText,message,registerPage){
 
 title.textContent = titleText;
 
@@ -227,7 +240,50 @@ Register Later
 
 }
 
-async function checkTeacher(){
+function goHome(){
+location.href = "index.html";
+}
+
+async function findByPhone(path, phone){
+
+const snap =
+await get(ref(db,path));
+
+let result = null;
+
+if(snap.exists()){
+
+snap.forEach(child=>{
+
+if(result) return;
+
+const d =
+child.val();
+
+const dbPhone =
+cleanPhone(
+d.phone ||
+d.mobile ||
+d.alternatePhone ||
+""
+);
+
+if(dbPhone === cleanPhone(phone)){
+result = {
+id: child.key,
+data: d
+};
+}
+
+});
+
+}
+
+return result;
+
+}
+
+async function checkAccount(){
 
 try{
 
@@ -242,154 +298,169 @@ OTP Login
 return;
 }
 
-/* STUDENT / PARENT FLOW */
+/* NEW AUTH USER */
+if(isNewAuthUser === "true"){
+
 if(otpRole === "student"){
-
-const snap = await get(ref(db,"students"));
-let found = false;
-
-if(snap.exists()){
-
-snap.forEach(child=>{
-
-const d = child.val();
-
-const dbPhone =
-cleanPhone(
-d.phone ||
-d.mobile ||
-""
-);
-
-if(dbPhone === cleanPhone(phone)){
-
-found = true;
-
-localStorage.setItem("role","student");
-localStorage.setItem("studentId",child.key);
-localStorage.setItem("profileId",child.key);
-
-location.href = "index.html";
-
-}
-
-});
-
-}
-
-if(found) return;
-
-showNotRegistered(
+showRegisterChoice(
 "Student / Parent Not Registered",
-"This mobile number is not registered as Student / Parent.",
+"This mobile number is new. You can register now or continue later.",
 "student-registration.html"
 );
-
 return;
 }
 
-/* TEACHER FLOW */
+if(otpRole === "teacher" || otpRole === "teacher_institute"){
+showRegisterChoice(
+"Teacher / Institution Not Registered",
+"This mobile number is new. You can register now or continue later.",
+"register.html"
+);
+return;
+}
+
+if(otpRole === "institution"){
+showRegisterChoice(
+"Institution Not Registered",
+"This mobile number is new. You can register now or continue later.",
+"register.html"
+);
+return;
+}
+
+showRegisterChoice(
+"New User",
+"This mobile number is new. You can register now or continue later.",
+"register.html"
+);
+return;
+
+}
+
+/* EXISTING AUTH USER - STUDENT */
+if(otpRole === "student"){
+
+const student =
+await findByPhone("students",phone);
+
+if(student){
+
+localStorage.setItem("role","student");
+localStorage.setItem("studentId",student.id);
+localStorage.setItem("profileId",student.id);
+
+location.href = "student-dashboard.html";
+return;
+
+}
+
+goHome();
+return;
+
+}
+
+/* EXISTING AUTH USER - TEACHER / INSTITUTE COMBINED */
 if(otpRole === "teacher" || otpRole === "teacher_institute"){
 
-const snap = await get(ref(db,"teachers"));
-let found = false;
+const teacher =
+await findByPhone("teachers",phone);
 
-if(snap.exists()){
-
-snap.forEach(child=>{
-
-const d = child.val();
-
-const dbPhone =
-cleanPhone(
-d.phone ||
-d.mobile ||
-d.alternatePhone ||
-""
-);
-
-if(dbPhone === cleanPhone(phone)){
-
-found = true;
+if(teacher){
 
 localStorage.setItem("role","teacher");
-localStorage.setItem("teacherId",child.key);
-localStorage.setItem("profileId",child.key);
+localStorage.setItem("teacherId",teacher.id);
+localStorage.setItem("profileId",teacher.id);
 
 location.href = "teacher-dashboard.html";
-
-}
-
-});
-
-}
-
-if(found) return;
-
-showNotRegistered(
-"Teacher Not Registered",
-"This mobile number is not registered as Teacher.",
-"register.html"
-);
-
 return;
+
 }
 
-/* INSTITUTION FLOW */
-if(otpRole === "institution"){
+const institution =
+await findByPhone("institutions",phone);
 
-const snap = await get(ref(db,"institutions"));
-let found = false;
-
-if(snap.exists()){
-
-snap.forEach(child=>{
-
-const d = child.val();
-
-const dbPhone =
-cleanPhone(
-d.phone ||
-d.mobile ||
-d.alternatePhone ||
-""
-);
-
-if(dbPhone === cleanPhone(phone)){
-
-found = true;
+if(institution){
 
 localStorage.setItem("role","institution");
-localStorage.setItem("institutionId",child.key);
-localStorage.setItem("profileId",child.key);
+localStorage.setItem("institutionId",institution.id);
+localStorage.setItem("profileId",institution.id);
 
 location.href = "institution-dashboard.html";
-
-}
-
-});
-
-}
-
-if(found) return;
-
-showNotRegistered(
-"Institution Not Registered",
-"This mobile number is not registered as Institution.",
-"register.html"
-);
-
 return;
+
 }
 
-title.textContent = "Role Not Found";
+goHome();
+return;
 
-content.innerHTML = `
-<p>Please select your role again.</p>
-<button class="register" style="width:100%;" onclick="location.href='role-select.html'">
-Select Role
-</button>
-`;
+}
+
+/* EXISTING AUTH USER - INSTITUTION */
+if(otpRole === "institution"){
+
+const institution =
+await findByPhone("institutions",phone);
+
+if(institution){
+
+localStorage.setItem("role","institution");
+localStorage.setItem("institutionId",institution.id);
+localStorage.setItem("profileId",institution.id);
+
+location.href = "institution-dashboard.html";
+return;
+
+}
+
+goHome();
+return;
+
+}
+
+/* FALLBACK: CHECK ALL DATABASES */
+const student =
+await findByPhone("students",phone);
+
+if(student){
+
+localStorage.setItem("role","student");
+localStorage.setItem("studentId",student.id);
+localStorage.setItem("profileId",student.id);
+
+location.href = "student-dashboard.html";
+return;
+
+}
+
+const teacher =
+await findByPhone("teachers",phone);
+
+if(teacher){
+
+localStorage.setItem("role","teacher");
+localStorage.setItem("teacherId",teacher.id);
+localStorage.setItem("profileId",teacher.id);
+
+location.href = "teacher-dashboard.html";
+return;
+
+}
+
+const institution =
+await findByPhone("institutions",phone);
+
+if(institution){
+
+localStorage.setItem("role","institution");
+localStorage.setItem("institutionId",institution.id);
+localStorage.setItem("profileId",institution.id);
+
+location.href = "institution-dashboard.html";
+return;
+
+}
+
+goHome();
 
 }catch(err){
 
@@ -402,7 +473,7 @@ content.innerHTML = err.message;
 
 }
 
-checkTeacher();
+checkAccount();
 
 </script>
 
