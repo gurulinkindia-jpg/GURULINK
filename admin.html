@@ -989,7 +989,85 @@ db,
 window.approveRenewalFromPayment =
 async function(paymentId, profileId, type){
 
-  // We will add the full renewal logic here
+  if(!confirm("Approve this renewal payment?")){
+    return;
+  }
+
+  try{
+
+    const profilePath =
+      type === "institution"
+      ? `institutions/${profileId}`
+      : `teachers/${profileId}`;
+
+    const snap =
+      await get(ref(db, profilePath));
+
+    if(!snap.exists()){
+      alert("Profile not found");
+      return;
+    }
+
+    const profile = snap.val();
+
+    const ONE_DAY =
+      24 * 60 * 60 * 1000;
+
+    const MEMBERSHIP_DAYS = 366;
+
+    const MEMBERSHIP_TIME =
+      MEMBERSHIP_DAYS * ONE_DAY;
+
+    const now = Date.now();
+
+    const oldApprovedAt =
+      Number(profile.approvedAt || 0);
+
+    const oldExpiry =
+      oldApprovedAt + MEMBERSHIP_TIME;
+
+    let newApprovedAt;
+
+    if(
+      oldApprovedAt &&
+      oldExpiry > now
+    ){
+      // add renewal after current expiry
+      newApprovedAt = oldExpiry;
+    }else{
+      // expired membership
+      newApprovedAt = now;
+    }
+
+    await update(
+      ref(db, profilePath),
+      {
+        approvedAt:newApprovedAt,
+        status:"approved",
+        renewalStatus:"active",
+        lastRenewalDate:now
+      }
+    );
+
+    await update(
+      ref(db, "payment2/" + paymentId),
+      {
+        status:"approved",
+        approvedAt:now
+      }
+    );
+
+    alert("Renewal approved successfully");
+
+  }catch(err){
+
+    console.error(err);
+
+    alert(
+      "Renewal approval failed"
+    );
+
+  }
 
 };
 /* =========================
