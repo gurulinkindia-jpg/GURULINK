@@ -5,43 +5,14 @@
 <title>GURULINK Payment2</title>
 
 <style>
-body{
-font-family:Arial;
-background:#eef2f7;
-padding:20px;
-}
-
-.container{
-max-width:500px;
-margin:auto;
-background:white;
-padding:25px;
-border-radius:15px;
-text-align:center;
-box-shadow:0 5px 15px rgba(0,0,0,.15);
-}
-
-button{
-width:100%;
-padding:14px;
-border:none;
-border-radius:10px;
-background:#1b5e20;
-color:white;
-font-size:16px;
-cursor:pointer;
-}
-
-.amount{
-font-size:25px;
-font-weight:bold;
-margin:20px;
-}
+body{font-family:Arial;background:#eef2f7;padding:20px;}
+.container{max-width:500px;margin:auto;background:white;padding:25px;border-radius:15px;text-align:center;box-shadow:0 5px 15px rgba(0,0,0,.15);}
+button{width:100%;padding:14px;border:none;border-radius:10px;background:#1b5e20;color:white;font-size:16px;cursor:pointer;}
+.amount{font-size:25px;font-weight:bold;margin:20px;}
 </style>
 </head>
 
 <body>
-
 <div class="container">
 <h2>GURULINK Renewal Payment</h2>
 <div id="feeText" class="amount"></div>
@@ -51,45 +22,62 @@ margin:20px;
 <script>
 const params = new URLSearchParams(window.location.search);
 
-const type =
+function cleanValue(value) {
+  if (!value) return "";
+  value = String(value).trim();
+  if (value === "null" || value === "undefined" || value === "...") return "";
+  return value;
+}
+
+const type = cleanValue(
   params.get("type") ||
   localStorage.getItem("paymentType") ||
   localStorage.getItem("renewRole") ||
   localStorage.getItem("role") ||
-  "teacher";
+  "teacher"
+);
 
-let id =
+let id = cleanValue(
   params.get("id") ||
   localStorage.getItem("profileId") ||
   localStorage.getItem("teacherId") ||
   localStorage.getItem("institutionId") ||
   localStorage.getItem("paymentProfileId") ||
   localStorage.getItem("renewProfileId") ||
-  "";
+  ""
+);
 
-if (!id || id === "null" || id === "undefined") {
+if (!id) {
   alert("Profile ID missing. Please login again and open payment from dashboard.");
   throw new Error("Missing profileId");
 }
 
-if (!type || type === "null" || type === "undefined") {
+if (!type) {
   alert("Account type missing. Please login again and open payment from dashboard.");
   throw new Error("Missing type");
 }
 
-localStorage.setItem("profileId", id);
-localStorage.setItem("paymentProfileId", id);
-localStorage.setItem("renewProfileId", id);
-localStorage.setItem("role", type);
-localStorage.setItem("paymentType", type);
-localStorage.setItem("renewRole", type);
+function savePaymentData() {
+  localStorage.setItem("profileId", id);
+  localStorage.setItem("paymentProfileId", id);
+  localStorage.setItem("renewProfileId", id);
+  localStorage.setItem("role", type);
+  localStorage.setItem("paymentType", type);
+  localStorage.setItem("renewRole", type);
 
-sessionStorage.setItem("profileId", id);
-sessionStorage.setItem("paymentProfileId", id);
-sessionStorage.setItem("renewProfileId", id);
-sessionStorage.setItem("role", type);
-sessionStorage.setItem("paymentType", type);
-sessionStorage.setItem("renewRole", type);
+  sessionStorage.setItem("profileId", id);
+  sessionStorage.setItem("paymentProfileId", id);
+  sessionStorage.setItem("renewProfileId", id);
+  sessionStorage.setItem("role", type);
+  sessionStorage.setItem("paymentType", type);
+  sessionStorage.setItem("renewRole", type);
+
+  if (window.AndroidPayment) {
+    AndroidPayment.savePaymentContext(id, type);
+  }
+}
+
+savePaymentData();
 
 const amount = 399;
 let paymentLink = "";
@@ -107,18 +95,14 @@ const successUrl =
 if (type === "teacher" || type === "teacher_institute") {
   paymentLink =
     "https://rzp.io/rzp/6jCbwy7?redirect=true" +
-    "&reference_id=" +
-    encodeURIComponent(id) +
-    "&redirect_url=" +
-    encodeURIComponent(successUrl);
+    "&reference_id=" + encodeURIComponent(id) +
+    "&redirect_url=" + encodeURIComponent(successUrl);
 
 } else if (type === "institution") {
   paymentLink =
     "https://rzp.io/rzp/poQdXFn?redirect=true" +
-    "&reference_id=" +
-    encodeURIComponent(id) +
-    "&redirect_url=" +
-    encodeURIComponent(successUrl);
+    "&reference_id=" + encodeURIComponent(id) +
+    "&redirect_url=" + encodeURIComponent(successUrl);
 
 } else {
   alert("Invalid account type: " + type);
@@ -129,23 +113,11 @@ document.getElementById("feeText").innerText =
   "Renewal Fee ₹" + amount;
 
 document.getElementById("payBtn").onclick = function () {
-  localStorage.setItem("profileId", id);
-  localStorage.setItem("paymentProfileId", id);
-  localStorage.setItem("renewProfileId", id);
-  localStorage.setItem("role", type);
-  localStorage.setItem("paymentType", type);
-  localStorage.setItem("renewRole", type);
-
-  sessionStorage.setItem("profileId", id);
-  sessionStorage.setItem("paymentProfileId", id);
-  sessionStorage.setItem("renewProfileId", id);
-  sessionStorage.setItem("role", type);
-  sessionStorage.setItem("paymentType", type);
-  sessionStorage.setItem("renewRole", type);
-
-  window.location.href = paymentLink;
+  savePaymentData();
+  setTimeout(function () {
+    window.location.href = paymentLink;
+  }, 300);
 };
 </script>
-
 </body>
 </html>
