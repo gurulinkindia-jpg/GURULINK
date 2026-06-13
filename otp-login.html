@@ -2,32 +2,53 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
 <title>GURULINK OTP Login</title>
 
 <style>
-body{
+*{
+box-sizing:border-box;
+}
+
+html,body{
 margin:0;
+padding:0;
+width:100%;
+min-height:100%;
+}
+
+body{
 font-family:Arial,sans-serif;
-background:#eef2f7;
+background:linear-gradient(135deg,#e3f2fd,#eef2f7,#ffffff);
 display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
+min-height:100vh;
+min-height:100dvh;
+padding:15px;
 }
 
 .box{
-width:90%;
+width:100%;
 max-width:400px;
 background:white;
 padding:25px;
-border-radius:15px;
-box-shadow:0 5px 20px rgba(0,0,0,.15);
+border-radius:18px;
+box-shadow:0 8px 25px rgba(0,0,0,.15);
 text-align:center;
 }
 
-h2{color:#1565c0;margin-bottom:10px;}
-p{color:#666;margin-bottom:20px;}
+h2{
+color:#1565c0;
+margin:0 0 10px;
+font-size:28px;
+}
+
+p{
+color:#666;
+margin:0 0 18px;
+font-size:15px;
+}
 
 input{
 width:100%;
@@ -36,6 +57,12 @@ margin-bottom:12px;
 border:1px solid #ddd;
 border-radius:10px;
 font-size:16px;
+outline:none;
+}
+
+input:focus{
+border-color:#1565c0;
+box-shadow:0 0 0 2px rgba(21,101,192,.12);
 }
 
 button{
@@ -50,19 +77,67 @@ cursor:pointer;
 margin-bottom:10px;
 }
 
-button:hover{background:#0d47a1;}
+button:hover{
+background:#0d47a1;
+}
 
-#otpSection{display:none;}
+button:disabled{
+background:#9e9e9e;
+cursor:not-allowed;
+}
+
+#otpSection{
+display:none;
+}
 
 .role{
 font-weight:bold;
 color:#2e7d32;
 margin-bottom:15px;
+font-size:15px;
 }
 
 .small{
 font-size:13px;
 color:#888;
+line-height:1.4;
+}
+
+#msg{
+font-size:14px;
+margin:8px 0;
+min-height:20px;
+color:#1565c0;
+word-break:break-word;
+}
+
+#recaptcha-container{
+margin:10px 0;
+display:flex;
+justify-content:center;
+}
+
+.backBtn{
+background:#757575;
+}
+
+@media(max-width:480px){
+
+.box{
+padding:20px;
+border-radius:14px;
+}
+
+h2{
+font-size:24px;
+}
+
+input,
+button{
+font-size:16px;
+padding:13px;
+}
+
 }
 </style>
 </head>
@@ -77,35 +152,58 @@ color:#888;
 
 <p>Login with Mobile OTP</p>
 
-<input type="tel" id="phone" placeholder="Enter Mobile Number" maxlength="10">
+<input
+type="tel"
+id="phone"
+placeholder="Enter Mobile Number"
+maxlength="10"
+inputmode="numeric">
 
-<button id="sendOtpBtn">Send OTP</button>
+<button id="sendOtpBtn">
+Send OTP
+</button>
 
 <div id="otpSection">
-<input type="text" id="otp" placeholder="Enter OTP">
-<button id="verifyBtn">Verify OTP</button>
+
+<input
+type="text"
+id="otp"
+placeholder="Enter OTP"
+maxlength="6"
+inputmode="numeric">
+
+<button id="verifyBtn">
+Verify OTP
+</button>
+
 </div>
 
 <div id="recaptcha-container"></div>
 
-<div class="small">Enter your mobile number and verify OTP.</div>
+<div id="msg"></div>
+
+<div class="small">
+Enter your mobile number and verify OTP.
+</div>
+
+<button
+class="backBtn"
+onclick="location.href='role-select.html'">
+Change Role
+</button>
 
 </div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
 import {
 getAuth,
 RecaptchaVerifier,
 signInWithPhoneNumber
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-import {
-getDatabase
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-/* FIREBASE */
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
@@ -116,152 +214,197 @@ messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
+const app =
+initializeApp(firebaseConfig);
 
-/* ROLE */
-const role = localStorage.getItem("selectedRole");
+const auth =
+getAuth(app);
 
+const role =
+localStorage.getItem("selectedRole");
 
+const roleText =
+document.getElementById("roleText");
 
-if (!role) {
+const msg =
+document.getElementById("msg");
+
+const sendOtpBtn =
+document.getElementById("sendOtpBtn");
+
+const verifyBtn =
+document.getElementById("verifyBtn");
+
+if(!role){
 alert("Role not selected");
 location.href = "role-select.html";
 }
 
-document.getElementById("roleText").textContent =
-role === "teacher_institute"
-? "Teacher / Institute Login"
-: "Parent / Student Login";
+/* ROLE TEXT */
+if(role === "student"){
+roleText.textContent =
+"Student / Parent Login";
+}
+else if(role === "institution"){
+roleText.textContent =
+"Institution Login";
+}
+else{
+roleText.textContent =
+"Teacher / Institute Login";
+}
 
 /* RECAPTCHA */
-window.recaptchaVerifier = new RecaptchaVerifier(
+window.recaptchaVerifier =
+new RecaptchaVerifier(
 auth,
 "recaptcha-container",
-{ size: "normal" }
+{
+size:"normal"
+}
 );
 
 /* SEND OTP */
-document.getElementById("sendOtpBtn").onclick = async () => {
-try {
-const mobile = document.getElementById("phone").value.trim();
+sendOtpBtn.onclick =
+async function(){
 
-if (mobile.length !== 10) {
-alert("Enter valid mobile number");
+try{
+
+const mobile =
+document
+.getElementById("phone")
+.value
+.trim()
+.replace(/\D/g,"");
+
+if(mobile.length !== 10){
+msg.style.color = "red";
+msg.innerText = "Enter valid 10-digit mobile number.";
 return;
 }
 
-const phoneNumber = "+91" + mobile;
+const phoneNumber =
+"+91" + mobile;
 
-const confirmationResult = await signInWithPhoneNumber(
+sendOtpBtn.disabled = true;
+sendOtpBtn.innerText = "Sending OTP...";
+msg.style.color = "#1565c0";
+msg.innerText = "Sending OTP...";
+
+const confirmationResult =
+await signInWithPhoneNumber(
 auth,
 phoneNumber,
 window.recaptchaVerifier
 );
 
-window.confirmationResult = confirmationResult;
+window.confirmationResult =
+confirmationResult;
 
-document.getElementById("otpSection").style.display = "block";
+document
+.getElementById("otpSection")
+.style.display = "block";
 
-alert("OTP Sent Successfully");
+msg.style.color = "green";
+msg.innerText = "OTP sent successfully.";
 
-} catch (err) {
+sendOtpBtn.innerText = "OTP Sent";
+
+}catch(err){
+
 console.error(err);
-alert(err.message);
+
+msg.style.color = "red";
+msg.innerText =
+err.message || "Failed to send OTP.";
+
+sendOtpBtn.disabled = false;
+sendOtpBtn.innerText = "Send OTP";
+
 }
+
 };
 
 /* VERIFY OTP */
-document.getElementById("verifyBtn").onclick = async () => {
-try {
+verifyBtn.onclick =
+async function(){
 
-const code = document.getElementById("otp").value.trim();
+try{
 
-if (!code) {
-alert("Enter OTP");
+const code =
+document
+.getElementById("otp")
+.value
+.trim();
+
+if(!code){
+msg.style.color = "red";
+msg.innerText = "Enter OTP.";
 return;
 }
 
-const result = await window.confirmationResult.confirm(code);
-const user = result.user;
+if(!window.confirmationResult){
+msg.style.color = "red";
+msg.innerText = "Please send OTP first.";
+return;
+}
 
-const phone = user.phoneNumber.replace("+91", "");
-const uid = user.uid;
+verifyBtn.disabled = true;
+verifyBtn.innerText = "Verifying...";
+msg.style.color = "#1565c0";
+msg.innerText = "Verifying OTP...";
+
+const result =
+await window.confirmationResult.confirm(code);
+
+const user =
+result.user;
+
+const phone =
+(user.phoneNumber || "")
+.replace("+91","")
+.replace(/\D/g,"");
+
+const uid =
+user.uid;
+
+/*
+  IMPORTANT:
+  If Firebase Authentication phone user is newly created,
+  result.additionalUserInfo.isNewUser will be true.
+*/
+const isNewUser =
+result.additionalUserInfo &&
+result.additionalUserInfo.isNewUser
+? "true"
+: "false";
 
 /* SAVE LOCAL */
 localStorage.setItem("phone", phone);
 localStorage.setItem("uid", uid);
 localStorage.setItem("role", role);
-
-
-
-
-
-
-
-/* FINAL REDIRECT */
-/* FINAL REDIRECT */
 localStorage.setItem("otpRole", role);
+localStorage.setItem("isNewAuthUser", isNewUser);
 
-location.href = "teacher-check.html";
-return;
+msg.style.color = "green";
+msg.innerText = "OTP verified successfully.";
 
-/* teacher / institute flow */
+location.href =
+"teacher-check.html";
 
+}catch(err){
 
-} catch (err) {
 console.error(err);
-alert("Invalid OTP");
+
+msg.style.color = "red";
+msg.innerText = "Invalid OTP. Please try again.";
+
+verifyBtn.disabled = false;
+verifyBtn.innerText = "Verify OTP";
+
 }
+
 };
-
-/* CHECK TEACHER / INSTITUTE */
-async function checkTeacherFlow(phone, uid) {
-
-let found = false;
-
-/* CHECK TEACHERS */
-const teacherSnap = await get(ref(db, "teachers"));
-
-teacherSnap.forEach(child => {
-const d = child.val();
-const dbPhone = String(d.phone || "").replace(/\s/g, "");
-
-if (dbPhone === phone) {
-found = true;
-
-localStorage.setItem("role", "teacher");
-localStorage.setItem("profileId", child.key);
-
-location.href = "teacher-dashboard.html";
-}
-});
-
-if (found) return;
-
-/* CHECK INSTITUTIONS */
-const instSnap = await get(ref(db, "institutions"));
-
-instSnap.forEach(child => {
-const d = child.val();
-const dbPhone = String(d.phone || "").replace(/\s/g, "");
-
-if (dbPhone === phone) {
-found = true;
-
-localStorage.setItem("role", "institution");
-localStorage.setItem("profileId", child.key);
-
-location.href = "institute-dashboard.html";
-}
-});
-
-if (found) return;
-
-/* NOT REGISTERED */
-location.href = "teacher-check.html";
-}
 
 </script>
 
