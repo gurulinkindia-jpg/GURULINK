@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Checking Account</title>
 
 <style>
@@ -87,6 +87,21 @@ margin-top:15px;
 .btnRow button{
 flex:1;
 }
+
+@media(max-width:480px){
+.box{
+padding:20px;
+border-radius:12px;
+}
+
+.btnRow{
+flex-direction:column;
+}
+
+.btnRow button{
+width:100%;
+}
+}
 </style>
 </head>
 
@@ -134,8 +149,18 @@ const otpRole =
 localStorage.getItem("otpRole") ||
 localStorage.getItem("role");
 
-const title = document.getElementById("title");
-const content = document.getElementById("content");
+const title =
+document.getElementById("title");
+
+const content =
+document.getElementById("content");
+
+function cleanPhone(num){
+return String(num || "")
+.replace("+91","")
+.replace(/\s/g,"")
+.replace(/\D/g,"");
+}
 
 window.goRegister = function(page){
 
@@ -165,24 +190,13 @@ location.href = "index.html";
 
 };
 
-function cleanPhone(num){
-
-return String(num || "")
-.replace("+91","")
-.replace(/\s/g,"")
-.replace(/\D/g,"");
-
-}
-
 function showNotRegistered(titleText,message,registerPage){
 
 title.textContent = titleText;
 
 content.innerHTML = `
 
-<p>
-${message}
-</p>
+<p>${message}</p>
 
 <div class="termsBox">
 <label>
@@ -247,7 +261,7 @@ d.mobile ||
 ""
 );
 
-if(dbPhone === phone){
+if(dbPhone === cleanPhone(phone)){
 
 found = true;
 
@@ -294,7 +308,7 @@ d.alternatePhone ||
 ""
 );
 
-if(dbPhone === phone){
+if(dbPhone === cleanPhone(phone)){
 
 found = true;
 
@@ -341,7 +355,7 @@ d.alternatePhone ||
 ""
 );
 
-if(dbPhone === phone){
+if(dbPhone === cleanPhone(phone)){
 
 found = true;
 
@@ -369,6 +383,7 @@ return;
 }
 
 title.textContent = "Role Not Found";
+
 content.innerHTML = `
 <p>Please select your role again.</p>
 <button class="register" style="width:100%;" onclick="location.href='role-select.html'">
@@ -379,6 +394,7 @@ Select Role
 }catch(err){
 
 console.error(err);
+
 title.textContent = "Error";
 content.innerHTML = err.message;
 
