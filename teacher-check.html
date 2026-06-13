@@ -13,26 +13,37 @@ background:#eef2f7;
 display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
+min-height:100vh;
+padding:15px;
+box-sizing:border-box;
 }
 
 .box{
 background:white;
-padding:30px;
+padding:25px;
 border-radius:15px;
-width:90%;
-max-width:400px;
+width:100%;
+max-width:420px;
 text-align:center;
 box-shadow:0 5px 20px rgba(0,0,0,.15);
 }
 
+h2{
+color:#1565c0;
+margin-top:0;
+}
+
+p{
+color:#555;
+font-size:14px;
+line-height:1.5;
+}
+
 button{
-width:100%;
 padding:14px;
-margin-top:10px;
 border:none;
 border-radius:10px;
-font-size:16px;
+font-size:15px;
 cursor:pointer;
 }
 
@@ -43,16 +54,47 @@ color:white;
 
 .later{
 background:#e0e0e0;
+color:#222;
+}
+
+.termsBox{
+margin-top:12px;
+padding:10px;
+background:#f7f7f7;
+border:1px solid #ddd;
+border-radius:8px;
+text-align:left;
+font-size:13px;
+color:#555;
+}
+
+.termsBox label{
+display:flex;
+gap:8px;
+align-items:flex-start;
+}
+
+.termsBox input{
+margin-top:2px;
+}
+
+.btnRow{
+display:flex;
+gap:10px;
+margin-top:15px;
+}
+
+.btnRow button{
+flex:1;
 }
 </style>
 </head>
+
 <body>
 
 <div class="box">
 
-<h2 id="title">
-Checking Account...
-</h2>
+<h2 id="title">Checking Account...</h2>
 
 <div id="content">
 Please wait...
@@ -62,15 +104,13 @@ Please wait...
 
 <script type="module">
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
 getDatabase,
 ref,
 get
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig={
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -90,144 +130,257 @@ const phone =
 .replace("+91","")
 .replace(/\s/g,"");
 
-const title =
-document.getElementById("title");
+const otpRole =
+localStorage.getItem("otpRole") ||
+localStorage.getItem("role");
 
-const content =
-document.getElementById("content");
+const title = document.getElementById("title");
+const content = document.getElementById("content");
 
-async function checkTeacher(){
+window.goRegister = function(page){
 
-try{
+const agree =
+document.getElementById("termsCheck");
 
-/* CHECK TEACHERS */
+if(!agree || !agree.checked){
+alert("Please accept the Terms & Conditions.");
+return;
+}
 
-const teacherSnap =
-await get(ref(db,"teachers"));
+location.href = page;
 
-if(teacherSnap.exists()){
+};
 
-let found = false;
+window.goLater = function(){
 
-teacherSnap.forEach(child=>{
+const agree =
+document.getElementById("termsCheck");
 
-const d = child.val();
+if(!agree || !agree.checked){
+alert("Please accept the Terms & Conditions.");
+return;
+}
 
-const dbPhone =
-String(
-d.phone ||
-d.mobile ||
-d.alternatePhone ||
-""
-)
-.replace(/\s/g,"");
+location.href = "index.html";
 
-if(dbPhone === phone){
+};
 
-found = true;
+function cleanPhone(num){
 
-localStorage.setItem(
-"role",
-"teacher"
-);
-
-localStorage.setItem(
-"teacherId",
-child.key
-);
-
-location.href =
-"teacher-dashboard.html";
+return String(num || "")
+.replace("+91","")
+.replace(/\s/g,"")
+.replace(/\D/g,"");
 
 }
 
-});
+function showNotRegistered(titleText,message,registerPage){
 
-if(found) return;
-
-}
-
-/* CHECK INSTITUTIONS */
-
-const instSnap =
-await get(ref(db,"institutions"));
-
-if(instSnap.exists()){
-
-let found = false;
-
-instSnap.forEach(child=>{
-
-const d = child.val();
-
-const dbPhone =
-String(
-d.phone ||
-d.mobile ||
-d.alternatePhone ||
-""
-)
-.replace(/\s/g,"");
-
-if(dbPhone === phone){
-
-found = true;
-
-localStorage.setItem(
-"role",
-"institution"
-);
-
-localStorage.setItem(
-"institutionId",
-child.key
-);
-
-location.href =
-"institute-dashboard.html";
-
-}
-
-});
-
-if(found) return;
-
-}
-
-/* NOT FOUND */
-
-title.textContent =
-"Teacher / Institute Not Registered";
+title.textContent = titleText;
 
 content.innerHTML = `
 
 <p>
-This mobile number is not registered.
+${message}
 </p>
+
+<div class="termsBox">
+<label>
+<input type="checkbox" id="termsCheck">
+<span>
+I accept the Terms & Conditions. I understand that GURULINK is only a linking platform between students, parents, teachers and institutions.
+</span>
+</label>
+</div>
+
+<div class="btnRow">
 
 <button
 class="register"
-onclick="location.href='register.html'">
+onclick="goRegister('${registerPage}')">
 Register Now
 </button>
 
 <button
 class="later"
-onclick="location.href='index.html'">
+onclick="goLater()">
 Register Later
 </button>
 
+</div>
+
+`;
+
+}
+
+async function checkTeacher(){
+
+try{
+
+if(!phone){
+title.textContent = "Phone Number Missing";
+content.innerHTML = `
+<p>Please login again with OTP.</p>
+<button class="register" style="width:100%;" onclick="location.href='otp-login.html'">
+OTP Login
+</button>
+`;
+return;
+}
+
+/* STUDENT / PARENT FLOW */
+if(otpRole === "student"){
+
+const snap = await get(ref(db,"students"));
+let found = false;
+
+if(snap.exists()){
+
+snap.forEach(child=>{
+
+const d = child.val();
+
+const dbPhone =
+cleanPhone(
+d.phone ||
+d.mobile ||
+""
+);
+
+if(dbPhone === phone){
+
+found = true;
+
+localStorage.setItem("role","student");
+localStorage.setItem("studentId",child.key);
+localStorage.setItem("profileId",child.key);
+
+location.href = "index.html";
+
+}
+
+});
+
+}
+
+if(found) return;
+
+showNotRegistered(
+"Student / Parent Not Registered",
+"This mobile number is not registered as Student / Parent.",
+"student-registration.html"
+);
+
+return;
+}
+
+/* TEACHER FLOW */
+if(otpRole === "teacher" || otpRole === "teacher_institute"){
+
+const snap = await get(ref(db,"teachers"));
+let found = false;
+
+if(snap.exists()){
+
+snap.forEach(child=>{
+
+const d = child.val();
+
+const dbPhone =
+cleanPhone(
+d.phone ||
+d.mobile ||
+d.alternatePhone ||
+""
+);
+
+if(dbPhone === phone){
+
+found = true;
+
+localStorage.setItem("role","teacher");
+localStorage.setItem("teacherId",child.key);
+localStorage.setItem("profileId",child.key);
+
+location.href = "teacher-dashboard.html";
+
+}
+
+});
+
+}
+
+if(found) return;
+
+showNotRegistered(
+"Teacher Not Registered",
+"This mobile number is not registered as Teacher.",
+"register.html"
+);
+
+return;
+}
+
+/* INSTITUTION FLOW */
+if(otpRole === "institution"){
+
+const snap = await get(ref(db,"institutions"));
+let found = false;
+
+if(snap.exists()){
+
+snap.forEach(child=>{
+
+const d = child.val();
+
+const dbPhone =
+cleanPhone(
+d.phone ||
+d.mobile ||
+d.alternatePhone ||
+""
+);
+
+if(dbPhone === phone){
+
+found = true;
+
+localStorage.setItem("role","institution");
+localStorage.setItem("institutionId",child.key);
+localStorage.setItem("profileId",child.key);
+
+location.href = "institution-dashboard.html";
+
+}
+
+});
+
+}
+
+if(found) return;
+
+showNotRegistered(
+"Institution Not Registered",
+"This mobile number is not registered as Institution.",
+"register.html"
+);
+
+return;
+}
+
+title.textContent = "Role Not Found";
+content.innerHTML = `
+<p>Please select your role again.</p>
+<button class="register" style="width:100%;" onclick="location.href='role-select.html'">
+Select Role
+</button>
 `;
 
 }catch(err){
 
 console.error(err);
-
-title.textContent =
-"Error";
-
-content.innerHTML =
-err.message;
+title.textContent = "Error";
+content.innerHTML = err.message;
 
 }
 
