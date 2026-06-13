@@ -27,7 +27,7 @@ p{font-size:15px;line-height:1.6;}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push, get, set, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, push, get, set, update, remove } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -193,6 +193,20 @@ async function resolvePaymentContext() {
 
 const amount = 399;
 
+async function cleanupPending(finalType) {
+  try {
+    if (token) {
+      await remove(ref(db, "pendingPayments/" + token));
+    }
+
+    if (finalType) {
+      await remove(ref(db, "pendingPaymentsLatest/" + finalType));
+    }
+  } catch (err) {
+    console.log("Cleanup failed:", err);
+  }
+}
+
 async function savePayment() {
   try {
     await resolvePaymentContext();
@@ -254,17 +268,7 @@ async function savePayment() {
       renewalStatus: "active"
     });
 
-    if (token) {
-      await update(ref(db, "pendingPayments/" + token), {
-        status: "paid",
-        paidAt: Date.now()
-      });
-    }
-
-    await update(ref(db, "pendingPaymentsLatest/" + finalType), {
-      status: "paid",
-      paidAt: Date.now()
-    });
+    await cleanupPending(finalType);
 
     loader.style.display = "none";
     msg.innerHTML =
