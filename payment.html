@@ -19,22 +19,47 @@ button{width:100%;padding:14px;border:none;border-radius:10px;background:#1b5e20
 <button id="payBtn">Continue To Payment</button>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
 const params = new URLSearchParams(window.location.search);
 
 function cleanValue(value) {
   if (!value) return "";
   value = String(value).trim();
-  if (value === "null" || value === "undefined" || value === "...") return "";
+  if (
+    value === "null" ||
+    value === "undefined" ||
+    value === "..." ||
+    value === "[object Object]"
+  ) return "";
   return value;
 }
 
-const type = cleanValue(
+let type = cleanValue(
   params.get("type") ||
   localStorage.getItem("paymentType") ||
   localStorage.getItem("role") ||
   "teacher"
-);
+).toLowerCase();
+
+if (type === "teacher_institute") {
+  type = "teacher";
+}
 
 let id = cleanValue(
   params.get("id") ||
@@ -55,6 +80,13 @@ if (!type) {
   throw new Error("Missing Type");
 }
 
+if (type !== "teacher" && type !== "institution") {
+  alert("Invalid account type: " + type);
+  throw new Error("Invalid Type");
+}
+
+let amount = type === "institution" ? 2 : 1;
+
 function savePaymentData() {
   localStorage.setItem("profileId", id);
   localStorage.setItem("paymentProfileId", id);
@@ -71,48 +103,75 @@ function savePaymentData() {
   }
 }
 
-savePaymentData();
+function createToken() {
+  return "register_" + type + "_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+}
 
-let amount = 1;
-let paymentLink = "";
+async function createPaymentLink() {
+  const token = createToken();
 
-const returnData = btoa(type + "||" + id);
+  const pendingData = {
+    token: token,
+    profileId: id,
+    type: type,
+    flow: "registration",
+    amount: amount,
+    status: "pending",
+    createdAt: Date.now()
+  };
 
-const successUrl =
-  "https://www.gurulink.co.in/payment-success.html?returnData=" +
-  encodeURIComponent(returnData) +
-  "&type=" +
-  encodeURIComponent(type) +
-  "&id=" +
-  encodeURIComponent(id);
+  await set(ref(db, "pendingPayments/" + token), pendingData);
 
-if (type === "teacher") {
-  amount = 1;
-  paymentLink =
-    "https://rzp.io/rzp/gurulink?redirect=true" +
-    "&reference_id=" + encodeURIComponent(id) +
-    "&redirect_url=" + encodeURIComponent(successUrl);
+  await set(ref(db, "pendingPaymentsLatestRegister/" + type), pendingData);
 
-} else if (type === "institution") {
-  amount = 2;
-  paymentLink =
-    "https://rzp.io/rzp/gurulink-I?redirect=true" +
-    "&reference_id=" + encodeURIComponent(id) +
-    "&redirect_url=" + encodeURIComponent(successUrl);
+  const successUrl =
+    "https://www.gurulink.co.in/payment-success.html?token=" +
+    encodeURIComponent(token) +
+    "&type=" +
+    encodeURIComponent(type);
 
-} else {
-  alert("Invalid account type: " + type);
-  throw new Error("Invalid Type");
+  if (type === "teacher") {
+    return (
+      "https://rzp.io/rzp/gurulink?redirect=true" +
+      "&reference_id=" + encodeURIComponent(token) +
+      "&redirect_url=" + encodeURIComponent(successUrl)
+    );
+  }
+
+  if (type === "institution") {
+    return (
+      "https://rzp.io/rzp/gurulink-I?redirect=true" +
+      "&reference_id=" + encodeURIComponent(token) +
+      "&redirect_url=" + encodeURIComponent(successUrl)
+    );
+  }
+
+  throw new Error("Invalid type: " + type);
 }
 
 document.getElementById("feeText").innerHTML =
   "Registration Fee ₹" + amount;
 
-document.getElementById("payBtn").onclick = function () {
-  savePaymentData();
-  setTimeout(function () {
-    window.location.href = paymentLink;
-  }, 300);
+document.getElementById("payBtn").onclick = async function () {
+  try {
+    const btn = document.getElementById("payBtn");
+    btn.disabled = true;
+    btn.innerText = "Opening Payment...";
+
+    savePaymentData();
+
+    const paymentLink = await createPaymentLink();
+
+    setTimeout(function () {
+      window.location.href = paymentLink;
+    }, 300);
+
+  } catch (err) {
+    alert("Unable to start payment: " + err.message);
+    const btn = document.getElementById("payBtn");
+    btn.disabled = false;
+    btn.innerText = "Continue To Payment";
+  }
 };
 </script>
 </body>
