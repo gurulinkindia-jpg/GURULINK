@@ -61,26 +61,9 @@ background:#e0e0e0;
 color:#222;
 }
 
-.termsBox{
-margin-top:12px;
-padding:10px;
-background:#f7f7f7;
-border:1px solid #ddd;
-border-radius:8px;
-text-align:left;
-font-size:13px;
-color:#555;
-}
 
-.termsBox label{
-display:flex;
-gap:8px;
-align-items:flex-start;
-}
 
-.termsBox input{
-margin-top:2px;
-}
+
 
 .btnRow{
 display:flex;
@@ -105,6 +88,39 @@ flex-direction:column;
 .btnRow button{
 width:100%;
 }
+}
+
+.termsBox{
+margin-top:12px;
+border:1px solid #ddd;
+border-radius:8px;
+background:#fafafa;
+padding:10px;
+}
+
+.termsContent{
+height:80px;
+overflow-y:auto;
+font-size:12px;
+color:#666;
+line-height:1.5;
+padding-right:5px;
+margin-bottom:10px;
+text-align:left;
+}
+
+.agreeRow{
+display:flex;
+gap:8px;
+align-items:flex-start;
+font-size:13px;
+color:#444;
+text-align:left;
+cursor:pointer;
+}
+
+.agreeRow input{
+margin-top:2px;
 }
 </style>
 </head>
@@ -181,6 +197,10 @@ location.href = page;
 
 };
 
+
+
+
+
 window.goLater = function(){
 
 const agree =
@@ -191,9 +211,23 @@ alert("Please accept the Terms & Conditions.");
 return;
 }
 
+if(otpRole === "student"){
+localStorage.setItem("role","student_guest");
+}
+else if(otpRole === "teacher" || otpRole === "teacher_institute"){
+localStorage.setItem("role","teacher_guest");
+}
+else if(otpRole === "institution"){
+localStorage.setItem("role","institution_guest");
+}
+
 location.href = "index.html";
 
 };
+
+
+
+
 
 function showRegisterChoice(titleText,message,registerPage){
 
@@ -203,14 +237,39 @@ content.innerHTML = `
 
 <p>${message}</p>
 
+
+
 <div class="termsBox">
-<label>
-<input type="checkbox" id="termsCheck">
-<span>
-I accept the Terms & Conditions. I understand that GURULINK is only a linking platform between students, parents, teachers and institutions.
-</span>
-</label>
+
+<div class="termsContent">
+
+<b>Terms & Conditions</b><br><br>
+
+• GURULINK is only a linking platform between students, parents, teachers and institutions.<br><br>
+
+• GURULINK is not responsible for fees, payments, refunds, disputes or legal matters between users.<br><br>
+
+• Users are responsible for verifying identities and information before entering into any agreement.<br><br>
+
+• By continuing, you agree to all Terms & Conditions and Privacy Policy.
+
 </div>
+
+<label class="agreeRow">
+
+<input
+type="checkbox"
+id="termsCheck">
+
+<span>
+I have read and accept the Terms & Conditions.
+</span>
+
+</label>
+
+</div>
+
+
 
 <div class="btnRow">
 
