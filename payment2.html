@@ -50,13 +50,17 @@ function cleanValue(value) {
   return value;
 }
 
-const type = cleanValue(
+let type = cleanValue(
   params.get("type") ||
   localStorage.getItem("paymentType") ||
   localStorage.getItem("renewRole") ||
   localStorage.getItem("role") ||
   "teacher"
 ).toLowerCase();
+
+if (type === "teacher_institute") {
+  type = "teacher";
+}
 
 let id = cleanValue(
   params.get("id") ||
@@ -76,6 +80,11 @@ if (!id) {
 if (!type) {
   alert("Account type missing. Please login again and open payment from dashboard.");
   throw new Error("Missing type");
+}
+
+if (type !== "teacher" && type !== "institution") {
+  alert("Invalid account type: " + type);
+  throw new Error("Invalid type");
 }
 
 const amount = 399;
@@ -101,13 +110,13 @@ function savePaymentData() {
 }
 
 function createToken() {
-  return "renew_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+  return "renew_" + type + "_" + Date.now() + "_" + Math.random().toString(36).slice(2);
 }
 
 async function createPaymentLink() {
   const token = createToken();
 
-  await set(ref(db, "pendingPayments/" + token), {
+  const pendingData = {
     token: token,
     profileId: id,
     type: type,
@@ -115,13 +124,19 @@ async function createPaymentLink() {
     amount: amount,
     status: "pending",
     createdAt: Date.now()
-  });
+  };
+
+  await set(ref(db, "pendingPayments/" + token), pendingData);
+
+  await set(ref(db, "pendingPaymentsLatest/" + type), pendingData);
 
   const successUrl =
     "https://www.gurulink.co.in/payment-success2.html?token=" +
-    encodeURIComponent(token);
+    encodeURIComponent(token) +
+    "&type=" +
+    encodeURIComponent(type);
 
-  if (type === "teacher" || type === "teacher_institute") {
+  if (type === "teacher") {
     return (
       "https://rzp.io/rzp/6jCbwy7?redirect=true" +
       "&reference_id=" + encodeURIComponent(token) +
