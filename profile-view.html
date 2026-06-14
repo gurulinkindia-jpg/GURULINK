@@ -333,6 +333,10 @@ async function markView() {
       viewerRole === "teacher" ||
       viewerRole === "institution";
 
+    const isGuestViewer =
+      !viewerId ||
+      viewerRole === "guest";
+
     const viewId =
       viewerId ||
       "guest_" + Date.now() + "_" + Math.floor(Math.random() * 9999);
@@ -375,7 +379,11 @@ async function markView() {
 
     const displayName = isRegisteredTeacherOrInstitution
       ? (viewerRole === "teacher" ? "Teacher" : "Institution")
-      : (viewerData.name || (viewerRole === "parent" ? "Parent" : "Student"));
+      : (
+        isGuestViewer
+          ? "Guest"
+          : (viewerData.name || (viewerRole === "parent" ? "Parent" : "Student"))
+      );
 
     const displayPhone = isRegisteredTeacherOrInstitution
       ? ""
@@ -410,31 +418,6 @@ async function load(){
 
 if(!id){
 profile.innerHTML = "<h2>No ID Found</h2>";
-return;
-}
-
-const viewerId =
-localStorage.getItem("uid") ||
-localStorage.getItem("profileId");
-
-const viewerRole =
-(localStorage.getItem("role") || "").toLowerCase();
-
-if(
-!viewerId ||
-viewerRole === "guest"
-){
-localStorage.removeItem("selectedRole");
-
-sessionStorage.setItem(
-"postLoginRedirect",
-location.href
-);
-
-location.href =
-"otp-login.html?return=" +
-encodeURIComponent(location.href);
-
 return;
 }
 
