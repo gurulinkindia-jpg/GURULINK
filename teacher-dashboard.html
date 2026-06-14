@@ -886,11 +886,12 @@ snapshot.forEach((child)=>{
 total++;
 
 const id=child.key;
-
 const lead=child.val();
-
-const status=
-lead.status || "pending";
+const status=lead.status || "pending";
+const leadRole=(lead.viewerRole || "").toLowerCase();
+const hasPhone=lead.phone && lead.phone.toString().trim();
+const cleanPhone=hasPhone ? lead.phone.toString().replace(/\D/g,"") : "";
+const leadType=lead.name || (hasPhone ? "Student" : (leadRole === "institution" ? "Institution" : "Teacher/Institution"));
 
 if(status==="enrolled"){
 enrolled++;
@@ -899,100 +900,30 @@ pending++;
 }
 
 html+=`
-
 <div class="leadCard">
-
 <div class="leadHeader">
-
-
-
-
-
-<div class="leadName">
-${
-  (lead.phone && lead.phone.toString().trim())
-    ? "Student"
-    : "Teacher/Institute"
-}
+<div class="leadName">${leadType}</div>
+<div class="statusBadge ${status==="enrolled" ? "enrolledBadge" : "pendingBadge"}">${status.toUpperCase()}</div>
 </div>
 
-
-
-
-
-<div class="statusBadge
-${status==="enrolled"
-?
-"enrolledBadge"
-:
-"pendingBadge"
-}">
-
-${status.toUpperCase()}
-
-</div>
-
-</div>
-
-<div class="leadInfo">
-📞 ${lead.phone || "N/A"}
-</div>
-
-<div class="leadInfo">
-📧 ${lead.email || "N/A"}
-</div>
-
-<div class="leadInfo">
-🕒 ${
-lead.time
-?
-new Date(
-lead.time
-).toLocaleString()
-:
-"N/A"
-}
-</div>
+<div class="leadInfo">Phone: ${hasPhone ? lead.phone : "Hidden / Not Available"}</div>
+<div class="leadInfo">Email: ${lead.email || "N/A"}</div>
+<div class="leadInfo">Viewed: ${lead.time ? new Date(lead.time).toLocaleString() : "N/A"}</div>
 
 <div class="leadActions">
-
-<button
-class="whatsappBtn"
-onclick="contactWhatsApp('${(lead.phone || "").replace(/\D/g,'')}')">
-WhatsApp
-</button>
-
-<button
-class="callBtn"
-onclick="callLead('${(lead.phone || "").replace(/\D/g,'')}')">
-Call
-</button>
-
-
-
-<button
-class="${status === 'enrolled' ? 'pendingBtn' : 'enrollBtn'}"
-onclick="toggleStatus('${id}', '${status}')">
-
+${hasPhone ? `
+<button class="whatsappBtn" onclick="contactWhatsApp('${cleanPhone}')">WhatsApp</button>
+<button class="callBtn" onclick="callLead('${cleanPhone}')">Call</button>
+` : ""}
+<button class="${status === 'enrolled' ? 'pendingBtn' : 'enrollBtn'}" onclick="toggleStatus('${id}', '${status}')">
 ${status === 'enrolled' ? 'Mark Pending' : 'Mark Enrolled'}
-
 </button>
-
-<button
-class="deleteBtn"
-onclick="deleteLead(
-'${id}'
-)">
-Delete
-</button>
-
+<button class="deleteBtn" onclick="deleteLead('${id}')">Delete</button>
 </div>
-
 </div>
 `;
 
 });
-
 html+="</div>";
 
 document.getElementById(
