@@ -121,6 +121,20 @@ justify-content:center;
 background:#757575;
 }
 
+.roleChoice{
+display:grid;
+gap:10px;
+margin:15px 0;
+}
+
+.guestBtn{
+background:#00897b;
+}
+
+.loginArea{
+display:none;
+}
+
 @media(max-width:480px){
 
 .box{
@@ -149,6 +163,14 @@ padding:13px;
 <h2>GURULINK</h2>
 
 <div class="role" id="roleText"></div>
+
+<div id="roleChoice" class="roleChoice">
+<button onclick="chooseRole('student')">Student / Parent</button>
+<button onclick="chooseRole('teacher')">Teacher / Institution</button>
+<button class="guestBtn" onclick="continueGuest()">Guest</button>
+</div>
+
+<div id="loginArea" class="loginArea">
 
 <p>Login with Mobile OTP</p>
 
@@ -188,10 +210,11 @@ Enter your mobile number and verify OTP.
 
 <button
 class="backBtn"
-onclick="location.href='role-select.html'">
+onclick="changeRole()">
 Change Role
 </button>
 
+</div>
 </div>
 
 <script type="module">
@@ -235,23 +258,53 @@ document.getElementById("sendOtpBtn");
 const verifyBtn =
 document.getElementById("verifyBtn");
 
-if(!role){
-alert("Role not selected");
-location.href = "role-select.html";
+const urlReturn =
+new URLSearchParams(location.search).get("return");
+
+if(urlReturn){
+sessionStorage.setItem("postLoginRedirect", urlReturn);
 }
 
 /* ROLE TEXT */
-if(role === "student"){
+function showLoginForRole(selectedRole){
+localStorage.setItem("selectedRole", selectedRole);
+document.getElementById("roleChoice").style.display = "none";
+document.getElementById("loginArea").style.display = "block";
+
+if(selectedRole === "student"){
 roleText.textContent =
 "Student / Parent Login";
 }
-else if(role === "institution"){
+else if(selectedRole === "institution"){
 roleText.textContent =
 "Institution Login";
 }
 else{
 roleText.textContent =
 "Teacher / Institute Login";
+}
+}
+
+window.chooseRole = function(selectedRole){
+showLoginForRole(selectedRole);
+};
+
+window.changeRole = function(){
+localStorage.removeItem("selectedRole");
+roleText.textContent = "";
+document.getElementById("loginArea").style.display = "none";
+document.getElementById("roleChoice").style.display = "grid";
+};
+
+window.continueGuest = function(){
+alert("Guest has limited access. Full features of GURULINK are available for Student / Parent and Teacher / Institution users.");
+localStorage.setItem("role","guest");
+localStorage.removeItem("selectedRole");
+location.href = "index.html";
+};
+
+if(role){
+showLoginForRole(role);
 }
 
 /* RECAPTCHA */
@@ -380,10 +433,13 @@ result.additionalUserInfo.isNewUser
 : "false";
 
 /* SAVE LOCAL */
+const selectedRole =
+localStorage.getItem("selectedRole") || "student";
+
 localStorage.setItem("phone", phone);
 localStorage.setItem("uid", uid);
-localStorage.setItem("role", role);
-localStorage.setItem("otpRole", role);
+localStorage.setItem("role", selectedRole);
+localStorage.setItem("otpRole", selectedRole);
 localStorage.setItem("isNewAuthUser", isNewUser);
 
 msg.style.color = "green";
