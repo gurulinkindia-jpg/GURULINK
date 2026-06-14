@@ -4,10 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Sport/Physical/Gym Teacher/Traner Registration</title>
+<title>Sports & Fitness Teacher Registration</title>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial,sans-serif;
@@ -15,10 +14,26 @@ background:#eef2f7;
 }
 
 header{
-background:#e65100;
+background:#00897b;
 color:white;
 padding:18px;
 text-align:center;
+position:relative;
+}
+
+.helpButton{
+position:absolute;
+top:14px;
+right:14px;
+display:inline-block;
+margin-top:0;
+padding:8px 14px;
+background:white;
+color:#00897b;
+text-decoration:none;
+border-radius:8px;
+font-weight:bold;
+font-size:14px;
 }
 
 .container{
@@ -76,10 +91,78 @@ object-fit:cover;
 border:1px solid #ddd;
 }
 
-.subjectGrid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px 20px;
+.subjectGrid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+gap:12px;
+}
+
+.skillCategory{
+background:white;
+border:1px solid #e0e0e0;
+border-radius:10px;
+padding:12px;
+}
+
+.skillCategory h4{
+margin:0 0 8px;
+color:#e65100;
+}
+
+.skillsPanel{
+display:none;
+padding:14px;
+border:1px solid #ddd;
+border-radius:10px;
+background:#fafafa;
+margin:10px 0;
+}
+
+.skillsPanel.open{
+display:block;
+}
+
+.modesPanel{
+display:none;
+padding:14px;
+border:1px solid #ddd;
+border-radius:10px;
+background:#fafafa;
+margin:10px 0;
+}
+
+.modesPanel.open{
+display:block;
+}
+
+.secondaryButton{
+background:#263238;
+margin:8px 0;
+}
+
+.selectedSummary{
+font-size:13px;
+line-height:1.5;
+background:#fff8e1;
+border:1px solid #ffe082;
+border-radius:8px;
+padding:10px;
+margin:8px 0;
+}
+
+.skillExamples{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+margin:8px 0;
+}
+
+.skillExamples span{
+font-size:13px;
+background:#eef2f7;
+border:1px solid #d8dee8;
+border-radius:20px;
+padding:7px 10px;
 }
 
 .row{
@@ -102,9 +185,6 @@ border-radius:10px;
 margin-bottom:10px;
 }
 
-
-
-
 @keyframes blink{
 0%,100%{
 opacity:1;
@@ -113,23 +193,10 @@ opacity:1;
 opacity:0.7;
 }
 }
-
-
-
-
-
 </style>
 </head>
 
 <body>
-
-
-
-
-
-
-
-
 
 <div style="
 background:#d50000;
@@ -140,43 +207,26 @@ font-weight:bold;
 font-size:15px;
 animation:blink 1.2s infinite;
 ">
-🎉 Up tp 98% Promotional Discount Going On! Use Promo Code: <b>PRO-98</b> 🎉
+Up to 98% Promotional Discount Going On! Use Promo Code: <b>PRO-98</b>
 </div>
 
-
-
-
-
-
-
-
-
-
 <header>
-<h1>Sport/Physical/Gym Teacher/Traner Registration</h1>
+<h1>Sports & Fitness Teacher Registration</h1>
 <p>1 Year Subscription Fee ₹5000</p>
+<a href="helpdesk.html" class="helpButton">Help</a>
 </header>
 
-
-
-
-
 <div class="container">
-
-
-
 <form id="form">
 
 <input id="name" placeholder="Teacher Name" required>
 
-
-
 <label>Experience (in Years)</label>
 <input type="number" id="experience" placeholder="Example: 2, 5, 10 years" required>
 
-<input id="phone" placeholder="Contact Number" required>
+<input id="qualification" placeholder="Qualification / Certification">
 
-<input id="qualification" placeholder="Qualification (B.Ed, M.Sc, etc.)">
+<input id="phone" placeholder="Contact Number" required>
 
 <input id="alternatePhone" placeholder="Alternate Phone Number">
 
@@ -190,16 +240,9 @@ required>
 
 <input id="website" placeholder="Website URL (if available)">
 
-
-
-
-
-
 <label>Select State</label>
-
 <select id="address" required>
 <option value="">Select State</option>
-
 <option value="Andhra Pradesh">Andhra Pradesh</option>
 <option value="Arunachal Pradesh">Arunachal Pradesh</option>
 <option value="Assam">Assam</option>
@@ -228,33 +271,23 @@ required>
 <option value="Uttar Pradesh">Uttar Pradesh</option>
 <option value="Uttarakhand">Uttarakhand</option>
 <option value="West Bengal">West Bengal</option>
-
 <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
 <option value="Chandigarh">Chandigarh</option>
-<option value="Dadra and Nagar Haveli and Daman and Diu">
-Dadra and Nagar Haveli and Daman and Diu
-</option>
+<option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
 <option value="Delhi">Delhi</option>
 <option value="Jammu and Kashmir">Jammu and Kashmir</option>
 <option value="Ladakh">Ladakh</option>
 <option value="Lakshadweep">Lakshadweep</option>
 <option value="Puducherry">Puducherry</option>
-
 </select>
 
-<input id="area" placeholder="Area/City or Town">
-
-
+<input id="area" placeholder="Area/City or town">
 
 <input type="text" id="pinCode" placeholder="PIN Code" maxlength="6" pattern="[0-9]{6}" required>
 
-
-
 <h3>Location</h3>
 
-<input
-id="mapUrl"
-placeholder="Google Maps Share Link">
+<input id="mapUrl" placeholder="Google Maps Share Link">
 
 <textarea
 id="mapLink"
@@ -262,111 +295,239 @@ placeholder="Google Maps Embed Code (iframe)"
 style="height:120px;resize:vertical;">
 </textarea>
 
+<h3>Sports & Fitness</h3>
 
+<p style="font-size:13px;line-height:1.5;margin-bottom:6px;">
+Examples:
+</p>
 
+<div class="skillExamples">
+<span>Cricket</span>
+<span>Football</span>
+<span>Gym Training</span>
+<span>Yoga</span>
+<span>Karate</span>
+</div>
 
+<button type="button" id="toggleSkills" class="secondaryButton">
+More Sports & Fitness
+</button>
 
+<div id="selectedSkills" class="selectedSummary">
+No sports and fitness activity selected yet. Click More to open the full chart.
+</div>
 
-<h3>Sports / Physical / Gym </h3>
+<div id="skillsPanel" class="skillsPanel">
 
 <div class="subjectGrid">
 
-  <div class="row">
-    <input type="checkbox" value="Cricket Coaching" class="subjectCheck"> Cricket Coaching
-  </div>
+<div class="skillCategory"><h4>Team Sports</h4>
+<div class="row"><input type="checkbox" value="Cricket" class="subjectCheck"> Cricket</div>
+<div class="row"><input type="checkbox" value="Football (Soccer)" class="subjectCheck"> Football (Soccer)</div>
+<div class="row"><input type="checkbox" value="Basketball" class="subjectCheck"> Basketball</div>
+<div class="row"><input type="checkbox" value="Volleyball" class="subjectCheck"> Volleyball</div>
+<div class="row"><input type="checkbox" value="Hockey" class="subjectCheck"> Hockey</div>
+<div class="row"><input type="checkbox" value="Baseball" class="subjectCheck"> Baseball</div>
+<div class="row"><input type="checkbox" value="Softball" class="subjectCheck"> Softball</div>
+<div class="row"><input type="checkbox" value="Rugby" class="subjectCheck"> Rugby</div>
+<div class="row"><input type="checkbox" value="Handball" class="subjectCheck"> Handball</div>
+<div class="row"><input type="checkbox" value="Netball" class="subjectCheck"> Netball</div>
+<div class="row"><input type="checkbox" value="Kabaddi" class="subjectCheck"> Kabaddi</div>
+<div class="row"><input type="checkbox" value="Kho-Kho" class="subjectCheck"> Kho-Kho</div>
+<div class="row"><input type="checkbox" value="Water Polo" class="subjectCheck"> Water Polo</div>
+<div class="row"><input type="checkbox" value="Ultimate Frisbee" class="subjectCheck"> Ultimate Frisbee</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherTeamSports"> Other Team Sport</div>
+<input id="otherTeamSports" class="otherSkillInput" placeholder="Write Other Team Sport" style="display:none;"></div>
 
-  <div class="row">
-    <input type="checkbox" value="Football Coaching" class="subjectCheck"> Football Coaching
-  </div>
+<div class="skillCategory"><h4>Racquet Sports</h4>
+<div class="row"><input type="checkbox" value="Badminton" class="subjectCheck"> Badminton</div>
+<div class="row"><input type="checkbox" value="Tennis" class="subjectCheck"> Tennis</div>
+<div class="row"><input type="checkbox" value="Table Tennis" class="subjectCheck"> Table Tennis</div>
+<div class="row"><input type="checkbox" value="Squash" class="subjectCheck"> Squash</div>
+<div class="row"><input type="checkbox" value="Pickleball" class="subjectCheck"> Pickleball</div>
+<div class="row"><input type="checkbox" value="Padel Tennis" class="subjectCheck"> Padel Tennis</div>
+<div class="row"><input type="checkbox" value="Racquetball" class="subjectCheck"> Racquetball</div>
+<div class="row"><input type="checkbox" value="Shuttle Tennis" class="subjectCheck"> Shuttle Tennis</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherRacquetSports"> Other Racquet Sport</div>
+<input id="otherRacquetSports" class="otherSkillInput" placeholder="Write Other Racquet Sport" style="display:none;"></div>
 
-  <div class="row">
-    <input type="checkbox" value="Basketball Coaching" class="subjectCheck"> Basketball Coaching
-  </div>
+<div class="skillCategory"><h4>Individual Sports</h4>
+<div class="row"><input type="checkbox" value="Swimming" class="subjectCheck"> Swimming</div>
+<div class="row"><input type="checkbox" value="Athletics (Track & Field)" class="subjectCheck"> Athletics (Track & Field)</div>
+<div class="row"><input type="checkbox" value="Cycling" class="subjectCheck"> Cycling</div>
+<div class="row"><input type="checkbox" value="Archery" class="subjectCheck"> Archery</div>
+<div class="row"><input type="checkbox" value="Shooting" class="subjectCheck"> Shooting</div>
+<div class="row"><input type="checkbox" value="Gymnastics" class="subjectCheck"> Gymnastics</div>
+<div class="row"><input type="checkbox" value="Weightlifting" class="subjectCheck"> Weightlifting</div>
+<div class="row"><input type="checkbox" value="Powerlifting" class="subjectCheck"> Powerlifting</div>
+<div class="row"><input type="checkbox" value="Bodybuilding" class="subjectCheck"> Bodybuilding</div>
+<div class="row"><input type="checkbox" value="Triathlon" class="subjectCheck"> Triathlon</div>
+<div class="row"><input type="checkbox" value="Marathon Running" class="subjectCheck"> Marathon Running</div>
+<div class="row"><input type="checkbox" value="Cross Country Running" class="subjectCheck"> Cross Country Running</div>
+<div class="row"><input type="checkbox" value="Fencing" class="subjectCheck"> Fencing</div>
+<div class="row"><input type="checkbox" value="Diving" class="subjectCheck"> Diving</div>
+<div class="row"><input type="checkbox" value="Equestrian Sports" class="subjectCheck"> Equestrian Sports</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherIndividualSports"> Other Individual Sport</div>
+<input id="otherIndividualSports" class="otherSkillInput" placeholder="Write Other Individual Sport" style="display:none;"></div>
 
-  <div class="row">
-    <input type="checkbox" value="Badminton Coaching" class="subjectCheck"> Badminton Coaching
-  </div>
+<div class="skillCategory"><h4>Martial Arts & Self-Defense</h4>
+<div class="row"><input type="checkbox" value="Karate" class="subjectCheck"> Karate</div>
+<div class="row"><input type="checkbox" value="Taekwondo" class="subjectCheck"> Taekwondo</div>
+<div class="row"><input type="checkbox" value="Judo" class="subjectCheck"> Judo</div>
+<div class="row"><input type="checkbox" value="Boxing" class="subjectCheck"> Boxing</div>
+<div class="row"><input type="checkbox" value="Kickboxing" class="subjectCheck"> Kickboxing</div>
+<div class="row"><input type="checkbox" value="MMA (Mixed Martial Arts)" class="subjectCheck"> MMA (Mixed Martial Arts)</div>
+<div class="row"><input type="checkbox" value="Wrestling" class="subjectCheck"> Wrestling</div>
+<div class="row"><input type="checkbox" value="Muay Thai" class="subjectCheck"> Muay Thai</div>
+<div class="row"><input type="checkbox" value="Kung Fu" class="subjectCheck"> Kung Fu</div>
+<div class="row"><input type="checkbox" value="Wushu" class="subjectCheck"> Wushu</div>
+<div class="row"><input type="checkbox" value="Brazilian Jiu-Jitsu (BJJ)" class="subjectCheck"> Brazilian Jiu-Jitsu (BJJ)</div>
+<div class="row"><input type="checkbox" value="Krav Maga" class="subjectCheck"> Krav Maga</div>
+<div class="row"><input type="checkbox" value="Self-Defense Training" class="subjectCheck"> Self-Defense Training</div>
+<div class="row"><input type="checkbox" value="Aikido" class="subjectCheck"> Aikido</div>
+<div class="row"><input type="checkbox" value="Silambam" class="subjectCheck"> Silambam</div>
+<div class="row"><input type="checkbox" value="Kalaripayattu" class="subjectCheck"> Kalaripayattu</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherMartialArts"> Other Martial Art</div>
+<input id="otherMartialArts" class="otherSkillInput" placeholder="Write Other Martial Art" style="display:none;"></div>
 
-  <div class="row">
-    <input type="checkbox" value="Tennis Coaching" class="subjectCheck"> Tennis Coaching
-  </div>
+<div class="skillCategory"><h4>Fitness & Wellness</h4>
+<div class="row"><input type="checkbox" value="Gym Training" class="subjectCheck"> Gym Training</div>
+<div class="row"><input type="checkbox" value="Personal Training" class="subjectCheck"> Personal Training</div>
+<div class="row"><input type="checkbox" value="Yoga" class="subjectCheck"> Yoga</div>
+<div class="row"><input type="checkbox" value="Pilates" class="subjectCheck"> Pilates</div>
+<div class="row"><input type="checkbox" value="Aerobics" class="subjectCheck"> Aerobics</div>
+<div class="row"><input type="checkbox" value="Zumba" class="subjectCheck"> Zumba</div>
+<div class="row"><input type="checkbox" value="Functional Fitness" class="subjectCheck"> Functional Fitness</div>
+<div class="row"><input type="checkbox" value="CrossFit" class="subjectCheck"> CrossFit</div>
+<div class="row"><input type="checkbox" value="Strength Training" class="subjectCheck"> Strength Training</div>
+<div class="row"><input type="checkbox" value="Cardio Training" class="subjectCheck"> Cardio Training</div>
+<div class="row"><input type="checkbox" value="HIIT (High-Intensity Interval Training)" class="subjectCheck"> HIIT (High-Intensity Interval Training)</div>
+<div class="row"><input type="checkbox" value="Calisthenics" class="subjectCheck"> Calisthenics</div>
+<div class="row"><input type="checkbox" value="Flexibility & Mobility Training" class="subjectCheck"> Flexibility & Mobility Training</div>
+<div class="row"><input type="checkbox" value="Senior Fitness" class="subjectCheck"> Senior Fitness</div>
+<div class="row"><input type="checkbox" value="Weight Management Coaching" class="subjectCheck"> Weight Management Coaching</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherFitnessWellness"> Other Fitness & Wellness</div>
+<input id="otherFitnessWellness" class="otherSkillInput" placeholder="Write Other Fitness & Wellness" style="display:none;"></div>
 
-  <div class="row">
-    <input type="checkbox" value="Athletics / Running" class="subjectCheck"> Athletics / Running
-  </div>
+<div class="skillCategory"><h4>Outdoor & Adventure Sports</h4>
+<div class="row"><input type="checkbox" value="Trekking" class="subjectCheck"> Trekking</div>
+<div class="row"><input type="checkbox" value="Hiking" class="subjectCheck"> Hiking</div>
+<div class="row"><input type="checkbox" value="Rock Climbing" class="subjectCheck"> Rock Climbing</div>
+<div class="row"><input type="checkbox" value="Mountaineering" class="subjectCheck"> Mountaineering</div>
+<div class="row"><input type="checkbox" value="Skating" class="subjectCheck"> Skating</div>
+<div class="row"><input type="checkbox" value="Roller Skating" class="subjectCheck"> Roller Skating</div>
+<div class="row"><input type="checkbox" value="Skateboarding" class="subjectCheck"> Skateboarding</div>
+<div class="row"><input type="checkbox" value="Camping Skills" class="subjectCheck"> Camping Skills</div>
+<div class="row"><input type="checkbox" value="Orienteering" class="subjectCheck"> Orienteering</div>
+<div class="row"><input type="checkbox" value="Adventure Racing" class="subjectCheck"> Adventure Racing</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherOutdoorAdventure"> Other Outdoor & Adventure Sport</div>
+<input id="otherOutdoorAdventure" class="otherSkillInput" placeholder="Write Other Outdoor & Adventure Sport" style="display:none;"></div>
 
-  <div class="row">
-    <input type="checkbox" value="Gym Training" class="subjectCheck"> Gym Training / Body Building
-  </div>
+<div class="skillCategory"><h4>Water Sports</h4>
+<div class="row"><input type="checkbox" value="Swimming" class="subjectCheck"> Swimming</div>
+<div class="row"><input type="checkbox" value="Surfing" class="subjectCheck"> Surfing</div>
+<div class="row"><input type="checkbox" value="Kayaking" class="subjectCheck"> Kayaking</div>
+<div class="row"><input type="checkbox" value="Canoeing" class="subjectCheck"> Canoeing</div>
+<div class="row"><input type="checkbox" value="Rowing" class="subjectCheck"> Rowing</div>
+<div class="row"><input type="checkbox" value="Sailing" class="subjectCheck"> Sailing</div>
+<div class="row"><input type="checkbox" value="Stand-Up Paddleboarding (SUP)" class="subjectCheck"> Stand-Up Paddleboarding (SUP)</div>
+<div class="row"><input type="checkbox" value="Scuba Diving" class="subjectCheck"> Scuba Diving</div>
+<div class="row"><input type="checkbox" value="Snorkeling" class="subjectCheck"> Snorkeling</div>
+<div class="row"><input type="checkbox" value="Water Polo" class="subjectCheck"> Water Polo</div>
+<div class="row"><input type="checkbox" value="Jet Skiing" class="subjectCheck"> Jet Skiing</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherWaterSports"> Other Water Sport</div>
+<input id="otherWaterSports" class="otherSkillInput" placeholder="Write Other Water Sport" style="display:none;"></div>
 
-  <div class="row">
-    <input type="checkbox" value="Fitness Training" class="subjectCheck"> Fitness Training
-  </div>
+<div class="skillCategory"><h4>Mind Sports</h4>
+<div class="row"><input type="checkbox" value="Chess" class="subjectCheck"> Chess</div>
+<div class="row"><input type="checkbox" value="Rubik's Cube Training" class="subjectCheck"> Rubik's Cube Training</div>
+<div class="row"><input type="checkbox" value="Speed Cubing" class="subjectCheck"> Speed Cubing</div>
+<div class="row"><input type="checkbox" value="Checkers" class="subjectCheck"> Checkers</div>
+<div class="row"><input type="checkbox" value="Go" class="subjectCheck"> Go</div>
+<div class="row"><input type="checkbox" value="Bridge" class="subjectCheck"> Bridge</div>
+<div class="row"><input type="checkbox" value="Sudoku & Logic Games" class="subjectCheck"> Sudoku & Logic Games</div>
+<div class="row"><input type="checkbox" value="Esports Strategy Training" class="subjectCheck"> Esports Strategy Training</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherMindSports"> Other Mind Sport</div>
+<input id="otherMindSports" class="otherSkillInput" placeholder="Write Other Mind Sport" style="display:none;"></div>
 
-  <div class="row">
-    <input type="checkbox" value="Yoga & Wellness" class="subjectCheck"> Yoga & Wellness
-  </div>
+<div class="skillCategory"><h4>Winter Sports</h4>
+<div class="row"><input type="checkbox" value="Ice Skating" class="subjectCheck"> Ice Skating</div>
+<div class="row"><input type="checkbox" value="Figure Skating" class="subjectCheck"> Figure Skating</div>
+<div class="row"><input type="checkbox" value="Ice Hockey" class="subjectCheck"> Ice Hockey</div>
+<div class="row"><input type="checkbox" value="Skiing" class="subjectCheck"> Skiing</div>
+<div class="row"><input type="checkbox" value="Snowboarding" class="subjectCheck"> Snowboarding</div>
+<div class="row"><input type="checkbox" value="Curling" class="subjectCheck"> Curling</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherWinterSports"> Other Winter Sport</div>
+<input id="otherWinterSports" class="otherSkillInput" placeholder="Write Other Winter Sport" style="display:none;"></div>
 
-  <div class="row">
-    <input type="checkbox" value="Martial Arts" class="subjectCheck"> Martial Arts (Karate / Kung Fu)
-  </div>
+<div class="skillCategory"><h4>Traditional & Indigenous Sports</h4>
+<div class="row"><input type="checkbox" value="Kabaddi" class="subjectCheck"> Kabaddi</div>
+<div class="row"><input type="checkbox" value="Kho-Kho" class="subjectCheck"> Kho-Kho</div>
+<div class="row"><input type="checkbox" value="Mallakhamb" class="subjectCheck"> Mallakhamb</div>
+<div class="row"><input type="checkbox" value="Gatka" class="subjectCheck"> Gatka</div>
+<div class="row"><input type="checkbox" value="Tug of War" class="subjectCheck"> Tug of War</div>
+<div class="row"><input type="checkbox" value="Silambam" class="subjectCheck"> Silambam</div>
+<div class="row"><input type="checkbox" value="Traditional Wrestling (Kushti)" class="subjectCheck"> Traditional Wrestling (Kushti)</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherTraditionalSports"> Other Traditional Sport</div>
+<input id="otherTraditionalSports" class="otherSkillInput" placeholder="Write Other Traditional Sport" style="display:none;"></div>
 
-  <div class="row">
-    <input type="checkbox" value="Self Defense" class="subjectCheck"> Self Defense Training
-  </div>
+<div class="skillCategory"><h4>Esports & Competitive Gaming</h4>
+<div class="row"><input type="checkbox" value="Esports Fundamentals" class="subjectCheck"> Esports Fundamentals</div>
+<div class="row"><input type="checkbox" value="Mobile Gaming Competitions" class="subjectCheck"> Mobile Gaming Competitions</div>
+<div class="row"><input type="checkbox" value="PC Gaming Competitions" class="subjectCheck"> PC Gaming Competitions</div>
+<div class="row"><input type="checkbox" value="Strategy Gaming" class="subjectCheck"> Strategy Gaming</div>
+<div class="row"><input type="checkbox" value="Game Analysis & Coaching" class="subjectCheck"> Game Analysis & Coaching</div>
+<div class="row"><input type="checkbox" value="Team-Based Esports Training" class="subjectCheck"> Team-Based Esports Training</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherEsports"> Other Esports & Gaming</div>
+<input id="otherEsports" class="otherSkillInput" placeholder="Write Other Esports & Gaming" style="display:none;"></div>
 
-  <div class="row">
-    <input type="checkbox" value="Swimming" class="subjectCheck"> Swimming Coaching
-  </div>
-
-  <div class="row">
-    <input type="checkbox" value="Dance Fitness" class="subjectCheck"> Dance Fitness / Zumba
-  </div>
-
-  <div class="row">
-    <input type="checkbox" value="Weight Training" class="subjectCheck"> Weight Training
-  </div>
-
-  <div class="row">
-    <input type="checkbox" id="otherCheck"> Other Sports Skill
-  </div>
-
-  <input
-    id="otherSubject"
-    placeholder="Write other sports / fitness skill"
-    style="display:none;">
-
-  <p id="subjectError" style="color:red;display:none;">
-    Please select at least one skill
-  </p>
+<div class="skillCategory"><h4>Sports Coaching & Management</h4>
+<div class="row"><input type="checkbox" value="Sports Coaching" class="subjectCheck"> Sports Coaching</div>
+<div class="row"><input type="checkbox" value="Refereeing & Officiating" class="subjectCheck"> Refereeing & Officiating</div>
+<div class="row"><input type="checkbox" value="Sports Analytics" class="subjectCheck"> Sports Analytics</div>
+<div class="row"><input type="checkbox" value="Sports Management" class="subjectCheck"> Sports Management</div>
+<div class="row"><input type="checkbox" value="Sports Nutrition" class="subjectCheck"> Sports Nutrition</div>
+<div class="row"><input type="checkbox" value="Sports Psychology" class="subjectCheck"> Sports Psychology</div>
+<div class="row"><input type="checkbox" value="Fitness Assessment" class="subjectCheck"> Fitness Assessment</div>
+<div class="row"><input type="checkbox" value="Injury Prevention & Recovery" class="subjectCheck"> Injury Prevention & Recovery</div>
+<div class="row"><input type="checkbox" value="Event Management in Sports" class="subjectCheck"> Event Management in Sports</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherSportsManagement"> Other Sports Coaching & Management</div>
+<input id="otherSportsManagement" class="otherSkillInput" placeholder="Write Other Sports Coaching & Management" style="display:none;"></div>
+<p id="subjectError" style="color:red;display:none;">
+Please select at least one sports and fitness activity
+</p>
+</div>
 
 </div>
 
-
-
-
-
-
-
-
-
 <input
 id="class"
-placeholder="Age Group: eg. 10-14, 15-18,etc"
+placeholder="Age group: eg. 10-14. 15-18, etc"
 required>
 
+<h3>Sports & Fitness Coaching Modes</h3>
 
+<p style="font-size:13px;line-height:1.5;margin-bottom:6px;">
+Examples:
+</p>
 
+<div class="skillExamples">
+<span>Group Training / Team Practice</span>
+<span>Personal Coaching</span>
+<span>Online Coaching</span>
+</div>
 
+<button type="button" id="toggleModes" class="secondaryButton">
+More Training Modes
+</button>
 
+<div id="selectedModes" class="selectedSummary">
+No training mode selected yet. Click More to open the full chart.
+</div>
 
-
-
-
-<h3>Sports Coaching Modes</h3>
+<div id="modesPanel" class="modesPanel">
 
 <div class="modeBox">
-
 <div class="row">
 <input type="checkbox" class="mode" value="Group Training / Team Practice" onchange="toggleFee('groupFeeBox')">
 Group Training / Team Practice
@@ -375,7 +536,6 @@ Group Training / Team Practice
 <div id="groupFeeBox" class="modeFee">
 <input id="groupFee" placeholder="Enter Group Training Fee">
 </div>
-
 
 <div class="row">
 <input type="checkbox" class="mode" value="Personal Coaching" onchange="toggleFee('individualFeeBox')">
@@ -386,7 +546,6 @@ Personal Coaching (1-to-1)
 <input id="individualFee" placeholder="Enter Personal Coaching Fee">
 </div>
 
-
 <div class="row">
 <input type="checkbox" class="mode" value="Home Coaching" onchange="toggleFee('homeFeeBox')">
 Home Coaching / Home Visit Training
@@ -395,7 +554,6 @@ Home Coaching / Home Visit Training
 <div id="homeFeeBox" class="modeFee">
 <input id="homeFee" placeholder="Enter Home Coaching Fee">
 </div>
-
 
 <div class="row">
 <input type="checkbox" class="mode" value="Online Coaching" onchange="toggleFee('onlineFeeBox')">
@@ -406,181 +564,115 @@ Online Coaching
 <input id="onlineFee" placeholder="Enter Online Coaching Fee">
 </div>
 
+<div class="row">
+<input type="checkbox" id="otherModeCheck" onchange="toggleFee('otherModeBox')">
+Other Training Mode
 </div>
 
+<div id="otherModeBox" class="modeFee">
+<input id="otherMode" placeholder="Write Other Training Mode">
+<input id="otherModeFee" placeholder="Enter Other Training Mode Fee">
+</div>
+</div>
 
+</div>
 
+<h3>Profile Picture</h3>
 
-
-
-
-
-
-
-<h3>Logo/Profile Pic</h3>
-
-<input
-type="file"
-id="logo"
-accept="image/*"
-required>
+<input type="file" id="logo" accept="image/*" required>
 
 <div id="logoPreview" class="preview"></div>
 
-
-
-
-
-
-
 <h3>ID Proof</h3>
 
+<div class="selectedSummary">
+GURULINK assures to never use or make user ID proof public under any circumstances. This is for verification purposes only.
+</div>
+
 <select id="idType" required>
-
 <option value="">Select</option>
-
-<option value="Owner PAN"> PAN</option>
-<option value="Owner Aadhaar"> Aadhaar</option>
-
-
-
+<option value="PAN">PAN</option>
+<option value="Aadhaar">Aadhaar</option>
 <option value="Electricity Bill">Electricity Bill</option>
 <option value="NGO Certificate">NGO Certificate</option>
-
 <option value="Other">Other</option>
-
 </select>
 
-<!-- ✅ MUST BE OUTSIDE SELECT -->
 <input
 id="otherIdProof"
 placeholder="Specify Other ID Proof"
 style="display:none; margin-top:10px;">
 
-<input
-type="file"
-id="idUpload"
-accept="image/*"
-required>
+<input type="file" id="idUpload" accept="image/*" required>
 
 <div id="idPreview" class="preview"></div>
 
 <h3>Gallery</h3>
 
-<input
-type="file"
-id="gallery"
-multiple
-accept="image/*">
+<input type="file" id="gallery" multiple accept="image/*">
 
 <div id="galleryPreview" class="preview"></div>
 
+<textarea id="description" placeholder="About Teacher"></textarea>
 
-
-
-
-
-
-
-
-<!-- KEEP EVERYTHING SAME ABOVE -->
-
-<textarea
-id="description"
-placeholder="About Teacher"></textarea>
-
-
-
-
-
-
-
-
-
-<!-- ✅ DECLARATION START -->
 <div style="margin-top:15px;padding:10px;border:1px solid #ddd;border-radius:10px;background:#fafafa;">
-
 <p style="font-size:12px;line-height:1.5;margin-bottom:10px;">
-
 I hereby declare that all the information provided by me in this form is true and correct to the best of my knowledge and belief. I understand that if any information is found to be false or incorrect, my application may be rejected or necessary action may be taken against me. I also agree to follow all the rules, regulations, and responsibilities assigned by the GURULINK, powered by G10 Group.
-
 </p>
 
 <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-
 <input
 type="checkbox"
 id="declaration"
 required
 style="width:auto;margin:0;">
-
-<span style="font-size:13px;">
-I Agree
-</span>
-
+<span style="font-size:13px;">I Agree</span>
 </label>
-
 </div>
-<!-- ✅ DECLARATION END -->
 
-
-
-
-
-
-
-
-
-
-<button type="submit">
-
-Continue To Payment
-
-</button>
+<button type="submit">Continue To Payment</button>
 
 </form>
-
 </div>
 
 <script>
-
 function toggleFee(id){
-
 const box=document.getElementById(id);
-
-box.style.display=
-box.style.display==="block"
-?
-"none"
-:
-"block";
-
+box.style.display=box.style.display==="block" ? "none" : "block";
 }
 
+function updateSelectedSkills(){
+const selected = Array.from(document.querySelectorAll(".subjectCheck:checked")).map(item=>item.value);
+
+document.querySelectorAll(".otherSkillCheck:checked").forEach(item=>{
+const input = document.getElementById(item.dataset.target);
+selected.push(input.value.trim() || item.parentElement.innerText.trim());
+});
+
+document.getElementById("selectedSkills").innerText =
+selected.length ? "Selected: " + selected.join(", ") : "No sports and fitness activity selected yet. Click More to open the full chart.";
+}
+
+function updateSelectedModes(){
+const selected = Array.from(document.querySelectorAll(".mode:checked")).map(item=>item.value);
+const otherModeCheck = document.getElementById("otherModeCheck");
+const otherMode = document.getElementById("otherMode").value.trim();
+
+if(otherModeCheck.checked){
+selected.push(otherMode || "Other Training Mode");
+}
+
+document.getElementById("selectedModes").innerText =
+selected.length ? "Selected: " + selected.join(", ") : "No training mode selected yet. Click More to open the full chart.";
+}
 </script>
 
 <script type="module">
-
-import {
-initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
-import {
-getDatabase,
-ref,
-set
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-import {
-getAuth,
-createUserWithEmailAndPassword
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
-
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -588,214 +680,121 @@ projectId:"gurulink-59cc7",
 storageBucket:"gurulink-59cc7.appspot.com",
 messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getDatabase(app);
-
 const auth = getAuth(app);
-
 const form = document.getElementById("form");
+const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
 
-
-
-
-/* 🔥 ID PROOF "OTHER" HANDLER */
 document.getElementById("idType").addEventListener("change",(e)=>{
-
 document.getElementById("otherIdProof").style.display =
 e.target.value === "Other" ? "block" : "none";
-
 });
 
-
-
-
-const API_KEY =
-"31f729ff855eb2e42c00ee508a8647ea";
-
-/* SUBJECT OTHER */
-
-document
-.getElementById("otherCheck")
-.addEventListener("change",(e)=>{
-
-document.getElementById(
-"otherSubject"
-).style.display =
-
-e.target.checked
-?
-"block"
-:
-"none";
-
+document.getElementById("toggleSkills").addEventListener("click",()=>{
+const panel = document.getElementById("skillsPanel");
+const button = document.getElementById("toggleSkills");
+panel.classList.toggle("open");
+button.innerText = panel.classList.contains("open")
+? "Hide Sports & Fitness Chart"
+: "More Sports & Fitness";
 });
 
-/* IMAGE UPLOAD */
+document.getElementById("toggleModes").addEventListener("click",()=>{
+const panel = document.getElementById("modesPanel");
+const button = document.getElementById("toggleModes");
+panel.classList.toggle("open");
+button.innerText = panel.classList.contains("open")
+? "Hide Training Modes Chart"
+: "More Training Modes";
+});
+
+document.querySelectorAll(".subjectCheck").forEach(item=>{
+item.addEventListener("change", updateSelectedSkills);
+});
+
+document.querySelectorAll(".mode").forEach(item=>{
+item.addEventListener("change", updateSelectedModes);
+});
+
+document.getElementById("otherModeCheck").addEventListener("change", updateSelectedModes);
+document.getElementById("otherMode").addEventListener("input", updateSelectedModes);
+
+document.querySelectorAll(".otherSkillCheck").forEach(item=>{
+item.addEventListener("change",(e)=>{
+const input = document.getElementById(e.target.dataset.target);
+input.style.display = e.target.checked ? "block" : "none";
+if(!e.target.checked){
+input.value = "";
+}
+updateSelectedSkills();
+});
+});
+
+document.querySelectorAll(".otherSkillInput").forEach(item=>{
+item.addEventListener("input", updateSelectedSkills);
+});
 
 async function upload(file){
-
 let fd = new FormData();
-
 fd.append("image",file);
 
-let res = await fetch(
-
-`https://api.imgbb.com/1/upload?key=${API_KEY}`,
-
-{
+let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`,{
 method:"POST",
 body:fd
-}
-
-);
+});
 
 let data = await res.json();
-
 return data.data.url;
-
 }
 
-/* PREVIEW */
-
 function preview(input, box){
-
 input.addEventListener("change",()=>{
-
 box.innerHTML="";
 
 if(input.files[0]){
-
-let img =
-document.createElement("img");
-
-img.src =
-URL.createObjectURL(
-input.files[0]
-);
-
+let img = document.createElement("img");
+img.src = URL.createObjectURL(input.files[0]);
 box.appendChild(img);
-
 }
-
 });
-
 }
 
-preview(
-document.getElementById("logo"),
-document.getElementById("logoPreview")
-);
-
-preview(
-document.getElementById("idUpload"),
-document.getElementById("idPreview")
-);
+preview(document.getElementById("logo"), document.getElementById("logoPreview"));
+preview(document.getElementById("idUpload"), document.getElementById("idPreview"));
 
 let galleryFiles=[];
 
-document
-.getElementById("gallery")
-.addEventListener("change",function(){
-
-galleryFiles =
-Array.from(this.files);
-
-document.getElementById(
-"galleryPreview"
-).innerHTML =
-
-galleryFiles.map(f=>
-
-`<img src="${URL.createObjectURL(f)}">`
-
-).join("");
-
+document.getElementById("gallery").addEventListener("change",function(){
+galleryFiles = Array.from(this.files);
+document.getElementById("galleryPreview").innerHTML =
+galleryFiles.map(f=>`<img src="${URL.createObjectURL(f)}">`).join("");
 });
 
-/* SUBMIT */
-
-form.addEventListener(
-"submit",
-async (e)=>{
-
+form.addEventListener("submit", async (e)=>{
 e.preventDefault();
 
-const submitBtn =
-form.querySelector("button");
-
+const submitBtn = form.querySelector("button[type=submit]");
 submitBtn.disabled=true;
 submitBtn.innerText="Processing...";
 
-
-
-
-
-
-
-
-
-
-
-
-
 try{
+let checked = document.querySelectorAll(".subjectCheck:checked").length;
+let otherChecked = document.querySelectorAll(".otherSkillCheck:checked").length;
 
-let checked =
-document.querySelectorAll(
-".subjectCheck:checked"
-).length;
-
-if(
-checked===0 &&
-!document.getElementById("otherCheck").checked
-){
-
-document.getElementById(
-"subjectError"
-).style.display="block";
-
+if(checked===0 && otherChecked===0){
+document.getElementById("subjectError").style.display="block";
 submitBtn.disabled=false;
-submitBtn.innerText=
-"Continue To Payment";
-
+submitBtn.innerText="Continue To Payment";
 return;
-
 }
 
+document.getElementById("subjectError").style.display="none";
 
-
-
-
-
-
-
-
-document.getElementById(
-"subjectError"
-).style.display="none";
-
-const email =
-document.getElementById("email")
-.value
-.trim()
-.toLowerCase();
-
-const password =
-document.getElementById("password")
-.value;
-
-
-
-
-
-
-
-
-
+const email = document.getElementById("email").value.trim().toLowerCase();
+const password = document.getElementById("password").value;
 
 if(!document.getElementById("declaration").checked){
 alert("Please accept the declaration before submitting.");
@@ -804,371 +803,134 @@ submitBtn.innerText="Continue To Payment";
 return;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-/* CREATE AUTH */
-
-const userCred =
-
-await createUserWithEmailAndPassword(
-auth,
-email,
-password
-);
-
-const uid =
-userCred.user.uid;
+const userCred = await createUserWithEmailAndPassword(auth,email,password);
+const uid = userCred.user.uid;
 await auth.currentUser.getIdToken(true);
 
-/* LOCAL STORAGE */
-
-localStorage.setItem(
-"uid",
-uid
-);
-
-localStorage.setItem(
-"profileId",
-uid
-);
-
-
-
-
-
-
-
-localStorage.setItem(
-"role",
-"teacher"
-);
-
-
-
-
-
-
-
-
-/* IMAGE UPLOAD */
+localStorage.setItem("uid",uid);
+localStorage.setItem("profileId",uid);
+localStorage.setItem("role","teacher");
 
 let logoUrl="";
-
-if(
-document.getElementById("logo").files[0]
-){
-
-logoUrl = await upload(
-document.getElementById("logo").files[0]
-);
-
+if(document.getElementById("logo").files[0]){
+logoUrl = await upload(document.getElementById("logo").files[0]);
 }
 
 let idProofUrl="";
-
-if(
-document.getElementById("idUpload").files[0]
-){
-
-idProofUrl = await upload(
-document.getElementById("idUpload").files[0]
-);
-
+if(document.getElementById("idUpload").files[0]){
+idProofUrl = await upload(document.getElementById("idUpload").files[0]);
 }
 
 let gallery=[];
-
 for(let file of galleryFiles){
-
-gallery.push(
-await upload(file)
-);
-
+gallery.push(await upload(file));
 }
 
-/* SUBJECTS */
-
 let subjects=[];
-
-document
-.querySelectorAll(
-".subjectCheck:checked"
-)
-.forEach(item=>{
-
+document.querySelectorAll(".subjectCheck:checked").forEach(item=>{
 subjects.push(item.value);
+});
 
+document.querySelectorAll(".otherSkillCheck:checked").forEach(item=>{
+const input = document.getElementById(item.dataset.target);
+if(input.value.trim()!==""){
+subjects.push(input.value.trim());
+}
+});
+
+let teachingModes=[];
+document.querySelectorAll(".mode:checked").forEach(item=>{
+teachingModes.push(item.value);
 });
 
 if(
-document.getElementById("otherCheck").checked &&
-document.getElementById("otherSubject").value.trim()!==""
+document.getElementById("otherModeCheck").checked &&
+document.getElementById("otherMode").value.trim()!==""
 ){
-
-subjects.push(
-document.getElementById("otherSubject").value
-);
-
+teachingModes.push(document.getElementById("otherMode").value.trim());
 }
 
-/* MODES */
+const selectedIdType = document.getElementById("idType").value;
+const idTypeValue =
+selectedIdType === "Other" && document.getElementById("otherIdProof").value.trim()
+? document.getElementById("otherIdProof").value.trim()
+: selectedIdType;
 
-let teachingModes=[];
-
-document
-.querySelectorAll(".mode:checked")
-.forEach(item=>{
-
-teachingModes.push(
-item.value
-);
-
+await set(ref(db,"teachers/"+uid),{
+uid:uid,
+name:document.getElementById("name").value,
+qualification:document.getElementById("qualification").value,
+experience:document.getElementById("experience").value,
+phone:document.getElementById("phone").value,
+alternatePhone:document.getElementById("alternatePhone").value,
+email:email,
+website:document.getElementById("website").value,
+address:document.getElementById("address").value,
+area:document.getElementById("area").value,
+pinCode:document.getElementById("pinCode").value,
+mapUrl:document.getElementById("mapUrl").value.trim(),
+mapLink:document.getElementById("mapLink").value.trim(),
+subjects:subjects,
+class:document.getElementById("class").value,
+teachingModes:teachingModes,
+individualFee:document.getElementById("individualFee").value,
+homeFee:document.getElementById("homeFee").value,
+groupFee:document.getElementById("groupFee").value,
+onlineFee:document.getElementById("onlineFee").value,
+otherMode:document.getElementById("otherMode").value.trim(),
+otherModeFee:document.getElementById("otherModeFee").value,
+logo:logoUrl,
+profilePic:logoUrl,
+gallery:gallery,
+idType:idTypeValue,
+idProof:idProofUrl,
+description:document.getElementById("description").value,
+category:"sport",
+categoryName:"Sports & Fitness",
+role:"teacher",
+status:"pending",
+paymentStatus:"pending",
+createdAt:Date.now(),
+updatedAt:Date.now()
 });
 
-/* SAVE Teacher */
-
-await set(
-
-
-
-
-
-
-ref(db,"teachers/"+uid),
-
-{
-
-
-
-
-
-
-
-uid:uid,
-
-name:
-document.getElementById("name").value,
-
-qualification: document.getElementById("qualification").value,
-
-experience: document.getElementById("experience").value,
-
-phone:
-document.getElementById("phone").value,
-
-alternatePhone:
-document.getElementById("alternatePhone").value,
-
-email:email,
-
-website:
-document.getElementById("website").value,
-
-address:
-document.getElementById("address").value,
-
-area:
-document.getElementById("area").value,
-pinCode:
-document.getElementById("pinCode").value,
-
-
-
-
-
-
-mapUrl:
-document.getElementById("mapUrl").value.trim(),
-
-mapLink:
-document.getElementById("mapLink").value.trim(),
-
-
-
-
-
-
-
-subjects:subjects,
-
-class:
-document.getElementById("class").value,
-
-teachingModes:
-teachingModes,
-
-individualFee:
-document.getElementById("individualFee").value,
-
-homeFee:
-document.getElementById("homeFee").value,
-
-groupFee:
-document.getElementById("groupFee").value,
-
-onlineFee:
-document.getElementById("onlineFee").value,
-
-logo:logoUrl,
-
-gallery:gallery,
-
-idType:
-document.getElementById("idType").value,
-
-idProof:idProofUrl,
-
-description:
-document.getElementById("description").value,
-
-
-
-
-
-
-
-
-category:"sport",
-
-role:"teacher",
-
-
-
-
-
-status:"pending",
-
-
-
-
-
-
-createdAt:Date.now()
-
-}
-
-);
-
-
-
-
-
-
-
-/* USER ROLE */
-
-await set(
-ref(db,"users/"+uid),
-{
+await set(ref(db,"users/"+uid),{
 uid:uid,
 name:document.getElementById("name").value,
 email:email,
-
-
-
-
-
-
 role:"teacher",
-
-
-
-
-
 profileId:uid,
 createdAt:Date.now()
-}
-);
+});
 
+localStorage.setItem("teacherId",uid);
 
+alert("Registration Successful. Do not refresh or go back. Complete payment to finish registration.");
 
-
-
-
-
-
-
-
-
-localStorage.setItem("uid", uid);
-localStorage.setItem("profileId", uid);
-localStorage.setItem("teacherId", uid);
-localStorage.setItem("institutionId", uid); // optiona
-
-
-
-
-alert(
-"Registration Successful, ⚠ Do not refresh or go back. Complete payment to finish registration."
-);
-
-
-
-
-
-
-
-
-window.location.href =
-"payment.html?type=teacher&id=" + uid;
-
-
-
-
-
-
-
-
+window.location.href = "payment.html?type=teacher&id="+uid;
 }
 catch(err){
-
 console.log(err);
 
-if(
-err.code==="auth/email-already-in-use"
-){
-
-alert(
-"This email already exists.\nPlease login instead."
-);
-
+if(err.code==="auth/email-already-in-use"){
+alert("This email already exists.\nPlease login instead.");
 }
-else if(
-err.code==="auth/weak-password"
-){
-
-alert(
-"Password must be minimum 6 characters."
-);
-
+else if(err.code==="auth/weak-password"){
+alert("Password must be minimum 6 characters.");
 }
 else{
-
 alert(err.message);
-
 }
 
 submitBtn.disabled=false;
-
-submitBtn.innerText=
-"Continue To Payment";
-
+submitBtn.innerText="Continue To Payment";
 }
-
-}
-);
-
+});
 </script>
 
 </body>
 </html>
+
+
+
+
