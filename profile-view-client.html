@@ -369,230 +369,153 @@ loadReviews();
 /* RENDER PROFILE */
 function renderProfile(){
 
+const visibility = data.publicVisibility || {};
+
+function canShow(key){
+return visibility[key] !== false;
+}
+
+function showValue(key){
+return canShow(key) && data[key];
+}
+
+function esc(value){
+return String(value ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+}
+
 const subjects = Array.isArray(data.subjects) ? data.subjects : [];
+const teachingModes = Array.isArray(data.teachingModes) ? data.teachingModes : [];
 
 const modes = [];
-
-if(data.homeFee) modes.push(`🏠 Home Tuition - ₹${data.homeFee}`);
-if(data.groupFee) modes.push(`👨‍🏫 Group Tuition - ₹${data.groupFee}`);
-if(data.onlineFee) modes.push(`💻 Online - ₹${data.onlineFee}`);
-if(data.individualFee) modes.push(`👤 Individual - ₹${data.individualFee}`);
-if(data.offlineFee) modes.push(`🏫 Offline Classroom - ₹${data.offlineFee}`);
-if(data.hybridFee) modes.push(`🔄 Hybrid - ₹${data.hybridFee}`);
-
-
-
-
-
+if(showValue("homeFee")) modes.push(`Home Tuition - Rs ${esc(data.homeFee)}`);
+if(showValue("groupFee")) modes.push(`Group / Team - Rs ${esc(data.groupFee)}`);
+if(showValue("superGroupFee")) modes.push(`Super Group - Rs ${esc(data.superGroupFee)}`);
+if(showValue("onlineFee")) modes.push(`Online - Rs ${esc(data.onlineFee)}`);
+if(showValue("individualFee")) modes.push(`Individual / Personal - Rs ${esc(data.individualFee)}`);
+if(showValue("otherMode") || showValue("otherModeFee")) modes.push(`${esc(data.otherMode || "Other Mode")} ${data.otherModeFee ? "- Rs " + esc(data.otherModeFee) : ""}`);
 
 let galleryHTML = "";
+let gallery = data.gallery || [];
 
-let gallery = data.gallery;
-
-// HARD SAFE CHECK
-if (!gallery) gallery = [];
-
-// Convert object → array safely
 if (typeof gallery === "object" && !Array.isArray(gallery)) {
-  gallery = Object.values(gallery);
+gallery = Object.values(gallery);
 }
 
-// Remove invalid values
 gallery = gallery.filter(img => typeof img === "string" && img.length > 5);
 
-if (gallery.length > 0) {
-  galleryHTML = `
-    <div class="section">
-      <h3>🖼️ Gallery</h3>
-      <div class="gallery">
-        ${gallery.map(img => `
-          <img src="${img}" onclick="window.open('${img}','_blank')">
-        `).join("")}
-      </div>
-    </div>
-  `;
+if (canShow("gallery") && gallery.length > 0) {
+galleryHTML = `
+<div class="section">
+<h3>Gallery</h3>
+<div class="gallery">
+${gallery.map(img => `<img src="${esc(img)}" onclick="window.open('${esc(img)}','_blank')">`).join("")}
+</div>
+</div>
+`;
 }
-
-
-
-
 
 let mapHTML = "";
 
-if (data.mapLink || data.mapUrl) {
+if (canShow("mapUrl") && (data.mapLink || data.mapUrl)) {
+let iframeHTML = "";
 
-  let iframeHTML = "";
-
-  if (data.mapLink) {
-    const src =
-      data.mapLink.match(/src="([^"]+)"/)?.[1];
-
-    if (src) {
-      iframeHTML = `
-        <iframe
-          src="${src}"
-          allowfullscreen
-          loading="lazy">
-        </iframe>
-      `;
-    }
-  }
-
-  mapHTML = `
-    <div class="section">
-      <h3>📍 Google Map</h3>
-
-      ${data.mapUrl ? `
-      <a
-        href="${data.mapUrl}"
-        target="_blank"
-        style="
-          display:inline-block;
-          padding:12px 20px;
-          background:#1976d2;
-          color:white;
-          text-decoration:none;
-          border-radius:10px;
-          font-weight:bold;
-          margin-bottom:10px;
-        ">
-        📍 Open Google Maps
-      </a>
-      ` : ""}
-
-      ${iframeHTML}
-    </div>
-  `;
+if (canShow("mapLink") && data.mapLink) {
+const src = data.mapLink.match(/src="([^"]+)"/)?.[1];
+if (src) {
+iframeHTML = `<iframe src="${esc(src)}" allowfullscreen loading="lazy"></iframe>`;
+}
 }
 
+mapHTML = `
+<div class="section">
+<h3>Google Map</h3>
+${showValue("mapUrl") ? `<a href="${esc(data.mapUrl)}" target="_blank" style="display:inline-block;padding:12px 20px;background:#1976d2;color:white;text-decoration:none;border-radius:10px;font-weight:bold;margin-bottom:10px;">Open Google Maps</a>` : ""}
+${iframeHTML}
+</div>
+`;
+}
 
+const publicLocation = [
+canShow("area") ? data.area : "",
+canShow("address") ? data.address : "",
+canShow("pinCode") ? data.pinCode : ""
+].filter(Boolean).join(", ");
 
-
-
-
+const profileImage = data.photo || data.profilePic || data.logo || "https://via.placeholder.com/120";
 
 profile.innerHTML = `
 <div class="header">
-<img class="mainPhoto" src="${data.photo || data.logo || 'https://via.placeholder.com/120'}">
+${canShow("logo") ? `<img class="mainPhoto" src="${esc(profileImage)}">` : ""}
 
 <div>
-<h2>${data.name || "-"}</h2>
-
+${canShow("name") ? `<h2>${esc(data.name || "-")}</h2>` : `<h2>GURULINK Profile</h2>`}
 <div>
-<span class="badge">${type}</span>
-<span class="badge">${data.category || "-"}</span>
+<span class="badge">${esc(type)}</span>
+${canShow("categoryName") ? `<span class="badge">${esc(data.categoryName || data.category || "-")}</span>` : ""}
 </div>
-
 </div>
 </div>
 
 <div class="section">
-<p><b>Subjects:</b> ${subjects.join(", ") || "-"}</p>
-<p><b>Phone:</b> ${data.phone || "-"}</p>
-<p><b>Email:</b> ${data.email || "-"}</p>
-<p><b>Location:</b> ${data.location || data.address || "-"}</p>
-<p><b>Description:</b> ${data.description || "-"}</p>
+${canShow("subjects") ? `<p><b>Subjects / Skills / Activities:</b> ${subjects.map(esc).join(", ") || "-"}</p>` : ""}
+${canShow("teachingModes") && teachingModes.length ? `<p><b>Teaching / Training Modes:</b> ${teachingModes.map(esc).join(", ")}</p>` : ""}
+${showValue("class") ? `<p><b>Class / Preparation For:</b> ${esc(data.class)}</p>` : ""}
+${showValue("board") ? `<p><b>Board / Type of Exam:</b> ${esc(data.board)}</p>` : ""}
+${showValue("qualification") ? `<p><b>Qualification:</b> ${esc(data.qualification)}</p>` : ""}
+${showValue("experience") ? `<p><b>Experience:</b> ${esc(data.experience)}</p>` : ""}
+${showValue("ownerName") ? `<p><b>Owner / Director:</b> ${esc(data.ownerName)}</p>` : ""}
+${showValue("establishedDate") ? `<p><b>Established Date:</b> ${esc(data.establishedDate)}</p>` : ""}
+${showValue("phone") ? `<p><b>Phone:</b> ${esc(data.phone)}</p>` : ""}
+${showValue("alternatePhone") ? `<p><b>Alternate Phone:</b> ${esc(data.alternatePhone)}</p>` : ""}
+${showValue("email") ? `<p><b>Email:</b> ${esc(data.email)}</p>` : ""}
+${publicLocation ? `<p><b>Location:</b> ${esc(publicLocation)}</p>` : ""}
+${showValue("website") ? `<p><b>Website:</b> ${esc(data.website)}</p>` : ""}
+${showValue("description") ? `<p><b>Description:</b> ${esc(data.description)}</p>` : ""}
 </div>
 
 <div class="actions">
-<a class="call" href="tel:${data.phone || ''}">📞 Call</a>
-<a class="whatsapp" target="_blank" href="https://wa.me/${data.phone || ''}">💬 WhatsApp</a>
-<button
-class="saveContact"
-onclick="saveContact()">
-💾 Save Contact
-</button>
-${data.website ? `<a class="website" target="_blank" href="${data.website}">🌐 Website</a>` : ""}
-
-
-
-
+${showValue("phone") ? `<a class="call" href="tel:${esc(data.phone)}">Call</a>` : ""}
+${showValue("phone") ? `<a class="whatsapp" target="_blank" href="https://wa.me/${esc(data.phone)}">WhatsApp</a>` : ""}
+${showValue("phone") || showValue("email") ? `<button class="saveContact" onclick="saveContact()">Save Contact</button>` : ""}
+${showValue("website") ? `<a class="website" target="_blank" href="${esc(data.website)}">Website</a>` : ""}
 ${(
 data.showBankDetails !== false &&
-(
-data.qrImage ||
-(data.accountHolderName &&
- data.bankName &&
- data.accountNumber)
-)
-) ? ` 
-
-
-<button
-class="payFee"
-onclick="showPaymentNotice()">
-💰 Pay Fee
-</button>
-` : ""}
+(data.qrImage || (data.accountHolderName && data.bankName && data.accountNumber))
+) ? `<button class="payFee" onclick="showPaymentNotice()">Pay Fee</button>` : ""}
 </div>
 
 ${data.showBankDetails !== false ? `
-
-<div
-id="bankBox"
-class="bankBox">
-
-<h3>💳 Payment Details</h3>
-
-${data.accountHolderName ? `
-<p><b>Account Holder:</b>
-${data.accountHolderName}</p>
-` : ""}
-
-${data.bankName ? `
-<p><b>Bank Name:</b>
-${data.bankName}</p>
-` : ""}
-
-${data.accountNumber ? `
-<p><b>Account Number:</b>
-${data.accountNumber}</p>
-` : ""}
-
-${data.ifsc ? `
-<p><b>IFSC Code:</b>
-${data.ifsc}</p>
-` : ""}
-
-${data.upiId ? `
-<p><b>UPI ID:</b>
-${data.upiId}</p>
-` : ""}
-
-${data.qrImage ? `
-<img
-src="${data.qrImage}"
-class="bankQr"
-alt="QR Code">
-` : ""}
-
+<div id="bankBox" class="bankBox">
+<h3>Payment Details</h3>
+${data.accountHolderName ? `<p><b>Account Holder:</b> ${esc(data.accountHolderName)}</p>` : ""}
+${data.bankName ? `<p><b>Bank Name:</b> ${esc(data.bankName)}</p>` : ""}
+${data.accountNumber ? `<p><b>Account Number:</b> ${esc(data.accountNumber)}</p>` : ""}
+${data.ifsc ? `<p><b>IFSC Code:</b> ${esc(data.ifsc)}</p>` : ""}
+${data.upiId ? `<p><b>UPI ID:</b> ${esc(data.upiId)}</p>` : ""}
+${data.qrImage ? `<img src="${esc(data.qrImage)}" class="bankQr" alt="QR Code">` : ""}
 </div>
-
 ` : ""}
 
 ${mapHTML}
 ${galleryHTML}
-<div class="section">
-<h3>💰 Teaching Modes</h3>
-${modes.map(m=>`<div class="modeBox">${m}</div>`).join("")}
-</div>
+${modes.length ? `<div class="section"><h3>Fees</h3>${modes.map(m=>`<div class="modeBox">${m}</div>`).join("")}</div>` : ""}
 
 <div class="section">
 <div class="ratingCard">
 <div class="bigRating" id="avgRating">0.0</div>
-<div class="starText">⭐⭐⭐⭐⭐</div>
+<div class="starText">*****</div>
 <div id="totalReviews">0 Reviews</div>
 </div>
 
 <div class="reviewForm">
-<h3>✍️ Write Review</h3>
+<h3>Write Review</h3>
 <input id="rname" placeholder="Your Name">
 <select id="rrating">
-<option value="5">⭐⭐⭐⭐⭐</option>
-<option value="4">⭐⭐⭐⭐</option>
-<option value="3">⭐⭐⭐</option>
-<option value="2">⭐⭐</option>
-<option value="1">⭐</option>
+<option value="5">5 Stars</option>
+<option value="4">4 Stars</option>
+<option value="3">3 Stars</option>
+<option value="2">2 Stars</option>
+<option value="1">1 Star</option>
 </select>
 <textarea id="rtext" placeholder="Write review"></textarea>
 <button onclick="submitReview()">Submit Review</button>
@@ -602,7 +525,6 @@ ${modes.map(m=>`<div class="modeBox">${m}</div>`).join("")}
 </div>
 `;
 }
-
 /* REVIEWS */
 function loadReviews(){
 
