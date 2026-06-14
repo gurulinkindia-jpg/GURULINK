@@ -398,6 +398,18 @@ cursor:pointer;
 ">
 👨‍🏫 Teacher / Institute
 </button>
+<button id="guestBtn" style="
+width:100%;
+padding:15px;
+margin-top:10px;
+background:#00897b;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+">
+Guest
+</button>
 
 </div>
 
@@ -561,8 +573,11 @@ const auth=getAuth(app);
 const db=getDatabase(app);
 
 if(
+localStorage.getItem("role") === "guest" ||
+(
 localStorage.getItem("role") &&
 localStorage.getItem("phone")
+)
 ){
 
 document.getElementById("loginOverlay").style.display="none";
@@ -593,6 +608,18 @@ localStorage.setItem(
 
 
 location.href="otp-login.html";
+
+};
+
+document.getElementById("guestBtn").onclick=()=>{
+
+alert("Guest has limited access. Full features of GURULINK are available for Student / Parent and Teacher / Institution users.");
+
+localStorage.setItem("role","guest");
+localStorage.removeItem("selectedRole");
+localStorage.removeItem("otpRole");
+
+document.getElementById("loginOverlay").style.display="none";
 
 };
 
