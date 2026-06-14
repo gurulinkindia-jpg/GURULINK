@@ -413,6 +413,31 @@ profile.innerHTML = "<h2>No ID Found</h2>";
 return;
 }
 
+const viewerId =
+localStorage.getItem("uid") ||
+localStorage.getItem("profileId");
+
+const viewerRole =
+(localStorage.getItem("role") || "").toLowerCase();
+
+if(
+!viewerId ||
+viewerRole === "guest"
+){
+localStorage.removeItem("selectedRole");
+
+sessionStorage.setItem(
+"postLoginRedirect",
+location.href
+);
+
+location.href =
+"otp-login.html?return=" +
+encodeURIComponent(location.href);
+
+return;
+}
+
 /* SAVE VIEW */
 markView();
 
