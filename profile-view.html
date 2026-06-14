@@ -275,6 +275,11 @@ push,
 set
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
+import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
 /* FIREBASE CONFIG */
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -288,6 +293,7 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
 
 const profile = document.getElementById("profile");
 const id = new URLSearchParams(location.search).get("id");
@@ -295,29 +301,101 @@ const id = new URLSearchParams(location.search).get("id");
 let data = null;
 let type = "";
 
+function getAuthUser(){
+return new Promise((resolve)=>{
+const unsubscribe = onAuthStateChanged(auth,(user)=>{
+unsubscribe();
+resolve(user || null);
+});
+
+setTimeout(()=>{
+resolve(auth.currentUser || null);
+},1200);
+});
+}
+
 /* MARK VIEW */
 async function markView() {
-  const studentId = localStorage.getItem("uid");
-  const teacherId = id;
+  const authUser = await getAuthUser();
 
-  if (!studentId || !teacherId) return;
+  const viewerId =
+    localStorage.getItem("uid") ||
+    localStorage.getItem("profileId") ||
+    (authUser ? authUser.uid : "");
+
+  const viewedProfileId = id;
+  const viewerRole = (localStorage.getItem("role") || "").toLowerCase();
+
+  if (!viewedProfileId) return;
 
   try {
-    const snap = await get(ref(db, "students/" + studentId));
+    const isRegisteredTeacherOrInstitution =
+      viewerRole === "teacher" ||
+      viewerRole === "institution";
 
-    let studentData = { name:"", email:"", phone:"" };
+    const viewId =
+      viewerId ||
+      "guest_" + Date.now() + "_" + Math.floor(Math.random() * 9999);
 
-    if (snap.exists()) {
-      studentData = snap.val();
+    let viewerData = {
+      name:"",
+      email:"",
+      phone:""
+    };
+
+    if (viewerId) {
+      const paths = [];
+
+      if (viewerRole === "student" || viewerRole === "parent") {
+        paths.push("students/" + viewerId);
+      }
+
+      if (viewerRole === "teacher") {
+        paths.push("teachers/" + viewerId);
+      }
+
+      if (viewerRole === "institution") {
+        paths.push("institutions/" + viewerId);
+      }
+
+      paths.push("users/" + viewerId);
+      paths.push("students/" + viewerId);
+
+      for (const path of paths) {
+        const snap = await get(ref(db, path));
+
+        if (snap.exists()) {
+          viewerData = {
+            ...viewerData,
+            ...snap.val()
+          };
+        }
+      }
     }
 
+    const displayName = isRegisteredTeacherOrInstitution
+      ? (viewerRole === "teacher" ? "Teacher" : "Institution")
+      : (viewerData.name || (viewerRole === "parent" ? "Parent" : "Student"));
+
+    const displayPhone = isRegisteredTeacherOrInstitution
+      ? ""
+      : (
+        viewerData.phone ||
+        viewerData.alternatePhone ||
+        (authUser ? authUser.phoneNumber : "") ||
+        localStorage.getItem("phone") ||
+        ""
+      );
+
     await set(
-      ref(db, `profileViews/${teacherId}/${studentId}`),
+      ref(db, `profileViews/${viewedProfileId}/${viewId}`),
       {
-        studentId,
-        name: studentData.name || "",
-        email: studentData.email || "",
-        phone: studentData.phone || "",
+        viewerId:viewId,
+        studentId:viewId,
+        viewerRole:viewerRole || "guest",
+        name:displayName,
+        email:viewerData.email || (authUser ? authUser.email : "") || localStorage.getItem("email") || "",
+        phone:displayPhone,
         time: Date.now()
       }
     );
