@@ -513,12 +513,6 @@ ${iframeHTML}
 `;
 }
 
-const publicLocation = [
-canShow("area") ? data.area : "",
-canShow("address") ? data.address : "",
-canShow("pinCode") ? data.pinCode : ""
-].filter(Boolean).join(", ");
-
 const profileImage = data.photo || data.profilePic || data.logo || "https://via.placeholder.com/120";
 
 profile.innerHTML = `
@@ -546,7 +540,9 @@ ${showValue("establishedDate") ? `<p><b>Established Date:</b> ${esc(data.establi
 ${showValue("phone") ? `<p><b>Phone:</b> ${esc(data.phone)}</p>` : ""}
 ${showValue("alternatePhone") ? `<p><b>Alternate Phone:</b> ${esc(data.alternatePhone)}</p>` : ""}
 ${showValue("email") ? `<p><b>Email:</b> ${esc(data.email)}</p>` : ""}
-${publicLocation ? `<p><b>Location:</b> ${esc(publicLocation)}</p>` : ""}
+${showValue("address") ? `<p><b>State:</b> ${esc(data.address)}</p>` : ""}
+${showValue("area") ? `<p><b>Area / City or Town:</b> ${esc(data.area)}</p>` : ""}
+${showValue("pinCode") ? `<p><b>PIN Code:</b> ${esc(data.pinCode)}</p>` : ""}
 ${showValue("website") ? `<p><b>Website:</b> ${esc(data.website)}</p>` : ""}
 ${showValue("description") ? `<p><b>Description:</b> ${esc(data.description)}</p>` : ""}
 </div>
