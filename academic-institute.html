@@ -4,10 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Academic Institution Registration</title>
+<title>Academics, Education & Career Development Registration</title>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial,sans-serif;
@@ -15,10 +14,26 @@ background:#eef2f7;
 }
 
 header{
-background:#e65100;
+background:#00897b;
 color:white;
 padding:18px;
 text-align:center;
+position:relative;
+}
+
+.helpButton{
+position:absolute;
+top:14px;
+right:14px;
+display:inline-block;
+margin-top:0;
+padding:8px 14px;
+background:white;
+color:#00897b;
+text-decoration:none;
+border-radius:8px;
+font-weight:bold;
+font-size:14px;
 }
 
 .container{
@@ -76,10 +91,78 @@ object-fit:cover;
 border:1px solid #ddd;
 }
 
-.subjectGrid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px 20px;
+.subjectGrid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+gap:12px;
+}
+
+.skillCategory{
+background:white;
+border:1px solid #e0e0e0;
+border-radius:10px;
+padding:12px;
+}
+
+.skillCategory h4{
+margin:0 0 8px;
+color:#e65100;
+}
+
+.skillsPanel{
+display:none;
+padding:14px;
+border:1px solid #ddd;
+border-radius:10px;
+background:#fafafa;
+margin:10px 0;
+}
+
+.skillsPanel.open{
+display:block;
+}
+
+.modesPanel{
+display:none;
+padding:14px;
+border:1px solid #ddd;
+border-radius:10px;
+background:#fafafa;
+margin:10px 0;
+}
+
+.modesPanel.open{
+display:block;
+}
+
+.secondaryButton{
+background:#263238;
+margin:8px 0;
+}
+
+.selectedSummary{
+font-size:13px;
+line-height:1.5;
+background:#fff8e1;
+border:1px solid #ffe082;
+border-radius:8px;
+padding:10px;
+margin:8px 0;
+}
+
+.skillExamples{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+margin:8px 0;
+}
+
+.skillExamples span{
+font-size:13px;
+background:#eef2f7;
+border:1px solid #d8dee8;
+border-radius:20px;
+padding:7px 10px;
 }
 
 .row{
@@ -102,11 +185,6 @@ border-radius:10px;
 margin-bottom:10px;
 }
 
-
-
-
-
-
 @keyframes blink{
 0%,100%{
 opacity:1;
@@ -115,22 +193,10 @@ opacity:1;
 opacity:0.7;
 }
 }
-
-
-
-
-
-
 </style>
 </head>
 
 <body>
-
-
-
-
-
-
 
 <div style="
 background:#d50000;
@@ -141,24 +207,16 @@ font-weight:bold;
 font-size:15px;
 animation:blink 1.2s infinite;
 ">
-🎉 Up tp 98% Promotional Discount Going On! Use Promo Code: <b>PRO-98</b> 🎉
+Up to 98% Promotional Discount Going On! Use Promo Code: <b>PRO-98</b>
 </div>
 
-
-
-
-
-
-
 <header>
-<h1>Academic Institution Registration</h1>
+<h1>Academics, Education & Career Development Registration</h1>
 <p>1 Year Subscription Fee ₹5000</p>
+<a href="helpdesk.html" class="helpButton">Help</a>
 </header>
 
 <div class="container">
-
-
-
 <form id="form">
 
 <input id="name" placeholder="Institution Name" required>
@@ -182,18 +240,9 @@ required>
 
 <input id="website" placeholder="Website URL (if available)">
 
-
-
-
-
-
-
-
 <label>Select State</label>
-
 <select id="address" required>
 <option value="">Select State</option>
-
 <option value="Andhra Pradesh">Andhra Pradesh</option>
 <option value="Arunachal Pradesh">Arunachal Pradesh</option>
 <option value="Assam">Assam</option>
@@ -222,34 +271,23 @@ required>
 <option value="Uttar Pradesh">Uttar Pradesh</option>
 <option value="Uttarakhand">Uttarakhand</option>
 <option value="West Bengal">West Bengal</option>
-
 <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
 <option value="Chandigarh">Chandigarh</option>
-<option value="Dadra and Nagar Haveli and Daman and Diu">
-Dadra and Nagar Haveli and Daman and Diu
-</option>
+<option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
 <option value="Delhi">Delhi</option>
 <option value="Jammu and Kashmir">Jammu and Kashmir</option>
 <option value="Ladakh">Ladakh</option>
 <option value="Lakshadweep">Lakshadweep</option>
 <option value="Puducherry">Puducherry</option>
-
 </select>
 
-
-<input id="area" placeholder="Area/City or Town">
-
-
+<input id="area" placeholder="Area/City or town">
 
 <input type="text" id="pinCode" placeholder="PIN Code" maxlength="6" pattern="[0-9]{6}" required>
 
-
-
 <h3>Location</h3>
 
-<input
-id="mapUrl"
-placeholder="Google Maps Share Link">
+<input id="mapUrl" placeholder="Google Maps Share Link">
 
 <textarea
 id="mapLink"
@@ -257,136 +295,276 @@ placeholder="Google Maps Embed Code (iframe)"
 style="height:120px;resize:vertical;">
 </textarea>
 
+<h3>Academics, Education & Career Development</h3>
 
+<p style="font-size:13px;line-height:1.5;margin-bottom:6px;">
+Examples:
+</p>
 
+<div class="skillExamples">
+<span>Mathematics</span>
+<span>English</span>
+<span>JEE Main</span>
+<span>NEET UG</span>
+<span>Career Counselling</span>
+</div>
 
+<button type="button" id="toggleSkills" class="secondaryButton">
+More Academics & Career Options
+</button>
 
+<div id="selectedSkills" class="selectedSummary">
+No academic subject or career option selected yet. Click More to open the full chart.
+</div>
 
-
-
-<h3>Subjects</h3>
+<div id="skillsPanel" class="skillsPanel">
 
 <div class="subjectGrid">
 
+<div class="skillCategory"><h4>Early Childhood Education</h4>
+<div class="row"><input type="checkbox" value="Playgroup" class="subjectCheck"> Playgroup</div>
+<div class="row"><input type="checkbox" value="Nursery" class="subjectCheck"> Nursery</div>
+<div class="row"><input type="checkbox" value="LKG (Lower Kindergarten)" class="subjectCheck"> LKG (Lower Kindergarten)</div>
+<div class="row"><input type="checkbox" value="UKG (Upper Kindergarten)" class="subjectCheck"> UKG (Upper Kindergarten)</div>
+<div class="row"><input type="checkbox" value="Phonics" class="subjectCheck"> Phonics</div>
+<div class="row"><input type="checkbox" value="Early Reading Skills" class="subjectCheck"> Early Reading Skills</div>
+<div class="row"><input type="checkbox" value="Early Writing Skills" class="subjectCheck"> Early Writing Skills</div>
+<div class="row"><input type="checkbox" value="Early Mathematics" class="subjectCheck"> Early Mathematics</div>
+<div class="row"><input type="checkbox" value="Alphabet & Numbers Learning" class="subjectCheck"> Alphabet & Numbers Learning</div>
+<div class="row"><input type="checkbox" value="Storytelling" class="subjectCheck"> Storytelling</div>
+<div class="row"><input type="checkbox" value="Creative Learning Activities" class="subjectCheck"> Creative Learning Activities</div>
+<div class="row"><input type="checkbox" value="School Readiness Programs" class="subjectCheck"> School Readiness Programs</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherEarlyChildhood"> Other Early Childhood Subject</div>
+<input id="otherEarlyChildhood" class="otherSkillInput" placeholder="Write Other Early Childhood Subject" style="display:none;"></div>
 
-<div class="row">
-<input type="checkbox" value="Physics" class="subjectCheck"> Physics
-</div>
+<div class="skillCategory"><h4>Primary Education (Classes 1-5)</h4>
+<div class="row"><input type="checkbox" value="Mathematics" class="subjectCheck"> Mathematics</div>
+<div class="row"><input type="checkbox" value="English" class="subjectCheck"> English</div>
+<div class="row"><input type="checkbox" value="Hindi" class="subjectCheck"> Hindi</div>
+<div class="row"><input type="checkbox" value="Assamese" class="subjectCheck"> Assamese</div>
+<div class="row"><input type="checkbox" value="Environmental Studies (EVS)" class="subjectCheck"> Environmental Studies (EVS)</div>
+<div class="row"><input type="checkbox" value="General Science" class="subjectCheck"> General Science</div>
+<div class="row"><input type="checkbox" value="Social Studies" class="subjectCheck"> Social Studies</div>
+<div class="row"><input type="checkbox" value="Computer Basics" class="subjectCheck"> Computer Basics</div>
+<div class="row"><input type="checkbox" value="General Knowledge" class="subjectCheck"> General Knowledge</div>
+<div class="row"><input type="checkbox" value="Moral Science" class="subjectCheck"> Moral Science</div>
+<div class="row"><input type="checkbox" value="Handwriting Improvement" class="subjectCheck"> Handwriting Improvement</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherPrimary"> Other Primary Subject</div>
+<input id="otherPrimary" class="otherSkillInput" placeholder="Write Other Primary Subject" style="display:none;"></div>
 
-<div class="row">
-<input type="checkbox" value="Chemistry" class="subjectCheck"> Chemistry
-</div>
+<div class="skillCategory"><h4>Secondary Education (Classes 6-10)</h4>
+<div class="row"><input type="checkbox" value="Mathematics" class="subjectCheck"> Mathematics</div>
+<div class="row"><input type="checkbox" value="Science" class="subjectCheck"> Science</div>
+<div class="row"><input type="checkbox" value="Social Sciences" class="subjectCheck"> Social Sciences</div>
+<div class="row"><input type="checkbox" value="English" class="subjectCheck"> English</div>
+<div class="row"><input type="checkbox" value="Hindi" class="subjectCheck"> Hindi</div>
+<div class="row"><input type="checkbox" value="Assamese" class="subjectCheck"> Assamese</div>
+<div class="row"><input type="checkbox" value="Sanskrit" class="subjectCheck"> Sanskrit</div>
+<div class="row"><input type="checkbox" value="French" class="subjectCheck"> French</div>
+<div class="row"><input type="checkbox" value="German" class="subjectCheck"> German</div>
+<div class="row"><input type="checkbox" value="Spanish" class="subjectCheck"> Spanish</div>
+<div class="row"><input type="checkbox" value="Computer Science" class="subjectCheck"> Computer Science</div>
+<div class="row"><input type="checkbox" value="Information Technology" class="subjectCheck"> Information Technology</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherSecondary"> Other Secondary Subject</div>
+<input id="otherSecondary" class="otherSkillInput" placeholder="Write Other Secondary Subject" style="display:none;"></div>
 
-<div class="row">
-<input type="checkbox" value="Mathematics" class="subjectCheck"> Mathematics
-</div>
+<div class="skillCategory"><h4>Higher Secondary Education (Classes 11-12)</h4>
+<div class="row"><input type="checkbox" value="Physics" class="subjectCheck"> Physics</div>
+<div class="row"><input type="checkbox" value="Chemistry" class="subjectCheck"> Chemistry</div>
+<div class="row"><input type="checkbox" value="Biology" class="subjectCheck"> Biology</div>
+<div class="row"><input type="checkbox" value="Computer Science" class="subjectCheck"> Computer Science</div>
+<div class="row"><input type="checkbox" value="Informatics Practices" class="subjectCheck"> Informatics Practices</div>
+<div class="row"><input type="checkbox" value="Statistics" class="subjectCheck"> Statistics</div>
+<div class="row"><input type="checkbox" value="Biotechnology" class="subjectCheck"> Biotechnology</div>
+<div class="row"><input type="checkbox" value="Accountancy" class="subjectCheck"> Accountancy</div>
+<div class="row"><input type="checkbox" value="Business Studies" class="subjectCheck"> Business Studies</div>
+<div class="row"><input type="checkbox" value="Economics" class="subjectCheck"> Economics</div>
+<div class="row"><input type="checkbox" value="Entrepreneurship" class="subjectCheck"> Entrepreneurship</div>
+<div class="row"><input type="checkbox" value="Finance" class="subjectCheck"> Finance</div>
+<div class="row"><input type="checkbox" value="Banking" class="subjectCheck"> Banking</div>
+<div class="row"><input type="checkbox" value="History" class="subjectCheck"> History</div>
+<div class="row"><input type="checkbox" value="Geography" class="subjectCheck"> Geography</div>
+<div class="row"><input type="checkbox" value="Political Science" class="subjectCheck"> Political Science</div>
+<div class="row"><input type="checkbox" value="Sociology" class="subjectCheck"> Sociology</div>
+<div class="row"><input type="checkbox" value="Psychology" class="subjectCheck"> Psychology</div>
+<div class="row"><input type="checkbox" value="Philosophy" class="subjectCheck"> Philosophy</div>
+<div class="row"><input type="checkbox" value="Education" class="subjectCheck"> Education</div>
+<div class="row"><input type="checkbox" value="Logic" class="subjectCheck"> Logic</div>
+<div class="row"><input type="checkbox" value="Anthropology" class="subjectCheck"> Anthropology</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherHigherSecondary"> Other Higher Secondary Subject</div>
+<input id="otherHigherSecondary" class="otherSkillInput" placeholder="Write Other Higher Secondary Subject" style="display:none;"></div>
 
-<div class="row">
-<input type="checkbox" value="Biology" class="subjectCheck"> Biology
-</div>
+<div class="skillCategory"><h4>Law</h4>
+<div class="row"><input type="checkbox" value="Constitutional Law" class="subjectCheck"> Constitutional Law</div>
+<div class="row"><input type="checkbox" value="Criminal Law" class="subjectCheck"> Criminal Law</div>
+<div class="row"><input type="checkbox" value="Civil Law" class="subjectCheck"> Civil Law</div>
+<div class="row"><input type="checkbox" value="Corporate Law" class="subjectCheck"> Corporate Law</div>
+<div class="row"><input type="checkbox" value="Legal Studies" class="subjectCheck"> Legal Studies</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherLaw"> Other Law Subject</div>
+<input id="otherLaw" class="otherSkillInput" placeholder="Write Other Law Subject" style="display:none;"></div>
 
-<div class="row">
-<input type="checkbox" value="English" class="subjectCheck"> English
-</div>
+<div class="skillCategory"><h4>Languages</h4>
+<div class="row"><input type="checkbox" value="English" class="subjectCheck"> English</div>
+<div class="row"><input type="checkbox" value="Spoken English" class="subjectCheck"> Spoken English</div>
+<div class="row"><input type="checkbox" value="Academic English" class="subjectCheck"> Academic English</div>
+<div class="row"><input type="checkbox" value="Business English" class="subjectCheck"> Business English</div>
+<div class="row"><input type="checkbox" value="Hindi" class="subjectCheck"> Hindi</div>
+<div class="row"><input type="checkbox" value="Assamese" class="subjectCheck"> Assamese</div>
+<div class="row"><input type="checkbox" value="Sanskrit" class="subjectCheck"> Sanskrit</div>
+<div class="row"><input type="checkbox" value="Bengali" class="subjectCheck"> Bengali</div>
+<div class="row"><input type="checkbox" value="French" class="subjectCheck"> French</div>
+<div class="row"><input type="checkbox" value="German" class="subjectCheck"> German</div>
+<div class="row"><input type="checkbox" value="Spanish" class="subjectCheck"> Spanish</div>
+<div class="row"><input type="checkbox" value="Japanese" class="subjectCheck"> Japanese</div>
+<div class="row"><input type="checkbox" value="Chinese (Mandarin)" class="subjectCheck"> Chinese (Mandarin)</div>
+<div class="row"><input type="checkbox" value="Korean" class="subjectCheck"> Korean</div>
+<div class="row"><input type="checkbox" value="Arabic" class="subjectCheck"> Arabic</div>
+<div class="row"><input type="checkbox" value="Russian" class="subjectCheck"> Russian</div>
+<div class="row"><input type="checkbox" value="Urdu" class="subjectCheck"> Urdu</div>
+<div class="row"><input type="checkbox" value="Sign Language" class="subjectCheck"> Sign Language</div>
+<div class="row"><input type="checkbox" value="Braille Education" class="subjectCheck"> Braille Education</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherLanguages"> Other Language</div>
+<input id="otherLanguages" class="otherSkillInput" placeholder="Write Other Language" style="display:none;"></div>
 
-<div class="row">
-<input type="checkbox" value="Hindi" class="subjectCheck"> Hindi
-</div>
+<div class="skillCategory"><h4>Engineering Entrance</h4>
+<div class="row"><input type="checkbox" value="JEE Main Physics" class="subjectCheck"> JEE Main Physics</div>
+<div class="row"><input type="checkbox" value="JEE Main Chemistry" class="subjectCheck"> JEE Main Chemistry</div>
+<div class="row"><input type="checkbox" value="JEE Main Mathematics" class="subjectCheck"> JEE Main Mathematics</div>
+<div class="row"><input type="checkbox" value="JEE Advanced Physics" class="subjectCheck"> JEE Advanced Physics</div>
+<div class="row"><input type="checkbox" value="JEE Advanced Chemistry" class="subjectCheck"> JEE Advanced Chemistry</div>
+<div class="row"><input type="checkbox" value="JEE Advanced Mathematics" class="subjectCheck"> JEE Advanced Mathematics</div>
+<div class="row"><input type="checkbox" value="State Engineering Entrance Physics" class="subjectCheck"> State Engineering Entrance Physics</div>
+<div class="row"><input type="checkbox" value="State Engineering Entrance Chemistry" class="subjectCheck"> State Engineering Entrance Chemistry</div>
+<div class="row"><input type="checkbox" value="State Engineering Entrance Mathematics" class="subjectCheck"> State Engineering Entrance Mathematics</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherEngineeringEntrance"> Other Engineering Entrance Subject</div>
+<input id="otherEngineeringEntrance" class="otherSkillInput" placeholder="Write Other Engineering Entrance Subject" style="display:none;"></div>
 
-<div class="row">
-<input type="checkbox" value="Sanskrit" class="subjectCheck"> Sanskrit
-</div>
+<div class="skillCategory"><h4>Medical Entrance</h4>
+<div class="row"><input type="checkbox" value="NEET UG Physics" class="subjectCheck"> NEET UG Physics</div>
+<div class="row"><input type="checkbox" value="NEET UG Chemistry" class="subjectCheck"> NEET UG Chemistry</div>
+<div class="row"><input type="checkbox" value="NEET UG Biology" class="subjectCheck"> NEET UG Biology</div>
+<div class="row"><input type="checkbox" value="NEET PG Pre-Clinical Subjects" class="subjectCheck"> NEET PG Pre-Clinical Subjects</div>
+<div class="row"><input type="checkbox" value="NEET PG Para-Clinical Subjects" class="subjectCheck"> NEET PG Para-Clinical Subjects</div>
+<div class="row"><input type="checkbox" value="NEET PG Clinical Subjects" class="subjectCheck"> NEET PG Clinical Subjects</div>
+<div class="row"><input type="checkbox" value="AIIMS Physics" class="subjectCheck"> AIIMS Physics</div>
+<div class="row"><input type="checkbox" value="AIIMS Chemistry" class="subjectCheck"> AIIMS Chemistry</div>
+<div class="row"><input type="checkbox" value="AIIMS Biology" class="subjectCheck"> AIIMS Biology</div>
+<div class="row"><input type="checkbox" value="AIIMS General Knowledge" class="subjectCheck"> AIIMS General Knowledge</div>
+<div class="row"><input type="checkbox" value="AIIMS Aptitude & Logical Reasoning" class="subjectCheck"> AIIMS Aptitude & Logical Reasoning</div>
+<div class="row"><input type="checkbox" value="Nursing Entrance Nursing Sciences" class="subjectCheck"> Nursing Entrance Nursing Sciences</div>
+<div class="row"><input type="checkbox" value="Nursing Entrance Science Subjects" class="subjectCheck"> Nursing Entrance Science Subjects</div>
+<div class="row"><input type="checkbox" value="Nursing Entrance General Aptitude" class="subjectCheck"> Nursing Entrance General Aptitude</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherMedicalEntrance"> Other Medical Entrance Subject</div>
+<input id="otherMedicalEntrance" class="otherSkillInput" placeholder="Write Other Medical Entrance Subject" style="display:none;"></div>
 
-<div class="row">
-<input type="checkbox" value="Assamese" class="subjectCheck"> Assamese
-</div>
+<div class="skillCategory"><h4>Competitive Exam Preparation</h4>
+<div class="row"><input type="checkbox" value="UPSC" class="subjectCheck"> UPSC</div>
+<div class="row"><input type="checkbox" value="APSC" class="subjectCheck"> APSC</div>
+<div class="row"><input type="checkbox" value="State PSC Exams" class="subjectCheck"> State PSC Exams</div>
+<div class="row"><input type="checkbox" value="IBPS PO" class="subjectCheck"> IBPS PO</div>
+<div class="row"><input type="checkbox" value="IBPS Clerk" class="subjectCheck"> IBPS Clerk</div>
+<div class="row"><input type="checkbox" value="SBI PO" class="subjectCheck"> SBI PO</div>
+<div class="row"><input type="checkbox" value="SBI Clerk" class="subjectCheck"> SBI Clerk</div>
+<div class="row"><input type="checkbox" value="RBI Exams" class="subjectCheck"> RBI Exams</div>
+<div class="row"><input type="checkbox" value="Insurance Exams" class="subjectCheck"> Insurance Exams</div>
+<div class="row"><input type="checkbox" value="SSC CGL" class="subjectCheck"> SSC CGL</div>
+<div class="row"><input type="checkbox" value="SSC CHSL" class="subjectCheck"> SSC CHSL</div>
+<div class="row"><input type="checkbox" value="SSC MTS" class="subjectCheck"> SSC MTS</div>
+<div class="row"><input type="checkbox" value="Railway Exams (RRB)" class="subjectCheck"> Railway Exams (RRB)</div>
+<div class="row"><input type="checkbox" value="Postal Exams" class="subjectCheck"> Postal Exams</div>
+<div class="row"><input type="checkbox" value="NDA" class="subjectCheck"> NDA</div>
+<div class="row"><input type="checkbox" value="CDS" class="subjectCheck"> CDS</div>
+<div class="row"><input type="checkbox" value="AFCAT" class="subjectCheck"> AFCAT</div>
+<div class="row"><input type="checkbox" value="CAPF" class="subjectCheck"> CAPF</div>
+<div class="row"><input type="checkbox" value="Agniveer Recruitment" class="subjectCheck"> Agniveer Recruitment</div>
+<div class="row"><input type="checkbox" value="CTET" class="subjectCheck"> CTET</div>
+<div class="row"><input type="checkbox" value="TET" class="subjectCheck"> TET</div>
+<div class="row"><input type="checkbox" value="NET" class="subjectCheck"> NET</div>
+<div class="row"><input type="checkbox" value="JRF" class="subjectCheck"> JRF</div>
+<div class="row"><input type="checkbox" value="B.Ed Entrance" class="subjectCheck"> B.Ed Entrance</div>
+<div class="row"><input type="checkbox" value="D.El.Ed Entrance" class="subjectCheck"> D.El.Ed Entrance</div>
+<div class="row"><input type="checkbox" value="CAT" class="subjectCheck"> CAT</div>
+<div class="row"><input type="checkbox" value="XAT" class="subjectCheck"> XAT</div>
+<div class="row"><input type="checkbox" value="MAT" class="subjectCheck"> MAT</div>
+<div class="row"><input type="checkbox" value="CMAT" class="subjectCheck"> CMAT</div>
+<div class="row"><input type="checkbox" value="CA Foundation" class="subjectCheck"> CA Foundation</div>
+<div class="row"><input type="checkbox" value="CA Intermediate" class="subjectCheck"> CA Intermediate</div>
+<div class="row"><input type="checkbox" value="CS Exams" class="subjectCheck"> CS Exams</div>
+<div class="row"><input type="checkbox" value="CMA Exams" class="subjectCheck"> CMA Exams</div>
+<div class="row"><input type="checkbox" value="Olympiads" class="subjectCheck"> Olympiads</div>
+<div class="row"><input type="checkbox" value="NTSE" class="subjectCheck"> NTSE</div>
+<div class="row"><input type="checkbox" value="KVPY" class="subjectCheck"> KVPY</div>
+<div class="row"><input type="checkbox" value="Scholarship Examinations" class="subjectCheck"> Scholarship Examinations</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherCompetitiveExam"> Other Competitive Exam</div>
+<input id="otherCompetitiveExam" class="otherSkillInput" placeholder="Write Other Competitive Exam" style="display:none;"></div>
 
-<div class="row">
-<input type="checkbox" value="Science" class="subjectCheck"> Science (General)
-</div>
+<div class="skillCategory"><h4>Career Guidance</h4>
+<div class="row"><input type="checkbox" value="Career Counselling" class="subjectCheck"> Career Counselling</div>
+<div class="row"><input type="checkbox" value="Stream Selection Guidance" class="subjectCheck"> Stream Selection Guidance</div>
+<div class="row"><input type="checkbox" value="College Admission Guidance" class="subjectCheck"> College Admission Guidance</div>
+<div class="row"><input type="checkbox" value="Scholarship Guidance" class="subjectCheck"> Scholarship Guidance</div>
+<div class="row"><input type="checkbox" value="Study Abroad Guidance" class="subjectCheck"> Study Abroad Guidance</div>
+<div class="row"><input type="checkbox" value="Career Planning" class="subjectCheck"> Career Planning</div>
+<div class="row"><input type="checkbox" value="Skill Assessment" class="subjectCheck"> Skill Assessment</div>
+<div class="row"><input type="checkbox" value="Entrepreneurship Guidance" class="subjectCheck"> Entrepreneurship Guidance</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherCareerGuidance"> Other Career Guidance</div>
+<input id="otherCareerGuidance" class="otherSkillInput" placeholder="Write Other Career Guidance" style="display:none;"></div>
 
-<div class="row">
-<input type="checkbox" value="Social Science" class="subjectCheck"> Social Science
-</div>
-
-<div class="row">
-<input type="checkbox" value="Computer Science" class="subjectCheck"> Computer Science
-</div>
-
-<div class="row">
-<input type="checkbox" value="Information Technology" class="subjectCheck"> Information Technology
-</div>
-
-<div class="row">
-<input type="checkbox" value="Economics" class="subjectCheck"> Economics
-</div>
-
-<div class="row">
-<input type="checkbox" value="Accountancy" class="subjectCheck"> Accountancy
-</div>
-
-<div class="row">
-<input type="checkbox" value="Business Studies" class="subjectCheck"> Business Studies
-</div>
-
-<div class="row">
-<input type="checkbox" value="History" class="subjectCheck"> History
-</div>
-
-<div class="row">
-<input type="checkbox" value="Geography" class="subjectCheck"> Geography
-</div>
-
-<div class="row">
-<input type="checkbox" value="Political Science" class="subjectCheck"> Political Science
-</div>
-
-<div class="row">
-<input type="checkbox" value="EVS" class="subjectCheck"> Environmental Science (EVS)
-</div>
-
-<div class="row">
-<input type="checkbox" id="otherCheck"> Other
-</div>
-
-<input
-id="otherSubject"
-placeholder="Write Other Subject"
-style="display:none;">
-
-<p
-id="subjectError"
-style="color:red;display:none;">
-
-Select at least one subject
-
+<div class="skillCategory"><h4>Government Job Preparation</h4>
+<div class="row"><input type="checkbox" value="SSC Preparation" class="subjectCheck"> SSC Preparation</div>
+<div class="row"><input type="checkbox" value="UPSC Preparation" class="subjectCheck"> UPSC Preparation</div>
+<div class="row"><input type="checkbox" value="APSC Preparation" class="subjectCheck"> APSC Preparation</div>
+<div class="row"><input type="checkbox" value="Banking Exam Preparation" class="subjectCheck"> Banking Exam Preparation</div>
+<div class="row"><input type="checkbox" value="Railway Exam Preparation" class="subjectCheck"> Railway Exam Preparation</div>
+<div class="row"><input type="checkbox" value="Defence Exam Preparation" class="subjectCheck"> Defence Exam Preparation</div>
+<div class="row"><input type="checkbox" value="Police Recruitment Preparation" class="subjectCheck"> Police Recruitment Preparation</div>
+<div class="row"><input type="checkbox" value="Forest Service Preparation" class="subjectCheck"> Forest Service Preparation</div>
+<div class="row"><input type="checkbox" value="Judicial Service Preparation" class="subjectCheck"> Judicial Service Preparation</div>
+<div class="row"><input type="checkbox" value="Insurance Exam Preparation" class="subjectCheck"> Insurance Exam Preparation</div>
+<div class="row"><input type="checkbox" value="Current Affairs & General Studies" class="subjectCheck"> Current Affairs & General Studies</div>
+<div class="row"><input type="checkbox" value="Government Job Interview Training" class="subjectCheck"> Government Job Interview Training</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherGovernmentJob"> Other Government Job Preparation</div>
+<input id="otherGovernmentJob" class="otherSkillInput" placeholder="Write Other Government Job Preparation" style="display:none;"></div>
+<p id="subjectError" style="color:red;display:none;">
+Please select at least one academic subject or career option
 </p>
+</div>
 
 </div>
 
 <input
 id="class"
-placeholder="Class UKG,LKG,1,2,3,4.5.6.7,9,9,10,11,12,JEE,NEET"
+placeholder="Class / Preparation For: UKG, LKG, Class 1-12, JEE, NEET, UPSC, Banking, etc."
 required>
 
-<label>Board</label>
+<label>Board / Type of Exam</label>
+<input id="board" placeholder="CBSE, SEBA, ISC, ICSE, IB, Cambridge, JEE, NEET, UPSC, Banking, etc.">
 
-<input
-id="board"
-placeholder="CBSE, SEBA, ISC, ICSE, IB, Cambridge">
+<h3>Academic Teaching Modes</h3>
 
-<h3>Teaching Modes</h3>
+<p style="font-size:13px;line-height:1.5;margin-bottom:6px;">
+Examples:
+</p>
+
+<div class="skillExamples">
+<span>Workshop / Group Session</span>
+<span>Super Group Coaching</span>
+<span>Individual Coaching</span>
+</div>
+
+<button type="button" id="toggleModes" class="secondaryButton">
+More Training Modes
+</button>
+
+<div id="selectedModes" class="selectedSummary">
+No training mode selected yet. Click More to open the full chart.
+</div>
+
+<div id="modesPanel" class="modesPanel">
 
 <div class="modeBox">
-
-
-
-
 <div class="row">
-<input type="checkbox"
-       class="mode"
-       value="Group Coaching"
-       onchange="toggleFee('groupFeeBox')">
+<input type="checkbox" class="mode" value="Group Coaching" onchange="toggleFee('groupFeeBox')">
 Group Coaching
 </div>
 
@@ -394,21 +572,14 @@ Group Coaching
 <input id="groupFee" placeholder="Enter Group Coaching Fee">
 </div>
 
-
 <div class="row">
-<input type="checkbox"
-       class="mode"
-       value="Super Group Coaching"
-       onchange="toggleFee('superGroupFeeBox')">
+<input type="checkbox" class="mode" value="Super Group Coaching" onchange="toggleFee('superGroupFeeBox')">
 Super Group Coaching
 </div>
 
 <div id="superGroupFeeBox" class="modeFee">
 <input id="superGroupFee" placeholder="Enter Super Group Coaching Fee">
 </div>
-
-
-
 
 <div class="row">
 <input type="checkbox" class="mode" value="Individual Coaching" onchange="toggleFee('individualFeeBox')">
@@ -428,7 +599,6 @@ Home Tuition
 <input id="homeFee" placeholder="Enter Home Tuition Fee">
 </div>
 
-
 <div class="row">
 <input type="checkbox" class="mode" value="Online" onchange="toggleFee('onlineFeeBox')">
 Online
@@ -438,179 +608,118 @@ Online
 <input id="onlineFee" placeholder="Enter Online Fee">
 </div>
 
+<div class="row">
+<input type="checkbox" id="otherModeCheck" onchange="toggleFee('otherModeBox')">
+Other Training Mode
+</div>
+
+<div id="otherModeBox" class="modeFee">
+<input id="otherMode" placeholder="Write Other Training Mode">
+<input id="otherModeFee" placeholder="Enter Other Training Mode Fee">
+</div>
+</div>
+
 </div>
 
 <h3>Logo</h3>
 
-<input
-type="file"
-id="logo"
-accept="image/*"
-required>
+<input type="file" id="logo" accept="image/*" required>
 
 <div id="logoPreview" class="preview"></div>
 
 <h3>ID Proof</h3>
 
+<div class="selectedSummary">
+GURULINK assures to never use or make user ID proof public under any circumstances. This is for verification purposes only.
+</div>
+
 <select id="idType" required>
-
 <option value="">Select</option>
-
 <option value="Owner PAN">Owner PAN</option>
 <option value="Owner Aadhaar">Owner Aadhaar</option>
-<option value="GST Certificate">UDYAM Aadhar</option>
 <option value="Trading License">Trading License</option>
 <option value="GST Certificate">GST Certificate</option>
-
+<option value="UDYAM Aadhaar">UDYAM Aadhaar</option>
 <option value="Electricity Bill">Electricity Bill</option>
 <option value="NGO Certificate">NGO Certificate</option>
-
 <option value="Other">Other</option>
-
 </select>
 
-<!-- ✅ MUST BE OUTSIDE SELECT -->
 <input
 id="otherIdProof"
 placeholder="Specify Other ID Proof"
 style="display:none; margin-top:10px;">
 
-<input
-type="file"
-id="idUpload"
-accept="image/*"
-required>
+<input type="file" id="idUpload" accept="image/*" required>
 
 <div id="idPreview" class="preview"></div>
 
 <h3>Gallery</h3>
 
-<input
-type="file"
-id="gallery"
-multiple
-accept="image/*">
+<input type="file" id="gallery" multiple accept="image/*">
 
 <div id="galleryPreview" class="preview"></div>
 
+<textarea id="description" placeholder="About Institution"></textarea>
 
-
-
-
-
-
-
-
-<!-- KEEP EVERYTHING SAME ABOVE -->
-
-<textarea
-id="description"
-placeholder="About Institution"></textarea>
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ✅ DECLARATION START -->
 <div style="margin-top:15px;padding:10px;border:1px solid #ddd;border-radius:10px;background:#fafafa;">
-
 <p style="font-size:12px;line-height:1.5;margin-bottom:10px;">
-
 I hereby declare that all the information provided by me in this form is true and correct to the best of my knowledge and belief. I understand that if any information is found to be false or incorrect, my application may be rejected or necessary action may be taken against me. I also agree to follow all the rules, regulations, and responsibilities assigned by the GURULINK, powered by G10 Group.
-
 </p>
 
 <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-
 <input
 type="checkbox"
 id="declaration"
 required
 style="width:auto;margin:0;">
-
-<span style="font-size:13px;">
-I Agree
-</span>
-
+<span style="font-size:13px;">I Agree</span>
 </label>
-
 </div>
-<!-- ✅ DECLARATION END -->
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<button type="submit">
-
-Continue To Payment
-
-</button>
+<button type="submit">Continue To Payment</button>
 
 </form>
-
 </div>
 
 <script>
-
 function toggleFee(id){
-
 const box=document.getElementById(id);
-
-box.style.display=
-box.style.display==="block"
-?
-"none"
-:
-"block";
-
+box.style.display=box.style.display==="block" ? "none" : "block";
 }
 
+function updateSelectedSkills(){
+const selected = Array.from(document.querySelectorAll(".subjectCheck:checked")).map(item=>item.value);
+
+document.querySelectorAll(".otherSkillCheck:checked").forEach(item=>{
+const input = document.getElementById(item.dataset.target);
+selected.push(input.value.trim() || item.parentElement.innerText.trim());
+});
+
+document.getElementById("selectedSkills").innerText =
+selected.length ? "Selected: " + selected.join(", ") : "No academic subject or career option selected yet. Click More to open the full chart.";
+}
+
+function updateSelectedModes(){
+const selected = Array.from(document.querySelectorAll(".mode:checked")).map(item=>item.value);
+const otherModeCheck = document.getElementById("otherModeCheck");
+const otherMode = document.getElementById("otherMode").value.trim();
+
+if(otherModeCheck.checked){
+selected.push(otherMode || "Other Training Mode");
+}
+
+document.getElementById("selectedModes").innerText =
+selected.length ? "Selected: " + selected.join(", ") : "No training mode selected yet. Click More to open the full chart.";
+}
 </script>
 
 <script type="module">
-
-import {
-initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
-import {
-getDatabase,
-ref,
-set
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-import {
-getAuth,
-createUserWithEmailAndPassword
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
-
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -618,214 +727,121 @@ projectId:"gurulink-59cc7",
 storageBucket:"gurulink-59cc7.appspot.com",
 messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getDatabase(app);
-
 const auth = getAuth(app);
-
 const form = document.getElementById("form");
+const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
 
-
-
-
-/* 🔥 ID PROOF "OTHER" HANDLER */
 document.getElementById("idType").addEventListener("change",(e)=>{
-
 document.getElementById("otherIdProof").style.display =
 e.target.value === "Other" ? "block" : "none";
-
 });
 
-
-
-
-const API_KEY =
-"31f729ff855eb2e42c00ee508a8647ea";
-
-/* SUBJECT OTHER */
-
-document
-.getElementById("otherCheck")
-.addEventListener("change",(e)=>{
-
-document.getElementById(
-"otherSubject"
-).style.display =
-
-e.target.checked
-?
-"block"
-:
-"none";
-
+document.getElementById("toggleSkills").addEventListener("click",()=>{
+const panel = document.getElementById("skillsPanel");
+const button = document.getElementById("toggleSkills");
+panel.classList.toggle("open");
+button.innerText = panel.classList.contains("open")
+? "Hide Academics & Career Chart"
+: "More Academics & Career Options";
 });
 
-/* IMAGE UPLOAD */
+document.getElementById("toggleModes").addEventListener("click",()=>{
+const panel = document.getElementById("modesPanel");
+const button = document.getElementById("toggleModes");
+panel.classList.toggle("open");
+button.innerText = panel.classList.contains("open")
+? "Hide Training Modes Chart"
+: "More Training Modes";
+});
+
+document.querySelectorAll(".subjectCheck").forEach(item=>{
+item.addEventListener("change", updateSelectedSkills);
+});
+
+document.querySelectorAll(".mode").forEach(item=>{
+item.addEventListener("change", updateSelectedModes);
+});
+
+document.getElementById("otherModeCheck").addEventListener("change", updateSelectedModes);
+document.getElementById("otherMode").addEventListener("input", updateSelectedModes);
+
+document.querySelectorAll(".otherSkillCheck").forEach(item=>{
+item.addEventListener("change",(e)=>{
+const input = document.getElementById(e.target.dataset.target);
+input.style.display = e.target.checked ? "block" : "none";
+if(!e.target.checked){
+input.value = "";
+}
+updateSelectedSkills();
+});
+});
+
+document.querySelectorAll(".otherSkillInput").forEach(item=>{
+item.addEventListener("input", updateSelectedSkills);
+});
 
 async function upload(file){
-
 let fd = new FormData();
-
 fd.append("image",file);
 
-let res = await fetch(
-
-`https://api.imgbb.com/1/upload?key=${API_KEY}`,
-
-{
+let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`,{
 method:"POST",
 body:fd
-}
-
-);
+});
 
 let data = await res.json();
-
 return data.data.url;
-
 }
 
-/* PREVIEW */
-
 function preview(input, box){
-
 input.addEventListener("change",()=>{
-
 box.innerHTML="";
 
 if(input.files[0]){
-
-let img =
-document.createElement("img");
-
-img.src =
-URL.createObjectURL(
-input.files[0]
-);
-
+let img = document.createElement("img");
+img.src = URL.createObjectURL(input.files[0]);
 box.appendChild(img);
-
 }
-
 });
-
 }
 
-preview(
-document.getElementById("logo"),
-document.getElementById("logoPreview")
-);
-
-preview(
-document.getElementById("idUpload"),
-document.getElementById("idPreview")
-);
+preview(document.getElementById("logo"), document.getElementById("logoPreview"));
+preview(document.getElementById("idUpload"), document.getElementById("idPreview"));
 
 let galleryFiles=[];
 
-document
-.getElementById("gallery")
-.addEventListener("change",function(){
-
-galleryFiles =
-Array.from(this.files);
-
-document.getElementById(
-"galleryPreview"
-).innerHTML =
-
-galleryFiles.map(f=>
-
-`<img src="${URL.createObjectURL(f)}">`
-
-).join("");
-
+document.getElementById("gallery").addEventListener("change",function(){
+galleryFiles = Array.from(this.files);
+document.getElementById("galleryPreview").innerHTML =
+galleryFiles.map(f=>`<img src="${URL.createObjectURL(f)}">`).join("");
 });
 
-/* SUBMIT */
-
-form.addEventListener(
-"submit",
-async (e)=>{
-
+form.addEventListener("submit", async (e)=>{
 e.preventDefault();
 
-const submitBtn =
-form.querySelector("button");
-
+const submitBtn = form.querySelector("button[type=submit]");
 submitBtn.disabled=true;
 submitBtn.innerText="Processing...";
 
-
-
-
-
-
-
-
-
-
-
-
-
 try{
+let checked = document.querySelectorAll(".subjectCheck:checked").length;
+let otherChecked = document.querySelectorAll(".otherSkillCheck:checked").length;
 
-let checked =
-document.querySelectorAll(
-".subjectCheck:checked"
-).length;
-
-if(
-checked===0 &&
-!document.getElementById("otherCheck").checked
-){
-
-document.getElementById(
-"subjectError"
-).style.display="block";
-
+if(checked===0 && otherChecked===0){
+document.getElementById("subjectError").style.display="block";
 submitBtn.disabled=false;
-submitBtn.innerText=
-"Continue To Payment";
-
+submitBtn.innerText="Continue To Payment";
 return;
-
 }
 
+document.getElementById("subjectError").style.display="none";
 
-
-
-
-
-
-
-
-document.getElementById(
-"subjectError"
-).style.display="none";
-
-const email =
-document.getElementById("email")
-.value
-.trim()
-.toLowerCase();
-
-const password =
-document.getElementById("password")
-.value;
-
-
-
-
-
-
-
-
-
+const email = document.getElementById("email").value.trim().toLowerCase();
+const password = document.getElementById("password").value;
 
 if(!document.getElementById("declaration").checked){
 alert("Please accept the declaration before submitting.");
@@ -834,299 +850,134 @@ submitBtn.innerText="Continue To Payment";
 return;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-/* CREATE AUTH */
-
-const userCred =
-
-await createUserWithEmailAndPassword(
-auth,
-email,
-password
-);
-
-const uid =
-userCred.user.uid;
+const userCred = await createUserWithEmailAndPassword(auth,email,password);
+const uid = userCred.user.uid;
 await auth.currentUser.getIdToken(true);
 
-/* LOCAL STORAGE */
-
-localStorage.setItem(
-"uid",
-uid
-);
-
-localStorage.setItem(
-"profileId",
-uid
-);
-
-localStorage.setItem(
-"role",
-"institution"
-);
-
-/* IMAGE UPLOAD */
+localStorage.setItem("uid",uid);
+localStorage.setItem("profileId",uid);
+localStorage.setItem("role","institution");
 
 let logoUrl="";
-
-if(
-document.getElementById("logo").files[0]
-){
-
-logoUrl = await upload(
-document.getElementById("logo").files[0]
-);
-
+if(document.getElementById("logo").files[0]){
+logoUrl = await upload(document.getElementById("logo").files[0]);
 }
 
 let idProofUrl="";
-
-if(
-document.getElementById("idUpload").files[0]
-){
-
-idProofUrl = await upload(
-document.getElementById("idUpload").files[0]
-);
-
+if(document.getElementById("idUpload").files[0]){
+idProofUrl = await upload(document.getElementById("idUpload").files[0]);
 }
 
 let gallery=[];
-
 for(let file of galleryFiles){
-
-gallery.push(
-await upload(file)
-);
-
+gallery.push(await upload(file));
 }
 
-/* SUBJECTS */
-
 let subjects=[];
-
-document
-.querySelectorAll(
-".subjectCheck:checked"
-)
-.forEach(item=>{
-
+document.querySelectorAll(".subjectCheck:checked").forEach(item=>{
 subjects.push(item.value);
+});
 
+document.querySelectorAll(".otherSkillCheck:checked").forEach(item=>{
+const input = document.getElementById(item.dataset.target);
+if(input.value.trim()!==""){
+subjects.push(input.value.trim());
+}
+});
+
+let teachingModes=[];
+document.querySelectorAll(".mode:checked").forEach(item=>{
+teachingModes.push(item.value);
 });
 
 if(
-document.getElementById("otherCheck").checked &&
-document.getElementById("otherSubject").value.trim()!==""
+document.getElementById("otherModeCheck").checked &&
+document.getElementById("otherMode").value.trim()!==""
 ){
-
-subjects.push(
-document.getElementById("otherSubject").value
-);
-
+teachingModes.push(document.getElementById("otherMode").value.trim());
 }
 
-/* MODES */
+const selectedIdType = document.getElementById("idType").value;
+const idTypeValue =
+selectedIdType === "Other" && document.getElementById("otherIdProof").value.trim()
+? document.getElementById("otherIdProof").value.trim()
+: selectedIdType;
 
-let teachingModes=[];
-
-document
-.querySelectorAll(".mode:checked")
-.forEach(item=>{
-
-teachingModes.push(
-item.value
-);
-
+await set(ref(db,"institutions/"+uid),{
+uid:uid,
+name:document.getElementById("name").value,
+ownerName:document.getElementById("ownerName").value,
+establishedDate:document.getElementById("establishedDate").value,
+phone:document.getElementById("phone").value,
+alternatePhone:document.getElementById("alternatePhone").value,
+email:email,
+website:document.getElementById("website").value,
+address:document.getElementById("address").value,
+area:document.getElementById("area").value,
+pinCode:document.getElementById("pinCode").value,
+mapUrl:document.getElementById("mapUrl").value.trim(),
+mapLink:document.getElementById("mapLink").value.trim(),
+subjects:subjects,
+class:document.getElementById("class").value,
+board:document.getElementById("board").value,
+teachingModes:teachingModes,
+individualFee:document.getElementById("individualFee").value,
+homeFee:document.getElementById("homeFee").value,
+groupFee:document.getElementById("groupFee").value,
+superGroupFee:document.getElementById("superGroupFee").value,
+onlineFee:document.getElementById("onlineFee").value,
+otherMode:document.getElementById("otherMode").value.trim(),
+otherModeFee:document.getElementById("otherModeFee").value,
+logo:logoUrl,
+gallery:gallery,
+idType:idTypeValue,
+idProof:idProofUrl,
+description:document.getElementById("description").value,
+category:"academic",
+categoryName:"Academics, Education & Career Development",
+role:"institution",
+status:"pending",
+paymentStatus:"pending",
+createdAt:Date.now(),
+updatedAt:Date.now()
 });
 
-/* SAVE INSTITUTION */
-
-await set(
-
-ref(db,"institutions/"+uid),
-
-{
-
-uid:uid,
-
-name:
-document.getElementById("name").value,
-
-ownerName:
-document.getElementById("ownerName").value,
-
-establishedDate:
-document.getElementById("establishedDate").value,
-
-phone:
-document.getElementById("phone").value,
-
-alternatePhone:
-document.getElementById("alternatePhone").value,
-
-email:email,
-
-website:
-document.getElementById("website").value,
-
-address:
-document.getElementById("address").value,
-
-area:
-document.getElementById("area").value,
-
-
-
-
-pinCode:
-document.getElementById("pinCode").value,
-
-
-
-
-
-
-mapUrl:
-document.getElementById("mapUrl").value.trim(),
-
-mapLink:
-document.getElementById("mapLink").value.trim(),
-
-
-
-
-
-
-
-subjects:subjects,
-
-class:
-document.getElementById("class").value,
-
-board:
-document.getElementById("board").value,
-
-teachingModes:
-teachingModes,
-
-individualFee:
-document.getElementById("individualFee").value,
-
-homeFee:
-document.getElementById("homeFee").value,
-
-groupFee:
-document.getElementById("groupFee").value,
-
-superGroupFee:
-document.getElementById("superGroupFee").value,
-
-onlineFee:
-document.getElementById("onlineFee").value,
-
-logo:logoUrl,
-
-gallery:gallery,
-
-idType:
-document.getElementById("idType").value,
-
-idProof:idProofUrl,
-
-description:
-document.getElementById("description").value,
-
-category:"academic",
-
-role:"institution",
-
-status:"pending",
-
-createdAt:Date.now()
-
-}
-
-);
-
-/* USER ROLE */
-
-await set(
-ref(db,"users/"+uid),
-{
+await set(ref(db,"users/"+uid),{
 uid:uid,
 name:document.getElementById("name").value,
 email:email,
 role:"institution",
 profileId:uid,
 createdAt:Date.now()
-}
-);
+});
 
-localStorage.setItem(
-"institutionId",
-uid
-);
+localStorage.setItem("institutionId",uid);
 
-alert(
-"Registration Successful, ⚠ Do not refresh or go back. Complete payment to finish registration."
-);
+alert("Registration Successful. Do not refresh or go back. Complete payment to finish registration.");
 
-window.location.href =
-"payment.html?type=institution&id="+uid;
-
+window.location.href = "payment.html?type=institution&id="+uid;
 }
 catch(err){
-
 console.log(err);
 
-if(
-err.code==="auth/email-already-in-use"
-){
-
-alert(
-"This email already exists.\nPlease login instead."
-);
-
+if(err.code==="auth/email-already-in-use"){
+alert("This email already exists.\nPlease login instead.");
 }
-else if(
-err.code==="auth/weak-password"
-){
-
-alert(
-"Password must be minimum 6 characters."
-);
-
+else if(err.code==="auth/weak-password"){
+alert("Password must be minimum 6 characters.");
 }
 else{
-
 alert(err.message);
-
 }
 
 submitBtn.disabled=false;
-
-submitBtn.innerText=
-"Continue To Payment";
-
+submitBtn.innerText="Continue To Payment";
 }
-
-}
-);
-
+});
 </script>
 
 </body>
 </html>
+
+
+
