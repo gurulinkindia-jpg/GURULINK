@@ -2,186 +2,271 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>GURULINK Helpdesk Pro</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GURULINK Helpdesk</title>
 
 <style>
 *{
-margin:0; padding:0; box-sizing:border-box; font-family:Arial,sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
 }
 
-body{ background:#eef2f7; padding:10px;
+body{
+background:#eef2f7;
+padding:12px;
 }
 
-.window{width:100%; max-width:700px; margin:auto; background:#fff; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,.15); overflow:hidden;
+.window{
+width:100%;
+max-width:900px;
+margin:auto;
+background:#fff;
+border-radius:15px;
+box-shadow:0 5px 20px rgba(0,0,0,.15);
+overflow:hidden;
 }
 
-.header{ background:#1565c0; color:#fff; padding:12px; display:flex; justify-content:space-between; align-items:center; gap:10px;
+.header{
+background:#00897b;
+color:#fff;
+padding:16px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
 }
 
-.header h3{ font-size:18px; margin:0; flex:1;
+.header h3{
+font-size:20px;
+margin:0;
 }
 
-.closeBtn{ background:red; border:none; color:#fff; width:40px; height:40px; border-radius:8px; font-size:18px; cursor:pointer; flex-shrink:0;
+.closeBtn{
+background:#fff;
+border:none;
+color:#00897b;
+min-width:42px;
+height:38px;
+border-radius:8px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
 }
 
-.chat height:65vh; overflow-y:auto; padding:12px; background:#f9f9f9;
+.chat{
+height:68vh;
+overflow-y:auto;
+padding:14px;
+background:#f9f9f9;
 }
 
-.msg{ padding:12px; margin:8px 0; border-radius:12px; max-width:90%; word-wrap:break-word; line-height:1.5;
+.msg{
+padding:12px;
+margin:8px 0;
+border-radius:12px;
+max-width:95%;
+word-wrap:break-word;
+line-height:1.55;
 }
 
-.user{ background:#d1e7ff; margin-left:auto;
+.user{
+background:#d1e7ff;
+margin-left:auto;
 }
 
-.bot{ background:#fff; border:1px solid #ddd;
+.bot{
+background:#fff;
+border:1px solid #ddd;
 }
 
-.statusBox{ background:#fff3cd; padding:12px; border-radius:10px; border:1px solid #ffeeba; margin-bottom:15px;
+.statusBox,.faqPanel{
+background:#fff3cd;
+padding:12px;
+border-radius:10px;
+border:1px solid #ffeeba;
+margin:12px 0;
 }
 
-.statusBox button{ width:100%; margin-top:8px; margin-left:0;
+.quickGrid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:8px;
+margin-top:10px;
 }
 
-input, select, textarea{ width:100%; padding:12px; border:1px solid #ccc; border-radius:8px; font-size:16px; margin-bottom:10px; outline:none;
+input,select,textarea{
+width:100%;
+padding:12px;
+border:1px solid #ccc;
+border-radius:8px;
+font-size:15px;
+margin-bottom:10px;
+outline:none;
 }
 
-input:focus, select:focus, textarea:focus{ border-color:#1565c0;
+input:focus,select:focus,textarea:focus{
+border-color:#00897b;
 }
 
-button{ padding:12px 15px; border:none; border-radius:8px; cursor:pointer; font-size:15px;
+button{
+padding:11px 14px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-size:14px;
 }
 
-.send{ background:#1565c0; color:#fff;
+.send,.quickGrid button{
+background:#00897b;
+color:#fff;
 }
 
-.ticketBtn{ background:#ff9800; color:#fff; width:100%; margin-top:10px;
+.ticketBtn{
+background:#ff9800;
+color:#fff;
+width:100%;
+margin-top:10px;
 }
 
-/* Category Buttons */
-
-#catBox{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px; margin-top:10px;
+.ghostBtn{
+background:#263238;
+color:#fff;
 }
 
-#catBox button{ width:100%; background:#1565c0; color:white; padding:12px; margin:0;
+.faqItem{
+background:#fff;
+border:1px solid #ddd;
+border-radius:10px;
+margin:8px 0;
+overflow:hidden;
 }
 
-/* Chat Input */
-
-.inputBox{ position:relative; padding:10px; border-top:1px solid #ddd; background:white; display:flex; gap:8px; align-items:center;
+.faqItem summary{
+cursor:pointer;
+font-weight:bold;
+padding:12px;
+color:#1f2933;
 }
 
-.inputBox input{ margin:0;
+.faqItem div{
+padding:0 12px 12px;
+color:#333;
+line-height:1.55;
 }
 
-.inputBox .send{ white-space:nowrap;
+.inputBox{
+position:relative;
+padding:10px;
+border-top:1px solid #ddd;
+background:white;
+display:flex;
+gap:8px;
+align-items:center;
 }
 
-/* Suggestions */
-
-.suggestions{ position:absolute; left:10px; right:10px; bottom:60px; background:white; border:1px solid #ccc; border-radius:8px; display:none; flex-direction:column; max-height:200px; overflow-y:auto; z-index:100; box-shadow:0 4px 10px rgba(0,0,0,.15);
+.inputBox input{
+margin:0;
 }
 
-.suggestions div{ padding:12px; cursor:pointer; border-bottom:1px solid #eee;
+.suggestions{
+position:absolute;
+left:10px;
+right:10px;
+bottom:60px;
+background:white;
+border:1px solid #ccc;
+border-radius:8px;
+display:none;
+flex-direction:column;
+max-height:220px;
+overflow-y:auto;
+z-index:100;
+box-shadow:0 4px 10px rgba(0,0,0,.15);
 }
 
-.suggestions div:last-child{ border-bottom:none;
+.suggestions div{
+padding:12px;
+cursor:pointer;
+border-bottom:1px solid #eee;
 }
 
-.suggestions div:hover{ background:#f5f5f5;
+.suggestions div:hover{
+background:#f5f5f5;
 }
-
-/* Ticket Form Buttons */
-
-.msg button{ margin-top:8px; margin-right:6px;
-}
-
-/* Mobile */
 
 @media(max-width:600px){
-
-body{ padding:5px;
+body{
+padding:5px;
 }
 
-.window{ border-radius:0; height:100vh; max-width:none;
+.window{
+border-radius:0;
+height:100vh;
 }
 
-.chat{ height:calc(100vh - 180px);
+.chat{
+height:calc(100vh - 150px);
 }
 
-.header h3{ font-size:16px;
+.header h3{
+font-size:16px;
 }
 
-.inputBox{ flex-direction:column;
+.inputBox{
+flex-direction:column;
 }
 
-.inputBox input{ width:100%;
+.inputBox input,.inputBox .send{
+width:100%;
 }
-
-.inputBox .send{ width:100%; margin:0;
 }
-
-#catBox{ grid-template-columns:1fr;
-}
-
-.msg{ max-width:100%;
-}
-
-.closeBtn{ width:36px; height:36px;
-}
-} 
-
 </style>
 </head>
 
 <body>
-
 <div class="window">
-
 <div class="header">
-<h3>GURULINK HELP DESK</h3>
-<button class="closeBtn" onclick="closeHelpdesk()">✖</button>
+<h3>GURULINK Helpdesk</h3>
+<button class="closeBtn" onclick="closeHelpdesk()">X</button>
 </div>
 
 <div class="chat" id="chatBox">
-
 <div class="msg bot">
-👋 Welcome! Enter Ticket Number or Phone to check status OR start new request.
+Welcome. Search your issue, open the FAQ sections, check an existing ticket, or create a new support ticket.
 </div>
 
 <div class="statusBox">
-<input id="checkInput" placeholder="Enter Ticket No OR Phone">
-<button onclick="checkStatus()" class="send">Check Status</button>
+<input id="checkInput" placeholder="Enter Ticket Number or Phone">
+<button onclick="checkStatus()" class="send">Check Ticket Status</button>
 </div>
 
-<div id="catBox">
-<button onclick="selectCategory('login')">Login</button>
-<button onclick="selectCategory('registration')">Registration</button>
-<button onclick="selectCategory('profile')">Profile</button>
-<button onclick="selectCategory('dashboard')">Dashboard</button>
-<button onclick="selectCategory('find teacher')">Find Teacher</button>
-<button onclick="selectCategory('renew profile')">Renew Profile</button>
+<div class="faqPanel">
+<b>Quick Help Topics</b>
+<div class="quickGrid">
+<button onclick="showFaq('registration')">Registration</button>
+<button onclick="showFaq('category')">Category Selection</button>
+<button onclick="showFaq('images')">Images & ID Proof</button>
+<button onclick="showFaq('payment')">Payment</button>
+<button onclick="showFaq('login')">Login</button>
+<button onclick="showFaq('teacher')">Teacher Forms</button>
+<button onclick="showFaq('institution')">Institution Forms</button>
+<button onclick="showFaq('all')">Show All FAQ</button>
+</div>
 </div>
 
+<div id="faqBox"></div>
 </div>
 
 <div class="inputBox">
-
-<input id="input"
-placeholder="Type your question..."
-oninput="showSuggestions()"
-disabled>
-
+<input id="input" placeholder="Type your question..." oninput="showSuggestions()">
 <button class="send" onclick="sendMsg()">Send</button>
-
 <div class="suggestions" id="suggestBox"></div>
-
 </div>
-
 </div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, push, get, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
@@ -200,87 +285,86 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-let currentUser=null;
-let currentCategory="";
-let canCreateTicket=false;
+let currentUser = null;
+let canCreateTicket = true;
+let currentCategory = "general";
 
-/* AUTH */
-onAuthStateChanged(auth, async (user)=>{
-if(user){
-currentUser=user;
+const faqs = [
+{cat:"registration",q:"Which registration form should I choose?",a:"Choose Institution if you are registering a school, coaching center, academy, institute, gym, sports club, studio, training center, or organization. Choose Teacher if you are registering as an individual teacher, trainer, coach, mentor, tutor, artist, or instructor."},
+{cat:"registration",q:"What are the current registration categories?",a:"Available categories include Professional Skills, Arts & Creativity, Sports & Fitness, and Academics, Education & Career Development. Each category has separate Institution and Teacher forms."},
+{cat:"registration",q:"Can I edit my details later?",a:"Yes, the forms are structured so profile data can be edited later from the dashboard or edit profile page. Use the same login email and password created during registration."},
+{cat:"registration",q:"Why is email and password required?",a:"Email and password create your secure login account. The same login will be used later to manage your profile, payment status, dashboard, and future edits."},
+{cat:"registration",q:"What if my email already exists?",a:"Use the login page instead of registering again. If you forgot the password, use password reset. Do not create duplicate profiles with another email unless it is a different teacher or institution."},
+{cat:"registration",q:"What if password is not accepted?",a:"Use at least 6 characters. A stronger password should include letters, numbers, and a symbol."},
+{cat:"registration",q:"What should I enter in phone and alternate phone?",a:"Enter your main active contact number in Phone. Alternate Phone is optional but useful if the first number is unavailable."},
+{cat:"registration",q:"What should I enter in Area / City or Town?",a:"Enter your locality, city, town, or service area. Example: Guwahati, Dispur, Jorhat Town, Silchar, or your local area name."},
+{cat:"registration",q:"Why is PIN code required?",a:"PIN code helps students, parents, and users find nearby teachers or institutions and improves location accuracy."},
 
-if(!user.phoneNumber){
-addMsg("⚠ Login with registered phone number","bot");
-return;
-}
+{cat:"category",q:"How do I select a long list of subjects or skills?",a:"Click the More button in the form. A full grouped chart will open. Select all subjects, skills, activities, or exams that apply to your profile."},
+{cat:"category",q:"Can I select multiple subjects or skills?",a:"Yes. You can select multiple checkboxes across different groups. All selected values are saved in your profile."},
+{cat:"category",q:"What if my subject or skill is not listed?",a:"Use the Other option inside the matching category. Type your custom subject, skill, sport, training mode, or exam name in the input that appears."},
+{cat:"category",q:"What is Professional Skills?",a:"Professional Skills includes technology, business, digital skills, communication, career development, software training, languages, culinary arts, fashion, trade skills, and beauty or styling skills."},
+{cat:"category",q:"What is Arts & Creativity?",a:"Arts & Creativity includes music, dance, visual arts, performing arts, photography, media, creative content, crafts, design, literary arts, and fine arts."},
+{cat:"category",q:"What is Sports & Fitness?",a:"Sports & Fitness includes team sports, racquet sports, individual sports, martial arts, fitness, wellness, adventure sports, water sports, mind sports, esports, and sports coaching."},
+{cat:"category",q:"What is Academics, Education & Career Development?",a:"This includes early childhood education, primary, secondary, higher secondary, law, languages, competitive exams, career guidance, and government job preparation."},
+{cat:"category",q:"What should I enter in Class / Preparation For?",a:"Enter the class, level, age group, or exam type you teach or support. Examples: LKG, Class 1-5, Class 10, Class 11-12, JEE, NEET, UPSC, Banking, SSC, Career Guidance."},
+{cat:"category",q:"What should I enter in Board / Type of Exam?",a:"Enter board or exam type. Examples: CBSE, SEBA, ICSE, ISC, IB, Cambridge, JEE, NEET, UPSC, APSC, Banking, SSC, Railway, Defence."},
+{cat:"category",q:"What are Training Modes or Teaching Modes?",a:"These describe how you provide service, such as group coaching, individual coaching, home tuition, online training, workshop, personal coaching, or other custom mode."},
+{cat:"category",q:"Can I add fees for every mode?",a:"Yes. When you select a mode, the fee input appears. Enter the amount for that mode. Leave blank only if you do not want to show a fee yet."},
 
+{cat:"images",q:"Why do I need to upload ID proof?",a:"ID proof is used only for verification. GURULINK promises never to use or make your ID proof public under any circumstances."},
+{cat:"images",q:"Which ID proof can I upload?",a:"Institutions can upload documents such as Owner PAN, Owner Aadhaar, Trading License, GST Certificate, UDYAM Aadhaar, Electricity Bill, NGO Certificate, or Other. Teachers can upload PAN, Aadhaar, or Other accepted proof."},
+{cat:"images",q:"Will my ID proof be shown publicly?",a:"No. ID proof is only for verification and should not be displayed publicly on your profile."},
+{cat:"images",q:"What is logo or profile picture?",a:"Institution forms use Logo for the institution brand image. Teacher forms use Profile Picture for the teacher or trainer image."},
+{cat:"images",q:"What image format should I upload?",a:"Use clear JPG, PNG, or WebP images. Avoid blurry images, screenshots with extra borders, or very dark photos."},
+{cat:"images",q:"Why is my image not uploading?",a:"Check your internet connection, try a smaller image, use JPG or PNG, and wait until upload completes before clicking payment. If it still fails, create a support ticket."},
+{cat:"images",q:"What is Gallery?",a:"Gallery is optional. You can upload extra photos of your institute, classroom, training area, studio, gym, sports ground, previous work, or certificates where suitable."},
+{cat:"images",q:"Can I skip Gallery?",a:"Yes. Gallery is optional unless your admin specifically asks for it."},
+{cat:"images",q:"What is Google Maps Share Link?",a:"Paste the normal Google Maps share URL for your location so users can open directions."},
+{cat:"images",q:"What is Google Maps Embed Code?",a:"This is optional iframe code from Google Maps. It helps display a map on your profile if the website supports embedded maps."},
+
+{cat:"payment",q:"Why does the form go to payment after registration?",a:"After registration, your profile is saved as pending. Payment completes the subscription process and allows your profile to move toward approval."},
+{cat:"payment",q:"What should I do after clicking Continue To Payment?",a:"Do not refresh or go back. Complete the payment page. The payment success page updates your payment status in Firebase."},
+{cat:"payment",q:"What if payment succeeds but profile still shows pending?",a:"Wait a few minutes and refresh your dashboard. If it still shows pending, create a ticket with your registered phone, email, and payment reference."},
+{cat:"payment",q:"What if payment fails?",a:"Try again from the payment page or dashboard if available. Do not create another registration unless support asks you to."},
+{cat:"payment",q:"What if I closed the payment page by mistake?",a:"Login with the registered email and check whether your dashboard or payment page allows retry. If not, create a ticket with your registered email and phone."},
+{cat:"payment",q:"Can I use promo code PRO-98?",a:"If the promo is active on the payment page, use the displayed promo code exactly as shown. Promo availability can depend on current offers."},
+
+{cat:"login",q:"How do I login after registration?",a:"Use the same email and password you entered during registration."},
+{cat:"login",q:"I forgot my password. What should I do?",a:"Use the forgot password option on the login page. A reset email should be sent to your registered email address."},
+{cat:"login",q:"My login says user not found.",a:"Make sure you are using the exact email used during registration. If registration failed before account creation, register again."},
+{cat:"login",q:"My account exists but payment was not completed.",a:"Login and check the dashboard or payment retry option. If unavailable, create a ticket with your registered email and phone number."},
+
+{cat:"teacher",q:"What is different in Teacher forms?",a:"Teacher forms ask for Teacher Name, Experience, Qualification, Profile Picture, subjects or skills, training modes, and fees. They save under the teacher role."},
+{cat:"teacher",q:"What should teachers enter in Experience?",a:"Enter total teaching, coaching, training, or professional experience in years. Example: 2, 5, or 10."},
+{cat:"teacher",q:"What should teachers enter in Qualification?",a:"Enter education, certification, professional course, coaching certificate, degree, diploma, or practical expertise."},
+{cat:"teacher",q:"Can a teacher register in multiple categories?",a:"Yes, but use the correct category form each time. Avoid duplicate profiles in the same category unless support advises it."},
+{cat:"teacher",q:"Why does teacher form still save logo?",a:"Some older profile display code may read the image from logo. Teacher forms also save profilePic for clearer future use."},
+
+{cat:"institution",q:"What is different in Institution forms?",a:"Institution forms ask for Institution Name, Owner or Director Name, Established Date, Logo, ID proof, subjects or services, training modes, and fees."},
+{cat:"institution",q:"What should I enter in Established Date?",a:"Enter the start date or establishment date of the institute, academy, center, gym, studio, or organization."},
+{cat:"institution",q:"What if my institution does not have a website?",a:"Leave Website URL blank. It is optional."},
+{cat:"institution",q:"Can an institution offer online and offline classes?",a:"Yes. Select all applicable teaching or training modes and enter fees for each mode if you want to show them."},
+{cat:"institution",q:"What if I manage both institution and teacher profile?",a:"Register institution using the Institution form. Register yourself as a teacher only if you also want an individual teacher profile."},
+
+{cat:"profile",q:"When will my profile be approved?",a:"After successful payment and verification, admin can approve the profile. Timing depends on verification queue and completeness of your submitted details."},
+{cat:"profile",q:"Why is my status pending?",a:"Pending means registration is saved but payment or admin approval may still be incomplete."},
+{cat:"profile",q:"What does paymentStatus pending mean?",a:"It means payment has not been confirmed in the database yet. Complete payment or contact support if you already paid."},
+{cat:"profile",q:"What does approved mean?",a:"Approved means the profile has passed verification and is allowed to appear or function according to the platform rules."},
+{cat:"profile",q:"Can I change phone, fee, subjects, or image later?",a:"Yes, from edit profile when available. If edit is not visible, create a support ticket with the exact change needed."},
+{cat:"profile",q:"I selected wrong category. What should I do?",a:"Create a ticket before making payment if possible. If already paid, contact support with your registered email, phone, profile type, and correct category."},
+{cat:"profile",q:"I entered wrong spelling or wrong fee.",a:"Use edit profile if available. Otherwise create a ticket and mention the exact field and correct value."}
+];
+
+const suggestions = faqs.map(item => item.q);
+
+onAuthStateChanged(auth, (user)=>{
+currentUser = user || null;
+if(user && user.phoneNumber){
 checkOpenTicket(user.phoneNumber);
 }
 });
 
-/* FIXED REALTIME TICKET CHECK */
-function checkOpenTicket(phone){
-
-onValue(ref(db,"tickets"),(snap)=>{
-
-let open=false;
-
-snap.forEach(c=>{
-let d=c.val();
-if(d.phone===phone && d.status==="open"){
-open=true;
-}
-});
-
-canCreateTicket = !open;
-
-if(open){
-addMsg("🚫 You already have an OPEN ticket.","bot");
-}else{
-addMsg("✅ You can create a new ticket now.","bot");
-}
-
-});
-}
-
-/* STATUS CHECK */
-window.checkStatus = async function(){
-
-const val=document.getElementById("checkInput").value.trim();
-if(!val) return;
-
-const snap=await get(ref(db,"tickets"));
-
-let found=null;
-
-snap.forEach(c=>{
-let d=c.val();
-if(d.ticketNo===val || d.phone===val){
-found=d;
-}
-});
-
-if(found){
-addMsg(
-`🎫 Ticket: ${found.ticketNo}<br>
-📌 Status: ${found.status}<br>
-📞 Phone: ${found.phone}`,
-"bot"
-);
-}else{
-addMsg("❌ No ticket found","bot");
-}
-};
-
-/* CATEGORY */
-window.selectCategory=function(cat){
-currentCategory=cat;
-document.getElementById("catBox").style.display="none";
-document.getElementById("input").disabled=false;
-addMsg("Category: "+cat,"bot");
-};
-
-/* CHAT */
 function addMsg(text,type){
 const div=document.createElement("div");
 div.className="msg "+type;
@@ -289,42 +373,51 @@ document.getElementById("chatBox").appendChild(div);
 div.scrollIntoView();
 }
 
-/* BOT */
-function botReply(msg){
-msg=msg.toLowerCase();
-
-if(msg.includes("login")) return "Reset password via email.";
-if(msg.includes("profile")) return "Go to edit profile.";
-
-return "Not solved. Create ticket or check status.";
+function faqHtml(list){
+return list.map(item => `
+<details class="faqItem">
+<summary>${item.q}</summary>
+<div>${item.a}</div>
+</details>
+`).join("");
 }
 
-/* FIXED SUGGESTIONS */
-const suggestions = {
-login:["Login issue","Forgot password","OTP issue"],
-registration:["Sign up issue","Email not verified"],
-profile:["Edit profile","Photo issue"],
-dashboard:["Dashboard not loading"],
-"find teacher":["Search teacher"],
-"renew profile":["Renew failed"]
+window.showFaq=function(cat){
+currentCategory=cat;
+let list = cat==="all" ? faqs : faqs.filter(item => item.cat===cat);
+document.getElementById("faqBox").innerHTML = faqHtml(list);
+addMsg("Showing FAQ: "+cat,"bot");
 };
 
-window.showSuggestions = function(){
+function findAnswer(text){
+const q = text.toLowerCase();
+let exact = faqs.find(item => item.q.toLowerCase()===q);
+if(exact) return exact;
 
+let scored = faqs.map(item => {
+const combined = (item.q+" "+item.a+" "+item.cat).toLowerCase();
+let score = 0;
+q.split(/\s+/).forEach(word => {
+if(word.length > 2 && combined.includes(word)) score++;
+});
+return {item,score};
+}).sort((a,b)=>b.score-a.score);
+
+return scored[0].score > 0 ? scored[0].item : null;
+}
+
+window.showSuggestions=function(){
 const input=document.getElementById("input");
 const val=input.value.toLowerCase();
 const box=document.getElementById("suggestBox");
-
 box.innerHTML="";
 
-if(!val || !currentCategory){
+if(!val){
 box.style.display="none";
 return;
 }
 
-let list = suggestions[currentCategory] || [];
-
-let found = list.filter(s=>s.toLowerCase().includes(val));
+let found=suggestions.filter(s=>s.toLowerCase().includes(val)).slice(0,8);
 
 if(found.length===0){
 box.style.display="none";
@@ -336,7 +429,6 @@ let div=document.createElement("div");
 div.innerText=s;
 div.onclick=()=>{
 input.value=s;
-input.disabled=true;
 box.style.display="none";
 };
 box.appendChild(div);
@@ -345,31 +437,32 @@ box.appendChild(div);
 box.style.display="flex";
 };
 
-/* SEND */
 window.sendMsg=function(){
-
 const input=document.getElementById("input");
 const text=input.value.trim();
 if(!text) return;
 
 addMsg(text,"user");
-
-setTimeout(()=>{
-addMsg(botReply(text),"bot");
-askResolved();
-},500);
-
 input.value="";
+document.getElementById("suggestBox").style.display="none";
+
+const answer=findAnswer(text);
+if(answer){
+addMsg("<b>"+answer.q+"</b><br>"+answer.a,"bot");
+}else{
+addMsg("I could not find an exact FAQ answer. You can create a support ticket below with your registered phone and email.","bot");
+}
+
+askResolved();
 };
 
-/* RESOLVED */
 function askResolved(){
 const div=document.createElement("div");
 div.className="msg bot";
 div.innerHTML=`
-<b>Resolved?</b><br>
-<button onclick="resolved(true)">Yes</button>
-<button onclick="resolved(false)">No</button>
+<b>Was this helpful?</b><br>
+<button class="send" onclick="resolved(true)">Yes</button>
+<button class="ghostBtn" onclick="resolved(false)">No, create ticket</button>
 `;
 document.getElementById("chatBox").appendChild(div);
 div.scrollIntoView();
@@ -377,68 +470,97 @@ div.scrollIntoView();
 
 window.resolved=function(status){
 if(status){
-addMsg("Yes ✔","user");
-addMsg("Great 👍","bot");
+addMsg("Yes","user");
+addMsg("Great. You can continue registration.","bot");
 }else{
-addMsg("No ❌","user");
+addMsg("No, create ticket","user");
 showTicketBox();
 }
 };
 
-/* TICKET */
 function generateTicket(){
 return "GURU-"+Date.now()+"-"+Math.floor(Math.random()*999);
 }
 
-function showTicketBox(){
+function checkOpenTicket(phone){
+onValue(ref(db,"tickets"),(snap)=>{
+let open=false;
+snap.forEach(c=>{
+let d=c.val();
+if(d.phone===phone && d.status==="open"){
+open=true;
+}
+});
+canCreateTicket=!open;
+});
+}
 
+window.checkStatus=async function(){
+const val=document.getElementById("checkInput").value.trim();
+if(!val) return;
+
+const snap=await get(ref(db,"tickets"));
+let found=null;
+
+snap.forEach(c=>{
+let d=c.val();
+if(d.ticketNo===val || d.phone===val){
+found=d;
+}
+});
+
+if(found){
+addMsg(`<b>Ticket:</b> ${found.ticketNo}<br><b>Status:</b> ${found.status}<br><b>Phone:</b> ${found.phone}<br><b>Category:</b> ${found.category || "general"}`,"bot");
+}else{
+addMsg("No ticket found for this ticket number or phone.","bot");
+}
+};
+
+function showTicketBox(){
 const div=document.createElement("div");
 div.className="msg bot";
 div.innerHTML=`
-<b>Create Ticket</b><br><br>
-
-<input id="tname" placeholder="Name"><br>
+<b>Create Support Ticket</b><br><br>
+<input id="tname" placeholder="Name">
 <select id="role">
-<option>Student</option>
+<option>Institution</option>
 <option>Teacher</option>
-<option>Institute</option>
+<option>Student</option>
 <option>Parent</option>
-</select><br>
-
-<input id="tphone" placeholder="Phone"><br>
-<input id="temail" placeholder="Email"><br>
-<textarea
-id="tmsg"
-placeholder="Describe your issue"
-rows="4"></textarea><br>
-
-<button class="ticketBtn" onclick="submitTicket()">Submit</button>
+</select>
+<select id="issueCategory">
+<option>Registration</option>
+<option>Payment</option>
+<option>ID Proof / Image Upload</option>
+<option>Login</option>
+<option>Profile Edit</option>
+<option>Category / Subject Selection</option>
+<option>Other</option>
+</select>
+<input id="tphone" placeholder="Registered Phone">
+<input id="temail" placeholder="Registered Email">
+<textarea id="tmsg" placeholder="Describe your issue. Include form name, registered email, phone, and payment reference if payment related." rows="4"></textarea>
+<button class="ticketBtn" onclick="submitTicket()">Submit Ticket</button>
 `;
-
 document.getElementById("chatBox").appendChild(div);
 div.scrollIntoView();
 }
 
-window.submitTicket = async function(){
-
+window.submitTicket=async function(){
 if(!canCreateTicket){
-alert("You already have an open ticket. Wait until resolved.");
+alert("You already have an open ticket. Please wait until it is resolved.");
 return;
 }
 
-const name=document.getElementById("tname").value;
+const name=document.getElementById("tname").value.trim();
 const role=document.getElementById("role").value;
-const phone=document.getElementById("tphone").value;
-const email=document.getElementById("temail").value;
-const msg=document.getElementById("tmsg").value;
+const issueCategory=document.getElementById("issueCategory").value;
+const phone=document.getElementById("tphone").value.trim();
+const email=document.getElementById("temail").value.trim();
+const message=document.getElementById("tmsg").value.trim();
 
-if(!name||!phone||!email||!msg){
-alert("Fill all fields");
-return;
-}
-
-if(currentUser && phone!==currentUser.phoneNumber){
-alert("Enter registered phone number");
+if(!name || !phone || !email || !message){
+alert("Please fill all ticket fields.");
 return;
 }
 
@@ -450,34 +572,31 @@ name,
 role,
 phone,
 email,
-message:msg,
-category:currentCategory,
+message,
+category:issueCategory,
 status:"open",
 time:Date.now()
 });
 
 canCreateTicket=false;
 
-addMsg(
-`🎫 Ticket Created Successfully<br>
-<b>Ticket ID:</b> ${ticketNo}<br>
-⏳ Your ticket is under review.`,
-"bot"
-);
+addMsg(`<b>Ticket Created Successfully</b><br><b>Ticket ID:</b> ${ticketNo}<br>Please save this ticket number for status checking.`,"bot");
 };
-window.closeHelpdesk = function () {
-  const returnPage = sessionStorage.getItem("helpdeskReturn");
 
-  if (returnPage) {
-    sessionStorage.removeItem("helpdeskReturn");
-    window.location.href = returnPage;
-  } else if (document.referrer) {
-    history.back();
-  } else {
-    window.location.href = "index.html";
-  }
+window.closeHelpdesk=function(){
+const returnPage=sessionStorage.getItem("helpdeskReturn");
+
+if(returnPage){
+sessionStorage.removeItem("helpdeskReturn");
+window.location.href=returnPage;
+}else if(document.referrer){
+history.back();
+}else{
+window.location.href="index.html";
+}
 };
+
+window.showFaq("all");
 </script>
-
 </body>
 </html>
