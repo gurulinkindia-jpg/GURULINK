@@ -8,44 +8,181 @@
 <style>
 body{
 margin:0;
-font-family:Arial;
+font-family:Arial,sans-serif;
 background:#eef2f7;
+color:#1f2933;
 }
 
 header{
-background:#000;
+background:linear-gradient(135deg,#0f766e,#1565c0);
 color:white;
 padding:15px;
-text-align:center;
+box-shadow:0 3px 14px rgba(0,0,0,.16);
+}
+
+.headerInner{
+max-width:1100px;
+margin:auto;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:12px;
+flex-wrap:wrap;
+}
+
+.headerInner h2{
+margin:0;
+font-size:22px;
 }
 
 .container{
-max-width:950px;
+max-width:1100px;
 margin:20px auto;
+padding:0 12px 20px;
+}
+
+.summary{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+gap:10px;
+margin:14px 0;
+}
+
+.summaryCard{
 background:white;
-padding:15px;
-border-radius:10px;
+border-radius:14px;
+padding:12px;
+box-shadow:0 4px 14px rgba(0,0,0,.08);
+border-left:6px solid #1565c0;
+}
+
+.summaryCard b{
+display:block;
+font-size:12px;
+color:#667085;
+margin-bottom:6px;
+}
+
+.summaryCard span{
+font-size:24px;
+font-weight:bold;
+color:#0f172a;
+}
+
+.summaryOpen{border-left-color:#f57c00;background:#fffaf0;}
+.summaryResolved{border-left-color:#2e7d32;background:#f4fff6;}
+.summaryRejected{border-left-color:#d32f2f;background:#fff5f5;}
+.summaryTotal{border-left-color:#1565c0;background:#f8fbff;}
+
+.toolbar{
+background:white;
+border-radius:14px;
+padding:10px;
+box-shadow:0 4px 14px rgba(0,0,0,.08);
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+margin-bottom:12px;
+flex-wrap:wrap;
+}
+
+.toolbar input{
+flex:1;
+min-width:220px;
+padding:10px;
+border:1px solid #d9e2ec;
+border-radius:9px;
+outline:none;
+}
+
+.ticketsGrid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
+gap:12px;
 }
 
 .ticket{
-border:1px solid #ddd;
+border:1px solid #d9e2ec;
+border-left:6px solid #f57c00;
 padding:12px;
-margin:10px 0;
-border-radius:8px;
+border-radius:14px;
 background:#fff;
+box-shadow:0 4px 14px rgba(0,0,0,.08);
+overflow:hidden;
+}
+
+.ticket.openTicket{
+border-left-color:#f57c00;
+background:#fffaf0;
+}
+
+.ticket.resolvedTicket{
+border-left-color:#2e7d32;
+background:#f4fff6;
+}
+
+.ticket.rejectedTicket{
+border-left-color:#d32f2f;
+background:#fff5f5;
+}
+
+.ticketHeader{
+display:flex;
+align-items:flex-start;
+justify-content:space-between;
+gap:8px;
+margin-bottom:8px;
+}
+
+.ticketHeader h3{
+margin:0;
+font-size:16px;
+line-height:1.25;
+word-break:break-word;
+}
+
+.statusBadge{
+display:inline-block;
+padding:5px 8px;
+border-radius:999px;
+font-size:11px;
+font-weight:bold;
+white-space:nowrap;
+background:#f57c00;
+color:white;
+}
+
+.statusBadge.resolved{
+background:#2e7d32;
+}
+
+.statusBadge.rejected{
+background:#d32f2f;
 }
 
 .ticket p{
 margin:5px 0;
+font-size:13px;
+line-height:1.35;
+word-break:break-word;
+}
+
+.buttonRow{
+display:flex;
+flex-wrap:wrap;
+gap:5px;
+margin:8px 0;
 }
 
 button{
-margin:5px;
+margin:0;
 padding:8px 10px;
 border:none;
-border-radius:5px;
+border-radius:8px;
 cursor:pointer;
 font-size:13px;
+font-weight:bold;
 }
 
 .resolve{background:green;color:white;}
@@ -56,14 +193,14 @@ font-size:13px;
 .whatsapp{background:#25D366;color:white;}
 .email{background:#1565c0;color:white;}
 
-.clearAll{background:#b71c1c;color:white;float:right;}
+.clearAll{background:#b71c1c;color:white;}
 
 .chatBox{
 margin-top:12px;
 padding:10px;
-background:#f8fafc;
+background:rgba(255,255,255,.75);
 border:1px solid #d9e2ec;
-border-radius:8px;
+border-radius:10px;
 }
 
 .chatMessages{
@@ -112,21 +249,49 @@ font-family:Arial;
 .sendReply{background:#00897b;color:white;}
 
 @media(max-width:650px){
-.container{margin:10px;padding:10px;}
+.headerInner h2{font-size:18px;}
+.container{margin:10px auto;padding:0 10px 15px;}
+.ticketsGrid{grid-template-columns:1fr;}
+.toolbar input{min-width:100%;}
 .replyRow{flex-direction:column;}
 .replyRow button{width:100%;margin:0;}
+.buttonRow button{flex:1;}
 }
 </style>
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 </head>
 
 <body>
 
 <header>
+<div class="headerInner">
 <h2>Helpdesk Admin Panel</h2>
-<button class="clearAll" onclick="clearAllTickets()">ðŸ§¨ Delete ALL Tickets</button>
+<button class="clearAll" onclick="clearAllTickets()">Delete ALL Tickets</button>
+</div>
 </header>
 
-<div class="container" id="tickets"></div>
+<div class="container">
+
+<div class="summary">
+<div class="summaryCard summaryOpen"><b>New / Open Tickets</b><span id="openTicketCount">0</span></div>
+<div class="summaryCard summaryResolved"><b>Resolved Tickets</b><span id="resolvedTicketCount">0</span></div>
+<div class="summaryCard summaryRejected"><b>Not Resolved</b><span id="rejectedTicketCount">0</span></div>
+<div class="summaryCard summaryTotal"><b>Total Tickets</b><span id="totalTicketCount">0</span></div>
+</div>
+
+<div class="toolbar">
+<input id="ticketSearch" placeholder="Search ticket, name, phone, email, category..." oninput="renderTickets()">
+<button class="resolve" onclick="filterTickets('open')">Open</button>
+<button class="resolve" onclick="filterTickets('resolved')">Resolved</button>
+<button class="reject" onclick="filterTickets('not_resolved')">Not Resolved</button>
+<button class="email" onclick="filterTickets('all')">All</button>
+</div>
+
+<div class="ticketsGrid" id="tickets"></div>
+
+</div>
 
 <script type="module">
 
@@ -147,6 +312,8 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 const box = document.getElementById("tickets");
+let allTickets = [];
+let activeFilter = "all";
 
 function escapeHtml(value){
 return String(value ?? "").replace(/[&<>"]/g, c => ({
@@ -173,44 +340,116 @@ return `<div class="chatMsg user">No chat messages yet.</div>`;
 return list.map(msg => `
 <div class="chatMsg ${msg.sender === "admin" ? "admin" : "user"}">
 ${escapeHtml(msg.text)}
-<span class="chatMeta">${msg.sender === "admin" ? "Admin" : "User"} â€¢ ${formatTime(msg.time)}</span>
+<span class="chatMeta">${msg.sender === "admin" ? "Admin" : "User"} - ${formatTime(msg.time)}</span>
 </div>
 `).join("");
 }
 
-/* LOAD */
-onValue(ref(db,"tickets"), snap => {
+function normalizeStatus(status){
+return status || "open";
+}
+
+function ticketClass(status){
+status = normalizeStatus(status);
+if(status === "resolved") return "resolvedTicket";
+if(status === "not_resolved") return "rejectedTicket";
+return "openTicket";
+}
+
+function statusBadgeClass(status){
+status = normalizeStatus(status);
+if(status === "resolved") return "resolved";
+if(status === "not_resolved") return "rejected";
+return "";
+}
+
+function updateSummary(){
+const total = allTickets.length;
+const open = allTickets.filter(t => normalizeStatus(t.data.status) === "open").length;
+const resolved = allTickets.filter(t => normalizeStatus(t.data.status) === "resolved").length;
+const rejected = allTickets.filter(t => normalizeStatus(t.data.status) === "not_resolved").length;
+
+document.getElementById("openTicketCount").innerText = open;
+document.getElementById("resolvedTicketCount").innerText = resolved;
+document.getElementById("rejectedTicketCount").innerText = rejected;
+document.getElementById("totalTicketCount").innerText = total;
+}
+
+function ticketMatches(t,query){
+const d = t.data;
+const text = [
+d.ticketNo,
+d.name,
+d.role,
+d.phone,
+d.email,
+d.category,
+d.message,
+d.status
+].join(" ").toLowerCase();
+
+return text.includes(query);
+}
+
+window.filterTickets = function(status){
+activeFilter = status;
+renderTickets();
+};
+
+window.renderTickets = function(){
+const query =
+(document.getElementById("ticketSearch")?.value || "")
+.trim()
+.toLowerCase();
+
+let list = allTickets.filter(t => {
+const status = normalizeStatus(t.data.status);
+const filterOk = activeFilter === "all" || status === activeFilter;
+const searchOk = !query || ticketMatches(t,query);
+return filterOk && searchOk;
+});
+
+list.sort((a,b)=>(b.data.time || b.data.lastUserMessageAt || b.data.lastReplyAt || 0) - (a.data.time || a.data.lastUserMessageAt || a.data.lastReplyAt || 0));
 
 box.innerHTML = "";
 
-snap.forEach(child => {
+if(!list.length){
+box.innerHTML = `<div class="ticket openTicket"><p>No tickets found.</p></div>`;
+return;
+}
 
-const t = child.val();
-const id = child.key;
+list.forEach(item => {
+const t = item.data;
+const id = item.id;
 
 const phone = t.phone || "";
 const email = t.email || "";
+const status = normalizeStatus(t.status);
 
 const div = document.createElement("div");
-div.className="ticket";
+div.className = "ticket " + ticketClass(status);
 
 div.innerHTML = `
+<div class="ticketHeader">
+<h3>${escapeHtml(t.name || "No Name")}</h3>
+<span class="statusBadge ${statusBadgeClass(status)}">${escapeHtml(status)}</span>
+</div>
 <p><b>Ticket No:</b> ${escapeHtml(t.ticketNo || "N/A")}</p>
-<p><b>Name:</b> ${escapeHtml(t.name || "N/A")}</p>
 <p><b>Role:</b> ${escapeHtml(t.role || "N/A")}</p>
 <p><b>Phone:</b> ${escapeHtml(phone)}</p>
 <p><b>Email:</b> ${escapeHtml(email)}</p>
 <p><b>Category:</b> ${escapeHtml(t.category || "N/A")}</p>
 <p><b>Message:</b> ${escapeHtml(t.message || "")}</p>
-<p><b>Status:</b> ${escapeHtml(t.status || "open")}</p>
+<p><b>Created:</b> ${formatTime(t.time)}</p>
 
+<div class="buttonRow">
 <button class="resolve" onclick="resolveTicket('${id}')">Resolve</button>
 <button class="reject" onclick="rejectTicket('${id}')">Reject</button>
 <button class="delete" onclick="deleteTicket('${id}')">Delete</button>
-
 <button class="call" onclick="callUser('${phone}')">Call</button>
 <button class="whatsapp" onclick="whatsappUser('${phone}')">WhatsApp</button>
 <button class="email" onclick="emailUser('${email}')">Email</button>
+</div>
 
 <div class="chatBox">
 <b>Ticket Chat</b>
@@ -224,6 +463,22 @@ div.innerHTML = `
 
 box.appendChild(div);
 });
+};
+
+/* LOAD */
+onValue(ref(db,"tickets"), snap => {
+
+allTickets = [];
+
+snap.forEach(child => {
+allTickets.push({
+id:child.key,
+data:child.val()
+});
+});
+
+updateSummary();
+renderTickets();
 
 });
 
