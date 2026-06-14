@@ -383,6 +383,60 @@ No professional skill selected yet. Click More to open the full chart.
 <input id="otherLanguage" class="otherSkillInput" placeholder="Write Other Language Skill" style="display:none;">
 </div>
 
+<div class="skillCategory">
+<h4>Professional Culinary Arts</h4>
+<div class="row"><input type="checkbox" value="Cooking Fundamentals" class="subjectCheck"> Cooking Fundamentals</div>
+<div class="row"><input type="checkbox" value="Baking & Pastry Making" class="subjectCheck"> Baking & Pastry Making</div>
+<div class="row"><input type="checkbox" value="Cake Decoration" class="subjectCheck"> Cake Decoration</div>
+<div class="row"><input type="checkbox" value="Biscuit & Cookie Making" class="subjectCheck"> Biscuit & Cookie Making</div>
+<div class="row"><input type="checkbox" value="Bread Making" class="subjectCheck"> Bread Making</div>
+<div class="row"><input type="checkbox" value="Confectionery & Desserts" class="subjectCheck"> Confectionery & Desserts</div>
+<div class="row"><input type="checkbox" value="Chocolate Making" class="subjectCheck"> Chocolate Making</div>
+<div class="row"><input type="checkbox" value="Catering & Food Presentation" class="subjectCheck"> Catering & Food Presentation</div>
+<div class="row"><input type="checkbox" value="Bakery Business Management" class="subjectCheck"> Bakery Business Management</div>
+<div class="row"><input type="checkbox" value="Food Safety & Hygiene" class="subjectCheck"> Food Safety & Hygiene</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherCulinary"> Other Culinary Arts Skill</div>
+<input id="otherCulinary" class="otherSkillInput" placeholder="Write Other Culinary Arts Skill" style="display:none;">
+</div>
+
+<div class="skillCategory">
+<h4>Fashion Design & Tailoring</h4>
+<div class="row"><input type="checkbox" value="Tailoring Fundamentals" class="subjectCheck"> Tailoring Fundamentals</div>
+<div class="row"><input type="checkbox" value="Dress Designing" class="subjectCheck"> Dress Designing</div>
+<div class="row"><input type="checkbox" value="Embroidery" class="subjectCheck"> Embroidery</div>
+<div class="row"><input type="checkbox" value="Fashion Illustration" class="subjectCheck"> Fashion Illustration</div>
+<div class="row"><input type="checkbox" value="Pattern Making" class="subjectCheck"> Pattern Making</div>
+<div class="row"><input type="checkbox" value="Garment Construction" class="subjectCheck"> Garment Construction</div>
+<div class="row"><input type="checkbox" value="Boutique Management" class="subjectCheck"> Boutique Management</div>
+<div class="row"><input type="checkbox" value="Alteration & Stitching" class="subjectCheck"> Alteration & Stitching</div>
+<div class="row"><input type="checkbox" value="Machine Sewing" class="subjectCheck"> Machine Sewing</div>
+<div class="row"><input type="checkbox" value="Textile & Fabric Knowledge" class="subjectCheck"> Textile & Fabric Knowledge</div>
+<div class="row"><input type="checkbox" value="Hand Embroidery & Craft Work" class="subjectCheck"> Hand Embroidery & Craft Work</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherFashion"> Other Fashion Design & Tailoring Skill</div>
+<input id="otherFashion" class="otherSkillInput" placeholder="Write Other Fashion Design & Tailoring Skill" style="display:none;">
+</div>
+
+<div class="skillCategory">
+<h4>Technical & Trade Skills</h4>
+<div class="row"><input type="checkbox" value="Carpentry" class="subjectCheck"> Carpentry</div>
+<div class="row"><input type="checkbox" value="Furniture Making" class="subjectCheck"> Furniture Making</div>
+<div class="row"><input type="checkbox" value="Welding" class="subjectCheck"> Welding</div>
+<div class="row"><input type="checkbox" value="Electrical Repair & Maintenance" class="subjectCheck"> Electrical Repair & Maintenance</div>
+<div class="row"><input type="checkbox" value="Plumbing" class="subjectCheck"> Plumbing</div>
+<div class="row"><input type="checkbox" value="Gas Stove Repairing" class="subjectCheck"> Gas Stove Repairing</div>
+<div class="row"><input type="checkbox" value="Home Appliance Repairing" class="subjectCheck"> Home Appliance Repairing</div>
+<div class="row"><input type="checkbox" value="Refrigeration & Air Conditioning (AC Repair)" class="subjectCheck"> Refrigeration & Air Conditioning (AC Repair)</div>
+<div class="row"><input type="checkbox" value="Mobile Phone Repairing" class="subjectCheck"> Mobile Phone Repairing</div>
+<div class="row"><input type="checkbox" value="Computer Hardware Repairing" class="subjectCheck"> Computer Hardware Repairing</div>
+<div class="row"><input type="checkbox" value="Solar Panel Installation & Maintenance" class="subjectCheck"> Solar Panel Installation & Maintenance</div>
+<div class="row"><input type="checkbox" value="Two-Wheeler Repairing" class="subjectCheck"> Two-Wheeler Repairing</div>
+<div class="row"><input type="checkbox" value="Four-Wheeler Basic Maintenance" class="subjectCheck"> Four-Wheeler Basic Maintenance</div>
+<div class="row"><input type="checkbox" value="Painting & Interior Finishing" class="subjectCheck"> Painting & Interior Finishing</div>
+<div class="row"><input type="checkbox" value="CCTV Installation & Maintenance" class="subjectCheck"> CCTV Installation & Maintenance</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherTrade"> Other Technical & Trade Skill</div>
+<input id="otherTrade" class="otherSkillInput" placeholder="Write Other Technical & Trade Skill" style="display:none;">
+</div>
+
 <p id="subjectError" style="color:red;display:none;">
 Please select at least one professional skill
 </p>
@@ -452,6 +506,16 @@ Online Training
 
 <div id="onlineFeeBox" class="modeFee">
 <input id="onlineFee" placeholder="Enter Online Training Fee">
+</div>
+
+<div class="row">
+<input type="checkbox" id="otherModeCheck" onchange="toggleFee('otherModeBox')">
+Other Training Mode
+</div>
+
+<div id="otherModeBox" class="modeFee">
+<input id="otherMode" placeholder="Write Other Training Mode">
+<input id="otherModeFee" placeholder="Enter Other Training Mode Fee">
 </div>
 </div>
 
@@ -533,6 +597,12 @@ selected.length ? "Selected: " + selected.join(", ") : "No professional skill se
 
 function updateSelectedModes(){
 const selected = Array.from(document.querySelectorAll(".mode:checked")).map(item=>item.value);
+const otherModeCheck = document.getElementById("otherModeCheck");
+const otherMode = document.getElementById("otherMode").value.trim();
+
+if(otherModeCheck.checked){
+selected.push(otherMode || "Other Training Mode");
+}
 
 document.getElementById("selectedModes").innerText =
 selected.length ? "Selected: " + selected.join(", ") : "No training mode selected yet. Click More to open the full chart.";
@@ -590,6 +660,9 @@ item.addEventListener("change", updateSelectedSkills);
 document.querySelectorAll(".mode").forEach(item=>{
 item.addEventListener("change", updateSelectedModes);
 });
+
+document.getElementById("otherModeCheck").addEventListener("change", updateSelectedModes);
+document.getElementById("otherMode").addEventListener("input", updateSelectedModes);
 
 document.querySelectorAll(".otherSkillCheck").forEach(item=>{
 item.addEventListener("change",(e)=>{
@@ -712,6 +785,13 @@ document.querySelectorAll(".mode:checked").forEach(item=>{
 teachingModes.push(item.value);
 });
 
+if(
+document.getElementById("otherModeCheck").checked &&
+document.getElementById("otherMode").value.trim()!==""
+){
+teachingModes.push(document.getElementById("otherMode").value.trim());
+}
+
 const selectedIdType = document.getElementById("idType").value;
 const idTypeValue =
 selectedIdType === "Other" && document.getElementById("otherIdProof").value.trim()
@@ -739,6 +819,8 @@ individualFee:document.getElementById("individualFee").value,
 homeFee:document.getElementById("homeFee").value,
 groupFee:document.getElementById("groupFee").value,
 onlineFee:document.getElementById("onlineFee").value,
+otherMode:document.getElementById("otherMode").value.trim(),
+otherModeFee:document.getElementById("otherModeFee").value,
 logo:logoUrl,
 gallery:gallery,
 idType:idTypeValue,
