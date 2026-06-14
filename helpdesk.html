@@ -16,16 +16,24 @@ font-family:Arial,sans-serif;
 body{
 background:#eef2f7;
 padding:12px;
+min-height:100vh;
+min-height:100dvh;
+display:flex;
+align-items:center;
+justify-content:center;
 }
 
 .window{
 width:100%;
 max-width:900px;
-margin:auto;
 background:#fff;
 border-radius:15px;
 box-shadow:0 5px 20px rgba(0,0,0,.15);
 overflow:hidden;
+height:calc(100vh - 24px);
+height:calc(100dvh - 24px);
+display:flex;
+flex-direction:column;
 }
 
 .header{
@@ -36,6 +44,7 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 gap:12px;
+flex-shrink:0;
 }
 
 .header h3{
@@ -56,10 +65,11 @@ cursor:pointer;
 }
 
 .chat{
-height:68vh;
+flex:1;
 overflow-y:auto;
 padding:14px;
 background:#f9f9f9;
+scroll-behavior:smooth;
 }
 
 .msg{
@@ -68,6 +78,7 @@ margin:8px 0;
 border-radius:12px;
 max-width:95%;
 word-wrap:break-word;
+overflow-wrap:anywhere;
 line-height:1.55;
 }
 
@@ -91,7 +102,7 @@ margin:12px 0;
 
 .quickGrid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
 gap:8px;
 margin-top:10px;
 }
@@ -116,6 +127,7 @@ border:none;
 border-radius:8px;
 cursor:pointer;
 font-size:14px;
+min-height:42px;
 }
 
 .send,.quickGrid button{
@@ -164,6 +176,7 @@ background:white;
 display:flex;
 gap:8px;
 align-items:center;
+flex-shrink:0;
 }
 
 .inputBox input{
@@ -198,28 +211,116 @@ background:#f5f5f5;
 
 @media(max-width:600px){
 body{
-padding:5px;
+padding:0;
+align-items:stretch;
 }
 
 .window{
 border-radius:0;
 height:100vh;
+height:100dvh;
+max-width:none;
+box-shadow:none;
+}
+
+.header{
+padding:calc(env(safe-area-inset-top) + 12px) 12px 12px;
+}
+
+.header h3{
+font-size:17px;
+line-height:1.2;
+}
+
+.closeBtn{
+min-width:38px;
+height:36px;
+font-size:14px;
 }
 
 .chat{
-height:calc(100vh - 150px);
+padding:10px;
+}
+
+.msg{
+max-width:100%;
+padding:11px;
+font-size:14px;
+border-radius:10px;
+}
+
+.statusBox,.faqPanel{
+padding:10px;
+margin:10px 0;
+border-radius:10px;
+}
+
+.quickGrid{
+grid-template-columns:repeat(2,1fr);
+gap:7px;
+}
+
+.quickGrid button{
+padding:9px 6px;
+font-size:12px;
+line-height:1.2;
+min-height:42px;
+}
+
+.faqItem{
+border-radius:9px;
+margin:7px 0;
+}
+
+.faqItem summary{
+padding:11px;
+font-size:14px;
+line-height:1.35;
+}
+
+.faqItem div{
+padding:0 11px 11px;
+font-size:14px;
+}
+
+.inputBox{
+flex-direction:column;
+padding:8px;
+padding-bottom:calc(env(safe-area-inset-bottom) + 8px);
+}
+
+.inputBox input,.inputBox .send{
+width:100%;
+height:42px;
+margin:0;
+font-size:14px;
+}
+
+.suggestions{
+left:8px;
+right:8px;
+bottom:96px;
+max-height:45vh;
+}
+
+input,select,textarea{
+font-size:14px;
+padding:11px;
+margin-bottom:8px;
+}
+}
+
+@media(max-width:360px){
+.quickGrid{
+grid-template-columns:1fr;
 }
 
 .header h3{
 font-size:16px;
 }
 
-.inputBox{
-flex-direction:column;
-}
-
-.inputBox input,.inputBox .send{
-width:100%;
+.quickGrid button{
+font-size:13px;
 }
 }
 </style>
@@ -252,6 +353,8 @@ Welcome. Search your issue, open the FAQ sections, check an existing ticket, or 
 <button onclick="showFaq('login')">Login</button>
 <button onclick="showFaq('teacher')">Teacher Forms</button>
 <button onclick="showFaq('institution')">Institution Forms</button>
+<button onclick="showFaq('dashboard')">Dashboard</button>
+<button onclick="showFaq('editprofile')">Edit Profile</button>
 <button onclick="showFaq('all')">Show All FAQ</button>
 </div>
 </div>
@@ -346,6 +449,51 @@ const faqs = [
 {cat:"institution",q:"What if my institution does not have a website?",a:"Leave Website URL blank. It is optional."},
 {cat:"institution",q:"Can an institution offer online and offline classes?",a:"Yes. Select all applicable teaching or training modes and enter fees for each mode if you want to show them."},
 {cat:"institution",q:"What if I manage both institution and teacher profile?",a:"Register institution using the Institution form. Register yourself as a teacher only if you also want an individual teacher profile."},
+
+{cat:"dashboard",q:"Who can use the teacher dashboard?",a:"The dashboard is used by both teachers and institutions. It opens the profile connected to the current login and role saved during registration or OTP login."},
+{cat:"dashboard",q:"Why is the same dashboard used for teacher and institution?",a:"Teacher and institution profiles share many common tools, such as profile status, profile views, bank details, edit profile, sharing link, and support. The dashboard detects the role and loads the correct teacher or institution data."},
+{cat:"dashboard",q:"What does Total Views mean in the dashboard?",a:"Total Views shows how many profile view records are saved for your profile. It helps you understand how many people opened or viewed your public profile."},
+{cat:"dashboard",q:"Why do some viewers show phone number but some do not?",a:"Phone numbers are hidden for registered Teacher or Institution viewers. Student, Parent, and guest viewers may show a phone number when it is available from OTP login or saved profile data."},
+{cat:"dashboard",q:"Why does a viewer show as Teacher or Institution instead of a personal name?",a:"For privacy, registered Teacher or Institution viewers are shown as Teacher or Institution. Their personal phone number is not shown in your dashboard leads."},
+{cat:"dashboard",q:"Why does a viewer show as Guest?",a:"Guest appears when someone opens a shared public profile link directly without OTP login, or when the system cannot identify a registered student, parent, teacher, or institution account."},
+{cat:"dashboard",q:"Why is a viewer phone number missing?",a:"The viewer may be a registered teacher or institution, a guest without OTP, or the phone number was not available in Firebase Auth or profile data at the time of view."},
+{cat:"dashboard",q:"Can I call or WhatsApp a viewer from the dashboard?",a:"Yes, when a valid phone number is available, the dashboard can show call and WhatsApp options. If the phone number is hidden or missing, those contact buttons may not appear."},
+{cat:"dashboard",q:"Why are Call or WhatsApp buttons not visible?",a:"The contact buttons are shown only when the viewer phone number is available. If the viewer is a registered teacher or institution, the number is intentionally hidden."},
+{cat:"dashboard",q:"What does payment status mean in dashboard?",a:"Payment status shows whether payment has been recorded for the profile. If payment is successful but the dashboard does not update, wait a few minutes and then create a ticket with your payment reference."},
+{cat:"dashboard",q:"What does profile status pending mean?",a:"Pending means the profile is saved but may still need payment confirmation, admin verification, or approval before full public use."},
+{cat:"dashboard",q:"What does profile status approved mean?",a:"Approved means the profile has passed verification and can be shown or used according to GURULINK platform rules."},
+{cat:"dashboard",q:"How do I edit my profile from dashboard?",a:"Click Edit Profile from the dashboard. It opens the edit profile page for the current teacher or institution account."},
+{cat:"dashboard",q:"How do I share my profile?",a:"Use the share profile option in the dashboard. It creates a public profile link like profile-view.html?id=YOUR_PROFILE_ID. A person opening that shared link can view the profile directly."},
+{cat:"dashboard",q:"Will a shared social media profile link require OTP?",a:"No. A direct shared profile-view link opens publicly. OTP is required only when a guest clicks a profile from inside GURULINK listing pages."},
+{cat:"dashboard",q:"Why does a guest need OTP when clicking from the website listing?",a:"Guests have limited access inside the app or website. For complete access and better lead tracking, they are asked to log in as Student / Parent or Teacher / Institution before opening profiles from listing pages."},
+{cat:"dashboard",q:"Can I hide my bank details from public profile?",a:"Yes. Open Edit Profile and uncheck the public option for bank details. Bank details can stay saved for your own dashboard/admin use while remaining hidden publicly."},
+{cat:"dashboard",q:"Why are my bank details visible in dashboard?",a:"Dashboard shows your own saved information so you can check and manage it. Public visibility is controlled separately from Edit Profile."},
+{cat:"dashboard",q:"What should I do if dashboard opens the wrong profile?",a:"Logout and login again with the correct account. If the issue continues, create a ticket with your registered phone, email, role, and profile ID."},
+{cat:"dashboard",q:"Why does dashboard ask me to login again?",a:"Your browser may have lost local login data, or you may be opening the dashboard from a different device or browser. Login again using the correct role and phone/email."},
+
+{cat:"editprofile",q:"What can I change in Edit Profile?",a:"You can update profile details such as name, phone, alternate phone, email, website, address, area or city, PIN code, subjects, skills, class or preparation, board or exam type, teaching modes, fees, images, map link, description, and bank details where available."},
+{cat:"editprofile",q:"What do the checkboxes beside profile fields mean?",a:"The checkboxes control public visibility. If checked, that field can be shown on the public profile. If unchecked, the field remains saved but should be hidden from profile-view."},
+{cat:"editprofile",q:"If I uncheck a field, is the data deleted?",a:"No. Unchecking only hides the field from the public profile. The saved value remains in your profile so you can show it again later by checking the box."},
+{cat:"editprofile",q:"Why are bank details handled carefully?",a:"Bank details are sensitive. You can save them for your own/dashboard or admin use, but you can uncheck public visibility so they do not appear on the public profile."},
+{cat:"editprofile",q:"How do I hide my phone number from public profile?",a:"Open Edit Profile and uncheck the public visibility checkbox beside the phone field. Save the profile after changing it."},
+{cat:"editprofile",q:"How do I hide my email or alternate phone?",a:"Open Edit Profile, uncheck the visibility checkbox beside Email or Alternate Phone, and save. The information remains saved but should not be shown publicly."},
+{cat:"editprofile",q:"How do I hide my address, area, or PIN code?",a:"Open Edit Profile and uncheck the visibility checkbox beside Address, Area / City or Town, or PIN Code. Save the profile after changing it."},
+{cat:"editprofile",q:"How do I hide fees?",a:"Open Edit Profile and uncheck the visibility checkbox beside the fee fields you do not want public, such as group fee, individual fee, home fee, online fee, or super group fee."},
+{cat:"editprofile",q:"Can I hide subjects, skills, sports, or exams?",a:"Yes. Open Edit Profile and uncheck public visibility for the subjects or skills field if you do not want the selected chart items to appear publicly."},
+{cat:"editprofile",q:"Can I hide teaching modes or training modes?",a:"Yes. Uncheck the visibility checkbox beside teaching modes or training modes and save the profile."},
+{cat:"editprofile",q:"Can I change my logo or profile picture?",a:"Yes. Use the logo/profile picture upload section in Edit Profile, upload a new image, and save. Use a clear JPG, PNG, or WebP image."},
+{cat:"editprofile",q:"Can I remove or update gallery images?",a:"Yes. Edit Profile can show existing gallery images and options to manage them where available. If an image does not remove correctly, create a ticket with your profile ID."},
+{cat:"editprofile",q:"Can I update my Google Maps link?",a:"Yes. Update the Google Maps Share Link or Embed Code in Edit Profile and save. If you do not want a map shown publicly, uncheck the related visibility option."},
+{cat:"editprofile",q:"Why do I see technical field names in Edit Profile?",a:"Some data comes directly from Firebase keys. The edit page supports all known registration fields so old and new forms can be edited from one place."},
+{cat:"editprofile",q:"What should I do after editing profile details?",a:"Click Save or Update Profile and wait for confirmation. Then open your public profile to check that the visible information is correct."},
+{cat:"editprofile",q:"Why did my public profile not change immediately?",a:"Refresh the public profile page. If it still does not update, make sure you clicked Save in Edit Profile and that the visibility checkbox for that field is checked."},
+{cat:"editprofile",q:"Why is a field still visible after I unchecked it?",a:"Make sure you saved the profile after unchecking. If it is still visible, create a ticket and mention the field name, profile ID, and whether you are teacher or institution."},
+{cat:"editprofile",q:"Can I make a hidden field public again?",a:"Yes. Open Edit Profile, check the visibility checkbox again, save, and refresh the public profile."},
+{cat:"editprofile",q:"Can I edit category from Edit Profile?",a:"Category changes can affect listing pages and profile search. If you selected the wrong main category, create a support ticket instead of changing it manually."},
+{cat:"editprofile",q:"Can I edit role from Edit Profile?",a:"No. Role should remain teacher or institution. If the role is wrong, create a support ticket with your registered email, phone, and correct role."},
+{cat:"editprofile",q:"Can I edit payment status or approval status?",a:"No. Payment status and approval status are verification fields. Contact support if payment or approval status looks wrong."},
+{cat:"editprofile",q:"What happens if I leave a field blank?",a:"Blank fields may not appear on the public profile. If the field is important, enter the correct value and keep its visibility checkbox checked."},
+{cat:"editprofile",q:"Why should I keep my profile complete?",a:"A complete profile helps students and parents understand your subjects, modes, fees, location, experience, and contact options before contacting you."},
 
 {cat:"profile",q:"When will my profile be approved?",a:"After successful payment and verification, admin can approve the profile. Timing depends on verification queue and completeness of your submitted details."},
 {cat:"profile",q:"Why is my status pending?",a:"Pending means registration is saved but payment or admin approval may still be incomplete."},
@@ -534,6 +682,9 @@ div.innerHTML=`
 <option>ID Proof / Image Upload</option>
 <option>Login</option>
 <option>Profile Edit</option>
+<option>Teacher / Institution Dashboard</option>
+<option>Public Visibility / Hidden Fields</option>
+<option>Profile Views / Leads</option>
 <option>Category / Subject Selection</option>
 <option>Other</option>
 </select>
