@@ -57,6 +57,65 @@ font-size:13px;
 .email{background:#1565c0;color:white;}
 
 .clearAll{background:#b71c1c;color:white;float:right;}
+
+.chatBox{
+margin-top:12px;
+padding:10px;
+background:#f8fafc;
+border:1px solid #d9e2ec;
+border-radius:8px;
+}
+
+.chatMessages{
+max-height:220px;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:8px;
+margin-bottom:10px;
+}
+
+.chatMsg{
+padding:8px 10px;
+border-radius:8px;
+line-height:1.4;
+font-size:13px;
+max-width:90%;
+word-break:break-word;
+}
+
+.chatMsg.user{background:#e3f2fd;align-self:flex-start;}
+.chatMsg.admin{background:#e8f5e9;align-self:flex-end;}
+
+.chatMeta{
+display:block;
+font-size:11px;
+color:#666;
+margin-top:4px;
+}
+
+.replyRow{
+display:flex;
+gap:8px;
+}
+
+.replyRow textarea{
+flex:1;
+min-height:46px;
+resize:vertical;
+padding:9px;
+border:1px solid #ccc;
+border-radius:7px;
+font-family:Arial;
+}
+
+.sendReply{background:#00897b;color:white;}
+
+@media(max-width:650px){
+.container{margin:10px;padding:10px;}
+.replyRow{flex-direction:column;}
+.replyRow button{width:100%;margin:0;}
+}
 </style>
 </head>
 
@@ -64,7 +123,7 @@ font-size:13px;
 
 <header>
 <h2>Helpdesk Admin Panel</h2>
-<button class="clearAll" onclick="clearAllTickets()">🧨 Delete ALL Tickets</button>
+<button class="clearAll" onclick="clearAllTickets()">ðŸ§¨ Delete ALL Tickets</button>
 </header>
 
 <div class="container" id="tickets"></div>
@@ -72,7 +131,7 @@ font-size:13px;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, onValue, update, remove, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -88,6 +147,36 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 const box = document.getElementById("tickets");
+
+function escapeHtml(value){
+return String(value ?? "").replace(/[&<>"]/g, c => ({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+"\"":"&quot;"
+}[c]));
+}
+
+function formatTime(time){
+return time ? new Date(time).toLocaleString() : "";
+}
+
+function chatHtml(messages){
+const list =
+Object.values(messages || {})
+.sort((a,b)=>(a.time || 0) - (b.time || 0));
+
+if(!list.length){
+return `<div class="chatMsg user">No chat messages yet.</div>`;
+}
+
+return list.map(msg => `
+<div class="chatMsg ${msg.sender === "admin" ? "admin" : "user"}">
+${escapeHtml(msg.text)}
+<span class="chatMeta">${msg.sender === "admin" ? "Admin" : "User"} â€¢ ${formatTime(msg.time)}</span>
+</div>
+`).join("");
+}
 
 /* LOAD */
 onValue(ref(db,"tickets"), snap => {
@@ -106,22 +195,31 @@ const div = document.createElement("div");
 div.className="ticket";
 
 div.innerHTML = `
-<p><b>Ticket No:</b> ${t.ticketNo || "N/A"}</p>
-<p><b>Name:</b> ${t.name || "N/A"}</p>
-<p><b>Role:</b> ${t.role || "N/A"}</p>
-<p><b>Phone:</b> ${phone}</p>
-<p><b>Email:</b> ${email}</p>
-<p><b>Category:</b> ${t.category || "N/A"}</p>
-<p><b>Message:</b> ${t.message}</p>
-<p><b>Status:</b> ${t.status}</p>
+<p><b>Ticket No:</b> ${escapeHtml(t.ticketNo || "N/A")}</p>
+<p><b>Name:</b> ${escapeHtml(t.name || "N/A")}</p>
+<p><b>Role:</b> ${escapeHtml(t.role || "N/A")}</p>
+<p><b>Phone:</b> ${escapeHtml(phone)}</p>
+<p><b>Email:</b> ${escapeHtml(email)}</p>
+<p><b>Category:</b> ${escapeHtml(t.category || "N/A")}</p>
+<p><b>Message:</b> ${escapeHtml(t.message || "")}</p>
+<p><b>Status:</b> ${escapeHtml(t.status || "open")}</p>
 
 <button class="resolve" onclick="resolveTicket('${id}')">Resolve</button>
 <button class="reject" onclick="rejectTicket('${id}')">Reject</button>
 <button class="delete" onclick="deleteTicket('${id}')">Delete</button>
 
-<button class="call" onclick="callUser('${phone}')">📞 Call</button>
-<button class="whatsapp" onclick="whatsappUser('${phone}')">💬 WhatsApp</button>
-<button class="email" onclick="emailUser('${email}')">📧 Email</button>
+<button class="call" onclick="callUser('${phone}')">Call</button>
+<button class="whatsapp" onclick="whatsappUser('${phone}')">WhatsApp</button>
+<button class="email" onclick="emailUser('${email}')">Email</button>
+
+<div class="chatBox">
+<b>Ticket Chat</b>
+<div class="chatMessages">${chatHtml(t.chatMessages)}</div>
+<div class="replyRow">
+<textarea id="reply_${id}" placeholder="Type admin reply..."></textarea>
+<button class="sendReply" onclick="sendAdminReply('${id}')">Send Reply</button>
+</div>
+</div>
 `;
 
 box.appendChild(div);
@@ -136,6 +234,29 @@ await update(ref(db,"tickets/"+id),{status:"resolved"});
 
 window.rejectTicket = async (id)=>{
 await update(ref(db,"tickets/"+id),{status:"not_resolved"});
+};
+
+window.sendAdminReply = async (id)=>{
+const input = document.getElementById("reply_"+id);
+const text = input.value.trim();
+
+if(!text){
+alert("Please type a reply.");
+return;
+}
+
+await push(ref(db,"tickets/"+id+"/chatMessages"),{
+sender:"admin",
+text,
+time:Date.now()
+});
+
+await update(ref(db,"tickets/"+id),{
+lastReply:text,
+lastReplyAt:Date.now()
+});
+
+input.value = "";
 };
 
 window.deleteTicket = async (id)=>{
