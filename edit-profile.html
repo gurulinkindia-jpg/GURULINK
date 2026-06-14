@@ -85,6 +85,23 @@ border-radius:8px;
 box-sizing:border-box;
 }
 
+.field input:disabled{
+background:#eef2f7;
+color:#666;
+cursor:not-allowed;
+}
+
+.approvalNote{
+font-size:12px;
+line-height:1.45;
+color:#b45309;
+background:#fff7ed;
+border:1px solid #fed7aa;
+border-radius:8px;
+padding:8px;
+margin-top:8px;
+}
+
 .field textarea{
 min-height:100px;
 resize:vertical;
@@ -404,7 +421,8 @@ const hiddenFields = [
 "category",
 "publicVisibility",
 "renewalStatus",
-"lastRenewalDate"
+"lastRenewalDate",
+"updatedAt"
 
 ];
 
@@ -555,8 +573,23 @@ input.id=key;
 
 input.value=value ?? "";
 
+if(key === "phone"){
+input.disabled = true;
+input.title = "Phone number changes need approval.";
+}
+
 wrapper.appendChild(input);
 
+}
+
+if(key === "phone"){
+const note =
+document.createElement("div");
+note.className =
+"approvalNote";
+note.innerText =
+"Phone number changes need approval. Please contact support if you want to update your registered phone number.";
+wrapper.appendChild(note);
 }
 
 const visibilityLabel =
@@ -793,6 +826,11 @@ document.querySelectorAll("#dynamicFields input[id], #dynamicFields textarea[id]
 .filter(id=>!id.startsWith("show_"));
 
 for(const key of fieldKeys){
+
+if(key === "phone"){
+updateData.phone = profileData.phone || "";
+continue;
+}
 
 const field =
 document.getElementById(key);
