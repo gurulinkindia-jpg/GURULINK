@@ -4,10 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Creative Institution Registration</title>
+<title>Arts & Creativity Registration</title>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial,sans-serif;
@@ -76,10 +75,78 @@ object-fit:cover;
 border:1px solid #ddd;
 }
 
-.subjectGrid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 8px 20px;
+.subjectGrid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+gap:12px;
+}
+
+.skillCategory{
+background:white;
+border:1px solid #e0e0e0;
+border-radius:10px;
+padding:12px;
+}
+
+.skillCategory h4{
+margin:0 0 8px;
+color:#e65100;
+}
+
+.skillsPanel{
+display:none;
+padding:14px;
+border:1px solid #ddd;
+border-radius:10px;
+background:#fafafa;
+margin:10px 0;
+}
+
+.skillsPanel.open{
+display:block;
+}
+
+.modesPanel{
+display:none;
+padding:14px;
+border:1px solid #ddd;
+border-radius:10px;
+background:#fafafa;
+margin:10px 0;
+}
+
+.modesPanel.open{
+display:block;
+}
+
+.secondaryButton{
+background:#263238;
+margin:8px 0;
+}
+
+.selectedSummary{
+font-size:13px;
+line-height:1.5;
+background:#fff8e1;
+border:1px solid #ffe082;
+border-radius:8px;
+padding:10px;
+margin:8px 0;
+}
+
+.skillExamples{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+margin:8px 0;
+}
+
+.skillExamples span{
+font-size:13px;
+background:#eef2f7;
+border:1px solid #d8dee8;
+border-radius:20px;
+padding:7px 10px;
 }
 
 .row{
@@ -102,9 +169,6 @@ border-radius:10px;
 margin-bottom:10px;
 }
 
-
-
-
 @keyframes blink{
 0%,100%{
 opacity:1;
@@ -118,24 +182,6 @@ opacity:0.7;
 
 <body>
 
-
-
-
-
-
-
-
-</style>
-</head>
-
-<body>
-
-
-
-
-
-
-
 <div style="
 background:#d50000;
 color:white;
@@ -145,49 +191,18 @@ font-weight:bold;
 font-size:15px;
 animation:blink 1.2s infinite;
 ">
-🎉 Up tp 98% Promotional Discount Going On! Use Promo Code: <b>PRO-98</b> 🎉
+Up to 98% Promotional Discount Going On! Use Promo Code: <b>PRO-98</b>
 </div>
 
-
-
-
-
-
-
-
-
 <header>
-
-
-
-
-<h1>Creative Institution Registration</h1>
-
-
-
-
-
+<h1>Arts & Creativity Registration</h1>
 <p>1 Year Subscription Fee ₹5000</p>
 </header>
 
 <div class="container">
-
-
-
 <form id="form">
 
-
-
-
-
-
 <input id="name" placeholder="Institution Name" required>
-
-
-
-
-
-
 
 <input id="ownerName" placeholder="Owner / Director Name" required>
 
@@ -208,16 +223,9 @@ required>
 
 <input id="website" placeholder="Website URL (if available)">
 
-
-
-
-
-
 <label>Select State</label>
-
 <select id="address" required>
 <option value="">Select State</option>
-
 <option value="Andhra Pradesh">Andhra Pradesh</option>
 <option value="Arunachal Pradesh">Arunachal Pradesh</option>
 <option value="Assam">Assam</option>
@@ -246,34 +254,23 @@ required>
 <option value="Uttar Pradesh">Uttar Pradesh</option>
 <option value="Uttarakhand">Uttarakhand</option>
 <option value="West Bengal">West Bengal</option>
-
 <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
 <option value="Chandigarh">Chandigarh</option>
-<option value="Dadra and Nagar Haveli and Daman and Diu">
-Dadra and Nagar Haveli and Daman and Diu
-</option>
+<option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
 <option value="Delhi">Delhi</option>
 <option value="Jammu and Kashmir">Jammu and Kashmir</option>
 <option value="Ladakh">Ladakh</option>
 <option value="Lakshadweep">Lakshadweep</option>
 <option value="Puducherry">Puducherry</option>
-
 </select>
 
-
-<input id="area" placeholder="Area/City or Town">
-
-
+<input id="area" placeholder="Area/City or town">
 
 <input type="text" id="pinCode" placeholder="PIN Code" maxlength="6" pattern="[0-9]{6}" required>
 
-
-
 <h3>Location</h3>
 
-<input
-id="mapUrl"
-placeholder="Google Maps Share Link">
+<input id="mapUrl" placeholder="Google Maps Share Link">
 
 <textarea
 id="mapLink"
@@ -281,119 +278,189 @@ placeholder="Google Maps Embed Code (iframe)"
 style="height:120px;resize:vertical;">
 </textarea>
 
+<h3>Arts & Creativity</h3>
 
+<p style="font-size:13px;line-height:1.5;margin-bottom:6px;">
+Examples:
+</p>
 
+<div class="skillExamples">
+<span>Singing</span>
+<span>Classical Dance</span>
+<span>Drawing & Sketching</span>
+<span>Photography</span>
+<span>Creative Writing</span>
+</div>
 
+<button type="button" id="toggleSkills" class="secondaryButton">
+More Arts & Creativity
+</button>
 
+<div id="selectedSkills" class="selectedSummary">
+No arts and creativity subject selected yet. Click More to open the full chart.
+</div>
 
-
-
-
-<h3>Creative Subjects</h3>
+<div id="skillsPanel" class="skillsPanel">
 
 <div class="subjectGrid">
 
-<div class="row">
-<input type="checkbox" value="Music" class="subjectCheck"> Music
+<div class="skillCategory">
+<h4>Music</h4>
+<div class="row"><input type="checkbox" value="Singing" class="subjectCheck"> Singing</div>
+<div class="row"><input type="checkbox" value="Guitar" class="subjectCheck"> Guitar</div>
+<div class="row"><input type="checkbox" value="Piano/Keyboard" class="subjectCheck"> Piano/Keyboard</div>
+<div class="row"><input type="checkbox" value="Violin" class="subjectCheck"> Violin</div>
+<div class="row"><input type="checkbox" value="Drums" class="subjectCheck"> Drums</div>
+<div class="row"><input type="checkbox" value="Music Production" class="subjectCheck"> Music Production</div>
+<div class="row"><input type="checkbox" value="Music Composition" class="subjectCheck"> Music Composition</div>
+<div class="row"><input type="checkbox" value="DJ Skills" class="subjectCheck"> DJ Skills</div>
+<div class="row"><input type="checkbox" value="Sound Engineering" class="subjectCheck"> Sound Engineering</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherMusic"> Other Music Skill</div>
+<input id="otherMusic" class="otherSkillInput" placeholder="Write Other Music Skill" style="display:none;">
 </div>
 
-<div class="row">
-<input type="checkbox" value="Dance" class="subjectCheck"> Dance
+<div class="skillCategory">
+<h4>Dance</h4>
+<div class="row"><input type="checkbox" value="Classical Dance" class="subjectCheck"> Classical Dance</div>
+<div class="row"><input type="checkbox" value="Hip-Hop" class="subjectCheck"> Hip-Hop</div>
+<div class="row"><input type="checkbox" value="Contemporary" class="subjectCheck"> Contemporary</div>
+<div class="row"><input type="checkbox" value="Bollywood Dance" class="subjectCheck"> Bollywood Dance</div>
+<div class="row"><input type="checkbox" value="Folk Dance" class="subjectCheck"> Folk Dance</div>
+<div class="row"><input type="checkbox" value="Salsa" class="subjectCheck"> Salsa</div>
+<div class="row"><input type="checkbox" value="Jazz Dance" class="subjectCheck"> Jazz Dance</div>
+<div class="row"><input type="checkbox" value="Freestyle Dance" class="subjectCheck"> Freestyle Dance</div>
+<div class="row"><input type="checkbox" value="Choreography" class="subjectCheck"> Choreography</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherDance"> Other Dance Skill</div>
+<input id="otherDance" class="otherSkillInput" placeholder="Write Other Dance Skill" style="display:none;">
 </div>
 
-<div class="row">
-<input type="checkbox" value="Drawing" class="subjectCheck"> Drawing
+<div class="skillCategory">
+<h4>Visual Arts</h4>
+<div class="row"><input type="checkbox" value="Drawing & Sketching" class="subjectCheck"> Drawing & Sketching</div>
+<div class="row"><input type="checkbox" value="Painting & Watercolor" class="subjectCheck"> Painting & Watercolor</div>
+<div class="row"><input type="checkbox" value="Digital Art" class="subjectCheck"> Digital Art</div>
+<div class="row"><input type="checkbox" value="Calligraphy" class="subjectCheck"> Calligraphy</div>
+<div class="row"><input type="checkbox" value="Portrait Art" class="subjectCheck"> Portrait Art</div>
+<div class="row"><input type="checkbox" value="Cartoon & Comic Art" class="subjectCheck"> Cartoon & Comic Art</div>
+<div class="row"><input type="checkbox" value="Mural Painting" class="subjectCheck"> Mural Painting</div>
+<div class="row"><input type="checkbox" value="Sculpture & Clay Modeling" class="subjectCheck"> Sculpture & Clay Modeling</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherVisualArts"> Other Visual Arts Skill</div>
+<input id="otherVisualArts" class="otherSkillInput" placeholder="Write Other Visual Arts Skill" style="display:none;">
 </div>
 
-<div class="row">
-<input type="checkbox" value="Painting" class="subjectCheck"> Painting
+<div class="skillCategory">
+<h4>Performing Arts</h4>
+<div class="row"><input type="checkbox" value="Acting" class="subjectCheck"> Acting</div>
+<div class="row"><input type="checkbox" value="Theatre & Drama" class="subjectCheck"> Theatre & Drama</div>
+<div class="row"><input type="checkbox" value="Voice Acting" class="subjectCheck"> Voice Acting</div>
+<div class="row"><input type="checkbox" value="Mimicry" class="subjectCheck"> Mimicry</div>
+<div class="row"><input type="checkbox" value="Anchoring & Hosting" class="subjectCheck"> Anchoring & Hosting</div>
+<div class="row"><input type="checkbox" value="Stand-Up Comedy" class="subjectCheck"> Stand-Up Comedy</div>
+<div class="row"><input type="checkbox" value="Stage Performance Skills" class="subjectCheck"> Stage Performance Skills</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherPerformingArts"> Other Performing Arts Skill</div>
+<input id="otherPerformingArts" class="otherSkillInput" placeholder="Write Other Performing Arts Skill" style="display:none;">
 </div>
 
-<div class="row">
-<input type="checkbox" value="Sketching" class="subjectCheck"> Sketching
+<div class="skillCategory">
+<h4>Photography & Media</h4>
+<div class="row"><input type="checkbox" value="Photography" class="subjectCheck"> Photography</div>
+<div class="row"><input type="checkbox" value="Videography" class="subjectCheck"> Videography</div>
+<div class="row"><input type="checkbox" value="Video Editing" class="subjectCheck"> Video Editing</div>
+<div class="row"><input type="checkbox" value="Filmmaking" class="subjectCheck"> Filmmaking</div>
+<div class="row"><input type="checkbox" value="Cinematography" class="subjectCheck"> Cinematography</div>
+<div class="row"><input type="checkbox" value="Photo Editing" class="subjectCheck"> Photo Editing</div>
+<div class="row"><input type="checkbox" value="Drone Photography" class="subjectCheck"> Drone Photography</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherPhotographyMedia"> Other Photography & Media Skill</div>
+<input id="otherPhotographyMedia" class="otherSkillInput" placeholder="Write Other Photography & Media Skill" style="display:none;">
 </div>
 
-<div class="row">
-<input type="checkbox" value="Singing" class="subjectCheck"> Singing (Vocal)
+<div class="skillCategory">
+<h4>Creative Content Creation</h4>
+<div class="row"><input type="checkbox" value="Content Creation" class="subjectCheck"> Content Creation</div>
+<div class="row"><input type="checkbox" value="Storytelling" class="subjectCheck"> Storytelling</div>
+<div class="row"><input type="checkbox" value="Script Writing" class="subjectCheck"> Script Writing</div>
+<div class="row"><input type="checkbox" value="Podcasting" class="subjectCheck"> Podcasting</div>
+<div class="row"><input type="checkbox" value="Blogging" class="subjectCheck"> Blogging</div>
+<div class="row"><input type="checkbox" value="Creative Writing" class="subjectCheck"> Creative Writing</div>
+<div class="row"><input type="checkbox" value="Copywriting" class="subjectCheck"> Copywriting</div>
+<div class="row"><input type="checkbox" value="YouTube Content Creation" class="subjectCheck"> YouTube Content Creation</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherContentCreation"> Other Creative Content Skill</div>
+<input id="otherContentCreation" class="otherSkillInput" placeholder="Write Other Creative Content Skill" style="display:none;">
 </div>
 
-<div class="row">
-<input type="checkbox" value="Instrumental Music" class="subjectCheck"> Instrumental Music
+<div class="skillCategory">
+<h4>Crafts & Design</h4>
+<div class="row"><input type="checkbox" value="Craft Making" class="subjectCheck"> Craft Making</div>
+<div class="row"><input type="checkbox" value="Origami" class="subjectCheck"> Origami</div>
+<div class="row"><input type="checkbox" value="Fashion Design" class="subjectCheck"> Fashion Design</div>
+<div class="row"><input type="checkbox" value="Graphic Design" class="subjectCheck"> Graphic Design</div>
+<div class="row"><input type="checkbox" value="Jewellery Making" class="subjectCheck"> Jewellery Making</div>
+<div class="row"><input type="checkbox" value="Paper Craft" class="subjectCheck"> Paper Craft</div>
+<div class="row"><input type="checkbox" value="Handmade Gift Making" class="subjectCheck"> Handmade Gift Making</div>
+<div class="row"><input type="checkbox" value="Candle Making" class="subjectCheck"> Candle Making</div>
+<div class="row"><input type="checkbox" value="Resin Art" class="subjectCheck"> Resin Art</div>
+<div class="row"><input type="checkbox" value="DIY Craft Projects" class="subjectCheck"> DIY Craft Projects</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherCraftDesign"> Other Crafts & Design Skill</div>
+<input id="otherCraftDesign" class="otherSkillInput" placeholder="Write Other Crafts & Design Skill" style="display:none;">
 </div>
 
-<div class="row">
-<input type="checkbox" value="Guitar" class="subjectCheck"> Guitar
+<div class="skillCategory">
+<h4>Literary Arts</h4>
+<div class="row"><input type="checkbox" value="Creative Writing" class="subjectCheck"> Creative Writing</div>
+<div class="row"><input type="checkbox" value="Poetry Writing" class="subjectCheck"> Poetry Writing</div>
+<div class="row"><input type="checkbox" value="Short Story Writing" class="subjectCheck"> Short Story Writing</div>
+<div class="row"><input type="checkbox" value="Novel Writing" class="subjectCheck"> Novel Writing</div>
+<div class="row"><input type="checkbox" value="Public Reading & Recitation" class="subjectCheck"> Public Reading & Recitation</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherLiteraryArts"> Other Literary Arts Skill</div>
+<input id="otherLiteraryArts" class="otherSkillInput" placeholder="Write Other Literary Arts Skill" style="display:none;">
 </div>
 
-<div class="row">
-<input type="checkbox" value="Piano" class="subjectCheck"> Piano / Keyboard
+<div class="skillCategory">
+<h4>Fine Arts</h4>
+<div class="row"><input type="checkbox" value="Painting" class="subjectCheck"> Painting</div>
+<div class="row"><input type="checkbox" value="Sculpture" class="subjectCheck"> Sculpture</div>
+<div class="row"><input type="checkbox" value="Printmaking" class="subjectCheck"> Printmaking</div>
+<div class="row"><input type="checkbox" value="Art History" class="subjectCheck"> Art History</div>
+<div class="row"><input type="checkbox" value="Art Appreciation" class="subjectCheck"> Art Appreciation</div>
+<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherFineArts"> Other Fine Arts Skill</div>
+<input id="otherFineArts" class="otherSkillInput" placeholder="Write Other Fine Arts Skill" style="display:none;">
 </div>
-
-<div class="row">
-<input type="checkbox" value="Tabla" class="subjectCheck"> Tabla
-</div>
-
-<div class="row">
-<input type="checkbox" value="Yoga" class="subjectCheck"> Yoga
-</div>
-
-<div class="row">
-<input type="checkbox" value="Acting" class="subjectCheck"> Acting / Drama
-</div>
-
-<div class="row">
-<input type="checkbox" value="Craft" class="subjectCheck"> Craft / Handmade Art
-</div>
-
-<div class="row">
-<input type="checkbox" value="Photography" class="subjectCheck"> Photography
-</div>
-
-<div class="row">
-<input type="checkbox" value="Graphic Design" class="subjectCheck"> Graphic Design
-</div>
-
-<div class="row">
-<input type="checkbox" id="otherCheck"> Other
-</div>
-
-<input
-id="otherSubject"
-placeholder="Write Other Creative Skill"
-style="display:none;">
 
 <p id="subjectError" style="color:red;display:none;">
-Select at least one subject
+Please select at least one arts and creativity subject
 </p>
-
 </div>
 
-
-
-
-
-
-
-
-
-
-
+</div>
 
 <input
 id="class"
-placeholder="Age Group: eg. 10-14, 15-18,etc"
+placeholder="Age group: eg. 10-14. 15-18, etc"
 required>
 
+<h3>Arts & Creativity Training Modes</h3>
 
+<p style="font-size:13px;line-height:1.5;margin-bottom:6px;">
+Examples:
+</p>
 
+<div class="skillExamples">
+<span>Group Class / Workshop</span>
+<span>One-to-One Training</span>
+<span>Online Classes</span>
+</div>
 
+<button type="button" id="toggleModes" class="secondaryButton">
+More Training Modes
+</button>
 
+<div id="selectedModes" class="selectedSummary">
+No training mode selected yet. Click More to open the full chart.
+</div>
 
-
-<h3>Teaching Modes</h3>
+<div id="modesPanel" class="modesPanel">
 
 <div class="modeBox">
-
 <div class="row">
 <input type="checkbox" class="mode" value="Group Class" onchange="toggleFee('groupFeeBox')">
 Group Class / Workshop
@@ -402,7 +469,6 @@ Group Class / Workshop
 <div id="groupFeeBox" class="modeFee">
 <input id="groupFee" placeholder="Enter Group Class Fee">
 </div>
-
 
 <div class="row">
 <input type="checkbox" class="mode" value="One-to-One Training" onchange="toggleFee('individualFeeBox')">
@@ -413,7 +479,6 @@ One-to-One Training
 <input id="individualFee" placeholder="Enter One-to-One Fee">
 </div>
 
-
 <div class="row">
 <input type="checkbox" class="mode" value="Home Visit" onchange="toggleFee('homeFeeBox')">
 Home Visit / Home Teaching
@@ -422,7 +487,6 @@ Home Visit / Home Teaching
 <div id="homeFeeBox" class="modeFee">
 <input id="homeFee" placeholder="Enter Home Visit Fee">
 </div>
-
 
 <div class="row">
 <input type="checkbox" class="mode" value="Online Classes" onchange="toggleFee('onlineFeeBox')">
@@ -433,199 +497,114 @@ Online Classes
 <input id="onlineFee" placeholder="Enter Online Fee">
 </div>
 
+<div class="row">
+<input type="checkbox" id="otherModeCheck" onchange="toggleFee('otherModeBox')">
+Other Training Mode
 </div>
 
+<div id="otherModeBox" class="modeFee">
+<input id="otherMode" placeholder="Write Other Training Mode">
+<input id="otherModeFee" placeholder="Enter Other Training Mode Fee">
+</div>
+</div>
 
-
-
-
-
-
+</div>
 
 <h3>Logo</h3>
 
-<input
-type="file"
-id="logo"
-accept="image/*"
-required>
+<input type="file" id="logo" accept="image/*" required>
 
 <div id="logoPreview" class="preview"></div>
 
 <h3>ID Proof</h3>
 
 <select id="idType" required>
-
 <option value="">Select</option>
-
 <option value="Owner PAN">Owner PAN</option>
 <option value="Owner Aadhaar">Owner Aadhaar</option>
-
 <option value="Trading License">Trading License</option>
 <option value="GST Certificate">GST Certificate</option>
-<option value="GST Certificate">UDYAM Aadhar</option>
+<option value="UDYAM Aadhaar">UDYAM Aadhaar</option>
 <option value="Electricity Bill">Electricity Bill</option>
 <option value="NGO Certificate">NGO Certificate</option>
-
 <option value="Other">Other</option>
-
 </select>
-
-<!-- ✅ MUST BE OUTSIDE SELECT -->
-
-
-
-
 
 <input
 id="otherIdProof"
 placeholder="Specify Other ID Proof"
 style="display:none; margin-top:10px;">
 
-<input
-type="file"
-id="idUpload"
-accept="image/*"
-required>
+<input type="file" id="idUpload" accept="image/*" required>
 
 <div id="idPreview" class="preview"></div>
 
-
-
-
-
-
 <h3>Gallery</h3>
 
-<input
-type="file"
-id="gallery"
-multiple
-accept="image/*">
+<input type="file" id="gallery" multiple accept="image/*">
 
 <div id="galleryPreview" class="preview"></div>
 
+<textarea id="description" placeholder="About Institution"></textarea>
 
-
-
-
-
-
-
-
-<!-- KEEP EVERYTHING SAME ABOVE -->
-
-
-
-
-<textarea
-id="description"
-placeholder="About Institution"></textarea>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!-- ✅ DECLARATION START -->
 <div style="margin-top:15px;padding:10px;border:1px solid #ddd;border-radius:10px;background:#fafafa;">
-
 <p style="font-size:12px;line-height:1.5;margin-bottom:10px;">
-
 I hereby declare that all the information provided by me in this form is true and correct to the best of my knowledge and belief. I understand that if any information is found to be false or incorrect, my application may be rejected or necessary action may be taken against me. I also agree to follow all the rules, regulations, and responsibilities assigned by the GURULINK, powered by G10 Group.
-
 </p>
 
 <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-
 <input
 type="checkbox"
 id="declaration"
 required
 style="width:auto;margin:0;">
-
-<span style="font-size:13px;">
-I Agree
-</span>
-
+<span style="font-size:13px;">I Agree</span>
 </label>
-
 </div>
-<!-- ✅ DECLARATION END -->
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-<button type="submit">
-
-Continue To Payment
-
-</button>
+<button type="submit">Continue To Payment</button>
 
 </form>
-
 </div>
 
 <script>
-
 function toggleFee(id){
-
 const box=document.getElementById(id);
-
-box.style.display=
-box.style.display==="block"
-?
-"none"
-:
-"block";
-
+box.style.display=box.style.display==="block" ? "none" : "block";
 }
 
+function updateSelectedSkills(){
+const selected = Array.from(document.querySelectorAll(".subjectCheck:checked")).map(item=>item.value);
+
+document.querySelectorAll(".otherSkillCheck:checked").forEach(item=>{
+const input = document.getElementById(item.dataset.target);
+selected.push(input.value.trim() || item.parentElement.innerText.trim());
+});
+
+document.getElementById("selectedSkills").innerText =
+selected.length ? "Selected: " + selected.join(", ") : "No arts and creativity subject selected yet. Click More to open the full chart.";
+}
+
+function updateSelectedModes(){
+const selected = Array.from(document.querySelectorAll(".mode:checked")).map(item=>item.value);
+const otherModeCheck = document.getElementById("otherModeCheck");
+const otherMode = document.getElementById("otherMode").value.trim();
+
+if(otherModeCheck.checked){
+selected.push(otherMode || "Other Training Mode");
+}
+
+document.getElementById("selectedModes").innerText =
+selected.length ? "Selected: " + selected.join(", ") : "No training mode selected yet. Click More to open the full chart.";
+}
 </script>
 
 <script type="module">
-
-import {
-initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-
-import {
-getDatabase,
-ref,
-set
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-
-import {
-getAuth,
-createUserWithEmailAndPassword
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
-
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -633,218 +612,121 @@ projectId:"gurulink-59cc7",
 storageBucket:"gurulink-59cc7.appspot.com",
 messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
-
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getDatabase(app);
-
 const auth = getAuth(app);
-
 const form = document.getElementById("form");
+const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
 
-
-
-
-/* 🔥 ID PROOF "OTHER" HANDLER */
 document.getElementById("idType").addEventListener("change",(e)=>{
-
 document.getElementById("otherIdProof").style.display =
 e.target.value === "Other" ? "block" : "none";
-
 });
 
-
-
-
-
-
-
-
-const API_KEY =
-"31f729ff855eb2e42c00ee508a8647ea";
-
-/* SUBJECT OTHER */
-
-document
-.getElementById("otherCheck")
-.addEventListener("change",(e)=>{
-
-document.getElementById(
-"otherSubject"
-).style.display =
-
-e.target.checked
-?
-"block"
-:
-"none";
-
+document.getElementById("toggleSkills").addEventListener("click",()=>{
+const panel = document.getElementById("skillsPanel");
+const button = document.getElementById("toggleSkills");
+panel.classList.toggle("open");
+button.innerText = panel.classList.contains("open")
+? "Hide Arts & Creativity Chart"
+: "More Arts & Creativity";
 });
 
-/* IMAGE UPLOAD */
+document.getElementById("toggleModes").addEventListener("click",()=>{
+const panel = document.getElementById("modesPanel");
+const button = document.getElementById("toggleModes");
+panel.classList.toggle("open");
+button.innerText = panel.classList.contains("open")
+? "Hide Training Modes Chart"
+: "More Training Modes";
+});
+
+document.querySelectorAll(".subjectCheck").forEach(item=>{
+item.addEventListener("change", updateSelectedSkills);
+});
+
+document.querySelectorAll(".mode").forEach(item=>{
+item.addEventListener("change", updateSelectedModes);
+});
+
+document.getElementById("otherModeCheck").addEventListener("change", updateSelectedModes);
+document.getElementById("otherMode").addEventListener("input", updateSelectedModes);
+
+document.querySelectorAll(".otherSkillCheck").forEach(item=>{
+item.addEventListener("change",(e)=>{
+const input = document.getElementById(e.target.dataset.target);
+input.style.display = e.target.checked ? "block" : "none";
+if(!e.target.checked){
+input.value = "";
+}
+updateSelectedSkills();
+});
+});
+
+document.querySelectorAll(".otherSkillInput").forEach(item=>{
+item.addEventListener("input", updateSelectedSkills);
+});
 
 async function upload(file){
-
 let fd = new FormData();
-
 fd.append("image",file);
 
-let res = await fetch(
-
-`https://api.imgbb.com/1/upload?key=${API_KEY}`,
-
-{
+let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`,{
 method:"POST",
 body:fd
-}
-
-);
+});
 
 let data = await res.json();
-
 return data.data.url;
-
 }
 
-/* PREVIEW */
-
 function preview(input, box){
-
 input.addEventListener("change",()=>{
-
 box.innerHTML="";
 
 if(input.files[0]){
-
-let img =
-document.createElement("img");
-
-img.src =
-URL.createObjectURL(
-input.files[0]
-);
-
+let img = document.createElement("img");
+img.src = URL.createObjectURL(input.files[0]);
 box.appendChild(img);
-
 }
-
 });
-
 }
 
-preview(
-document.getElementById("logo"),
-document.getElementById("logoPreview")
-);
-
-preview(
-document.getElementById("idUpload"),
-document.getElementById("idPreview")
-);
+preview(document.getElementById("logo"), document.getElementById("logoPreview"));
+preview(document.getElementById("idUpload"), document.getElementById("idPreview"));
 
 let galleryFiles=[];
 
-document
-.getElementById("gallery")
-.addEventListener("change",function(){
-
-galleryFiles =
-Array.from(this.files);
-
-document.getElementById(
-"galleryPreview"
-).innerHTML =
-
-galleryFiles.map(f=>
-
-`<img src="${URL.createObjectURL(f)}">`
-
-).join("");
-
+document.getElementById("gallery").addEventListener("change",function(){
+galleryFiles = Array.from(this.files);
+document.getElementById("galleryPreview").innerHTML =
+galleryFiles.map(f=>`<img src="${URL.createObjectURL(f)}">`).join("");
 });
 
-/* SUBMIT */
-
-form.addEventListener(
-"submit",
-async (e)=>{
-
+form.addEventListener("submit", async (e)=>{
 e.preventDefault();
 
-const submitBtn =
-form.querySelector("button");
-
+const submitBtn = form.querySelector("button[type=submit]");
 submitBtn.disabled=true;
 submitBtn.innerText="Processing...";
 
-
-
-
-
-
-
-
-
-
-
-
-
 try{
+let checked = document.querySelectorAll(".subjectCheck:checked").length;
+let otherChecked = document.querySelectorAll(".otherSkillCheck:checked").length;
 
-let checked =
-document.querySelectorAll(
-".subjectCheck:checked"
-).length;
-
-if(
-checked===0 &&
-!document.getElementById("otherCheck").checked
-){
-
-document.getElementById(
-"subjectError"
-).style.display="block";
-
+if(checked===0 && otherChecked===0){
+document.getElementById("subjectError").style.display="block";
 submitBtn.disabled=false;
-submitBtn.innerText=
-"Continue To Payment";
-
+submitBtn.innerText="Continue To Payment";
 return;
-
 }
 
+document.getElementById("subjectError").style.display="none";
 
-
-
-
-
-
-
-
-document.getElementById(
-"subjectError"
-).style.display="none";
-
-const email =
-document.getElementById("email")
-.value
-.trim()
-.toLowerCase();
-
-const password =
-document.getElementById("password")
-.value;
-
-
-
-
-
-
-
-
-
+const email = document.getElementById("email").value.trim().toLowerCase();
+const password = document.getElementById("password").value;
 
 if(!document.getElementById("declaration").checked){
 alert("Please accept the declaration before submitting.");
@@ -853,379 +735,128 @@ submitBtn.innerText="Continue To Payment";
 return;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-/* CREATE AUTH */
-
-const userCred =
-
-await createUserWithEmailAndPassword(
-auth,
-email,
-password
-);
-
-const uid =
-userCred.user.uid;
+const userCred = await createUserWithEmailAndPassword(auth,email,password);
+const uid = userCred.user.uid;
 await auth.currentUser.getIdToken(true);
 
-/* LOCAL STORAGE */
-
-localStorage.setItem(
-"uid",
-uid
-);
-
-localStorage.setItem(
-"profileId",
-uid
-);
-
-
-
-
-
-
-
-
-
-
-localStorage.setItem(
-"role",
-"institution"
-);
-
-
-
-
-
-
-
-
-
-
-/* IMAGE UPLOAD */
+localStorage.setItem("uid",uid);
+localStorage.setItem("profileId",uid);
+localStorage.setItem("role","institution");
 
 let logoUrl="";
-
-if(
-document.getElementById("logo").files[0]
-){
-
-logoUrl = await upload(
-document.getElementById("logo").files[0]
-);
-
+if(document.getElementById("logo").files[0]){
+logoUrl = await upload(document.getElementById("logo").files[0]);
 }
 
 let idProofUrl="";
-
-if(
-document.getElementById("idUpload").files[0]
-){
-
-idProofUrl = await upload(
-document.getElementById("idUpload").files[0]
-);
-
+if(document.getElementById("idUpload").files[0]){
+idProofUrl = await upload(document.getElementById("idUpload").files[0]);
 }
 
 let gallery=[];
-
 for(let file of galleryFiles){
-
-gallery.push(
-await upload(file)
-);
-
+gallery.push(await upload(file));
 }
 
-/* SUBJECTS */
-
 let subjects=[];
-
-document
-.querySelectorAll(
-".subjectCheck:checked"
-)
-.forEach(item=>{
-
+document.querySelectorAll(".subjectCheck:checked").forEach(item=>{
 subjects.push(item.value);
+});
 
+document.querySelectorAll(".otherSkillCheck:checked").forEach(item=>{
+const input = document.getElementById(item.dataset.target);
+if(input.value.trim()!==""){
+subjects.push(input.value.trim());
+}
+});
+
+let teachingModes=[];
+document.querySelectorAll(".mode:checked").forEach(item=>{
+teachingModes.push(item.value);
 });
 
 if(
-document.getElementById("otherCheck").checked &&
-document.getElementById("otherSubject").value.trim()!==""
+document.getElementById("otherModeCheck").checked &&
+document.getElementById("otherMode").value.trim()!==""
 ){
-
-subjects.push(
-document.getElementById("otherSubject").value
-);
-
+teachingModes.push(document.getElementById("otherMode").value.trim());
 }
 
-/* MODES */
+const selectedIdType = document.getElementById("idType").value;
+const idTypeValue =
+selectedIdType === "Other" && document.getElementById("otherIdProof").value.trim()
+? document.getElementById("otherIdProof").value.trim()
+: selectedIdType;
 
-let teachingModes=[];
-
-document
-.querySelectorAll(".mode:checked")
-.forEach(item=>{
-
-teachingModes.push(
-item.value
-);
-
+await set(ref(db,"institutions/"+uid),{
+uid:uid,
+name:document.getElementById("name").value,
+ownerName:document.getElementById("ownerName").value,
+establishedDate:document.getElementById("establishedDate").value,
+phone:document.getElementById("phone").value,
+alternatePhone:document.getElementById("alternatePhone").value,
+email:email,
+website:document.getElementById("website").value,
+address:document.getElementById("address").value,
+area:document.getElementById("area").value,
+pinCode:document.getElementById("pinCode").value,
+mapUrl:document.getElementById("mapUrl").value.trim(),
+mapLink:document.getElementById("mapLink").value.trim(),
+subjects:subjects,
+class:document.getElementById("class").value,
+teachingModes:teachingModes,
+individualFee:document.getElementById("individualFee").value,
+homeFee:document.getElementById("homeFee").value,
+groupFee:document.getElementById("groupFee").value,
+onlineFee:document.getElementById("onlineFee").value,
+otherMode:document.getElementById("otherMode").value.trim(),
+otherModeFee:document.getElementById("otherModeFee").value,
+logo:logoUrl,
+gallery:gallery,
+idType:idTypeValue,
+idProof:idProofUrl,
+description:document.getElementById("description").value,
+category:"creative",
+categoryName:"Arts & Creativity",
+role:"institution",
+status:"pending",
+paymentStatus:"pending",
+createdAt:Date.now(),
+updatedAt:Date.now()
 });
 
-/* SAVE INSTITUTION */
-
-
-
-
-
-
-
-await set(
-
-ref(db,"institutions/"+uid),
-
-{
-
-uid:uid,
-
-
-
-
-
-
-
-
-
-name:
-document.getElementById("name").value,
-
-ownerName:
-document.getElementById("ownerName").value,
-
-establishedDate:
-document.getElementById("establishedDate").value,
-
-phone:
-document.getElementById("phone").value,
-
-alternatePhone:
-document.getElementById("alternatePhone").value,
-
-email:email,
-
-website:
-document.getElementById("website").value,
-
-address:
-document.getElementById("address").value,
-
-area:
-document.getElementById("area").value,
-
-
-
-
-
-pinCode:
-document.getElementById("pinCode").value,
-
-
-
-
-
-
-mapUrl:
-document.getElementById("mapUrl").value.trim(),
-
-mapLink:
-document.getElementById("mapLink").value.trim(),
-
-
-
-
-
-
-
-subjects:subjects,
-
-class:
-document.getElementById("class").value,
-
-teachingModes:
-teachingModes,
-
-individualFee:
-document.getElementById("individualFee").value,
-
-homeFee:
-document.getElementById("homeFee").value,
-
-
-
-groupFee:
-document.getElementById("groupFee").value,
-
-
-
-
-
-
-
-onlineFee:
-document.getElementById("onlineFee").value,
-
-logo:logoUrl,
-
-gallery:gallery,
-
-idType:
-document.getElementById("idType").value,
-
-idProof:idProofUrl,
-
-description:
-document.getElementById("description").value,
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-category:"creative",
-
-role:"institution",
-
-status:"pending",
-
-createdAt:Date.now()
-
-}
-
-);
-
-/* USER ROLE */
-
-
-
-
-
-
-
-
-
-
-await set(
-ref(db,"users/"+uid),
-{
+await set(ref(db,"users/"+uid),{
 uid:uid,
 name:document.getElementById("name").value,
 email:email,
 role:"institution",
 profileId:uid,
 createdAt:Date.now()
-}
-);
+});
 
+localStorage.setItem("institutionId",uid);
 
+alert("Registration Successful. Do not refresh or go back. Complete payment to finish registration.");
 
-
-
-
-
-
-
-
-
-localStorage.setItem(
-"institutionId",
-uid
-);
-
-alert(
-"Registration Successful, ⚠ Do not refresh or go back. Complete payment to finish registration."
-);
-
-
-
-
-
-
-
-
-
-window.location.href =
-"payment.html?type=institution&id="+uid;
-
-
-
-
-
-
-
+window.location.href = "payment.html?type=institution&id="+uid;
 }
 catch(err){
-
 console.log(err);
 
-if(
-err.code==="auth/email-already-in-use"
-){
-
-alert(
-"This email already exists.\nPlease login instead."
-);
-
+if(err.code==="auth/email-already-in-use"){
+alert("This email already exists.\nPlease login instead.");
 }
-else if(
-err.code==="auth/weak-password"
-){
-
-alert(
-"Password must be minimum 6 characters."
-);
-
+else if(err.code==="auth/weak-password"){
+alert("Password must be minimum 6 characters.");
 }
 else{
-
 alert(err.message);
-
 }
 
 submitBtn.disabled=false;
-
-submitBtn.innerText=
-"Continue To Payment";
-
+submitBtn.innerText="Continue To Payment";
 }
-
-}
-);
-
+});
 </script>
 
 </body>
