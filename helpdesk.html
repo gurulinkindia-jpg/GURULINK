@@ -147,6 +147,58 @@ background:#263238;
 color:#fff;
 }
 
+.ticketChatBox{
+background:#fff;
+border:1px solid #d9e2ec;
+border-radius:10px;
+padding:10px;
+margin-top:10px;
+}
+
+.ticketChatMessages{
+max-height:240px;
+overflow-y:auto;
+display:flex;
+flex-direction:column;
+gap:8px;
+margin:10px 0;
+}
+
+.ticketChatMsg{
+padding:9px 11px;
+border-radius:10px;
+font-size:13px;
+line-height:1.45;
+max-width:90%;
+word-break:break-word;
+}
+
+.ticketChatMsg.user{
+background:#d1e7ff;
+align-self:flex-end;
+}
+
+.ticketChatMsg.admin{
+background:#e8f5e9;
+align-self:flex-start;
+}
+
+.ticketChatMeta{
+display:block;
+font-size:11px;
+color:#666;
+margin-top:4px;
+}
+
+.ticketReplyRow{
+display:flex;
+gap:8px;
+}
+
+.ticketReplyRow input{
+margin:0;
+}
+
 .faqItem{
 background:#fff;
 border:1px solid #ddd;
@@ -308,6 +360,14 @@ font-size:14px;
 padding:11px;
 margin-bottom:8px;
 }
+
+.ticketReplyRow{
+flex-direction:column;
+}
+
+.ticketReplyRow button{
+width:100%;
+}
 }
 
 @media(max-width:360px){
@@ -371,7 +431,7 @@ Welcome. Search your issue, open the FAQ sections, check an existing ticket, or 
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, push, get, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, push, get, onValue, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -391,6 +451,8 @@ const auth = getAuth(app);
 let currentUser = null;
 let canCreateTicket = true;
 let currentCategory = "general";
+let activeTicketId = "";
+let activeTicketListener = null;
 
 const faqs = [
 {cat:"registration",q:"Which registration form should I choose?",a:"Choose Institution if you are registering a school, coaching center, academy, institute, gym, sports club, studio, training center, or organization. Choose Teacher if you are registering as an individual teacher, trainer, coach, mentor, tutor, artist, or instructor."},
@@ -521,6 +583,97 @@ document.getElementById("chatBox").appendChild(div);
 div.scrollIntoView();
 }
 
+function escapeHtml(value){
+return String(value ?? "").replace(/[&<>"]/g, c => ({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+"\"":"&quot;"
+}[c]));
+}
+
+function formatTime(time){
+return time ? new Date(time).toLocaleString() : "";
+}
+
+function ticketChatHtml(messages){
+const list =
+Object.values(messages || {})
+.sort((a,b)=>(a.time || 0) - (b.time || 0));
+
+if(!list.length){
+return `<div class="ticketChatMsg admin">No chat messages yet. Send a message to support.</div>`;
+}
+
+return list.map(msg => `
+<div class="ticketChatMsg ${msg.sender === "admin" ? "admin" : "user"}">
+${escapeHtml(msg.text)}
+<span class="ticketChatMeta">${msg.sender === "admin" ? "Admin" : "You"} • ${formatTime(msg.time)}</span>
+</div>
+`).join("");
+}
+
+function openTicketChat(ticketId,ticketNo){
+activeTicketId = ticketId;
+
+if(activeTicketListener){
+activeTicketListener();
+activeTicketListener = null;
+}
+
+let existing = document.getElementById("ticketChatBox");
+if(!existing){
+const div = document.createElement("div");
+div.className = "msg bot";
+div.innerHTML = `
+<div class="ticketChatBox" id="ticketChatBox">
+<b>Ticket Chat</b>
+<div style="font-size:12px;color:#666;margin-top:4px;">Ticket: <span id="activeTicketNo">${escapeHtml(ticketNo || "")}</span></div>
+<div class="ticketChatMessages" id="ticketChatMessages"></div>
+<div class="ticketReplyRow">
+<input id="ticketReplyInput" placeholder="Type message to admin...">
+<button class="send" onclick="sendTicketMessage()">Send Message</button>
+</div>
+</div>
+`;
+document.getElementById("chatBox").appendChild(div);
+existing = div;
+}
+else{
+document.getElementById("activeTicketNo").textContent = ticketNo || "";
+}
+
+activeTicketListener = onValue(ref(db,"tickets/"+ticketId+"/chatMessages"), snap=>{
+document.getElementById("ticketChatMessages").innerHTML =
+ticketChatHtml(snap.val());
+document.getElementById("ticketChatBox").scrollIntoView();
+});
+}
+
+window.sendTicketMessage = async function(){
+const input = document.getElementById("ticketReplyInput");
+if(!activeTicketId || !input) return;
+
+const text = input.value.trim();
+if(!text){
+alert("Please type a message.");
+return;
+}
+
+await push(ref(db,"tickets/"+activeTicketId+"/chatMessages"),{
+sender:"user",
+text,
+time:Date.now()
+});
+
+await update(ref(db,"tickets/"+activeTicketId),{
+lastUserMessage:text,
+lastUserMessageAt:Date.now()
+});
+
+input.value = "";
+};
+
 function faqHtml(list){
 return list.map(item => `
 <details class="faqItem">
@@ -649,16 +802,19 @@ if(!val) return;
 
 const snap=await get(ref(db,"tickets"));
 let found=null;
+let foundId="";
 
 snap.forEach(c=>{
 let d=c.val();
 if(d.ticketNo===val || d.phone===val){
 found=d;
+foundId=c.key;
 }
 });
 
 if(found){
 addMsg(`<b>Ticket:</b> ${found.ticketNo}<br><b>Status:</b> ${found.status}<br><b>Phone:</b> ${found.phone}<br><b>Category:</b> ${found.category || "general"}`,"bot");
+openTicketChat(foundId,found.ticketNo);
 }else{
 addMsg("No ticket found for this ticket number or phone.","bot");
 }
@@ -717,7 +873,7 @@ return;
 
 const ticketNo=generateTicket();
 
-await push(ref(db,"tickets"),{
+const ticketRef = await push(ref(db,"tickets"),{
 ticketNo,
 name,
 role,
@@ -729,9 +885,16 @@ status:"open",
 time:Date.now()
 });
 
+await push(ref(db,"tickets/"+ticketRef.key+"/chatMessages"),{
+sender:"user",
+text:message,
+time:Date.now()
+});
+
 canCreateTicket=false;
 
-addMsg(`<b>Ticket Created Successfully</b><br><b>Ticket ID:</b> ${ticketNo}<br>Please save this ticket number for status checking.`,"bot");
+addMsg(`<b>Ticket Created Successfully</b><br><b>Ticket ID:</b> ${ticketNo}<br>Please save this ticket number for status checking. You can also chat with admin below.`,"bot");
+openTicketChat(ticketRef.key,ticketNo);
 };
 
 window.closeHelpdesk=function(){
