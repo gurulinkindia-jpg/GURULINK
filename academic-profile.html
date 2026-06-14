@@ -246,6 +246,38 @@ return (a || "").toLowerCase().includes((b || "").toLowerCase());
 }
 
 /* VIEW BUTTON FIX */
+function showGuestAccessPopup(onLogin){
+const oldPopup = document.getElementById("guestAccessPopup");
+if(oldPopup) oldPopup.remove();
+
+const popup = document.createElement("div");
+popup.id = "guestAccessPopup";
+popup.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:18px;z-index:9999;";
+popup.innerHTML = `
+<div style="width:100%;max-width:430px;background:white;border-radius:16px;box-shadow:0 18px 45px rgba(0,0,0,.28);overflow:hidden;">
+<div style="background:#00897b;color:white;padding:18px 20px;">
+<h3 style="margin:0;font-size:20px;">Limited Access</h3>
+</div>
+<div style="padding:20px;">
+<p style="margin:0 0 12px;line-height:1.6;color:#333;font-size:14px;">You are using limited access. For complete access, please log in as a Teacher / Institution or Student / Parent.</p>
+<p style="margin:0 0 12px;line-height:1.6;color:#333;font-size:14px;">GURULINK is only a linking platform between students, parents, teachers, and institutions. GURULINK never shares or misuses your personal data.</p>
+<p style="margin:0;line-height:1.6;color:#333;font-size:14px;">After login, you and the teacher or institution can contact each other directly by phone call, WhatsApp, or chat.</p>
+<div style="display:flex;gap:10px;margin-top:18px;">
+<button type="button" id="guestCancelBtn" style="flex:1;width:auto;padding:12px;background:#eceff1;color:#263238;border:none;border-radius:10px;font-size:14px;">Cancel</button>
+<button type="button" id="guestLoginBtn" style="flex:1;width:auto;padding:12px;background:#00897b;color:white;border:none;border-radius:10px;font-size:14px;">Login Now</button>
+</div>
+</div>
+</div>
+`;
+
+document.body.appendChild(popup);
+document.getElementById("guestCancelBtn").onclick = () => popup.remove();
+document.getElementById("guestLoginBtn").onclick = () => {
+popup.remove();
+onLogin();
+};
+}
+
 function openProfileWithLogin(id){
 const viewerId =
 localStorage.getItem("uid") ||
@@ -257,11 +289,12 @@ const viewerRole =
 const profileUrl = "profile-view.html?id=" + id;
 
 if(!viewerId || viewerRole === "guest"){
-alert("You are using limited access. For complete access, please log in as a Teacher / Institution or Student / Parent. GURULINK is only a linking platform between students, parents, teachers, and institutions. GURULINK never shares or misuses your personal data. After login, you and the teacher or institution can contact each other directly by phone call, WhatsApp, or chat.");
+showGuestAccessPopup(() => {
 localStorage.removeItem("selectedRole");
 sessionStorage.setItem("postLoginRedirect", profileUrl);
 window.location.href =
 "otp-login.html?return=" + encodeURIComponent(profileUrl);
+});
 return;
 }
 
