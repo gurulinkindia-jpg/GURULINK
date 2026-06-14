@@ -552,6 +552,27 @@ showFilters();
    VIEW PROFILE (LOGIN SAFE)
 ========================= */
 
+function openProfileWithLogin(id){
+  const viewerId =
+    localStorage.getItem("uid") ||
+    localStorage.getItem("profileId");
+
+  const viewerRole =
+    (localStorage.getItem("role") || "").toLowerCase();
+
+  const profileUrl = "profile-view.html?id=" + id;
+
+  if(!viewerId || viewerRole === "guest"){
+    localStorage.removeItem("selectedRole");
+    sessionStorage.setItem("postLoginRedirect", profileUrl);
+    window.location.href =
+      "otp-login.html?return=" + encodeURIComponent(profileUrl);
+    return;
+  }
+
+  window.location.href = profileUrl;
+}
+
 document.addEventListener("click", (e) => {
 
   const card = e.target.closest(".card");
@@ -560,54 +581,13 @@ document.addEventListener("click", (e) => {
   const id = card.dataset.id;
   if (!id) return;
 
-  const uid =
-    localStorage.getItem("uid") ||
-    localStorage.getItem("studentUid") ||
-    localStorage.getItem("teacherUid") ||
-    localStorage.getItem("adminUid") ||
-    localStorage.getItem("institutionId");
-
-  if (!uid) {
-
-    sessionStorage.setItem(
-      "redirectAfterLogin",
-      "profile-view.html?id=" + id
-    );
-
-    alert("Please login first");
-
-    window.location.href = "student-login.html";
-    return;
-  }
-
-  window.location.href = "profile-view.html?id=" + id;
+  openProfileWithLogin(id);
 });
 
 
 function viewProfile(id){
 
-const uid =
-localStorage.getItem("uid") ||
-localStorage.getItem("studentUid") ||
-localStorage.getItem("teacherUid") ||
-localStorage.getItem("adminUid") ||
-localStorage.getItem("institutionId");
-
-if(!uid){
-
-sessionStorage.setItem(
-"redirectAfterLogin",
-"profile-view.html?id=" + id
-);
-
-alert("Please login first");
-
-window.location.href = "student-login.html";
-return;
-}
-
-window.location.href =
-"profile-view.html?id=" + id;
+openProfileWithLogin(id);
 
 }
 
