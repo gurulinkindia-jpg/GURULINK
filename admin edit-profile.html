@@ -90,6 +90,31 @@ min-height:100px;
 resize:vertical;
 }
 
+.visibilityToggle{
+display:flex;
+align-items:center;
+gap:8px;
+font-size:13px;
+font-weight:normal;
+margin-top:8px;
+color:#333;
+}
+
+.visibilityToggle input{
+width:auto;
+margin:0;
+}
+
+.sectionNote{
+font-size:13px;
+line-height:1.5;
+background:#fff8e1;
+border:1px solid #ffe082;
+border-radius:8px;
+padding:10px;
+margin:10px 0 18px;
+}
+
 .uploadBox{
 background:#f5f5f5;
 padding:15px;
@@ -155,6 +180,11 @@ class="logoPreview"
 src=""
 alt="Logo">
 
+<label class="visibilityToggle">
+<input type="checkbox" id="show_logo">
+Show Logo / Profile Picture On Public Profile
+</label>
+
 </div>
 
 <div class="uploadBox">
@@ -177,6 +207,11 @@ id="galleryPreview"
 class="galleryGrid">
 </div>
 
+<label class="visibilityToggle">
+<input type="checkbox" id="show_gallery">
+Show Gallery On Public Profile
+</label>
+
 </div>
 
 <div class="uploadBox">
@@ -189,6 +224,10 @@ id="newGallery"
 multiple
 accept="image/*">
 
+</div>
+
+<div class="sectionNote">
+Admin full access: all registration/profile fields can be edited here. Use each checkbox to control whether that field is shown on the public profile.
 </div>
 
 <div id="dynamicFields">
@@ -283,12 +322,144 @@ role==="teacher_institute"
 
 let profileData = {};
 
-const hiddenFields = [];
-
-const readOnlyFields = [
-"uid",
-"createdAt"
+const hiddenFields = [
+"publicVisibility"
 ];
+
+const knownFormFields = [
+"uid",
+"name",
+"ownerName",
+"qualification",
+"experience",
+"establishedDate",
+"phone",
+"alternatePhone",
+"email",
+"website",
+"address",
+"area",
+"pinCode",
+"mapUrl",
+"mapLink",
+"subjects",
+"class",
+"board",
+"teachingModes",
+"individualFee",
+"homeFee",
+"groupFee",
+"superGroupFee",
+"onlineFee",
+"otherMode",
+"otherModeFee",
+"logo",
+"profilePic",
+"gallery",
+"idType",
+"idProof",
+"description",
+"category",
+"role",
+"status",
+"paymentStatus",
+"approvedAt",
+"createdAt",
+"updatedAt",
+"bankName",
+"accountHolderName",
+"accountNumber",
+"ifsc",
+"upiId",
+"qrImage",
+"showBankDetails",
+"categoryName",
+"renewalStatus",
+"lastRenewalDate"
+];
+
+const fieldLabels = {
+uid:"UID",
+name:"Name",
+ownerName:"Owner / Director Name",
+qualification:"Qualification / Certification",
+experience:"Experience",
+establishedDate:"Established Date",
+phone:"Phone",
+alternatePhone:"Alternate Phone",
+email:"Email",
+website:"Website",
+address:"State",
+area:"Area / City or Town",
+pinCode:"PIN Code",
+mapUrl:"Google Maps Share Link",
+mapLink:"Google Maps Embed Code",
+subjects:"Subjects / Skills / Activities",
+class:"Class / Preparation For",
+board:"Board / Type of Exam",
+teachingModes:"Teaching / Training Modes",
+individualFee:"Individual Fee",
+homeFee:"Home Fee",
+groupFee:"Group Fee",
+superGroupFee:"Super Group Fee",
+onlineFee:"Online Fee",
+otherMode:"Other Training Mode",
+otherModeFee:"Other Training Mode Fee",
+logo:"Logo",
+profilePic:"Profile Picture",
+gallery:"Gallery",
+idType:"ID Proof Type",
+idProof:"ID Proof",
+description:"About",
+category:"Category",
+role:"Role",
+status:"Status",
+paymentStatus:"Payment Status",
+approvedAt:"Approved At",
+createdAt:"Created At",
+updatedAt:"Updated At",
+bankName:"Bank Name",
+accountHolderName:"Account Holder Name",
+accountNumber:"Account Number",
+ifsc:"IFSC Code",
+upiId:"UPI ID",
+qrImage:"Bank QR Image",
+showBankDetails:"Show Bank Details",
+categoryName:"Category Name",
+renewalStatus:"Renewal Status",
+lastRenewalDate:"Last Renewal Date"
+};
+
+function isVisibleByDefault(key){
+const privateByDefault = [
+"email",
+"phone",
+"alternatePhone",
+"mapLink",
+"individualFee",
+"homeFee",
+"groupFee",
+"superGroupFee",
+"onlineFee",
+"otherModeFee",
+"bankName",
+"accountHolderName",
+"accountNumber",
+"ifsc",
+"upiId",
+"qrImage",
+"idProof"
+];
+return !privateByDefault.includes(key);
+}
+
+function getVisibility(key){
+const visibility = profileData.publicVisibility || {};
+if(visibility[key] !== undefined){
+return visibility[key] !== false;
+}
+return isVisibleByDefault(key);
+}
 
 async function uploadImage(file){
 
@@ -322,7 +493,7 @@ wrapper.className="field";
 const label =
 document.createElement("label");
 
-label.innerText=key;
+label.innerText=fieldLabels[key] || key;
 
 wrapper.appendChild(label);
 
@@ -359,6 +530,36 @@ wrapper.appendChild(input);
 
 }
 
+const visibilityLabel =
+document.createElement("label");
+
+visibilityLabel.className =
+"visibilityToggle";
+
+const visibilityCheckbox =
+document.createElement("input");
+
+visibilityCheckbox.type =
+"checkbox";
+
+visibilityCheckbox.id =
+"show_"+key;
+
+visibilityCheckbox.checked =
+getVisibility(key);
+
+visibilityLabel.appendChild(
+visibilityCheckbox
+);
+
+visibilityLabel.appendChild(
+document.createTextNode(" Show On Public Profile")
+);
+
+wrapper.appendChild(
+visibilityLabel
+);
+
 document
 .getElementById("dynamicFields")
 .appendChild(wrapper);
@@ -383,10 +584,20 @@ return;
 profileData =
 snap.val();
 
+if(!profileData.publicVisibility){
+profileData.publicVisibility = {};
+}
+
 document.getElementById(
 "logoPreview"
 ).src =
-profileData.logo || "";
+profileData.logo || profileData.profilePic || "";
+
+document.getElementById("show_logo").checked =
+getVisibility("logo");
+
+document.getElementById("show_gallery").checked =
+getVisibility("gallery");
 
 const gallery =
 profileData.gallery || [];
@@ -407,19 +618,41 @@ galleryBox.innerHTML +=
 
 });
 
-for(
-const key in profileData
-){
+const renderedKeys = new Set();
 
+knownFormFields.forEach(key=>{
 if(
 hiddenFields.includes(key)
 ){
+return;
+}
+
+if(
+key==="logo" ||
+key==="profilePic" ||
+key==="gallery"
+){
+return;
+}
+
+createField(
+key,
+profileData[key] ?? ""
+);
+
+renderedKeys.add(key);
+});
+
+for(const key in profileData){
+if(hiddenFields.includes(key)){
 continue;
 }
 
 if(
 key==="logo" ||
-key==="gallery"
+key==="profilePic" ||
+key==="gallery" ||
+renderedKeys.has(key)
 ){
 continue;
 }
@@ -429,6 +662,7 @@ key,
 profileData[key]
 );
 
+renderedKeys.add(key);
 }
 
 document.getElementById(
@@ -457,18 +691,25 @@ saveBtn.innerText="Saving...";
 /* START WITH EXISTING DATA */
 
 let updateData = {...profileData};
+updateData.publicVisibility = {
+...(profileData.publicVisibility || {})
+};
+
+updateData.publicVisibility.logo =
+document.getElementById("show_logo").checked;
+
+updateData.publicVisibility.gallery =
+document.getElementById("show_gallery").checked;
 
 /* DYNAMIC FIELDS */
 
-for(const key in profileData){
+const fieldKeys = Array.from(
+document.querySelectorAll("#dynamicFields input[id], #dynamicFields textarea[id]")
+)
+.map(field=>field.id)
+.filter(id=>!id.startsWith("show_"));
 
-if(hiddenFields.includes(key)){
-continue;
-}
-
-if(key==="logo" || key==="gallery"){
-continue;
-}
+for(const key of fieldKeys){
 
 const field =
 document.getElementById(key);
@@ -499,6 +740,14 @@ JSON.parse(value);
 
 updateData[key] = value;
 
+const visibilityField =
+document.getElementById("show_"+key);
+
+if(visibilityField){
+updateData.publicVisibility[key] =
+visibilityField.checked;
+}
+
 }
 
 /* ===========================
@@ -520,6 +769,9 @@ logoFile
 );
 
 updateData.logo =
+logoUrl;
+
+updateData.profilePic =
 logoUrl;
 
 }
