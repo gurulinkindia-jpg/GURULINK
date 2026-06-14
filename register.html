@@ -84,9 +84,10 @@ background:#43a047;
 .info{max-width:1200px;margin:auto;padding:20px}
 .infoCard{background:#fff;padding:20px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,.08)}
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;max-width:1200px;margin:auto;padding:20px}
-.card{background:#fff;padding:15px;border-radius:15px;text-align:center;box-shadow:0 5px 15px rgba(0,0,0,.08)}
+.card{background:#fff;padding:16px;border-radius:15px;text-align:center;box-shadow:0 5px 15px rgba(0,0,0,.08)}
 .card img{width:70px;height:70px;border-radius:50%;object-fit:cover;border:3px solid #1565c0}
-.card h3{color:#1565c0}
+.card h3{color:#1565c0;margin:10px 0 6px;font-size:18px}
+.card p{font-size:13px;color:#555;line-height:1.4;margin:0 0 12px}
 .card a{display:inline-block;padding:10px 15px;background:#1565c0;color:#fff;text-decoration:none;border-radius:8px}
 footer{background:#0d47a1;color:#fff;text-align:center;padding:20px}
 @media(max-width:768px){
@@ -113,6 +114,50 @@ padding:6px 10px;
 font-size:12px;
 }
 
+}
+
+@media(max-width:480px){
+.grid{
+grid-template-columns:1fr;
+padding:12px;
+}
+
+.hero{
+padding:28px 14px;
+}
+
+.hero h1{
+font-size:25px;
+}
+
+.info{
+padding:12px;
+}
+
+.card{
+display:grid;
+grid-template-columns:72px 1fr;
+text-align:left;
+gap:10px;
+align-items:center;
+}
+
+.card img{
+grid-row:1 / span 3;
+}
+
+.card h3{
+margin:0;
+font-size:16px;
+}
+
+.card p{
+margin:0;
+}
+
+.card a{
+text-align:center;
+}
 }
 </style>
 </head>
@@ -149,25 +194,25 @@ class="logoImg">
 
 <section class="hero">
 <h1>Join GURULINK Today</h1>
-<p>Register as a Teacher, Coach, Mentor, Trainer, Academy or Institution.</p>
+<p>Register as a Teacher or Institution in your correct category.</p>
 </section>
 
 <div class="info">
 <div class="infoCard">
 <h3>Welcome to GURULINK</h3>
-<p>Direct connection between students, teachers and institutions.</p>
+<p>Select the correct Teacher or Institution form below. Your profile will be saved for login, payment, approval, dashboard, and future editing.</p>
 </div>
 </div>
 
 <div class="grid">
-<div class="card"><img src="https://i.ibb.co/pvkp0Ggb/Academic-teacher.jpg"><h3>Academic Teacher</h3><a href="academic-teacher.html">Register</a></div>
-<div class="card"><img src="https://i.ibb.co/wZjcSNVx/Academic-institute.jpg"><h3>Academic Institute</h3><a href="academic-institute.html">Register</a></div>
-<div class="card"><img src="https://i.ibb.co/BVdt2sgL/Whats-App-Image-2026-06-07-at-9-14-10-PM-1.jpg"><h3>Skill Teacher</h3><a href="skill-teacher.html">Register</a></div>
-<div class="card"><img src="https://i.ibb.co/jXrPhw0/skill-teacher.avif"><h3>Skill Institute</h3><a href="skill-institute.html">Register</a></div>
-<div class="card"><img src="https://i.ibb.co/4gXxG3Xg/Whats-App-Image-2026-06-07-at-9-14-12-PM-1.jpg"><h3>Sports Teacher</h3><a href="sport-teacher.html">Register</a></div>
-<div class="card"><img src="https://i.ibb.co/Nv27qn9/Whats-App-Image-2026-06-07-at-9-14-12-PM.jpg"><h3>Sports Institute</h3><a href="sport-institution.html">Register</a></div>
-<div class="card"><img src="https://i.ibb.co/v6XG6gQ3/Whats-App-Image-2026-06-07-at-9-14-11-PM-1.jpg"><h3>Creative Teacher</h3><a href="creative-teacher.html">Register</a></div>
-<div class="card"><img src="https://i.ibb.co/HpDcGbCY/Whats-App-Image-2026-06-07-at-9-14-09-PM-1.jpg"><h3>Creative Institute</h3><a href="creative-institute.html">Register</a></div>
+<div class="card"><img src="https://i.ibb.co/pvkp0Ggb/Academic-teacher.jpg"><h3>Academics Teacher</h3><p>Education, tuition, exams, career guidance.</p><a href="academic-teacher.html">Register</a></div>
+<div class="card"><img src="https://i.ibb.co/wZjcSNVx/Academic-institute.jpg"><h3>Academics Institution</h3><p>School, coaching center, academy, institute.</p><a href="academic-institute.html">Register</a></div>
+<div class="card"><img src="https://i.ibb.co/BVdt2sgL/Whats-App-Image-2026-06-07-at-9-14-10-PM-1.jpg"><h3>Professional Skills Teacher</h3><p>Technology, business, trade, culinary, fashion.</p><a href="skill-teacher.html">Register</a></div>
+<div class="card"><img src="https://i.ibb.co/jXrPhw0/skill-teacher.avif"><h3>Professional Skills Institution</h3><p>Training center, skill academy, professional courses.</p><a href="skill-institute.html">Register</a></div>
+<div class="card"><img src="https://i.ibb.co/4gXxG3Xg/Whats-App-Image-2026-06-07-at-9-14-12-PM-1.jpg"><h3>Sports & Fitness Teacher</h3><p>Coach, trainer, fitness mentor, sports instructor.</p><a href="sport-teacher.html">Register</a></div>
+<div class="card"><img src="https://i.ibb.co/Nv27qn9/Whats-App-Image-2026-06-07-at-9-14-12-PM.jpg"><h3>Sports & Fitness Institution</h3><p>Gym, club, sports academy, fitness center.</p><a href="sport-institution.html">Register</a></div>
+<div class="card"><img src="https://i.ibb.co/v6XG6gQ3/Whats-App-Image-2026-06-07-at-9-14-11-PM-1.jpg"><h3>Arts & Creativity Teacher</h3><p>Music, dance, art, media, craft, performance.</p><a href="creative-teacher.html">Register</a></div>
+<div class="card"><img src="https://i.ibb.co/HpDcGbCY/Whats-App-Image-2026-06-07-at-9-14-09-PM-1.jpg"><h3>Arts & Creativity Institution</h3><p>Studio, creative academy, art and music school.</p><a href="creative-institute.html">Register</a></div>
 </div>
 
 <footer>© GURULINK Powered by G10 Group</footer>
@@ -176,7 +221,7 @@ class="logoImg">
 document.getElementById("dashboardBtn").onclick=function(){
 const role=localStorage.getItem("role");
 if(role==="teacher") location.href="teacher-dashboard.html";
-else if(role==="institution") location.href="institute-dashboard.html";
+else if(role==="institution") location.href="teacher-dashboard.html";
 else if(role==="student") location.href="student-dashboard.html";
 else location.href="login.html";
 }
