@@ -395,10 +395,10 @@ font-size:13px;
 
 <div class="chat" id="chatBox">
 <div class="msg bot">
-Welcome. Search your issue, open the FAQ sections, check an existing ticket, or create a new support ticket.
+Welcome. Choose a Quick Help Topic or type your question below.
 </div>
 
-<div class="statusBox">
+<div class="statusBox" id="ticketStatusBox" style="display:none;">
 <input id="checkInput" placeholder="Enter Ticket Number or Phone">
 <button onclick="checkStatus()" class="send">Check Ticket Status</button>
 </div>
@@ -415,6 +415,7 @@ Welcome. Search your issue, open the FAQ sections, check an existing ticket, or 
 <button onclick="showFaq('institution')">Institution Forms</button>
 <button onclick="showFaq('dashboard')">Dashboard</button>
 <button onclick="showFaq('editprofile')">Edit Profile</button>
+<button onclick="showTicketStatusBox()">Check Existing Ticket</button>
 <button onclick="showFaq('all')">Show All FAQ</button>
 </div>
 </div>
@@ -690,6 +691,13 @@ document.getElementById("faqBox").innerHTML = faqHtml(list);
 addMsg("Showing FAQ: "+cat,"bot");
 };
 
+window.showTicketStatusBox=function(){
+const box = document.getElementById("ticketStatusBox");
+box.style.display = "block";
+box.scrollIntoView();
+document.getElementById("checkInput").focus();
+};
+
 function findAnswer(text){
 const q = text.toLowerCase();
 let exact = faqs.find(item => item.q.toLowerCase()===q);
@@ -894,6 +902,8 @@ time:Date.now()
 canCreateTicket=false;
 
 addMsg(`<b>Ticket Created Successfully</b><br><b>Ticket ID:</b> ${ticketNo}<br>Please save this ticket number for status checking. You can also chat with admin below.`,"bot");
+document.getElementById("ticketStatusBox").style.display = "block";
+document.getElementById("checkInput").value = ticketNo;
 openTicketChat(ticketRef.key,ticketNo);
 };
 
@@ -910,7 +920,6 @@ window.location.href="index.html";
 }
 };
 
-window.showFaq("all");
 </script>
 </body>
 </html>
