@@ -298,6 +298,7 @@ function openProfileWithLogin(id){
   const profileUrl = "profile-view.html?id=" + id;
 
   if(!viewerId || viewerRole === "guest"){
+    alert("You are using limited access. For complete access, please log in as a Teacher / Institution or Student / Parent. GURULINK is only a linking platform between students, parents, teachers, and institutions. GURULINK never shares or misuses your personal data. After login, you and the teacher or institution can contact each other directly by phone call, WhatsApp, or chat.");
     localStorage.removeItem("selectedRole");
     sessionStorage.setItem("postLoginRedirect", profileUrl);
     window.location.href =
