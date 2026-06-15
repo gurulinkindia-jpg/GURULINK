@@ -1,0 +1,86 @@
+html.gurulink-dark,
+html.gurulink-dark body{
+background:#0f172a !important;
+color:#e5e7eb !important;
+}
+
+html.gurulink-dark header{
+background:#0b3a75 !important;
+color:#ffffff !important;
+}
+
+html.gurulink-dark .hero{
+background:linear-gradient(135deg,#0b3a75,#071f3f) !important;
+color:#ffffff !important;
+}
+
+html.gurulink-dark .container,
+html.gurulink-dark .box,
+html.gurulink-dark .card,
+html.gurulink-dark .stat,
+html.gurulink-dark .section,
+html.gurulink-dark .profileCard,
+html.gurulink-dark .panel,
+html.gurulink-dark .ticket,
+html.gurulink-dark .modal,
+html.gurulink-dark .dropdown,
+html.gurulink-dark #results,
+html.gurulink-dark .search-box,
+html.gurulink-dark .filter-bar,
+html.gurulink-dark .filterBar select,
+html.gurulink-dark .filterBar input,
+html.gurulink-dark input,
+html.gurulink-dark select,
+html.gurulink-dark textarea{
+background:#17212b !important;
+color:#e5e7eb !important;
+border-color:#2f3b46 !important;
+}
+
+html.gurulink-dark .card,
+html.gurulink-dark .stat,
+html.gurulink-dark .section,
+html.gurulink-dark .profileCard,
+html.gurulink-dark .panel,
+html.gurulink-dark .box{
+box-shadow:0 5px 18px rgba(0,0,0,.35) !important;
+}
+
+html.gurulink-dark a{
+color:#90caf9;
+}
+
+html.gurulink-dark .dashboardBtn,
+html.gurulink-dark .quick a,
+html.gurulink-dark .card a,
+html.gurulink-dark button{
+border-color:#2f3b46;
+}
+
+html.gurulink-dark .dropdown a,
+html.gurulink-dark #results a{
+color:#e5e7eb !important;
+border-color:#2f3b46 !important;
+}
+
+html.gurulink-dark .dropdown a:hover,
+html.gurulink-dark #results a:hover{
+background:#223142 !important;
+}
+
+html.gurulink-dark footer{
+background:#071f3f !important;
+color:#ffffff !important;
+}
+
+html.gurulink-dark .notice,
+html.gurulink-dark .selectedSummary{
+background:#1f2a35 !important;
+color:#d6dde5 !important;
+border-color:#2f3b46 !important;
+}
+
+html.gurulink-dark input::placeholder,
+html.gurulink-dark textarea::placeholder{
+color:#aab6c4 !important;
+}
