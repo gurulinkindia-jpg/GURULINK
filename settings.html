@@ -19,11 +19,12 @@ font-family:Arial,sans-serif;
 --text:#1f2933;
 --muted:#667085;
 --border:#d9e2ec;
---primary:#00897b;
---primaryDark:#00695c;
+--primary:#1565c0;
+--primaryDark:#0d47a1;
 --danger:#d32f2f;
 --dangerBg:#fff5f5;
 --soft:#f6f8fb;
+--hero:#1565c0;
 }
 
 body.dark{
@@ -32,11 +33,12 @@ body.dark{
 --text:#f3f6f8;
 --muted:#b8c2cc;
 --border:#2f3b46;
---primary:#26a69a;
---primaryDark:#00897b;
+--primary:#64b5f6;
+--primaryDark:#1565c0;
 --danger:#ef5350;
 --dangerBg:#2a171a;
 --soft:#1f2a35;
+--hero:#0b3a75;
 }
 
 body{
@@ -47,9 +49,9 @@ min-height:100dvh;
 }
 
 header{
-background:var(--primary);
+background:#1565c0;
 color:white;
-padding:calc(env(safe-area-inset-top) + 14px) 18px 14px;
+padding:calc(env(safe-area-inset-top) + 12px) 20px 12px;
 position:sticky;
 top:0;
 z-index:10;
@@ -67,18 +69,45 @@ gap:12px;
 }
 
 .brand{
-font-size:22px;
+display:flex;
+align-items:center;
+gap:10px;
+font-size:0;
 font-weight:bold;
-letter-spacing:.2px;
 }
 
-.brand span{
-color:#d9fff9;
+.logoImg{
+width:46px;
+height:46px;
+object-fit:contain;
+background:white;
+border-radius:50%;
+padding:3px;
+}
+
+.brandText{
+font-size:26px;
+line-height:1;
+}
+
+.guru{
+color:#90caf9;
+}
+
+.link{
+color:#a5d6a7;
+}
+
+.pageLabel{
+font-size:13px;
+font-weight:bold;
+opacity:.92;
+margin-top:3px;
 }
 
 .backBtn{
 background:white;
-color:var(--primary);
+color:#1565c0;
 border:none;
 border-radius:9px;
 padding:10px 13px;
@@ -93,6 +122,25 @@ margin:auto;
 padding:18px;
 }
 
+.settingsHero{
+background:linear-gradient(135deg,#1565c0,#0d47a1);
+color:white;
+padding:24px 18px;
+text-align:center;
+}
+
+.settingsHero h1{
+font-size:30px;
+margin-bottom:8px;
+}
+
+.settingsHero p{
+font-size:15px;
+line-height:1.5;
+max-width:650px;
+margin:auto;
+}
+
 .profileCard{
 background:var(--card);
 border:1px solid var(--border);
@@ -102,6 +150,8 @@ display:flex;
 align-items:center;
 gap:14px;
 box-shadow:0 5px 18px rgba(0,0,0,.08);
+margin-top:-26px;
+position:relative;
 }
 
 .avatar{
@@ -155,6 +205,7 @@ box-shadow:0 5px 18px rgba(0,0,0,.06);
 .sectionTitle{
 padding:15px 16px;
 border-bottom:1px solid var(--border);
+background:linear-gradient(90deg,rgba(21,101,192,.1),transparent);
 }
 
 .sectionTitle h3{
@@ -203,7 +254,7 @@ line-height:1.35;
 border:none;
 border-radius:9px;
 padding:10px 13px;
-background:var(--primary);
+background:#1565c0;
 color:white;
 font-weight:bold;
 cursor:pointer;
@@ -212,7 +263,7 @@ min-height:40px;
 }
 
 .actionBtn:hover{
-background:var(--primaryDark);
+background:#0d47a1;
 }
 
 .dangerBtn{
@@ -327,16 +378,33 @@ width:auto;
 }
 }
 </style>
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<link rel="stylesheet" href="gurulink-theme.css">
+<script src="gurulink-theme.js"></script>
 </head>
 
 <body>
 
 <header>
 <div class="headerInner">
-<div class="brand">GURU<span>LINK</span> Settings</div>
+<div class="brand" onclick="location.href='index.html'">
+<img src="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png" alt="GURULINK" class="logoImg">
+<div>
+<div class="brandText"><span class="guru">GURU</span><span class="link">LINK</span></div>
+<div class="pageLabel">Settings</div>
+</div>
+</div>
 <button class="backBtn" onclick="goBack()">Back</button>
 </div>
 </header>
+
+<section class="settingsHero">
+<h1>Settings</h1>
+<p>Manage your account, security, and app appearance from one place.</p>
+</section>
 
 <main class="container">
 
@@ -554,8 +622,16 @@ document.body.classList.add("dark");
 const darkToggle = document.getElementById("darkToggle");
 darkToggle.checked = document.body.classList.contains("dark");
 darkToggle.addEventListener("change",()=>{
+const theme = darkToggle.checked ? "dark" : "light";
+localStorage.setItem("theme",theme);
+localStorage.setItem("gurulinkTheme",theme);
+if(window.GurulinkTheme){
+window.GurulinkTheme.setTheme(theme);
+}
+else{
 document.body.classList.toggle("dark",darkToggle.checked);
-localStorage.setItem("theme",darkToggle.checked ? "dark" : "light");
+document.documentElement.classList.toggle("gurulink-dark",darkToggle.checked);
+}
 });
 
 onAuthStateChanged(auth,(user)=>{
@@ -675,3 +751,4 @@ alert(err.message);
 
 </body>
 </html>
+
