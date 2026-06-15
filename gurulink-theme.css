@@ -65,6 +65,19 @@ html.gurulink-dark div{
 border-color:#2f3b46;
 }
 
+html.gurulink-dark .section-title,
+html.gurulink-dark .card h3,
+html.gurulink-dark .stat h2,
+html.gurulink-dark .panel h3{
+color:#90caf9 !important;
+}
+
+html.gurulink-dark .categoryIcon{
+background:#102a43 !important;
+border-color:#64b5f6 !important;
+color:#90caf9 !important;
+}
+
 html.gurulink-dark .card,
 html.gurulink-dark .stat,
 html.gurulink-dark .section,
