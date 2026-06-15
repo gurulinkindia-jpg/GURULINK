@@ -66,6 +66,32 @@ transform:translateY(-2px);
 .section-title{text-align:center;padding:30px 15px 15px;font-size:30px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;padding:20px}
 .card,.stat{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08);text-align:center}
+.homeCategoryIcon{
+width:70px;
+height:70px;
+margin:0 auto 14px;
+border-radius:18px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:linear-gradient(135deg,#e3f2fd,#ffffff);
+border:1px solid #bbdefb;
+color:#1565c0;
+box-shadow:0 6px 16px rgba(21,101,192,.12);
+}
+.homeCategoryIcon svg{
+width:42px;
+height:42px;
+fill:none;
+stroke:currentColor;
+stroke-width:2;
+stroke-linecap:round;
+stroke-linejoin:round;
+}
+.homeSkillIcon{background:linear-gradient(135deg,#e8f5e9,#ffffff);border-color:#c8e6c9;color:#2e7d32;}
+.homeCreativeIcon{background:linear-gradient(135deg,#fff3e0,#ffffff);border-color:#ffe0b2;color:#ef6c00;}
+.homeSportIcon{background:linear-gradient(135deg,#fce4ec,#ffffff);border-color:#f8bbd0;color:#c2185b;}
+.homeAllIcon{background:linear-gradient(135deg,#ede7f6,#ffffff);border-color:#d1c4e9;color:#5e35b1;}
 .card a{display:inline-block;margin-top:10px;text-decoration:none;background:#1565c0;color:#fff;padding:10px 14px;border-radius:8px}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;padding:20px}
 #results{max-width:700px;margin:10px auto;background:#fff;border-radius:10px;display:none}
@@ -390,7 +416,7 @@ border:none;
 border-radius:10px;
 cursor:pointer;
 ">
-ðŸ‘¨â€ðŸ‘©â€ðŸ‘§ Parent / Student
+ Parent / Student
 </button>
 
 <button id="teacherBtn" style="
@@ -402,7 +428,7 @@ border:none;
 border-radius:10px;
 cursor:pointer;
 ">
-ðŸ‘¨â€ðŸ« Teacher / Institute
+ Teacher / Institute
 </button>
 <button id="guestBtn" style="
 width:100%;
@@ -436,10 +462,10 @@ class="logoImg">
 </div>
 <div class="header-right">
 <a href="register.html" class="dashboardBtn registerBtn">
-ðŸ“ <span class="desktopText">Register as Teacher / Institute</span>
+ <span class="desktopText">Register as Teacher / Institute</span>
 <span class="mobileText">Register</span>
 </a>
-<a href="#" id="dashboardBtn" class="dashboardBtn">ðŸ“Š Dashboard</a>
+<a href="#" id="dashboardBtn" class="dashboardBtn"> Dashboard</a>
 <div class="profile">
 <button class="profile-btn" id="profileBtn">
 <img
@@ -455,7 +481,7 @@ object-fit:cover;
 <div class="dropdown" id="menu">
 <a href="login.html">Login</a>
 <a href="register.html">Register</a>
-<a href="#" id="menuDashboard">ðŸ“Š Dashboard</a>
+<a href="#" id="menuDashboard"> Dashboard</a>
 <a href="settings.html">Settings</a>
 <a href="find-teacher.html">Find Teacher</a>
 <a href="#" onclick="openHelpdesk(event)">Helpdesk</a>
@@ -531,11 +557,70 @@ oninput="searchSite()">
 
 <h2 class="section-title">Categories</h2>
 <div class="grid">
-<div class="card"><h3>Academics, Education & Career Development</h3><a href="academic-profile.html">Open</a></div>
-<div class="card"><h3>Professional Skills</h3><a href="skill-profile.html">Open</a></div>
-<div class="card"><h3>Arts & Creativity</h3><a href="creative-profile.html">Open</a></div>
-<div class="card"><h3>Sports & Fitness</h3><a href="sport-profile.html">Open</a></div>
-<div class="card"><h3>All Teachers & Institutes</h3><a href="profile.html">Open</a></div>
+<div class="card">
+<div class="homeCategoryIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="M4 6.5 12 3l8 3.5-8 3.5-8-3.5z"></path>
+<path d="M6.5 9.5v4.2c0 1.5 2.5 2.8 5.5 2.8s5.5-1.3 5.5-2.8V9.5"></path>
+<path d="M20 6.5v5"></path>
+</svg>
+</div>
+<h3>Academics, Education & Career Development</h3>
+<a href="academic-profile.html">Open</a>
+</div>
+
+<div class="card">
+<div class="homeCategoryIcon homeSkillIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="M14.7 6.3a4 4 0 0 0-5 5l-5.4 5.4a2.1 2.1 0 0 0 3 3l5.4-5.4a4 4 0 0 0 5-5l-2.8 2.8-3-3 2.8-2.8z"></path>
+<path d="M5 19l2-2"></path>
+</svg>
+</div>
+<h3>Professional Skills</h3>
+<a href="skill-profile.html">Open</a>
+</div>
+
+<div class="card">
+<div class="homeCategoryIcon homeCreativeIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="M4 20c3.5-1 5.5-3.2 6-6"></path>
+<path d="M14.5 4.5 19.5 9.5"></path>
+<path d="M13 6 18 11 10.5 18.5 5.5 19.5 6.5 14.5 13 6z"></path>
+</svg>
+</div>
+<h3>Arts & Creativity</h3>
+<a href="creative-profile.html">Open</a>
+</div>
+
+<div class="card">
+<div class="homeCategoryIcon homeSportIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="M8 6h8"></path>
+<path d="M8 18h8"></path>
+<path d="M10 6v12"></path>
+<path d="M14 6v12"></path>
+<path d="M6 8v8"></path>
+<path d="M18 8v8"></path>
+<path d="M3 12h3"></path>
+<path d="M18 12h3"></path>
+</svg>
+</div>
+<h3>Sports & Fitness</h3>
+<a href="sport-profile.html">Open</a>
+</div>
+
+<div class="card">
+<div class="homeCategoryIcon homeAllIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<circle cx="8" cy="8" r="3"></circle>
+<circle cx="16" cy="8" r="3"></circle>
+<path d="M3.5 20c.7-3.2 2.4-5 4.5-5s3.8 1.8 4.5 5"></path>
+<path d="M11.5 20c.7-3.2 2.4-5 4.5-5s3.8 1.8 4.5 5"></path>
+</svg>
+</div>
+<h3>All Teachers & Institutes</h3>
+<a href="profile.html">Open</a>
+</div>
 </div>
 
 <h2 class="section-title">GURULINK Statistics</h2>
@@ -543,11 +628,11 @@ oninput="searchSite()">
 <div class="stat"><h2 id="teacherCount">0</h2><p>Teachers</p></div>
 <div class="stat"><h2 id="instCount">0</h2><p>Institutes</p></div>
 <div class="stat"><h2>100+</h2><p>Subjects</p></div>
-<div class="stat"><h2>24Ã—7</h2><p>Access</p></div>
+<div class="stat"><h2>24x7</h2><p>Access</p></div>
 </div>
 
 <footer>
-<p>Â© GURULINK Powred By G10 Group</p>
+<p>© GURULINK Powred By G10 Group</p>
 <p>Connecting Students & Teachers</p>
 </footer>
 
@@ -994,7 +1079,7 @@ matches.push({
 score,
 html:`
 <a href="${p[1]}">
-ðŸ“„ ${p[0]}
+ ${p[0]}
 </a>`
 });
 
