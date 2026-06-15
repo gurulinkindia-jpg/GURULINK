@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Student Registration - GURULINK</title>
+
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef2f7;
+color:#222;
+min-height:100vh;
+min-height:100dvh;
+}
+
+header{
+background:#1565c0;
+color:#fff;
+padding:14px 20px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+position:sticky;
+top:0;
+z-index:1000;
+box-shadow:0 2px 10px rgba(0,0,0,.15);
+}
+
+.logo{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+}
+
+.logoImg{
+width:50px;
+height:50px;
+object-fit:contain;
+margin-bottom:4px;
+}
+
+.logoText{
+font-size:28px;
+font-weight:bold;
+line-height:1;
+}
+
+.guru{
+color:#2196f3;
+}
+
+.link{
+color:#4caf50;
+}
+
+.dashboardBtn{
+background:#fff;
+color:#1565c0;
+text-decoration:none;
+padding:10px 16px;
+border-radius:8px;
+font-weight:bold;
+}
+
+.hero{
+background:linear-gradient(135deg,#1565c0,#0d47a1);
+color:#fff;
+padding:42px 20px;
+text-align:center;
+}
+
+.hero h1{
+font-size:34px;
+margin-bottom:8px;
+}
+
+.hero p{
+font-size:16px;
+max-width:700px;
+margin:auto;
+line-height:1.5;
+}
+
+.container{
+width:94%;
+max-width:480px;
+margin:24px auto;
+background:white;
+padding:24px;
+border-radius:15px;
+box-shadow:0 5px 20px rgba(0,0,0,.12);
+}
+
+label{
+display:block;
+font-weight:bold;
+margin:12px 0 6px;
+color:#1f2933;
+}
+
+input{
+width:100%;
+padding:13px;
+border:1px solid #ccd4df;
+border-radius:9px;
+font-size:15px;
+outline:none;
+}
+
+input:focus{
+border-color:#1565c0;
+box-shadow:0 0 0 3px rgba(21,101,192,.12);
+}
+
+button{
+width:100%;
+padding:14px;
+border:none;
+border-radius:10px;
+background:#1565c0;
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+margin-top:18px;
+}
+
+button:disabled{
+opacity:.75;
+cursor:not-allowed;
+}
+
+.note{
+font-size:13px;
+line-height:1.5;
+color:#555;
+background:#f8fbff;
+border:1px solid #d9e8ff;
+border-radius:10px;
+padding:10px;
+margin-bottom:8px;
+}
+
+@media(max-width:600px){
+header{
+padding:12px;
+}
+
+.logoText{
+font-size:20px;
+}
+
+.logoImg{
+width:42px;
+height:42px;
+}
+
+.dashboardBtn{
+padding:8px 10px;
+font-size:13px;
+}
+
+.hero{
+padding:30px 14px;
+}
+
+.hero h1{
+font-size:26px;
+}
+
+.container{
+margin:16px auto;
+padding:18px;
+border-radius:14px;
+}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo" onclick="location.href='index.html'">
+<img src="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png" alt="GURULINK" class="logoImg">
+<div class="logoText">
+<span class="guru">GURU</span><span class="link">LINK</span>
+</div>
+</div>
+
+<a href="index.html" class="dashboardBtn">Home</a>
+</header>
+
+<section class="hero">
+<h1>Student Registration</h1>
+<p>Create your student account to explore teachers, institutions, and learning profiles on GURULINK.</p>
+</section>
+
+<div class="container">
+<div class="note">
+Use an active email and password. These details will be used for your student login.
+</div>
+
+<form id="studentForm">
+<label for="name">Name</label>
+<input id="name" type="text" placeholder="Enter student name" required>
+
+<label for="email">Email</label>
+<input id="email" type="email" placeholder="Enter email" required>
+
+<label for="password">Password</label>
+<input id="password" type="password" placeholder="Create password" minlength="6" required>
+
+<label for="className">Class</label>
+<input id="className" type="text" placeholder="Example: Class 8, Class 10, JEE, NEET" required>
+
+<button type="submit" id="saveBtn">Save</button>
+</form>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+const form = document.getElementById("studentForm");
+const saveBtn = document.getElementById("saveBtn");
+
+form.addEventListener("submit", async (e)=>{
+e.preventDefault();
+
+saveBtn.disabled = true;
+saveBtn.innerText = "Saving...";
+
+const name = document.getElementById("name").value.trim();
+const email = document.getElementById("email").value.trim().toLowerCase();
+const password = document.getElementById("password").value;
+const className = document.getElementById("className").value.trim();
+
+try{
+const userCred = await createUserWithEmailAndPassword(auth,email,password);
+const uid = userCred.user.uid;
+
+const data = {
+uid,
+name,
+email,
+class:className,
+role:"student",
+createdAt:Date.now()
+};
+
+await set(ref(db,"students/"+uid),data);
+
+await set(ref(db,"users/"+uid),{
+uid,
+name,
+email,
+role:"student",
+profileId:uid,
+createdAt:Date.now()
+});
+
+localStorage.setItem("uid",uid);
+localStorage.setItem("profileId",uid);
+localStorage.setItem("studentId",uid);
+localStorage.setItem("role","student");
+localStorage.setItem("email",email);
+localStorage.setItem("name",name);
+
+window.location.href = "student-dashboard.html";
+}
+catch(err){
+if(err.code === "auth/email-already-in-use"){
+alert("This email already exists. Please login instead.");
+}
+else if(err.code === "auth/weak-password"){
+alert("Password must be minimum 6 characters.");
+}
+else{
+alert(err.message);
+}
+
+saveBtn.disabled = false;
+saveBtn.innerText = "Save";
+}
+});
+</script>
+
+</body>
+</html>
