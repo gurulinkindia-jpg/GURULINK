@@ -269,6 +269,13 @@ update
 from
 "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
+import {
+getAuth,
+onAuthStateChanged
+}
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
 const firebaseConfig={
 
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -298,26 +305,40 @@ initializeApp(firebaseConfig);
 const db =
 getDatabase(app);
 
+const auth =
+getAuth(app);
+
 const API_KEY =
 "31f729ff855eb2e42c00ee508a8647ea";
 
-const profileId =
-localStorage.getItem("profileId");
+const params =
+new URLSearchParams(location.search);
 
-const role =
-localStorage.getItem("role");
+const profileId =
+params.get("id") ||
+localStorage.getItem("adminEditProfileId");
+
+let role =
+(
+params.get("type") ||
+localStorage.getItem("adminEditProfileType") ||
+""
+).toLowerCase();
+
+if(role === "teacher_institute"){
+role = "teacher";
+}
 
 if(
 !profileId ||
 !role
 ){
 alert("Please Login Again");
-location.href="login.html";
+location.href="admin.html";
 }
 
 const dbPath =
-role==="teacher" ||
-role==="teacher_institute"
+role==="teacher"
 ?
 "teachers/"+profileId
 :
@@ -678,7 +699,36 @@ document.getElementById(
 
 }
 
+onAuthStateChanged(auth, async (user)=>{
+
+if(!user){
+alert("Please login as admin again.");
+location.href = "admin-register.html";
+return;
+}
+
+try{
+
+const adminSnap =
+await get(ref(db,"admins/" + user.uid));
+
+if(!adminSnap.exists()){
+alert("Access denied. This account is not admin.");
+location.href = "admin.html";
+return;
+}
+
 loadProfile();
+
+}
+catch(err){
+
+console.log(err);
+alert(err.message);
+
+}
+
+});
 
 
 window.saveProfile = async function(){
