@@ -218,6 +218,7 @@ window.printInvoice = printInvoice;
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -231,6 +232,7 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
 
 const params = new URLSearchParams(location.search);
 let profileId = params.get("id") || localStorage.getItem("invoiceProfileId") || localStorage.getItem("profileId") || "";
@@ -238,6 +240,8 @@ let role = (params.get("type") || localStorage.getItem("invoiceRole") || localSt
 if(role === "teacher_institute") role = "teacher";
 
 let profileData = {};
+let currentUser = null;
+let currentUserIsAdmin = false;
 
 const invoiceDateInput = document.getElementById("invoiceDateInput");
 invoiceDateInput.valueAsDate = new Date();
@@ -247,6 +251,32 @@ function cleanPhone(num){return String(num || "").replace("+91","").replace(/\s/
 function generateInvoiceNo(){return "INV-" + Date.now();}
 function invoiceBasePath(){return "invoices/" + profileId;}
 function clientBasePath(){return "invoiceClients/" + profileId;}
+
+function userCanUseInvoice(){
+if(!currentUser){
+return false;
+}
+
+const authPhone =
+cleanPhone(currentUser.phoneNumber || "");
+
+const profilePhone =
+cleanPhone(profileData.phone || "");
+
+const profileAltPhone =
+cleanPhone(profileData.alternatePhone || "");
+
+const authEmail =
+(currentUser.email || "").trim().toLowerCase();
+
+const profileEmail =
+(profileData.email || "").trim().toLowerCase();
+
+return currentUser.uid === profileId ||
+currentUserIsAdmin ||
+(authPhone && (authPhone === profilePhone || authPhone === profileAltPhone)) ||
+(authEmail && authEmail === profileEmail);
+}
 
 function profilePaths(){
 const preferred = role === "institution" ? "institutions/" + profileId : "teachers/" + profileId;
@@ -331,7 +361,6 @@ document.getElementById("brandAddress").textContent = [profileData.area, profile
 document.getElementById("brandContact").textContent = [profileData.phone, profileData.email].filter(Boolean).join(" | ");
 document.getElementById("upiText").textContent = "UPI ID: " + (profileData.upiId || "Not Added");
 updateQRCode(0);
-await populateDropdowns();
 return true;
 }
 
@@ -464,11 +493,20 @@ new QRCode(qrCanvas,{text:upiURL,width:180,height:180});
 }
 
 async function saveInvoice(){
+
+if(!userCanUseInvoice()){
+alert("Please login with the same teacher/institution account before saving invoice.");
+location.href = "otp-login.html";
+return;
+}
+
 const name = document.getElementById("studentName").value.trim();
 if(!name){
 alert("Enter student/client name.");
 return;
 }
+
+try{
 
 let invoiceNo = document.getElementById("invoiceNo").textContent.trim();
 if(!invoiceNo || invoiceNo === "INV-0001"){
@@ -527,6 +565,20 @@ await populateDropdowns();
 document.getElementById("invoiceSelect").value = invoiceNo;
 document.getElementById("printBtn").style.display = "inline-block";
 alert("Invoice saved successfully: " + invoiceNo);
+
+}
+catch(err){
+
+console.error(err);
+
+if(err && err.code === "PERMISSION_DENIED"){
+alert("Invoice save permission denied. Please login again with this teacher/institution account.");
+}
+else{
+alert("Invoice save failed: " + (err.message || err));
+}
+
+}
 }
 
 async function loadInvoiceByNumber(invoiceNoParam){
@@ -664,7 +716,51 @@ window.markAsPaid = markAsPaid;
 window.exportToExcel = exportToExcel;
 window.sharePaymentLink = sharePaymentLink;
 
-loadProfile().then(()=>addItem());
+onAuthStateChanged(auth, async (user)=>{
+
+currentUser = user;
+currentUserIsAdmin = false;
+
+if(!user){
+document.getElementById("brandAddress").textContent =
+"Please login before using invoice.";
+setTimeout(()=>{
+location.href = "otp-login.html";
+},800);
+return;
+}
+
+try{
+
+const adminSnap =
+await get(ref(db,"admins/" + user.uid));
+
+currentUserIsAdmin = adminSnap.exists();
+
+await loadProfile();
+
+if(!userCanUseInvoice()){
+document.getElementById("brandAddress").textContent =
+"This login does not match this invoice profile. Please open invoice from your dashboard again.";
+alert("This login does not match this teacher/institution profile.");
+return;
+}
+
+await populateDropdowns();
+
+if(!document.querySelector("#billBody tr")){
+addItem();
+}
+
+}
+catch(err){
+
+console.error(err);
+alert("Unable to open invoice: " + (err.message || err));
+
+}
+
+});
 </script>
 </body>
 </html>
