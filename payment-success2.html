@@ -265,7 +265,8 @@ async function savePayment() {
       paymentStatus: "paid",
       approvedAt: Date.now(),
       lastRenewalDate: Date.now(),
-      renewalStatus: "active"
+      renewalStatus: "active",
+      lastPaymentToken: token || ""
     });
 
     await cleanupPending(finalType);
