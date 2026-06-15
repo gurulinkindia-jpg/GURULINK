@@ -37,6 +37,34 @@ color:#e5e7eb !important;
 border-color:#2f3b46 !important;
 }
 
+html.gurulink-dark #loginOverlay,
+html.gurulink-dark .topbar,
+html.gurulink-dark .modeFee,
+html.gurulink-dark .skillsPanel,
+html.gurulink-dark .modesPanel,
+html.gurulink-dark .skillCategory,
+html.gurulink-dark .subjectGrid,
+html.gurulink-dark .ticketChatBox,
+html.gurulink-dark .chatBox,
+html.gurulink-dark table,
+html.gurulink-dark th,
+html.gurulink-dark td{
+background:#17212b !important;
+color:#e5e7eb !important;
+border-color:#2f3b46 !important;
+}
+
+html.gurulink-dark h1,
+html.gurulink-dark h2,
+html.gurulink-dark h3,
+html.gurulink-dark h4,
+html.gurulink-dark p,
+html.gurulink-dark span,
+html.gurulink-dark label,
+html.gurulink-dark div{
+border-color:#2f3b46;
+}
+
 html.gurulink-dark .card,
 html.gurulink-dark .stat,
 html.gurulink-dark .section,
