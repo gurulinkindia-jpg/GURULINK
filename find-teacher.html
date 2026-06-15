@@ -3,7 +3,7 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <title>Find Teachers - GURULINK</title>
 
@@ -26,7 +26,10 @@ color:#222;
 header{
 background:#1565c0;
 color:#fff;
-padding:14px 20px;
+padding-top:calc(env(safe-area-inset-top) + 16px);
+padding-right:20px;
+padding-bottom:14px;
+padding-left:20px;
 display:flex;
 justify-content:space-between;
 align-items:center;
@@ -421,6 +424,10 @@ display:none;
 
 @media(max-width:768px){
 
+header{
+padding-top:calc(env(safe-area-inset-top) + 22px);
+}
+
 .logoText{
 font-size:18px;
 }
@@ -470,6 +477,12 @@ grid-template-columns:repeat(2,1fr);
 
 </style>
 
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 <body>
 
@@ -478,7 +491,7 @@ grid-template-columns:repeat(2,1fr);
 <div class="logo" onclick="location.href='index.html'">
 
 <img
-src="https://i.ibb.co/nMqN80QL/GURULINK-Logo.png"
+src="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png"
 alt="GL"
 class="logoImg">
 
@@ -491,7 +504,7 @@ class="logoImg">
 <div class="header-right">
 
 <a href="register.html" class="dashboardBtn">
-📝
+
 <span class="desktopText">
 Register as Teacher / Institute
 </span>
@@ -501,7 +514,7 @@ Register
 </a>
 
 <a href="#" id="dashboardBtn" class="dashboardBtn">
-📊 Dashboard
+ Dashboard
 </a>
 
 <div class="profile">
@@ -531,7 +544,7 @@ Register
 </a>
 
 <a href="#" id="menuDashboard">
-📊 Dashboard
+ Dashboard
 </a>
 
 <a href="settings.html">
@@ -590,26 +603,7 @@ padding:0 15px;
 
 Welcome to GURULINK.
 
-To connect with a teacher, coach, mentor, trainer, or institution,
-please browse the appropriate category below.
-
-</p>
-
-<br>
-
-<p>
-
-You can view detailed profiles, qualifications,
-experience, fees and contact information before making your final decision.
-
-</p>
-
-<br>
-
-<p>
-
-Choose the category that best matches your requirement
-and explore available educators.
+Choose a category below to find and connect with the right educator or institution.
 
 </p>
 
@@ -636,7 +630,7 @@ margin-bottom:15px;
 ">
 
 <img
-src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png"
+src="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png"
 style="
 width:100%;
 height:100%;
@@ -662,7 +656,7 @@ Explore
 <div class="card">
 
 <div style="font-size:42px;">
-🎨
+
 </div>
 
 <h3>
@@ -682,7 +676,7 @@ Explore
 <div class="card">
 
 <div style="font-size:42px;">
-💻
+
 </div>
 
 <h3>
@@ -702,7 +696,7 @@ Explore
 <div class="card">
 
 <div style="font-size:42px;">
-🏏
+
 </div>
 
 <h3>
@@ -910,3 +904,5 @@ menu.style.display =
 
 </body>
 </html>
+
+
