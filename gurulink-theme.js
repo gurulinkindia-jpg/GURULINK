@@ -8,12 +8,21 @@ var isDark = theme === "dark";
 document.documentElement.classList.toggle("gurulink-dark",isDark);
 if(document.body){
 document.body.classList.toggle("dark",isDark);
+document.body.setAttribute("data-theme",isDark ? "dark" : "light");
 }
 }
 
 applyTheme(getTheme());
 
 document.addEventListener("DOMContentLoaded",function(){
+applyTheme(getTheme());
+});
+
+window.addEventListener("pageshow",function(){
+applyTheme(getTheme());
+});
+
+document.addEventListener("visibilitychange",function(){
 applyTheme(getTheme());
 });
 
