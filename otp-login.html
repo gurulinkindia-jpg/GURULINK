@@ -154,6 +154,9 @@ padding:13px;
 
 }
 </style>
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 </head>
 
 <body>
@@ -224,7 +227,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebas
 import {
 getAuth,
 RecaptchaVerifier,
-signInWithPhoneNumber
+signInWithPhoneNumber,
+getAdditionalUserInfo
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -426,9 +430,12 @@ user.uid;
   If Firebase Authentication phone user is newly created,
   result.additionalUserInfo.isNewUser will be true.
 */
+const userInfo =
+getAdditionalUserInfo(result);
+
 const isNewUser =
-result.additionalUserInfo &&
-result.additionalUserInfo.isNewUser
+userInfo &&
+userInfo.isNewUser
 ? "true"
 : "false";
 
