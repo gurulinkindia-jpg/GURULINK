@@ -167,11 +167,14 @@ role:"admin"
 
 });
 
+await set(ref(db,"admins/"+uid),true);
+
 msg.innerText = "Admin Created Successfully";
 
 /* AUTO LOGIN SESSION */
 
 localStorage.setItem("uid",uid);
+localStorage.setItem("profileId",uid);
 localStorage.setItem("role","admin");
 
 /* REDIRECT */
