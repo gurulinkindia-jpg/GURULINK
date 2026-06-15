@@ -384,6 +384,9 @@ font-size:13px;
 }
 }
 </style>
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 </head>
 
 <body>
@@ -609,7 +612,7 @@ return `<div class="ticketChatMsg admin">No chat messages yet. Send a message to
 return list.map(msg => `
 <div class="ticketChatMsg ${msg.sender === "admin" ? "admin" : "user"}">
 ${escapeHtml(msg.text)}
-<span class="ticketChatMeta">${msg.sender === "admin" ? "Admin" : "You"} • ${formatTime(msg.time)}</span>
+<span class="ticketChatMeta">${msg.sender === "admin" ? "Admin" : "You"} â€¢ ${formatTime(msg.time)}</span>
 </div>
 `).join("");
 }
@@ -890,13 +893,14 @@ email,
 message,
 category:issueCategory,
 status:"open",
-time:Date.now()
-});
-
-await push(ref(db,"tickets/"+ticketRef.key+"/chatMessages"),{
+time:Date.now(),
+chatMessages:{
+initial:{
 sender:"user",
 text:message,
 time:Date.now()
+}
+}
 });
 
 canCreateTicket=false;
