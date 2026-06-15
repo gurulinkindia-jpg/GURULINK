@@ -123,6 +123,9 @@ cursor:pointer;
 margin-top:2px;
 }
 </style>
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 </head>
 
 <body>
@@ -170,11 +173,27 @@ const otpRole =
 localStorage.getItem("otpRole") ||
 localStorage.getItem("role");
 
+const isNewAuthUser =
+localStorage.getItem("isNewAuthUser") === "true";
+
 const title =
 document.getElementById("title");
 
 const content =
 document.getElementById("content");
+
+function finishRedirect(defaultPage){
+const redirect =
+sessionStorage.getItem("postLoginRedirect");
+
+if(redirect){
+sessionStorage.removeItem("postLoginRedirect");
+location.href = redirect;
+return;
+}
+
+location.href = defaultPage;
+}
 
 function cleanPhone(num){
 return String(num || "")
@@ -221,7 +240,7 @@ else if(otpRole === "institution"){
 localStorage.setItem("role","institution_guest");
 }
 
-location.href = "index.html";
+finishRedirect("index.html");
 
 };
 
@@ -245,13 +264,13 @@ content.innerHTML = `
 
 <b>Terms & Conditions</b><br><br>
 
-• GURULINK is only a linking platform between students, parents, teachers and institutions.<br><br>
+â€¢ GURULINK is only a linking platform between students, parents, teachers and institutions.<br><br>
 
-• GURULINK is not responsible for fees, payments, refunds, disputes or legal matters between users.<br><br>
+â€¢ GURULINK is not responsible for fees, payments, refunds, disputes or legal matters between users.<br><br>
 
-• Users are responsible for verifying identities and information before entering into any agreement.<br><br>
+â€¢ Users are responsible for verifying identities and information before entering into any agreement.<br><br>
 
-• By continuing, you agree to all Terms & Conditions and Privacy Policy.
+â€¢ By continuing, you agree to all Terms & Conditions and Privacy Policy.
 
 </div>
 
@@ -289,6 +308,17 @@ Register Later
 
 `;
 
+}
+
+function handleNotRegistered(titleText,message,registerPage){
+if(isNewAuthUser){
+showRegisterChoice(titleText,message,registerPage);
+return;
+}
+
+sessionStorage.removeItem("postLoginRedirect");
+localStorage.setItem("role","guest");
+location.href = "index.html";
 }
 
 async function findByPhone(path, phone){
@@ -367,12 +397,12 @@ localStorage.setItem("role","student");
 localStorage.setItem("studentId",student.id);
 localStorage.setItem("profileId",student.id);
 
-location.href = "student-dashboard.html";
+finishRedirect("student-dashboard.html");
 return;
 
 }
 
-showRegisterChoice(
+handleNotRegistered(
 "Student / Parent Not Registered",
 "This mobile number is not registered as Student / Parent. You can register now or continue later.",
 "student-registration.html"
@@ -394,7 +424,7 @@ localStorage.setItem("role","teacher");
 localStorage.setItem("teacherId",teacher.id);
 localStorage.setItem("profileId",teacher.id);
 
-location.href = "teacher-dashboard.html";
+finishRedirect("teacher-dashboard.html");
 return;
 
 }
@@ -408,12 +438,12 @@ localStorage.setItem("role","institution");
 localStorage.setItem("institutionId",institution.id);
 localStorage.setItem("profileId",institution.id);
 
-location.href = "institution-dashboard.html";
+finishRedirect("teacher-dashboard.html");
 return;
 
 }
 
-showRegisterChoice(
+handleNotRegistered(
 "Teacher / Institution Not Registered",
 "This mobile number is not registered as Teacher or Institution. You can register now or continue later.",
 "register.html"
@@ -435,12 +465,12 @@ localStorage.setItem("role","institution");
 localStorage.setItem("institutionId",institution.id);
 localStorage.setItem("profileId",institution.id);
 
-location.href = "institution-dashboard.html";
+finishRedirect("teacher-dashboard.html");
 return;
 
 }
 
-showRegisterChoice(
+handleNotRegistered(
 "Institution Not Registered",
 "This mobile number is not registered as Institution. You can register now or continue later.",
 "register.html"
@@ -460,7 +490,7 @@ localStorage.setItem("role","student");
 localStorage.setItem("studentId",student.id);
 localStorage.setItem("profileId",student.id);
 
-location.href = "student-dashboard.html";
+finishRedirect("student-dashboard.html");
 return;
 
 }
@@ -474,7 +504,7 @@ localStorage.setItem("role","teacher");
 localStorage.setItem("teacherId",teacher.id);
 localStorage.setItem("profileId",teacher.id);
 
-location.href = "teacher-dashboard.html";
+finishRedirect("teacher-dashboard.html");
 return;
 
 }
@@ -488,12 +518,12 @@ localStorage.setItem("role","institution");
 localStorage.setItem("institutionId",institution.id);
 localStorage.setItem("profileId",institution.id);
 
-location.href = "institution-dashboard.html";
+finishRedirect("teacher-dashboard.html");
 return;
 
 }
 
-showRegisterChoice(
+handleNotRegistered(
 "Account Not Registered",
 "This mobile number is not registered. You can register now or continue later.",
 "register.html"
