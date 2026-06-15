@@ -46,23 +46,6 @@ button{padding:9px 12px;margin:4px;cursor:pointer;border:none;border-radius:8px;
 .delete-btn{background:none;border:none;color:#d32f2f;font-size:17px;cursor:pointer;padding:0;margin:0}
 input[disabled]{background:#f0f0f0;color:#666}
 .no-print{display:inline-block}
-.mobilePrintBar{display:none}
-body.mobile-print-mode{background:#fff;padding:0}
-body.mobile-print-mode .no-print,
-body.mobile-print-mode .actions,
-body.mobile-print-mode button,
-body.mobile-print-mode #clientSelect,
-body.mobile-print-mode #phoneSearch,
-body.mobile-print-mode #invoiceSelect,
-body.mobile-print-mode #invoiceList,
-body.mobile-print-mode #cashfreeLink{display:none!important}
-body.mobile-print-mode .container{box-shadow:none;border-radius:0;max-width:none;margin:0;padding:10px}
-body.mobile-print-mode .invoice-table-wrapper{overflow:visible}
-body.mobile-print-mode table{min-width:100%;table-layout:fixed}
-body.mobile-print-mode th,
-body.mobile-print-mode td{white-space:normal;word-break:break-word}
-body.mobile-print-mode .mobilePrintBar{display:flex!important;position:sticky;top:0;z-index:10;gap:8px;background:#fff8e1;border-bottom:1px solid #ffe082;padding:8px}
-body.mobile-print-mode .mobilePrintBar button{display:block!important;width:50%;margin:0}
 
 @media(max-width:768px){
 body{padding:4px}
@@ -106,10 +89,6 @@ h2{font-size:16px!important;margin:5px 0!important}
 </head>
 
 <body>
-<div class="mobilePrintBar">
-<button type="button" onclick="window.print()">Try Print Again</button>
-<button type="button" class="dark-btn" onclick="exitMobilePrintMode()">Back</button>
-</div>
 <div class="container">
 <div class="header">
 <div class="brandBlock">
@@ -214,45 +193,12 @@ To: <input type="date" id="toDate">
 </div>
 
 <script>
-let printDialogOpened = false;
-
-window.addEventListener("beforeprint",()=>{
-printDialogOpened = true;
-});
-
-window.addEventListener("afterprint",()=>{
-printDialogOpened = false;
-});
-
-function isMobilePrintDevice(){
-return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-}
-
-function enterMobilePrintMode(){
-document.body.classList.add("mobile-print-mode");
-window.scrollTo({top:0,behavior:"smooth"});
-}
-
-function exitMobilePrintMode(){
-document.body.classList.remove("mobile-print-mode");
-}
-
 function printInvoice(){
 document.title = document.getElementById("invoiceNo").textContent || "Invoice";
-printDialogOpened = false;
 window.focus();
 window.print();
-
-if(isMobilePrintDevice()){
-setTimeout(()=>{
-if(!printDialogOpened){
-enterMobilePrintMode();
-}
-},800);
-}
 }
 window.printInvoice = printInvoice;
-window.exitMobilePrintMode = exitMobilePrintMode;
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
