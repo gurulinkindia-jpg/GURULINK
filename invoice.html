@@ -317,7 +317,8 @@ role = foundPath.startsWith("institutions/") ? "institution" : "teacher";
 document.getElementById("profileIdText").textContent = profileId;
 const logoUrl = profileData.logo || profileData.profilePic || profileData.photo || "";
 const brandLogo = document.getElementById("brandLogo");
-if(logoUrl){
+const canShowLogo = !profileData.publicVisibility || profileData.publicVisibility.logo !== false;
+if(logoUrl && canShowLogo){
 brandLogo.src = logoUrl;
 brandLogo.style.display = "block";
 }
