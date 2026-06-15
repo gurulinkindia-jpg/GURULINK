@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Admin Edit Profile</title>
+<title>Edit Profile</title>
 
 <style>
 
@@ -90,6 +90,31 @@ min-height:100px;
 resize:vertical;
 }
 
+.visibilityToggle{
+display:flex;
+align-items:center;
+gap:8px;
+font-size:13px;
+font-weight:normal;
+margin-top:8px;
+color:#333;
+}
+
+.visibilityToggle input{
+width:auto;
+margin:0;
+}
+
+.sectionNote{
+font-size:13px;
+line-height:1.5;
+background:#fff8e1;
+border:1px solid #ffe082;
+border-radius:8px;
+padding:10px;
+margin:10px 0 18px;
+}
+
 .uploadBox{
 background:#f5f5f5;
 padding:15px;
@@ -129,12 +154,15 @@ font-size:18px;
 
 </style>
 
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 </head>
 
 <body>
 
 <header>
-<h2>Admin Edit Profile</h2>
+<h2>Edit Profile</h2>
 </header>
 
 <div class="container">
@@ -154,6 +182,11 @@ id="logoPreview"
 class="logoPreview"
 src=""
 alt="Logo">
+
+<label class="visibilityToggle">
+<input type="checkbox" id="show_logo">
+Show Logo / Profile Picture On Public Profile
+</label>
 
 </div>
 
@@ -177,6 +210,11 @@ id="galleryPreview"
 class="galleryGrid">
 </div>
 
+<label class="visibilityToggle">
+<input type="checkbox" id="show_gallery">
+Show Gallery On Public Profile
+</label>
+
 </div>
 
 <div class="uploadBox">
@@ -191,53 +229,8 @@ accept="image/*">
 
 </div>
 
-<div class="uploadBox">
-
-<h3>Upload Your Bank QR Code</h3>
-
-<input
-type="file"
-id="newQr"
-accept="image/*">
-
-</div>
-<div class="uploadBox">
-
-<h3>Bank Details</h3>
-
-<div class="field">
-<label>Account Holder Name</label>
-<input type="text" id="accountHolderName">
-</div>
-
-<div class="field">
-<label>Bank Name</label>
-<input type="text" id="bankName">
-</div>
-
-<div class="field">
-<label>Account Number</label>
-<input type="text" id="accountNumber">
-</div>
-
-<div class="field">
-<label>IFSC Code</label>
-<input type="text" id="ifsc">
-</div>
-
-<div class="field">
-<label>UPI ID</label>
-<input type="text" id="upiId">
-</div>
-
-</div>
-
-<div class="field">
-<label>Google Maps URL</label>
-<input
-type="text"
-id="mapUrl"
-placeholder="Paste Google Maps share link">
+<div class="sectionNote">
+Admin full access: all registration/profile fields can be edited here. Use each checkbox to control whether that field is shown on the public profile.
 </div>
 
 <div id="dynamicFields">
@@ -308,55 +301,168 @@ getDatabase(app);
 const API_KEY =
 "31f729ff855eb2e42c00ee508a8647ea";
 
-
-
-
-/* ADMIN MODE */
-
-const params =
-new URLSearchParams(
-window.location.search
-);
-
 const profileId =
-params.get("id");
+localStorage.getItem("profileId");
 
-const type =
-params.get("type");
+const role =
+localStorage.getItem("role");
 
 if(
 !profileId ||
-!type
+!role
 ){
-alert("Invalid Profile");
-location.href="admin.html";
+alert("Please Login Again");
+location.href="login.html";
 }
 
 const dbPath =
-
-type === "teacher"
-
+role==="teacher" ||
+role==="teacher_institute"
 ?
-
-"teachers/" + profileId
-
+"teachers/"+profileId
 :
-
-"institutions/" + profileId;
-
-
-
-
-
+"institutions/"+profileId;
 
 let profileData = {};
 
-const hiddenFields = [];
-
-const readOnlyFields = [
-"uid",
-"createdAt"
+const hiddenFields = [
+"publicVisibility"
 ];
+
+const knownFormFields = [
+"uid",
+"name",
+"ownerName",
+"qualification",
+"experience",
+"establishedDate",
+"phone",
+"alternatePhone",
+"email",
+"website",
+"address",
+"area",
+"pinCode",
+"mapUrl",
+"mapLink",
+"subjects",
+"class",
+"board",
+"teachingModes",
+"individualFee",
+"homeFee",
+"groupFee",
+"superGroupFee",
+"onlineFee",
+"otherMode",
+"otherModeFee",
+"logo",
+"profilePic",
+"gallery",
+"idType",
+"idProof",
+"description",
+"category",
+"role",
+"status",
+"paymentStatus",
+"approvedAt",
+"createdAt",
+"updatedAt",
+"bankName",
+"accountHolderName",
+"accountNumber",
+"ifsc",
+"upiId",
+"qrImage",
+"showBankDetails",
+"categoryName",
+"renewalStatus",
+"lastRenewalDate"
+];
+
+const fieldLabels = {
+uid:"UID",
+name:"Name",
+ownerName:"Owner / Director Name",
+qualification:"Qualification / Certification",
+experience:"Experience",
+establishedDate:"Established Date",
+phone:"Phone",
+alternatePhone:"Alternate Phone",
+email:"Email",
+website:"Website",
+address:"State",
+area:"Area / City or Town",
+pinCode:"PIN Code",
+mapUrl:"Google Maps Share Link",
+mapLink:"Google Maps Embed Code",
+subjects:"Subjects / Skills / Activities",
+class:"Class / Preparation For",
+board:"Board / Type of Exam",
+teachingModes:"Teaching / Training Modes",
+individualFee:"Individual Fee",
+homeFee:"Home Fee",
+groupFee:"Group Fee",
+superGroupFee:"Super Group Fee",
+onlineFee:"Online Fee",
+otherMode:"Other Training Mode",
+otherModeFee:"Other Training Mode Fee",
+logo:"Logo",
+profilePic:"Profile Picture",
+gallery:"Gallery",
+idType:"ID Proof Type",
+idProof:"ID Proof",
+description:"About",
+category:"Category",
+role:"Role",
+status:"Status",
+paymentStatus:"Payment Status",
+approvedAt:"Approved At",
+createdAt:"Created At",
+updatedAt:"Updated At",
+bankName:"Bank Name",
+accountHolderName:"Account Holder Name",
+accountNumber:"Account Number",
+ifsc:"IFSC Code",
+upiId:"UPI ID",
+qrImage:"Bank QR Image",
+showBankDetails:"Show Bank Details",
+categoryName:"Category Name",
+renewalStatus:"Renewal Status",
+lastRenewalDate:"Last Renewal Date"
+};
+
+function isVisibleByDefault(key){
+const privateByDefault = [
+"email",
+"phone",
+"alternatePhone",
+"mapLink",
+"individualFee",
+"homeFee",
+"groupFee",
+"superGroupFee",
+"onlineFee",
+"otherModeFee",
+"bankName",
+"accountHolderName",
+"accountNumber",
+"ifsc",
+"upiId",
+"qrImage",
+"idProof"
+];
+return !privateByDefault.includes(key);
+}
+
+function getVisibility(key){
+const visibility = profileData.publicVisibility || {};
+if(visibility[key] !== undefined){
+return visibility[key] !== false;
+}
+return isVisibleByDefault(key);
+}
 
 async function uploadImage(file){
 
@@ -390,7 +496,7 @@ wrapper.className="field";
 const label =
 document.createElement("label");
 
-label.innerText=key;
+label.innerText=fieldLabels[key] || key;
 
 wrapper.appendChild(label);
 
@@ -419,18 +525,43 @@ else{
 const input =
 document.createElement("input");
 
-input.id = key;
-input.value = value ?? "";
+input.id=key;
 
-if(
-readOnlyFields.includes(key)
-){
-input.readOnly = true;
-}
+input.value=value ?? "";
 
 wrapper.appendChild(input);
 
 }
+
+const visibilityLabel =
+document.createElement("label");
+
+visibilityLabel.className =
+"visibilityToggle";
+
+const visibilityCheckbox =
+document.createElement("input");
+
+visibilityCheckbox.type =
+"checkbox";
+
+visibilityCheckbox.id =
+"show_"+key;
+
+visibilityCheckbox.checked =
+getVisibility(key);
+
+visibilityLabel.appendChild(
+visibilityCheckbox
+);
+
+visibilityLabel.appendChild(
+document.createTextNode(" Show On Public Profile")
+);
+
+wrapper.appendChild(
+visibilityLabel
+);
 
 document
 .getElementById("dynamicFields")
@@ -455,34 +586,21 @@ return;
 
 profileData =
 snap.val();
-if(profileData.accountHolderName === undefined){
-profileData.accountHolderName = "";
-}
 
-if(profileData.bankName === undefined){
-profileData.bankName = "";
-}
-
-if(profileData.accountNumber === undefined){
-profileData.accountNumber = "";
-}
-
-if(profileData.ifsc === undefined){
-profileData.ifsc = "";
-}
-
-if(profileData.upiId === undefined){
-profileData.upiId = "";
-}
-
-if(profileData.qrImage === undefined){
-profileData.qrImage = "";
+if(!profileData.publicVisibility){
+profileData.publicVisibility = {};
 }
 
 document.getElementById(
 "logoPreview"
 ).src =
-profileData.logo || "";
+profileData.logo || profileData.profilePic || "";
+
+document.getElementById("show_logo").checked =
+getVisibility("logo");
+
+document.getElementById("show_gallery").checked =
+getVisibility("gallery");
 
 const gallery =
 profileData.gallery || [];
@@ -503,26 +621,41 @@ galleryBox.innerHTML +=
 
 });
 
-for(
-const key in profileData
-){
+const renderedKeys = new Set();
 
+knownFormFields.forEach(key=>{
 if(
 hiddenFields.includes(key)
 ){
-continue;
+return;
 }
-
 
 if(
 key==="logo" ||
+key==="profilePic" ||
+key==="gallery"
+){
+return;
+}
+
+createField(
+key,
+profileData[key] ?? ""
+);
+
+renderedKeys.add(key);
+});
+
+for(const key in profileData){
+if(hiddenFields.includes(key)){
+continue;
+}
+
+if(
+key==="logo" ||
+key==="profilePic" ||
 key==="gallery" ||
-key==="accountHolderName" ||
-key==="bankName" ||
-key==="accountNumber" ||
-key==="ifsc" ||
-key==="upiId" ||
-key==="qrImage"
+renderedKeys.has(key)
 ){
 continue;
 }
@@ -532,29 +665,8 @@ key,
 profileData[key]
 );
 
+renderedKeys.add(key);
 }
-
-document.getElementById("accountHolderName").value =
-profileData.accountHolderName || "";
-
-document.getElementById("bankName").value =
-profileData.bankName || "";
-
-document.getElementById("accountNumber").value =
-profileData.accountNumber || "";
-
-document.getElementById("ifsc").value =
-profileData.ifsc || "";
-
-document.getElementById("upiId").value =
-profileData.upiId || "";
-
-if(profileData.mapUrl === undefined){
-profileData.mapUrl = "";
-}
-
-document.getElementById("mapUrl").value =
-profileData.mapUrl || "";
 
 document.getElementById(
 "loading"
@@ -565,9 +677,6 @@ document.getElementById(
 ).style.display="block";
 
 }
-
-
-
 
 loadProfile();
 
@@ -585,45 +694,25 @@ saveBtn.innerText="Saving...";
 /* START WITH EXISTING DATA */
 
 let updateData = {...profileData};
-updateData.accountHolderName =
-document.getElementById("accountHolderName").value;
+updateData.publicVisibility = {
+...(profileData.publicVisibility || {})
+};
 
-updateData.bankName =
-document.getElementById("bankName").value;
+updateData.publicVisibility.logo =
+document.getElementById("show_logo").checked;
 
-updateData.accountNumber =
-document.getElementById("accountNumber").value;
-
-updateData.ifsc =
-document.getElementById("ifsc").value;
-
-updateData.upiId =
-document.getElementById("upiId").value;
-
-updateData.mapUrl =
-document.getElementById("mapUrl").value.trim();
+updateData.publicVisibility.gallery =
+document.getElementById("show_gallery").checked;
 
 /* DYNAMIC FIELDS */
 
-for(const key in profileData){
+const fieldKeys = Array.from(
+document.querySelectorAll("#dynamicFields input[id], #dynamicFields textarea[id]")
+)
+.map(field=>field.id)
+.filter(id=>!id.startsWith("show_"));
 
-if(hiddenFields.includes(key)){
-continue;
-}
-
-if(
-key==="logo" ||
-key==="gallery" ||
-key==="bankName" ||
-key==="accountHolderName" ||
-key==="accountNumber" ||
-key==="ifsc" ||
-key==="upiId" ||
-key==="qrImage" ||
-key==="mapUrl"
-){
-continue;
-}
+for(const key of fieldKeys){
 
 const field =
 document.getElementById(key);
@@ -654,6 +743,14 @@ JSON.parse(value);
 
 updateData[key] = value;
 
+const visibilityField =
+document.getElementById("show_"+key);
+
+if(visibilityField){
+updateData.publicVisibility[key] =
+visibilityField.checked;
+}
+
 }
 
 /* ===========================
@@ -675,6 +772,9 @@ logoFile
 );
 
 updateData.logo =
+logoUrl;
+
+updateData.profilePic =
 logoUrl;
 
 }
@@ -719,22 +819,6 @@ updateData.gallery = [
 ...newGalleryUrls
 
 ];
-
-}
-
-const qrFile =
-document.getElementById("newQr").files[0];
-
-if(qrFile){
-
-saveBtn.innerText =
-"Uploading QR...";
-
-const qrUrl =
-await uploadImage(qrFile);
-
-updateData.qrImage =
-qrUrl;
 
 }
 
@@ -786,18 +870,25 @@ saveBtn.innerText=
    BACK BUTTON
 =========================== */
 
-
-
-
 window.goBack=function(){
 
-location.href =
-"admin.html";
+if(
+role==="teacher" ||
+role==="teacher_institute"
+){
+
+location.href=
+"teacher-dashboard.html";
+
+}
+else{
+
+location.href=
+"institution-dashboard.html";
+
+}
 
 };
-
-
-
 
 </script>
 
