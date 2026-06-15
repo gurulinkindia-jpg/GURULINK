@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GURULINK Invoice</title>
+
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<style>
+*{box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:#eef2f7;margin:0;padding:10px;color:#222}
+.container{width:100%;max-width:940px;margin:auto;background:#fff;padding:16px;border-radius:12px;overflow-x:hidden;box-shadow:0 5px 18px rgba(0,0,0,.12)}
+.header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.brandBlock{min-width:260px}
+.brandName{font-size:20px;font-weight:bold;color:#1565c0}
+.brandMeta{font-size:12px;line-height:1.45;color:#333}
+.info{text-align:right;font-size:12px;line-height:1.55}
+h2{text-align:center;margin:12px 0;font-size:21px;color:#0f172a}
+.notice{font-size:13px;background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:10px;margin:10px 0;line-height:1.5}
+.form-row{display:flex;gap:10px;margin-bottom:10px}
+.form-row input,.form-row select{flex:1;padding:10px;font-size:13px;width:100%;min-width:0;border:1px solid #ccd4df;border-radius:8px;outline:none}
+.form-row input:focus,.form-row select:focus{border-color:#1565c0;box-shadow:0 0 0 3px rgba(21,101,192,.12)}
+#clientSelect,#phoneSearch,#invoiceSelect{background:#ffecb3!important;border:2px solid #ef6c00!important;color:#000!important;font-weight:bold;border-radius:8px}
+.invoice-table-wrapper{width:100%;overflow-x:auto}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{border:1px solid #ddd;padding:6px;text-align:center;font-size:12px}
+td input,td select{width:100%;min-width:78px;padding:5px;font-size:12px}
+.small-cell{width:70px}
+.actions{margin-top:15px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.date-filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.totals{margin-top:18px;text-align:right;font-size:14px}
+.totals div{margin:6px 0}
+#dueBalance{font-weight:bold;color:#d32f2f}
+.qr{text-align:center;margin-top:20px}
+.upi-text{margin-top:10px;font-size:14px;font-weight:bold;text-align:center;color:#000;word-break:break-all}
+.notes{margin-top:28px;font-size:10px;line-height:1.5}
+button{padding:9px 12px;margin:4px;cursor:pointer;border:none;border-radius:8px;font-size:12px;font-weight:bold;color:#fff;background:#1565c0}
+.paid-btn{background:#28a745}
+.danger-btn{background:#d32f2f}
+.dark-btn{background:#263238}
+.orange-btn{background:#ef6c00}
+.green-btn{background:#2e7d32}
+.delete-btn{background:none;border:none;color:#d32f2f;font-size:17px;cursor:pointer;padding:0;margin:0}
+input[disabled]{background:#f0f0f0;color:#666}
+.no-print{display:inline-block}
+
+@media(max-width:768px){
+body{padding:4px}
+.container{padding:9px;border-radius:0}
+.header{flex-direction:column;align-items:center;text-align:center}
+.brandBlock{min-width:0;width:100%;text-align:center}
+.info{text-align:center;width:100%;font-size:11px}
+h2{font-size:17px}
+.form-row{flex-direction:column;gap:8px}
+.form-row input,.form-row select{font-size:14px}
+.invoice-table-wrapper{-webkit-overflow-scrolling:touch}
+table{min-width:760px}
+th,td{font-size:10px;padding:4px;white-space:nowrap}
+td input,td select{font-size:10px;padding:4px}
+button{width:100%;margin:4px 0;font-size:12px}
+.actions{flex-direction:column}
+.date-filters{flex-direction:column;align-items:stretch}
+.totals{text-align:left;font-size:12px}
+#amountPaid{width:100%!important;margin-top:5px}
+}
+
+@page{size:A4;margin:12mm}
+@media print{
+html,body{width:210mm;background:white!important;margin:0;padding:0}
+body *{visibility:hidden}
+.container,.container *{visibility:visible}
+.container{position:absolute;left:0;top:0;width:190mm!important;max-width:190mm!important;padding:5mm!important;margin:0!important;border-radius:0!important;box-shadow:none!important;background:#fff!important;overflow:visible!important}
+.no-print,button,.actions,#clientSelect,#phoneSearch,#invoiceSelect,#invoiceList,#cashfreeLink{display:none!important}
+.invoice-table-wrapper{overflow:visible!important}
+table{width:100%!important;min-width:100%!important;table-layout:fixed;border-collapse:collapse}
+th,td{border:1px solid #000!important;padding:4px!important;font-size:10px!important;word-wrap:break-word;white-space:normal!important}
+input,select{border:none!important;background:transparent!important;font-size:10px!important;padding:0!important;margin:0!important;appearance:none;-webkit-appearance:none;width:100%!important}
+.header{display:flex!important;justify-content:space-between;align-items:flex-start;gap:10px}
+.info{font-size:10px!important;text-align:right}
+#qrCanvas canvas{width:160px!important;height:160px!important}
+h2{font-size:16px!important;margin:5px 0!important}
+.totals{font-size:11px!important;margin-top:10px!important}
+.notes{font-size:8px!important;margin-top:10px!important}
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+<div class="header">
+<div class="brandBlock">
+<div class="brandName" id="brandName">Teacher / Institution</div>
+<div class="brandMeta" id="brandAddress">Loading profile...</div>
+<div class="brandMeta" id="brandContact"></div>
+</div>
+<div class="info">
+<div><strong>Invoice / Money Receipt</strong></div>
+<div>Date: <input type="date" id="invoiceDateInput"></div>
+<div>Invoice No: <span id="invoiceNo">INV-0001</span></div>
+<div>Profile ID: <span id="profileIdText">-</span></div>
+</div>
+</div>
+
+<h2>INVOICE / MONEY RECEIPT</h2>
+
+<div class="notice">
+This invoice is generated by the teacher/institution. GURULINK is only a linking platform and is not responsible for fee disputes, refunds, or private agreements.
+</div>
+
+<div class="form-row no-print">
+<select id="clientSelect" onchange="handleClientChange()">
+<option value="">-- STUDENT / CLIENT NAME --</option>
+</select>
+<input type="text" id="phoneSearch" placeholder="Search by Phone Number" oninput="searchByPhone()">
+<input list="invoiceList" id="invoiceSelect" placeholder="-- Load Invoice No. --" oninput="handleInvoiceInput()">
+<datalist id="invoiceList"></datalist>
+</div>
+
+<div class="form-row">
+<input type="text" id="studentName" placeholder="Student / Client Name">
+<input type="text" id="phone" placeholder="Phone Number">
+</div>
+
+<div class="form-row">
+<input type="email" id="email" placeholder="Email ID">
+<input type="text" id="address" placeholder="Address">
+<input type="text" id="studentClass" placeholder="Class / Level / Batch / Mode">
+<input type="text" id="parentName" placeholder="Parent / Guardian Name">
+</div>
+
+<div class="invoice-table-wrapper">
+<table id="invoiceTable" style="display:none;">
+<thead>
+<tr>
+<th colspan="2">Date / Duration</th>
+<th rowspan="2">Service Type</th>
+<th rowspan="2">Subject / Skill / Service</th>
+<th rowspan="2" class="small-cell">Qty</th>
+<th rowspan="2" class="small-cell">Rate</th>
+<th rowspan="2">Total</th>
+<th rowspan="2" class="no-print">x</th>
+</tr>
+<tr>
+<th>From</th>
+<th>To</th>
+</tr>
+</thead>
+<tbody id="billBody"></tbody>
+</table>
+</div>
+
+<div class="no-print">
+<button onclick="addItem()">+ Add Item</button>
+<button id="printBtn" type="button" style="display:none;" onclick="printInvoice()">Print Invoice</button>
+<button id="downloadPdfBtn">Download PDF</button>
+<button onclick="saveInvoice()" class="green-btn">Save Invoice</button>
+<button onclick="markAsPaid()" class="paid-btn">Paid</button>
+<button onclick="newInvoice()" class="orange-btn">New Invoice</button>
+<button id="whatsappShareBtn" onclick="sharePaymentLink()">Share via WhatsApp</button>
+</div>
+
+<div class="actions">
+<div class="date-filters no-print">
+From: <input type="date" id="fromDate">
+To: <input type="date" id="toDate">
+</div>
+<button onclick="exportToExcel()" class="no-print dark-btn">Export Excel</button>
+</div>
+
+<div class="totals">
+<div id="grandTotal">Total Amount: Rs 0.00</div>
+<div id="amountInWords">Total (in words): Zero Rupees Only</div>
+<div>Amount Paid: Rs <input type="number" id="amountPaid" value="0" min="0" oninput="calculateTotal()" style="width:100px;"></div>
+<div id="dueBalance">Due Balance: Rs 0.00</div>
+</div>
+
+<div class="qr">
+<p style="font-weight:bold;color:green;text-align:left;">Scan the QR to pay the fee:</p>
+<div id="qrCanvas"></div>
+<div class="upi-text" id="upiText">UPI ID: Not Added</div>
+<input type="text" id="cashfreeLink" placeholder="Enter payment link manually here..." class="no-print">
+</div>
+
+<div class="notes">
+<p><strong>Note:</strong></p>
+<ol>
+<li>This is a computer-generated invoice; signature is not required.</li>
+<li>Fee once paid is subject to the teacher/institution policy.</li>
+</ol>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const params = new URLSearchParams(location.search);
+let profileId = params.get("id") || localStorage.getItem("invoiceProfileId") || localStorage.getItem("profileId") || "";
+let role = (params.get("type") || localStorage.getItem("invoiceRole") || localStorage.getItem("role") || "teacher").toLowerCase();
+if(role === "teacher_institute") role = "teacher";
+
+let profileData = {};
+
+const invoiceDateInput = document.getElementById("invoiceDateInput");
+invoiceDateInput.valueAsDate = new Date();
+
+function esc(str){return String(str ?? "").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function cleanPhone(num){return String(num || "").replace("+91","").replace(/\s/g,"").replace(/\D/g,"");}
+function generateInvoiceNo(){return "INV-" + Date.now();}
+function invoiceBasePath(){return "invoices/" + profileId;}
+function clientBasePath(){return "invoiceClients/" + profileId;}
+function getProfilePath(){
+return role === "institution" ? "institutions/" + profileId : "teachers/" + profileId;
+}
+
+function getArrayOptions(value, fallback){
+if(Array.isArray(value) && value.length) return value;
+return fallback;
+}
+
+function serviceOptions(){
+return getArrayOptions(profileData.teachingModes, [
+"Individual Coaching",
+"Home Tuition",
+"Group Coaching",
+"Online Training",
+"Workshop / Group Session",
+"Personal Training",
+"Sports Coaching",
+"Admission Fee",
+"Study Material",
+"Previous Balance",
+"Fee Concession",
+"Other"
+]);
+}
+
+function subjectOptions(){
+return getArrayOptions(profileData.subjects, [
+"Academic Service",
+"Professional Skill",
+"Arts & Creativity",
+"Sports & Fitness",
+"Training Fee",
+"Admission Fee",
+"Study Material",
+"NA"
+]);
+}
+
+async function loadProfile(){
+if(!profileId){
+alert("Profile ID missing. Please open invoice from dashboard.");
+return;
+}
+
+const snap = await get(ref(db,getProfilePath()));
+if(!snap.exists()){
+alert("Profile not found.");
+return;
+}
+
+profileData = snap.val();
+document.getElementById("profileIdText").textContent = profileId;
+document.getElementById("brandName").textContent = profileData.name || "Teacher / Institution";
+document.getElementById("brandAddress").textContent = [profileData.area, profileData.address, profileData.pinCode].filter(Boolean).join(", ");
+document.getElementById("brandContact").textContent = [profileData.phone, profileData.email].filter(Boolean).join(" | ");
+document.getElementById("upiText").textContent = "UPI ID: " + (profileData.upiId || "Not Added");
+updateQRCode(0);
+await populateDropdowns();
+}
+
+async function populateDropdowns(){
+const clientSnap = await get(ref(db,clientBasePath()));
+const clientSelect = document.getElementById("clientSelect");
+clientSelect.innerHTML = `<option value="">-- STUDENT / CLIENT NAME --</option>`;
+
+if(clientSnap.exists()){
+clientSnap.forEach(c=>{
+const d = c.val();
+const option = document.createElement("option");
+option.value = c.key;
+option.textContent = d.name || c.key;
+clientSelect.appendChild(option);
+});
+}
+
+const invoiceSnap = await get(ref(db,invoiceBasePath()));
+const invoiceList = document.getElementById("invoiceList");
+invoiceList.innerHTML = "";
+
+let invoiceNumbers = [];
+if(invoiceSnap.exists()){
+invoiceSnap.forEach(c=>invoiceNumbers.push(c.key));
+}
+
+invoiceNumbers.sort((a,b)=>(parseInt(b.replace("INV-","")) || 0) - (parseInt(a.replace("INV-","")) || 0));
+invoiceNumbers.forEach(no=>{
+const option = document.createElement("option");
+option.value = no;
+invoiceList.appendChild(option);
+});
+}
+
+async function handleClientChange(){
+const key = document.getElementById("clientSelect").value;
+if(!key) return;
+
+const snap = await get(ref(db,clientBasePath()+"/"+key));
+if(!snap.exists()) return;
+
+const s = snap.val();
+document.getElementById("studentName").value = s.name || "";
+document.getElementById("phone").value = s.phone || "";
+document.getElementById("email").value = s.email || "";
+document.getElementById("address").value = s.address || "";
+document.getElementById("studentClass").value = s.class || "";
+document.getElementById("parentName").value = s.parentName || "";
+document.getElementById("invoiceNo").textContent = generateInvoiceNo();
+}
+
+function optionHtml(options, selected){
+return options.map(opt=>`<option value="${esc(opt)}" ${opt === selected ? "selected" : ""}>${esc(opt)}</option>`).join("");
+}
+
+function addItem(rowData = {}){
+document.getElementById("invoiceTable").style.display = "table";
+const row = document.createElement("tr");
+
+row.innerHTML = `
+<td><input type="date" value="${esc(rowData.from || "")}"></td>
+<td><input type="date" value="${esc(rowData.to || "")}"></td>
+<td><select onchange="calculateTotal()">${optionHtml(serviceOptions(),rowData.type || "")}</select></td>
+<td><select>${optionHtml(subjectOptions(),rowData.subject || "")}</select></td>
+<td><input type="text" value="${esc(rowData.qty || "1")}" oninput="calculateTotal()"></td>
+<td><input type="number" value="${esc(rowData.rate || 0)}" min="0" oninput="calculateTotal()"></td>
+<td><input type="number" step="0.01" value="${esc(rowData.total || 0)}" class="total-input" oninput="calculateTotal()"></td>
+<td class="no-print"><button class="delete-btn" onclick="this.closest('tr').remove();calculateTotal()">x</button></td>
+`;
+
+document.getElementById("billBody").appendChild(row);
+calculateTotal();
+}
+
+function calculateTotal(){
+let grandTotal = 0;
+document.querySelectorAll("#billBody tr").forEach(row=>{
+const qtyText = row.children[4].querySelector("input")?.value || "0";
+const rate = parseFloat(row.children[5].querySelector("input")?.value || 0) || 0;
+const totalInput = row.children[6].querySelector("input");
+let total = parseFloat(totalInput?.value || 0) || 0;
+
+const qty = parseFloat(qtyText) || 0;
+if(qty && rate){
+total = qty * rate;
+if(totalInput) totalInput.value = total.toFixed(2);
+}
+
+grandTotal += total;
+});
+
+document.getElementById("grandTotal").textContent = `Total Amount: Rs ${grandTotal.toFixed(2)}`;
+document.getElementById("amountInWords").textContent = `Total (in words): ${convertNumberToWords(grandTotal)} Only`;
+const paid = parseFloat(document.getElementById("amountPaid").value) || 0;
+const balance = grandTotal - paid;
+document.getElementById("dueBalance").textContent = `Due Balance: Rs ${balance.toFixed(2)}`;
+updateQRCode(balance);
+}
+
+function convertNumberToWords(num){
+if(!num || isNaN(num) || Number(num) === 0) return "Zero Rupees";
+const a=["","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen","Eighteen","Nineteen"];
+const b=["","","Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"];
+const nnum = Math.floor(Math.abs(Number(num)));
+if(nnum.toString().length > 9) return "Amount too high";
+const n = ("000000000" + nnum).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+if(!n) return "";
+let str="";
+str += n[1] != 0 ? (a[Number(n[1])] || (b[n[1][0]] + " " + a[n[1][1]])) + " Crore " : "";
+str += n[2] != 0 ? (a[Number(n[2])] || (b[n[2][0]] + " " + a[n[2][1]])) + " Lakh " : "";
+str += n[3] != 0 ? (a[Number(n[3])] || (b[n[3][0]] + " " + a[n[3][1]])) + " Thousand " : "";
+str += n[4] != 0 ? (a[Number(n[4])] || (b[n[4][0]] + " " + a[n[4][1]])) + " Hundred " : "";
+str += n[5] != 0 ? ((str !== "") ? "and " : "") + (a[Number(n[5])] || (b[n[5][0]] + " " + a[n[5][1]])) + " " : "";
+return str.trim() + " Rupees";
+}
+
+function updateQRCode(amount){
+const upiID = profileData.upiId || "";
+const payeeName = profileData.name || "GURULINK";
+const qrCanvas = document.getElementById("qrCanvas");
+qrCanvas.innerHTML = "";
+if(!upiID){
+qrCanvas.innerHTML = "<p>No UPI ID added in profile.</p>";
+return;
+}
+const amt = (isNaN(amount) ? 0 : Number(amount).toFixed(2));
+const upiURL = `upi://pay?pa=${encodeURIComponent(upiID)}&pn=${encodeURIComponent(payeeName)}&am=${amt}&cu=INR`;
+new QRCode(qrCanvas,{text:upiURL,width:180,height:180});
+}
+
+async function saveInvoice(){
+const name = document.getElementById("studentName").value.trim();
+if(!name){
+alert("Enter student/client name.");
+return;
+}
+
+let invoiceNo = document.getElementById("invoiceNo").textContent.trim();
+if(!invoiceNo || invoiceNo === "INV-0001"){
+invoiceNo = generateInvoiceNo();
+document.getElementById("invoiceNo").textContent = invoiceNo;
+}
+
+const rows = Array.from(document.querySelectorAll("#billBody tr")).map(row=>({
+from:row.children[0].querySelector("input")?.value || "",
+to:row.children[1].querySelector("input")?.value || "",
+type:row.children[2].querySelector("select")?.value || "",
+subject:row.children[3].querySelector("select,input")?.value || "",
+qty:row.children[4].querySelector("input")?.value || "",
+rate:row.children[5].querySelector("input")?.value || "",
+total:row.children[6].querySelector("input")?.value || "0"
+}));
+
+let total = rows.reduce((sum,r)=>sum + (parseFloat(r.total) || 0),0);
+const amountPaid = parseFloat(document.getElementById("amountPaid").value) || 0;
+const balance = parseFloat((total - amountPaid).toFixed(2));
+
+const invoice = {
+invoiceNo,
+profileId,
+role,
+businessName:profileData.name || "",
+category:profileData.category || "",
+name,
+phone:document.getElementById("phone").value.trim(),
+email:document.getElementById("email").value.trim(),
+address:document.getElementById("address").value.trim(),
+class:document.getElementById("studentClass").value.trim(),
+parentName:document.getElementById("parentName").value.trim(),
+date:invoiceDateInput.value,
+amountPaid,
+rows,
+total,
+balance,
+createdAt:Date.now()
+};
+
+await set(ref(db,invoiceBasePath()+"/"+invoiceNo),invoice);
+
+const clientKey = cleanPhone(invoice.phone) || name.toLowerCase().replace(/[^a-z0-9]+/g,"_");
+await set(ref(db,clientBasePath()+"/"+clientKey),{
+name:invoice.name,
+phone:invoice.phone,
+email:invoice.email,
+address:invoice.address,
+class:invoice.class,
+parentName:invoice.parentName,
+updatedAt:Date.now()
+});
+
+await populateDropdowns();
+document.getElementById("invoiceSelect").value = invoiceNo;
+document.getElementById("printBtn").style.display = "inline-block";
+alert("Invoice saved successfully: " + invoiceNo);
+}
+
+async function loadInvoiceByNumber(invoiceNoParam){
+const invoiceNo = (invoiceNoParam || document.getElementById("invoiceSelect").value).trim();
+if(!invoiceNo) return;
+const snap = await get(ref(db,invoiceBasePath()+"/"+invoiceNo));
+if(!snap.exists()){
+alert("Invoice not found.");
+return;
+}
+
+const invoice = snap.val();
+document.getElementById("studentName").value = invoice.name || "";
+document.getElementById("phone").value = invoice.phone || "";
+document.getElementById("email").value = invoice.email || "";
+document.getElementById("address").value = invoice.address || "";
+document.getElementById("studentClass").value = invoice.class || "";
+document.getElementById("parentName").value = invoice.parentName || "";
+document.getElementById("invoiceDateInput").value = invoice.date || "";
+document.getElementById("amountPaid").value = invoice.amountPaid || 0;
+document.getElementById("invoiceNo").textContent = invoiceNo;
+document.getElementById("billBody").innerHTML = "";
+document.getElementById("invoiceTable").style.display = "table";
+(invoice.rows || []).forEach(row=>addItem(row));
+calculateTotal();
+document.getElementById("printBtn").style.display = "inline-block";
+}
+
+async function handleInvoiceInput(){
+await loadInvoiceByNumber(document.getElementById("invoiceSelect").value);
+}
+
+async function searchByPhone(){
+const phone = document.getElementById("phoneSearch").value.trim();
+if(!phone) return;
+const snap = await get(ref(db,invoiceBasePath()));
+if(!snap.exists()) return;
+let found = "";
+snap.forEach(c=>{
+const inv = c.val();
+if(!found && (inv.phone || "").includes(phone)) found = c.key;
+});
+if(found){
+document.getElementById("invoiceSelect").value = found;
+await loadInvoiceByNumber(found);
+}
+}
+
+function newInvoice(){
+document.getElementById("invoiceNo").textContent = "";
+document.getElementById("studentName").value = "";
+document.getElementById("phone").value = "";
+document.getElementById("email").value = "";
+document.getElementById("address").value = "";
+document.getElementById("studentClass").value = "";
+document.getElementById("parentName").value = "";
+document.getElementById("amountPaid").value = "0";
+document.getElementById("billBody").innerHTML = "";
+document.getElementById("invoiceTable").style.display = "none";
+document.getElementById("invoiceSelect").value = "";
+invoiceDateInput.valueAsDate = new Date();
+document.getElementById("printBtn").style.display = "none";
+addItem();
+}
+
+async function markAsPaid(){
+calculateTotal();
+const total = parseFloat(document.getElementById("grandTotal").textContent.replace("Total Amount: Rs","").trim()) || 0;
+document.getElementById("amountPaid").value = total.toFixed(2);
+calculateTotal();
+await saveInvoice();
+alert("Invoice marked as fully paid.");
+}
+
+async function exportToExcel(){
+const snap = await get(ref(db,invoiceBasePath()));
+if(!snap.exists()){
+alert("No invoices to export.");
+return;
+}
+
+const fromDate = document.getElementById("fromDate").value;
+const toDate = document.getElementById("toDate").value;
+let data = [["Invoice No","Date","Student / Client","Class / Level","Phone","Email","Address","Invoice Total","Amount Paid","Due Balance"]];
+let grandTotal = 0, grandPaid = 0, grandDue = 0;
+
+snap.forEach(c=>{
+const inv = c.val();
+if(fromDate && new Date(inv.date) < new Date(fromDate)) return;
+if(toDate && new Date(inv.date) > new Date(toDate)) return;
+const invoiceTotal = parseFloat(inv.total || 0) || 0;
+const paidTotal = parseFloat(inv.amountPaid || 0) || 0;
+const dueTotal = parseFloat(inv.balance || (invoiceTotal - paidTotal)) || 0;
+data.push([c.key,inv.date,inv.name,inv.class,inv.phone,inv.email,inv.address,invoiceTotal,paidTotal,dueTotal]);
+grandTotal += invoiceTotal;
+grandPaid += paidTotal;
+grandDue += dueTotal;
+});
+
+data.push([]);
+data.push(["","","GRAND TOTAL","","","","",grandTotal,grandPaid,grandDue]);
+const ws = XLSX.utils.aoa_to_sheet(data);
+const wb = XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(wb,ws,"Invoices");
+XLSX.writeFile(wb,"GURULINK-Invoices.xlsx");
+}
+
+function sharePaymentLink(){
+const studentName = document.getElementById("studentName").value.trim() || "Student";
+const invoiceNo = document.getElementById("invoiceNo").textContent.trim() || "N/A";
+const totalAmount = document.getElementById("grandTotal").textContent.replace("Total Amount: ","").trim();
+const dueBalance = document.getElementById("dueBalance").textContent.replace("Due Balance: ","").trim();
+const paymentLink = document.getElementById("cashfreeLink").value.trim();
+const business = profileData.name || "GURULINK";
+let message =
+`Hello ${studentName},\n\n` +
+`Here are your invoice details from ${business}:\n` +
+`Invoice No: ${invoiceNo}\n` +
+`Total Amount: ${totalAmount}\n` +
+`Due Balance: ${dueBalance}\n\n`;
+if(paymentLink) message += `Payment Link:\n${paymentLink}\n\n`;
+message += "Thank you.";
+window.open("https://wa.me/?text=" + encodeURIComponent(message),"_blank");
+}
+
+function printInvoice(){
+document.title = document.getElementById("invoiceNo").textContent || "Invoice";
+window.print();
+}
+
+document.getElementById("downloadPdfBtn").addEventListener("click",async()=>{
+const printable = document.querySelector(".container");
+const originalBg = document.body.style.backgroundColor;
+document.body.style.backgroundColor = "#fff";
+const canvas = await html2canvas(printable,{scale:2,useCORS:true,backgroundColor:"#ffffff"});
+document.body.style.backgroundColor = originalBg;
+const imgData = canvas.toDataURL("image/png");
+const { jsPDF } = window.jspdf;
+const pdf = new jsPDF("p","pt","a4");
+const pageWidth = pdf.internal.pageSize.getWidth();
+const pageHeight = pdf.internal.pageSize.getHeight();
+const imgWidth = pageWidth;
+const imgHeight = (canvas.height * imgWidth) / canvas.width;
+if(imgHeight <= pageHeight){
+pdf.addImage(imgData,"PNG",0,0,imgWidth,imgHeight);
+}
+else{
+let remainingHeight = imgHeight;
+let position = 0;
+const pageCanvas = document.createElement("canvas");
+const pageCtx = pageCanvas.getContext("2d");
+const ratio = canvas.width / imgWidth;
+pageCanvas.width = canvas.width;
+pageCanvas.height = Math.floor(pageHeight * ratio);
+let srcY = 0;
+while(remainingHeight > 0){
+pageCtx.clearRect(0,0,pageCanvas.width,pageCanvas.height);
+pageCtx.drawImage(canvas,0,srcY,canvas.width,pageCanvas.height,0,0,pageCanvas.width,pageCanvas.height);
+if(position > 0) pdf.addPage();
+pdf.addImage(pageCanvas.toDataURL("image/png"),"PNG",0,0,imgWidth,pageHeight);
+srcY += pageCanvas.height;
+remainingHeight -= pageHeight;
+position++;
+}
+}
+pdf.save(`invoice-${new Date().toISOString().split("T")[0]}.pdf`);
+});
+
+window.handleClientChange = handleClientChange;
+window.handleInvoiceInput = handleInvoiceInput;
+window.searchByPhone = searchByPhone;
+window.addItem = addItem;
+window.calculateTotal = calculateTotal;
+window.saveInvoice = saveInvoice;
+window.loadInvoiceByNumber = loadInvoiceByNumber;
+window.newInvoice = newInvoice;
+window.markAsPaid = markAsPaid;
+window.exportToExcel = exportToExcel;
+window.sharePaymentLink = sharePaymentLink;
+window.printInvoice = printInvoice;
+
+loadProfile().then(()=>addItem());
+</script>
+</body>
+</html>
