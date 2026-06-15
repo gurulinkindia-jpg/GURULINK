@@ -296,7 +296,8 @@ font-family:Arial;
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, onValue, update, remove, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, get, onValue, update, remove, push } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -310,10 +311,12 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
 
 const box = document.getElementById("tickets");
 let allTickets = [];
 let activeFilter = "all";
+let isAdmin = false;
 
 function escapeHtml(value){
 return String(value ?? "").replace(/[&<>"]/g, c => ({
@@ -465,7 +468,7 @@ box.appendChild(div);
 });
 };
 
-/* LOAD */
+function loadTickets(){
 onValue(ref(db,"tickets"), snap => {
 
 allTickets = [];
@@ -481,17 +484,38 @@ updateSummary();
 renderTickets();
 
 });
+}
+
+onAuthStateChanged(auth, async (user)=>{
+if(!user){
+box.innerHTML = `<div class="ticket openTicket"><p>Please login as admin first.</p></div>`;
+return;
+}
+
+const adminSnap = await get(ref(db,"admins/"+user.uid));
+
+if(!adminSnap.exists()){
+box.innerHTML = `<div class="ticket rejectedTicket"><p>This account is not admin.</p></div>`;
+return;
+}
+
+isAdmin = true;
+loadTickets();
+});
 
 /* ACTIONS */
 window.resolveTicket = async (id)=>{
+if(!isAdmin) return alert("Admin login required.");
 await update(ref(db,"tickets/"+id),{status:"resolved"});
 };
 
 window.rejectTicket = async (id)=>{
+if(!isAdmin) return alert("Admin login required.");
 await update(ref(db,"tickets/"+id),{status:"not_resolved"});
 };
 
 window.sendAdminReply = async (id)=>{
+if(!isAdmin) return alert("Admin login required.");
 const input = document.getElementById("reply_"+id);
 const text = input.value.trim();
 
@@ -515,12 +539,14 @@ input.value = "";
 };
 
 window.deleteTicket = async (id)=>{
+if(!isAdmin) return alert("Admin login required.");
 if(confirm("Delete this ticket?")){
 await remove(ref(db,"tickets/"+id));
 }
 };
 
 window.clearAllTickets = async ()=>{
+if(!isAdmin) return alert("Admin login required.");
 if(confirm("Delete ALL tickets?")){
 await remove(ref(db,"tickets"));
 }
