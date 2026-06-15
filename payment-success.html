@@ -323,7 +323,8 @@ async function savePayment() {
     });
 
     await update(ref(db, profilePath), {
-      paymentStatus: "paid"
+      paymentStatus: "paid",
+      lastPaymentToken: token || ""
     });
 
     await cleanupPending(finalType);
