@@ -80,6 +80,10 @@ font-weight:bold;
 Register Admin
 </button>
 
+<button onclick="loginAdmin()" style="margin-top:10px;background:#2e7d32;">
+Login Existing Admin
+</button>
+
 <p id="msg"></p>
 
 </div>
@@ -91,14 +95,16 @@ from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
 getAuth,
-createUserWithEmailAndPassword
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 import {
 getDatabase,
 ref,
-set
+set,
+get
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
@@ -184,6 +190,76 @@ setTimeout(()=>{
 window.location.href = "admin.html";
 
 },1000);
+
+}
+catch(err){
+
+msg.innerText = err.message;
+
+}
+
+};
+
+window.loginAdmin = async function(){
+
+const email =
+document.getElementById("email").value.trim();
+
+const password =
+document.getElementById("password").value.trim();
+
+const msg =
+document.getElementById("msg");
+
+if(!email || !password){
+
+msg.innerText = "Enter admin email and password";
+return;
+
+}
+
+try{
+
+msg.innerText = "Checking Admin Login...";
+
+const userCred =
+await signInWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+const uid = userCred.user.uid;
+
+const adminSnap =
+await get(ref(db,"admins/" + uid));
+
+const userSnap =
+await get(ref(db,"users/" + uid));
+
+if(!adminSnap.exists() && userSnap.exists() && userSnap.val().role === "admin"){
+
+await set(ref(db,"admins/" + uid),true);
+
+}
+else if(!adminSnap.exists()){
+
+msg.innerText = "This account is not an admin";
+return;
+
+}
+
+localStorage.setItem("uid",uid);
+localStorage.setItem("profileId",uid);
+localStorage.setItem("role","admin");
+
+msg.innerText = "Admin Login Successful";
+
+setTimeout(()=>{
+
+window.location.href = "admin.html";
+
+},700);
 
 }
 catch(err){
