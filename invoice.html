@@ -195,6 +195,10 @@ To: <input type="date" id="toDate">
 <script>
 function printInvoice(){
 document.title = document.getElementById("invoiceNo").textContent || "Invoice";
+if(window.AndroidPrint && typeof window.AndroidPrint.printPage === "function"){
+window.AndroidPrint.printPage(document.title);
+return;
+}
 window.focus();
 window.print();
 }
