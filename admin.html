@@ -322,6 +322,9 @@ padding:6px;
 }
 }
 </style>
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 </head>
 
 <body>
@@ -343,7 +346,7 @@ Home
 <button
 style="background:#ff9800;"
 onclick="openHelpdesk()">
-ðŸŽ« Helpdesk
+Helpdesk
 </button>
 
 <button
@@ -369,20 +372,20 @@ font-size:13px;
 min-width:220px;
 ">
 
-ðŸ”” <b>Notifications</b>
+<b>Notifications</b>
 
 <div>
-ðŸŸ¢ New Registrations:
+New Registrations:
 <span id="newRegistrationCount">0</span>
 </div>
 
 <div>
-ðŸŸ£ New Renewals:
+New Renewals:
 <span id="newRenewalCount">0</span>
 </div>
 
 <div>
-ðŸŸ  Helpdesk Tickets:
+Helpdesk Tickets:
 <span id="newTicketCount">0</span>
 </div>
 
@@ -423,7 +426,7 @@ Creative
 </div>
 
 <div class="stat statRevenue">
-Revenue â‚¹
+Revenue Rs.
 <div id="pTotal">0</div>
 </div>
 <div class="stat statHelpdesk">
@@ -485,6 +488,14 @@ get
 from
 "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
+import {
+getAuth,
+onAuthStateChanged,
+signOut
+}
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
 const firebaseConfig = {
 
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -514,12 +525,22 @@ initializeApp(firebaseConfig);
 const db =
 getDatabase(app);
 
-if(
-localStorage.getItem("role")
-!== "admin"
-){
-alert("Access Denied");
-location.href="login.html";
+const auth =
+getAuth(app);
+
+let adminStarted = false;
+
+function showAdminMessage(message){
+
+document.getElementById("teachers").innerHTML =
+`<div class="card teacherCard"><h3>${message}</h3></div>`;
+
+document.getElementById("institutions").innerHTML = "";
+
+document.getElementById("payments").innerHTML = "";
+
+document.getElementById("renewPayments").innerHTML = "";
+
 }
 
 let teachers=[];
@@ -676,7 +697,7 @@ ${d.phone || "-"}
 </p>
 
 <p>
-â‚¹${d.amount || 0}
+Rs. ${d.amount || 0}
 </p>
 
 <p>
@@ -753,7 +774,7 @@ ${d.phone || "-"}
 </p>
 
 <p>
-â‚¹${d.amount || 0}
+Rs. ${d.amount || 0}
 
 </p>
 
@@ -1371,15 +1392,36 @@ count("creative");
 ========================= */
 
 window.logout =
-function(){
+async function(){
 
 localStorage.clear();
 
+try{
+await signOut(auth);
+}
+catch(err){
+console.log(err);
+}
+
 location.href =
-"login.html";
+"admin-register.html";
 
 };
 
+
+function startAdminPanel(){
+
+if(adminStarted){
+return;
+}
+
+adminStarted = true;
+
+loadTeachers();
+
+loadInstitutions();
+
+loadPayments();
 
 onValue(
   ref(db,"tickets"),
@@ -1478,15 +1520,35 @@ onValue(
 
   }
 );
-/* =========================
-   INIT
-========================= */
 
-loadTeachers();
+}
 
-loadInstitutions();
+onAuthStateChanged(auth, async (user)=>{
 
-loadPayments();
+if(!user){
+showAdminMessage("Please login as admin first.");
+setTimeout(()=>{
+location.href = "admin-register.html";
+},800);
+return;
+}
+
+const adminSnap =
+await get(ref(db,"admins/" + user.uid));
+
+if(!adminSnap.exists()){
+localStorage.clear();
+showAdminMessage("Access denied. This account is not an admin.");
+return;
+}
+
+localStorage.setItem("uid",user.uid);
+localStorage.setItem("profileId",user.uid);
+localStorage.setItem("role","admin");
+
+startAdminPanel();
+
+});
 
 /* =========================
    HEPL
