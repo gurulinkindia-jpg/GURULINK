@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0, viewport-fit=cover">
 
 <title>GURULINK Dashboard</title>
 
@@ -347,6 +346,23 @@ background:#1e88e5;
 .callBtn:hover{
 background:#1565c0;
 }
+
+.messageBox{
+margin-top:12px;
+display:grid;
+grid-template-columns:1fr auto;
+gap:8px;
+}
+
+.messageBox input{
+padding:10px;
+border:1px solid #ccc;
+border-radius:8px;
+}
+
+.messageBtn{
+background:#6a1b9a;
+}
 .homeBtn{
 background:#673ab7;
 }
@@ -359,7 +375,7 @@ background:#00897b;
 background:#00695c;
 }
 
-/* Ã°Å¸â€Â¥ SHARE BUTTON (PUT HERE) */
+/*  SHARE BUTTON (PUT HERE) */
 .shareBtn{
   background:linear-gradient(135deg,#00e5ff,#2962ff);
   border:3px solid #ffeb3b !important;
@@ -415,6 +431,9 @@ background:#00695c;
 <link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 <link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 <link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -446,7 +465,7 @@ Loading...
 <button
 class="renewBtn"
 onclick="renewProfile()">
-Renew Ã¢â€šÂ¹399
+Renew Rs.399
 </button>
 
 </div>
@@ -515,15 +534,15 @@ Quick Actions
 <div class="mainBtns">
 
   <button class="editBtn" onclick="editProfile()">
-    Ã¢Å“Â Edit Profile
+    Edit Profile
   </button>
 
   <button class="supportBtn" onclick="contactDeveloper()">
-    Ã°Å¸â€ºÂ  Developer Support
+     Developer Support
   </button>
 
   <button class="homeBtn" onclick="goHome()">
-    Ã°Å¸ÂÂ  Home
+     Home
   </button>
 
   <button class="invoiceBtn" onclick="createInvoice()">
@@ -531,11 +550,11 @@ Quick Actions
   </button>
 
   <button class="logoutBtn" onclick="logout()">
-    Ã°Å¸Å¡Âª Logout
+     Logout
   </button>
 
   <button class="shareBtn full" onclick="shareProfile()">
-    Ã°Å¸â€œÂ¤ Share Business Card
+    Share Business Card
   </button>
 
 </div>
@@ -559,7 +578,7 @@ Quick Actions
 
   <!-- LEFT: BANK DETAILS -->
   <div class="section" id="bankSection">
-    <h2 class="sectionTitle">Ã°Å¸â€™Â³ Bank & Payment Details</h2>
+    <h2 class="sectionTitle"> Bank & Payment Details</h2>
 
     <p><b>Account Holder Name:</b>
       <span id="accountHolderName">-</span>
@@ -577,9 +596,9 @@ Quick Actions
 
   <!-- RIGHT: PRIVACY NOTICE -->
   <div class="bankAdBox">
-    <h3>Ã¢Å¡Â  Privacy Notice</h3>
+    <h3> Privacy Notice</h3>
     <p>
-      If you want or donÃ¢â‚¬â„¢t want to share your bank details publicly,  
+      If you want or don't want to share your bank details publicly,  
       uncheck the option below the bank details in your Edit Profile page.
     </p>
   </div>
@@ -621,7 +640,9 @@ ref,
 get,
 update,
 remove,
-onValue
+onValue,
+set,
+push
 }
 
 
@@ -699,6 +720,7 @@ role === "teacher" || role === "teacher_institute"
   ? "teachers/" + profileId
   : "institutions/" + profileId;
 
+let currentProfileData = {};
 
 
 
@@ -756,6 +778,7 @@ return;
 
 
 const d = snap.val();
+currentProfileData = d;
 /* BANK DETAILS */
 document.getElementById("accountHolderName").innerText =
 d.accountHolderName || "Not Added";
@@ -774,7 +797,7 @@ if (d.qrImage) {
   document.getElementById("bankSectionWrapper").style.display = "none";
 }
 
-/* Ã¢Å“â€¦ ADD LOGO CODE HERE */
+/*  ADD LOGO CODE HERE */
 const logoURL = d.logo || "default.png";
 const img = document.getElementById("profileLogo");
 
@@ -904,12 +927,13 @@ total++;
 const id=child.key;
 const lead=child.val();
 const status=lead.status || "pending";
+const isAccepted = status === "accepted";
 const leadRole=(lead.viewerRole || "").toLowerCase();
 const hasPhone=lead.phone && lead.phone.toString().trim();
 const cleanPhone=hasPhone ? lead.phone.toString().replace(/\D/g,"") : "";
 const leadType=lead.name || (hasPhone ? "Student" : (leadRole === "institution" ? "Institution" : "Teacher/Institution"));
 
-if(status==="enrolled"){
+if(status==="enrolled" || status==="accepted"){
 enrolled++;
 }else{
 pending++;
@@ -919,7 +943,7 @@ html+=`
 <div class="leadCard">
 <div class="leadHeader">
 <div class="leadName">${leadType}</div>
-<div class="statusBadge ${status==="enrolled" ? "enrolledBadge" : "pendingBadge"}">${status.toUpperCase()}</div>
+<div class="statusBadge ${status==="enrolled" || status==="accepted" ? "enrolledBadge" : "pendingBadge"}">${status.toUpperCase()}</div>
 </div>
 
 <div class="leadInfo">Phone: ${hasPhone ? lead.phone : "Hidden / Not Available"}</div>
@@ -932,10 +956,16 @@ ${hasPhone ? `
 <button class="callBtn" onclick="callLead('${cleanPhone}')">Call</button>
 ` : ""}
 <button class="${status === 'enrolled' ? 'pendingBtn' : 'enrollBtn'}" onclick="toggleStatus('${id}', '${status}')">
-${status === 'enrolled' ? 'Mark Pending' : 'Mark Enrolled'}
+${status === 'enrolled' || status === 'accepted' ? 'Mark Pending' : 'Mark Enrolled'}
 </button>
 <button class="deleteBtn" onclick="deleteLead('${id}')">Delete</button>
 </div>
+${isAccepted ? `
+<div class="messageBox">
+<input id="msg_${id}" placeholder="Message to student">
+<button class="messageBtn" onclick="sendEnrollmentMessage('${id}')">Send</button>
+</div>
+` : ""}
 </div>
 `;
 
@@ -1218,7 +1248,7 @@ window.contactWhatsApp = function(phone) {
 window.toggleStatus = async function (leadId, currentStatus) {
 
   const newStatus =
-    currentStatus === "enrolled" ? "pending" : "enrolled";
+    currentStatus === "enrolled" || currentStatus === "accepted" ? "pending" : "enrolled";
 
   await update(
     ref(db, `profileViews/${profileId}/${leadId}`),
@@ -1226,6 +1256,74 @@ window.toggleStatus = async function (leadId, currentStatus) {
       status: newStatus
     }
   );
+
+  if(newStatus === "enrolled"){
+    await set(
+      ref(db, `studentEnrollments/${leadId}/${profileId}`),
+      {
+        studentId:leadId,
+        profileId:profileId,
+        profileRole:role === "institution" ? "institution" : "teacher",
+        name:currentProfileData.name || "",
+        phone:currentProfileData.phone || "",
+        alternatePhone:currentProfileData.alternatePhone || "",
+        email:currentProfileData.email || "",
+        website:currentProfileData.website || "",
+        logo:currentProfileData.logo || currentProfileData.profilePic || "",
+        category:currentProfileData.category || "",
+        status:"pending_student_acceptance",
+        requestedAt:Date.now(),
+        updatedAt:Date.now()
+      }
+    );
+  }
+  else{
+    await update(
+      ref(db, `studentEnrollments/${leadId}/${profileId}`),
+      {
+        status:"pending",
+        updatedAt:Date.now()
+      }
+    );
+  }
+
+};
+
+window.sendEnrollmentMessage = async function(studentId){
+
+const input =
+document.getElementById("msg_" + studentId);
+
+const text =
+(input?.value || "").trim();
+
+if(!text){
+alert("Type a message first.");
+return;
+}
+
+await push(
+ref(db, `enrollmentChats/${studentId}/${profileId}/messages`),
+{
+senderId:profileId,
+senderRole:role === "institution" ? "institution" : "teacher",
+senderName:currentProfileData.name || "Teacher / Institution",
+text:text,
+time:Date.now()
+}
+);
+
+await update(
+ref(db, `studentEnrollments/${studentId}/${profileId}`),
+{
+lastMessage:text,
+lastMessageAt:Date.now(),
+unreadForStudent:true
+}
+);
+
+input.value = "";
+alert("Message sent to student.");
 
 };
 
@@ -1281,3 +1379,5 @@ profileId;
 
 </body>
 </html>
+
+
