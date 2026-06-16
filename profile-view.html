@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Profile View - GURULINK</title>
 
 <style>
@@ -253,7 +253,48 @@ border:1px solid #ddd;
 border-radius:10px;
 margin-top:10px;
 }
+
+.demoBox{
+margin-top:15px;
+padding:15px;
+background:#f3f9ff;
+border:1px solid #bbdefb;
+border-radius:12px;
+}
+
+.demoBox h3{
+margin:0 0 8px;
+color:#1565c0;
+}
+
+.demoBox p{
+font-size:13px;
+line-height:1.5;
+color:#555;
+}
+
+.demoChat{
+background:white;
+border:1px solid #d6e8ff;
+border-radius:12px;
+padding:10px;
+}
+
+.demoChat textarea{
+height:90px;
+resize:vertical;
+}
+
+.demoSubmit{
+background:#6a1b9a;
+}
 </style>
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -566,6 +607,17 @@ data.showBankDetails !== false &&
 ) ? `<button class="payFee" onclick="showPaymentNotice()">Pay Fee</button>` : ""}
 </div>
 
+<div class="demoBox">
+<h3>Request Demo Class</h3>
+<p>Send a short demo class request to this ${esc(type.toLowerCase())}. Your message will be visible to them for 15 days.</p>
+<div class="demoChat">
+<input id="demoName" placeholder="Your Name">
+<input id="demoPhone" placeholder="Phone Number">
+<textarea id="demoMessage" placeholder="Write your demo class request"></textarea>
+<button class="demoSubmit" onclick="submitDemoRequest()">Send Demo Request</button>
+</div>
+</div>
+
 ${data.showBankDetails !== false ? `
 <div id="bankBox" class="bankBox">
 <h3>Payment Details</h3>
@@ -622,7 +674,7 @@ count++;
 html+=`
 <div class="reviewItem">
 <b>${d.name}</b>
-<div>${"⭐".repeat(d.rating)}</div>
+<div>${"â­".repeat(d.rating)}</div>
 <p>${d.text}</p>
 </div>`;
 });
@@ -658,6 +710,41 @@ name,rating,text,time:Date.now()
 alert("Review submitted");
 document.getElementById("rname").value="";
 document.getElementById("rtext").value="";
+};
+
+window.submitDemoRequest = async function(){
+
+const name =
+document.getElementById("demoName").value.trim();
+
+const phone =
+document.getElementById("demoPhone").value.trim();
+
+const message =
+document.getElementById("demoMessage").value.trim();
+
+if(!name || !phone || !message){
+alert("Please enter name, phone number, and demo request message.");
+return;
+}
+
+await push(ref(db,`demoRequests/${id}`),{
+profileId:id,
+profileType:type,
+name:name,
+phone:phone,
+message:message,
+status:"new",
+createdAt:Date.now(),
+expiresAt:Date.now() + (15 * 24 * 60 * 60 * 1000)
+});
+
+alert("Demo class request sent successfully.");
+
+document.getElementById("demoName").value = "";
+document.getElementById("demoPhone").value = "";
+document.getElementById("demoMessage").value = "";
+
 };
 
 /* START */
@@ -749,13 +836,15 @@ load();
 
 </script>
 
-<a href="index.html" class="floatingBtn homeBtn">🏠</a>
+<a href="index.html" class="floatingBtn homeBtn">Home</a>
 
 <a
 href="javascript:history.back()"
 class="floatingBtn backBtn">
-⬅️
+â¬…ï¸
 </a>
 
 </body>
 </html>
+
+
