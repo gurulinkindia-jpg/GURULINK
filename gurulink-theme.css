@@ -1,3 +1,29 @@
+html{
+min-height:100%;
+}
+
+body{
+min-height:100%;
+}
+
+header{
+padding-top:calc(env(safe-area-inset-top) + 14px) !important;
+}
+
+@media(max-width:768px){
+header{
+padding-top:calc(env(safe-area-inset-top) + 28px) !important;
+}
+
+.logoImg{
+margin-top:2px;
+}
+
+.profile-btn{
+margin-top:2px;
+}
+}
+
 html.gurulink-dark,
 html.gurulink-dark body{
 background:#0f172a !important;
