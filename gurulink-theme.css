@@ -7,12 +7,12 @@ min-height:100%;
 }
 
 header{
-padding-top:calc(env(safe-area-inset-top) + 14px) !important;
+padding-top:calc(env(safe-area-inset-top) + 8px) !important;
 }
 
 @media(max-width:768px){
 header{
-padding-top:calc(env(safe-area-inset-top) + 28px) !important;
+padding-top:calc(env(safe-area-inset-top) + 14px) !important;
 }
 
 .logoImg{
