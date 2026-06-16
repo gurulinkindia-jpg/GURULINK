@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover">
 
 <title>Professional Skills Teacher Registration</title>
 
@@ -194,6 +194,12 @@ opacity:0.7;
 }
 }
 </style>
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -212,7 +218,7 @@ Up to 98% Promotional Discount Going On! Use Promo Code: <b>PRO-98</b>
 
 <header>
 <h1>Professional Skills Teacher Registration</h1>
-<p>1 Year Subscription Fee ₹5000</p>
+<p>1 Year Subscription Fee Rs.5000</p>
 <a href="helpdesk.html" class="helpButton">Help</a>
 </header>
 
@@ -220,6 +226,14 @@ Up to 98% Promotional Discount Going On! Use Promo Code: <b>PRO-98</b>
 <form id="form">
 
 <input id="name" placeholder="Teacher Name" required>
+
+<label>Gender</label>
+<select id="gender" required>
+<option value="">Select Gender</option>
+<option value="Male">Male</option>
+<option value="Female">Female</option>
+<option value="Other">Other</option>
+</select>
 
 <label>Experience (in Years)</label>
 <input type="number" id="experience" placeholder="Example: 2, 5, 10 years" required>
@@ -832,6 +846,7 @@ selectedIdType === "Other" && document.getElementById("otherIdProof").value.trim
 await set(ref(db,"teachers/"+uid),{
 uid:uid,
 name:document.getElementById("name").value,
+gender:document.getElementById("gender").value,
 qualification:document.getElementById("qualification").value,
 experience:document.getElementById("experience").value,
 phone:document.getElementById("phone").value,
@@ -903,5 +918,7 @@ submitBtn.innerText="Continue To Payment";
 
 </body>
 </html>
+
+
 
 
