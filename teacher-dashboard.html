@@ -375,12 +375,12 @@ line-height:1.4;
 }
 
 .teacherChatMsg{
-background:white;
-border:1px solid #ece3f8;
 border-radius:8px;
 padding:8px;
 margin-bottom:8px;
 color:#333;
+border:1px solid transparent;
+max-width:92%;
 }
 
 .teacherChatMsg:last-child{
@@ -393,6 +393,45 @@ font-size:11px;
 font-weight:bold;
 color:#6a1b9a;
 margin-bottom:3px;
+}
+
+.teacherChatMsg.studentMsg{
+background:#e3f2fd;
+border-color:#90caf9;
+margin-right:auto;
+color:#0d47a1;
+}
+
+.teacherChatMsg.providerMsg{
+background:#e8f5e9;
+border-color:#a5d6a7;
+margin-left:auto;
+color:#1b5e20;
+}
+
+.teacherChatMsg.systemMsg{
+background:#fff8e1;
+border-color:#ffe082;
+color:#6d4c41;
+max-width:100%;
+}
+
+.teacherChatHeader{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+margin-bottom:8px;
+}
+
+.clearChatBtn{
+background:#ef5350;
+color:white;
+border:none;
+border-radius:8px;
+padding:8px 10px;
+font-size:12px;
+cursor:pointer;
 }
 .homeBtn{
 background:#673ab7;
@@ -949,13 +988,28 @@ return;
 }
 
 onValue(
-ref(db,`enrollmentChats/${studentId}/${profileId}/messages`),
+ref(db,`enrollmentChats/${studentId}/${profileId}`),
 (snap)=>{
 
 let messages = [];
+const clearedAt =
+Number(snap.child(`clearedFor/${profileId}`).val() || 0);
 
-snap.forEach(child=>{
-messages.push(child.val());
+const expiryTime =
+Date.now() - (7 * 24 * 60 * 60 * 1000);
+
+snap.child("messages").forEach(child=>{
+const msg = child.val();
+const msgTime = Number(msg.time || 0);
+
+if(msgTime && msgTime < expiryTime){
+remove(ref(db,`enrollmentChats/${studentId}/${profileId}/messages/${child.key}`));
+return;
+}
+
+if(msgTime > clearedAt){
+messages.push(msg);
+}
 });
 
 messages = messages
@@ -964,13 +1018,13 @@ messages = messages
 
 if(!messages.length){
 box.innerHTML =
-`<div class="teacherChatMsg">No messages yet.</div>`;
+`<div class="teacherChatMsg systemMsg">No messages yet.</div>`;
 return;
 }
 
 box.innerHTML =
 messages.map(msg=>`
-<div class="teacherChatMsg">
+<div class="teacherChatMsg ${msg.senderRole === "student" ? "studentMsg" : "providerMsg"}">
 <span class="teacherChatMeta">${msg.senderRole === "student" ? "Student" : "You"} - ${msg.time ? new Date(msg.time).toLocaleString() : ""}</span>
 ${escapeHTML(msg.text || "")}
 </div>
@@ -1048,6 +1102,10 @@ ${status === 'enrolled' || status === 'accepted' ? 'Mark Pending' : 'Mark Enroll
 <button class="deleteBtn" onclick="deleteLead('${id}')">Delete</button>
 </div>
 ${isAccepted ? `
+<div class="teacherChatHeader">
+<strong>Messages</strong>
+<button class="clearChatBtn" onclick="clearEnrollmentChat('${id}')">Clear Chat</button>
+</div>
 <div class="teacherChat" id="chat_${id}">
 Loading messages...
 </div>
@@ -1365,6 +1423,13 @@ window.toggleStatus = async function (leadId, currentStatus) {
         website:currentProfileData.website || "",
         logo:currentProfileData.logo || currentProfileData.profilePic || "",
         category:currentProfileData.category || "",
+        showBankDetails:currentProfileData.showBankDetails !== false,
+        accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
+        bankName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.bankName || ""),
+        accountNumber:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountNumber || ""),
+        ifsc:currentProfileData.showBankDetails === false ? "" : (currentProfileData.ifsc || ""),
+        upiId:currentProfileData.showBankDetails === false ? "" : (currentProfileData.upiId || ""),
+        qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.qrImage || ""),
         status:"pending_student_acceptance",
         requestedAt:Date.now(),
         updatedAt:Date.now()
@@ -1412,12 +1477,40 @@ ref(db, `studentEnrollments/${studentId}/${profileId}`),
 {
 lastMessage:text,
 lastMessageAt:Date.now(),
-unreadForStudent:true
+unreadForStudent:true,
+website:currentProfileData.website || "",
+showBankDetails:currentProfileData.showBankDetails !== false,
+accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
+bankName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.bankName || ""),
+accountNumber:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountNumber || ""),
+ifsc:currentProfileData.showBankDetails === false ? "" : (currentProfileData.ifsc || ""),
+upiId:currentProfileData.showBankDetails === false ? "" : (currentProfileData.upiId || ""),
+qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.qrImage || "")
 }
 );
 
 input.value = "";
 alert("Message sent to student.");
+
+};
+
+window.clearEnrollmentChat = async function(studentId){
+
+if(!confirm("Clear this chat from your side only?")){
+return;
+}
+
+await update(ref(db,`enrollmentChats/${studentId}/${profileId}/clearedFor`),{
+[profileId]:Date.now()
+});
+
+await update(
+ref(db, `studentEnrollments/${studentId}/${profileId}`),
+{
+lastMessageAt:Date.now(),
+unreadForStudent:false
+}
+);
 
 };
 
