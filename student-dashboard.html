@@ -243,6 +243,7 @@ from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
 import {
 getAuth,
+onAuthStateChanged,
 signOut
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
@@ -285,14 +286,18 @@ const db = getDatabase(app);
 
 /* CHECK LOGIN */
 
-const uid = localStorage.getItem("uid");
+const authUid = localStorage.getItem("uid");
+const uid =
+localStorage.getItem("studentId") ||
+localStorage.getItem("profileId") ||
+authUid;
 
 const role = localStorage.getItem("role");
 
 if(!uid || role !== "student"){
 
 window.location.href =
-"login.html";
+"otp-login.html";
 
 }
 
@@ -333,8 +338,6 @@ console.log(err);
 }
 
 }
-
-loadStudent();
 
 function cleanPhone(phone){
 return String(phone || "").replace(/\D/g,"");
@@ -538,7 +541,17 @@ window.callProvider = callProvider;
 window.whatsappProvider = whatsappProvider;
 window.providerWebsite = providerWebsite;
 
+onAuthStateChanged(auth,(user)=>{
+
+if(!user){
+window.location.href = "otp-login.html";
+return;
+}
+
+loadStudent();
 loadEnrollments();
+
+});
 
 /* LOGOUT */
 
