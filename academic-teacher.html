@@ -180,7 +180,8 @@ margin-top:10px;
 }
 
 .categoryDropdownList{
-display:grid;
+display:flex;
+flex-direction:column;
 gap:10px;
 margin-top:10px;
 }
@@ -864,19 +865,6 @@ button.innerText = panel.classList.contains("open")
 
 renderAcademicCategories();
 updateSelectedSkills();
-
-document.getElementById("addCustomAcademicOption").addEventListener("click",()=>{
-const input = document.getElementById("customAcademicOption");
-const value = input.value.trim();
-
-if(!value){
-alert("Please write the other academic subject or career option.");
-return;
-}
-
-addAcademicSubject(value);
-input.value = "";
-});
 
 document.querySelectorAll(".mode").forEach(item=>{
 item.addEventListener("change", updateSelectedModes);
