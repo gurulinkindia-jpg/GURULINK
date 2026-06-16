@@ -165,6 +165,147 @@ border-radius:20px;
 padding:7px 10px;
 }
 
+.plainExamples{
+font-size:13px;
+line-height:1.6;
+color:#555;
+margin:8px 0 12px;
+}
+
+.selectorGrid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:10px;
+margin-top:10px;
+}
+
+.categoryDropdownList{
+display:grid;
+gap:10px;
+margin-top:10px;
+}
+
+.categoryDropdown{
+border:1px solid #d9e2ec;
+border-radius:10px;
+background:#fff;
+overflow:hidden;
+}
+
+.categoryDropdownHeader{
+width:100%;
+margin:0;
+padding:12px 14px;
+background:#f7fafc;
+color:#263238;
+border:none;
+border-radius:0;
+font-size:14px;
+font-weight:bold;
+text-align:left;
+display:flex;
+justify-content:space-between;
+align-items:center;
+cursor:pointer;
+}
+
+.categoryDropdownHeader span:last-child{
+font-size:16px;
+}
+
+.categoryDropdownBody{
+display:none;
+padding:12px 14px;
+background:#fff;
+border-top:1px solid #e6edf5;
+}
+
+.categoryDropdown.open .categoryDropdownBody{
+display:block;
+}
+
+.categoryHelpText{
+font-size:12px;
+color:#666;
+margin-bottom:10px;
+}
+
+.categoryOptionsGrid{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:6px 14px;
+}
+
+.categoryOptionRow{
+display:flex;
+align-items:flex-start;
+gap:10px;
+margin:8px 0;
+font-size:14px;
+}
+
+.categoryOptionRow input[type=checkbox]{
+width:auto;
+margin:2px 0 0;
+}
+
+.categoryOtherInput{
+display:none;
+margin-top:8px;
+}
+
+@media(max-width:600px){
+.categoryOptionsGrid{
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:6px 10px;
+}
+
+.categoryOptionRow{
+font-size:13px;
+}
+}
+
+.selectorActions{
+display:grid;
+grid-template-columns:1fr auto;
+gap:10px;
+margin-top:10px;
+}
+
+.smallButton{
+width:auto;
+padding:12px 16px;
+font-size:14px;
+border-radius:8px;
+}
+
+.selectedTags{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+margin-top:12px;
+}
+
+.selectedTag{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:8px 10px;
+background:#eef5ff;
+border:1px solid #bbd3ff;
+border-radius:999px;
+font-size:13px;
+}
+
+.selectedTag button{
+width:auto;
+margin:0;
+padding:2px 8px;
+background:#d32f2f;
+font-size:12px;
+border-radius:999px;
+}
+
 .row{
 display:flex;
 align-items:center;
@@ -315,12 +456,8 @@ style="height:120px;resize:vertical;">
 Examples:
 </p>
 
-<div class="skillExamples">
-<span>Mathematics</span>
-<span>English</span>
-<span>JEE Main</span>
-<span>NEET UG</span>
-<span>Career Counselling</span>
+<div class="plainExamples">
+Mathematics, English, JEE Main, NEET UG, Career Counselling
 </div>
 
 <button type="button" id="toggleSkills" class="secondaryButton">
@@ -333,217 +470,13 @@ No academic subject or career option selected yet. Click More to open the full c
 
 <div id="skillsPanel" class="skillsPanel">
 
-<div class="subjectGrid">
+<div class="categoryDropdownList" id="academicCategoryList"></div>
 
-<div class="skillCategory"><h4>Early Childhood Education</h4>
-<div class="row"><input type="checkbox" value="Playgroup" class="subjectCheck"> Playgroup</div>
-<div class="row"><input type="checkbox" value="Nursery" class="subjectCheck"> Nursery</div>
-<div class="row"><input type="checkbox" value="LKG (Lower Kindergarten)" class="subjectCheck"> LKG (Lower Kindergarten)</div>
-<div class="row"><input type="checkbox" value="UKG (Upper Kindergarten)" class="subjectCheck"> UKG (Upper Kindergarten)</div>
-<div class="row"><input type="checkbox" value="Phonics" class="subjectCheck"> Phonics</div>
-<div class="row"><input type="checkbox" value="Early Reading Skills" class="subjectCheck"> Early Reading Skills</div>
-<div class="row"><input type="checkbox" value="Early Writing Skills" class="subjectCheck"> Early Writing Skills</div>
-<div class="row"><input type="checkbox" value="Early Mathematics" class="subjectCheck"> Early Mathematics</div>
-<div class="row"><input type="checkbox" value="Alphabet & Numbers Learning" class="subjectCheck"> Alphabet & Numbers Learning</div>
-<div class="row"><input type="checkbox" value="Storytelling" class="subjectCheck"> Storytelling</div>
-<div class="row"><input type="checkbox" value="Creative Learning Activities" class="subjectCheck"> Creative Learning Activities</div>
-<div class="row"><input type="checkbox" value="School Readiness Programs" class="subjectCheck"> School Readiness Programs</div>
-<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherEarlyChildhood"> Other Early Childhood Subject</div>
-<input id="otherEarlyChildhood" class="otherSkillInput" placeholder="Write Other Early Childhood Subject" style="display:none;"></div>
+<div id="academicSelectedList" class="selectedTags"></div>
 
-<div class="skillCategory"><h4>Primary Education (Classes 1-5)</h4>
-<div class="row"><input type="checkbox" value="Mathematics" class="subjectCheck"> Mathematics</div>
-<div class="row"><input type="checkbox" value="English" class="subjectCheck"> English</div>
-<div class="row"><input type="checkbox" value="Hindi" class="subjectCheck"> Hindi</div>
-<div class="row"><input type="checkbox" value="Assamese" class="subjectCheck"> Assamese</div>
-<div class="row"><input type="checkbox" value="Environmental Studies (EVS)" class="subjectCheck"> Environmental Studies (EVS)</div>
-<div class="row"><input type="checkbox" value="General Science" class="subjectCheck"> General Science</div>
-<div class="row"><input type="checkbox" value="Social Studies" class="subjectCheck"> Social Studies</div>
-<div class="row"><input type="checkbox" value="Computer Basics" class="subjectCheck"> Computer Basics</div>
-<div class="row"><input type="checkbox" value="General Knowledge" class="subjectCheck"> General Knowledge</div>
-<div class="row"><input type="checkbox" value="Moral Science" class="subjectCheck"> Moral Science</div>
-<div class="row"><input type="checkbox" value="Handwriting Improvement" class="subjectCheck"> Handwriting Improvement</div>
-<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherPrimary"> Other Primary Subject</div>
-<input id="otherPrimary" class="otherSkillInput" placeholder="Write Other Primary Subject" style="display:none;"></div>
-
-<div class="skillCategory"><h4>Secondary Education (Classes 6-10)</h4>
-<div class="row"><input type="checkbox" value="Mathematics" class="subjectCheck"> Mathematics</div>
-<div class="row"><input type="checkbox" value="Science" class="subjectCheck"> Science</div>
-<div class="row"><input type="checkbox" value="Social Sciences" class="subjectCheck"> Social Sciences</div>
-<div class="row"><input type="checkbox" value="English" class="subjectCheck"> English</div>
-<div class="row"><input type="checkbox" value="Hindi" class="subjectCheck"> Hindi</div>
-<div class="row"><input type="checkbox" value="Assamese" class="subjectCheck"> Assamese</div>
-<div class="row"><input type="checkbox" value="Sanskrit" class="subjectCheck"> Sanskrit</div>
-<div class="row"><input type="checkbox" value="French" class="subjectCheck"> French</div>
-<div class="row"><input type="checkbox" value="German" class="subjectCheck"> German</div>
-<div class="row"><input type="checkbox" value="Spanish" class="subjectCheck"> Spanish</div>
-<div class="row"><input type="checkbox" value="Computer Science" class="subjectCheck"> Computer Science</div>
-<div class="row"><input type="checkbox" value="Information Technology" class="subjectCheck"> Information Technology</div>
-<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherSecondary"> Other Secondary Subject</div>
-<input id="otherSecondary" class="otherSkillInput" placeholder="Write Other Secondary Subject" style="display:none;"></div>
-
-<div class="skillCategory"><h4>Higher Secondary Education (Classes 11-12)</h4>
-<div class="row"><input type="checkbox" value="Mathematics" class="subjectCheck"> Mathematics</div>
-<div class="row"><input type="checkbox" value="Physics" class="subjectCheck"> Physics</div>
-<div class="row"><input type="checkbox" value="Chemistry" class="subjectCheck"> Chemistry</div>
-<div class="row"><input type="checkbox" value="Biology" class="subjectCheck"> Biology</div>
-<div class="row"><input type="checkbox" value="Computer Science" class="subjectCheck"> Computer Science</div>
-<div class="row"><input type="checkbox" value="Informatics Practices" class="subjectCheck"> Informatics Practices</div>
-<div class="row"><input type="checkbox" value="Statistics" class="subjectCheck"> Statistics</div>
-<div class="row"><input type="checkbox" value="Biotechnology" class="subjectCheck"> Biotechnology</div>
-<div class="row"><input type="checkbox" value="Accountancy" class="subjectCheck"> Accountancy</div>
-<div class="row"><input type="checkbox" value="Business Studies" class="subjectCheck"> Business Studies</div>
-<div class="row"><input type="checkbox" value="Economics" class="subjectCheck"> Economics</div>
-<div class="row"><input type="checkbox" value="Entrepreneurship" class="subjectCheck"> Entrepreneurship</div>
-<div class="row"><input type="checkbox" value="Finance" class="subjectCheck"> Finance</div>
-<div class="row"><input type="checkbox" value="Banking" class="subjectCheck"> Banking</div>
-<div class="row"><input type="checkbox" value="History" class="subjectCheck"> History</div>
-<div class="row"><input type="checkbox" value="Geography" class="subjectCheck"> Geography</div>
-<div class="row"><input type="checkbox" value="Political Science" class="subjectCheck"> Political Science</div>
-<div class="row"><input type="checkbox" value="Sociology" class="subjectCheck"> Sociology</div>
-<div class="row"><input type="checkbox" value="Psychology" class="subjectCheck"> Psychology</div>
-<div class="row"><input type="checkbox" value="Philosophy" class="subjectCheck"> Philosophy</div>
-<div class="row"><input type="checkbox" value="Education" class="subjectCheck"> Education</div>
-<div class="row"><input type="checkbox" value="Logic" class="subjectCheck"> Logic</div>
-<div class="row"><input type="checkbox" value="Anthropology" class="subjectCheck"> Anthropology</div>
-<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherHigherSecondary"> Other Higher Secondary Subject</div>
-<input id="otherHigherSecondary" class="otherSkillInput" placeholder="Write Other Higher Secondary Subject" style="display:none;"></div>
-
-<div class="skillCategory"><h4>Law</h4>
-<div class="row"><input type="checkbox" value="Constitutional Law" class="subjectCheck"> Constitutional Law</div>
-<div class="row"><input type="checkbox" value="Criminal Law" class="subjectCheck"> Criminal Law</div>
-<div class="row"><input type="checkbox" value="Civil Law" class="subjectCheck"> Civil Law</div>
-<div class="row"><input type="checkbox" value="Corporate Law" class="subjectCheck"> Corporate Law</div>
-<div class="row"><input type="checkbox" value="Legal Studies" class="subjectCheck"> Legal Studies</div>
-<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherLaw"> Other Law Subject</div>
-<input id="otherLaw" class="otherSkillInput" placeholder="Write Other Law Subject" style="display:none;"></div>
-
-<div class="skillCategory"><h4>Languages</h4>
-<div class="row"><input type="checkbox" value="English" class="subjectCheck"> English</div>
-<div class="row"><input type="checkbox" value="Spoken English" class="subjectCheck"> Spoken English</div>
-<div class="row"><input type="checkbox" value="Academic English" class="subjectCheck"> Academic English</div>
-<div class="row"><input type="checkbox" value="Business English" class="subjectCheck"> Business English</div>
-<div class="row"><input type="checkbox" value="Hindi" class="subjectCheck"> Hindi</div>
-<div class="row"><input type="checkbox" value="Assamese" class="subjectCheck"> Assamese</div>
-<div class="row"><input type="checkbox" value="Sanskrit" class="subjectCheck"> Sanskrit</div>
-<div class="row"><input type="checkbox" value="Bengali" class="subjectCheck"> Bengali</div>
-<div class="row"><input type="checkbox" value="French" class="subjectCheck"> French</div>
-<div class="row"><input type="checkbox" value="German" class="subjectCheck"> German</div>
-<div class="row"><input type="checkbox" value="Spanish" class="subjectCheck"> Spanish</div>
-<div class="row"><input type="checkbox" value="Japanese" class="subjectCheck"> Japanese</div>
-<div class="row"><input type="checkbox" value="Chinese (Mandarin)" class="subjectCheck"> Chinese (Mandarin)</div>
-<div class="row"><input type="checkbox" value="Korean" class="subjectCheck"> Korean</div>
-<div class="row"><input type="checkbox" value="Arabic" class="subjectCheck"> Arabic</div>
-<div class="row"><input type="checkbox" value="Russian" class="subjectCheck"> Russian</div>
-<div class="row"><input type="checkbox" value="Urdu" class="subjectCheck"> Urdu</div>
-<div class="row"><input type="checkbox" value="Sign Language" class="subjectCheck"> Sign Language</div>
-<div class="row"><input type="checkbox" value="Braille Education" class="subjectCheck"> Braille Education</div>
-<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherLanguages"> Other Language</div>
-<input id="otherLanguages" class="otherSkillInput" placeholder="Write Other Language" style="display:none;"></div>
-
-<div class="skillCategory"><h4>Engineering Entrance</h4>
-<div class="row"><input type="checkbox" value="JEE Main Physics" class="subjectCheck"> JEE Main Physics</div>
-<div class="row"><input type="checkbox" value="JEE Main Chemistry" class="subjectCheck"> JEE Main Chemistry</div>
-<div class="row"><input type="checkbox" value="JEE Main Mathematics" class="subjectCheck"> JEE Main Mathematics</div>
-<div class="row"><input type="checkbox" value="JEE Advanced Physics" class="subjectCheck"> JEE Advanced Physics</div>
-<div class="row"><input type="checkbox" value="JEE Advanced Chemistry" class="subjectCheck"> JEE Advanced Chemistry</div>
-<div class="row"><input type="checkbox" value="JEE Advanced Mathematics" class="subjectCheck"> JEE Advanced Mathematics</div>
-<div class="row"><input type="checkbox" value="State Engineering Entrance Physics" class="subjectCheck"> State Engineering Entrance Physics</div>
-<div class="row"><input type="checkbox" value="State Engineering Entrance Chemistry" class="subjectCheck"> State Engineering Entrance Chemistry</div>
-<div class="row"><input type="checkbox" value="State Engineering Entrance Mathematics" class="subjectCheck"> State Engineering Entrance Mathematics</div>
-<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherEngineeringEntrance"> Other Engineering Entrance Subject</div>
-<input id="otherEngineeringEntrance" class="otherSkillInput" placeholder="Write Other Engineering Entrance Subject" style="display:none;"></div>
-
-<div class="skillCategory"><h4>Medical Entrance</h4>
-<div class="row"><input type="checkbox" value="NEET UG Physics" class="subjectCheck"> NEET UG Physics</div>
-<div class="row"><input type="checkbox" value="NEET UG Chemistry" class="subjectCheck"> NEET UG Chemistry</div>
-<div class="row"><input type="checkbox" value="NEET UG Biology" class="subjectCheck"> NEET UG Biology</div>
-<div class="row"><input type="checkbox" value="NEET PG Pre-Clinical Subjects" class="subjectCheck"> NEET PG Pre-Clinical Subjects</div>
-<div class="row"><input type="checkbox" value="NEET PG Para-Clinical Subjects" class="subjectCheck"> NEET PG Para-Clinical Subjects</div>
-<div class="row"><input type="checkbox" value="NEET PG Clinical Subjects" class="subjectCheck"> NEET PG Clinical Subjects</div>
-<div class="row"><input type="checkbox" value="AIIMS Physics" class="subjectCheck"> AIIMS Physics</div>
-<div class="row"><input type="checkbox" value="AIIMS Chemistry" class="subjectCheck"> AIIMS Chemistry</div>
-<div class="row"><input type="checkbox" value="AIIMS Biology" class="subjectCheck"> AIIMS Biology</div>
-<div class="row"><input type="checkbox" value="AIIMS General Knowledge" class="subjectCheck"> AIIMS General Knowledge</div>
-<div class="row"><input type="checkbox" value="AIIMS Aptitude & Logical Reasoning" class="subjectCheck"> AIIMS Aptitude & Logical Reasoning</div>
-<div class="row"><input type="checkbox" value="Nursing Entrance Nursing Sciences" class="subjectCheck"> Nursing Entrance Nursing Sciences</div>
-<div class="row"><input type="checkbox" value="Nursing Entrance Science Subjects" class="subjectCheck"> Nursing Entrance Science Subjects</div>
-<div class="row"><input type="checkbox" value="Nursing Entrance General Aptitude" class="subjectCheck"> Nursing Entrance General Aptitude</div>
-<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherMedicalEntrance"> Other Medical Entrance Subject</div>
-<input id="otherMedicalEntrance" class="otherSkillInput" placeholder="Write Other Medical Entrance Subject" style="display:none;"></div>
-
-<div class="skillCategory"><h4>Competitive Exam Preparation</h4>
-<div class="row"><input type="checkbox" value="UPSC" class="subjectCheck"> UPSC</div>
-<div class="row"><input type="checkbox" value="APSC" class="subjectCheck"> APSC</div>
-<div class="row"><input type="checkbox" value="State PSC Exams" class="subjectCheck"> State PSC Exams</div>
-<div class="row"><input type="checkbox" value="IBPS PO" class="subjectCheck"> IBPS PO</div>
-<div class="row"><input type="checkbox" value="IBPS Clerk" class="subjectCheck"> IBPS Clerk</div>
-<div class="row"><input type="checkbox" value="SBI PO" class="subjectCheck"> SBI PO</div>
-<div class="row"><input type="checkbox" value="SBI Clerk" class="subjectCheck"> SBI Clerk</div>
-<div class="row"><input type="checkbox" value="RBI Exams" class="subjectCheck"> RBI Exams</div>
-<div class="row"><input type="checkbox" value="Insurance Exams" class="subjectCheck"> Insurance Exams</div>
-<div class="row"><input type="checkbox" value="SSC CGL" class="subjectCheck"> SSC CGL</div>
-<div class="row"><input type="checkbox" value="SSC CHSL" class="subjectCheck"> SSC CHSL</div>
-<div class="row"><input type="checkbox" value="SSC MTS" class="subjectCheck"> SSC MTS</div>
-<div class="row"><input type="checkbox" value="Railway Exams (RRB)" class="subjectCheck"> Railway Exams (RRB)</div>
-<div class="row"><input type="checkbox" value="Postal Exams" class="subjectCheck"> Postal Exams</div>
-<div class="row"><input type="checkbox" value="NDA" class="subjectCheck"> NDA</div>
-<div class="row"><input type="checkbox" value="CDS" class="subjectCheck"> CDS</div>
-<div class="row"><input type="checkbox" value="AFCAT" class="subjectCheck"> AFCAT</div>
-<div class="row"><input type="checkbox" value="CAPF" class="subjectCheck"> CAPF</div>
-<div class="row"><input type="checkbox" value="Agniveer Recruitment" class="subjectCheck"> Agniveer Recruitment</div>
-<div class="row"><input type="checkbox" value="CTET" class="subjectCheck"> CTET</div>
-<div class="row"><input type="checkbox" value="TET" class="subjectCheck"> TET</div>
-<div class="row"><input type="checkbox" value="NET" class="subjectCheck"> NET</div>
-<div class="row"><input type="checkbox" value="JRF" class="subjectCheck"> JRF</div>
-<div class="row"><input type="checkbox" value="B.Ed Entrance" class="subjectCheck"> B.Ed Entrance</div>
-<div class="row"><input type="checkbox" value="D.El.Ed Entrance" class="subjectCheck"> D.El.Ed Entrance</div>
-<div class="row"><input type="checkbox" value="CAT" class="subjectCheck"> CAT</div>
-<div class="row"><input type="checkbox" value="XAT" class="subjectCheck"> XAT</div>
-<div class="row"><input type="checkbox" value="MAT" class="subjectCheck"> MAT</div>
-<div class="row"><input type="checkbox" value="CMAT" class="subjectCheck"> CMAT</div>
-<div class="row"><input type="checkbox" value="CA Foundation" class="subjectCheck"> CA Foundation</div>
-<div class="row"><input type="checkbox" value="CA Intermediate" class="subjectCheck"> CA Intermediate</div>
-<div class="row"><input type="checkbox" value="CS Exams" class="subjectCheck"> CS Exams</div>
-<div class="row"><input type="checkbox" value="CMA Exams" class="subjectCheck"> CMA Exams</div>
-<div class="row"><input type="checkbox" value="Olympiads" class="subjectCheck"> Olympiads</div>
-<div class="row"><input type="checkbox" value="NTSE" class="subjectCheck"> NTSE</div>
-<div class="row"><input type="checkbox" value="KVPY" class="subjectCheck"> KVPY</div>
-<div class="row"><input type="checkbox" value="Scholarship Examinations" class="subjectCheck"> Scholarship Examinations</div>
-<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherCompetitiveExam"> Other Competitive Exam</div>
-<input id="otherCompetitiveExam" class="otherSkillInput" placeholder="Write Other Competitive Exam" style="display:none;"></div>
-
-<div class="skillCategory"><h4>Career Guidance</h4>
-<div class="row"><input type="checkbox" value="Career Counselling" class="subjectCheck"> Career Counselling</div>
-<div class="row"><input type="checkbox" value="Stream Selection Guidance" class="subjectCheck"> Stream Selection Guidance</div>
-<div class="row"><input type="checkbox" value="College Admission Guidance" class="subjectCheck"> College Admission Guidance</div>
-<div class="row"><input type="checkbox" value="Scholarship Guidance" class="subjectCheck"> Scholarship Guidance</div>
-<div class="row"><input type="checkbox" value="Study Abroad Guidance" class="subjectCheck"> Study Abroad Guidance</div>
-<div class="row"><input type="checkbox" value="Career Planning" class="subjectCheck"> Career Planning</div>
-<div class="row"><input type="checkbox" value="Skill Assessment" class="subjectCheck"> Skill Assessment</div>
-<div class="row"><input type="checkbox" value="Entrepreneurship Guidance" class="subjectCheck"> Entrepreneurship Guidance</div>
-<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherCareerGuidance"> Other Career Guidance</div>
-<input id="otherCareerGuidance" class="otherSkillInput" placeholder="Write Other Career Guidance" style="display:none;"></div>
-
-<div class="skillCategory"><h4>Government Job Preparation</h4>
-<div class="row"><input type="checkbox" value="SSC Preparation" class="subjectCheck"> SSC Preparation</div>
-<div class="row"><input type="checkbox" value="UPSC Preparation" class="subjectCheck"> UPSC Preparation</div>
-<div class="row"><input type="checkbox" value="APSC Preparation" class="subjectCheck"> APSC Preparation</div>
-<div class="row"><input type="checkbox" value="Banking Exam Preparation" class="subjectCheck"> Banking Exam Preparation</div>
-<div class="row"><input type="checkbox" value="Railway Exam Preparation" class="subjectCheck"> Railway Exam Preparation</div>
-<div class="row"><input type="checkbox" value="Defence Exam Preparation" class="subjectCheck"> Defence Exam Preparation</div>
-<div class="row"><input type="checkbox" value="Police Recruitment Preparation" class="subjectCheck"> Police Recruitment Preparation</div>
-<div class="row"><input type="checkbox" value="Forest Service Preparation" class="subjectCheck"> Forest Service Preparation</div>
-<div class="row"><input type="checkbox" value="Judicial Service Preparation" class="subjectCheck"> Judicial Service Preparation</div>
-<div class="row"><input type="checkbox" value="Insurance Exam Preparation" class="subjectCheck"> Insurance Exam Preparation</div>
-<div class="row"><input type="checkbox" value="Current Affairs & General Studies" class="subjectCheck"> Current Affairs & General Studies</div>
-<div class="row"><input type="checkbox" value="Government Job Interview Training" class="subjectCheck"> Government Job Interview Training</div>
-<div class="row"><input type="checkbox" class="otherSkillCheck" data-target="otherGovernmentJob"> Other Government Job Preparation</div>
-<input id="otherGovernmentJob" class="otherSkillInput" placeholder="Write Other Government Job Preparation" style="display:none;"></div>
 <p id="subjectError" style="color:red;display:none;">
 Please select at least one academic subject or career option
 </p>
-</div>
 
 </div>
 
@@ -561,10 +494,8 @@ required>
 Examples:
 </p>
 
-<div class="skillExamples">
-<span>Workshop / Group Session</span>
-<span>Super Group Coaching</span>
-<span>Individual Coaching</span>
+<div class="plainExamples">
+Workshop / Group Session, Super Group Coaching, Individual Coaching
 </div>
 
 <button type="button" id="toggleModes" class="secondaryButton">
@@ -695,21 +626,182 @@ style="width:auto;margin:0;">
 </div>
 
 <script>
+const ACADEMIC_OPTIONS = {
+"Early Childhood Education":[
+"Playgroup","Nursery","LKG (Lower Kindergarten)","UKG (Upper Kindergarten)","Phonics","Early Reading Skills","Early Writing Skills","Early Mathematics","Alphabet & Numbers Learning","Storytelling","Creative Learning Activities","School Readiness Programs"
+],
+"Primary Education (Classes 1-5)":[
+"Mathematics","English","Hindi","Assamese","Environmental Studies (EVS)","General Science","Social Studies","Computer Basics","General Knowledge","Moral Science","Handwriting Improvement"
+],
+"Secondary Education (Classes 6-10)":[
+"Mathematics","Science","Social Sciences","English","Hindi","Assamese","Sanskrit","French","German","Spanish","Computer Science","Information Technology"
+],
+"Higher Secondary Education (Classes 11-12)":[
+"Mathematics","Physics","Chemistry","Biology","Computer Science","Informatics Practices","Statistics","Biotechnology","Accountancy","Business Studies","Economics","Entrepreneurship","Finance","Banking","History","Geography","Political Science","Sociology","Psychology","Philosophy","Education","Logic","Anthropology"
+],
+"Law":[
+"Constitutional Law","Criminal Law","Civil Law","Corporate Law","Legal Studies"
+],
+"Languages":[
+"English","Spoken English","Academic English","Business English","Hindi","Assamese","Sanskrit","Bengali","French","German","Spanish","Japanese","Chinese (Mandarin)","Korean","Arabic","Russian","Urdu","Sign Language","Braille Education"
+],
+"Engineering Entrance":[
+"JEE Main Physics","JEE Main Chemistry","JEE Main Mathematics","JEE Advanced Physics","JEE Advanced Chemistry","JEE Advanced Mathematics","State Engineering Entrance Physics","State Engineering Entrance Chemistry","State Engineering Entrance Mathematics"
+],
+"Medical Entrance":[
+"NEET UG Physics","NEET UG Chemistry","NEET UG Biology","NEET PG Pre-Clinical Subjects","NEET PG Para-Clinical Subjects","NEET PG Clinical Subjects","AIIMS Physics","AIIMS Chemistry","AIIMS Biology","AIIMS General Knowledge","AIIMS Aptitude & Logical Reasoning","Nursing Entrance Nursing Sciences","Nursing Entrance Science Subjects","Nursing Entrance General Aptitude"
+],
+"Competitive Exam Preparation":[
+"UPSC","APSC","State PSC Exams","IBPS PO","IBPS Clerk","SBI PO","SBI Clerk","RBI Exams","Insurance Exams","SSC CGL","SSC CHSL","SSC MTS","Railway Exams (RRB)","Postal Exams","NDA","CDS","AFCAT","CAPF","Agniveer Recruitment","CTET","TET","NET","JRF","B.Ed Entrance","D.El.Ed Entrance","CAT","XAT","MAT","CMAT","CA Foundation","CA Intermediate","CS Exams","CMA Exams","Olympiads","NTSE","KVPY","Scholarship Examinations"
+],
+"Career Guidance":[
+"Career Counselling","Stream Selection Guidance","College Admission Guidance","Scholarship Guidance","Study Abroad Guidance","Career Planning","Skill Assessment","Entrepreneurship Guidance"
+],
+"Government Job Preparation":[
+"SSC Preparation","UPSC Preparation","APSC Preparation","Banking Exam Preparation","Railway Exam Preparation","Defence Exam Preparation","Police Recruitment Preparation","Forest Service Preparation","Judicial Service Preparation","Insurance Exam Preparation","Current Affairs & General Studies","Government Job Interview Training"
+]
+};
+
+let selectedAcademicSubjects = [];
+
 function toggleFee(id){
 const box=document.getElementById(id);
 box.style.display=box.style.display==="block" ? "none" : "block";
 }
 
 function updateSelectedSkills(){
-const selected = Array.from(document.querySelectorAll(".subjectCheck:checked")).map(item=>item.value);
+document.getElementById("selectedSkills").innerText =
+selectedAcademicSubjects.length ? "Selected: " + selectedAcademicSubjects.join(", ") : "No academic subject or career option selected yet. Click More to open the full chart.";
 
-document.querySelectorAll(".otherSkillCheck:checked").forEach(item=>{
-const input = document.getElementById(item.dataset.target);
-selected.push(input.value.trim() || item.parentElement.innerText.trim());
+const list = document.getElementById("academicSelectedList");
+
+list.innerHTML = selectedAcademicSubjects.map(item=>`
+<div class="selectedTag">
+<span>${item}</span>
+<button type="button" onclick="removeAcademicSubject('${item.replace(/'/g,"\\'")}')">x</button>
+</div>
+`).join("");
+}
+
+function addAcademicSubject(value){
+const finalValue = String(value || "").trim();
+
+if(!finalValue){
+return;
+}
+
+if(!selectedAcademicSubjects.includes(finalValue)){
+selectedAcademicSubjects.push(finalValue);
+}
+
+updateSelectedSkills();
+}
+
+window.removeAcademicSubject = function(value){
+selectedAcademicSubjects = selectedAcademicSubjects.filter(item=>item !== value);
+document.querySelectorAll(".academicSubjectCheck").forEach(item=>{
+if(item.value === value){
+item.checked = false;
+}
+});
+document.querySelectorAll(".categoryOtherInput").forEach(input=>{
+if((input.dataset.previousValue || "") === value){
+input.dataset.previousValue = "";
+input.value = "";
+}
+});
+updateSelectedSkills();
+};
+
+function renderAcademicCategories(){
+const container = document.getElementById("academicCategoryList");
+
+container.innerHTML = Object.entries(ACADEMIC_OPTIONS).map(([category, options])=>`
+<div class="categoryDropdown">
+<button type="button" class="categoryDropdownHeader" data-category="${category}">
+<span>${category}</span>
+<span>+</span>
+</button>
+<div class="categoryDropdownBody">
+<div class="categoryHelpText">Click to select the subject</div>
+<div class="categoryOptionsGrid">
+${options.map(option=>`
+<label class="categoryOptionRow">
+<input type="checkbox" class="academicSubjectCheck" value="${option}">
+<span>${option}</span>
+</label>
+`).join("")}
+</div>
+<label class="categoryOptionRow" style="margin-top:10px;">
+<input type="checkbox" class="academicOtherCheck" data-target="other_${category.replace(/[^a-zA-Z0-9]/g,"_")}">
+<span>Other Subject / Career Option</span>
+</label>
+<input id="other_${category.replace(/[^a-zA-Z0-9]/g,"_")}" class="categoryOtherInput" placeholder="Write other subject / career option">
+</div>
+</div>
+`).join("");
+
+document.querySelectorAll(".categoryDropdownHeader").forEach(button=>{
+button.addEventListener("click",()=>{
+const card = button.parentElement;
+card.classList.toggle("open");
+button.querySelector("span:last-child").innerText =
+card.classList.contains("open") ? "-" : "+";
+});
 });
 
-document.getElementById("selectedSkills").innerText =
-selected.length ? "Selected: " + selected.join(", ") : "No academic subject or career option selected yet. Click More to open the full chart.";
+document.querySelectorAll(".academicSubjectCheck").forEach(item=>{
+item.addEventListener("change",(e)=>{
+if(e.target.checked){
+addAcademicSubject(e.target.value);
+}
+else{
+selectedAcademicSubjects = selectedAcademicSubjects.filter(value=>value !== e.target.value);
+updateSelectedSkills();
+}
+});
+});
+
+document.querySelectorAll(".academicOtherCheck").forEach(item=>{
+item.addEventListener("change",(e)=>{
+const input = document.getElementById(e.target.dataset.target);
+input.style.display = e.target.checked ? "block" : "none";
+
+if(!e.target.checked){
+const previousValue = input.dataset.previousValue || "";
+if(previousValue){
+selectedAcademicSubjects = selectedAcademicSubjects.filter(value=>value !== previousValue);
+}
+input.dataset.previousValue = "";
+input.value = "";
+updateSelectedSkills();
+}
+});
+});
+
+document.querySelectorAll(".categoryOtherInput").forEach(input=>{
+input.addEventListener("input",(e)=>{
+const previousValue = e.target.dataset.previousValue || "";
+const newValue = e.target.value.trim();
+const relatedCheck = document.querySelector(`.academicOtherCheck[data-target="${e.target.id}"]`);
+
+if(previousValue){
+selectedAcademicSubjects = selectedAcademicSubjects.filter(value=>value !== previousValue);
+}
+
+if(relatedCheck && relatedCheck.checked && newValue){
+if(!selectedAcademicSubjects.includes(newValue)){
+selectedAcademicSubjects.push(newValue);
+}
+e.target.dataset.previousValue = newValue;
+}
+else{
+e.target.dataset.previousValue = "";
+}
+
+updateSelectedSkills();
+});
+});
 }
 
 function updateSelectedModes(){
@@ -770,8 +862,20 @@ button.innerText = panel.classList.contains("open")
 : "More Training Modes";
 });
 
-document.querySelectorAll(".subjectCheck").forEach(item=>{
-item.addEventListener("change", updateSelectedSkills);
+renderAcademicCategories();
+updateSelectedSkills();
+
+document.getElementById("addCustomAcademicOption").addEventListener("click",()=>{
+const input = document.getElementById("customAcademicOption");
+const value = input.value.trim();
+
+if(!value){
+alert("Please write the other academic subject or career option.");
+return;
+}
+
+addAcademicSubject(value);
+input.value = "";
 });
 
 document.querySelectorAll(".mode").forEach(item=>{
@@ -780,21 +884,6 @@ item.addEventListener("change", updateSelectedModes);
 
 document.getElementById("otherModeCheck").addEventListener("change", updateSelectedModes);
 document.getElementById("otherMode").addEventListener("input", updateSelectedModes);
-
-document.querySelectorAll(".otherSkillCheck").forEach(item=>{
-item.addEventListener("change",(e)=>{
-const input = document.getElementById(e.target.dataset.target);
-input.style.display = e.target.checked ? "block" : "none";
-if(!e.target.checked){
-input.value = "";
-}
-updateSelectedSkills();
-});
-});
-
-document.querySelectorAll(".otherSkillInput").forEach(item=>{
-item.addEventListener("input", updateSelectedSkills);
-});
 
 async function upload(file){
 let fd = new FormData();
@@ -840,10 +929,7 @@ submitBtn.disabled=true;
 submitBtn.innerText="Processing...";
 
 try{
-let checked = document.querySelectorAll(".subjectCheck:checked").length;
-let otherChecked = document.querySelectorAll(".otherSkillCheck:checked").length;
-
-if(checked===0 && otherChecked===0){
+if(selectedAcademicSubjects.length===0){
 document.getElementById("subjectError").style.display="block";
 submitBtn.disabled=false;
 submitBtn.innerText="Continue To Payment";
@@ -885,17 +971,7 @@ for(let file of galleryFiles){
 gallery.push(await upload(file));
 }
 
-let subjects=[];
-document.querySelectorAll(".subjectCheck:checked").forEach(item=>{
-subjects.push(item.value);
-});
-
-document.querySelectorAll(".otherSkillCheck:checked").forEach(item=>{
-const input = document.getElementById(item.dataset.target);
-if(input.value.trim()!==""){
-subjects.push(input.value.trim());
-}
-});
+let subjects=[...selectedAcademicSubjects];
 
 let teachingModes=[];
 document.querySelectorAll(".mode:checked").forEach(item=>{
