@@ -363,6 +363,37 @@ border-radius:8px;
 .messageBtn{
 background:#6a1b9a;
 }
+
+.teacherChat{
+margin-top:12px;
+background:#f7f3ff;
+border:1px solid #e0d2f5;
+border-radius:10px;
+padding:10px;
+font-size:13px;
+line-height:1.4;
+}
+
+.teacherChatMsg{
+background:white;
+border:1px solid #ece3f8;
+border-radius:8px;
+padding:8px;
+margin-bottom:8px;
+color:#333;
+}
+
+.teacherChatMsg:last-child{
+margin-bottom:0;
+}
+
+.teacherChatMeta{
+display:block;
+font-size:11px;
+font-weight:bold;
+color:#6a1b9a;
+margin-bottom:3px;
+}
 .homeBtn{
 background:#673ab7;
 }
@@ -899,6 +930,57 @@ loadProfile();
 
 
 
+function escapeHTML(value){
+return String(value ?? "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+}
+
+function renderEnrollmentMessages(studentId){
+
+const box =
+document.getElementById("chat_" + studentId);
+
+if(!box){
+return;
+}
+
+onValue(
+ref(db,`enrollmentChats/${studentId}/${profileId}/messages`),
+(snap)=>{
+
+let messages = [];
+
+snap.forEach(child=>{
+messages.push(child.val());
+});
+
+messages = messages
+.sort((a,b)=>(a.time || 0) - (b.time || 0))
+.slice(-5);
+
+if(!messages.length){
+box.innerHTML =
+`<div class="teacherChatMsg">No messages yet.</div>`;
+return;
+}
+
+box.innerHTML =
+messages.map(msg=>`
+<div class="teacherChatMsg">
+<span class="teacherChatMeta">${msg.senderRole === "student" ? "Student" : "You"} - ${msg.time ? new Date(msg.time).toLocaleString() : ""}</span>
+${escapeHTML(msg.text || "")}
+</div>
+`).join("");
+
+}
+);
+
+}
+
 function loadLeads(){
 
 onValue(
@@ -919,6 +1001,7 @@ Student Enquiries
 let total=0;
 let pending=0;
 let enrolled=0;
+let acceptedStudentIds=[];
 
 snapshot.forEach((child)=>{
 
@@ -937,6 +1020,10 @@ if(status==="enrolled" || status==="accepted"){
 enrolled++;
 }else{
 pending++;
+}
+
+if(isAccepted){
+acceptedStudentIds.push(id);
 }
 
 html+=`
@@ -961,6 +1048,9 @@ ${status === 'enrolled' || status === 'accepted' ? 'Mark Pending' : 'Mark Enroll
 <button class="deleteBtn" onclick="deleteLead('${id}')">Delete</button>
 </div>
 ${isAccepted ? `
+<div class="teacherChat" id="chat_${id}">
+Loading messages...
+</div>
 <div class="messageBox">
 <input id="msg_${id}" placeholder="Message to student">
 <button class="messageBtn" onclick="sendEnrollmentMessage('${id}')">Send</button>
@@ -975,6 +1065,10 @@ html+="</div>";
 document.getElementById(
 "leadsSection"
 ).innerHTML=html;
+
+acceptedStudentIds.forEach(studentId=>{
+renderEnrollmentMessages(studentId);
+});
 
 document.getElementById(
 "totalViews"
