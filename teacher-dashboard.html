@@ -520,6 +520,54 @@ background:#1e88e5;
 background:#607d8b;
 }
 
+.demoRequestCard{
+background:white;
+border:1px solid #bbdefb;
+border-left:5px solid #1976d2;
+border-radius:12px;
+padding:14px;
+margin:10px 0;
+box-shadow:0 3px 10px rgba(0,0,0,.06);
+}
+
+.demoRequestTop{
+display:flex;
+justify-content:space-between;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.demoRequestName{
+font-weight:bold;
+color:#1565c0;
+font-size:17px;
+}
+
+.demoRequestMsg{
+background:#f3f9ff;
+border:1px solid #d6e8ff;
+border-radius:10px;
+padding:10px;
+margin-top:8px;
+font-size:14px;
+line-height:1.5;
+}
+
+.demoRequestActions{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
+gap:8px;
+margin-top:10px;
+}
+
+.demoRequestActions button{
+border:none;
+border-radius:8px;
+padding:10px;
+color:white;
+cursor:pointer;
+}
+
 @media(max-width:480px){
 .enrollModalActions{
 grid-template-columns:1fr;
@@ -779,6 +827,8 @@ Quick Actions
 
 
 <!-- PART 2 WILL ADD LEADS HERE -->
+
+<div id="demoRequestsSection"></div>
 
 <div id="leadsSection"></div>
 
@@ -1163,6 +1213,70 @@ updatedAt:Date.now()
 );
 }
 
+function loadDemoRequests(){
+
+const box =
+document.getElementById("demoRequestsSection");
+
+if(!box){
+return;
+}
+
+onValue(
+ref(db,`demoRequests/${profileId}`),
+(snapshot)=>{
+
+let html = `
+<div class="section">
+<h2 class="sectionTitle">Demo Class Requests</h2>
+`;
+
+let count = 0;
+const nowTime = Date.now();
+
+snapshot.forEach(child=>{
+const request = child.val() || {};
+const requestId = child.key;
+const expiresAt =
+Number(request.expiresAt || 0);
+
+if(expiresAt && expiresAt < nowTime){
+remove(ref(db,`demoRequests/${profileId}/${requestId}`));
+return;
+}
+
+count++;
+
+const phone =
+String(request.phone || "").replace(/\D/g,"");
+
+html += `
+<div class="demoRequestCard">
+<div class="demoRequestTop">
+<div class="demoRequestName">${escapeHTML(request.name || "Student")}</div>
+<div>${request.createdAt ? new Date(request.createdAt).toLocaleString() : ""}</div>
+</div>
+<div class="leadInfo">Phone: ${escapeHTML(request.phone || "-")}</div>
+<div class="demoRequestMsg">${escapeHTML(request.message || "")}</div>
+<div class="demoRequestActions">
+${phone ? `<button class="callBtn" onclick="callLead('${phone}')">Call Student</button>` : ""}
+${phone ? `<button class="whatsappBtn" onclick="contactWhatsApp('${phone}')">WhatsApp</button>` : ""}
+<button class="deleteBtn" onclick="deleteDemoRequest('${requestId}')">Delete</button>
+</div>
+</div>
+`;
+
+});
+
+html += count ? "</div>" : "<p>No demo class request yet.</p></div>";
+
+box.innerHTML = html;
+
+}
+);
+
+}
+
 function loadLeads(){
 
 onValue(
@@ -1371,6 +1485,17 @@ db,
 
 };
 
+window.deleteDemoRequest = async function(requestId){
+
+if(!confirm("Delete this demo request?")){
+return;
+}
+
+await remove(
+ref(db,`demoRequests/${profileId}/${requestId}`)
+);
+
+};
 
 
 
@@ -1384,6 +1509,8 @@ db,
 
 
 
+
+loadDemoRequests();
 loadLeads();
 
 
