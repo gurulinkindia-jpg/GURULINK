@@ -131,24 +131,99 @@ color:#2e7d32;
 
 .chatBox{
 margin-top:12px;
-border-top:1px solid #e0e0e0;
-padding-top:10px;
+border:1px solid #cfe8ff;
+background:#f5fbff;
+border-radius:12px;
+padding:12px;
 }
 
 .chatMsg{
 padding:8px 10px;
 border-radius:8px;
-background:#eef2f7;
 margin:6px 0;
 font-size:13px;
 line-height:1.4;
+border:1px solid transparent;
+max-width:92%;
 }
 
 .chatMeta{
 display:block;
 font-size:11px;
-color:#666;
+font-weight:bold;
 margin-bottom:3px;
+}
+
+.chatMsg.studentMsg{
+background:#e8f5e9;
+border-color:#a5d6a7;
+margin-left:auto;
+color:#1b5e20;
+}
+
+.chatMsg.providerMsg{
+background:#e3f2fd;
+border-color:#90caf9;
+margin-right:auto;
+color:#0d47a1;
+}
+
+.chatMsg.systemMsg{
+background:#fff8e1;
+border-color:#ffe082;
+color:#6d4c41;
+max-width:100%;
+}
+
+.chatHeader{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+margin-bottom:8px;
+}
+
+.chatHeader h3{
+margin:0;
+}
+
+.clearChatBtn{
+background:#ef5350;
+color:white;
+border:none;
+border-radius:8px;
+padding:8px 10px;
+cursor:pointer;
+font-size:12px;
+}
+
+.payFeeBtn{
+background:#8e24aa;
+color:white;
+}
+
+.paymentBox{
+display:none;
+margin-top:10px;
+padding:12px;
+border:1px solid #ce93d8;
+border-radius:12px;
+background:#fbf4ff;
+font-size:13px;
+line-height:1.5;
+}
+
+.paymentBox h3{
+margin:0 0 8px;
+color:#6a1b9a;
+}
+
+.paymentBox img{
+max-width:150px;
+border-radius:10px;
+border:1px solid #ddd;
+background:white;
+padding:6px;
 }
 
 .replyRow{
@@ -254,7 +329,8 @@ ref,
 get,
 onValue,
 update,
-push
+push,
+remove
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
@@ -370,6 +446,15 @@ url.startsWith("http") ? url : "https://" + url;
 window.open(finalUrl,"_blank");
 }
 
+function escapeHTML(value){
+return String(value ?? "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+}
+
 function renderMessages(profileId){
 const box =
 document.getElementById("chat_" + profileId);
@@ -379,12 +464,27 @@ return;
 }
 
 onValue(
-ref(db,`enrollmentChats/${uid}/${profileId}/messages`),
+ref(db,`enrollmentChats/${uid}/${profileId}`),
 snap=>{
 let messages = [];
+const clearedAt =
+Number(snap.child(`clearedFor/${uid}`).val() || 0);
 
-snap.forEach(child=>{
-messages.push(child.val());
+const expiryTime =
+Date.now() - (7 * 24 * 60 * 60 * 1000);
+
+snap.child("messages").forEach(child=>{
+const msg = child.val();
+const msgTime = Number(msg.time || 0);
+
+if(msgTime && msgTime < expiryTime){
+remove(ref(db,`enrollmentChats/${uid}/${profileId}/messages/${child.key}`));
+return;
+}
+
+if(msgTime > clearedAt){
+messages.push(msg);
+}
 });
 
 messages = messages
@@ -392,14 +492,14 @@ messages = messages
 .slice(-5);
 
 if(!messages.length){
-box.innerHTML = `<div class="chatMsg">No messages yet.</div>`;
+box.innerHTML = `<div class="chatMsg systemMsg">No messages yet.</div>`;
 return;
 }
 
 box.innerHTML = messages.map(msg=>`
-<div class="chatMsg">
+<div class="chatMsg ${msg.senderRole === "student" ? "studentMsg" : "providerMsg"}">
 <span class="chatMeta">${msg.senderRole === "student" ? "You" : (msg.senderName || "Teacher / Institution")} - ${msg.time ? new Date(msg.time).toLocaleString() : ""}</span>
-${msg.text || ""}
+${escapeHTML(msg.text || "")}
 </div>
 `).join("");
 }
@@ -432,6 +532,23 @@ item.status === "accepted";
 const phone =
 item.phone || item.alternatePhone || "";
 
+const hasPayment =
+item.showBankDetails !== false &&
+(item.qrImage || item.upiId || (item.accountHolderName && item.bankName && item.accountNumber));
+
+const paymentDetailsHTML = hasPayment ? `
+<div class="paymentBox" id="payment_${profileId}">
+<h3>Payment Details</h3>
+<p><b>Important:</b> Please verify payment details before sending money. GURULINK is only a linking platform and does not process or verify payments.</p>
+${item.accountHolderName ? `<p><b>Account Holder:</b> ${escapeHTML(item.accountHolderName)}</p>` : ""}
+${item.bankName ? `<p><b>Bank Name:</b> ${escapeHTML(item.bankName)}</p>` : ""}
+${item.accountNumber ? `<p><b>Account Number:</b> ${escapeHTML(item.accountNumber)}</p>` : ""}
+${item.ifsc ? `<p><b>IFSC Code:</b> ${escapeHTML(item.ifsc)}</p>` : ""}
+${item.upiId ? `<p><b>UPI ID:</b> ${escapeHTML(item.upiId)}</p>` : ""}
+${item.qrImage ? `<img src="${escapeHTML(item.qrImage)}" alt="Payment QR">` : ""}
+</div>
+` : "";
+
 html += `
 <div class="providerCard">
 <div class="providerTop">
@@ -451,8 +568,13 @@ ${accepted ? `
 <button class="btn green" onclick="callProvider('${phone}')">Call</button>
 <button class="btn green" onclick="whatsappProvider('${phone}')">WhatsApp</button>
 ${item.website ? `<button class="btn blue" onclick="providerWebsite('${item.website}')">Website</button>` : ""}
+${hasPayment ? `<button class="btn payFeeBtn" onclick="toggleProviderPayment('${profileId}')">Pay Fee</button>` : ""}
+${paymentDetailsHTML}
 <div class="chatBox">
+<div class="chatHeader">
 <h3>Messages</h3>
+<button class="clearChatBtn" onclick="clearStudentChat('${profileId}')">Clear Chat</button>
+</div>
 <div id="chat_${profileId}">Loading messages...</div>
 <div class="replyRow">
 <input id="reply_${profileId}" placeholder="Reply message">
@@ -535,6 +657,46 @@ unreadForStudent:false
 });
 
 input.value = "";
+};
+
+window.clearStudentChat = async function(profileId){
+if(!confirm("Clear this chat from your side only?")){
+return;
+}
+
+await update(ref(db,`enrollmentChats/${uid}/${profileId}/clearedFor`),{
+[uid]:Date.now()
+});
+
+await update(ref(db,`studentEnrollments/${uid}/${profileId}`),{
+lastMessageAt:Date.now(),
+unreadForStudent:false
+});
+};
+
+window.toggleProviderPayment = function(profileId){
+const box =
+document.getElementById("payment_" + profileId);
+
+if(!box){
+alert("Payment details are not available.");
+return;
+}
+
+if(box.style.display === "block"){
+box.style.display = "none";
+return;
+}
+
+const ok = confirm(
+"Payments are made directly between you and the teacher/institution.\n\n" +
+"GURULINK does not process or verify payments and is not responsible for failed transactions, refunds, disputes, or wrong transfers.\n\n" +
+"Please verify all details before paying."
+);
+
+if(ok){
+box.style.display = "block";
+}
 };
 
 window.callProvider = callProvider;
