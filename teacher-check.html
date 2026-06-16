@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0, viewport-fit=cover">
 <title>Checking Account</title>
 
 <style>
@@ -126,6 +126,9 @@ margin-top:2px;
 <link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 <link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 <link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -150,6 +153,11 @@ ref,
 get
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
+import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
 const firebaseConfig={
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
@@ -162,6 +170,7 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
 
 const phone =
 (localStorage.getItem("phone") || "")
@@ -264,13 +273,13 @@ content.innerHTML = `
 
 <b>Terms & Conditions</b><br><br>
 
-â€¢ GURULINK is only a linking platform between students, parents, teachers and institutions.<br><br>
+- GURULINK is only a linking platform between students, parents, teachers and institutions.<br><br>
 
-â€¢ GURULINK is not responsible for fees, payments, refunds, disputes or legal matters between users.<br><br>
+- GURULINK is not responsible for fees, payments, refunds, disputes or legal matters between users.<br><br>
 
-â€¢ Users are responsible for verifying identities and information before entering into any agreement.<br><br>
+- Users are responsible for verifying identities and information before entering into any agreement.<br><br>
 
-â€¢ By continuing, you agree to all Terms & Conditions and Privacy Policy.
+- By continuing, you agree to all Terms & Conditions and Privacy Policy.
 
 </div>
 
@@ -543,9 +552,37 @@ err.message;
 
 }
 
+onAuthStateChanged(auth,(user)=>{
+
+if(!user){
+
+title.textContent =
+"Login Required";
+
+content.innerHTML = `
+
+<p>Your OTP login session was not found. Please login again.</p>
+
+<button
+class="register"
+style="width:100%;"
+onclick="location.href='otp-login.html'">
+OTP Login
+</button>
+
+`;
+
+return;
+
+}
+
 checkAccount();
+
+});
 
 </script>
 
 </body>
 </html>
+
+
