@@ -288,6 +288,18 @@ resize:vertical;
 .demoSubmit{
 background:#6a1b9a;
 }
+
+.demoSuccess{
+display:none;
+margin-top:10px;
+padding:12px;
+background:#e8f5e9;
+border:1px solid #a5d6a7;
+border-radius:10px;
+color:#1b5e20;
+font-weight:bold;
+line-height:1.5;
+}
 </style>
 <link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 <link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
@@ -608,13 +620,16 @@ data.showBankDetails !== false &&
 </div>
 
 <div class="demoBox">
-<h3>Request Demo Class</h3>
-<p>Send a short demo class request to this ${esc(type.toLowerCase())}. Your message will be visible to them for 15 days.</p>
-<div class="demoChat">
+<h3>Request Demo Class / Practice</h3>
+<p>Send one short demo class or practice request to this ${esc(type.toLowerCase())}. Your message will be visible to them for 15 days.</p>
+<div class="demoChat" id="demoChatBox">
 <input id="demoName" placeholder="Your Name">
 <input id="demoPhone" placeholder="Phone Number">
 <textarea id="demoMessage" placeholder="Write your demo class request"></textarea>
 <button class="demoSubmit" onclick="submitDemoRequest()">Send Demo Request</button>
+</div>
+<div class="demoSuccess" id="demoSuccessBox">
+Your request has been sent. Soon the teacher/institute will contact you.
 </div>
 </div>
 
@@ -728,7 +743,17 @@ alert("Please enter name, phone number, and demo request message.");
 return;
 }
 
-await push(ref(db,`demoRequests/${id}`),{
+const requestKey =
+phone.replace(/\D/g,"");
+
+if(requestKey.length < 6){
+alert("Please enter a valid phone number.");
+return;
+}
+
+try{
+
+await set(ref(db,`demoRequests/${id}/${requestKey}`),{
 profileId:id,
 profileType:type,
 name:name,
@@ -739,11 +764,20 @@ createdAt:Date.now(),
 expiresAt:Date.now() + (15 * 24 * 60 * 60 * 1000)
 });
 
-alert("Demo class request sent successfully.");
+document.getElementById("demoChatBox").style.display = "none";
+document.getElementById("demoSuccessBox").style.display = "block";
 
 document.getElementById("demoName").value = "";
 document.getElementById("demoPhone").value = "";
 document.getElementById("demoMessage").value = "";
+
+}
+catch(err){
+console.error(err);
+alert("You have already sent a demo request. Soon the teacher/institute will contact you.");
+document.getElementById("demoChatBox").style.display = "none";
+document.getElementById("demoSuccessBox").style.display = "block";
+}
 
 };
 
