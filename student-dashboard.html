@@ -455,6 +455,97 @@ return String(value ?? "")
 .replace(/'/g,"&#039;");
 }
 
+async function getProviderProfile(profileId,item){
+let profile = null;
+
+if((item.profileRole || "").toLowerCase() === "institution"){
+const instSnap = await get(ref(db,"institutions/" + profileId));
+if(instSnap.exists()){
+profile = instSnap.val();
+}
+}
+
+if(!profile){
+const teacherSnap = await get(ref(db,"teachers/" + profileId));
+if(teacherSnap.exists()){
+profile = teacherSnap.val();
+}
+}
+
+if(!profile){
+const instSnap = await get(ref(db,"institutions/" + profileId));
+if(instSnap.exists()){
+profile = instSnap.val();
+}
+}
+
+if(!profile){
+const itemEmail =
+String(item.email || "").trim().toLowerCase();
+const itemPhone =
+cleanPhone(item.phone || item.alternatePhone || "");
+
+const collections =
+["teachers","institutions"];
+
+for(const collectionName of collections){
+const snap = await get(ref(db,collectionName));
+
+if(!snap.exists()){
+continue;
+}
+
+snap.forEach(child=>{
+if(profile){
+return;
+}
+
+const candidate = child.val() || {};
+const candidateEmail =
+String(candidate.email || "").trim().toLowerCase();
+const candidatePhone =
+cleanPhone(candidate.phone || candidate.alternatePhone || "");
+
+if(
+(itemEmail && candidateEmail && itemEmail === candidateEmail) ||
+(itemPhone && candidatePhone && itemPhone === candidatePhone)
+){
+profile = {
+...candidate,
+uid:child.key
+};
+}
+});
+
+if(profile){
+break;
+}
+}
+}
+
+if(!profile){
+return item;
+}
+
+return {
+...item,
+name:profile.name || item.name,
+phone:profile.phone || item.phone,
+alternatePhone:profile.alternatePhone || item.alternatePhone,
+email:profile.email || item.email,
+website:profile.website || item.website,
+logo:profile.logo || profile.profilePic || item.logo,
+category:profile.category || item.category,
+showBankDetails:profile.showBankDetails !== false,
+accountHolderName:profile.showBankDetails === false ? "" : (profile.accountHolderName || item.accountHolderName || ""),
+bankName:profile.showBankDetails === false ? "" : (profile.bankName || item.bankName || ""),
+accountNumber:profile.showBankDetails === false ? "" : (profile.accountNumber || item.accountNumber || ""),
+ifsc:profile.showBankDetails === false ? "" : (profile.ifsc || item.ifsc || ""),
+upiId:profile.showBankDetails === false ? "" : (profile.upiId || item.upiId || ""),
+qrImage:profile.showBankDetails === false ? "" : (profile.qrImage || item.qrImage || "")
+};
+}
+
 function renderMessages(profileId){
 const box =
 document.getElementById("chat_" + profileId);
@@ -512,7 +603,7 @@ document.getElementById("enrollmentList");
 
 onValue(
 ref(db,"studentEnrollments/" + uid),
-snap=>{
+async snap=>{
 if(!snap.exists()){
 list.innerHTML = "No enrolled teacher or institution yet.";
 return;
@@ -520,11 +611,40 @@ return;
 
 let html = "";
 let ids = [];
+let enrollmentItems = [];
 
 snap.forEach(child=>{
-const item = child.val();
-const profileId = child.key;
+enrollmentItems.push({
+profileId:child.key,
+item:child.val()
+});
+});
+
+for(const entry of enrollmentItems){
+
+const profileId = entry.profileId;
+const item = await getProviderProfile(profileId,entry.item);
 ids.push(profileId);
+
+if(
+item.website !== entry.item.website ||
+item.upiId !== entry.item.upiId ||
+item.qrImage !== entry.item.qrImage ||
+item.bankName !== entry.item.bankName ||
+item.accountNumber !== entry.item.accountNumber
+){
+update(ref(db,`studentEnrollments/${uid}/${profileId}`),{
+website:item.website || "",
+showBankDetails:item.showBankDetails !== false,
+accountHolderName:item.accountHolderName || "",
+bankName:item.bankName || "",
+accountNumber:item.accountNumber || "",
+ifsc:item.ifsc || "",
+upiId:item.upiId || "",
+qrImage:item.qrImage || "",
+updatedAt:Date.now()
+});
+}
 
 const accepted =
 item.status === "accepted";
@@ -587,7 +707,7 @@ ${paymentDetailsHTML}
 `}
 </div>
 `;
-});
+}
 
 list.innerHTML = html;
 
