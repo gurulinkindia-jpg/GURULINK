@@ -1,208 +1,466 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Privacy Policy - GURULINK</title>
-
 <style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+:root{
+--bg:#eef2f7;
+--card:#ffffff;
+--text:#1f2933;
+--muted:#667085;
+--border:#d9e2ec;
+--primary:#1565c0;
+--primaryDark:#0d47a1;
+--soft:#f6f8fb;
+}
+
+body.dark{
+--bg:#101820;
+--card:#17212b;
+--text:#f3f6f8;
+--muted:#b8c2cc;
+--border:#2f3b46;
+--primary:#64b5f6;
+--primaryDark:#1565c0;
+--soft:#1f2a35;
+}
+
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#eef2f7;
-  color:#222;
-  line-height:1.6;
+background:var(--bg);
+color:var(--text);
+min-height:100vh;
+min-height:100dvh;
 }
 
 header{
-  background:#1565c0;
-  color:white;
-  padding:25px;
-  text-align:center;
+background:#1565c0;
+color:#fff;
+padding:calc(env(safe-area-inset-top) + 12px) 18px 12px;
+box-shadow:0 3px 14px rgba(0,0,0,.12);
+position:sticky;
+top:0;
+z-index:10;
+}
+
+.headerInner{
+max-width:980px;
+margin:auto;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:12px;
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:12px;
+cursor:pointer;
+}
+
+.brand img{
+width:46px;
+height:46px;
+object-fit:contain;
+background:#fff;
+border-radius:50%;
+padding:3px;
+}
+
+.brandText b{
+display:block;
+font-size:24px;
+line-height:1;
+}
+
+.brandText span{
+display:block;
+font-size:12px;
+opacity:.92;
+margin-top:4px;
+}
+
+.backBtn{
+background:#fff;
+color:#1565c0;
+border:none;
+padding:10px 14px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
 }
 
 .container{
-  max-width:900px;
-  margin:25px auto;
-  background:white;
-  padding:25px;
-  border-radius:12px;
-  box-shadow:0 4px 15px rgba(0,0,0,.1);
+max-width:980px;
+margin:auto;
+padding:18px;
 }
 
-h1,h2{
-  color:#1565c0;
+.hero{
+background:linear-gradient(135deg,#1565c0,#0d47a1);
+color:#fff;
+border-radius:18px;
+padding:24px 20px;
+box-shadow:0 8px 24px rgba(0,0,0,.12);
 }
 
-header h1{
-  color:white;
-  margin:0;
+.hero h1{
+font-size:31px;
+margin-bottom:10px;
 }
 
-p,li{
-  font-size:15px;
+.hero p{
+font-size:15px;
+line-height:1.6;
+max-width:760px;
 }
 
-ul{
-  padding-left:22px;
+.meta{
+margin-top:10px;
+font-size:13px;
+opacity:.95;
 }
 
-.footer{
-  text-align:center;
-  margin-top:30px;
-  color:#666;
-  font-size:14px;
+.layout{
+display:grid;
+grid-template-columns:280px 1fr;
+gap:16px;
+margin-top:16px;
 }
 
-a{
-  color:#1565c0;
+.card{
+background:var(--card);
+border:1px solid var(--border);
+border-radius:16px;
+padding:18px;
+box-shadow:0 5px 18px rgba(0,0,0,.06);
+}
+
+.sideCard a{
+display:block;
+text-decoration:none;
+color:var(--primary);
+font-weight:bold;
+padding:10px 0;
+border-bottom:1px solid var(--border);
+font-size:14px;
+}
+
+.sideCard a:last-child{
+border-bottom:none;
+}
+
+.contentCard section{
+padding-top:4px;
+margin-bottom:24px;
+}
+
+.contentCard h2{
+font-size:20px;
+margin-bottom:10px;
+}
+
+.contentCard p{
+font-size:14px;
+line-height:1.7;
+color:var(--muted);
+margin-bottom:10px;
+}
+
+.contentCard ul{
+padding-left:20px;
+margin:8px 0 0;
+}
+
+.contentCard li{
+font-size:14px;
+line-height:1.6;
+margin:7px 0;
+}
+
+.notice{
+margin-top:12px;
+padding:14px;
+border-radius:12px;
+background:var(--soft);
+border:1px solid var(--border);
+font-size:14px;
+line-height:1.6;
+}
+
+.quickLinks{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-top:12px;
+}
+
+.quickLinks a{
+text-decoration:none;
+background:var(--primary);
+color:#fff;
+padding:10px 14px;
+border-radius:10px;
+font-size:14px;
+font-weight:bold;
+}
+
+footer{
+text-align:center;
+padding:20px 18px 30px;
+color:var(--muted);
+font-size:13px;
+}
+
+@media(max-width:820px){
+.layout{
+grid-template-columns:1fr;
+}
+}
+
+@media(max-width:600px){
+.container{
+padding:12px;
+}
+
+.hero{
+padding:20px 16px;
+border-radius:14px;
+}
+
+.hero h1{
+font-size:25px;
+}
+
+.card{
+padding:15px;
+border-radius:14px;
+}
+
+.quickLinks a{
+width:100%;
+text-align:center;
+}
 }
 </style>
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
-
 <body>
-
 <header>
-  <h1>Privacy Policy</h1>
-  <p>GURULINK</p>
+<div class="headerInner">
+<div class="brand" onclick="location.href='index.html'">
+<img src="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png" alt="GURULINK">
+<div class="brandText">
+<b>GURULINK</b>
+<span>Privacy Policy</span>
+</div>
+</div>
+<button class="backBtn" onclick="goBack()">Back</button>
+</div>
 </header>
 
 <div class="container">
+<section class="hero">
+<h1>Privacy Policy</h1>
+<p>
+This Privacy Policy explains how GURULINK collects, uses, stores, shares, and protects user information when people use the GURULINK website, mobile app, registration forms, dashboards, helpdesk, and related services.
+</p>
+<div class="meta">
+Effective date: June 17, 2026
+<br>
+Developer / Platform name: GURULINK, powered by G10 Group
+</div>
+</section>
 
-  <p><strong>Effective Date:</strong> June 2026</p>
+<div class="layout">
+<aside class="card sideCard">
+<a href="#overview">1. Overview</a>
+<a href="#collect">2. Data We Collect</a>
+<a href="#use">3. How We Use Data</a>
+<a href="#share">4. Data Sharing</a>
+<a href="#payments">5. Payments</a>
+<a href="#children">6. Children and Teen Users</a>
+<a href="#security">7. Security</a>
+<a href="#retention">8. Retention</a>
+<a href="#rights">9. Your Choices and Rights</a>
+<a href="#delete">10. Account Deletion</a>
+<a href="#contact">11. Contact</a>
+<div class="notice">
+For account deletion requests, visit:
+<br>
+<b>delete-account.html</b>
+<br>
+or use the Delete Account option in Settings.
+</div>
+</aside>
 
-  <p>
-    GURULINK is committed to protecting the privacy of students, parents,
-    teachers, tutors, coaches, skill trainers, and educational institutions
-    using our platform. This Privacy Policy explains how we collect, use,
-    store, and protect user information.
-  </p>
+<main class="card contentCard">
+<section id="overview">
+<h2>1. Overview</h2>
+<p>
+GURULINK is a linking platform that helps students, parents, teachers, and institutions connect with each other for education, training, communication, profile discovery, support, and related services. GURULINK itself is not the direct provider of private teaching agreements between users unless clearly stated otherwise.
+</p>
+</section>
 
-  <h2>1. Information We Collect</h2>
-  <p>We may collect the following information from users:</p>
-  <ul>
-    <li>Name</li>
-    <li>Email address</li>
-    <li>Phone number</li>
-    <li>Profile information</li>
-    <li>Educational and professional details</li>
-    <li>Teacher, tutor, coach, or institute details</li>
-    <li>Student enquiry details</li>
-    <li>Location or address information provided by users</li>
-    <li>Uploaded images, documents, ID proof, profile photo, logo, or gallery images</li>
-    <li>Payment or subscription-related information</li>
-    <li>Device, browser, and usage information</li>
-  </ul>
+<section id="collect">
+<h2>2. Data We Collect</h2>
+<p>Depending on how you use GURULINK, we may collect the following data:</p>
+<ul>
+<li>Name, institution name, owner name, and profile display information</li>
+<li>Email address and phone number</li>
+<li>Password-based login data and OTP-based authentication data through supported authentication providers</li>
+<li>Profile information such as category, subjects, classes, boards, qualification, experience, address, area, pin code, website, map link, teaching mode, and fee details</li>
+<li>Uploaded photos, logo, gallery images, student profile photos, and ID proof documents submitted for verification</li>
+<li>Payment-related status data, invoice data, invoice client details, and transaction references</li>
+<li>Messages, demo requests, helpdesk tickets, support chats, enrollment-related chats, and profile enquiry records</li>
+<li>Profile view logs, timestamps, device/session data stored locally in browser/app storage, and basic usage metadata needed to operate the service</li>
+</ul>
+</section>
 
-  <h2>2. How We Use Your Information</h2>
-  <p>We use collected information to:</p>
-  <ul>
-    <li>Create and manage user accounts</li>
-    <li>Connect students and parents with teachers, tutors, coaches, and institutes</li>
-    <li>Display educator and institute profiles</li>
-    <li>Process registration, subscription, and renewal requests</li>
-    <li>Manage student enquiries and demo class requests</li>
-    <li>Enable profile sharing and digital business card features</li>
-    <li>Provide receipt generation and related services</li>
-    <li>Improve app performance, security, and user experience</li>
-    <li>Provide customer support and important updates</li>
-  </ul>
+<section id="use">
+<h2>3. How We Use Data</h2>
+<ul>
+<li>To create and manage accounts</li>
+<li>To verify teacher and institution identities</li>
+<li>To publish profile details selected by the user for public display</li>
+<li>To connect students, parents, teachers, and institutions</li>
+<li>To process registrations, approvals, support requests, and profile editing</li>
+<li>To enable invoice generation, communication, demo requests, and student enrollment workflows</li>
+<li>To improve safety, reduce misuse, investigate disputes, and maintain platform operations</li>
+<li>To comply with legal, tax, fraud-prevention, and regulatory obligations</li>
+</ul>
+</section>
 
-  <h2>3. Information Sharing</h2>
-  <p>
-    GURULINK does not sell personal information. User information may be shared
-    only in the following cases:
-  </p>
-  <ul>
-    <li>With other users where necessary for educational connection and profile visibility</li>
-    <li>With trusted third-party service providers used for app operation</li>
-    <li>With payment, hosting, database, or communication service providers</li>
-    <li>When required by law, regulation, or legal process</li>
-    <li>To protect the rights, safety, and security of GURULINK and its users</li>
-  </ul>
+<section id="share">
+<h2>4. Data Sharing</h2>
+<p>
+GURULINK does not sell personal data. We may share limited information only in the following situations:
+</p>
+<ul>
+<li>Public profile data chosen by the teacher or institution may be shown to app users, website visitors, or people opening a shared profile link</li>
+<li>Student and teacher/institution contact information may be shared inside the platform where a feature requires direct communication</li>
+<li>Payment, hosting, database, storage, and authentication providers may process data as service providers on our behalf</li>
+<li>We may disclose information if required by law, regulation, court order, fraud investigation, or safety-related request</li>
+</ul>
+</section>
 
-  <h2>4. Public Profile Information</h2>
-  <p>
-    Teachers, tutors, coaches, trainers, and institutes may create public profiles
-    on GURULINK. Information such as name, photo, qualification, experience,
-    subjects, services, fees, address, contact details, and uploaded profile
-    content may be visible to students, parents, and other users.
-  </p>
+<section id="payments">
+<h2>5. Payments</h2>
+<p>
+GURULINK may store payment status, invoice records, fee-related details, and payment references required for registration, subscriptions, invoice tools, or support. Payment processing itself may involve third-party platforms such as Razorpay, UPI, Cashfree, Firebase, or other service providers integrated into the platform.
+</p>
+<p>
+Users should review the privacy and payment terms of any third-party payment provider used during a transaction.
+</p>
+</section>
 
-  <h2>5. Payments and Subscriptions</h2>
-  <p>
-    GURULINK may collect payment-related details for registration, subscription,
-    or renewal purposes. Payment processing may be handled by third-party payment
-    service providers. GURULINK does not store sensitive card or banking passwords.
-  </p>
+<section id="children">
+<h2>6. Children and Teen Users</h2>
+<p>
+GURULINK is intended for educational connection and support use by students, parents, teachers, and institutions. Where younger learners are involved, we expect a parent, guardian, school, or responsible adult to supervise use as required by law and platform policy.
+</p>
+<p>
+If you believe a child has provided personal data in a way that should be removed or restricted, contact us using the details below or submit a deletion request.
+</p>
+</section>
 
-  <h2>6. Third-Party Services</h2>
-  <p>GURULINK may use third-party services, including but not limited to:</p>
-  <ul>
-    <li>Firebase or similar database and authentication services</li>
-    <li>Cloud hosting platforms</li>
-    <li>Payment gateway services</li>
-    <li>Image hosting or storage services</li>
-    <li>Analytics and performance monitoring tools</li>
-  </ul>
+<section id="security">
+<h2>7. Security</h2>
+<p>
+We use reasonable administrative, technical, and service-provider-based safeguards to protect data. User data transmitted through GURULINK and Firebase-backed services is intended to be encrypted in transit over HTTPS/TLS-enabled connections. No method of transmission or storage is completely guaranteed to be secure, so users should also protect their own devices, passwords, and OTP access.
+</p>
+</section>
 
-  <h2>7. Data Security</h2>
-  <p>
-    We take reasonable technical and organizational measures to protect user
-    information from unauthorized access, misuse, loss, or disclosure. However,
-    no online platform can guarantee complete security.
-  </p>
+<section id="retention">
+<h2>8. Data Retention</h2>
+<p>
+We keep data only for as long as needed to operate the service, provide support, maintain business records, investigate misuse, or comply with legal and financial obligations.
+</p>
+<ul>
+<li>Core account and profile records may be deleted promptly when self-service deletion succeeds</li>
+<li>Some linked records such as invoices, payment references, support history, operational logs, or dispute-related records may be retained for up to 90 days or longer where legally required</li>
+<li>Temporary chats or requests may also be removed automatically after their configured validity period in the platform</li>
+</ul>
+</section>
 
-  <h2>8. User Control and Data Removal</h2>
-  <p>
-    Users may request correction, update, or deletion of their information by
-    contacting GURULINK. Some information may be retained where required for
-    legal, security, payment, or record-keeping purposes.
-  </p>
+<section id="rights">
+<h2>9. Your Choices and Rights</h2>
+<ul>
+<li>You may review and update many profile details through Edit Profile</li>
+<li>You may request account deletion and associated data deletion</li>
+<li>You may request correction of inaccurate personal information</li>
+<li>You may choose what profile details are publicly visible where visibility controls are provided</li>
+</ul>
+</section>
 
-  <h2>9. Children's Privacy</h2>
-  <p>
-    GURULINK may be used by students and parents. Minors should use the platform
-    with the consent and supervision of a parent or guardian. We do not knowingly
-    collect personal information from children without appropriate consent where
-    required by law.
-  </p>
+<section id="delete">
+<h2>10. Account Deletion</h2>
+<p>
+Users can request deletion of their GURULINK account and associated data using the official deletion page:
+</p>
+<div class="notice">
+<b>Delete account URL:</b>
+<br>
+<a href="delete-account.html">delete-account.html</a>
+</div>
+<p>
+That page explains:
+</p>
+<ul>
+<li>the steps to request deletion</li>
+<li>what data is deleted immediately</li>
+<li>what data may be retained for a limited period</li>
+<li>how to contact support if manual cleanup is needed</li>
+</ul>
+</section>
 
-  <h2>10. Links to Other Websites</h2>
-  <p>
-    GURULINK may contain links to external websites, maps, payment pages, or
-    communication platforms. We are not responsible for the privacy practices or
-    content of third-party websites.
-  </p>
+<section id="contact">
+<h2>11. Contact</h2>
+<p>
+If you have privacy-related questions, support issues, or deletion requests, contact GURULINK through the Helpdesk page or email:
+</p>
+<ul>
+<li>Email: gurulinkindia@gmail.com</li>
+<li>Helpdesk: <a href="helpdesk.html">helpdesk.html</a></li>
+<li>Delete account: <a href="delete-account.html">delete-account.html</a></li>
+</ul>
 
-  <h2>11. Changes to This Privacy Policy</h2>
-  <p>
-    We may update this Privacy Policy from time to time. Any changes will be
-    posted on this page with an updated effective date.
-  </p>
-
-  <h2>12. Contact Us</h2>
-  <p>
-    If you have any questions, concerns, or requests regarding this Privacy Policy,
-    you can contact us at:
-  </p>
-
-  <p>
-    <strong>Email:</strong>
-    <a href="mailto:gurulinkindia@gmail.com">gurulinkindia@gmail.com</a>
-  </p>
-
-  <p>
-    By using GURULINK, you agree to this Privacy Policy.
-  </p>
-
-  <div class="footer">
-    © 2026 GURULINK. All rights reserved.
-  </div>
-
+<div class="quickLinks">
+<a href="helpdesk.html">Open Helpdesk</a>
+<a href="delete-account.html">Delete Account</a>
+<a href="index.html">Back to Home</a>
+</div>
+</section>
+</main>
+</div>
 </div>
 
+<footer>
+© GURULINK Powered by G10 Group
+</footer>
+
+<script>
+window.goBack = function(){
+if(history.length > 1){
+history.back();
+}
+else{
+location.href = "index.html";
+}
+};
+</script>
 </body>
 </html>
-```
