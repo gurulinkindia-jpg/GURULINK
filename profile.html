@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover">
 <title>GURULINK</title>
 
 <style>
@@ -317,6 +317,12 @@ font-size:22px;
 }
 }
 </style>
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -396,6 +402,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let all = [];
+let ratingMap = {};
 
 /* =========================
    LOAD DATA (FIXED STRUCTURE)
@@ -444,6 +451,36 @@ function loadData() {
 
 loadData();
 
+onValue(ref(db, "reviews"), (snap) => {
+  ratingMap = {};
+
+  snap.forEach((typeSnap) => {
+    const collection = typeSnap.key;
+
+    typeSnap.forEach((profileSnap) => {
+      let total = 0;
+      let count = 0;
+
+      profileSnap.forEach((reviewSnap) => {
+        const rating = Number(reviewSnap.val()?.rating || 0);
+        if (rating > 0) {
+          total += rating;
+          count++;
+        }
+      });
+
+      if (count) {
+        ratingMap[collection + "/" + profileSnap.key] = {
+          avg: total / count,
+          count
+        };
+      }
+    });
+  });
+
+  render();
+});
+
 /* =========================
    HELPERS
 ========================= */
@@ -452,8 +489,25 @@ function similar(a, b) {
   return (a || "").toLowerCase().includes((b || "").toLowerCase());
 }
 
+function ratingInfo(profile) {
+  const collection = profile.type === "Institution" ? "institutions" : "teachers";
+  return ratingMap[collection + "/" + profile.id] || { avg: 0, count: 0 };
+}
+
+function sortByRating(list) {
+  return [...list].sort((a, b) => {
+    const ar = ratingInfo(a);
+    const br = ratingInfo(b);
+
+    if (br.avg !== ar.avg) return br.avg - ar.avg;
+    if (br.count !== ar.count) return br.count - ar.count;
+
+    return (a.name || "").localeCompare(b.name || "");
+  });
+}
+
 /* =========================
-   CATEGORY CHANGE → RESET FILTERS
+   CATEGORY CHANGE -> RESET FILTERS
 ========================= */
 
 const category = document.getElementById("category");
@@ -710,7 +764,9 @@ x.subjects
     return true;
   });
 
-  if (!filtered.length) {
+  const sorted = sortByRating(filtered);
+
+  if (!sorted.length) {
     grid.innerHTML = `
       <div class="empty">
         No Results Found
@@ -723,7 +779,7 @@ x.subjects
   
   
   
-grid.innerHTML = filtered.map((x) => {
+grid.innerHTML = sorted.map((x) => {
 
 let subject = "Not Mentioned";
 
@@ -858,13 +914,15 @@ View Details
 <div class="floating-buttons">
 
 <a href="index.html" class="float-btn home-btn">
-🏠
+Home
 </a>
 
 <button class="float-btn back-btn" onclick="history.back()">
-⬅️
+Back
 </button>
 
 </div>
 </body>
 </html>
+
+
