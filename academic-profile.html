@@ -3,7 +3,7 @@
 
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <title>Academic Profile - GURULINK</title>
 
@@ -124,6 +124,12 @@ header {
   border-radius: 15px;
 }
 </style>
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -187,6 +193,7 @@ const db = getDatabase(app);
 
 let teachers = [];
 let institutes = [];
+let ratingMap = {};
 
 /* ONLY ACADEMIC */
 onValue(ref(db, "teachers"), (snap) => {
@@ -223,6 +230,36 @@ institutes.push({ ...d, id: c.key, type: "Institution" });
 render();
 });
 
+onValue(ref(db, "reviews"), (snap) => {
+ratingMap = {};
+
+snap.forEach((typeSnap) => {
+const collection = typeSnap.key;
+
+typeSnap.forEach((profileSnap) => {
+let total = 0;
+let count = 0;
+
+profileSnap.forEach((reviewSnap) => {
+const rating = Number(reviewSnap.val()?.rating || 0);
+if(rating > 0){
+total += rating;
+count++;
+}
+});
+
+if(count){
+ratingMap[collection + "/" + profileSnap.key] = {
+avg: total / count,
+count
+};
+}
+});
+});
+
+render();
+});
+
 function getAllProfiles() {
 return [...teachers, ...institutes];
 }
@@ -243,6 +280,23 @@ return list.includes(selectedClass.toLowerCase());
 /* SEARCH */
 function similar(a, b) {
 return (a || "").toLowerCase().includes((b || "").toLowerCase());
+}
+
+function ratingInfo(profile){
+const collection = profile.type === "Institution" ? "institutions" : "teachers";
+return ratingMap[collection + "/" + profile.id] || {avg:0,count:0};
+}
+
+function sortByRating(list){
+return [...list].sort((a,b)=>{
+const ar = ratingInfo(a);
+const br = ratingInfo(b);
+
+if(br.avg !== ar.avg) return br.avg - ar.avg;
+if(br.count !== ar.count) return br.count - ar.count;
+
+return (a.name || "").localeCompare(b.name || "");
+});
 }
 
 /* VIEW BUTTON FIX */
@@ -341,12 +395,14 @@ return true;
 
 const grid = document.getElementById("grid");
 
-if (!filtered.length) {
+const sorted = sortByRating(filtered);
+
+if (!sorted.length) {
 grid.innerHTML = `<div class="empty">No Academic Profiles Found</div>`;
 return;
 }
 
-grid.innerHTML = filtered.map((item) => `
+grid.innerHTML = sorted.map((item) => `
 <div class="card ${item.type.toLowerCase()}">
 
 <div class="top">
@@ -360,7 +416,7 @@ grid.innerHTML = filtered.map((item) => `
 <div class="badge">${item.type}</div>
 
 <div class="badge verify">
-${(item.status || "").toLowerCase() === "approved" ? "✅ Verified" : "❌ Not Verified"}
+${(item.status || "").toLowerCase() === "approved" ? "Verified" : "Not Verified"}
 </div>
 
 <button class="btn view" data-id="${item.id}">
@@ -384,3 +440,5 @@ View Details
 
 </body>
 </html>
+
+
