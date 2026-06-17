@@ -382,8 +382,8 @@ width:auto;
 <link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 <link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 
-<link rel="stylesheet" href="gurulink-theme.css">
-<script src="gurulink-theme.js"></script>
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -449,7 +449,7 @@ width:auto;
 <b>Delete Account</b>
 <span>This permanently removes your login account. You may need to login again before deletion.</span>
 </div>
-<button class="actionBtn dangerBtn" onclick="deleteAccount()">Delete</button>
+<button class="actionBtn dangerBtn" onclick="openDeleteAccountPage()">Delete</button>
 </div>
 </section>
 
@@ -510,13 +510,12 @@ For editing public profile details, subjects, fees, images, or visibility checkb
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, get, remove } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 import {
 getAuth,
 onAuthStateChanged,
 sendPasswordResetEmail,
-signOut,
-deleteUser
+signOut
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -699,56 +698,12 @@ alert("Cache could not be cleared: " + err.message);
 }
 };
 
-window.deleteAccount = async function(){
-const ok = confirm("Are you sure you want to delete your account? This action cannot be undone.");
-if(!ok) return;
-
-const user = auth.currentUser;
-if(!user){
-alert("Please login again before deleting your account.");
-location.href = "otp-login.html";
-return;
-}
-
-try{
-await deleteUser(user);
-
-try{
-if(profileId){
-await remove(ref(db,"users/" + profileId));
-
-if(role === "teacher"){
-await remove(ref(db,"teachers/" + profileId));
-}
-else if(role === "institution"){
-await remove(ref(db,"institutions/" + profileId));
-}
-else{
-await remove(ref(db,"students/" + profileId));
-}
-}
-}
-catch(cleanupErr){
-console.log("Profile cleanup skipped", cleanupErr);
-}
-
-localStorage.clear();
-sessionStorage.clear();
-alert("Your account has been deleted.");
-location.href = "index.html";
-}
-catch(err){
-if(err.code === "auth/requires-recent-login"){
-alert("For security, please login again and then delete the account.");
-location.href = "otp-login.html";
-}
-else{
-alert(err.message);
-}
-}
+window.openDeleteAccountPage = function(){
+location.href = "delete-account.html";
 };
 </script>
 
 </body>
 </html>
+
 
