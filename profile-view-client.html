@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Profile View - GURULINK</title>
 
 <style>
@@ -253,7 +253,60 @@ border:1px solid #ddd;
 border-radius:10px;
 margin-top:10px;
 }
+
+.demoBox{
+margin-top:15px;
+padding:15px;
+background:#f3f9ff;
+border:1px solid #bbdefb;
+border-radius:12px;
+}
+
+.demoBox h3{
+margin:0 0 8px;
+color:#1565c0;
+}
+
+.demoBox p{
+font-size:13px;
+line-height:1.5;
+color:#555;
+}
+
+.demoChat{
+background:white;
+border:1px solid #d6e8ff;
+border-radius:12px;
+padding:10px;
+}
+
+.demoChat textarea{
+height:90px;
+resize:vertical;
+}
+
+.demoSubmit{
+background:#6a1b9a;
+}
+
+.demoSuccess{
+display:none;
+margin-top:10px;
+padding:12px;
+background:#e8f5e9;
+border:1px solid #a5d6a7;
+border-radius:10px;
+color:#1b5e20;
+font-weight:bold;
+line-height:1.5;
+}
 </style>
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -275,6 +328,11 @@ push,
 set
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
+import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
 /* FIREBASE CONFIG */
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -288,6 +346,7 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
 
 const profile = document.getElementById("profile");
 const id = new URLSearchParams(location.search).get("id");
@@ -295,29 +354,109 @@ const id = new URLSearchParams(location.search).get("id");
 let data = null;
 let type = "";
 
+function getAuthUser(){
+return new Promise((resolve)=>{
+const unsubscribe = onAuthStateChanged(auth,(user)=>{
+unsubscribe();
+resolve(user || null);
+});
+
+setTimeout(()=>{
+resolve(auth.currentUser || null);
+},1200);
+});
+}
+
 /* MARK VIEW */
 async function markView() {
-  const studentId = localStorage.getItem("uid");
-  const teacherId = id;
+  const authUser = await getAuthUser();
 
-  if (!studentId || !teacherId) return;
+  const viewerId =
+    localStorage.getItem("uid") ||
+    localStorage.getItem("profileId") ||
+    (authUser ? authUser.uid : "");
+
+  const viewedProfileId = id;
+  const viewerRole = (localStorage.getItem("role") || "").toLowerCase();
+
+  if (!viewedProfileId) return;
 
   try {
-    const snap = await get(ref(db, "students/" + studentId));
+    const isRegisteredTeacherOrInstitution =
+      viewerRole === "teacher" ||
+      viewerRole === "institution";
 
-    let studentData = { name:"", email:"", phone:"" };
+    const isGuestViewer =
+      !viewerId ||
+      viewerRole === "guest";
 
-    if (snap.exists()) {
-      studentData = snap.val();
+    const viewId =
+      viewerId ||
+      "guest_" + Date.now() + "_" + Math.floor(Math.random() * 9999);
+
+    let viewerData = {
+      name:"",
+      email:"",
+      phone:""
+    };
+
+    if (viewerId) {
+      const paths = [];
+
+      if (viewerRole === "student" || viewerRole === "parent") {
+        paths.push("students/" + viewerId);
+      }
+
+      if (viewerRole === "teacher") {
+        paths.push("teachers/" + viewerId);
+      }
+
+      if (viewerRole === "institution") {
+        paths.push("institutions/" + viewerId);
+      }
+
+      paths.push("users/" + viewerId);
+      paths.push("students/" + viewerId);
+
+      for (const path of paths) {
+        const snap = await get(ref(db, path));
+
+        if (snap.exists()) {
+          viewerData = {
+            ...viewerData,
+            ...snap.val()
+          };
+        }
+      }
     }
 
+    const displayName = isRegisteredTeacherOrInstitution
+      ? (viewerRole === "teacher" ? "Teacher" : "Institution")
+      : (
+        isGuestViewer
+          ? "Guest"
+          : (viewerData.name || (viewerRole === "parent" ? "Parent" : "Student"))
+      );
+
+    const displayPhone = isRegisteredTeacherOrInstitution
+      ? ""
+      : (
+        viewerData.phone ||
+        viewerData.alternatePhone ||
+        (authUser ? authUser.phoneNumber : "") ||
+        localStorage.getItem("phone") ||
+        ""
+      );
+
     await set(
-      ref(db, `profileViews/${teacherId}/${studentId}`),
+      ref(db, `profileViews/${viewedProfileId}/${viewId}`),
       {
-        studentId,
-        name: studentData.name || "",
-        email: studentData.email || "",
-        phone: studentData.phone || "",
+        viewerId:viewId,
+        studentId:viewId,
+        viewerRole:viewerRole || "guest",
+        name:displayName,
+        email:viewerData.email || (authUser ? authUser.email : "") || localStorage.getItem("email") || "",
+        phone:displayPhone,
         time: Date.now()
       }
     );
@@ -435,12 +574,6 @@ ${iframeHTML}
 `;
 }
 
-const publicLocation = [
-canShow("area") ? data.area : "",
-canShow("address") ? data.address : "",
-canShow("pinCode") ? data.pinCode : ""
-].filter(Boolean).join(", ");
-
 const profileImage = data.photo || data.profilePic || data.logo || "https://via.placeholder.com/120";
 
 profile.innerHTML = `
@@ -468,7 +601,9 @@ ${showValue("establishedDate") ? `<p><b>Established Date:</b> ${esc(data.establi
 ${showValue("phone") ? `<p><b>Phone:</b> ${esc(data.phone)}</p>` : ""}
 ${showValue("alternatePhone") ? `<p><b>Alternate Phone:</b> ${esc(data.alternatePhone)}</p>` : ""}
 ${showValue("email") ? `<p><b>Email:</b> ${esc(data.email)}</p>` : ""}
-${publicLocation ? `<p><b>Location:</b> ${esc(publicLocation)}</p>` : ""}
+${showValue("address") ? `<p><b>State:</b> ${esc(data.address)}</p>` : ""}
+${showValue("area") ? `<p><b>Area / City or Town:</b> ${esc(data.area)}</p>` : ""}
+${showValue("pinCode") ? `<p><b>PIN Code:</b> ${esc(data.pinCode)}</p>` : ""}
 ${showValue("website") ? `<p><b>Website:</b> ${esc(data.website)}</p>` : ""}
 ${showValue("description") ? `<p><b>Description:</b> ${esc(data.description)}</p>` : ""}
 </div>
@@ -482,6 +617,20 @@ ${(
 data.showBankDetails !== false &&
 (data.qrImage || (data.accountHolderName && data.bankName && data.accountNumber))
 ) ? `<button class="payFee" onclick="showPaymentNotice()">Pay Fee</button>` : ""}
+</div>
+
+<div class="demoBox">
+<h3>Request Demo Class / Practice</h3>
+<p>Send one short demo class or practice request to this ${esc(type.toLowerCase())}. Your message will be visible to them for 15 days.</p>
+<div class="demoChat" id="demoChatBox">
+<input id="demoName" placeholder="Your Name">
+<input id="demoPhone" placeholder="Phone Number">
+<textarea id="demoMessage" placeholder="Write your demo class request"></textarea>
+<button class="demoSubmit" onclick="submitDemoRequest()">Send Demo Request</button>
+</div>
+<div class="demoSuccess" id="demoSuccessBox">
+Your request has been sent. Soon the teacher/institute will contact you.
+</div>
 </div>
 
 ${data.showBankDetails !== false ? `
@@ -540,7 +689,7 @@ count++;
 html+=`
 <div class="reviewItem">
 <b>${d.name}</b>
-<div>${"⭐".repeat(d.rating)}</div>
+<div>${"â­".repeat(d.rating)}</div>
 <p>${d.text}</p>
 </div>`;
 });
@@ -576,6 +725,60 @@ name,rating,text,time:Date.now()
 alert("Review submitted");
 document.getElementById("rname").value="";
 document.getElementById("rtext").value="";
+};
+
+window.submitDemoRequest = async function(){
+
+const name =
+document.getElementById("demoName").value.trim();
+
+const phone =
+document.getElementById("demoPhone").value.trim();
+
+const message =
+document.getElementById("demoMessage").value.trim();
+
+if(!name || !phone || !message){
+alert("Please enter name, phone number, and demo request message.");
+return;
+}
+
+const requestKey =
+phone.replace(/\D/g,"");
+
+if(requestKey.length < 6){
+alert("Please enter a valid phone number.");
+return;
+}
+
+try{
+
+await set(ref(db,`demoRequests/${id}/${requestKey}`),{
+profileId:id,
+profileType:type,
+name:name,
+phone:phone,
+message:message,
+status:"new",
+createdAt:Date.now(),
+expiresAt:Date.now() + (15 * 24 * 60 * 60 * 1000)
+});
+
+document.getElementById("demoChatBox").style.display = "none";
+document.getElementById("demoSuccessBox").style.display = "block";
+
+document.getElementById("demoName").value = "";
+document.getElementById("demoPhone").value = "";
+document.getElementById("demoMessage").value = "";
+
+}
+catch(err){
+console.error(err);
+alert("You have already sent a demo request. Soon the teacher/institute will contact you.");
+document.getElementById("demoChatBox").style.display = "none";
+document.getElementById("demoSuccessBox").style.display = "block";
+}
+
 };
 
 /* START */
@@ -667,13 +870,15 @@ load();
 
 </script>
 
-<a href="index.html" class="floatingBtn homeBtn">🏠</a>
+<a href="index.html" class="floatingBtn homeBtn">Home</a>
 
 <a
 href="javascript:history.back()"
 class="floatingBtn backBtn">
-⬅️
+â¬…ï¸
 </a>
 
 </body>
 </html>
+
+
