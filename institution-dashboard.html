@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0, viewport-fit=cover">
 
 <title>GURULINK Dashboard</title>
 
@@ -143,6 +142,31 @@ color:#1565c0;
 margin-bottom:10px;
 }
 
+@media(max-width:600px){
+.statsGrid{
+grid-template-columns:repeat(4,1fr);
+gap:6px;
+}
+
+.statCard{
+padding:10px 4px;
+border-radius:10px;
+min-width:0;
+}
+
+.statCard h2{
+font-size:22px;
+margin:0 0 4px;
+}
+
+.statCard p{
+font-size:10px;
+line-height:1.2;
+margin:0;
+word-break:normal;
+}
+}
+
 /* SECTION */
 
 .section{
@@ -158,12 +182,28 @@ font-size:22px;
 margin-bottom:15px;
 }
 
+.notifyBadge{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+min-width:26px;
+height:26px;
+padding:0 8px;
+margin-left:8px;
+background:#e53935;
+color:white;
+border-radius:999px;
+font-size:13px;
+font-weight:bold;
+vertical-align:middle;
+}
+
 /* BUTTONS */
 
-/* PC: 5 buttons in one row */
+/* PC: 6 buttons in one row */
 .mainBtns{
   display:grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap:10px;
 }
 
@@ -234,11 +274,31 @@ justify-content:space-between;
 align-items:center;
 margin-bottom:10px;
 flex-wrap:wrap;
+cursor:pointer;
+gap:8px;
 }
 
 .leadName{
 font-size:20px;
 font-weight:bold;
+}
+
+.leadHint{
+font-size:12px;
+color:#666;
+width:100%;
+margin-top:4px;
+}
+
+.leadDetails{
+display:none;
+border-top:1px solid #eef2f7;
+padding-top:10px;
+margin-top:10px;
+}
+
+.leadDetails.open{
+display:block;
 }
 
 .statusBadge{
@@ -347,10 +407,244 @@ background:#1e88e5;
 .callBtn:hover{
 background:#1565c0;
 }
+
+.messageBox{
+margin-top:12px;
+display:grid;
+grid-template-columns:1fr auto;
+gap:8px;
+}
+
+.messageBox input{
+padding:10px;
+border:1px solid #ccc;
+border-radius:8px;
+}
+
+.messageBtn{
+background:#6a1b9a;
+}
+
+.teacherChat{
+margin-top:12px;
+background:#f7f3ff;
+border:1px solid #e0d2f5;
+border-radius:10px;
+padding:10px;
+font-size:13px;
+line-height:1.4;
+}
+
+.teacherChatMsg{
+border-radius:8px;
+padding:8px;
+margin-bottom:8px;
+color:#333;
+border:1px solid transparent;
+max-width:92%;
+}
+
+.teacherChatMsg:last-child{
+margin-bottom:0;
+}
+
+.teacherChatMeta{
+display:block;
+font-size:11px;
+font-weight:bold;
+color:#6a1b9a;
+margin-bottom:3px;
+}
+
+.teacherChatMsg.studentMsg{
+background:#e3f2fd;
+border-color:#90caf9;
+margin-right:auto;
+color:#0d47a1;
+}
+
+.teacherChatMsg.providerMsg{
+background:#e8f5e9;
+border-color:#a5d6a7;
+margin-left:auto;
+color:#1b5e20;
+}
+
+.teacherChatMsg.systemMsg{
+background:#fff8e1;
+border-color:#ffe082;
+color:#6d4c41;
+max-width:100%;
+}
+
+.teacherChatHeader{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+margin-bottom:8px;
+}
+
+.clearChatBtn{
+background:#ef5350;
+color:white;
+border:none;
+border-radius:8px;
+padding:8px 10px;
+font-size:12px;
+cursor:pointer;
+}
+
+.enrollModal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:9999;
+padding:16px;
+}
+
+.enrollModal.show{
+display:flex;
+}
+
+.enrollCard{
+background:white;
+width:100%;
+max-width:430px;
+border-radius:16px;
+padding:20px;
+box-shadow:0 12px 35px rgba(0,0,0,.25);
+border-top:6px solid #43a047;
+}
+
+.enrollCard h2{
+margin:0 0 10px;
+color:#2e7d32;
+}
+
+.enrollCard p,
+.enrollCard li{
+font-size:14px;
+line-height:1.5;
+color:#333;
+}
+
+.enrollCard ul{
+padding-left:20px;
+margin:10px 0;
+}
+
+.enrollModalActions{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:15px;
+}
+
+.enrollModalActions button{
+border:none;
+border-radius:10px;
+padding:12px;
+color:white;
+cursor:pointer;
+font-weight:bold;
+}
+
+.enrollCallBtn{
+background:#1e88e5;
+}
+
+.enrollCloseBtn{
+background:#607d8b;
+}
+
+.demoRequestCard{
+background:white;
+border:1px solid #bbdefb;
+border-left:5px solid #1976d2;
+border-radius:12px;
+padding:14px;
+margin:10px 0;
+box-shadow:0 3px 10px rgba(0,0,0,.06);
+}
+
+.demoRequestTop{
+display:flex;
+justify-content:space-between;
+gap:10px;
+flex-wrap:wrap;
+cursor:pointer;
+}
+
+.demoRequestName{
+font-weight:bold;
+color:#1565c0;
+font-size:17px;
+}
+
+.demoRequestMsg{
+background:#f3f9ff;
+border:1px solid #d6e8ff;
+border-radius:10px;
+padding:10px;
+margin-top:8px;
+font-size:14px;
+line-height:1.5;
+}
+
+.demoRequestHint{
+font-size:12px;
+color:#666;
+width:100%;
+}
+
+.demoRequestDetails{
+display:none;
+border-top:1px solid #eef2f7;
+padding-top:10px;
+margin-top:10px;
+}
+
+.demoRequestDetails.open{
+display:block;
+}
+
+.demoRequestActions{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
+gap:8px;
+margin-top:10px;
+}
+
+.demoRequestActions button{
+border:none;
+border-radius:8px;
+padding:10px;
+color:white;
+cursor:pointer;
+}
+
+@media(max-width:480px){
+.enrollModalActions{
+grid-template-columns:1fr;
+}
+}
 .homeBtn{
 background:#673ab7;
 }
-/* 🔥 SHARE BUTTON (PUT HERE) */
+
+.invoiceBtn{
+background:#00897b;
+}
+
+.invoiceBtn:hover{
+background:#00695c;
+}
+
+/*  SHARE BUTTON (PUT HERE) */
 .shareBtn{
   background:linear-gradient(135deg,#00e5ff,#2962ff);
   border:3px solid #ffeb3b !important;
@@ -401,8 +695,63 @@ background:#673ab7;
     font-size: 14px;
     padding: 12px 8px;
   }
+
+  .bankRow{
+    gap:8px;
+    margin-bottom:12px;
+  }
+
+  .bankRow .section{
+    padding:10px;
+    border-radius:10px;
+  }
+
+  #bankSection .sectionTitle{
+    font-size:14px;
+    line-height:1.15;
+    margin-bottom:8px;
+  }
+
+  #bankSection p{
+    font-size:10px;
+    line-height:1.2;
+    margin:4px 0;
+    word-break:break-word;
+  }
+
+  #bankSection b{
+    font-size:10px;
+  }
+
+  #qrImage{
+    max-width:64px !important;
+    border-radius:6px !important;
+  }
+
+  .bankAdBox{
+    padding:8px;
+    border-radius:10px;
+    border-left-width:3px;
+  }
+
+  .bankAdBox h3{
+    font-size:12px;
+    margin:0 0 5px;
+  }
+
+  .bankAdBox p{
+    font-size:10px;
+    line-height:1.25;
+    margin:0;
+  }
 }
 </style>
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -434,7 +783,7 @@ Loading...
 <button
 class="renewBtn"
 onclick="renewProfile()">
-Renew ₹399
+Renew Rs.399
 </button>
 
 </div>
@@ -490,6 +839,11 @@ Loading...
 <p>Enrolled</p>
 </div>
 
+<div class="statCard">
+<h2 id="demoCount">0</h2>
+<p>Demo Requests</p>
+</div>
+
 </div>
 
 <div class="section">
@@ -503,23 +857,27 @@ Quick Actions
 <div class="mainBtns">
 
   <button class="editBtn" onclick="editProfile()">
-    ✏ Edit Profile
+    Edit Profile
   </button>
 
   <button class="supportBtn" onclick="contactDeveloper()">
-    🛠 Developer Support
+     Developer Support
   </button>
 
   <button class="homeBtn" onclick="goHome()">
-    🏠 Home
+     Home
+  </button>
+
+  <button class="invoiceBtn" onclick="createInvoice()">
+    Create Invoice
   </button>
 
   <button class="logoutBtn" onclick="logout()">
-    🚪 Logout
+     Logout
   </button>
 
   <button class="shareBtn full" onclick="shareProfile()">
-    📤 Share Business Card
+    Share Business Card
   </button>
 
 </div>
@@ -543,7 +901,7 @@ Quick Actions
 
   <!-- LEFT: BANK DETAILS -->
   <div class="section" id="bankSection">
-    <h2 class="sectionTitle">💳 Bank & Payment Details</h2>
+    <h2 class="sectionTitle"> Bank & Payment Details</h2>
 
     <p><b>Account Holder Name:</b>
       <span id="accountHolderName">-</span>
@@ -561,9 +919,9 @@ Quick Actions
 
   <!-- RIGHT: PRIVACY NOTICE -->
   <div class="bankAdBox">
-    <h3>⚠ Privacy Notice</h3>
+    <h3> Privacy Notice</h3>
     <p>
-      If you want or don’t want to share your bank details publicly,  
+      If you want or don't want to share your bank details publicly,  
       uncheck the option below the bank details in your Edit Profile page.
     </p>
   </div>
@@ -583,10 +941,31 @@ Quick Actions
 
 <!-- PART 2 WILL ADD LEADS HERE -->
 
+<div id="demoRequestsSection"></div>
+
 <div id="leadsSection"></div>
 
 </div>
 
+</div>
+
+<div class="enrollModal" id="enrollModal">
+<div class="enrollCard">
+<h2>Student Enrolled</h2>
+<p><b>Ask your student to register on GURULINK.</b></p>
+<p>If the student is not registered, they should sign up to unlock features like:</p>
+<ul>
+<li>Fee payments</li>
+<li>Chat and messages</li>
+<li>Link and resource sharing</li>
+<li>Website access</li>
+</ul>
+<p>This helps both of you stay connected and manage learning more efficiently.</p>
+<div class="enrollModalActions">
+<button class="enrollCallBtn" id="enrollCallBtn">Call Student</button>
+<button class="enrollCloseBtn" onclick="closeEnrollModal()">Close</button>
+</div>
+</div>
 </div>
 
 <script type="module">
@@ -605,7 +984,9 @@ ref,
 get,
 update,
 remove,
-onValue
+onValue,
+set,
+push
 }
 
 
@@ -683,6 +1064,7 @@ role === "teacher" || role === "teacher_institute"
   ? "teachers/" + profileId
   : "institutions/" + profileId;
 
+let currentProfileData = {};
 
 
 
@@ -740,6 +1122,7 @@ return;
 
 
 const d = snap.val();
+currentProfileData = d;
 /* BANK DETAILS */
 document.getElementById("accountHolderName").innerText =
 d.accountHolderName || "Not Added";
@@ -758,7 +1141,7 @@ if (d.qrImage) {
   document.getElementById("bankSectionWrapper").style.display = "none";
 }
 
-/* ✅ ADD LOGO CODE HERE */
+/*  ADD LOGO CODE HERE */
 const logoURL = d.logo || "default.png";
 const img = document.getElementById("profileLogo");
 
@@ -860,6 +1243,170 @@ loadProfile();
 
 
 
+function escapeHTML(value){
+return String(value ?? "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+}
+
+function renderEnrollmentMessages(studentId){
+
+const box =
+document.getElementById("chat_" + studentId);
+
+if(!box){
+return;
+}
+
+onValue(
+ref(db,`enrollmentChats/${studentId}/${profileId}`),
+(snap)=>{
+
+let messages = [];
+const clearedAt =
+Number(snap.child(`clearedFor/${profileId}`).val() || 0);
+
+const expiryTime =
+Date.now() - (7 * 24 * 60 * 60 * 1000);
+
+snap.child("messages").forEach(child=>{
+const msg = child.val();
+const msgTime = Number(msg.time || 0);
+
+if(msgTime && msgTime < expiryTime){
+remove(ref(db,`enrollmentChats/${studentId}/${profileId}/messages/${child.key}`));
+return;
+}
+
+if(msgTime > clearedAt){
+messages.push(msg);
+}
+});
+
+messages = messages
+.sort((a,b)=>(a.time || 0) - (b.time || 0))
+.slice(-5);
+
+if(!messages.length){
+box.innerHTML =
+`<div class="teacherChatMsg systemMsg">No messages yet.</div>`;
+return;
+}
+
+box.innerHTML =
+messages.map(msg=>`
+<div class="teacherChatMsg ${msg.senderRole === "student" ? "studentMsg" : "providerMsg"}">
+<span class="teacherChatMeta">${msg.senderRole === "student" ? "Student" : "You"} - ${msg.time ? new Date(msg.time).toLocaleString() : ""}</span>
+${escapeHTML(msg.text || "")}
+</div>
+`).join("");
+
+}
+);
+
+}
+
+async function syncEnrollmentDetails(studentId){
+await update(
+ref(db, `studentEnrollments/${studentId}/${profileId}`),
+{
+website:currentProfileData.website || "",
+showBankDetails:currentProfileData.showBankDetails !== false,
+accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
+bankName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.bankName || ""),
+accountNumber:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountNumber || ""),
+ifsc:currentProfileData.showBankDetails === false ? "" : (currentProfileData.ifsc || ""),
+upiId:currentProfileData.showBankDetails === false ? "" : (currentProfileData.upiId || ""),
+qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.qrImage || ""),
+updatedAt:Date.now()
+}
+);
+}
+
+function loadDemoRequests(){
+
+const box =
+document.getElementById("demoRequestsSection");
+
+if(!box){
+return;
+}
+
+onValue(
+ref(db,`demoRequests/${profileId}`),
+(snapshot)=>{
+
+let html = `
+<div class="section">
+<h2 class="sectionTitle">Demo Class Requests <span class="notifyBadge" id="demoNotifyBadge">0</span></h2>
+`;
+
+let count = 0;
+const nowTime = Date.now();
+
+snapshot.forEach(child=>{
+const request = child.val() || {};
+const requestId = child.key;
+const expiresAt =
+Number(request.expiresAt || 0);
+
+if(expiresAt && expiresAt < nowTime){
+remove(ref(db,`demoRequests/${profileId}/${requestId}`));
+return;
+}
+
+count++;
+
+const phone =
+String(request.phone || "").replace(/\D/g,"");
+
+html += `
+<div class="demoRequestCard">
+<div class="demoRequestTop" onclick="toggleDemoRequestDetails('${requestId}')">
+<div class="demoRequestName">${escapeHTML(request.name || "Student")}</div>
+<div>${request.createdAt ? new Date(request.createdAt).toLocaleString() : ""}</div>
+<div class="demoRequestHint">Click to view request</div>
+</div>
+<div class="demoRequestDetails" id="demoDetails_${requestId}">
+<div class="leadInfo">Phone: ${escapeHTML(request.phone || "-")}</div>
+<div class="demoRequestMsg">${escapeHTML(request.message || "")}</div>
+<div class="demoRequestActions">
+${phone ? `<button class="callBtn" onclick="callLead('${phone}')">Call Student</button>` : ""}
+${phone ? `<button class="whatsappBtn" onclick="contactWhatsApp('${phone}')">WhatsApp</button>` : ""}
+<button class="deleteBtn" onclick="deleteDemoRequest('${requestId}')">Delete</button>
+</div>
+</div>
+</div>
+`;
+
+});
+
+html += count ? "</div>" : "<p>No demo class request yet.</p></div>";
+
+box.innerHTML = html;
+
+const demoCountEl =
+document.getElementById("demoCount");
+
+if(demoCountEl){
+demoCountEl.innerText = count;
+}
+
+const demoNotifyBadge =
+document.getElementById("demoNotifyBadge");
+
+if(demoNotifyBadge){
+demoNotifyBadge.innerText = count;
+}
+
+}
+);
+
+}
+
 function loadLeads(){
 
 onValue(
@@ -873,131 +1420,93 @@ let html=`
 <div class="section">
 
 <h2 class="sectionTitle">
-Student Enquiries
+Student Enquiries <span class="notifyBadge">__PENDING_COUNT__</span>
 </h2>
 `;
 
 let total=0;
 let pending=0;
 let enrolled=0;
+let acceptedStudentIds=[];
 
 snapshot.forEach((child)=>{
 
 total++;
 
 const id=child.key;
-
 const lead=child.val();
+const status=lead.status || "pending";
+const isAccepted = status === "accepted";
+const leadRole=(lead.viewerRole || "").toLowerCase();
+const hasPhone=lead.phone && lead.phone.toString().trim();
+const cleanPhone=hasPhone ? lead.phone.toString().replace(/\D/g,"") : "";
+const leadType=lead.name || (hasPhone ? "Student" : (leadRole === "institution" ? "Institution" : "Teacher/Institution"));
 
-const status=
-lead.status || "pending";
-
-if(status==="enrolled"){
+if(status==="enrolled" || status==="accepted"){
 enrolled++;
 }else{
 pending++;
 }
 
+if(isAccepted){
+acceptedStudentIds.push(id);
+}
+
+if(status === "enrolled" || status === "accepted"){
+syncEnrollmentDetails(id);
+}
+
 html+=`
-
 <div class="leadCard">
-
-<div class="leadHeader">
-
-
-
-
-
-<div class="leadName">
-${
-  (lead.phone && lead.phone.toString().trim())
-    ? "Student"
-    : "Teacher/Institute"
-}
+<div class="leadHeader" onclick="toggleLeadDetails('${id}')">
+<div class="leadName">${leadType}</div>
+<div class="statusBadge ${status==="enrolled" || status==="accepted" ? "enrolledBadge" : "pendingBadge"}">${status.toUpperCase()}</div>
+<div class="leadHint">Click to view details</div>
 </div>
 
-
-
-
-
-<div class="statusBadge
-${status==="enrolled"
-?
-"enrolledBadge"
-:
-"pendingBadge"
-}">
-
-${status.toUpperCase()}
-
-</div>
-
-</div>
-
-<div class="leadInfo">
-📞 ${lead.phone || "N/A"}
-</div>
-
-<div class="leadInfo">
-📧 ${lead.email || "N/A"}
-</div>
-
-<div class="leadInfo">
-🕒 ${
-lead.time
-?
-new Date(
-lead.time
-).toLocaleString()
-:
-"N/A"
-}
-</div>
+<div class="leadDetails" id="leadDetails_${id}">
+<div class="leadInfo">Phone: ${hasPhone ? lead.phone : "Hidden / Not Available"}</div>
+<div class="leadInfo">Email: ${lead.email || "N/A"}</div>
+<div class="leadInfo">Viewed: ${lead.time ? new Date(lead.time).toLocaleString() : "N/A"}</div>
 
 <div class="leadActions">
-
-<button
-class="whatsappBtn"
-onclick="contactWhatsApp('${(lead.phone || "").replace(/\D/g,'')}')">
-WhatsApp
+${hasPhone ? `
+<button class="whatsappBtn" onclick="contactWhatsApp('${cleanPhone}')">WhatsApp</button>
+<button class="callBtn" onclick="callLead('${cleanPhone}')">Call</button>
+` : ""}
+<button class="${status === 'enrolled' ? 'pendingBtn' : 'enrollBtn'}" onclick="toggleStatus('${id}', '${status}', '${cleanPhone}')">
+${status === 'enrolled' || status === 'accepted' ? 'Mark Pending' : 'Mark Enrolled'}
 </button>
-
-<button
-class="callBtn"
-onclick="callLead('${(lead.phone || "").replace(/\D/g,'')}')">
-Call
-</button>
-
-
-
-<button
-class="${status === 'enrolled' ? 'pendingBtn' : 'enrollBtn'}"
-onclick="toggleStatus('${id}', '${status}')">
-
-${status === 'enrolled' ? 'Mark Pending' : 'Mark Enrolled'}
-
-</button>
-
-<button
-class="deleteBtn"
-onclick="deleteLead(
-'${id}'
-)">
-Delete
-</button>
-
+<button class="deleteBtn" onclick="deleteLead('${id}')">Delete</button>
 </div>
-
+${isAccepted ? `
+<div class="teacherChatHeader">
+<strong>Messages</strong>
+<button class="clearChatBtn" onclick="clearEnrollmentChat('${id}')">Clear Chat</button>
+</div>
+<div class="teacherChat" id="chat_${id}">
+Loading messages...
+</div>
+<div class="messageBox">
+<input id="msg_${id}" placeholder="Message to student">
+<button class="messageBtn" onclick="sendEnrollmentMessage('${id}')">Send</button>
+</div>
+` : ""}
+</div>
 </div>
 `;
 
 });
-
 html+="</div>";
+html = html.replace("__PENDING_COUNT__", pending);
 
 document.getElementById(
 "leadsSection"
 ).innerHTML=html;
+
+acceptedStudentIds.forEach(studentId=>{
+renderEnrollmentMessages(studentId);
+});
 
 document.getElementById(
 "totalViews"
@@ -1046,6 +1555,70 @@ status:status
 
 };
 
+window.toggleLeadDetails = function(leadId){
+
+const box =
+document.getElementById("leadDetails_" + leadId);
+
+if(!box){
+return;
+}
+
+const shouldOpen =
+!box.classList.contains("open");
+
+document
+.querySelectorAll(".leadDetails.open")
+.forEach(item=>{
+if(item !== box){
+item.classList.remove("open");
+}
+});
+
+document
+.querySelectorAll(".demoRequestDetails.open")
+.forEach(item=>{
+item.classList.remove("open");
+});
+
+if(shouldOpen){
+box.classList.add("open");
+}
+else{
+box.classList.toggle("open");
+}
+
+};
+
+window.toggleDemoRequestDetails = function(requestId){
+
+const box =
+document.getElementById("demoDetails_" + requestId);
+
+if(!box){
+return;
+}
+
+const shouldOpen =
+!box.classList.contains("open");
+
+document
+.querySelectorAll(".leadDetails.open, .demoRequestDetails.open")
+.forEach(item=>{
+if(item !== box){
+item.classList.remove("open");
+}
+});
+
+if(shouldOpen){
+box.classList.add("open");
+}
+else{
+box.classList.remove("open");
+}
+
+};
+
 
 
 
@@ -1078,6 +1651,17 @@ db,
 
 };
 
+window.deleteDemoRequest = async function(requestId){
+
+if(!confirm("Delete this demo request?")){
+return;
+}
+
+await remove(
+ref(db,`demoRequests/${profileId}/${requestId}`)
+);
+
+};
 
 
 
@@ -1091,6 +1675,8 @@ db,
 
 
 
+
+loadDemoRequests();
 loadLeads();
 
 
@@ -1103,6 +1689,35 @@ window.editProfile=function(){
 location.href=
 "edit-profile.html";
 
+};
+
+window.createInvoice = function () {
+  const id =
+    profileId ||
+    localStorage.getItem("profileId") ||
+    localStorage.getItem("teacherId") ||
+    localStorage.getItem("institutionId");
+
+  const type =
+    role ||
+    localStorage.getItem("role") ||
+    "teacher";
+
+  if (!id || id === "null" || id === "undefined") {
+    alert("Profile ID missing. Please login again.");
+    return;
+  }
+
+  localStorage.setItem("invoiceProfileId", id);
+  localStorage.setItem("invoiceRole", type);
+  sessionStorage.setItem("invoiceProfileId", id);
+  sessionStorage.setItem("invoiceRole", type);
+
+  location.href =
+    "invoice.html?id=" +
+    encodeURIComponent(id) +
+    "&type=" +
+    encodeURIComponent(type);
 };
 
 
@@ -1239,10 +1854,10 @@ window.contactWhatsApp = function(phone) {
 };
 
 
-window.toggleStatus = async function (leadId, currentStatus) {
+window.toggleStatus = async function (leadId, currentStatus, studentPhone = "") {
 
   const newStatus =
-    currentStatus === "enrolled" ? "pending" : "enrolled";
+    currentStatus === "enrolled" || currentStatus === "accepted" ? "pending" : "enrolled";
 
   await update(
     ref(db, `profileViews/${profileId}/${leadId}`),
@@ -1250,6 +1865,149 @@ window.toggleStatus = async function (leadId, currentStatus) {
       status: newStatus
     }
   );
+
+  if(newStatus === "enrolled"){
+    await set(
+      ref(db, `studentEnrollments/${leadId}/${profileId}`),
+      {
+        studentId:leadId,
+        profileId:profileId,
+        profileRole:role === "institution" ? "institution" : "teacher",
+        name:currentProfileData.name || "",
+        phone:currentProfileData.phone || "",
+        alternatePhone:currentProfileData.alternatePhone || "",
+        email:currentProfileData.email || "",
+        website:currentProfileData.website || "",
+        logo:currentProfileData.logo || currentProfileData.profilePic || "",
+        category:currentProfileData.category || "",
+        showBankDetails:currentProfileData.showBankDetails !== false,
+        accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
+        bankName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.bankName || ""),
+        accountNumber:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountNumber || ""),
+        ifsc:currentProfileData.showBankDetails === false ? "" : (currentProfileData.ifsc || ""),
+        upiId:currentProfileData.showBankDetails === false ? "" : (currentProfileData.upiId || ""),
+        qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.qrImage || ""),
+        status:"pending_student_acceptance",
+        requestedAt:Date.now(),
+        updatedAt:Date.now()
+      }
+    );
+  }
+  else{
+    await update(
+      ref(db, `studentEnrollments/${leadId}/${profileId}`),
+      {
+        status:"pending",
+        updatedAt:Date.now()
+      }
+    );
+  }
+
+  if(newStatus === "enrolled"){
+    showEnrollModal(studentPhone);
+  }
+
+};
+
+window.sendEnrollmentMessage = async function(studentId){
+
+const input =
+document.getElementById("msg_" + studentId);
+
+const text =
+(input?.value || "").trim();
+
+if(!text){
+alert("Type a message first.");
+return;
+}
+
+await push(
+ref(db, `enrollmentChats/${studentId}/${profileId}/messages`),
+{
+senderId:profileId,
+senderRole:role === "institution" ? "institution" : "teacher",
+senderName:currentProfileData.name || "Teacher / Institution",
+text:text,
+time:Date.now()
+}
+);
+
+await update(
+ref(db, `studentEnrollments/${studentId}/${profileId}`),
+{
+lastMessage:text,
+lastMessageAt:Date.now(),
+unreadForStudent:true,
+website:currentProfileData.website || "",
+showBankDetails:currentProfileData.showBankDetails !== false,
+accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
+bankName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.bankName || ""),
+accountNumber:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountNumber || ""),
+ifsc:currentProfileData.showBankDetails === false ? "" : (currentProfileData.ifsc || ""),
+upiId:currentProfileData.showBankDetails === false ? "" : (currentProfileData.upiId || ""),
+qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.qrImage || "")
+}
+);
+
+input.value = "";
+alert("Message sent to student.");
+
+};
+
+window.clearEnrollmentChat = async function(studentId){
+
+if(!confirm("Clear this chat from your side only?")){
+return;
+}
+
+await update(ref(db,`enrollmentChats/${studentId}/${profileId}/clearedFor`),{
+[profileId]:Date.now()
+});
+
+await update(
+ref(db, `studentEnrollments/${studentId}/${profileId}`),
+{
+lastMessageAt:Date.now(),
+unreadForStudent:false
+}
+);
+
+};
+
+window.showEnrollModal = function(studentPhone){
+
+const modal =
+document.getElementById("enrollModal");
+
+const callBtn =
+document.getElementById("enrollCallBtn");
+
+if(callBtn){
+callBtn.onclick = function(){
+if(studentPhone){
+location.href = "tel:" + studentPhone;
+}
+else{
+alert("Student phone number is not available.");
+}
+};
+}
+
+if(modal){
+modal.classList.add("show");
+}
+
+};
+
+window.closeEnrollModal = function(){
+
+const modal =
+document.getElementById("enrollModal");
+
+if(modal){
+modal.classList.remove("show");
+}
 
 };
 
@@ -1305,3 +2063,4 @@ profileId;
 
 </body>
 </html>
+
