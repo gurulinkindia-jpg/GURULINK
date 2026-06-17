@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover">
 
 <title>Skill Profile - GURULINK</title>
 
@@ -127,6 +127,12 @@ border-radius:15px;
 }
 
 </style>
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -244,6 +250,7 @@ const db = getDatabase(app);
 
 let teachers = [];
 let institutions = [];
+let ratingMap = {};
 
 /* LOAD TEACHERS */
 onValue(ref(db, "teachers"), (snap) => {
@@ -295,6 +302,36 @@ onValue(ref(db, "institutions"), (snap) => {
   render();
 });
 
+onValue(ref(db, "reviews"), (snap) => {
+  ratingMap = {};
+
+  snap.forEach((typeSnap) => {
+    const collection = typeSnap.key;
+
+    typeSnap.forEach((profileSnap) => {
+      let total = 0;
+      let count = 0;
+
+      profileSnap.forEach((reviewSnap) => {
+        const rating = Number(reviewSnap.val()?.rating || 0);
+        if (rating > 0) {
+          total += rating;
+          count++;
+        }
+      });
+
+      if (count) {
+        ratingMap[collection + "/" + profileSnap.key] = {
+          avg: total / count,
+          count
+        };
+      }
+    });
+  });
+
+  render();
+});
+
 /* COMBINE */
 function getAll() {
   return [...teachers, ...institutions];
@@ -303,6 +340,23 @@ function getAll() {
 /* SEARCH HELP */
 function similar(a, b) {
   return (a || "").toLowerCase().includes((b || "").toLowerCase());
+}
+
+function ratingInfo(profile) {
+  const collection = profile.type === "Institution" ? "institutions" : "teachers";
+  return ratingMap[collection + "/" + profile.id] || { avg: 0, count: 0 };
+}
+
+function sortByRating(list) {
+  return [...list].sort((a, b) => {
+    const ar = ratingInfo(a);
+    const br = ratingInfo(b);
+
+    if (br.avg !== ar.avg) return br.avg - ar.avg;
+    if (br.count !== ar.count) return br.count - ar.count;
+
+    return (a.name || "").localeCompare(b.name || "");
+  });
 }
 
 /* SUBJECT MATCH */
@@ -440,9 +494,11 @@ function render() {
     return true;
   });
 
+  const sorted = sortByRating(filtered);
+
   const grid = document.getElementById("grid");
 
-  if (!filtered.length) {
+  if (!sorted.length) {
     grid.innerHTML = `
       <div class="empty">
         No Skill Profiles Found
@@ -451,7 +507,7 @@ function render() {
     return;
   }
 
-  grid.innerHTML = filtered.map((x) => `
+  grid.innerHTML = sorted.map((x) => `
 
     <div class="card ${x.type.toLowerCase()}">
 
@@ -471,8 +527,8 @@ function render() {
          <div class="badge verify">
   ${
     x.status === "approved"
-      ? "✅ Verified"
-      : "❌ Not Verified"
+      ? "Verified"
+      : "Not Verified"
   }
 </div>
 
@@ -527,3 +583,5 @@ ${x.establishedDate
 </body>
 </html>
 ```
+
+
