@@ -336,20 +336,16 @@ async function savePayment() {
 
     loader.style.display = "none";
     msg.innerHTML =
-      '<span class="success">Payment successful!</span>';
+      '<span class="success">Payment successful! Redirecting...</span>';
 
     setTimeout(() => {
-      alert(
-        "Payment Successful!\n\n" +
-        "Your profile will be public after Admin/Developer approval.\n\n" +
-        "Approval may take 24 to 48 hours.\n\n" +
-        "For any query call: 9706380357"
-      );
-
       window.location.href =
-        "profile-view.html?id=" + encodeURIComponent(id);
+        "registration-success.html?type=" +
+        encodeURIComponent(finalType) +
+        "&id=" +
+        encodeURIComponent(id);
 
-    }, 1500);
+    }, 1800);
 
   } catch (err) {
     console.log(err);
