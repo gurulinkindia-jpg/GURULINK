@@ -35,6 +35,10 @@ flex:1 1 100%;
 min-width:0;
 }
 
+.headerInfo h2{
+margin:0;
+}
+
 .topRatingCard{
 display:flex;
 flex-direction:column;
@@ -67,6 +71,20 @@ font-size:22px;
 color:#fbc02d;
 letter-spacing:1px;
 line-height:1;
+}
+
+.topMeta{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:4px;
+margin-top:8px;
+}
+
+.topMeta .badge{
+margin:0;
+font-size:11px;
+padding:4px 8px;
 }
 
 .mainPhoto{
@@ -174,7 +192,7 @@ background:white;
 border:1px solid #d9e3f5;
 border-radius:12px;
 padding:10px 12px;
-font-size:14px;
+font-size:13px;
 line-height:1.5;
 color:#222;
 word-break:break-word;
@@ -667,6 +685,17 @@ if(!text) return "";
 return /year/i.test(text) ? esc(text) : `${esc(text)} years`;
 }
 
+function getCategoryLabel(){
+const raw = String(data.categoryName || data.category || "").trim();
+if(!raw) return "";
+const normalized = raw.toLowerCase();
+if(normalized === "skill") return "Professional Skill";
+if(normalized === "sport") return "Sports & Fitness";
+if(normalized === "creative") return "Arts & Creativity";
+if(normalized === "academic") return "Academic";
+return esc(raw);
+}
+
 const subjects = Array.isArray(data.subjects) ? data.subjects : [];
 const teachingModes = Array.isArray(data.teachingModes) ? data.teachingModes : [];
 const youtubeLink =
@@ -676,6 +705,7 @@ const youtubeLink =
   (canShow("youtubeUrl") && data.youtubeUrl) ||
   "";
 const websiteLink = showValue("website") ? externalUrl(data.website) : "";
+const categoryLabel = canShow("categoryName") ? getCategoryLabel() : "";
 const addressParts = [];
 
 if(showValue("address")) addressParts.push(`<div><b>State:</b> ${esc(data.address)}</div>`);
@@ -790,14 +820,14 @@ ${canShow("logo") ? `<img class="mainPhoto" src="${esc(profileImage)}">` : ""}
 <div class="topRatingText" id="topRatingText">Rating: 0.0 stars</div>
 <div class="topStars" id="topStars">☆☆☆☆☆</div>
 </div>
+<div class="topMeta">
+<span class="badge">${esc(type)}</span>
+${categoryLabel ? `<span class="badge">${categoryLabel}</span>` : ""}
+</div>
 </div>
 
 <div class="headerInfo">
 ${canShow("name") ? `<h2>${esc(data.name || "-")}</h2>` : `<h2>GURULINK Profile</h2>`}
-<div>
-<span class="badge">${esc(type)}</span>
-${canShow("categoryName") ? `<span class="badge">${esc(data.categoryName || data.category || "-")}</span>` : ""}
-</div>
 </div>
 
 <div class="section">
