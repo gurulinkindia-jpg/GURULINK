@@ -61,14 +61,13 @@ margin:5px 3px;
 
 .actions{
 margin-top:15px;
-display:flex;
+display:grid;
+grid-template-columns:repeat(3,minmax(0,1fr));
 gap:8px;
-flex-wrap:nowrap;
 }
 
 .actions a,
 .actions button{
-flex:1;
 padding:10px 5px;
 border-radius:10px;
 text-decoration:none;
@@ -89,11 +88,17 @@ font-size:12px;
 padding:10px 3px;
 }
 
+.actions{
+grid-template-columns:repeat(3,minmax(0,1fr));
+}
+
 }
 
 .call{background:#4caf50}
 .whatsapp{background:#009688}
+.emailBtn{background:#3949ab}
 .website{background:#1565c0}
+.youtubeBtn{background:#d32f2f}
 
 
 
@@ -149,20 +154,52 @@ padding:4px 8px;
 text-align:center;
 }
 
-.addressBlock{
-margin-top:10px;
+.infoStack{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.infoGrid{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:10px;
+}
+
+.infoBlock{
 padding:12px;
 background:white;
 border:1px solid #d9e3f5;
 border-radius:12px;
 line-height:1.6;
+min-width:0;
 }
 
-.addressLines{
+.infoTitle{
+font-size:13px;
+font-weight:bold;
+color:#1e3a66;
+margin-bottom:6px;
+}
+
+.infoValue{
+font-size:14px;
+line-height:1.6;
+color:#222;
+word-break:break-word;
+}
+
+.infoLines{
 margin-top:6px;
 display:flex;
 flex-direction:column;
 gap:4px;
+}
+
+@media(max-width:640px){
+.infoGrid{
+grid-template-columns:1fr;
+}
 }
 
 .detailsDescription{
@@ -595,6 +632,18 @@ function esc(value){
 return String(value ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
 }
 
+function externalUrl(value){
+const text = String(value ?? "").trim();
+if(!text) return "";
+return /^https?:\/\//i.test(text) ? text : `https://${text}`;
+}
+
+function formatExperience(value){
+const text = String(value ?? "").trim();
+if(!text) return "";
+return /year/i.test(text) ? esc(text) : `${esc(text)} years`;
+}
+
 function getCategoryLabel(){
 const raw = String(data.categoryName || data.category || "").trim();
 if(!raw) return "";
@@ -610,6 +659,15 @@ const subjects = Array.isArray(data.subjects) ? data.subjects : [];
 const teachingModes = Array.isArray(data.teachingModes) ? data.teachingModes : [];
 const addressLines = [];
 const categoryLabel = canShow("categoryName") ? getCategoryLabel() : "";
+const websiteLink = showValue("website") ? externalUrl(data.website) : "";
+const youtubeRaw =
+  (canShow("youtube") && data.youtube) ||
+  (canShow("youtubeLink") && data.youtubeLink) ||
+  (canShow("youtubeChannel") && data.youtubeChannel) ||
+  (canShow("youtubeUrl") && data.youtubeUrl) ||
+  data.youtubeChanel ||
+  "";
+const youtubeLink = youtubeRaw ? externalUrl(youtubeRaw) : "";
 
 if(showValue("address")) addressLines.push(`<div><b>State:</b> ${esc(data.address)}</div>`);
 if(showValue("area")) addressLines.push(`<div><b>Area / City or Town:</b> ${esc(data.area)}</div>`);
@@ -622,6 +680,24 @@ if(showValue("superGroupFee")) modes.push(`Super Group - Rs ${esc(data.superGrou
 if(showValue("onlineFee")) modes.push(`Online - Rs ${esc(data.onlineFee)}`);
 if(showValue("individualFee")) modes.push(`Individual / Personal - Rs ${esc(data.individualFee)}`);
 if(showValue("otherMode") || showValue("otherModeFee")) modes.push(`${esc(data.otherMode || "Other Mode")} ${data.otherModeFee ? "- Rs " + esc(data.otherModeFee) : ""}`);
+const subjectText =
+canShow("subjects") ? (subjects.map(esc).join(", ") || "-") : "";
+const modeText =
+modes.length
+? modes.join("<br>")
+: (canShow("teachingModes") && teachingModes.length ? teachingModes.map(esc).join(", ") : "");
+const classText =
+showValue("class") ? esc(data.class) : "";
+const experienceText =
+showValue("experience") ? formatExperience(data.experience) : "";
+const qualificationText =
+showValue("qualification") ? esc(data.qualification) : "";
+const boardText =
+showValue("board") ? esc(data.board) : "";
+const ownerText =
+showValue("ownerName") ? esc(data.ownerName) : "";
+const establishedText =
+showValue("establishedDate") ? esc(data.establishedDate) : "";
 
 let galleryHTML = "";
 let gallery = data.gallery || [];
@@ -697,31 +773,73 @@ ${canShow("name") ? `<h2>${esc(data.name || "-")}</h2>` : `<h2>GURULINK Profile<
 </div>
 
 <div class="section">
-${canShow("subjects") ? `<p><b>Subjects / Skills / Activities:</b> ${subjects.map(esc).join(", ") || "-"}</p>` : ""}
-${canShow("teachingModes") && teachingModes.length ? `<p><b>Teaching / Training Modes:</b> ${teachingModes.map(esc).join(", ")}</p>` : ""}
-${showValue("class") ? `<p><b>Class / Preparation For:</b> ${esc(data.class)}</p>` : ""}
-${showValue("board") ? `<p><b>Board / Type of Exam:</b> ${esc(data.board)}</p>` : ""}
-${showValue("qualification") ? `<p><b>Qualification:</b> ${esc(data.qualification)}</p>` : ""}
-${showValue("experience") ? `<p><b>Experience:</b> ${esc(data.experience)}</p>` : ""}
-${showValue("ownerName") ? `<p><b>Owner / Director:</b> ${esc(data.ownerName)}</p>` : ""}
-${showValue("establishedDate") ? `<p><b>Established Date:</b> ${esc(data.establishedDate)}</p>` : ""}
-${showValue("phone") ? `<p><b>Phone:</b> ${esc(data.phone)}</p>` : ""}
-${showValue("alternatePhone") ? `<p><b>Alternate Phone:</b> ${esc(data.alternatePhone)}</p>` : ""}
-${showValue("email") ? `<p><b>Email:</b> ${esc(data.email)}</p>` : ""}
-${addressLines.length ? `
-<div class="addressBlock">
-<b>Address:</b>
-<div class="addressLines">${addressLines.join("")}</div>
+<div class="infoStack">
+${subjectText ? `
+<div class="infoBlock">
+<div class="infoTitle">Subjects / Skills / Activities</div>
+<div class="infoValue">${subjectText}</div>
 </div>
 ` : ""}
-${showValue("website") ? `<p><b>Website:</b> ${esc(data.website)}</p>` : ""}
+${modeText ? `
+<div class="infoBlock">
+<div class="infoTitle">Teaching / Training Modes</div>
+<div class="infoValue">${modeText}</div>
+</div>
+` : ""}
+<div class="infoGrid">
+${classText ? `
+<div class="infoBlock">
+<div class="infoTitle">Class / Preparation For</div>
+<div class="infoValue">${classText}</div>
+</div>
+` : ""}
+${boardText ? `
+<div class="infoBlock">
+<div class="infoTitle">Board / Type of Exam</div>
+<div class="infoValue">${boardText}</div>
+</div>
+` : ""}
+${experienceText ? `
+<div class="infoBlock">
+<div class="infoTitle">Experience</div>
+<div class="infoValue">${experienceText}</div>
+</div>
+` : ""}
+${qualificationText ? `
+<div class="infoBlock">
+<div class="infoTitle">Qualification</div>
+<div class="infoValue">${qualificationText}</div>
+</div>
+` : ""}
+${ownerText ? `
+<div class="infoBlock">
+<div class="infoTitle">Owner / Director</div>
+<div class="infoValue">${ownerText}</div>
+</div>
+` : ""}
+${establishedText ? `
+<div class="infoBlock">
+<div class="infoTitle">Established Date</div>
+<div class="infoValue">${establishedText}</div>
+</div>
+` : ""}
+</div>
+${addressLines.length ? `
+<div class="infoBlock">
+<div class="infoTitle">Address</div>
+<div class="infoLines">${addressLines.join("")}</div>
+</div>
+` : ""}
+</div>
 </div>
 
 <div class="actions">
 ${showValue("phone") ? `<a class="call" href="tel:${esc(data.phone)}">Call</a>` : ""}
 ${showValue("phone") ? `<a class="whatsapp" target="_blank" href="https://wa.me/${esc(data.phone)}">WhatsApp</a>` : ""}
+${showValue("email") ? `<a class="emailBtn" href="mailto:${esc(data.email)}">Email</a>` : ""}
 ${showValue("phone") || showValue("email") ? `<button class="saveContact" onclick="saveContact()">Save Contact</button>` : ""}
-${showValue("website") ? `<a class="website" target="_blank" href="${esc(data.website)}">Website</a>` : ""}
+${websiteLink ? `<a class="website" target="_blank" href="${esc(websiteLink)}">Website</a>` : ""}
+${youtubeLink ? `<a class="youtubeBtn" target="_blank" href="${esc(youtubeLink)}">YouTube</a>` : ""}
 ${(
 data.showBankDetails !== false &&
 (data.qrImage || (data.accountHolderName && data.bankName && data.accountNumber))
