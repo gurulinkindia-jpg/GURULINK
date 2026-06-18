@@ -30,6 +30,32 @@ align-items:center;
 flex-wrap:wrap;
 }
 
+.headerInfo{
+flex:1;
+min-width:220px;
+}
+
+.topRating{
+display:flex;
+align-items:center;
+gap:10px;
+margin-top:8px;
+flex-wrap:wrap;
+}
+
+.topRatingText{
+font-size:13px;
+color:#d32f2f;
+font-weight:bold;
+}
+
+.topStars{
+font-size:22px;
+color:#fbc02d;
+letter-spacing:1px;
+line-height:1;
+}
+
 .mainPhoto{
 width:120px;
 height:120px;
@@ -50,14 +76,13 @@ margin:5px 3px;
 
 .actions{
 margin-top:15px;
-display:flex;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
 gap:8px;
-flex-wrap:wrap;
 }
 
 .actions a,
 .actions button{
-flex:1 1 130px;
 padding:10px 5px;
 border-radius:10px;
 text-decoration:none;
@@ -76,7 +101,10 @@ margin:0;
 .actions button{
 font-size:12px;
 padding:10px 6px;
-flex:1 1 calc(50% - 8px);
+}
+
+.actions{
+grid-template-columns:repeat(2,minmax(0,1fr));
 }
 
 }
@@ -608,6 +636,11 @@ const youtubeLink =
   (canShow("youtubeUrl") && data.youtubeUrl) ||
   "";
 const websiteLink = showValue("website") ? externalUrl(data.website) : "";
+const addressParts = [];
+
+if(showValue("address")) addressParts.push(`<div><b>State:</b> ${esc(data.address)}</div>`);
+if(showValue("area")) addressParts.push(`<div><b>Area / City or Town:</b> ${esc(data.area)}</div>`);
+if(showValue("pinCode")) addressParts.push(`<div><b>PIN Code:</b> ${esc(data.pinCode)}</div>`);
 
 const modes = [];
 if(showValue("homeFee")) modes.push(`Home Tuition - Rs ${esc(data.homeFee)}`);
@@ -642,9 +675,7 @@ pushDetail("Experience", showValue("experience") ? esc(data.experience) : "");
 pushDetail("Qualification", showValue("qualification") ? esc(data.qualification) : "");
 pushDetail("Owner / Director", showValue("ownerName") ? esc(data.ownerName) : "");
 pushDetail("Established Date", showValue("establishedDate") ? esc(data.establishedDate) : "");
-pushDetail("State", showValue("address") ? esc(data.address) : "");
-pushDetail("Area / City or Town", showValue("area") ? esc(data.area) : "");
-pushDetail("PIN Code", showValue("pinCode") ? esc(data.pinCode) : "");
+pushDetail("Address", addressParts.join(""));
 
 let galleryHTML = "";
 let gallery = data.gallery || [];
@@ -693,11 +724,15 @@ profile.innerHTML = `
 <div class="header">
 ${canShow("logo") ? `<img class="mainPhoto" src="${esc(profileImage)}">` : ""}
 
-<div>
+<div class="headerInfo">
 ${canShow("name") ? `<h2>${esc(data.name || "-")}</h2>` : `<h2>GURULINK Profile</h2>`}
 <div>
 <span class="badge">${esc(type)}</span>
 ${canShow("categoryName") ? `<span class="badge">${esc(data.categoryName || data.category || "-")}</span>` : ""}
+</div>
+<div class="topRating">
+<div class="topRatingText" id="topRatingText">Rating: 0.0 stars</div>
+<div class="topStars" id="topStars">☆☆☆☆☆</div>
 </div>
 </div>
 </div>
@@ -804,6 +839,21 @@ html+=`
 
 document.getElementById("avgRating").innerText =
 count ? (total/count).toFixed(1) : "0.0";
+
+const avgValue = count ? (total/count).toFixed(1) : "0.0";
+const roundedStars = Math.round(Number(avgValue));
+const starLine = "★".repeat(roundedStars) + "☆".repeat(5-roundedStars);
+
+const topRatingText = document.getElementById("topRatingText");
+const topStars = document.getElementById("topStars");
+
+if(topRatingText){
+topRatingText.innerText = `Rating: ${avgValue} stars`;
+}
+
+if(topStars){
+topStars.innerText = starLine;
+}
 
 document.getElementById("totalReviews").innerText =
 count + " Reviews";
