@@ -18,73 +18,16 @@ margin:0;
 max-width:900px;
 margin:auto;
 background:white;
-padding:16px;
+padding:20px;
 border-radius:15px;
 box-shadow:0 10px 25px rgba(0,0,0,0.1);
 }
 
 .header{
 display:flex;
-gap:10px;
+gap:15px;
 align-items:center;
 flex-wrap:wrap;
-}
-
-.headerInfo{
-flex:1 1 100%;
-min-width:0;
-}
-
-.headerInfo h2{
-margin:0;
-}
-
-.topRatingCard{
-display:flex;
-flex-direction:column;
-justify-content:center;
-min-width:126px;
-padding:10px 12px;
-background:white;
-border:1px solid #d9e3f5;
-border-radius:12px;
-box-shadow:0 2px 8px rgba(0,0,0,.05);
-}
-
-.topRating{
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:5px;
-width:100%;
-}
-
-.topRatingText{
-font-size:13px;
-color:#d32f2f;
-font-weight:bold;
-white-space:nowrap;
-}
-
-.topStars{
-font-size:22px;
-color:#fbc02d;
-letter-spacing:1px;
-line-height:1;
-}
-
-.topMeta{
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:4px;
-margin-top:8px;
-}
-
-.topMeta .badge{
-margin:0;
-font-size:11px;
-padding:4px 8px;
 }
 
 .mainPhoto{
@@ -107,13 +50,14 @@ margin:5px 3px;
 
 .actions{
 margin-top:15px;
-display:grid;
-grid-template-columns:repeat(3,minmax(0,1fr));
+display:flex;
 gap:8px;
+flex-wrap:nowrap;
 }
 
 .actions a,
 .actions button{
+flex:1;
 padding:10px 5px;
 border-radius:10px;
 text-decoration:none;
@@ -131,20 +75,14 @@ margin:0;
 .actions a,
 .actions button{
 font-size:12px;
-padding:10px 6px;
-}
-
-.actions{
-grid-template-columns:repeat(3,minmax(0,1fr));
+padding:10px 3px;
 }
 
 }
 
 .call{background:#4caf50}
 .whatsapp{background:#009688}
-.emailBtn{background:#3949ab}
 .website{background:#1565c0}
-.youtubeBtn{background:#d32f2f}
 
 
 
@@ -157,83 +95,10 @@ background:#ff5722;
 
 
 .section{
-margin-top:14px;
-padding:12px;
+margin-top:20px;
+padding:15px;
 background:#f9f9ff;
 border-radius:12px;
-}
-
-.section h3{
-margin:0 0 10px;
-color:#0f2d5c;
-}
-
-.detailsSection{
-background:linear-gradient(180deg,#f9fbff 0%,#f2f7ff 100%);
-}
-
-.detailGrid{
-display:grid;
-grid-template-columns:repeat(2,minmax(0,1fr));
-gap:10px;
-}
-
-.detailCard{
-background:white;
-border:1px solid #d9e3f5;
-border-radius:14px;
-padding:12px 14px;
-min-width:0;
-box-shadow:0 2px 10px rgba(18,48,90,.04);
-}
-
-.detailCard.wide{
-grid-column:1 / -1;
-}
-
-.detailTitle{
-font-size:12px;
-font-weight:bold;
-color:#31507f;
-margin-bottom:6px;
-}
-
-.detailBody{
-font-size:14px;
-line-height:1.6;
-color:#222;
-word-break:break-word;
-}
-
-.detailBodyRows{
-display:flex;
-flex-direction:column;
-gap:4px;
-}
-
-.detailBody a{
-color:#1565c0;
-text-decoration:none;
-font-weight:bold;
-}
-
-.detailsDescription{
-padding:12px;
-background:white;
-border:1px solid #d9e3f5;
-border-radius:12px;
-line-height:1.6;
-word-break:break-word;
-}
-
-@media(max-width:760px){
-.detailGrid{
-grid-template-columns:1fr;
-}
-
-.detailCard.wide{
-grid-column:auto;
-}
 }
 
 .reviewItem{
@@ -248,15 +113,9 @@ box-shadow:0 2px 8px rgba(0,0,0,.05);
 .gallery{
 display:flex;
 overflow-x:auto;
-gap:12px;
+gap:15px;
 padding:10px 0;
 scroll-behavior:smooth;
-scroll-snap-type:x mandatory;
-scrollbar-width:none;
-}
-
-.gallery::-webkit-scrollbar{
-display:none;
 }
 
 .gallery img{
@@ -267,7 +126,6 @@ border-radius:15px;
 object-fit:cover;
 box-shadow:0 5px 15px rgba(0,0,0,.15);
 cursor:pointer;
-scroll-snap-align:center;
 }
 
 .modeBox{
@@ -340,63 +198,36 @@ padding:50px;
 }
 
 /* FLOATING BUTTONS */
-.floatingActionStack{
+.floatingBtn{
 position:fixed;
 right:20px;
-display:flex;
-flex-direction:column;
-gap:8px;
-z-index:9999;
-bottom:20px;
-padding:10px;
-background:rgba(255,255,255,.96);
-border:1px solid #d9e3f5;
-border-radius:18px;
-box-shadow:0 8px 22px rgba(0,0,0,.16);
-backdrop-filter:blur(10px);
-}
-
-.floatingBtn{
-min-width:120px;
-padding:10px 14px;
-border-radius:14px;
+width:55px;
+height:55px;
+border-radius:50%;
 display:flex;
 justify-content:center;
 align-items:center;
 color:white;
-font-size:14px;
-font-weight:bold;
+font-size:20px;
 text-decoration:none;
 box-shadow:0 5px 15px rgba(0,0,0,0.2);
+z-index:9999;
 }
 
 .homeBtn{
+bottom:20px;
 background:#1976d2;
 }
 
-.dashboardBtn{
-background:#7b1fa2;
-}
-
 .backBtn{
+bottom:90px;
 background:#4caf50;
 }
 
+/* Hide Back button on mobile */
 @media(max-width:768px){
-.floatingActionStack{
-right:12px;
-left:12px;
-bottom:12px;
-flex-direction:row;
-gap:8px;
-padding:8px;
-}
-
-.floatingBtn{
-min-width:0;
-flex:1;
-padding:10px 8px;
-font-size:13px;
+.backBtn{
+display:none;
 }
 }
 
@@ -522,7 +353,6 @@ const id = new URLSearchParams(location.search).get("id");
 
 let data = null;
 let type = "";
-let galleryCarouselTimer = null;
 
 function getAuthUser(){
 return new Promise((resolve)=>{
@@ -692,44 +522,8 @@ function esc(value){
 return String(value ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
 }
 
-function externalUrl(value){
-const text = String(value ?? "").trim();
-if(!text) return "";
-return /^https?:\/\//i.test(text) ? text : `https://${text}`;
-}
-
-function formatExperience(value){
-const text = String(value ?? "").trim();
-if(!text) return "";
-return /year/i.test(text) ? esc(text) : `${esc(text)} years`;
-}
-
-function getCategoryLabel(){
-const raw = String(data.categoryName || data.category || "").trim();
-if(!raw) return "";
-const normalized = raw.toLowerCase();
-if(normalized === "skill") return "Professional Skill";
-if(normalized === "sport") return "Sports & Fitness";
-if(normalized === "creative") return "Arts & Creativity";
-if(normalized === "academic") return "Academic";
-return esc(raw);
-}
-
 const subjects = Array.isArray(data.subjects) ? data.subjects : [];
 const teachingModes = Array.isArray(data.teachingModes) ? data.teachingModes : [];
-const youtubeLink =
-  (canShow("youtube") && data.youtube) ||
-  (canShow("youtubeLink") && data.youtubeLink) ||
-  (canShow("youtubeChannel") && data.youtubeChannel) ||
-  (canShow("youtubeUrl") && data.youtubeUrl) ||
-  "";
-const websiteLink = showValue("website") ? externalUrl(data.website) : "";
-const categoryLabel = canShow("categoryName") ? getCategoryLabel() : "";
-const addressParts = [];
-
-if(showValue("address")) addressParts.push(`<div><b>State:</b> ${esc(data.address)}</div>`);
-if(showValue("area")) addressParts.push(`<div><b>Area / City or Town:</b> ${esc(data.area)}</div>`);
-if(showValue("pinCode")) addressParts.push(`<div><b>PIN Code:</b> ${esc(data.pinCode)}</div>`);
 
 const modes = [];
 if(showValue("homeFee")) modes.push(`Home Tuition - Rs ${esc(data.homeFee)}`);
@@ -738,44 +532,6 @@ if(showValue("superGroupFee")) modes.push(`Super Group - Rs ${esc(data.superGrou
 if(showValue("onlineFee")) modes.push(`Online - Rs ${esc(data.onlineFee)}`);
 if(showValue("individualFee")) modes.push(`Individual / Personal - Rs ${esc(data.individualFee)}`);
 if(showValue("otherMode") || showValue("otherModeFee")) modes.push(`${esc(data.otherMode || "Other Mode")} ${data.otherModeFee ? "- Rs " + esc(data.otherModeFee) : ""}`);
-
-const detailCards = [];
-
-function pushCard(label, value, wide = false){
-if(!value) return;
-detailCards.push(`
-<div class="detailCard${wide ? " wide" : ""}">
-<div class="detailTitle">${label}</div>
-<div class="detailBody">${value}</div>
-</div>
-`);
-}
-
-pushCard(
-"Subjects / Skills / Activities",
-canShow("subjects") ? (subjects.map(esc).join(", ") || "-") : "",
-true
-);
-
-pushCard(
-"Teaching / Training Modes",
-modes.length
-? modes.join("<br>")
-: (canShow("teachingModes") && teachingModes.length ? teachingModes.map(esc).join(", ") : ""),
-true
-);
-
-pushCard("Class / Preparation For", showValue("class") ? esc(data.class) : "");
-pushCard("Board / Type of Exam", showValue("board") ? esc(data.board) : "");
-pushCard("Experience", showValue("experience") ? formatExperience(data.experience) : "");
-pushCard("Qualification", showValue("qualification") ? esc(data.qualification) : "");
-pushCard("Owner / Director", showValue("ownerName") ? esc(data.ownerName) : "");
-pushCard("Established Date", showValue("establishedDate") ? esc(data.establishedDate) : "");
-pushCard(
-"Address",
-addressParts.length ? `<div class="detailBodyRows">${addressParts.join("")}</div>` : "",
-true
-);
 
 let galleryHTML = "";
 let gallery = data.gallery || [];
@@ -796,42 +552,6 @@ ${gallery.map(img => `<img src="${esc(img)}" onclick="window.open('${esc(img)}',
 </div>
 `;
 }
-
-function initGalleryCarousel(){
-if(galleryCarouselTimer){
-clearInterval(galleryCarouselTimer);
-galleryCarouselTimer = null;
-}
-
-const galleryBox = document.querySelector(".gallery");
-
-if(!galleryBox) return;
-
-const images = Array.from(galleryBox.querySelectorAll("img"));
-
-if(images.length <= 1) return;
-
-let currentIndex = 0;
-
-galleryCarouselTimer = setInterval(()=>{
-currentIndex = (currentIndex + 1) % images.length;
-
-galleryBox.scrollTo({
-left: images[currentIndex].offsetLeft - 12,
-behavior: "smooth"
-});
-}, 2600);
-}
-
-const descriptionHTML =
-showValue("description")
-? `
-<div class="section">
-<h3>Description</h3>
-<div class="detailsDescription">${esc(data.description)}</div>
-</div>
-`
-: "";
 
 let mapHTML = "";
 
@@ -860,40 +580,39 @@ profile.innerHTML = `
 <div class="header">
 ${canShow("logo") ? `<img class="mainPhoto" src="${esc(profileImage)}">` : ""}
 
-<div class="topRatingCard">
-<div class="topRating">
-<div class="topRatingText" id="topRatingText">Rating: 0.0 stars</div>
-<div class="topStars" id="topStars">☆☆☆☆☆</div>
-</div>
-<div class="topMeta">
-<span class="badge">${esc(type)}</span>
-${categoryLabel ? `<span class="badge">${categoryLabel}</span>` : ""}
-</div>
-</div>
-
-<div class="headerInfo">
+<div>
 ${canShow("name") ? `<h2>${esc(data.name || "-")}</h2>` : `<h2>GURULINK Profile</h2>`}
+<div>
+<span class="badge">${esc(type)}</span>
+${canShow("categoryName") ? `<span class="badge">${esc(data.categoryName || data.category || "-")}</span>` : ""}
+</div>
+</div>
 </div>
 
-<div class="section detailsSection">
-<h3>Profile Details</h3>
-<div class="detailGrid">
-${detailCards.join("") || `
-<div class="detailCard wide">
-<div class="detailTitle">Details</div>
-<div class="detailBody">Not available</div>
-</div>
-`}
-</div>
+<div class="section">
+${canShow("subjects") ? `<p><b>Subjects / Skills / Activities:</b> ${subjects.map(esc).join(", ") || "-"}</p>` : ""}
+${canShow("teachingModes") && teachingModes.length ? `<p><b>Teaching / Training Modes:</b> ${teachingModes.map(esc).join(", ")}</p>` : ""}
+${showValue("class") ? `<p><b>Class / Preparation For:</b> ${esc(data.class)}</p>` : ""}
+${showValue("board") ? `<p><b>Board / Type of Exam:</b> ${esc(data.board)}</p>` : ""}
+${showValue("qualification") ? `<p><b>Qualification:</b> ${esc(data.qualification)}</p>` : ""}
+${showValue("experience") ? `<p><b>Experience:</b> ${esc(data.experience)}</p>` : ""}
+${showValue("ownerName") ? `<p><b>Owner / Director:</b> ${esc(data.ownerName)}</p>` : ""}
+${showValue("establishedDate") ? `<p><b>Established Date:</b> ${esc(data.establishedDate)}</p>` : ""}
+${showValue("phone") ? `<p><b>Phone:</b> ${esc(data.phone)}</p>` : ""}
+${showValue("alternatePhone") ? `<p><b>Alternate Phone:</b> ${esc(data.alternatePhone)}</p>` : ""}
+${showValue("email") ? `<p><b>Email:</b> ${esc(data.email)}</p>` : ""}
+${showValue("address") ? `<p><b>State:</b> ${esc(data.address)}</p>` : ""}
+${showValue("area") ? `<p><b>Area / City or Town:</b> ${esc(data.area)}</p>` : ""}
+${showValue("pinCode") ? `<p><b>PIN Code:</b> ${esc(data.pinCode)}</p>` : ""}
+${showValue("website") ? `<p><b>Website:</b> ${esc(data.website)}</p>` : ""}
+${showValue("description") ? `<p><b>Description:</b> ${esc(data.description)}</p>` : ""}
 </div>
 
 <div class="actions">
 ${showValue("phone") ? `<a class="call" href="tel:${esc(data.phone)}">Call</a>` : ""}
 ${showValue("phone") ? `<a class="whatsapp" target="_blank" href="https://wa.me/${esc(data.phone)}">WhatsApp</a>` : ""}
-${showValue("email") ? `<a class="emailBtn" href="mailto:${esc(data.email)}">Email</a>` : ""}
 ${showValue("phone") || showValue("email") ? `<button class="saveContact" onclick="saveContact()">Save Contact</button>` : ""}
-${websiteLink ? `<a class="website" target="_blank" href="${esc(websiteLink)}">Website</a>` : ""}
-${youtubeLink ? `<a class="youtubeBtn" target="_blank" href="${esc(externalUrl(youtubeLink))}">YouTube</a>` : ""}
+${showValue("website") ? `<a class="website" target="_blank" href="${esc(data.website)}">Website</a>` : ""}
 ${(
 data.showBankDetails !== false &&
 (data.qrImage || (data.accountHolderName && data.bankName && data.accountNumber))
@@ -928,7 +647,7 @@ ${data.qrImage ? `<img src="${esc(data.qrImage)}" class="bankQr" alt="QR Code">`
 
 ${mapHTML}
 ${galleryHTML}
-${descriptionHTML}
+${modes.length ? `<div class="section"><h3>Fees</h3>${modes.map(m=>`<div class="modeBox">${m}</div>`).join("")}</div>` : ""}
 
 <div class="section">
 <div class="ratingCard">
@@ -954,8 +673,6 @@ ${descriptionHTML}
 <div id="reviews">No Reviews Yet</div>
 </div>
 `;
-
-initGalleryCarousel();
 }
 /* REVIEWS */
 function loadReviews(){
@@ -979,21 +696,6 @@ html+=`
 
 document.getElementById("avgRating").innerText =
 count ? (total/count).toFixed(1) : "0.0";
-
-const avgValue = count ? (total/count).toFixed(1) : "0.0";
-const roundedStars = Math.round(Number(avgValue));
-const starLine = "★".repeat(roundedStars) + "☆".repeat(5-roundedStars);
-
-const topRatingText = document.getElementById("topRatingText");
-const topStars = document.getElementById("topStars");
-
-if(topRatingText){
-topRatingText.innerText = `Rating: ${avgValue} stars`;
-}
-
-if(topStars){
-topStars.innerText = starLine;
-}
 
 document.getElementById("totalReviews").innerText =
 count + " Reviews";
@@ -1166,36 +868,16 @@ URL.revokeObjectURL(url);
 
 load();
 
-window.goDashboard = function(){
-const role = (localStorage.getItem("role") || "").toLowerCase();
-
-if(role === "teacher" || role === "institution"){
-location.href = "teacher-dashboard.html";
-return;
-}
-
-if(role === "student" || role === "parent"){
-location.href = "student-dashboard.html";
-return;
-}
-
-if(role === "admin"){
-location.href = "admin.html";
-return;
-}
-
-location.href = "otp-login.html";
-};
-
 </script>
 
-<div class="floatingActionStack">
 <a href="index.html" class="floatingBtn homeBtn">Home</a>
-<a href="javascript:goDashboard()" class="floatingBtn dashboardBtn">Dashboard</a>
-<a href="javascript:history.back()" class="floatingBtn backBtn">Back</a>
-</div>
+
+<a
+href="javascript:history.back()"
+class="floatingBtn backBtn">
+â¬…ï¸
+</a>
 
 </body>
 </html>
-
 
