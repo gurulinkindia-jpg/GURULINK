@@ -278,11 +278,41 @@ const profileId =
   localStorage.getItem("institutionId") ||
   "";
 
-let role = roleFromQuery || roleFromStorage || "teacher";
-if (role === "teacher_institute") role = "teacher";
+function normalizeRole(value) {
+  const raw = String(value || "").trim().toLowerCase();
+
+  if (!raw) return "";
+  if (raw === "teacher") return "teacher";
+  if (raw === "teacher_institute") return "";
+  if (raw.includes("institution") || raw.includes("institute")) {
+    return "institution";
+  }
+
+  return "";
+}
+
+let role =
+  normalizeRole(roleFromQuery) ||
+  normalizeRole(roleFromStorage) ||
+  (profileId && profileId === localStorage.getItem("institutionId")
+    ? "institution"
+    : "") ||
+  (profileId && profileId === sessionStorage.getItem("institutionId")
+    ? "institution"
+    : "") ||
+  (profileId && profileId === localStorage.getItem("teacherId")
+    ? "teacher"
+    : "") ||
+  (profileId && profileId === sessionStorage.getItem("teacherId")
+    ? "teacher"
+    : "");
 
 document.getElementById("userRole").textContent =
-  role === "institution" ? "Institution" : "Teacher";
+  role === "institution"
+    ? "Institution"
+    : role === "teacher"
+      ? "Teacher"
+      : "Teacher / Institution";
 
 document.getElementById("webDashboardBtn").href = WEBSITE_DASHBOARD;
 
@@ -309,20 +339,45 @@ async function loadProfile() {
     return;
   }
 
-  const profilePath =
-    role === "institution"
-      ? "institutions/" + profileId
-      : "teachers/" + profileId;
-
   try {
-    const snap = await get(ref(db, profilePath));
+    const profileCandidates =
+      role === "institution"
+        ? [
+            { path: "institutions/" + profileId, role: "institution" },
+            { path: "teachers/" + profileId, role: "teacher" }
+          ]
+        : role === "teacher"
+          ? [
+              { path: "teachers/" + profileId, role: "teacher" },
+              { path: "institutions/" + profileId, role: "institution" }
+            ]
+          : [
+              { path: "institutions/" + profileId, role: "institution" },
+              { path: "teachers/" + profileId, role: "teacher" }
+            ];
 
-    if (!snap.exists()) {
+    let snap = null;
+    let resolvedRole = role;
+
+    for (const candidate of profileCandidates) {
+      const candidateSnap = await get(ref(db, candidate.path));
+      if (candidateSnap.exists()) {
+        snap = candidateSnap;
+        resolvedRole = candidate.role;
+        break;
+      }
+    }
+
+    if (!snap) {
       document.getElementById("userName").textContent = "Not found";
       document.getElementById("userEmail").textContent = "-";
       document.getElementById("userPhone").textContent = "-";
       return;
     }
+
+    role = resolvedRole;
+    document.getElementById("userRole").textContent =
+      role === "institution" ? "Institution" : "Teacher";
 
     const data = snap.val() || {};
 
