@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Registration Successful - GURULINK</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef2f7;
+color:#222;
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+
+.card{
+width:100%;
+max-width:660px;
+background:white;
+border-radius:18px;
+padding:28px 22px;
+box-shadow:0 10px 28px rgba(0,0,0,.12);
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:12px;
+margin-bottom:20px;
+}
+
+.brand img{
+width:52px;
+height:52px;
+object-fit:contain;
+}
+
+.brandText{
+font-size:28px;
+font-weight:bold;
+line-height:1;
+}
+
+.brandText span:first-child{
+color:#1976d2;
+}
+
+.brandText span:last-child{
+color:#43a047;
+}
+
+.statusRow{
+display:flex;
+align-items:center;
+gap:14px;
+margin-bottom:18px;
+}
+
+.tick{
+width:64px;
+height:64px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:34px;
+background:#e8f5e9;
+color:#2e7d32;
+font-weight:bold;
+flex-shrink:0;
+}
+
+h1{
+font-size:28px;
+color:#1565c0;
+margin-bottom:6px;
+}
+
+.subText{
+font-size:15px;
+line-height:1.75;
+color:#444;
+}
+
+.infoBox{
+margin-top:20px;
+padding:14px;
+background:#f6f9ff;
+border:1px solid #dce8ff;
+border-radius:14px;
+}
+
+.infoBox h3{
+font-size:16px;
+color:#0f2d5c;
+margin-bottom:10px;
+}
+
+.infoLine{
+font-size:14px;
+line-height:1.8;
+word-break:break-word;
+}
+
+.buttonGrid{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:10px;
+margin-top:22px;
+}
+
+.actionBtn{
+display:flex;
+align-items:center;
+justify-content:center;
+min-height:46px;
+padding:12px 14px;
+border:none;
+border-radius:12px;
+text-decoration:none;
+font-size:14px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.appBtn{
+background:#1565c0;
+color:white;
+}
+
+.webBtn{
+background:#43a047;
+color:white;
+}
+
+.homeBtn{
+background:#f3f6fb;
+color:#0f2d5c;
+border:1px solid #d9e3f5;
+}
+
+.helpBtn{
+background:#fff3e0;
+color:#e65100;
+border:1px solid #ffcc80;
+}
+
+.note{
+margin-top:18px;
+font-size:13px;
+line-height:1.7;
+color:#666;
+}
+
+@media(max-width:640px){
+body{
+padding:12px;
+}
+
+.card{
+padding:22px 16px;
+border-radius:16px;
+}
+
+.brandText{
+font-size:22px;
+}
+
+.statusRow{
+align-items:flex-start;
+}
+
+h1{
+font-size:24px;
+}
+
+.buttonGrid{
+grid-template-columns:1fr;
+}
+}
+</style>
+
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
+</head>
+
+<body>
+
+<div class="card">
+  <div class="brand">
+    <img src="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png" alt="GURULINK">
+    <div class="brandText"><span>GURU</span><span>LINK</span></div>
+  </div>
+
+  <div class="statusRow">
+    <div class="tick">OK</div>
+    <div>
+      <h1>Registration Successful</h1>
+      <div class="subText">
+        Your registration is successful, but your profile is not public yet.
+        It will become public after admin approval.
+        Approval may take 24 to 48 hours depending on verification traffic.
+      </div>
+    </div>
+  </div>
+
+  <div class="infoBox">
+    <h3>Profile Details</h3>
+    <div class="infoLine"><b>Name:</b> <span id="userName">Loading...</span></div>
+    <div class="infoLine"><b>Email:</b> <span id="userEmail">Loading...</span></div>
+    <div class="infoLine"><b>Phone:</b> <span id="userPhone">Loading...</span></div>
+    <div class="infoLine"><b>Role:</b> <span id="userRole">Loading...</span></div>
+  </div>
+
+  <div class="buttonGrid">
+    <button class="actionBtn appBtn" id="openAppProfileBtn" type="button">View Your Profile in App</button>
+    <a class="actionBtn webBtn" id="webProfileBtn" href="profile-view.html">View Your Profile on Website</a>
+    <a class="actionBtn homeBtn" href="index.html">Home Page</a>
+    <a class="actionBtn helpBtn" href="helpdesk.html">Helpdesk</a>
+  </div>
+
+  <div class="note">
+    If the Android app is installed, use <b>View Your Profile in App</b>. If you are continuing in Chrome or another browser, use <b>View Your Profile on Website</b>.
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const APP_PACKAGE = "com.gurulinkindia.gurulink";
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const params = new URLSearchParams(location.search);
+
+const roleFromQuery = String(params.get("type") || "").trim().toLowerCase();
+const idFromQuery = String(params.get("id") || "").trim();
+
+const roleFromStorage = String(
+  localStorage.getItem("role") ||
+  sessionStorage.getItem("role") ||
+  localStorage.getItem("paymentType") ||
+  sessionStorage.getItem("paymentType") ||
+  ""
+).trim().toLowerCase();
+
+const profileId =
+  idFromQuery ||
+  localStorage.getItem("paymentProfileId") ||
+  sessionStorage.getItem("paymentProfileId") ||
+  localStorage.getItem("profileId") ||
+  localStorage.getItem("teacherId") ||
+  localStorage.getItem("institutionId") ||
+  "";
+
+function normalizeRole(value) {
+  const raw = String(value || "").trim().toLowerCase();
+
+  if (!raw) return "";
+  if (raw === "teacher") return "teacher";
+  if (raw === "teacher_institute") return "";
+  if (raw.includes("institution") || raw.includes("institute")) {
+    return "institution";
+  }
+
+  return "";
+}
+
+let role =
+  normalizeRole(roleFromQuery) ||
+  normalizeRole(roleFromStorage) ||
+  (profileId && profileId === localStorage.getItem("institutionId")
+    ? "institution"
+    : "") ||
+  (profileId && profileId === sessionStorage.getItem("institutionId")
+    ? "institution"
+    : "") ||
+  (profileId && profileId === localStorage.getItem("teacherId")
+    ? "teacher"
+    : "") ||
+  (profileId && profileId === sessionStorage.getItem("teacherId")
+    ? "teacher"
+    : "");
+
+document.getElementById("userRole").textContent =
+  role === "institution"
+    ? "Institution"
+    : role === "teacher"
+      ? "Teacher"
+      : "Teacher / Institution";
+
+const websiteProfilePath =
+  "profile-view.html?id=" + encodeURIComponent(profileId);
+
+document.getElementById("webProfileBtn").href = websiteProfilePath;
+
+document.getElementById("openAppProfileBtn").addEventListener("click", () => {
+  const intentUrl =
+    "intent://www.gurulink.co.in/" +
+    websiteProfilePath +
+    "#Intent;scheme=https;package=" +
+    APP_PACKAGE +
+    ";end";
+
+  window.location.href = intentUrl;
+
+  setTimeout(() => {
+    window.location.href = websiteProfilePath;
+  }, 1600);
+});
+
+async function loadProfile() {
+  if (!profileId) {
+    document.getElementById("userName").textContent = "Not found";
+    document.getElementById("userEmail").textContent = "-";
+    document.getElementById("userPhone").textContent = "-";
+    return;
+  }
+
+  try {
+    const profileCandidates =
+      role === "institution"
+        ? [
+            { path: "institutions/" + profileId, role: "institution" },
+            { path: "teachers/" + profileId, role: "teacher" }
+          ]
+        : role === "teacher"
+          ? [
+              { path: "teachers/" + profileId, role: "teacher" },
+              { path: "institutions/" + profileId, role: "institution" }
+            ]
+          : [
+              { path: "institutions/" + profileId, role: "institution" },
+              { path: "teachers/" + profileId, role: "teacher" }
+            ];
+
+    let snap = null;
+    let resolvedRole = role;
+
+    for (const candidate of profileCandidates) {
+      const candidateSnap = await get(ref(db, candidate.path));
+      if (candidateSnap.exists()) {
+        snap = candidateSnap;
+        resolvedRole = candidate.role;
+        break;
+      }
+    }
+
+    if (!snap) {
+      document.getElementById("userName").textContent = "Not found";
+      document.getElementById("userEmail").textContent = "-";
+      document.getElementById("userPhone").textContent = "-";
+      return;
+    }
+
+    role = resolvedRole;
+    document.getElementById("userRole").textContent =
+      role === "institution" ? "Institution" : "Teacher";
+
+    const data = snap.val() || {};
+
+    document.getElementById("userName").textContent =
+      data.name || data.ownerName || "-";
+    document.getElementById("userEmail").textContent =
+      data.email || "-";
+    document.getElementById("userPhone").textContent =
+      data.phone || "-";
+  } catch (err) {
+    console.log(err);
+    document.getElementById("userName").textContent = "Not found";
+    document.getElementById("userEmail").textContent = "-";
+    document.getElementById("userPhone").textContent = "-";
+  }
+}
+
+loadProfile();
+</script>
+
+</body>
+</html>
