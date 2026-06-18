@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0, viewport-fit=cover">
 
 <title>Edit Profile</title>
 
@@ -157,6 +157,9 @@ font-size:18px;
 <link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 <link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 <link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -276,6 +279,8 @@ onAuthStateChanged
 from
 "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+
 const firebaseConfig={
 
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -289,7 +294,7 @@ databaseURL:
 projectId:"gurulink-59cc7",
 
 storageBucket:
-"gurulink-59cc7.appspot.com",
+"gurulink-59cc7.firebasestorage.app",
 
 messagingSenderId:
 "112148672399",
@@ -308,8 +313,8 @@ getDatabase(app);
 const auth =
 getAuth(app);
 
-const API_KEY =
-"31f729ff855eb2e42c00ee508a8647ea";
+const storage =
+getStorage(app);
 
 const params =
 new URLSearchParams(location.search);
@@ -485,26 +490,18 @@ return visibility[key] !== false;
 return isVisibleByDefault(key);
 }
 
-async function uploadImage(file){
-
-const fd = new FormData();
-
-fd.append("image",file);
-
-const res =
-await fetch(
-`https://api.imgbb.com/1/upload?key=${API_KEY}`,
-{
-method:"POST",
-body:fd
+function makeStorageFileName(file){
+const originalName = (file && file.name ? file.name : "image").replace(/[^a-zA-Z0-9._-]/g,"_");
+return Date.now() + "-" + Math.random().toString(36).slice(2,8) + "-" + originalName;
 }
-);
 
-const data =
-await res.json();
-
-return data.data.url;
-
+async function uploadImage(file, folder){
+const storageRoot = role === "teacher" ? "teachers" : "institutions";
+const fileRef = storageRef(storage, storageRoot + "/" + profileId + "/" + folder + "/" + makeStorageFileName(file));
+await uploadBytes(fileRef, file, {
+contentType: file.type || "application/octet-stream"
+});
+return await getDownloadURL(fileRef);
 }
 
 function createField(key,value){
@@ -818,7 +815,8 @@ saveBtn.innerText=
 
 const logoUrl =
 await uploadImage(
-logoFile
+logoFile,
+"logo"
 );
 
 updateData.logo =
@@ -857,7 +855,7 @@ const newGalleryUrls=[];
 for(const file of galleryFiles){
 
 const url =
-await uploadImage(file);
+await uploadImage(file,"gallery");
 
 newGalleryUrls.push(url);
 
@@ -944,3 +942,6 @@ location.href=
 
 </body>
 </html>
+
+
+
