@@ -175,6 +175,13 @@ line-height:1.6;
 min-width:0;
 }
 
+.infoBlock.compact{
+display:flex;
+flex-wrap:wrap;
+align-items:baseline;
+gap:6px;
+}
+
 .infoTitle{
 font-size:13px;
 font-weight:bold;
@@ -187,6 +194,16 @@ font-size:14px;
 line-height:1.6;
 color:#222;
 word-break:break-word;
+}
+
+.infoBlock.compact .infoTitle{
+margin-bottom:0;
+white-space:nowrap;
+}
+
+.infoBlock.compact .infoValue{
+flex:1 1 140px;
+min-width:0;
 }
 
 .infoLines{
@@ -788,37 +805,37 @@ ${modeText ? `
 ` : ""}
 <div class="infoGrid">
 ${classText ? `
-<div class="infoBlock">
+<div class="infoBlock compact">
 <div class="infoTitle">Class / Preparation For</div>
 <div class="infoValue">${classText}</div>
 </div>
 ` : ""}
 ${boardText ? `
-<div class="infoBlock">
+<div class="infoBlock compact">
 <div class="infoTitle">Board / Type of Exam</div>
 <div class="infoValue">${boardText}</div>
 </div>
 ` : ""}
 ${experienceText ? `
-<div class="infoBlock">
+<div class="infoBlock compact">
 <div class="infoTitle">Experience</div>
 <div class="infoValue">${experienceText}</div>
 </div>
 ` : ""}
 ${qualificationText ? `
-<div class="infoBlock">
+<div class="infoBlock compact">
 <div class="infoTitle">Qualification</div>
 <div class="infoValue">${qualificationText}</div>
 </div>
 ` : ""}
 ${ownerText ? `
-<div class="infoBlock">
+<div class="infoBlock compact">
 <div class="infoTitle">Owner / Director</div>
 <div class="infoValue">${ownerText}</div>
 </div>
 ` : ""}
 ${establishedText ? `
-<div class="infoBlock">
+<div class="infoBlock compact">
 <div class="infoTitle">Established Date</div>
 <div class="infoValue">${establishedText}</div>
 </div>
