@@ -10,7 +10,7 @@
 body{
 font-family:Arial;
 background:#f5f7ff;
-padding:20px 20px 120px;
+padding:20px 20px 130px;
 margin:0;
 }
 
@@ -328,7 +328,7 @@ padding:50px;
 .floatingNav{
 position:fixed;
 right:16px;
-bottom:16px;
+bottom:calc(env(safe-area-inset-bottom, 0px) + 16px);
 display:flex;
 flex-direction:column;
 gap:10px;
@@ -378,13 +378,13 @@ background:#4caf50;
 
 @media(max-width:768px){
 body{
-padding:12px 12px 98px;
+padding:12px 12px 150px;
 }
 
 .floatingNav{
 left:12px;
 right:12px;
-bottom:12px;
+bottom:calc(env(safe-area-inset-bottom, 0px) + 54px);
 flex-direction:row;
 gap:8px;
 padding:7px;
