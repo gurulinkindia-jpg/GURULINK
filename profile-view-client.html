@@ -18,35 +18,48 @@ margin:0;
 max-width:900px;
 margin:auto;
 background:white;
-padding:20px;
+padding:16px;
 border-radius:15px;
 box-shadow:0 10px 25px rgba(0,0,0,0.1);
 }
 
 .header{
 display:flex;
-gap:15px;
+gap:10px;
 align-items:center;
 flex-wrap:wrap;
 }
 
 .headerInfo{
-flex:1;
-min-width:220px;
+flex:1 1 100%;
+min-width:0;
+}
+
+.topRatingCard{
+display:flex;
+flex-direction:column;
+justify-content:center;
+min-width:126px;
+padding:10px 12px;
+background:white;
+border:1px solid #d9e3f5;
+border-radius:12px;
+box-shadow:0 2px 8px rgba(0,0,0,.05);
 }
 
 .topRating{
 display:flex;
+flex-direction:column;
 align-items:center;
-gap:10px;
-margin-top:8px;
-flex-wrap:wrap;
+gap:5px;
+width:100%;
 }
 
 .topRatingText{
 font-size:13px;
 color:#d32f2f;
 font-weight:bold;
+white-space:nowrap;
 }
 
 .topStars{
@@ -126,28 +139,49 @@ background:#ff5722;
 
 
 .section{
-margin-top:20px;
-padding:15px;
+margin-top:14px;
+padding:12px;
 background:#f9f9ff;
 border-radius:12px;
 }
 
 .section h3{
-margin:0 0 12px;
+margin:0 0 10px;
 color:#0f2d5c;
 }
 
 .detailList{
 display:flex;
 flex-direction:column;
-gap:12px;
+gap:8px;
 }
 
 .detailItem{
 background:white;
 border:1px solid #d9e3f5;
 border-radius:12px;
-padding:12px 14px;
+padding:10px 12px;
+}
+
+.detailInlineRow{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:8px;
+}
+
+.detailInlineItem{
+background:white;
+border:1px solid #d9e3f5;
+border-radius:12px;
+padding:10px 12px;
+font-size:14px;
+line-height:1.5;
+color:#222;
+word-break:break-word;
+}
+
+.detailInlineItem b{
+color:#1e3a66;
 }
 
 .detailLabel{
@@ -627,6 +661,12 @@ if(!text) return "";
 return /^https?:\/\//i.test(text) ? text : `https://${text}`;
 }
 
+function formatExperience(value){
+const text = String(value ?? "").trim();
+if(!text) return "";
+return /year/i.test(text) ? esc(text) : `${esc(text)} years`;
+}
+
 const subjects = Array.isArray(data.subjects) ? data.subjects : [];
 const teachingModes = Array.isArray(data.teachingModes) ? data.teachingModes : [];
 const youtubeLink =
@@ -651,6 +691,7 @@ if(showValue("individualFee")) modes.push(`Individual / Personal - Rs ${esc(data
 if(showValue("otherMode") || showValue("otherModeFee")) modes.push(`${esc(data.otherMode || "Other Mode")} ${data.otherModeFee ? "- Rs " + esc(data.otherModeFee) : ""}`);
 
 const detailBlocks = [];
+const compactInlineDetails = [];
 
 function pushDetail(label, value){
 if(!value) return;
@@ -659,6 +700,13 @@ detailBlocks.push(`
 <div class="detailLabel">${label}</div>
 <div class="detailValue">${value}</div>
 </div>
+`);
+}
+
+function pushInlineDetail(label, value){
+if(!value) return;
+compactInlineDetails.push(`
+<div class="detailInlineItem"><b>${label}:</b> ${value}</div>
 `);
 }
 
@@ -671,8 +719,11 @@ modes.length
 );
 pushDetail("Class / Preparation For", showValue("class") ? esc(data.class) : "");
 pushDetail("Board / Type of Exam", showValue("board") ? esc(data.board) : "");
-pushDetail("Experience", showValue("experience") ? esc(data.experience) : "");
-pushDetail("Qualification", showValue("qualification") ? esc(data.qualification) : "");
+pushInlineDetail("Experience", showValue("experience") ? formatExperience(data.experience) : "");
+pushInlineDetail("Qualification", showValue("qualification") ? esc(data.qualification) : "");
+if(compactInlineDetails.length){
+detailBlocks.push(`<div class="detailInlineRow">${compactInlineDetails.join("")}</div>`);
+}
 pushDetail("Owner / Director", showValue("ownerName") ? esc(data.ownerName) : "");
 pushDetail("Established Date", showValue("establishedDate") ? esc(data.establishedDate) : "");
 pushDetail("Address", addressParts.join(""));
@@ -696,6 +747,16 @@ ${gallery.map(img => `<img src="${esc(img)}" onclick="window.open('${esc(img)}',
 </div>
 `;
 }
+
+const descriptionHTML =
+showValue("description")
+? `
+<div class="section">
+<h3>Description</h3>
+<div class="detailsDescription">${esc(data.description)}</div>
+</div>
+`
+: "";
 
 let mapHTML = "";
 
@@ -724,16 +785,18 @@ profile.innerHTML = `
 <div class="header">
 ${canShow("logo") ? `<img class="mainPhoto" src="${esc(profileImage)}">` : ""}
 
+<div class="topRatingCard">
+<div class="topRating">
+<div class="topRatingText" id="topRatingText">Rating: 0.0 stars</div>
+<div class="topStars" id="topStars">☆☆☆☆☆</div>
+</div>
+</div>
+
 <div class="headerInfo">
 ${canShow("name") ? `<h2>${esc(data.name || "-")}</h2>` : `<h2>GURULINK Profile</h2>`}
 <div>
 <span class="badge">${esc(type)}</span>
 ${canShow("categoryName") ? `<span class="badge">${esc(data.categoryName || data.category || "-")}</span>` : ""}
-</div>
-<div class="topRating">
-<div class="topRatingText" id="topRatingText">Rating: 0.0 stars</div>
-<div class="topStars" id="topStars">☆☆☆☆☆</div>
-</div>
 </div>
 </div>
 
@@ -747,7 +810,6 @@ ${detailBlocks.join("") || `
 </div>
 `}
 </div>
-${showValue("description") ? `<div class="detailsDescription"><b>Description:</b><br>${esc(data.description)}</div>` : ""}
 </div>
 
 <div class="actions">
@@ -791,6 +853,7 @@ ${data.qrImage ? `<img src="${esc(data.qrImage)}" class="bankQr" alt="QR Code">`
 
 ${mapHTML}
 ${galleryHTML}
+${descriptionHTML}
 
 <div class="section">
 <div class="ratingCard">
