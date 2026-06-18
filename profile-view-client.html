@@ -52,12 +52,12 @@ margin:5px 3px;
 margin-top:15px;
 display:flex;
 gap:8px;
-flex-wrap:nowrap;
+flex-wrap:wrap;
 }
 
 .actions a,
 .actions button{
-flex:1;
+flex:1 1 130px;
 padding:10px 5px;
 border-radius:10px;
 text-decoration:none;
@@ -75,14 +75,17 @@ margin:0;
 .actions a,
 .actions button{
 font-size:12px;
-padding:10px 3px;
+padding:10px 6px;
+flex:1 1 calc(50% - 8px);
 }
 
 }
 
 .call{background:#4caf50}
 .whatsapp{background:#009688}
+.emailBtn{background:#3949ab}
 .website{background:#1565c0}
+.youtubeBtn{background:#d32f2f}
 
 
 
@@ -106,49 +109,34 @@ margin:0 0 12px;
 color:#0f2d5c;
 }
 
-.detailsTableWrap{
-overflow-x:auto;
+.detailList{
+display:flex;
+flex-direction:column;
+gap:12px;
 }
 
-.detailsTable{
-width:100%;
-border-collapse:collapse;
-table-layout:fixed;
+.detailItem{
 background:white;
 border:1px solid #d9e3f5;
 border-radius:12px;
-overflow:hidden;
+padding:12px 14px;
 }
 
-.detailsTable th,
-.detailsTable td{
-padding:11px 12px;
-border-bottom:1px solid #e4ebf8;
-text-align:left;
-vertical-align:top;
+.detailLabel{
+font-size:13px;
+font-weight:bold;
+color:#1e3a66;
+margin-bottom:6px;
+}
+
+.detailValue{
 font-size:14px;
-line-height:1.5;
+line-height:1.6;
+color:#222;
 word-break:break-word;
 }
 
-.detailsTable tr:last-child th,
-.detailsTable tr:last-child td{
-border-bottom:none;
-}
-
-.detailsTable th{
-width:34%;
-background:#f4f7ff;
-color:#1e3a66;
-font-weight:bold;
-}
-
-.detailsTable td{
-background:white;
-color:#222;
-}
-
-.detailsTable a{
+.detailValue a{
 color:#1565c0;
 text-decoration:none;
 font-weight:bold;
@@ -605,8 +593,21 @@ function esc(value){
 return String(value ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
 }
 
+function externalUrl(value){
+const text = String(value ?? "").trim();
+if(!text) return "";
+return /^https?:\/\//i.test(text) ? text : `https://${text}`;
+}
+
 const subjects = Array.isArray(data.subjects) ? data.subjects : [];
 const teachingModes = Array.isArray(data.teachingModes) ? data.teachingModes : [];
+const youtubeLink =
+  (canShow("youtube") && data.youtube) ||
+  (canShow("youtubeLink") && data.youtubeLink) ||
+  (canShow("youtubeChannel") && data.youtubeChannel) ||
+  (canShow("youtubeUrl") && data.youtubeUrl) ||
+  "";
+const websiteLink = showValue("website") ? externalUrl(data.website) : "";
 
 const modes = [];
 if(showValue("homeFee")) modes.push(`Home Tuition - Rs ${esc(data.homeFee)}`);
@@ -616,33 +617,34 @@ if(showValue("onlineFee")) modes.push(`Online - Rs ${esc(data.onlineFee)}`);
 if(showValue("individualFee")) modes.push(`Individual / Personal - Rs ${esc(data.individualFee)}`);
 if(showValue("otherMode") || showValue("otherModeFee")) modes.push(`${esc(data.otherMode || "Other Mode")} ${data.otherModeFee ? "- Rs " + esc(data.otherModeFee) : ""}`);
 
-const detailRows = [];
+const detailBlocks = [];
 
 function pushDetail(label, value){
 if(!value) return;
-detailRows.push(`
-<tr>
-<th>${label}</th>
-<td>${value}</td>
-</tr>
+detailBlocks.push(`
+<div class="detailItem">
+<div class="detailLabel">${label}</div>
+<div class="detailValue">${value}</div>
+</div>
 `);
 }
 
 pushDetail("Subjects / Skills / Activities", canShow("subjects") ? (subjects.map(esc).join(", ") || "-") : "");
-pushDetail("Teaching / Training Modes", canShow("teachingModes") && teachingModes.length ? teachingModes.map(esc).join(", ") : "");
+pushDetail(
+"Teaching / Training Modes",
+modes.length
+? modes.join("<br>")
+: (canShow("teachingModes") && teachingModes.length ? teachingModes.map(esc).join(", ") : "")
+);
 pushDetail("Class / Preparation For", showValue("class") ? esc(data.class) : "");
 pushDetail("Board / Type of Exam", showValue("board") ? esc(data.board) : "");
-pushDetail("Qualification", showValue("qualification") ? esc(data.qualification) : "");
 pushDetail("Experience", showValue("experience") ? esc(data.experience) : "");
+pushDetail("Qualification", showValue("qualification") ? esc(data.qualification) : "");
 pushDetail("Owner / Director", showValue("ownerName") ? esc(data.ownerName) : "");
 pushDetail("Established Date", showValue("establishedDate") ? esc(data.establishedDate) : "");
-pushDetail("Phone", showValue("phone") ? esc(data.phone) : "");
-pushDetail("Alternate Phone", showValue("alternatePhone") ? esc(data.alternatePhone) : "");
-pushDetail("Email", showValue("email") ? esc(data.email) : "");
 pushDetail("State", showValue("address") ? esc(data.address) : "");
 pushDetail("Area / City or Town", showValue("area") ? esc(data.area) : "");
 pushDetail("PIN Code", showValue("pinCode") ? esc(data.pinCode) : "");
-pushDetail("Website", showValue("website") ? `<a href="${esc(data.website)}" target="_blank">${esc(data.website)}</a>` : "");
 
 let galleryHTML = "";
 let gallery = data.gallery || [];
@@ -702,12 +704,13 @@ ${canShow("categoryName") ? `<span class="badge">${esc(data.categoryName || data
 
 <div class="section">
 <h3>Profile Details</h3>
-<div class="detailsTableWrap">
-<table class="detailsTable">
-<tbody>
-${detailRows.join("") || `<tr><th>Details</th><td>Not available</td></tr>`}
-</tbody>
-</table>
+<div class="detailList">
+${detailBlocks.join("") || `
+<div class="detailItem">
+<div class="detailLabel">Details</div>
+<div class="detailValue">Not available</div>
+</div>
+`}
 </div>
 ${showValue("description") ? `<div class="detailsDescription"><b>Description:</b><br>${esc(data.description)}</div>` : ""}
 </div>
@@ -715,8 +718,10 @@ ${showValue("description") ? `<div class="detailsDescription"><b>Description:</b
 <div class="actions">
 ${showValue("phone") ? `<a class="call" href="tel:${esc(data.phone)}">Call</a>` : ""}
 ${showValue("phone") ? `<a class="whatsapp" target="_blank" href="https://wa.me/${esc(data.phone)}">WhatsApp</a>` : ""}
+${showValue("email") ? `<a class="emailBtn" href="mailto:${esc(data.email)}">Email</a>` : ""}
 ${showValue("phone") || showValue("email") ? `<button class="saveContact" onclick="saveContact()">Save Contact</button>` : ""}
-${showValue("website") ? `<a class="website" target="_blank" href="${esc(data.website)}">Website</a>` : ""}
+${websiteLink ? `<a class="website" target="_blank" href="${esc(websiteLink)}">Website</a>` : ""}
+${youtubeLink ? `<a class="youtubeBtn" target="_blank" href="${esc(externalUrl(youtubeLink))}">YouTube</a>` : ""}
 ${(
 data.showBankDetails !== false &&
 (data.qrImage || (data.accountHolderName && data.bankName && data.accountNumber))
@@ -751,7 +756,6 @@ ${data.qrImage ? `<img src="${esc(data.qrImage)}" class="bankQr" alt="QR Code">`
 
 ${mapHTML}
 ${galleryHTML}
-${modes.length ? `<div class="section"><h3>Fees</h3>${modes.map(m=>`<div class="modeBox">${m}</div>`).join("")}</div>` : ""}
 
 <div class="section">
 <div class="ratingCard">
