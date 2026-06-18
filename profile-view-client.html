@@ -108,7 +108,7 @@ margin:5px 3px;
 .actions{
 margin-top:15px;
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+grid-template-columns:repeat(3,minmax(0,1fr));
 gap:8px;
 }
 
@@ -135,7 +135,7 @@ padding:10px 6px;
 }
 
 .actions{
-grid-template-columns:repeat(2,minmax(0,1fr));
+grid-template-columns:repeat(3,minmax(0,1fr));
 }
 
 }
@@ -182,8 +182,8 @@ padding:10px 12px;
 }
 
 .detailInlineRow{
-display:grid;
-grid-template-columns:repeat(2,minmax(0,1fr));
+display:flex;
+flex-direction:column;
 gap:8px;
 }
 
@@ -244,9 +244,15 @@ box-shadow:0 2px 8px rgba(0,0,0,.05);
 .gallery{
 display:flex;
 overflow-x:auto;
-gap:15px;
+gap:12px;
 padding:10px 0;
 scroll-behavior:smooth;
+scroll-snap-type:x mandatory;
+scrollbar-width:none;
+}
+
+.gallery::-webkit-scrollbar{
+display:none;
 }
 
 .gallery img{
@@ -257,6 +263,7 @@ border-radius:15px;
 object-fit:cover;
 box-shadow:0 5px 15px rgba(0,0,0,.15);
 cursor:pointer;
+scroll-snap-align:center;
 }
 
 .modeBox{
@@ -334,14 +341,20 @@ position:fixed;
 right:20px;
 display:flex;
 flex-direction:column;
-gap:10px;
+gap:8px;
 z-index:9999;
 bottom:20px;
+padding:10px;
+background:rgba(255,255,255,.96);
+border:1px solid #d9e3f5;
+border-radius:18px;
+box-shadow:0 8px 22px rgba(0,0,0,.16);
+backdrop-filter:blur(10px);
 }
 
 .floatingBtn{
 min-width:120px;
-padding:12px 16px;
+padding:10px 14px;
 border-radius:14px;
 display:flex;
 justify-content:center;
@@ -372,12 +385,13 @@ left:12px;
 bottom:12px;
 flex-direction:row;
 gap:8px;
+padding:8px;
 }
 
 .floatingBtn{
 min-width:0;
 flex:1;
-padding:12px 8px;
+padding:10px 8px;
 font-size:13px;
 }
 }
@@ -504,6 +518,7 @@ const id = new URLSearchParams(location.search).get("id");
 
 let data = null;
 let type = "";
+let galleryCarouselTimer = null;
 
 function getAuthUser(){
 return new Promise((resolve)=>{
@@ -776,6 +791,34 @@ ${gallery.map(img => `<img src="${esc(img)}" onclick="window.open('${esc(img)}',
 </div>
 </div>
 `;
+
+initGalleryCarousel();
+}
+
+function initGalleryCarousel(){
+if(galleryCarouselTimer){
+clearInterval(galleryCarouselTimer);
+galleryCarouselTimer = null;
+}
+
+const galleryBox = document.querySelector(".gallery");
+
+if(!galleryBox) return;
+
+const images = Array.from(galleryBox.querySelectorAll("img"));
+
+if(images.length <= 1) return;
+
+let currentIndex = 0;
+
+galleryCarouselTimer = setInterval(()=>{
+currentIndex = (currentIndex + 1) % images.length;
+
+galleryBox.scrollTo({
+left: images[currentIndex].offsetLeft - 12,
+behavior: "smooth"
+});
+}, 2600);
 }
 
 const descriptionHTML =
