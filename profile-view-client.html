@@ -101,6 +101,69 @@ background:#f9f9ff;
 border-radius:12px;
 }
 
+.section h3{
+margin:0 0 12px;
+color:#0f2d5c;
+}
+
+.detailsTableWrap{
+overflow-x:auto;
+}
+
+.detailsTable{
+width:100%;
+border-collapse:collapse;
+table-layout:fixed;
+background:white;
+border:1px solid #d9e3f5;
+border-radius:12px;
+overflow:hidden;
+}
+
+.detailsTable th,
+.detailsTable td{
+padding:11px 12px;
+border-bottom:1px solid #e4ebf8;
+text-align:left;
+vertical-align:top;
+font-size:14px;
+line-height:1.5;
+word-break:break-word;
+}
+
+.detailsTable tr:last-child th,
+.detailsTable tr:last-child td{
+border-bottom:none;
+}
+
+.detailsTable th{
+width:34%;
+background:#f4f7ff;
+color:#1e3a66;
+font-weight:bold;
+}
+
+.detailsTable td{
+background:white;
+color:#222;
+}
+
+.detailsTable a{
+color:#1565c0;
+text-decoration:none;
+font-weight:bold;
+}
+
+.detailsDescription{
+margin-top:12px;
+padding:12px;
+background:white;
+border:1px solid #d9e3f5;
+border-radius:12px;
+line-height:1.6;
+word-break:break-word;
+}
+
 .reviewItem{
 padding:12px;
 background:white;
@@ -198,36 +261,56 @@ padding:50px;
 }
 
 /* FLOATING BUTTONS */
-.floatingBtn{
+.floatingActionStack{
 position:fixed;
 right:20px;
-width:55px;
-height:55px;
-border-radius:50%;
+display:flex;
+flex-direction:column;
+gap:10px;
+z-index:9999;
+bottom:20px;
+}
+
+.floatingBtn{
+min-width:120px;
+padding:12px 16px;
+border-radius:14px;
 display:flex;
 justify-content:center;
 align-items:center;
 color:white;
-font-size:20px;
+font-size:14px;
+font-weight:bold;
 text-decoration:none;
 box-shadow:0 5px 15px rgba(0,0,0,0.2);
-z-index:9999;
 }
 
 .homeBtn{
-bottom:20px;
 background:#1976d2;
 }
 
+.dashboardBtn{
+background:#7b1fa2;
+}
+
 .backBtn{
-bottom:90px;
 background:#4caf50;
 }
 
-/* Hide Back button on mobile */
 @media(max-width:768px){
-.backBtn{
-display:none;
+.floatingActionStack{
+right:12px;
+left:12px;
+bottom:12px;
+flex-direction:row;
+gap:8px;
+}
+
+.floatingBtn{
+min-width:0;
+flex:1;
+padding:12px 8px;
+font-size:13px;
 }
 }
 
@@ -533,6 +616,34 @@ if(showValue("onlineFee")) modes.push(`Online - Rs ${esc(data.onlineFee)}`);
 if(showValue("individualFee")) modes.push(`Individual / Personal - Rs ${esc(data.individualFee)}`);
 if(showValue("otherMode") || showValue("otherModeFee")) modes.push(`${esc(data.otherMode || "Other Mode")} ${data.otherModeFee ? "- Rs " + esc(data.otherModeFee) : ""}`);
 
+const detailRows = [];
+
+function pushDetail(label, value){
+if(!value) return;
+detailRows.push(`
+<tr>
+<th>${label}</th>
+<td>${value}</td>
+</tr>
+`);
+}
+
+pushDetail("Subjects / Skills / Activities", canShow("subjects") ? (subjects.map(esc).join(", ") || "-") : "");
+pushDetail("Teaching / Training Modes", canShow("teachingModes") && teachingModes.length ? teachingModes.map(esc).join(", ") : "");
+pushDetail("Class / Preparation For", showValue("class") ? esc(data.class) : "");
+pushDetail("Board / Type of Exam", showValue("board") ? esc(data.board) : "");
+pushDetail("Qualification", showValue("qualification") ? esc(data.qualification) : "");
+pushDetail("Experience", showValue("experience") ? esc(data.experience) : "");
+pushDetail("Owner / Director", showValue("ownerName") ? esc(data.ownerName) : "");
+pushDetail("Established Date", showValue("establishedDate") ? esc(data.establishedDate) : "");
+pushDetail("Phone", showValue("phone") ? esc(data.phone) : "");
+pushDetail("Alternate Phone", showValue("alternatePhone") ? esc(data.alternatePhone) : "");
+pushDetail("Email", showValue("email") ? esc(data.email) : "");
+pushDetail("State", showValue("address") ? esc(data.address) : "");
+pushDetail("Area / City or Town", showValue("area") ? esc(data.area) : "");
+pushDetail("PIN Code", showValue("pinCode") ? esc(data.pinCode) : "");
+pushDetail("Website", showValue("website") ? `<a href="${esc(data.website)}" target="_blank">${esc(data.website)}</a>` : "");
+
 let galleryHTML = "";
 let gallery = data.gallery || [];
 
@@ -590,22 +701,15 @@ ${canShow("categoryName") ? `<span class="badge">${esc(data.categoryName || data
 </div>
 
 <div class="section">
-${canShow("subjects") ? `<p><b>Subjects / Skills / Activities:</b> ${subjects.map(esc).join(", ") || "-"}</p>` : ""}
-${canShow("teachingModes") && teachingModes.length ? `<p><b>Teaching / Training Modes:</b> ${teachingModes.map(esc).join(", ")}</p>` : ""}
-${showValue("class") ? `<p><b>Class / Preparation For:</b> ${esc(data.class)}</p>` : ""}
-${showValue("board") ? `<p><b>Board / Type of Exam:</b> ${esc(data.board)}</p>` : ""}
-${showValue("qualification") ? `<p><b>Qualification:</b> ${esc(data.qualification)}</p>` : ""}
-${showValue("experience") ? `<p><b>Experience:</b> ${esc(data.experience)}</p>` : ""}
-${showValue("ownerName") ? `<p><b>Owner / Director:</b> ${esc(data.ownerName)}</p>` : ""}
-${showValue("establishedDate") ? `<p><b>Established Date:</b> ${esc(data.establishedDate)}</p>` : ""}
-${showValue("phone") ? `<p><b>Phone:</b> ${esc(data.phone)}</p>` : ""}
-${showValue("alternatePhone") ? `<p><b>Alternate Phone:</b> ${esc(data.alternatePhone)}</p>` : ""}
-${showValue("email") ? `<p><b>Email:</b> ${esc(data.email)}</p>` : ""}
-${showValue("address") ? `<p><b>State:</b> ${esc(data.address)}</p>` : ""}
-${showValue("area") ? `<p><b>Area / City or Town:</b> ${esc(data.area)}</p>` : ""}
-${showValue("pinCode") ? `<p><b>PIN Code:</b> ${esc(data.pinCode)}</p>` : ""}
-${showValue("website") ? `<p><b>Website:</b> ${esc(data.website)}</p>` : ""}
-${showValue("description") ? `<p><b>Description:</b> ${esc(data.description)}</p>` : ""}
+<h3>Profile Details</h3>
+<div class="detailsTableWrap">
+<table class="detailsTable">
+<tbody>
+${detailRows.join("") || `<tr><th>Details</th><td>Not available</td></tr>`}
+</tbody>
+</table>
+</div>
+${showValue("description") ? `<div class="detailsDescription"><b>Description:</b><br>${esc(data.description)}</div>` : ""}
 </div>
 
 <div class="actions">
@@ -868,15 +972,34 @@ URL.revokeObjectURL(url);
 
 load();
 
+window.goDashboard = function(){
+const role = (localStorage.getItem("role") || "").toLowerCase();
+
+if(role === "teacher" || role === "institution"){
+location.href = "teacher-dashboard.html";
+return;
+}
+
+if(role === "student" || role === "parent"){
+location.href = "student-dashboard.html";
+return;
+}
+
+if(role === "admin"){
+location.href = "admin.html";
+return;
+}
+
+location.href = "otp-login.html";
+};
+
 </script>
 
+<div class="floatingActionStack">
 <a href="index.html" class="floatingBtn homeBtn">Home</a>
-
-<a
-href="javascript:history.back()"
-class="floatingBtn backBtn">
-â¬…ï¸
-</a>
+<a href="javascript:goDashboard()" class="floatingBtn dashboardBtn">Dashboard</a>
+<a href="javascript:history.back()" class="floatingBtn backBtn">Back</a>
+</div>
 
 </body>
 </html>
