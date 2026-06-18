@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Payment Success2</title>
 
 <style>
@@ -16,9 +16,6 @@ p{font-size:15px;line-height:1.6;}
 .error{color:red;font-weight:bold;}
 .debug{font-size:12px;color:#555;word-break:break-all;}
 </style>
-
-<link rel="stylesheet" href="gurulink-theme.css?v=2">
-<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -47,8 +44,6 @@ const db = getDatabase(app);
 
 const loader = document.getElementById("loader");
 const msg = document.getElementById("msg");
-const APP_PACKAGE = "com.gurulinkindia.gurulink";
-const APP_BASE_URL = "https://www.gurulink.co.in/";
 
 function cleanValue(value) {
   if (!value) return "";
@@ -64,50 +59,6 @@ function cleanValue(value) {
     value.includes("]")
   ) return "";
   return value;
-}
-
-function isAndroid() {
-  return /Android/i.test(navigator.userAgent || "");
-}
-
-function isInsideGuruLinkApp() {
-  return (navigator.userAgent || "").includes("GuruLinkAndroidApp");
-}
-
-function buildWebUrl(path) {
-  return APP_BASE_URL + path.replace(/^\/+/, "");
-}
-
-function buildIntentUrl(path) {
-  const cleanPath = path.replace(/^\/+/, "");
-  return "intent://www.gurulink.co.in/" +
-    cleanPath +
-    "#Intent;scheme=https;package=" +
-    APP_PACKAGE +
-    ";end";
-}
-
-function redirectToAppOrWeb(path) {
-  const webUrl = buildWebUrl(path);
-
-  if (isInsideGuruLinkApp()) {
-    window.location.href = path;
-    return;
-  }
-
-  if (isAndroid()) {
-    msg.innerHTML =
-      '<span class="success">Payment successful! Redirecting...</span><br><br>Opening GURULINK app...';
-
-    window.location.href = buildIntentUrl(path);
-
-    setTimeout(() => {
-      window.location.href = webUrl;
-    }, 1800);
-    return;
-  }
-
-  window.location.href = webUrl;
 }
 
 const params = new URLSearchParams(window.location.search);
@@ -325,12 +276,11 @@ async function savePayment() {
       '<span class="success">Payment successful! Redirecting...</span>';
 
     setTimeout(() => {
-      redirectToAppOrWeb(
+      window.location.href =
         "renewal-success.html?type=" +
         encodeURIComponent(finalType) +
         "&id=" +
-        encodeURIComponent(id)
-      );
+        encodeURIComponent(id);
     }, 2000);
 
   } catch (err) {
@@ -349,5 +299,3 @@ savePayment();
 </script>
 </body>
 </html>
-
-
