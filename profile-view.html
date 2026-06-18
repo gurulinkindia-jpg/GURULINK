@@ -376,6 +376,32 @@ background:#fb8c00;
 background:#4caf50;
 }
 
+.shareFab{
+position:fixed;
+right:18px;
+bottom:calc(env(safe-area-inset-bottom, 0px) + 84px);
+width:42px;
+height:42px;
+padding:0;
+margin:0;
+border:none;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#e91e63;
+color:white;
+box-shadow:0 8px 18px rgba(0,0,0,.2);
+cursor:pointer;
+z-index:10000;
+}
+
+.shareFab svg{
+width:18px;
+height:18px;
+display:block;
+}
+
 @media(max-width:768px){
 body{
 padding:12px 12px 150px;
@@ -398,6 +424,18 @@ height:36px;
 padding:0 6px;
 font-size:11px;
 border-radius:12px;
+}
+
+.shareFab{
+right:16px;
+bottom:calc(env(safe-area-inset-bottom, 0px) + 102px);
+width:38px;
+height:38px;
+}
+
+.shareFab svg{
+width:16px;
+height:16px;
 }
 }
 
@@ -517,9 +555,19 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
+const WEBSITE_BASE = "https://www.gurulink.co.in/";
 
 const profile = document.getElementById("profile");
-const id = new URLSearchParams(location.search).get("id");
+const queryProfileId = new URLSearchParams(location.search).get("id");
+let currentProfileId =
+queryProfileId ||
+localStorage.getItem("profileId") ||
+sessionStorage.getItem("profileId") ||
+localStorage.getItem("teacherId") ||
+sessionStorage.getItem("teacherId") ||
+localStorage.getItem("institutionId") ||
+sessionStorage.getItem("institutionId") ||
+"";
 
 let data = null;
 let type = "";
@@ -546,7 +594,7 @@ async function markView() {
     localStorage.getItem("profileId") ||
     (authUser ? authUser.uid : "");
 
-  const viewedProfileId = id;
+  const viewedProfileId = currentProfileId;
   const viewerRole = (localStorage.getItem("role") || "").toLowerCase();
 
   if (!viewedProfileId) return;
@@ -639,7 +687,7 @@ async function markView() {
 /* LOAD PROFILE */
 async function load(){
 
-if(!id){
+if(!currentProfileId){
 profile.innerHTML = "<h2>No ID Found</h2>";
 return;
 }
@@ -648,20 +696,22 @@ return;
 markView();
 
 /* TEACHER */
-let snap = await get(child(ref(db),"teachers/"+id));
+let snap = await get(child(ref(db),"teachers/"+currentProfileId));
 
 if(snap.exists()){
 data = snap.val();
 type = "Teacher";
+currentProfileId = data.uid || currentProfileId;
 }
 
 /* INSTITUTION */
 if(!data){
-let snap2 = await get(child(ref(db),"institutions/"+id));
+let snap2 = await get(child(ref(db),"institutions/"+currentProfileId));
 
 if(snap2.exists()){
 data = snap2.val();
 type = "Institution";
+currentProfileId = data.uid || currentProfileId;
 }
 }
 
@@ -964,7 +1014,7 @@ ${descriptionHTML}
 /* REVIEWS */
 function loadReviews(){
 
-onValue(ref(db,`reviews/${type.toLowerCase()}s/${id}`),(snap)=>{
+onValue(ref(db,`reviews/${type.toLowerCase()}s/${currentProfileId}`),(snap)=>{
 
 let total=0,count=0,html="";
 
@@ -1036,7 +1086,7 @@ alert("Fill all fields");
 return;
 }
 
-await push(ref(db,`reviews/${type.toLowerCase()}s/${id}`),{
+await push(ref(db,`reviews/${type.toLowerCase()}s/${currentProfileId}`),{
 name,rating,text,time:Date.now()
 });
 
@@ -1071,8 +1121,8 @@ return;
 
 try{
 
-await set(ref(db,`demoRequests/${id}/${requestKey}`),{
-profileId:id,
+await set(ref(db,`demoRequests/${currentProfileId}/${requestKey}`),{
+profileId:currentProfileId,
 profileType:type,
 name:name,
 phone:phone,
@@ -1221,6 +1271,70 @@ getDashboardPath() === "otp-login.html"
 window.location.href = fallback;
 };
 
+function getShareProfileUrl(){
+if(!currentProfileId){
+return "";
+}
+
+return WEBSITE_BASE + "profile-view.html?id=" + encodeURIComponent(currentProfileId);
+}
+
+window.shareProfile = async function(){
+const shareUrl = getShareProfileUrl();
+
+if(!shareUrl){
+alert("Profile link is not ready yet. Please try again.");
+return;
+}
+
+const profileName =
+data && data.name
+? data.name
+: data && data.ownerName
+  ? data.ownerName
+  : "this profile";
+
+const shareText =
+"Check out " + profileName + " on GURULINK.";
+
+try{
+if(navigator.share){
+await navigator.share({
+title:"GURULINK Profile",
+text:shareText,
+url:shareUrl
+});
+return;
+}
+
+if(navigator.clipboard && navigator.clipboard.writeText){
+await navigator.clipboard.writeText(shareUrl);
+alert("Profile link copied. You can now share it on social media.");
+return;
+}
+
+const tempInput =
+document.createElement("input");
+
+tempInput.value = shareUrl;
+document.body.appendChild(tempInput);
+tempInput.select();
+document.execCommand("copy");
+document.body.removeChild(tempInput);
+
+alert("Profile link copied. You can now share it on social media.");
+}
+catch(err){
+console.log(err);
+
+if(err && err.name === "AbortError"){
+return;
+}
+
+alert("Unable to share right now. Please try again.");
+}
+};
+
 
 
 
@@ -1239,6 +1353,20 @@ dashboardBtn.href = getDashboardPath();
 load();
 
 </script>
+
+<button
+type="button"
+class="shareFab"
+onclick="shareProfile()"
+aria-label="Share profile"
+title="Share profile">
+<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 8L9 12L15 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="18" cy="6" r="3" fill="currentColor"/>
+<circle cx="6" cy="12" r="3" fill="currentColor"/>
+<circle cx="18" cy="18" r="3" fill="currentColor"/>
+</svg>
+</button>
 
 <div class="floatingNav">
 <a href="index.html" class="floatingBtn homeBtn">Home</a>
