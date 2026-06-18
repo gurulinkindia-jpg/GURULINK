@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -25,9 +25,20 @@ box-shadow:0 10px 25px rgba(0,0,0,0.1);
 
 .header{
 display:flex;
-gap:15px;
+flex-direction:column;
+gap:12px;
+align-items:flex-start;
+}
+
+.headerTop{
+display:flex;
+gap:12px;
 align-items:center;
 flex-wrap:wrap;
+}
+
+.headerInfo{
+width:100%;
 }
 
 .mainPhoto{
@@ -99,6 +110,54 @@ margin-top:20px;
 padding:15px;
 background:#f9f9ff;
 border-radius:12px;
+}
+
+.topRatingCard{
+min-width:130px;
+padding:10px 12px;
+background:white;
+border:1px solid #d9e3f5;
+border-radius:12px;
+box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+
+.topRatingText{
+font-size:12px;
+font-weight:bold;
+color:#d32f2f;
+margin-bottom:6px;
+}
+
+.topStars{
+font-size:22px;
+line-height:1;
+color:#fbc02d;
+letter-spacing:1px;
+}
+
+.addressBlock{
+margin-top:10px;
+padding:12px;
+background:white;
+border:1px solid #d9e3f5;
+border-radius:12px;
+line-height:1.6;
+}
+
+.addressLines{
+margin-top:6px;
+display:flex;
+flex-direction:column;
+gap:4px;
+}
+
+.detailsDescription{
+padding:12px;
+background:white;
+border:1px solid #d9e3f5;
+border-radius:12px;
+line-height:1.6;
+word-break:break-word;
 }
 
 .reviewItem{
@@ -524,6 +583,11 @@ return String(value ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":
 
 const subjects = Array.isArray(data.subjects) ? data.subjects : [];
 const teachingModes = Array.isArray(data.teachingModes) ? data.teachingModes : [];
+const addressLines = [];
+
+if(showValue("address")) addressLines.push(`<div><b>State:</b> ${esc(data.address)}</div>`);
+if(showValue("area")) addressLines.push(`<div><b>Area / City or Town:</b> ${esc(data.area)}</div>`);
+if(showValue("pinCode")) addressLines.push(`<div><b>PIN Code:</b> ${esc(data.pinCode)}</div>`);
 
 const modes = [];
 if(showValue("homeFee")) modes.push(`Home Tuition - Rs ${esc(data.homeFee)}`);
@@ -553,6 +617,16 @@ ${gallery.map(img => `<img src="${esc(img)}" onclick="window.open('${esc(img)}',
 `;
 }
 
+const descriptionHTML =
+showValue("description")
+? `
+<div class="section">
+<h3>Description</h3>
+<div class="detailsDescription">${esc(data.description)}</div>
+</div>
+`
+: "";
+
 let mapHTML = "";
 
 if (canShow("mapUrl") && (data.mapLink || data.mapUrl)) {
@@ -578,9 +652,16 @@ const profileImage = data.photo || data.profilePic || data.logo || "https://via.
 
 profile.innerHTML = `
 <div class="header">
+<div class="headerTop">
 ${canShow("logo") ? `<img class="mainPhoto" src="${esc(profileImage)}">` : ""}
 
-<div>
+<div class="topRatingCard">
+<div class="topRatingText" id="topRatingText">Rating: 0.0 stars</div>
+<div class="topStars" id="topStars">&#9734;&#9734;&#9734;&#9734;&#9734;</div>
+</div>
+</div>
+
+<div class="headerInfo">
 ${canShow("name") ? `<h2>${esc(data.name || "-")}</h2>` : `<h2>GURULINK Profile</h2>`}
 <div>
 <span class="badge">${esc(type)}</span>
@@ -601,11 +682,13 @@ ${showValue("establishedDate") ? `<p><b>Established Date:</b> ${esc(data.establi
 ${showValue("phone") ? `<p><b>Phone:</b> ${esc(data.phone)}</p>` : ""}
 ${showValue("alternatePhone") ? `<p><b>Alternate Phone:</b> ${esc(data.alternatePhone)}</p>` : ""}
 ${showValue("email") ? `<p><b>Email:</b> ${esc(data.email)}</p>` : ""}
-${showValue("address") ? `<p><b>State:</b> ${esc(data.address)}</p>` : ""}
-${showValue("area") ? `<p><b>Area / City or Town:</b> ${esc(data.area)}</p>` : ""}
-${showValue("pinCode") ? `<p><b>PIN Code:</b> ${esc(data.pinCode)}</p>` : ""}
+${addressLines.length ? `
+<div class="addressBlock">
+<b>Address:</b>
+<div class="addressLines">${addressLines.join("")}</div>
+</div>
+` : ""}
 ${showValue("website") ? `<p><b>Website:</b> ${esc(data.website)}</p>` : ""}
-${showValue("description") ? `<p><b>Description:</b> ${esc(data.description)}</p>` : ""}
 </div>
 
 <div class="actions">
@@ -647,6 +730,7 @@ ${data.qrImage ? `<img src="${esc(data.qrImage)}" class="bankQr" alt="QR Code">`
 
 ${mapHTML}
 ${galleryHTML}
+${descriptionHTML}
 ${modes.length ? `<div class="section"><h3>Fees</h3>${modes.map(m=>`<div class="modeBox">${m}</div>`).join("")}</div>` : ""}
 
 <div class="section">
@@ -689,13 +773,44 @@ count++;
 html+=`
 <div class="reviewItem">
 <b>${d.name}</b>
-<div>${"â­".repeat(d.rating)}</div>
+<div>${"&#9733;".repeat(d.rating)}</div>
 <p>${d.text}</p>
 </div>`;
 });
 
-document.getElementById("avgRating").innerText =
+const avgValue =
 count ? (total/count).toFixed(1) : "0.0";
+
+document.getElementById("avgRating").innerText =
+avgValue;
+
+const roundedStars =
+Math.round(Number(avgValue));
+
+const starLine =
+"&#9733;".repeat(roundedStars) +
+"&#9734;".repeat(5-roundedStars);
+
+const topRatingText =
+document.getElementById("topRatingText");
+
+const topStars =
+document.getElementById("topStars");
+
+const bottomStars =
+document.querySelector(".starText");
+
+if(topRatingText){
+topRatingText.innerText = `Rating: ${avgValue} stars`;
+}
+
+if(topStars){
+topStars.innerHTML = starLine;
+}
+
+if(bottomStars){
+bottomStars.innerHTML = starLine;
+}
 
 document.getElementById("totalReviews").innerText =
 count + " Reviews";
