@@ -823,13 +823,14 @@ selected.length ? "Selected: " + selected.join(", ") : "No training mode selecte
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"gurulink-59cc7",
-storageBucket:"gurulink-59cc7.appspot.com",
+storageBucket:"gurulink-59cc7.firebasestorage.app",
 messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
@@ -837,8 +838,21 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
+const storage = getStorage(app);
 const form = document.getElementById("form");
-const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
+
+function makeStorageFileName(file){
+const originalName = (file && file.name ? file.name : "image").replace(/[^a-zA-Z0-9._-]/g,"_");
+return Date.now() + "-" + Math.random().toString(36).slice(2,8) + "-" + originalName;
+}
+
+async function upload(file, folder){
+const fileRef = storageRef(storage, folder + "/" + makeStorageFileName(file));
+await uploadBytes(fileRef, file, {
+contentType: file.type || "application/octet-stream"
+});
+return await getDownloadURL(fileRef);
+}
 
 document.getElementById("idType").addEventListener("change",(e)=>{
 document.getElementById("otherIdProof").style.display =
@@ -873,18 +887,7 @@ item.addEventListener("change", updateSelectedModes);
 document.getElementById("otherModeCheck").addEventListener("change", updateSelectedModes);
 document.getElementById("otherMode").addEventListener("input", updateSelectedModes);
 
-async function upload(file){
-let fd = new FormData();
-fd.append("image",file);
 
-let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`,{
-method:"POST",
-body:fd
-});
-
-let data = await res.json();
-return data.data.url;
-}
 
 function preview(input, box){
 input.addEventListener("change",()=>{
@@ -946,17 +949,17 @@ localStorage.setItem("role","teacher");
 
 let logoUrl="";
 if(document.getElementById("logo").files[0]){
-logoUrl = await upload(document.getElementById("logo").files[0]);
+logoUrl = await upload(document.getElementById("logo").files[0], "teachers/" + uid + "/logo");
 }
 
 let idProofUrl="";
 if(document.getElementById("idUpload").files[0]){
-idProofUrl = await upload(document.getElementById("idUpload").files[0]);
+idProofUrl = await upload(document.getElementById("idUpload").files[0], "teachers/" + uid + "/id-proof");
 }
 
 let gallery=[];
 for(let file of galleryFiles){
-gallery.push(await upload(file));
+gallery.push(await upload(file, "teachers/" + uid + "/gallery"));
 }
 
 let subjects=[...selectedAcademicSubjects];
@@ -1056,6 +1059,7 @@ submitBtn.innerText="Continue To Payment";
 
 </body>
 </html>
+
 
 
 
