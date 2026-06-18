@@ -135,6 +135,20 @@ color:#fbc02d;
 letter-spacing:1px;
 }
 
+.topMeta{
+display:flex;
+flex-direction:column;
+gap:5px;
+margin-top:8px;
+}
+
+.topMeta .badge{
+margin:0;
+font-size:11px;
+padding:4px 8px;
+text-align:center;
+}
+
 .addressBlock{
 margin-top:10px;
 padding:12px;
@@ -581,9 +595,21 @@ function esc(value){
 return String(value ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
 }
 
+function getCategoryLabel(){
+const raw = String(data.categoryName || data.category || "").trim();
+if(!raw) return "";
+const normalized = raw.toLowerCase();
+if(normalized === "skill") return "Professional Skill";
+if(normalized === "sport") return "Sports & Fitness";
+if(normalized === "creative") return "Arts & Creativity";
+if(normalized === "academic") return "Academic";
+return esc(raw);
+}
+
 const subjects = Array.isArray(data.subjects) ? data.subjects : [];
 const teachingModes = Array.isArray(data.teachingModes) ? data.teachingModes : [];
 const addressLines = [];
+const categoryLabel = canShow("categoryName") ? getCategoryLabel() : "";
 
 if(showValue("address")) addressLines.push(`<div><b>State:</b> ${esc(data.address)}</div>`);
 if(showValue("area")) addressLines.push(`<div><b>Area / City or Town:</b> ${esc(data.area)}</div>`);
@@ -658,15 +684,15 @@ ${canShow("logo") ? `<img class="mainPhoto" src="${esc(profileImage)}">` : ""}
 <div class="topRatingCard">
 <div class="topRatingText" id="topRatingText">Rating: 0.0 stars</div>
 <div class="topStars" id="topStars">&#9734;&#9734;&#9734;&#9734;&#9734;</div>
+<div class="topMeta">
+<span class="badge">${esc(type)}</span>
+${categoryLabel ? `<span class="badge">${categoryLabel}</span>` : ""}
+</div>
 </div>
 </div>
 
 <div class="headerInfo">
 ${canShow("name") ? `<h2>${esc(data.name || "-")}</h2>` : `<h2>GURULINK Profile</h2>`}
-<div>
-<span class="badge">${esc(type)}</span>
-${canShow("categoryName") ? `<span class="badge">${esc(data.categoryName || data.category || "-")}</span>` : ""}
-</div>
 </div>
 </div>
 
