@@ -183,6 +183,71 @@ margin-top:10px;
 display:block;
 }
 
+.skillCategory{
+display:block;
+margin-bottom:10px;
+}
+
+.skillCategory h4{
+width:100%;
+margin:0;
+padding:12px 14px;
+background:#f7fafc;
+color:#263238;
+border:1px solid #d9e2ec;
+border-radius:10px;
+font-size:14px;
+font-weight:bold;
+display:flex;
+justify-content:space-between;
+align-items:center;
+cursor:pointer;
+box-sizing:border-box;
+}
+
+.skillCategory .row,
+.skillCategory .otherSkillInput,
+.skillCategory .categoryHelpTextInline{
+display:none;
+}
+
+.skillCategory.open{
+display:flex;
+flex-wrap:wrap;
+gap:6px 14px;
+padding:12px 14px;
+border:1px solid #d9e2ec;
+border-radius:10px;
+background:#fff;
+}
+
+.skillCategory.open h4{
+margin:-12px -14px 0;
+border:none;
+border-bottom:1px solid #e6edf5;
+border-radius:10px 10px 0 0;
+}
+
+.skillCategory.open .categoryHelpTextInline{
+display:block;
+width:100%;
+font-size:12px;
+color:#666;
+margin-top:6px;
+margin-bottom:10px;
+}
+
+.skillCategory.open .row{
+display:flex;
+width:calc(50% - 7px);
+margin:6px 0;
+}
+
+.skillCategory.open .otherOptionRow,
+.skillCategory.open .otherSkillInput{
+width:100%;
+}
+
 .categoryDropdown{
 border:1px solid #d9e2ec;
 border-radius:10px;
@@ -808,56 +873,38 @@ return;
 }
 
 card.dataset.enhanced = "true";
-card.classList.add("categoryDropdown");
-
 const title = card.querySelector("h4");
-const titleText = title ? title.innerText.trim() : "Category";
-const children = Array.from(card.children);
-const optionRows = children.filter(child=>child.classList && child.classList.contains("row") && child.querySelector(".subjectCheck"));
-const otherRow = children.find(child=>child.classList && child.classList.contains("row") && child.querySelector(".otherSkillCheck"));
-const otherInput = children.find(child=>child.classList && child.classList.contains("otherSkillInput"));
+if(!title){
+return;
+}
 
-card.innerHTML = "";
+const toggleMark = document.createElement("span");
+toggleMark.className = "categoryToggleMark";
+toggleMark.innerText = "+";
+title.appendChild(toggleMark);
 
-const header = document.createElement("button");
-header.type = "button";
-header.className = "categoryDropdownHeader";
-header.innerHTML = `<span>${titleText}</span><span>+</span>`;
+const helpText = document.createElement("div");
+helpText.className = "categoryHelpTextInline";
+helpText.innerText = "Click to select the subject";
+title.insertAdjacentElement("afterend", helpText);
 
-const body = document.createElement("div");
-body.className = "categoryDropdownBody";
-body.innerHTML = `<div class="categoryHelpText">Click to select the subject</div>`;
-
-const grid = document.createElement("div");
-grid.className = "categoryOptionsGrid";
-
-optionRows.forEach(row=>{
-row.classList.add("categoryOptionRow");
-grid.appendChild(row);
-});
-
-body.appendChild(grid);
-
+const otherCheck = card.querySelector(".row .otherSkillCheck");
+const otherRow = otherCheck ? otherCheck.closest(".row") : null;
 if(otherRow){
-otherRow.classList.add("categoryOptionRow");
-otherRow.style.marginTop = "10px";
-body.appendChild(otherRow);
+otherRow.classList.add("otherOptionRow");
 }
 
-if(otherInput){
-otherInput.classList.add("categoryOtherInput");
-body.appendChild(otherInput);
-}
-
-card.appendChild(header);
-card.appendChild(body);
-
-header.addEventListener("click",()=>{
+title.addEventListener("click",()=>{
 card.classList.toggle("open");
-header.querySelector("span:last-child").innerText = card.classList.contains("open") ? "-" : "+";
+toggleMark.innerText = card.classList.contains("open") ? "-" : "+";
 });
 });
 }
+
+window.collectSelectedSkills = collectSelectedSkills;
+window.updateSelectedSkills = updateSelectedSkills;
+window.updateSelectedModes = updateSelectedModes;
+window.initializeSkillCategories = initializeSkillCategories;
 
 window.removeSelectedSkill = function(value){
 document.querySelectorAll(".subjectCheck").forEach(item=>{
@@ -883,13 +930,14 @@ updateSelectedSkills();
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"gurulink-59cc7",
-storageBucket:"gurulink-59cc7.appspot.com",
+storageBucket:"gurulink-59cc7.firebasestorage.app",
 messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
@@ -897,8 +945,21 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
+const storage = getStorage(app);
 const form = document.getElementById("form");
-const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
+
+function makeStorageFileName(file){
+const originalName = (file && file.name ? file.name : "image").replace(/[^a-zA-Z0-9._-]/g,"_");
+return Date.now() + "-" + Math.random().toString(36).slice(2,8) + "-" + originalName;
+}
+
+async function upload(file, folder){
+const fileRef = storageRef(storage, folder + "/" + makeStorageFileName(file));
+await uploadBytes(fileRef, file, {
+contentType: file.type || "application/octet-stream"
+});
+return await getDownloadURL(fileRef);
+}
 
 document.getElementById("idType").addEventListener("change",(e)=>{
 document.getElementById("otherIdProof").style.display =
@@ -923,19 +984,19 @@ button.innerText = panel.classList.contains("open")
 : "More Training Modes";
 });
 
-initializeSkillCategories();
-updateSelectedSkills();
+window.initializeSkillCategories();
+window.updateSelectedSkills();
 
 document.querySelectorAll(".subjectCheck").forEach(item=>{
-item.addEventListener("change", updateSelectedSkills);
+item.addEventListener("change", window.updateSelectedSkills);
 });
 
 document.querySelectorAll(".mode").forEach(item=>{
-item.addEventListener("change", updateSelectedModes);
+item.addEventListener("change", window.updateSelectedModes);
 });
 
-document.getElementById("otherModeCheck").addEventListener("change", updateSelectedModes);
-document.getElementById("otherMode").addEventListener("input", updateSelectedModes);
+document.getElementById("otherModeCheck").addEventListener("change", window.updateSelectedModes);
+document.getElementById("otherMode").addEventListener("input", window.updateSelectedModes);
 
 document.querySelectorAll(".otherSkillCheck").forEach(item=>{
 item.addEventListener("change",(e)=>{
@@ -944,26 +1005,15 @@ input.style.display = e.target.checked ? "block" : "none";
 if(!e.target.checked){
 input.value = "";
 }
-updateSelectedSkills();
+window.updateSelectedSkills();
 });
 });
 
 document.querySelectorAll(".otherSkillInput").forEach(item=>{
-item.addEventListener("input", updateSelectedSkills);
+item.addEventListener("input", window.updateSelectedSkills);
 });
 
-async function upload(file){
-let fd = new FormData();
-fd.append("image",file);
 
-let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`,{
-method:"POST",
-body:fd
-});
-
-let data = await res.json();
-return data.data.url;
-}
 
 function preview(input, box){
 input.addEventListener("change",()=>{
@@ -996,7 +1046,7 @@ submitBtn.disabled=true;
 submitBtn.innerText="Processing...";
 
 try{
-let subjects = collectSelectedSkills();
+let subjects = window.collectSelectedSkills();
 
 if(subjects.length===0){
 document.getElementById("subjectError").style.display="block";
@@ -1027,20 +1077,20 @@ localStorage.setItem("role","teacher");
 
 let logoUrl="";
 if(document.getElementById("logo").files[0]){
-logoUrl = await upload(document.getElementById("logo").files[0]);
+logoUrl = await upload(document.getElementById("logo").files[0], "teachers/" + uid + "/logo");
 }
 
 let idProofUrl="";
 if(document.getElementById("idUpload").files[0]){
-idProofUrl = await upload(document.getElementById("idUpload").files[0]);
+idProofUrl = await upload(document.getElementById("idUpload").files[0], "teachers/" + uid + "/id-proof");
 }
 
 let gallery=[];
 for(let file of galleryFiles){
-gallery.push(await upload(file));
+gallery.push(await upload(file, "teachers/" + uid + "/gallery"));
 }
 
-subjects = collectSelectedSkills();
+subjects = window.collectSelectedSkills();
 
 let teachingModes=[];
 document.querySelectorAll(".mode:checked").forEach(item=>{
@@ -1135,6 +1185,7 @@ submitBtn.innerText="Continue To Payment";
 
 </body>
 </html>
+
 
 
 
