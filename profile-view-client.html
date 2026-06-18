@@ -168,68 +168,72 @@ margin:0 0 10px;
 color:#0f2d5c;
 }
 
-.detailList{
-display:flex;
-flex-direction:column;
-gap:8px;
+.detailsSection{
+background:linear-gradient(180deg,#f9fbff 0%,#f2f7ff 100%);
 }
 
-.detailItem{
+.detailGrid{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:10px;
+}
+
+.detailCard{
 background:white;
 border:1px solid #d9e3f5;
-border-radius:12px;
-padding:10px 12px;
+border-radius:14px;
+padding:12px 14px;
+min-width:0;
+box-shadow:0 2px 10px rgba(18,48,90,.04);
 }
 
-.detailInlineRow{
-display:flex;
-flex-direction:column;
-gap:8px;
+.detailCard.wide{
+grid-column:1 / -1;
 }
 
-.detailInlineItem{
-background:white;
-border:1px solid #d9e3f5;
-border-radius:12px;
-padding:10px 12px;
-font-size:13px;
-line-height:1.5;
-color:#222;
-word-break:break-word;
-}
-
-.detailInlineItem b{
-color:#1e3a66;
-}
-
-.detailLabel{
-font-size:13px;
+.detailTitle{
+font-size:12px;
 font-weight:bold;
-color:#1e3a66;
+color:#31507f;
 margin-bottom:6px;
 }
 
-.detailValue{
+.detailBody{
 font-size:14px;
 line-height:1.6;
 color:#222;
 word-break:break-word;
 }
 
-.detailValue a{
+.detailBodyRows{
+display:flex;
+flex-direction:column;
+gap:4px;
+}
+
+.detailBody a{
 color:#1565c0;
 text-decoration:none;
 font-weight:bold;
 }
 
 .detailsDescription{
-margin-top:12px;
 padding:12px;
 background:white;
 border:1px solid #d9e3f5;
 border-radius:12px;
 line-height:1.6;
 word-break:break-word;
+}
+
+@media(max-width:760px){
+.detailGrid{
+grid-template-columns:1fr;
+}
+
+.detailCard.wide{
+grid-column:auto;
+}
 }
 
 .reviewItem{
@@ -735,43 +739,43 @@ if(showValue("onlineFee")) modes.push(`Online - Rs ${esc(data.onlineFee)}`);
 if(showValue("individualFee")) modes.push(`Individual / Personal - Rs ${esc(data.individualFee)}`);
 if(showValue("otherMode") || showValue("otherModeFee")) modes.push(`${esc(data.otherMode || "Other Mode")} ${data.otherModeFee ? "- Rs " + esc(data.otherModeFee) : ""}`);
 
-const detailBlocks = [];
-const compactInlineDetails = [];
+const detailCards = [];
 
-function pushDetail(label, value){
+function pushCard(label, value, wide = false){
 if(!value) return;
-detailBlocks.push(`
-<div class="detailItem">
-<div class="detailLabel">${label}</div>
-<div class="detailValue">${value}</div>
+detailCards.push(`
+<div class="detailCard${wide ? " wide" : ""}">
+<div class="detailTitle">${label}</div>
+<div class="detailBody">${value}</div>
 </div>
 `);
 }
 
-function pushInlineDetail(label, value){
-if(!value) return;
-compactInlineDetails.push(`
-<div class="detailInlineItem"><b>${label}:</b> ${value}</div>
-`);
-}
+pushCard(
+"Subjects / Skills / Activities",
+canShow("subjects") ? (subjects.map(esc).join(", ") || "-") : "",
+true
+);
 
-pushDetail("Subjects / Skills / Activities", canShow("subjects") ? (subjects.map(esc).join(", ") || "-") : "");
-pushDetail(
+pushCard(
 "Teaching / Training Modes",
 modes.length
 ? modes.join("<br>")
-: (canShow("teachingModes") && teachingModes.length ? teachingModes.map(esc).join(", ") : "")
+: (canShow("teachingModes") && teachingModes.length ? teachingModes.map(esc).join(", ") : ""),
+true
 );
-pushDetail("Class / Preparation For", showValue("class") ? esc(data.class) : "");
-pushDetail("Board / Type of Exam", showValue("board") ? esc(data.board) : "");
-pushInlineDetail("Experience", showValue("experience") ? formatExperience(data.experience) : "");
-pushInlineDetail("Qualification", showValue("qualification") ? esc(data.qualification) : "");
-if(compactInlineDetails.length){
-detailBlocks.push(`<div class="detailInlineRow">${compactInlineDetails.join("")}</div>`);
-}
-pushDetail("Owner / Director", showValue("ownerName") ? esc(data.ownerName) : "");
-pushDetail("Established Date", showValue("establishedDate") ? esc(data.establishedDate) : "");
-pushDetail("Address", addressParts.join(""));
+
+pushCard("Class / Preparation For", showValue("class") ? esc(data.class) : "");
+pushCard("Board / Type of Exam", showValue("board") ? esc(data.board) : "");
+pushCard("Experience", showValue("experience") ? formatExperience(data.experience) : "");
+pushCard("Qualification", showValue("qualification") ? esc(data.qualification) : "");
+pushCard("Owner / Director", showValue("ownerName") ? esc(data.ownerName) : "");
+pushCard("Established Date", showValue("establishedDate") ? esc(data.establishedDate) : "");
+pushCard(
+"Address",
+addressParts.length ? `<div class="detailBodyRows">${addressParts.join("")}</div>` : "",
+true
+);
 
 let galleryHTML = "";
 let gallery = data.gallery || [];
@@ -791,8 +795,6 @@ ${gallery.map(img => `<img src="${esc(img)}" onclick="window.open('${esc(img)}',
 </div>
 </div>
 `;
-
-initGalleryCarousel();
 }
 
 function initGalleryCarousel(){
@@ -873,13 +875,13 @@ ${categoryLabel ? `<span class="badge">${categoryLabel}</span>` : ""}
 ${canShow("name") ? `<h2>${esc(data.name || "-")}</h2>` : `<h2>GURULINK Profile</h2>`}
 </div>
 
-<div class="section">
+<div class="section detailsSection">
 <h3>Profile Details</h3>
-<div class="detailList">
-${detailBlocks.join("") || `
-<div class="detailItem">
-<div class="detailLabel">Details</div>
-<div class="detailValue">Not available</div>
+<div class="detailGrid">
+${detailCards.join("") || `
+<div class="detailCard wide">
+<div class="detailTitle">Details</div>
+<div class="detailBody">Not available</div>
 </div>
 `}
 </div>
@@ -952,6 +954,8 @@ ${descriptionHTML}
 <div id="reviews">No Reviews Yet</div>
 </div>
 `;
+
+initGalleryCarousel();
 }
 /* REVIEWS */
 function loadReviews(){
