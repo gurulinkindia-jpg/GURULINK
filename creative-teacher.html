@@ -165,6 +165,196 @@ border-radius:20px;
 padding:7px 10px;
 }
 
+.plainExamples{
+font-size:13px;
+line-height:1.6;
+color:#555;
+margin:8px 0 12px;
+}
+
+.categoryDropdownList{
+display:flex;
+flex-direction:column;
+gap:10px;
+margin-top:10px;
+}
+
+.skillsPanel .subjectGrid{
+display:block;
+}
+
+.skillCategory{
+display:block;
+margin-bottom:10px;
+}
+
+.skillCategory h4{
+width:100%;
+margin:0;
+padding:12px 14px;
+background:#f7fafc;
+color:#263238;
+border:1px solid #d9e2ec;
+border-radius:10px;
+font-size:14px;
+font-weight:bold;
+display:flex;
+justify-content:space-between;
+align-items:center;
+cursor:pointer;
+box-sizing:border-box;
+}
+
+.skillCategory .row,
+.skillCategory .otherSkillInput,
+.skillCategory .categoryHelpTextInline{
+display:none;
+}
+
+.skillCategory.open{
+display:flex;
+flex-wrap:wrap;
+gap:6px 14px;
+padding:12px 14px;
+border:1px solid #d9e2ec;
+border-radius:10px;
+background:#fff;
+}
+
+.skillCategory.open h4{
+margin:-12px -14px 0;
+border:none;
+border-bottom:1px solid #e6edf5;
+border-radius:10px 10px 0 0;
+}
+
+.skillCategory.open .categoryHelpTextInline{
+display:block;
+width:100%;
+font-size:12px;
+color:#666;
+margin-top:6px;
+margin-bottom:10px;
+}
+
+.skillCategory.open .row{
+display:flex;
+width:calc(50% - 7px);
+margin:6px 0;
+}
+
+.skillCategory.open .otherOptionRow,
+.skillCategory.open .otherSkillInput{
+width:100%;
+}
+
+.categoryDropdown{
+border:1px solid #d9e2ec;
+border-radius:10px;
+background:#fff;
+overflow:hidden;
+}
+
+.categoryDropdownHeader{
+width:100%;
+margin:0;
+padding:12px 14px;
+background:#f7fafc;
+color:#263238;
+border:none;
+border-radius:0;
+font-size:14px;
+font-weight:bold;
+text-align:left;
+display:flex;
+justify-content:space-between;
+align-items:center;
+cursor:pointer;
+}
+
+.categoryDropdownHeader span:last-child{
+font-size:16px;
+}
+
+.categoryDropdownBody{
+display:none;
+padding:12px 14px;
+background:#fff;
+border-top:1px solid #e6edf5;
+}
+
+.categoryDropdown.open .categoryDropdownBody{
+display:block;
+}
+
+.categoryHelpText{
+font-size:12px;
+color:#666;
+margin-bottom:10px;
+}
+
+.categoryOptionsGrid{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:6px 14px;
+}
+
+.categoryOptionRow{
+display:flex;
+align-items:flex-start;
+gap:10px;
+margin:8px 0;
+font-size:14px;
+}
+
+.categoryOptionRow input[type=checkbox]{
+width:auto;
+margin:2px 0 0;
+}
+
+.categoryOtherInput{
+display:none;
+margin-top:8px;
+}
+
+.selectedTags{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+margin-top:12px;
+}
+
+.selectedTag{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:8px 10px;
+background:#eef7ff;
+border:1px solid #bbdefb;
+border-radius:999px;
+font-size:13px;
+}
+
+.selectedTag button{
+width:auto;
+margin:0;
+padding:2px 8px;
+background:#d32f2f;
+font-size:12px;
+border-radius:999px;
+}
+
+@media(max-width:600px){
+.categoryOptionsGrid{
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:6px 10px;
+}
+
+.categoryOptionRow{
+font-size:13px;
+}
+}
+
 .row{
 display:flex;
 align-items:center;
@@ -315,12 +505,8 @@ style="height:120px;resize:vertical;">
 Examples:
 </p>
 
-<div class="skillExamples">
-<span>Singing</span>
-<span>Classical Dance</span>
-<span>Drawing & Sketching</span>
-<span>Photography</span>
-<span>Creative Writing</span>
+<div class="plainExamples">
+Singing, Classical Dance, Drawing & Sketching, Photography, Creative Writing
 </div>
 
 <button type="button" id="toggleSkills" class="secondaryButton">
@@ -475,10 +661,8 @@ required>
 Examples:
 </p>
 
-<div class="skillExamples">
-<span>Group Class / Workshop</span>
-<span>One-to-One Training</span>
-<span>Online Classes</span>
+<div class="plainExamples">
+Group Class / Workshop, One-to-One Training, Online Classes
 </div>
 
 <button type="button" id="toggleModes" class="secondaryButton">
@@ -605,16 +789,45 @@ const box=document.getElementById(id);
 box.style.display=box.style.display==="block" ? "none" : "block";
 }
 
-function updateSelectedSkills(){
+let selectedSkillValues = [];
+
+function collectSelectedSkills(){
 const selected = Array.from(document.querySelectorAll(".subjectCheck:checked")).map(item=>item.value);
 
 document.querySelectorAll(".otherSkillCheck:checked").forEach(item=>{
 const input = document.getElementById(item.dataset.target);
-selected.push(input.value.trim() || item.parentElement.innerText.trim());
+const value = input ? input.value.trim() : "";
+
+if(value){
+selected.push(value);
+}
 });
 
-document.getElementById("selectedSkills").innerText =
-selected.length ? "Selected: " + selected.join(", ") : "No arts and creativity subject selected yet. Click More to open the full chart.";
+return selected;
+}
+
+function updateSelectedSkills(){
+selectedSkillValues = collectSelectedSkills();
+const summary = document.getElementById("selectedSkills");
+const emptyMessage = "No arts and creativity subject selected yet. Click More to open the full chart.";
+
+summary.innerText = selectedSkillValues.length ? "Selected: " + selectedSkillValues.join(", ") : emptyMessage;
+
+let tagsBox = document.getElementById("selectedSkillTags");
+
+if(!tagsBox){
+tagsBox = document.createElement("div");
+tagsBox.id = "selectedSkillTags";
+tagsBox.className = "selectedTags";
+document.getElementById("subjectError").before(tagsBox);
+}
+
+tagsBox.innerHTML = selectedSkillValues.map(item=>`
+<div class="selectedTag">
+<span>${item}</span>
+<button type="button" onclick="removeSelectedSkill('${item.replace(/'/g,"\\'")}')">x</button>
+</div>
+`).join("");
 }
 
 function updateSelectedModes(){
@@ -629,19 +842,79 @@ selected.push(otherMode || "Other Training Mode");
 document.getElementById("selectedModes").innerText =
 selected.length ? "Selected: " + selected.join(", ") : "No training mode selected yet. Click More to open the full chart.";
 }
+
+function initializeSkillCategories(){
+document.querySelectorAll(".skillCategory").forEach(card=>{
+if(card.dataset.enhanced === "true"){
+return;
+}
+
+card.dataset.enhanced = "true";
+const title = card.querySelector("h4");
+if(!title){
+return;
+}
+
+const toggleMark = document.createElement("span");
+toggleMark.className = "categoryToggleMark";
+toggleMark.innerText = "+";
+title.appendChild(toggleMark);
+
+const helpText = document.createElement("div");
+helpText.className = "categoryHelpTextInline";
+helpText.innerText = "Click to select the subject";
+title.insertAdjacentElement("afterend", helpText);
+
+const otherCheck = card.querySelector(".row .otherSkillCheck");
+const otherRow = otherCheck ? otherCheck.closest(".row") : null;
+if(otherRow){
+otherRow.classList.add("otherOptionRow");
+}
+
+title.addEventListener("click",()=>{
+card.classList.toggle("open");
+toggleMark.innerText = card.classList.contains("open") ? "-" : "+";
+});
+});
+}
+
+window.collectSelectedSkills = collectSelectedSkills;
+window.updateSelectedSkills = updateSelectedSkills;
+window.updateSelectedModes = updateSelectedModes;
+window.initializeSkillCategories = initializeSkillCategories;
+
+window.removeSelectedSkill = function(value){
+document.querySelectorAll(".subjectCheck").forEach(item=>{
+if(item.value === value){
+item.checked = false;
+}
+});
+
+document.querySelectorAll(".otherSkillCheck").forEach(item=>{
+const input = document.getElementById(item.dataset.target);
+if(input && input.value.trim() === value){
+item.checked = false;
+input.value = "";
+input.style.display = "none";
+}
+});
+
+updateSelectedSkills();
+};
 </script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 authDomain:"gurulink-59cc7.firebaseapp.com",
 databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 projectId:"gurulink-59cc7",
-storageBucket:"gurulink-59cc7.appspot.com",
+storageBucket:"gurulink-59cc7.firebasestorage.app",
 messagingSenderId:"112148672399",
 appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
@@ -649,8 +922,21 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
+const storage = getStorage(app);
 const form = document.getElementById("form");
-const API_KEY = "31f729ff855eb2e42c00ee508a8647ea";
+
+function makeStorageFileName(file){
+const originalName = (file && file.name ? file.name : "image").replace(/[^a-zA-Z0-9._-]/g,"_");
+return Date.now() + "-" + Math.random().toString(36).slice(2,8) + "-" + originalName;
+}
+
+async function upload(file, folder){
+const fileRef = storageRef(storage, folder + "/" + makeStorageFileName(file));
+await uploadBytes(fileRef, file, {
+contentType: file.type || "application/octet-stream"
+});
+return await getDownloadURL(fileRef);
+}
 
 document.getElementById("idType").addEventListener("change",(e)=>{
 document.getElementById("otherIdProof").style.display =
@@ -675,16 +961,19 @@ button.innerText = panel.classList.contains("open")
 : "More Training Modes";
 });
 
+window.initializeSkillCategories();
+window.updateSelectedSkills();
+
 document.querySelectorAll(".subjectCheck").forEach(item=>{
-item.addEventListener("change", updateSelectedSkills);
+item.addEventListener("change", window.updateSelectedSkills);
 });
 
 document.querySelectorAll(".mode").forEach(item=>{
-item.addEventListener("change", updateSelectedModes);
+item.addEventListener("change", window.updateSelectedModes);
 });
 
-document.getElementById("otherModeCheck").addEventListener("change", updateSelectedModes);
-document.getElementById("otherMode").addEventListener("input", updateSelectedModes);
+document.getElementById("otherModeCheck").addEventListener("change", window.updateSelectedModes);
+document.getElementById("otherMode").addEventListener("input", window.updateSelectedModes);
 
 document.querySelectorAll(".otherSkillCheck").forEach(item=>{
 item.addEventListener("change",(e)=>{
@@ -693,26 +982,15 @@ input.style.display = e.target.checked ? "block" : "none";
 if(!e.target.checked){
 input.value = "";
 }
-updateSelectedSkills();
+window.updateSelectedSkills();
 });
 });
 
 document.querySelectorAll(".otherSkillInput").forEach(item=>{
-item.addEventListener("input", updateSelectedSkills);
+item.addEventListener("input", window.updateSelectedSkills);
 });
 
-async function upload(file){
-let fd = new FormData();
-fd.append("image",file);
 
-let res = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`,{
-method:"POST",
-body:fd
-});
-
-let data = await res.json();
-return data.data.url;
-}
 
 function preview(input, box){
 input.addEventListener("change",()=>{
@@ -745,10 +1023,9 @@ submitBtn.disabled=true;
 submitBtn.innerText="Processing...";
 
 try{
-let checked = document.querySelectorAll(".subjectCheck:checked").length;
-let otherChecked = document.querySelectorAll(".otherSkillCheck:checked").length;
+let subjects = window.collectSelectedSkills();
 
-if(checked===0 && otherChecked===0){
+if(subjects.length===0){
 document.getElementById("subjectError").style.display="block";
 submitBtn.disabled=false;
 submitBtn.innerText="Continue To Payment";
@@ -777,30 +1054,20 @@ localStorage.setItem("role","teacher");
 
 let logoUrl="";
 if(document.getElementById("logo").files[0]){
-logoUrl = await upload(document.getElementById("logo").files[0]);
+logoUrl = await upload(document.getElementById("logo").files[0], "teachers/" + uid + "/logo");
 }
 
 let idProofUrl="";
 if(document.getElementById("idUpload").files[0]){
-idProofUrl = await upload(document.getElementById("idUpload").files[0]);
+idProofUrl = await upload(document.getElementById("idUpload").files[0], "teachers/" + uid + "/id-proof");
 }
 
 let gallery=[];
 for(let file of galleryFiles){
-gallery.push(await upload(file));
+gallery.push(await upload(file, "teachers/" + uid + "/gallery"));
 }
 
-let subjects=[];
-document.querySelectorAll(".subjectCheck:checked").forEach(item=>{
-subjects.push(item.value);
-});
-
-document.querySelectorAll(".otherSkillCheck:checked").forEach(item=>{
-const input = document.getElementById(item.dataset.target);
-if(input.value.trim()!==""){
-subjects.push(input.value.trim());
-}
-});
+subjects = window.collectSelectedSkills();
 
 let teachingModes=[];
 document.querySelectorAll(".mode:checked").forEach(item=>{
@@ -895,6 +1162,7 @@ submitBtn.innerText="Continue To Payment";
 
 </body>
 </html>
+
 
 
 
