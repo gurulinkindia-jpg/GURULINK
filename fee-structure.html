@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fee Structure - GURULINK</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef2f7;
+color:#222;
+padding:18px;
+}
+
+.container{
+max-width:1100px;
+margin:0 auto;
+}
+
+.topCard{
+background:linear-gradient(135deg,#1565c0,#0d47a1);
+color:white;
+padding:22px;
+border-radius:18px;
+box-shadow:0 10px 24px rgba(0,0,0,.12);
+}
+
+.topCard h1{
+font-size:28px;
+margin-bottom:8px;
+}
+
+.topCard p{
+font-size:14px;
+line-height:1.6;
+opacity:.95;
+}
+
+.topActions{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+margin-top:16px;
+}
+
+.topActions a,
+.topActions button{
+min-height:42px;
+padding:10px 16px;
+border:none;
+border-radius:10px;
+text-decoration:none;
+font-size:14px;
+font-weight:bold;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+}
+
+.dashboardBtn{
+background:white;
+color:#1565c0;
+}
+
+.homeBtn{
+background:#43a047;
+color:white;
+}
+
+.backBtn{
+background:#ffb300;
+color:#222;
+}
+
+.pageSection{
+background:white;
+border-radius:18px;
+padding:20px;
+box-shadow:0 8px 20px rgba(0,0,0,.08);
+margin-top:18px;
+}
+
+.sectionTitle{
+font-size:22px;
+margin-bottom:14px;
+color:#0d47a1;
+}
+
+.summaryGrid{
+display:grid;
+grid-template-columns:repeat(3,minmax(0,1fr));
+gap:12px;
+}
+
+.summaryItem{
+background:#f7faff;
+border:1px solid #d9e8ff;
+border-radius:14px;
+padding:14px;
+}
+
+.summaryItem b{
+display:block;
+font-size:13px;
+color:#1e3a66;
+margin-bottom:6px;
+}
+
+.summaryItem span{
+font-size:15px;
+word-break:break-word;
+}
+
+.optionsGrid{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:14px;
+align-items:start;
+}
+
+.optionCard{
+background:#f7faff;
+border:1px solid #d9e8ff;
+border-radius:14px;
+padding:14px;
+}
+
+.optionCard label{
+display:flex;
+align-items:center;
+gap:10px;
+font-weight:bold;
+color:#1e3a66;
+cursor:pointer;
+}
+
+.optionCard input[type="checkbox"]{
+width:auto;
+transform:scale(1.1);
+}
+
+.optionCard textarea{
+margin-top:10px;
+}
+
+.helperText{
+font-size:13px;
+line-height:1.6;
+color:#666;
+margin-top:10px;
+}
+
+.importNote{
+margin-top:14px;
+padding:12px 14px;
+background:#fff8e1;
+border:1px solid #ffe082;
+border-radius:12px;
+font-size:13px;
+line-height:1.6;
+color:#6d4c41;
+}
+
+.toolbar{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+justify-content:space-between;
+align-items:center;
+margin-bottom:16px;
+}
+
+.toolbarLeft{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.toolbarRight{
+display:flex;
+gap:10px;
+}
+
+.toolBtn{
+min-height:42px;
+padding:10px 16px;
+border:none;
+border-radius:10px;
+font-size:14px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.addBtn{
+background:#1565c0;
+color:white;
+}
+
+.saveBtn{
+background:#43a047;
+color:white;
+}
+
+.resetBtn{
+background:#eceff1;
+color:#263238;
+}
+
+.statusMsg{
+font-size:13px;
+color:#555;
+}
+
+.feeList{
+display:flex;
+flex-direction:column;
+gap:14px;
+}
+
+.feeCard{
+border:1px solid #d9e3f5;
+border-radius:16px;
+padding:16px;
+background:#fcfdff;
+}
+
+.feeCardHeader{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+margin-bottom:14px;
+flex-wrap:wrap;
+}
+
+.feeTitleBadge{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+min-width:32px;
+height:32px;
+padding:0 10px;
+border-radius:999px;
+background:#e3f2fd;
+color:#1565c0;
+font-weight:bold;
+}
+
+.feeHeaderActions{
+display:flex;
+align-items:center;
+gap:12px;
+flex-wrap:wrap;
+}
+
+.activeToggle{
+display:flex;
+align-items:center;
+gap:8px;
+font-size:13px;
+font-weight:bold;
+color:#1e3a66;
+}
+
+.activeToggle input{
+width:auto;
+transform:scale(1.1);
+}
+
+.deleteBtn{
+background:#f44336;
+color:white;
+border:none;
+border-radius:10px;
+padding:9px 14px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.feeGrid{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:12px;
+}
+
+.fieldGroup{
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.fieldGroup.wide{
+grid-column:1 / -1;
+}
+
+.fieldGroup label{
+font-size:13px;
+font-weight:bold;
+color:#1e3a66;
+}
+
+input,
+textarea{
+width:100%;
+padding:12px;
+border:1px solid #cfd8dc;
+border-radius:10px;
+font-size:14px;
+outline:none;
+background:white;
+}
+
+textarea{
+min-height:90px;
+resize:vertical;
+}
+
+input:focus,
+textarea:focus{
+border-color:#1565c0;
+box-shadow:0 0 0 3px rgba(21,101,192,.08);
+}
+
+.emptyState{
+padding:20px;
+border:1px dashed #b0bec5;
+border-radius:14px;
+text-align:center;
+font-size:14px;
+color:#607d8b;
+background:#fafcff;
+}
+
+@media(max-width:820px){
+.summaryGrid,
+.optionsGrid,
+.feeGrid{
+grid-template-columns:1fr;
+}
+}
+
+@media(max-width:600px){
+body{
+padding:12px;
+}
+
+.topCard{
+padding:18px 16px;
+border-radius:16px;
+}
+
+.topCard h1{
+font-size:24px;
+}
+
+.pageSection{
+padding:16px;
+border-radius:16px;
+}
+
+.toolbar{
+align-items:stretch;
+}
+
+.toolbarLeft,
+.toolbarRight{
+width:100%;
+}
+
+.toolbarRight{
+display:grid;
+grid-template-columns:1fr 1fr;
+}
+
+.toolBtn{
+width:100%;
+}
+
+.topActions a,
+.topActions button{
+flex:1 1 140px;
+}
+
+.feeCard{
+padding:14px;
+}
+}
+</style>
+
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="topCard">
+    <h1>Fee Structure</h1>
+    <p>
+      Create a flexible fee list for your classes, coaching, batches, packages, admission fees, demo fees, or any custom offer.
+      This is easier to update than changing the registration form again and again.
+    </p>
+
+    <div class="topActions">
+      <a href="teacher-dashboard.html" class="dashboardBtn">Dashboard</a>
+      <a href="index.html" class="homeBtn">Home</a>
+      <button type="button" class="backBtn" onclick="history.back()">Back</button>
+    </div>
+  </div>
+
+  <div class="pageSection">
+    <h2 class="sectionTitle">Profile Summary</h2>
+
+    <div class="summaryGrid">
+      <div class="summaryItem">
+        <b>Name</b>
+        <span id="summaryName">Loading...</span>
+      </div>
+
+      <div class="summaryItem">
+        <b>Role</b>
+        <span id="summaryRole">Loading...</span>
+      </div>
+
+      <div class="summaryItem">
+        <b>Profile ID</b>
+        <span id="summaryId">Loading...</span>
+      </div>
+    </div>
+
+    <div class="importNote" id="importNote">
+      Loading your current fee details...
+    </div>
+  </div>
+
+  <div class="pageSection">
+    <h2 class="sectionTitle">Display Options</h2>
+
+    <div class="optionsGrid">
+      <div class="optionCard">
+        <label>
+          <input type="checkbox" id="showFeeStructure" checked>
+          Show fee structure on public profile
+        </label>
+        <div class="helperText">
+          Keep this on if you want students and parents to see your fee list later from your public profile.
+        </div>
+      </div>
+
+      <div class="optionCard">
+        <label for="feeNote">General Fee Note</label>
+        <textarea
+          id="feeNote"
+          placeholder="Example: Fees may change by class, subject, location, travel distance, or package type."></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="pageSection">
+    <div class="toolbar">
+      <div class="toolbarLeft">
+        <button type="button" class="toolBtn addBtn" onclick="addFeeItem()">Add Fee Row</button>
+      </div>
+
+      <div class="toolbarRight">
+        <button type="button" class="toolBtn resetBtn" onclick="resetToImportedFees()">Reset</button>
+        <button type="button" class="toolBtn saveBtn" onclick="saveFeeStructure()">Save Fee Structure</button>
+      </div>
+    </div>
+
+    <div class="statusMsg" id="statusMsg">
+      You can keep multiple fee rows active and update them anytime.
+    </div>
+
+    <div class="feeList" id="feeList"></div>
+  </div>
+
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+
+let currentUser = null;
+let profileId = "";
+let resolvedRole = "";
+let dbPath = "";
+let profileData = {};
+let importedStarterItems = [];
+let feeItems = [];
+
+function normalizeRole(value){
+  const role = String(value || "").trim().toLowerCase();
+
+  if(role === "teacher") return "teacher";
+  if(role === "institution") return "institution";
+  if(role === "teacher_institute") return "";
+
+  return "";
+}
+
+function getInitialProfileId(){
+  return (
+    localStorage.getItem("profileId") ||
+    localStorage.getItem("teacherId") ||
+    localStorage.getItem("institutionId") ||
+    localStorage.getItem("uid") ||
+    ""
+  ).trim();
+}
+
+function escapeHtml(value){
+  return String(value ?? "").replace(/[&<>"]/g, ch => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    "\"":"&quot;"
+  }[ch]));
+}
+
+function createId(prefix){
+  return prefix + "_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+}
+
+function createBlankItem(){
+  return {
+    id:createId("fee"),
+    title:"",
+    amount:"",
+    unit:"",
+    appliesTo:"",
+    note:"",
+    active:true,
+    sortOrder:feeItems.length + 1
+  };
+}
+
+function getSubjectsText(data){
+  if(Array.isArray(data.subjects)){
+    return data.subjects.filter(Boolean).join(", ");
+  }
+
+  if(data.subjects && typeof data.subjects === "object"){
+    return Object.values(data.subjects).filter(Boolean).join(", ");
+  }
+
+  return String(data.subjects || "").trim();
+}
+
+function getAppliesToText(data){
+  const subjects = getSubjectsText(data);
+  const classText = String(data.class || "").trim();
+
+  if(subjects && classText){
+    return subjects + " | " + classText;
+  }
+
+  return subjects || classText || "";
+}
+
+function pushImportedItem(list, title, amount, unit, appliesTo, note){
+  const cleanAmount = String(amount || "").trim();
+
+  if(!cleanAmount){
+    return;
+  }
+
+  list.push({
+    id:createId("fee"),
+    title:title,
+    amount:cleanAmount,
+    unit:unit,
+    appliesTo:appliesTo,
+    note:note,
+    active:true,
+    sortOrder:list.length + 1
+  });
+}
+
+function buildStarterItems(data){
+  const list = [];
+  const appliesTo = getAppliesToText(data);
+  const importedNote = "Imported from your current registration fee details.";
+
+  pushImportedItem(list, "Individual / Personal Coaching", data.individualFee, "per class", appliesTo, importedNote);
+  pushImportedItem(list, "Home Tuition / Home Visit", data.homeFee, "per class", appliesTo, importedNote);
+  pushImportedItem(list, "Group Coaching / Batch", data.groupFee, "per month", appliesTo, importedNote);
+  pushImportedItem(list, "Super Group Coaching", data.superGroupFee, "per month", appliesTo, importedNote);
+  pushImportedItem(list, "Online Coaching", data.onlineFee, "per class", appliesTo, importedNote);
+  pushImportedItem(list, data.otherMode || "Other Training Mode", data.otherModeFee, "", appliesTo, importedNote);
+
+  if(!list.length){
+    list.push(createBlankItem());
+  }
+
+  return list;
+}
+
+function normalizeFeeItem(item, index){
+  return {
+    id:item.id || createId("fee"),
+    title:String(item.title || ""),
+    amount:String(item.amount || ""),
+    unit:String(item.unit || ""),
+    appliesTo:String(item.appliesTo || ""),
+    note:String(item.note || ""),
+    active:item.active !== false,
+    sortOrder:Number(item.sortOrder || (index + 1))
+  };
+}
+
+function updateSummary(){
+  document.getElementById("summaryName").textContent =
+    profileData.name || profileData.ownerName || "-";
+
+  document.getElementById("summaryRole").textContent =
+    resolvedRole === "institution" ? "Institution" : "Teacher";
+
+  document.getElementById("summaryId").textContent =
+    profileId || "-";
+}
+
+function updateImportNote(){
+  const feeStructure = profileData.feeStructure || {};
+  const hasSavedItems =
+    Array.isArray(feeStructure.items) &&
+    feeStructure.items.length > 0;
+
+  const note = document.getElementById("importNote");
+
+  if(hasSavedItems){
+    note.textContent =
+      "Saved fee structure found. You are editing your latest saved fee rows.";
+    return;
+  }
+
+  if(importedStarterItems.length){
+    note.textContent =
+      "Your old registration fees were imported as starter rows. Edit them freely and save your new fee structure.";
+    return;
+  }
+
+  note.textContent =
+    "No old fee rows were found, so you can create a fresh custom fee structure here.";
+}
+
+function renderFeeItems(){
+  const container = document.getElementById("feeList");
+
+  if(!feeItems.length){
+    container.innerHTML = `
+      <div class="emptyState">
+        No fee rows yet. Tap <b>Add Fee Row</b> to start.
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = feeItems.map((item, index)=>`
+    <div class="feeCard">
+      <div class="feeCardHeader">
+        <span class="feeTitleBadge">#${index + 1}</span>
+
+        <div class="feeHeaderActions">
+          <label class="activeToggle">
+            <input
+              type="checkbox"
+              ${item.active ? "checked" : ""}
+              onchange="toggleFeeActive(${index}, this.checked)">
+            Active
+          </label>
+
+          <button type="button" class="deleteBtn" onclick="deleteFeeItem(${index})">
+            Delete
+          </button>
+        </div>
+      </div>
+
+      <div class="feeGrid">
+        <div class="fieldGroup">
+          <label>Fee Title</label>
+          <input
+            value="${escapeHtml(item.title)}"
+            placeholder="Example: One-to-One Tuition"
+            oninput="updateFeeItem(${index}, 'title', this.value)">
+        </div>
+
+        <div class="fieldGroup">
+          <label>Amount (INR)</label>
+          <input
+            value="${escapeHtml(item.amount)}"
+            placeholder="Example: 800"
+            oninput="updateFeeItem(${index}, 'amount', this.value)">
+        </div>
+
+        <div class="fieldGroup">
+          <label>Unit</label>
+          <input
+            value="${escapeHtml(item.unit)}"
+            placeholder="Example: per class / per month / one-time"
+            oninput="updateFeeItem(${index}, 'unit', this.value)">
+        </div>
+
+        <div class="fieldGroup">
+          <label>Applies To</label>
+          <input
+            value="${escapeHtml(item.appliesTo)}"
+            placeholder="Example: Class 9 Mathematics / Batch A / Age 10-14"
+            oninput="updateFeeItem(${index}, 'appliesTo', this.value)">
+        </div>
+
+        <div class="fieldGroup wide">
+          <label>Note</label>
+          <textarea
+            placeholder="Optional note about this fee row"
+            oninput="updateFeeItem(${index}, 'note', this.value)">${escapeHtml(item.note)}</textarea>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+async function resolveProfile(uid){
+  const storedRole =
+    normalizeRole(localStorage.getItem("role")) ||
+    normalizeRole(sessionStorage.getItem("role"));
+
+  const candidates =
+    storedRole === "institution"
+      ? [
+          { role:"institution", path:"institutions/" + uid },
+          { role:"teacher", path:"teachers/" + uid }
+        ]
+      : storedRole === "teacher"
+        ? [
+            { role:"teacher", path:"teachers/" + uid },
+            { role:"institution", path:"institutions/" + uid }
+          ]
+        : [
+            { role:"teacher", path:"teachers/" + uid },
+            { role:"institution", path:"institutions/" + uid }
+          ];
+
+  for(const candidate of candidates){
+    const snap = await get(ref(db, candidate.path));
+
+    if(!snap.exists()){
+      continue;
+    }
+
+    resolvedRole = candidate.role;
+    dbPath = candidate.path;
+    profileData = snap.val() || {};
+    profileId = uid;
+
+    localStorage.setItem("profileId", uid);
+    localStorage.setItem("role", resolvedRole);
+
+    if(resolvedRole === "teacher"){
+      localStorage.setItem("teacherId", uid);
+    }else{
+      localStorage.setItem("institutionId", uid);
+    }
+
+    return true;
+  }
+
+  return false;
+}
+
+function hydrateEditor(){
+  const feeStructure = profileData.feeStructure || {};
+  importedStarterItems = buildStarterItems(profileData).map(normalizeFeeItem);
+
+  document.getElementById("showFeeStructure").checked =
+    feeStructure.visible !== false;
+
+  document.getElementById("feeNote").value =
+    String(feeStructure.note || "");
+
+  if(Array.isArray(feeStructure.items) && feeStructure.items.length){
+    feeItems = feeStructure.items.map(normalizeFeeItem);
+  }else{
+    feeItems = importedStarterItems.map(item => ({ ...item }));
+  }
+
+  updateSummary();
+  updateImportNote();
+  renderFeeItems();
+}
+
+window.updateFeeItem = function(index, key, value){
+  if(!feeItems[index]){
+    return;
+  }
+
+  feeItems[index][key] = value;
+};
+
+window.toggleFeeActive = function(index, checked){
+  if(!feeItems[index]){
+    return;
+  }
+
+  feeItems[index].active = checked;
+};
+
+window.deleteFeeItem = function(index){
+  if(index < 0 || index >= feeItems.length){
+    return;
+  }
+
+  feeItems.splice(index, 1);
+
+  if(!feeItems.length){
+    feeItems.push(createBlankItem());
+  }
+
+  renderFeeItems();
+};
+
+window.addFeeItem = function(){
+  feeItems.push(createBlankItem());
+  renderFeeItems();
+};
+
+window.resetToImportedFees = function(){
+  const feeStructure = profileData.feeStructure || {};
+  const hasSavedItems =
+    Array.isArray(feeStructure.items) &&
+    feeStructure.items.length > 0;
+
+  feeItems = (
+    hasSavedItems
+      ? feeStructure.items.map(normalizeFeeItem)
+      : importedStarterItems.map(item => ({ ...item }))
+  );
+
+  document.getElementById("feeNote").value =
+    String(feeStructure.note || "");
+
+  document.getElementById("showFeeStructure").checked =
+    feeStructure.visible !== false;
+
+  document.getElementById("statusMsg").textContent =
+    hasSavedItems
+      ? "Reset to your last saved fee structure."
+      : "Reset to the fee rows imported from your current registration details.";
+
+  renderFeeItems();
+};
+
+window.saveFeeStructure = async function(){
+  if(!currentUser){
+    alert("Please login again before saving your fee structure.");
+    location.href = "otp-login.html";
+    return;
+  }
+
+  if(!dbPath){
+    alert("Profile path missing. Please open this page again from your dashboard.");
+    return;
+  }
+
+  const saveBtn = document.querySelector(".saveBtn");
+  const statusMsg = document.getElementById("statusMsg");
+
+  saveBtn.disabled = true;
+  saveBtn.textContent = "Saving...";
+  statusMsg.textContent = "Saving your fee structure...";
+
+  try{
+    const cleanedItems = feeItems
+      .map((item, index)=>({
+        id:item.id || createId("fee"),
+        title:String(item.title || "").trim(),
+        amount:String(item.amount || "").trim(),
+        unit:String(item.unit || "").trim(),
+        appliesTo:String(item.appliesTo || "").trim(),
+        note:String(item.note || "").trim(),
+        active:item.active !== false,
+        sortOrder:index + 1
+      }))
+      .filter(item =>
+        item.title ||
+        item.amount ||
+        item.unit ||
+        item.appliesTo ||
+        item.note
+      );
+
+    if(!cleanedItems.length){
+      alert("Please add at least one fee row before saving.");
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Save Fee Structure";
+      statusMsg.textContent = "Add at least one fee row to save.";
+      return;
+    }
+
+    const payload = {
+      feeStructure:{
+        visible:document.getElementById("showFeeStructure").checked,
+        note:document.getElementById("feeNote").value.trim(),
+        currency:"INR",
+        updatedAt:Date.now(),
+        items:cleanedItems
+      }
+    };
+
+    await update(ref(db, dbPath), payload);
+
+    profileData.feeStructure = payload.feeStructure;
+    feeItems = cleanedItems.map(normalizeFeeItem);
+    renderFeeItems();
+
+    saveBtn.textContent = "Saved";
+    statusMsg.textContent = "Fee structure saved successfully.";
+
+    setTimeout(()=>{
+      saveBtn.disabled = false;
+      saveBtn.textContent = "Save Fee Structure";
+    }, 900);
+  }
+  catch(err){
+    console.log(err);
+    alert(err.message || "Unable to save fee structure.");
+    saveBtn.disabled = false;
+    saveBtn.textContent = "Save Fee Structure";
+    statusMsg.textContent = "Unable to save. Please try again.";
+  }
+};
+
+onAuthStateChanged(auth, async(user)=>{
+  if(!user){
+    alert("Please login first.");
+    location.href = "otp-login.html";
+    return;
+  }
+
+  currentUser = user;
+  profileId = getInitialProfileId() || user.uid;
+
+  const resolved = await resolveProfile(user.uid);
+
+  if(!resolved){
+    document.getElementById("summaryName").textContent = "Profile not found";
+    document.getElementById("summaryRole").textContent = "-";
+    document.getElementById("summaryId").textContent = user.uid;
+    document.getElementById("importNote").textContent =
+      "We could not find a teacher or institution profile for this account.";
+    document.getElementById("feeList").innerHTML =
+      `<div class="emptyState">Profile not found. Please complete registration first.</div>`;
+    return;
+  }
+
+  hydrateEditor();
+});
+</script>
+
+</body>
+</html>
