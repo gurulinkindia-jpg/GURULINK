@@ -1039,7 +1039,7 @@ window.saveFeeStructure = async function(){
       alert(
         "Permission denied while saving fee structure.\n\n" +
         "Your current Firebase live rules are still blocking teacher/institution profile edits for this login method.\n" +
-        "Please update the teachers / institutions write rules in Firebase Console, then try again."
+        "Please update the teachers / institutions write rules in Firebase Console, then login once again and try again."
       );
     }else{
       alert(err.message || "Unable to save fee structure.");
