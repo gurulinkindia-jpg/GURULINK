@@ -150,7 +150,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebas
 import {
 getDatabase,
 ref,
-get
+get,
+set
 } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 import {
@@ -368,6 +369,34 @@ return result;
 
 }
 
+async function linkCurrentAuthUser(profileId, role, profileData){
+
+if(!auth.currentUser || !profileId || !role){
+return;
+}
+
+const currentUser = auth.currentUser;
+const cleanRole = String(role || "").trim().toLowerCase();
+const data = profileData || {};
+const resolvedName =
+data.name ||
+data.ownerName ||
+localStorage.getItem("name") ||
+"";
+
+await set(ref(db,"users/" + currentUser.uid),{
+uid:currentUser.uid,
+name:resolvedName,
+email:currentUser.email || data.email || "",
+phone:cleanPhone(currentUser.phoneNumber || phone || data.phone || ""),
+role:cleanRole,
+profileId:profileId,
+linkedRole:cleanRole,
+updatedAt:Date.now()
+});
+
+}
+
 async function checkAccount(){
 
 try{
@@ -406,6 +435,8 @@ localStorage.setItem("role","student");
 localStorage.setItem("studentId",student.id);
 localStorage.setItem("profileId",student.id);
 
+await linkCurrentAuthUser(student.id,"student",student.data);
+
 finishRedirect("student-dashboard.html");
 return;
 
@@ -433,6 +464,8 @@ localStorage.setItem("role","teacher");
 localStorage.setItem("teacherId",teacher.id);
 localStorage.setItem("profileId",teacher.id);
 
+await linkCurrentAuthUser(teacher.id,"teacher",teacher.data);
+
 finishRedirect("teacher-dashboard.html");
 return;
 
@@ -446,6 +479,8 @@ if(institution){
 localStorage.setItem("role","institution");
 localStorage.setItem("institutionId",institution.id);
 localStorage.setItem("profileId",institution.id);
+
+await linkCurrentAuthUser(institution.id,"institution",institution.data);
 
 finishRedirect("teacher-dashboard.html");
 return;
@@ -474,6 +509,8 @@ localStorage.setItem("role","institution");
 localStorage.setItem("institutionId",institution.id);
 localStorage.setItem("profileId",institution.id);
 
+await linkCurrentAuthUser(institution.id,"institution",institution.data);
+
 finishRedirect("teacher-dashboard.html");
 return;
 
@@ -499,6 +536,8 @@ localStorage.setItem("role","student");
 localStorage.setItem("studentId",student.id);
 localStorage.setItem("profileId",student.id);
 
+await linkCurrentAuthUser(student.id,"student",student.data);
+
 finishRedirect("student-dashboard.html");
 return;
 
@@ -513,6 +552,8 @@ localStorage.setItem("role","teacher");
 localStorage.setItem("teacherId",teacher.id);
 localStorage.setItem("profileId",teacher.id);
 
+await linkCurrentAuthUser(teacher.id,"teacher",teacher.data);
+
 finishRedirect("teacher-dashboard.html");
 return;
 
@@ -526,6 +567,8 @@ if(institution){
 localStorage.setItem("role","institution");
 localStorage.setItem("institutionId",institution.id);
 localStorage.setItem("profileId",institution.id);
+
+await linkCurrentAuthUser(institution.id,"institution",institution.data);
 
 finishRedirect("teacher-dashboard.html");
 return;
