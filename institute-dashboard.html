@@ -200,10 +200,10 @@ vertical-align:middle;
 
 /* BUTTONS */
 
-/* PC: 6 buttons in one row */
+/* PC: 7 buttons in one row */
 .mainBtns{
   display:grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   gap:10px;
 }
 
@@ -212,7 +212,7 @@ vertical-align:middle;
   grid-column: span 1;
 }
 
-/* MOBILE: 2 + 2 + 1 layout */
+/* MOBILE: 2-column layout */
 @media (max-width:600px){
 
   .mainBtns{
@@ -247,6 +247,10 @@ background:#1976d2;
 
 .supportBtn{
 background:#ff9800;
+}
+
+.feeBtn{
+background:#5e35b1;
 }
 
 .logoutBtn{
@@ -858,6 +862,10 @@ Quick Actions
 
   <button class="editBtn" onclick="editProfile()">
     Edit Profile
+  </button>
+
+  <button class="feeBtn" onclick="openFeeStructure()">
+    Fee Structure
   </button>
 
   <button class="supportBtn" onclick="contactDeveloper()">
@@ -1691,6 +1699,13 @@ location.href=
 
 };
 
+window.openFeeStructure = function(){
+
+location.href =
+"fee-structure.html";
+
+};
+
 window.createInvoice = function () {
   const id =
     profileId ||
@@ -2063,3 +2078,5 @@ profileId;
 
 </body>
 </html>
+
+
