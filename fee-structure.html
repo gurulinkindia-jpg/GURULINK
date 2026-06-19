@@ -96,7 +96,7 @@ color:#0d47a1;
 
 .summaryGrid{
 display:grid;
-grid-template-columns:repeat(3,minmax(0,1fr));
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
 gap:12px;
 }
 
@@ -436,6 +436,11 @@ padding:14px;
       </div>
 
       <div class="summaryItem">
+        <b>Category</b>
+        <span id="summaryCategory">Loading...</span>
+      </div>
+
+      <div class="summaryItem">
         <b>Profile ID</b>
         <span id="summaryId">Loading...</span>
       </div>
@@ -512,6 +517,7 @@ const auth = getAuth(app);
 let currentUser = null;
 let profileId = "";
 let resolvedRole = "";
+let resolvedCategory = "";
 let dbPath = "";
 let profileData = {};
 let importedStarterItems = [];
@@ -522,19 +528,73 @@ function normalizeRole(value){
 
   if(role === "teacher") return "teacher";
   if(role === "institution") return "institution";
-  if(role === "teacher_institute") return "";
+  if(role === "teacher_institute") return "teacher";
 
   return "";
 }
 
-function getInitialProfileId(){
-  return (
-    localStorage.getItem("profileId") ||
-    localStorage.getItem("teacherId") ||
-    localStorage.getItem("institutionId") ||
-    localStorage.getItem("uid") ||
-    ""
-  ).trim();
+function formatCategory(value){
+  const category = String(value || "").trim().toLowerCase();
+
+  if(category === "academic"){
+    return "Academic";
+  }
+
+  if(category === "creative"){
+    return "Arts & Creativity";
+  }
+
+  if(category === "skill"){
+    return "Professional Skills";
+  }
+
+  if(category === "sport"){
+    return "Sports & Fitness";
+  }
+
+  if(!category){
+    return "-";
+  }
+
+  return category.charAt(0).toUpperCase() + category.slice(1);
+}
+
+function getInitialProfileContext(){
+  const params = new URLSearchParams(location.search);
+
+  const id =
+    (
+      params.get("id") ||
+      sessionStorage.getItem("feeProfileId") ||
+      localStorage.getItem("feeProfileId") ||
+      sessionStorage.getItem("profileId") ||
+      localStorage.getItem("profileId") ||
+      localStorage.getItem("teacherId") ||
+      localStorage.getItem("institutionId") ||
+      localStorage.getItem("uid") ||
+      ""
+    ).trim();
+
+  const role =
+    normalizeRole(
+      params.get("role") ||
+      sessionStorage.getItem("feeRole") ||
+      localStorage.getItem("feeRole") ||
+      sessionStorage.getItem("role") ||
+      localStorage.getItem("role")
+    );
+
+  const category =
+    String(
+      params.get("category") ||
+      sessionStorage.getItem("feeCategory") ||
+      localStorage.getItem("feeCategory") ||
+      sessionStorage.getItem("profileCategory") ||
+      localStorage.getItem("profileCategory") ||
+      ""
+    ).trim().toLowerCase();
+
+  return { id, role, category };
 }
 
 function escapeHtml(value){
@@ -644,6 +704,9 @@ function updateSummary(){
   document.getElementById("summaryRole").textContent =
     resolvedRole === "institution" ? "Institution" : "Teacher";
 
+  document.getElementById("summaryCategory").textContent =
+    formatCategory(resolvedCategory || profileData.category || "");
+
   document.getElementById("summaryId").textContent =
     profileId || "-";
 }
@@ -748,25 +811,28 @@ function renderFeeItems(){
   `).join("");
 }
 
-async function resolveProfile(uid){
+async function resolveProfile(candidateId, preferredRole, preferredCategory){
   const storedRole =
-    normalizeRole(localStorage.getItem("role")) ||
-    normalizeRole(sessionStorage.getItem("role"));
+    preferredRole ||
+    normalizeRole(sessionStorage.getItem("feeRole")) ||
+    normalizeRole(localStorage.getItem("feeRole")) ||
+    normalizeRole(sessionStorage.getItem("role")) ||
+    normalizeRole(localStorage.getItem("role"));
 
   const candidates =
     storedRole === "institution"
       ? [
-          { role:"institution", path:"institutions/" + uid },
-          { role:"teacher", path:"teachers/" + uid }
+          { role:"institution", path:"institutions/" + candidateId },
+          { role:"teacher", path:"teachers/" + candidateId }
         ]
       : storedRole === "teacher"
         ? [
-            { role:"teacher", path:"teachers/" + uid },
-            { role:"institution", path:"institutions/" + uid }
+            { role:"teacher", path:"teachers/" + candidateId },
+            { role:"institution", path:"institutions/" + candidateId }
           ]
         : [
-            { role:"teacher", path:"teachers/" + uid },
-            { role:"institution", path:"institutions/" + uid }
+            { role:"teacher", path:"teachers/" + candidateId },
+            { role:"institution", path:"institutions/" + candidateId }
           ];
 
   for(const candidate of candidates){
@@ -779,15 +845,28 @@ async function resolveProfile(uid){
     resolvedRole = candidate.role;
     dbPath = candidate.path;
     profileData = snap.val() || {};
-    profileId = uid;
+    profileId = candidateId;
+    resolvedCategory =
+      String(profileData.category || preferredCategory || "").trim().toLowerCase();
 
-    localStorage.setItem("profileId", uid);
+    localStorage.setItem("profileId", candidateId);
     localStorage.setItem("role", resolvedRole);
+    localStorage.setItem("profileCategory", resolvedCategory);
+    localStorage.setItem("feeProfileId", candidateId);
+    localStorage.setItem("feeRole", resolvedRole);
+    localStorage.setItem("feeCategory", resolvedCategory);
+
+    sessionStorage.setItem("profileId", candidateId);
+    sessionStorage.setItem("role", resolvedRole);
+    sessionStorage.setItem("profileCategory", resolvedCategory);
+    sessionStorage.setItem("feeProfileId", candidateId);
+    sessionStorage.setItem("feeRole", resolvedRole);
+    sessionStorage.setItem("feeCategory", resolvedCategory);
 
     if(resolvedRole === "teacher"){
-      localStorage.setItem("teacherId", uid);
+      localStorage.setItem("teacherId", candidateId);
     }else{
-      localStorage.setItem("institutionId", uid);
+      localStorage.setItem("institutionId", candidateId);
     }
 
     return true;
@@ -966,13 +1045,31 @@ onAuthStateChanged(auth, async(user)=>{
   }
 
   currentUser = user;
-  profileId = getInitialProfileId() || user.uid;
+  const initialContext = getInitialProfileContext();
+  const candidateId = initialContext.id || user.uid;
 
-  const resolved = await resolveProfile(user.uid);
+  profileId = candidateId;
+  resolvedRole = initialContext.role || resolvedRole;
+  resolvedCategory = initialContext.category || resolvedCategory;
+
+  let resolved = await resolveProfile(
+    candidateId,
+    initialContext.role,
+    initialContext.category
+  );
+
+  if(!resolved && candidateId !== user.uid){
+    resolved = await resolveProfile(
+      user.uid,
+      initialContext.role,
+      initialContext.category
+    );
+  }
 
   if(!resolved){
     document.getElementById("summaryName").textContent = "Profile not found";
     document.getElementById("summaryRole").textContent = "-";
+    document.getElementById("summaryCategory").textContent = "-";
     document.getElementById("summaryId").textContent = user.uid;
     document.getElementById("importNote").textContent =
       "We could not find a teacher or institution profile for this account.";
