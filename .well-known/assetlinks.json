@@ -1,1 +1,15 @@
-
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.gurulinkindia.gurulink",
+      "sha256_cert_fingerprints": [
+        "62:37:64:EE:80:9A:C5:67:C2:E8:CA:A9:D6:19:B9:EB:4D:51:F4:EE:16:A4:BC:38:99:A0:6F:00:01:2B:87:86"
+      ]
+    }
+  }
+]
