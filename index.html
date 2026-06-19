@@ -646,7 +646,7 @@ let searchData = [];
 let matches = [];
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
 const firebaseConfig={
@@ -667,6 +667,7 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getDatabase(app);
+const DEFAULT_HEADER_PHOTO = "https://i.ibb.co/4pDNDk1/user.png";
 
 if(
 localStorage.getItem("role") === "guest" ||
@@ -724,6 +725,87 @@ const savedPhoto = localStorage.getItem("profilePhoto");
 if(savedPhoto){
 document.getElementById("headerProfilePic").src = savedPhoto;
 }
+
+async function loadHeaderProfilePhoto(authUser){
+const role =
+String(localStorage.getItem("role") || "")
+.trim()
+.toLowerCase();
+
+if(role === "guest"){
+return;
+}
+
+const profileId =
+localStorage.getItem("profileId") ||
+localStorage.getItem("teacherId") ||
+localStorage.getItem("institutionId") ||
+localStorage.getItem("uid") ||
+(authUser ? authUser.uid : "") ||
+"";
+
+if(!profileId){
+return;
+}
+
+const paths = [];
+
+if(role === "teacher"){
+paths.push("teachers/" + profileId);
+}
+
+if(role === "institution"){
+paths.push("institutions/" + profileId);
+}
+
+if(role === "student" || role === "parent"){
+paths.push("students/" + profileId);
+}
+
+paths.push("teachers/" + profileId);
+paths.push("institutions/" + profileId);
+paths.push("students/" + profileId);
+paths.push("users/" + profileId);
+
+const tried = new Set();
+
+for(const path of paths){
+if(!path || tried.has(path)) continue;
+tried.add(path);
+
+try{
+const snap = await get(ref(db, path));
+
+if(!snap.exists()) continue;
+
+const profileData = snap.val() || {};
+const photo =
+profileData.logo ||
+profileData.photo ||
+profileData.profilePhoto ||
+profileData.image ||
+"";
+
+if(photo){
+document.getElementById("headerProfilePic").src = photo;
+localStorage.setItem("profilePhoto", photo);
+return;
+}
+}
+catch(err){
+console.log("Header photo load failed for", path, err);
+}
+}
+
+if(!savedPhoto){
+document.getElementById("headerProfilePic").src =
+DEFAULT_HEADER_PHOTO;
+}
+}
+
+onAuthStateChanged(auth,(user)=>{
+loadHeaderProfilePhoto(user);
+});
 
 
 
