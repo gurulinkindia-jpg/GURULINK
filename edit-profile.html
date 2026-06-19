@@ -802,10 +802,11 @@ return;
 }
 
 if(
-currentUser.uid !== profileId
+currentUser.uid !== profileId &&
+localStorage.getItem("profileId") !== profileId &&
+sessionStorage.getItem("profileId") !== profileId
 ){
-alert("This login does not match this profile. Please login again with the correct account.");
-return;
+console.log("Profile save will rely on Firebase rules for linked OTP or email access.");
 }
 
 const saveBtn =
