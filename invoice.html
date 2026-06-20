@@ -90,6 +90,9 @@ h2{font-size:16px!important;margin:5px 0!important}
 .notes{font-size:8px!important;margin-top:10px!important}
 }
 </style>
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -306,6 +309,39 @@ return getArrayOptions(profileData.teachingModes, [
 ]);
 }
 
+function normalizeProfileImages(data){
+const items =
+Array.isArray(data?.profileImages)
+? data.profileImages
+: [];
+
+return items
+.map((item,index)=>{
+if(typeof item === "string"){
+return {
+url:item,
+uploadedAt:index
+};
+}
+
+if(item && typeof item === "object" && item.url){
+return item;
+}
+
+return null;
+})
+.filter(Boolean);
+}
+
+function getPrimaryProfileImage(data){
+const images = normalizeProfileImages(data);
+const selected =
+images[Number(data?.primaryProfileImage || 0)] ||
+images[0];
+
+return selected?.url || data?.logo || data?.profilePic || data?.photo || "";
+}
+
 function subjectOptions(){
 return getArrayOptions(profileData.subjects, [
 "Academic Service",
@@ -345,7 +381,7 @@ return false;
 profileData = snap.val();
 role = foundPath.startsWith("institutions/") ? "institution" : "teacher";
 document.getElementById("profileIdText").textContent = profileId;
-const logoUrl = profileData.logo || profileData.profilePic || profileData.photo || "";
+const logoUrl = getPrimaryProfileImage(profileData);
 const brandLogo = document.getElementById("brandLogo");
 const canShowLogo = !profileData.publicVisibility || profileData.publicVisibility.logo !== false;
 if(logoUrl && canShowLogo){
@@ -764,3 +800,5 @@ alert("Unable to open invoice: " + (err.message || err));
 </script>
 </body>
 </html>
+
+
