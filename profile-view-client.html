@@ -1192,13 +1192,6 @@ html || "No Reviews Yet";
 /* SUBMIT REVIEW */
 window.submitReview = async function(){
 
-const authUser = await getAuthUser();
-
-if(!authUser){
-alert("Please login first to submit a review.");
-return;
-}
-
 const name=document.getElementById("rname").value.trim();
 const rating=Number(document.getElementById("rrating").value);
 const text=document.getElementById("rtext").value.trim();
@@ -1207,6 +1200,21 @@ document.querySelector(".reviewForm button");
 
 if(!name||!text){
 alert("Fill all fields");
+return;
+}
+
+if(name.length > 80){
+alert("Name is too long. Please keep it within 80 characters.");
+return;
+}
+
+if(text.length > 500){
+alert("Review is too long. Please keep it within 500 characters.");
+return;
+}
+
+if(!rating || rating < 1 || rating > 5){
+alert("Please select a valid star rating.");
 return;
 }
 
@@ -1236,7 +1244,10 @@ if(
 rawMessage.includes("permission_denied") ||
 rawMessage.includes("permission denied")
 ){
-alert("You do not have permission to submit a review with this login. Please login again and try.");
+alert(
+"Review submission is currently blocked by your Firebase rules.\n\n" +
+"Please update the public reviews rule in Firebase Console so guest visitors can also submit reviews."
+);
 }else{
 alert(err.message || "Unable to submit review. Please try again.");
 }
