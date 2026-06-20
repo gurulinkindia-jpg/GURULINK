@@ -342,6 +342,69 @@ images[0];
 return selected?.url || data?.logo || data?.profilePic || data?.photo || "";
 }
 
+function getProfileImageCandidates(data){
+const images = normalizeProfileImages(data)
+.map(item=>String(item?.url || "").trim())
+.filter(Boolean);
+
+return [
+getPrimaryProfileImage(data),
+...images,
+String(data?.logo || "").trim(),
+String(data?.profilePic || "").trim(),
+String(data?.photo || "").trim()
+]
+.filter(Boolean)
+.filter((value,index,array)=>array.indexOf(value) === index);
+}
+
+function applyBrandLogo(data){
+const brandLogo =
+document.getElementById("brandLogo");
+
+const canShowLogo =
+!data.publicVisibility ||
+data.publicVisibility.logo !== false;
+
+if(!brandLogo || !canShowLogo){
+if(brandLogo){
+brandLogo.removeAttribute("src");
+brandLogo.style.display = "none";
+brandLogo.onerror = null;
+}
+return;
+}
+
+const candidates =
+getProfileImageCandidates(data);
+
+if(!candidates.length){
+brandLogo.removeAttribute("src");
+brandLogo.style.display = "none";
+brandLogo.onerror = null;
+return;
+}
+
+let candidateIndex = 0;
+
+const tryNext = ()=>{
+const nextUrl = candidates[candidateIndex++];
+
+if(!nextUrl){
+brandLogo.removeAttribute("src");
+brandLogo.style.display = "none";
+brandLogo.onerror = null;
+return;
+}
+
+brandLogo.style.display = "block";
+brandLogo.onerror = tryNext;
+brandLogo.src = nextUrl;
+};
+
+tryNext();
+}
+
 function subjectOptions(){
 return getArrayOptions(profileData.subjects, [
 "Academic Service",
@@ -381,17 +444,7 @@ return false;
 profileData = snap.val();
 role = foundPath.startsWith("institutions/") ? "institution" : "teacher";
 document.getElementById("profileIdText").textContent = profileId;
-const logoUrl = getPrimaryProfileImage(profileData);
-const brandLogo = document.getElementById("brandLogo");
-const canShowLogo = !profileData.publicVisibility || profileData.publicVisibility.logo !== false;
-if(logoUrl && canShowLogo){
-brandLogo.src = logoUrl;
-brandLogo.style.display = "block";
-}
-else{
-brandLogo.removeAttribute("src");
-brandLogo.style.display = "none";
-}
+applyBrandLogo(profileData);
 document.getElementById("brandName").textContent = profileData.name || "Teacher / Institution";
 document.getElementById("brandAddress").textContent = [profileData.area, profileData.address, profileData.pinCode].filter(Boolean).join(", ");
 document.getElementById("brandContact").textContent = [profileData.phone, profileData.email].filter(Boolean).join(" | ");
