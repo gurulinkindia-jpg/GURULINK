@@ -182,7 +182,7 @@ font-size:18px;
 <body>
 
 <header>
-<h2>Edit Profile</h2>
+<h2 id="pageTitle">Edit Profile</h2>
 </header>
 
 <div class="container">
@@ -193,7 +193,7 @@ Loading Profile...
 
 <div id="mainContent" style="display:none;">
 
-<div class="previewBox">
+<div class="previewBox" id="logoPreviewSection">
 
 <h3>Current Logo</h3>
 
@@ -210,7 +210,7 @@ alt="Logo">
 
 </div>
 
-<div class="uploadBox">
+<div class="uploadBox" id="logoUploadSection">
 
 <h3>Replace Logo</h3>
 
@@ -221,7 +221,7 @@ accept="image/*">
 
 </div>
 
-<div class="previewBox">
+<div class="previewBox" id="gallerySection">
 
 <h3>Current Gallery</h3>
 
@@ -237,7 +237,7 @@ class="galleryGrid">
 
 </div>
 
-<div class="uploadBox">
+<div class="uploadBox" id="galleryUploadSection">
 
 <h3>Add Gallery Images</h3>
 
@@ -250,7 +250,7 @@ accept="image/*">
 </div>
 
 
-<div class="uploadBox">
+<div class="uploadBox" id="bankSection">
 
 <h3>Bank Details</h3>
 <div class="sectionNote">
@@ -266,7 +266,7 @@ accept="image/*">
 
 <br><br>
 
-<div class="field">
+<div class="field" id="mapSection">
 <label>Bank Name</label>
 <input type="text" id="bankName">
 </div>
@@ -318,7 +318,7 @@ Show Map On Public Profile
 
 
 
-<div class="sectionNote">
+<div class="sectionNote" id="visibilityNote">
 Use the checkboxes below to control which details are public. Unchecked fields remain saved for admin/dashboard use, but should be hidden from the public profile.
 </div>
 
@@ -416,23 +416,38 @@ const profileId =
 localStorage.getItem("profileId");
 
 const role =
-localStorage.getItem("role");
+String(localStorage.getItem("role") || "").toLowerCase();
+
+const isStudentRole =
+role === "student";
+
+const isTeacherRole =
+role === "teacher" ||
+role === "teacher_institute";
+
+const isInstitutionRole =
+role === "institution";
 
 if(
 !profileId ||
 !role
 ){
 alert("Please Login Again");
-location.href="login.html";
+location.href="otp-login.html";
 }
 
 const dbPath =
-role==="teacher" ||
-role==="teacher_institute"
+isStudentRole
 ?
-"teachers/"+profileId
+"students/"+profileId
 :
-"institutions/"+profileId;
+(
+  isTeacherRole
+  ?
+  "teachers/"+profileId
+  :
+  "institutions/"+profileId
+);
 
 let profileData = {};
 
@@ -454,9 +469,10 @@ const hiddenFields = [
 
 ];
 
-const editableFields = [
+const teacherInstitutionFields = [
 "name",
 "ownerName",
+"gender",
 "qualification",
 "experience",
 "establishedDate",
@@ -483,9 +499,28 @@ const editableFields = [
 "description"
 ];
 
+const studentFields = [
+"name",
+"phone",
+"email",
+"class",
+"address",
+"area",
+"pinCode",
+"parentName"
+];
+
+const editableFields =
+isStudentRole
+?
+studentFields
+:
+teacherInstitutionFields;
+
 const fieldLabels = {
 name:"Name",
 ownerName:"Owner / Director Name",
+gender:"Gender",
 qualification:"Qualification / Certification",
 experience:"Experience",
 establishedDate:"Established Date",
@@ -509,10 +544,15 @@ onlineFee:"Online Fee",
 otherMode:"Other Training Mode",
 otherModeFee:"Other Training Mode Fee",
 categoryName:"Category Name",
-description:"About"
+description:"About",
+parentName:"Parent Name"
 };
 
 function isVisibleByDefault(key){
+if(isStudentRole){
+return true;
+}
+
 const privateByDefault = [
 "email",
 "phone",
@@ -526,6 +566,30 @@ const privateByDefault = [
 "otherModeFee"
 ];
 return !privateByDefault.includes(key);
+}
+
+function applyRoleLayout(){
+if(!isStudentRole){
+return;
+}
+
+document.getElementById("pageTitle").innerText =
+"Edit Student Profile";
+
+document.getElementById("logoPreviewSection").style.display = "none";
+document.getElementById("logoUploadSection").style.display = "none";
+document.getElementById("gallerySection").style.display = "none";
+document.getElementById("galleryUploadSection").style.display = "none";
+document.getElementById("bankSection").style.display = "none";
+document.getElementById("mapSection").style.display = "none";
+
+const note =
+document.getElementById("visibilityNote");
+
+if(note){
+note.innerText =
+"Update your student details here. This profile is used for your dashboard, enrollments, and messages.";
+}
 }
 
 function getVisibility(key){
@@ -612,6 +676,13 @@ note.innerText =
 wrapper.appendChild(note);
 }
 
+if(isStudentRole){
+document
+.getElementById("dynamicFields")
+.appendChild(wrapper);
+return;
+}
+
 const visibilityLabel =
 document.createElement("label");
 
@@ -650,6 +721,8 @@ document
 
 async function loadProfile(){
 
+applyRoleLayout();
+
 const snap =
 await get(
 ref(db,dbPath)
@@ -668,6 +741,14 @@ snap.val();
 
 if(!profileData.publicVisibility){
 profileData.publicVisibility = {};
+}
+
+if(isStudentRole){
+profileData.class = profileData.class || "";
+profileData.address = profileData.address || "";
+profileData.area = profileData.area || "";
+profileData.pinCode = profileData.pinCode || "";
+profileData.parentName = profileData.parentName || "";
 }
 
 if(profileData.qrImage === undefined){
@@ -748,6 +829,7 @@ createField(key, profileData[key]);
 renderedKeys.add(key);
 }
 
+if(!isStudentRole){
 document.getElementById("bankName").value =
 profileData.bankName || "";
 
@@ -775,6 +857,7 @@ profileData.mapUrl || "";
 
 document.getElementById("show_mapUrl").checked =
 getVisibility("mapUrl");
+}
 
 document.getElementById(
 "loading"
@@ -818,6 +901,8 @@ saveBtn.innerText="Saving...";
 /* START WITH EXISTING DATA */
 
 let updateData = {...profileData};
+
+if(!isStudentRole){
 updateData.gallery = profileData.gallery || [];
 updateData.publicVisibility = {
 ...(profileData.publicVisibility || {})
@@ -852,6 +937,7 @@ document.getElementById("show_gallery").checked;
 
 updateData.publicVisibility.mapUrl =
 document.getElementById("show_mapUrl").checked;
+}
 
 /* DYNAMIC FIELDS */
 
@@ -900,7 +986,7 @@ updateData[key] = value;
 const visibilityField =
 document.getElementById("show_"+key);
 
-if(visibilityField){
+if(!isStudentRole && visibilityField){
 updateData.publicVisibility[key] =
 visibilityField.checked;
 }
@@ -915,7 +1001,7 @@ const logoFile =
 document.getElementById("newLogo")
 .files[0];
 
-if(logoFile){
+if(!isStudentRole && logoFile){
 
 saveBtn.innerText=
 "Uploading Logo...";
@@ -948,7 +1034,7 @@ Array.from(
 document.getElementById("newGallery").files
 );
 
-if(galleryFiles.length){
+if(!isStudentRole && galleryFiles.length){
 
 saveBtn.innerText=
 "Uploading Gallery...";
@@ -991,7 +1077,7 @@ const qrFile =
 document.getElementById("newQr")
 .files[0];
 
-if(qrFile){
+if(!isStudentRole && qrFile){
 
 saveBtn.innerText =
 "Uploading QR...";
@@ -1054,18 +1140,23 @@ saveBtn.innerText=
 window.goBack=function(){
 
 if(
-role==="teacher" ||
-role==="teacher_institute"
+isTeacherRole
 ){
 
 location.href=
 "teacher-dashboard.html";
 
 }
+else if(isStudentRole){
+
+location.href=
+"student-dashboard.html";
+
+}
 else{
 
 location.href=
-"institution-dashboard.html";
+"teacher-dashboard.html";
 
 }
 
