@@ -191,6 +191,69 @@ border-radius:10px;
 margin-bottom:20px;
 }
 
+.uploadIntroNote{
+background:#eef6ff;
+border:1px solid #cfe2ff;
+color:#1e3a5f;
+}
+
+.uploadFieldsGrid{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:14px;
+}
+
+.uploadFieldCard{
+background:#ffffff;
+border:1px solid #d9e3f5;
+border-radius:12px;
+padding:14px;
+display:flex;
+flex-direction:column;
+gap:8px;
+box-shadow:0 2px 8px rgba(15,23,42,.04);
+}
+
+.uploadFieldCard label{
+font-size:14px;
+font-weight:bold;
+color:#1f2f46;
+}
+
+.uploadFieldHint{
+font-size:12px;
+line-height:1.45;
+color:#5b6b7f;
+}
+
+.uploadFieldCard input[type=file]{
+width:100%;
+padding:10px;
+border:1px solid #d8e3f2;
+border-radius:10px;
+background:#f8fbff;
+font-size:13px;
+color:#334155;
+}
+
+.uploadFieldCard input[type=file]::file-selector-button{
+margin-right:12px;
+padding:8px 12px;
+border:none;
+border-radius:8px;
+background:#1976d2;
+color:#fff;
+font-size:12px;
+font-weight:bold;
+cursor:pointer;
+}
+
+@media(max-width:640px){
+.uploadFieldsGrid{
+grid-template-columns:1fr;
+}
+}
+
 .saveBtn{
 width:100%;
 padding:14px;
@@ -269,14 +332,35 @@ Maximum 2 profile images are kept. If a 3rd image is uploaded, the oldest one wi
 
 <h3>Add Profile Image / Logo</h3>
 
-<div class="sectionNote">
-Upload one image at a time. You can keep up to 2 profile images and choose the main one for the public profile.
+<div class="sectionNote uploadIntroNote">
+You can add up to 2 profile images here and choose the main one for the public profile.
 </div>
 
+<div class="uploadFieldsGrid">
+
+<div class="uploadFieldCard">
+<label for="newLogo">Profile Image / Logo 1</label>
+<div class="uploadFieldHint">
+Upload the first profile image or logo for this teacher or institution.
+</div>
 <input
 type="file"
 id="newLogo"
 accept="image/*">
+</div>
+
+<div class="uploadFieldCard">
+<label for="newLogo2">Profile Image / Logo 2 (Optional)</label>
+<div class="uploadFieldHint">
+Add a second image if needed. Later you can choose either image as the main public profile image.
+</div>
+<input
+type="file"
+id="newLogo2"
+accept="image/*">
+</div>
+
+</div>
 
 </div>
 
@@ -1176,14 +1260,23 @@ visibilityField.checked;
    LOGO = REPLACE
 =========================== */
 
-const logoFile =
-document.getElementById("newLogo")
-.files[0];
+const logoFiles =
+[
+document.getElementById("newLogo").files[0],
+document.getElementById("newLogo2").files[0]
+]
+.filter(Boolean);
 
-if(logoFile){
+if(logoFiles.length){
 
 saveBtn.innerText=
 "Uploading Profile Image...";
+
+let nextProfileImages = [
+...updateData.profileImages
+];
+
+for(const logoFile of logoFiles){
 
 const uploadedProfileImage =
 await uploadManagedImage(
@@ -1191,15 +1284,16 @@ logoFile,
 "profile-images"
 );
 
-let nextProfileImages = [
-...updateData.profileImages,
+nextProfileImages.push(
 uploadedProfileImage
-];
+);
 
 while(nextProfileImages.length > 2){
 const removedImage =
 nextProfileImages.shift();
 await deleteStoragePath(removedImage?.storagePath || "");
+}
+
 }
 
 updateData.profileImages =
@@ -1279,9 +1373,24 @@ location.reload();
 
 console.log(err);
 
+const rawMessage =
+String(err && (err.message || err.code || err) || "").toLowerCase();
+
+if(
+rawMessage.includes("storage/unauthorized") ||
+rawMessage.includes("does not have permission")
+){
+alert(
+"Admin image upload/delete is blocked by your Firebase Storage rules.\n\n" +
+"Your admin page code is working, but Firebase Storage is still allowing only the profile owner.\n\n" +
+"Please update Firebase Storage rules to allow your admin UID too."
+);
+}
+else{
 alert(
 err.message
 );
+}
 
 }
 
