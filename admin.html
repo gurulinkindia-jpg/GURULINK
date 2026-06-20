@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <title>GURULINK Admin Panel</title>
 
@@ -105,6 +104,7 @@ color:#0f172a;
 
 .statTeacher{border-top-color:#1565c0;background:#f8fbff;}
 .statInstitution{border-top-color:#00897b;background:#f7fffc;}
+.statStudent{border-top-color:#7b1fa2;background:#fcf5ff;}
 .statAcademic{border-top-color:#3949ab;background:#f8f8ff;}
 .statSkill{border-top-color:#2e7d32;background:#f4fff6;}
 .statSport{border-top-color:#ef6c00;background:#fff8f0;}
@@ -140,6 +140,7 @@ color:white;
 
 .teacherPanel h3{background:#1565c0;}
 .institutionPanel h3{background:#00897b;}
+.studentPanel h3{background:#7b1fa2;}
 .paymentPanel h3{background:#f57c00;}
 .renewPanelTitle{background:#8e24aa !important;}
 
@@ -162,6 +163,7 @@ overflow:hidden;
 
 .teacherCard{border-left-color:#1565c0;background:#f8fbff;}
 .institutionCard{border-left-color:#00897b;background:#f7fffc;}
+.studentCard{border-left-color:#7b1fa2;background:#fcf5ff;}
 .registrationPaymentCard{border-left-color:#f57c00;background:#fffaf0;}
 .renewalPaymentCard{border-left-color:#8e24aa;background:#fbf5ff;}
 
@@ -325,6 +327,9 @@ padding:6px;
 <link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 <link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 <link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -405,6 +410,11 @@ Institutions
 <div id="iCount">0</div>
 </div>
 
+<div class="stat statStudent">
+Students
+<div id="stCount">0</div>
+</div>
+
 <div class="stat statAcademic">
 Academic
 <div id="aCount">0</div>
@@ -450,6 +460,14 @@ Helpdesk
 <h3>Institutions</h3>
 
 <div id="institutions" class="list"></div>
+
+</div>
+
+<div class="panel studentPanel">
+
+<h3>Students</h3>
+
+<div id="students" class="list"></div>
 
 </div>
 
@@ -537,6 +555,8 @@ document.getElementById("teachers").innerHTML =
 
 document.getElementById("institutions").innerHTML = "";
 
+document.getElementById("students").innerHTML = "";
+
 document.getElementById("payments").innerHTML = "";
 
 document.getElementById("renewPayments").innerHTML = "";
@@ -545,6 +565,7 @@ document.getElementById("renewPayments").innerHTML = "";
 
 let teachers=[];
 let inst=[];
+let students=[];
 let payments=[];
 let renewPayments=[];
 function expired(t){
@@ -1106,9 +1127,19 @@ window.open(
 window.editProfile =
 function(type,id){
 
+localStorage.setItem(
+"adminEditProfileType",
+type
+);
+
+localStorage.setItem(
+"adminEditProfileId",
+id
+);
+
 window.location.href =
 
-"admin-edit-profile.html" +
+"admin edit-profile.html" +
 
 "?type=" +
 encodeURIComponent(type)
@@ -1291,6 +1322,18 @@ return (
 .toLowerCase()
 .includes(q)
 
+||
+
+(x.class || "")
+.toLowerCase()
+.includes(q)
+
+||
+
+(x.parentName || "")
+.toLowerCase()
+.includes(q)
+
 );
 
 }
@@ -1317,6 +1360,17 @@ inst
 .map(d=>card(d,"institution"))
 .join("");
 
+document
+.getElementById(
+"students"
+)
+.innerHTML =
+
+students
+.filter(match)
+.map(d=>studentCard(d))
+.join("");
+
 };
 
 /* =========================
@@ -1336,6 +1390,12 @@ document
 "iCount"
 ).innerText =
 inst.length;
+
+document
+.getElementById(
+"stCount"
+).innerText =
+students.length;
 
 const all = [
 
@@ -1387,6 +1447,105 @@ count("creative");
 
 }
 
+function studentCard(d){
+
+return `
+
+<div class="card studentCard">
+
+<h3>
+${d.name || "-"}
+</h3>
+
+<span class="badge">
+student
+</span>
+
+${d.class ? `<span class="badge">${d.class}</span>` : ""}
+
+<br><br>
+
+<p>
+<b>Email:</b>
+${d.email || "-"}
+</p>
+
+<p>
+<b>Phone:</b>
+${d.phone || "-"}
+</p>
+
+<p>
+<b>Parent:</b>
+${d.parentName || "-"}
+</p>
+
+<p>
+<b>Address:</b>
+${d.address || d.area || d.pinCode ? `${d.address || ""}${d.area ? " / " + d.area : ""}${d.pinCode ? " - " + d.pinCode : ""}`.trim() : "-"}
+</p>
+
+<br>
+
+<button
+class="delete"
+onclick="delStudent('${d.id}')">
+
+Delete
+
+</button>
+
+<button
+class="edit"
+onclick="editProfile('student','${d.id}')">
+
+Edit
+
+</button>
+
+</div>
+
+`;
+
+}
+
+/* =========================
+   STUDENTS
+========================= */
+
+function loadStudents(){
+
+onValue(
+ref(db,"students"),
+snap=>{
+
+students=[];
+
+let html="";
+
+snap.forEach(c=>{
+
+let d=c.val();
+
+d.id=c.key;
+
+students.push(d);
+
+html += studentCard(d);
+
+});
+
+document
+.getElementById(
+"students"
+).innerHTML = html;
+
+updateStats();
+
+});
+
+}
+
 /* =========================
    LOGOUT
 ========================= */
@@ -1408,6 +1567,26 @@ location.href =
 
 };
 
+window.delStudent =
+function(id){
+
+if(
+!confirm(
+"Delete this student profile?"
+)
+){
+return;
+}
+
+remove(
+ref(
+db,
+"students/" + id
+)
+);
+
+};
+
 
 function startAdminPanel(){
 
@@ -1420,6 +1599,8 @@ adminStarted = true;
 loadTeachers();
 
 loadInstitutions();
+
+loadStudents();
 
 loadPayments();
 
@@ -1563,4 +1744,6 @@ window.openHelpdesk = function(){
 
 </body>
 </html>
+
+
 
