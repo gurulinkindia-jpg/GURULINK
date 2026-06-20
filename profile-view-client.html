@@ -217,6 +217,10 @@ gap:4px;
 .infoGrid{
 grid-template-columns:1fr;
 }
+
+.feeGrid{
+grid-template-columns:1fr;
+}
 }
 
 .detailsDescription{
@@ -225,6 +229,77 @@ background:white;
 border:1px solid #d9e3f5;
 border-radius:12px;
 line-height:1.6;
+word-break:break-word;
+}
+
+.feeSectionBox{
+padding:15px;
+background:#f9f9ff;
+border-radius:12px;
+margin-top:20px;
+}
+
+.feeSectionBox h3{
+margin:0 0 12px;
+}
+
+.feeGrid{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:10px;
+}
+
+.feeCard{
+background:white;
+border:1px solid #d9e3f5;
+border-radius:12px;
+padding:12px;
+display:flex;
+flex-direction:column;
+gap:7px;
+min-width:0;
+}
+
+.feeCardTitle{
+font-size:14px;
+font-weight:bold;
+color:#1e3a66;
+line-height:1.4;
+}
+
+.feeCardAmount{
+font-size:16px;
+font-weight:bold;
+color:#2e7d32;
+line-height:1.4;
+}
+
+.feeCardAmount span{
+font-size:12px;
+font-weight:bold;
+color:#607d8b;
+}
+
+.feeCardMeta{
+font-size:13px;
+line-height:1.5;
+color:#333;
+word-break:break-word;
+}
+
+.feeCardMeta b{
+color:#1e3a66;
+}
+
+.feeSectionNote{
+margin-top:12px;
+padding:12px;
+background:white;
+border:1px solid #d9e3f5;
+border-radius:12px;
+font-size:13px;
+line-height:1.6;
+color:#333;
 word-break:break-word;
 }
 
@@ -765,8 +840,32 @@ if(normalized === "academic") return "Academic";
 return esc(raw);
 }
 
-const subjects = Array.isArray(data.subjects) ? data.subjects : [];
-const teachingModes = Array.isArray(data.teachingModes) ? data.teachingModes : [];
+function listFromValue(value){
+if(Array.isArray(value)) return value.filter(Boolean);
+if(value && typeof value === "object") return Object.values(value).filter(Boolean);
+return String(value || "").trim() ? [String(value).trim()] : [];
+}
+
+const subjects = listFromValue(data.subjects);
+const teachingModes = listFromValue(data.teachingModes);
+const feeStructure =
+  data.feeStructure && typeof data.feeStructure === "object"
+    ? data.feeStructure
+    : {};
+const feeItems = Array.isArray(feeStructure.items)
+  ? feeStructure.items
+      .map((item, index)=>({
+        title:String(item && item.title || "").trim(),
+        amount:String(item && item.amount || "").trim(),
+        unit:String(item && item.unit || "").trim(),
+        appliesTo:String(item && item.appliesTo || "").trim(),
+        note:String(item && item.note || "").trim(),
+        active:item && item.active !== false,
+        sortOrder:Number(item && item.sortOrder || (index + 1))
+      }))
+      .filter(item => item.active && item.title)
+      .sort((a,b)=>a.sortOrder - b.sortOrder)
+  : [];
 const addressLines = [];
 const categoryLabel = canShow("categoryName") ? getCategoryLabel() : "";
 const websiteLink = showValue("website") ? externalUrl(data.website) : "";
@@ -808,6 +907,28 @@ const ownerText =
 showValue("ownerName") ? esc(data.ownerName) : "";
 const establishedText =
 showValue("establishedDate") ? esc(data.establishedDate) : "";
+const feeStructureHTML =
+(
+  feeStructure.visible !== false &&
+  feeItems.length
+)
+? `
+<div class="feeSectionBox">
+<h3>Fee Structure</h3>
+<div class="feeGrid">
+${feeItems.map(item => `
+<div class="feeCard">
+<div class="feeCardTitle">${esc(item.title)}</div>
+${item.amount ? `<div class="feeCardAmount">Rs ${esc(item.amount)}${item.unit ? ` <span>${esc(item.unit)}</span>` : ""}</div>` : ""}
+${item.appliesTo ? `<div class="feeCardMeta"><b>Applies To:</b> ${esc(item.appliesTo)}</div>` : ""}
+${item.note ? `<div class="feeCardMeta"><b>Note:</b> ${esc(item.note)}</div>` : ""}
+</div>
+`).join("")}
+</div>
+${feeStructure.note ? `<div class="feeSectionNote"><b>General Note:</b> ${esc(feeStructure.note)}</div>` : ""}
+</div>
+`
+: "";
 
 let galleryHTML = "";
 let gallery = data.gallery || [];
@@ -955,6 +1076,8 @@ data.showBankDetails !== false &&
 (data.qrImage || (data.accountHolderName && data.bankName && data.accountNumber))
 ) ? `<button class="payFee" onclick="showPaymentNotice()">Pay Fee</button>` : ""}
 </div>
+
+${feeStructureHTML}
 
 <div class="demoBox">
 <h3>Request Demo Class / Practice</h3>
