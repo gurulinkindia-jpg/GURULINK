@@ -165,7 +165,7 @@ font-size:18px;
 <body>
 
 <header>
-<h2>Edit Profile</h2>
+<h2 id="pageTitle">Edit Profile</h2>
 </header>
 
 <div class="container">
@@ -176,7 +176,7 @@ Loading Profile...
 
 <div id="mainContent" style="display:none;">
 
-<div class="previewBox">
+<div class="previewBox" id="logoPreviewSection">
 
 <h3>Current Logo</h3>
 
@@ -193,7 +193,7 @@ Show Logo / Profile Picture On Public Profile
 
 </div>
 
-<div class="uploadBox">
+<div class="uploadBox" id="logoUploadSection">
 
 <h3>Replace Logo</h3>
 
@@ -204,7 +204,7 @@ accept="image/*">
 
 </div>
 
-<div class="previewBox">
+<div class="previewBox" id="gallerySection">
 
 <h3>Current Gallery</h3>
 
@@ -220,7 +220,7 @@ Show Gallery On Public Profile
 
 </div>
 
-<div class="uploadBox">
+<div class="uploadBox" id="galleryUploadSection">
 
 <h3>Add Gallery Images</h3>
 
@@ -334,6 +334,9 @@ if(role === "teacher_institute"){
 role = "teacher";
 }
 
+const isStudentRole =
+role === "student";
+
 if(
 !profileId ||
 !role
@@ -347,7 +350,13 @@ role==="teacher"
 ?
 "teachers/"+profileId
 :
-"institutions/"+profileId;
+(
+  isStudentRole
+  ?
+  "students/"+profileId
+  :
+  "institutions/"+profileId
+);
 
 let profileData = {};
 
@@ -355,7 +364,7 @@ const hiddenFields = [
 "publicVisibility"
 ];
 
-const knownFormFields = [
+const teacherInstitutionFields = [
 "uid",
 "name",
 "ownerName",
@@ -409,10 +418,33 @@ const knownFormFields = [
 "lastRenewalDate"
 ];
 
+const studentFields = [
+"uid",
+"name",
+"phone",
+"email",
+"class",
+"address",
+"area",
+"pinCode",
+"parentName",
+"role",
+"createdAt",
+"updatedAt"
+];
+
+const knownFormFields =
+isStudentRole
+?
+studentFields
+:
+teacherInstitutionFields;
+
 const fieldLabels = {
 uid:"UID",
 name:"Name",
 ownerName:"Owner / Director Name",
+parentName:"Parent Name",
 gender:"Gender",
 qualification:"Qualification / Certification",
 experience:"Experience",
@@ -464,6 +496,10 @@ lastRenewalDate:"Last Renewal Date"
 };
 
 function isVisibleByDefault(key){
+if(isStudentRole){
+return true;
+}
+
 const privateByDefault = [
 "email",
 "phone",
@@ -486,6 +522,20 @@ const privateByDefault = [
 return !privateByDefault.includes(key);
 }
 
+function applyRoleLayout(){
+if(!isStudentRole){
+return;
+}
+
+document.getElementById("pageTitle").innerText =
+"Edit Student Profile";
+
+document.getElementById("logoPreviewSection").style.display = "none";
+document.getElementById("logoUploadSection").style.display = "none";
+document.getElementById("gallerySection").style.display = "none";
+document.getElementById("galleryUploadSection").style.display = "none";
+}
+
 function getVisibility(key){
 const visibility = profileData.publicVisibility || {};
 if(visibility[key] !== undefined){
@@ -500,7 +550,14 @@ return Date.now() + "-" + Math.random().toString(36).slice(2,8) + "-" + original
 }
 
 async function uploadImage(file, folder){
-const storageRoot = role === "teacher" ? "teachers" : "institutions";
+const storageRoot =
+role === "teacher"
+? "teachers"
+: (
+  isStudentRole
+  ? "students"
+  : "institutions"
+);
 const fileRef = storageRef(storage, storageRoot + "/" + profileId + "/" + folder + "/" + makeStorageFileName(file));
 await uploadBytes(fileRef, file, {
 contentType: file.type || "application/octet-stream"
@@ -593,6 +650,8 @@ document
 
 async function loadProfile(){
 
+applyRoleLayout();
+
 const snap =
 await get(
 ref(db,dbPath)
@@ -611,6 +670,15 @@ snap.val();
 
 if(!profileData.publicVisibility){
 profileData.publicVisibility = {};
+}
+
+if(isStudentRole){
+profileData.class = profileData.class || "";
+profileData.phone = profileData.phone || "";
+profileData.address = profileData.address || "";
+profileData.area = profileData.area || "";
+profileData.pinCode = profileData.pinCode || "";
+profileData.parentName = profileData.parentName || "";
 }
 
 document.getElementById(
