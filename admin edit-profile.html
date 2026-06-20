@@ -359,6 +359,7 @@ const knownFormFields = [
 "uid",
 "name",
 "ownerName",
+"gender",
 "qualification",
 "experience",
 "establishedDate",
@@ -382,6 +383,7 @@ const knownFormFields = [
 "onlineFee",
 "otherMode",
 "otherModeFee",
+"feeStructure",
 "logo",
 "profilePic",
 "gallery",
@@ -411,6 +413,7 @@ const fieldLabels = {
 uid:"UID",
 name:"Name",
 ownerName:"Owner / Director Name",
+gender:"Gender",
 qualification:"Qualification / Certification",
 experience:"Experience",
 establishedDate:"Established Date",
@@ -434,6 +437,7 @@ superGroupFee:"Super Group Fee",
 onlineFee:"Online Fee",
 otherMode:"Other Training Mode",
 otherModeFee:"Other Training Mode Fee",
+feeStructure:"Fee Structure",
 logo:"Logo",
 profilePic:"Profile Picture",
 gallery:"Gallery",
@@ -919,22 +923,8 @@ saveBtn.innerText=
 =========================== */
 
 window.goBack=function(){
-
-if(
-role==="teacher" ||
-role==="teacher_institute"
-){
-
 location.href=
-"teacher-dashboard.html";
-
-}
-else{
-
-location.href=
-"institution-dashboard.html";
-
-}
+"admin.html";
 
 };
 
