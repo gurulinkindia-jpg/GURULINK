@@ -99,6 +99,7 @@ grid-template-columns:repeat(3,minmax(0,1fr));
 .emailBtn{background:#3949ab}
 .website{background:#1565c0}
 .youtubeBtn{background:#d32f2f}
+.feeToggleBtn{background:#6a1b9a}
 
 
 
@@ -233,10 +234,15 @@ word-break:break-word;
 }
 
 .feeSectionBox{
+display:none;
 padding:15px;
 background:#f9f9ff;
 border-radius:12px;
 margin-top:20px;
+}
+
+.feeSectionBox.open{
+display:block;
 }
 
 .feeSectionBox h3{
@@ -907,13 +913,15 @@ const ownerText =
 showValue("ownerName") ? esc(data.ownerName) : "";
 const establishedText =
 showValue("establishedDate") ? esc(data.establishedDate) : "";
+const hasPublicFeeStructure =
+  feeStructure.visible !== false &&
+  feeItems.length;
 const feeStructureHTML =
 (
-  feeStructure.visible !== false &&
-  feeItems.length
+  hasPublicFeeStructure
 )
 ? `
-<div class="feeSectionBox">
+<div class="feeSectionBox" id="feeStructureBox">
 <h3>Fee Structure</h3>
 <div class="feeGrid">
 ${feeItems.map(item => `
@@ -1071,6 +1079,7 @@ ${showValue("email") ? `<a class="emailBtn" href="mailto:${esc(data.email)}">Ema
 ${showValue("phone") || showValue("email") ? `<button class="saveContact" onclick="saveContact()">Save Contact</button>` : ""}
 ${websiteLink ? `<a class="website" target="_blank" href="${esc(websiteLink)}">Website</a>` : ""}
 ${youtubeLink ? `<a class="youtubeBtn" target="_blank" href="${esc(youtubeLink)}">YouTube</a>` : ""}
+${hasPublicFeeStructure ? `<button class="feeToggleBtn" type="button" onclick="toggleFeeStructure()">Fee Structure</button>` : ""}
 ${(
 data.showBankDetails !== false &&
 (data.qrImage || (data.accountHolderName && data.bankName && data.accountNumber))
@@ -1300,6 +1309,27 @@ box.style.display =
 box.style.display === "block"
 ? "none"
 : "block";
+
+};
+
+window.toggleFeeStructure = function(){
+
+const box =
+document.getElementById("feeStructureBox");
+
+if(!box) return;
+
+const willOpen =
+!box.classList.contains("open");
+
+box.classList.toggle("open", willOpen);
+
+if(willOpen){
+box.scrollIntoView({
+behavior:"smooth",
+block:"start"
+});
+}
 
 };
 
