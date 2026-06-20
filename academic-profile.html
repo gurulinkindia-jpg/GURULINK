@@ -204,6 +204,7 @@ const d = c.val();
 
 if (
 (d.status || "").toLowerCase() === "approved" &&
+(isPublicProfile(d)) &&
 (d.category || "").toLowerCase() === "academic"
 ) {
 teachers.push({ ...d, id: c.key, type: "Teacher" });
@@ -221,6 +222,7 @@ const d = c.val();
 
 if (
 (d.status || "").toLowerCase() === "approved" &&
+(isPublicProfile(d)) &&
 (d.category || "").toLowerCase() === "academic"
 ) {
 institutes.push({ ...d, id: c.key, type: "Institution" });
@@ -282,13 +284,32 @@ function similar(a, b) {
 return (a || "").toLowerCase().includes((b || "").toLowerCase());
 }
 
+function isPublicProfile(profile){
+return profile.publicVisible !== false &&
+profile.publicVisible !== "false";
+}
+
+function publicRankValue(profile){
+const rank = Number(profile.publicRank);
+return Number.isFinite(rank) && rank > 0 ? rank : null;
+}
+
 function ratingInfo(profile){
 const collection = profile.type === "Institution" ? "institutions" : "teachers";
 return ratingMap[collection + "/" + profile.id] || {avg:0,count:0};
 }
 
-function sortByRating(list){
+function sortPublicProfiles(list){
 return [...list].sort((a,b)=>{
+const aRank = publicRankValue(a);
+const bRank = publicRankValue(b);
+
+if(aRank !== null || bRank !== null){
+if(aRank === null) return 1;
+if(bRank === null) return -1;
+if(aRank !== bRank) return aRank - bRank;
+}
+
 const ar = ratingInfo(a);
 const br = ratingInfo(b);
 
@@ -395,7 +416,7 @@ return true;
 
 const grid = document.getElementById("grid");
 
-const sorted = sortByRating(filtered);
+const sorted = sortPublicProfiles(filtered);
 
 if (!sorted.length) {
 grid.innerHTML = `<div class="empty">No Academic Profiles Found</div>`;
