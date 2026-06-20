@@ -287,12 +287,19 @@ Maximum 2 profile images are kept. If you upload a 3rd image, the oldest one wil
 <h3>Add Profile Image / Logo</h3>
 
 <div class="sectionNote">
-Upload one image at a time. You can keep up to 2 profile images and choose any one as the main public profile image.
+You can add up to 2 profile images here and choose any one as the main public profile image.
 </div>
 
+<label>Profile Image / Logo 1</label>
 <input
 type="file"
 id="newLogo"
+accept="image/*">
+
+<label>Profile Image / Logo 2 (Optional)</label>
+<input
+type="file"
+id="newLogo2"
 accept="image/*">
 
 </div>
@@ -1306,14 +1313,23 @@ visibilityField.checked;
    LOGO = REPLACE
 =========================== */
 
-const logoFile =
-document.getElementById("newLogo")
-.files[0];
+const logoFiles =
+[
+document.getElementById("newLogo").files[0],
+document.getElementById("newLogo2").files[0]
+]
+.filter(Boolean);
 
-if(!isStudentRole && logoFile){
+if(!isStudentRole && logoFiles.length){
 
 saveBtn.innerText=
 "Uploading Profile Image...";
+
+let nextProfileImages = [
+...updateData.profileImages
+];
+
+for(const logoFile of logoFiles){
 
 const uploadedProfileImage =
 await uploadManagedImage(
@@ -1321,15 +1337,16 @@ logoFile,
 "profile-images"
 );
 
-let nextProfileImages = [
-...updateData.profileImages,
+nextProfileImages.push(
 uploadedProfileImage
-];
+);
 
 while(nextProfileImages.length > 2){
 const removedImage =
 nextProfileImages.shift();
 await deleteStoragePath(removedImage?.storagePath || "");
+}
+
 }
 
 updateData.profileImages =
