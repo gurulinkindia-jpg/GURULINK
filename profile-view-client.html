@@ -941,7 +941,9 @@ ${feeStructure.note ? `<div class="feeSectionNote"><b>General Note:</b> ${esc(fe
 : "";
 
 let galleryHTML = "";
-let gallery = data.gallery || [];
+let gallery = Array.isArray(data.galleryImages)
+? data.galleryImages.map(item => typeof item === "string" ? item : item?.url)
+: (data.gallery || []);
 
 if (typeof gallery === "object" && !Array.isArray(gallery)) {
 gallery = Object.values(gallery);
@@ -991,7 +993,7 @@ ${iframeHTML}
 `;
 }
 
-const profileImage = data.photo || data.profilePic || data.logo || "https://via.placeholder.com/120";
+const profileImage = getPrimaryProfileImage(data);
 
 profile.innerHTML = `
 <div class="header">
@@ -1438,6 +1440,26 @@ return "teacher-dashboard.html";
 
 if(viewerRole === "admin"){
 return "admin.html";
+}
+
+function getPrimaryProfileImage(data){
+const images =
+Array.isArray(data?.profileImages)
+?
+data.profileImages
+:
+[];
+
+const normalized =
+images
+.map(item=>typeof item === "string" ? {url:item} : item)
+.filter(item=>item && item.url);
+
+const selected =
+normalized[Number(data?.primaryProfileImage || 0)] ||
+normalized[0];
+
+return selected?.url || data?.photo || data?.profilePic || data?.logo || "https://via.placeholder.com/120";
 }
 
 return "otp-login.html";
