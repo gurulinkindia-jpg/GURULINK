@@ -52,6 +52,75 @@ object-fit:cover;
 border:1px solid #ddd;
 }
 
+.profileImagesGrid{
+display:flex;
+flex-wrap:wrap;
+gap:12px;
+margin-top:12px;
+}
+
+.profileImageCard{
+width:140px;
+background:#f8fbff;
+border:1px solid #d7e7ff;
+border-radius:12px;
+padding:10px;
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
+.profileImageCard img{
+width:100%;
+height:110px;
+object-fit:cover;
+border-radius:10px;
+border:1px solid #d9e2ec;
+}
+
+.profileImageActions{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:8px;
+font-size:12px;
+}
+
+.profileImageActions label{
+display:flex;
+align-items:center;
+gap:6px;
+font-weight:bold;
+}
+
+.miniDanger{
+width:auto;
+padding:6px 10px;
+margin:0;
+background:#d32f2f;
+color:white;
+border:none;
+border-radius:8px;
+font-size:12px;
+cursor:pointer;
+}
+
+.imageLimitNote{
+font-size:12px;
+line-height:1.5;
+color:#555;
+margin-top:10px;
+}
+
+.emptyImageNote{
+padding:12px;
+background:#f8fafc;
+border:1px dashed #cbd5e1;
+border-radius:10px;
+font-size:13px;
+color:#475569;
+}
+
 .galleryGrid{
 display:flex;
 flex-wrap:wrap;
@@ -195,24 +264,31 @@ Loading Profile...
 
 <div class="previewBox" id="logoPreviewSection">
 
-<h3>Current Logo</h3>
+<h3>Current Profile Images / Logos</h3>
 
 <label class="visibilityToggle">
 <input type="checkbox" id="show_logo">
 Show Logo / Profile Picture On Public Profile
 </label>
 
-<img
-id="logoPreview"
-class="logoPreview"
-src=""
-alt="Logo">
+<div
+id="profileImagesPreview"
+class="profileImagesGrid">
+</div>
+
+<div class="imageLimitNote">
+Maximum 2 profile images are kept. If you upload a 3rd image, the oldest one will be removed automatically.
+</div>
 
 </div>
 
 <div class="uploadBox" id="logoUploadSection">
 
-<h3>Replace Logo</h3>
+<h3>Add Profile Image / Logo</h3>
+
+<div class="sectionNote">
+Upload one image at a time. You can keep up to 2 profile images and choose any one as the main public profile image.
+</div>
 
 <input
 type="file"
@@ -240,6 +316,10 @@ class="galleryGrid">
 <div class="uploadBox" id="galleryUploadSection">
 
 <h3>Add Gallery Images</h3>
+
+<div class="sectionNote">
+Maximum 5 gallery images are kept. If you upload more than 5, the oldest gallery image will be removed automatically.
+</div>
 
 <input
 type="file"
@@ -365,7 +445,7 @@ onAuthStateChanged
 from
 "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
 
 const firebaseConfig={
 
@@ -462,6 +542,9 @@ const hiddenFields = [
 "idProof",
 "role",
 "category",
+"profileImages",
+"primaryProfileImage",
+"galleryImages",
 "publicVisibility",
 "renewalStatus",
 "lastRenewalDate",
@@ -605,6 +688,181 @@ const originalName = (file && file.name ? file.name : "image").replace(/[^a-zA-Z
 return Date.now() + "-" + Math.random().toString(36).slice(2,8) + "-" + originalName;
 }
 
+function extractStoragePathFromUrl(url){
+try{
+const match = String(url || "").match(/\/o\/([^?]+)/);
+return match ? decodeURIComponent(match[1]) : "";
+}
+catch(e){
+return "";
+}
+}
+
+function normalizeImageItem(item, fallbackIndex = 0){
+if(!item){
+return null;
+}
+
+if(typeof item === "string"){
+const url = item.trim();
+if(!url){
+return null;
+}
+return {
+url,
+storagePath:extractStoragePathFromUrl(url),
+uploadedAt:Date.now() + fallbackIndex
+};
+}
+
+const url =
+String(item.url || item.src || "").trim();
+
+if(!url){
+return null;
+}
+
+return {
+url,
+storagePath:String(item.storagePath || extractStoragePathFromUrl(url) || ""),
+uploadedAt:Number(item.uploadedAt || Date.now() + fallbackIndex)
+};
+}
+
+function normalizeProfileImages(data){
+const existing =
+Array.isArray(data.profileImages)
+?
+data.profileImages
+:
+[];
+
+let items =
+existing
+.map((item,index)=>normalizeImageItem(item,index))
+.filter(Boolean);
+
+if(!items.length){
+const legacy =
+[
+data.logo,
+data.profilePic
+]
+.filter(Boolean)
+.filter((value,index,array)=>array.indexOf(value) === index);
+
+items =
+legacy
+.map((url,index)=>normalizeImageItem(url,index))
+.filter(Boolean);
+}
+
+return items
+.sort((a,b)=>(a.uploadedAt || 0) - (b.uploadedAt || 0));
+}
+
+function normalizeGalleryImages(data){
+const existing =
+Array.isArray(data.galleryImages)
+?
+data.galleryImages
+:
+[];
+
+let items =
+existing
+.map((item,index)=>normalizeImageItem(item,index))
+.filter(Boolean);
+
+if(!items.length){
+const legacyGalleryRaw =
+Array.isArray(data.gallery)
+?
+data.gallery
+:
+(
+data.gallery &&
+typeof data.gallery === "object"
+?
+Object.values(data.gallery)
+:
+[]
+);
+
+items =
+legacyGalleryRaw
+.map((item,index)=>normalizeImageItem(item,index))
+.filter(Boolean);
+}
+
+return items
+.sort((a,b)=>(a.uploadedAt || 0) - (b.uploadedAt || 0));
+}
+
+function getSelectedPrimaryUrl(){
+const checked =
+document.querySelector('input[name="primaryProfileImageChoice"]:checked');
+
+if(checked && checked.value){
+return checked.value;
+}
+
+const images =
+normalizeProfileImages(profileData);
+
+const currentIndex =
+Number(profileData.primaryProfileImage || 0);
+
+return images[currentIndex]?.url || images[0]?.url || "";
+}
+
+function resolvePrimaryIndex(images, preferredUrl){
+if(!images.length){
+return 0;
+}
+
+const foundIndex =
+images.findIndex(item=>item.url === preferredUrl);
+
+return foundIndex >= 0 ? foundIndex : (images.length - 1);
+}
+
+function syncLegacyImageFields(target){
+const images =
+normalizeProfileImages(target);
+
+target.profileImages = images;
+
+const primaryIndex =
+resolvePrimaryIndex(
+images,
+images[Number(target.primaryProfileImage || 0)]?.url || ""
+);
+
+target.primaryProfileImage = primaryIndex;
+
+const primaryImage =
+images[primaryIndex] || images[0] || null;
+
+target.logo = primaryImage ? primaryImage.url : "";
+target.profilePic = primaryImage ? primaryImage.url : "";
+target.galleryImages = normalizeGalleryImages(target);
+target.gallery = target.galleryImages.map(item=>item.url);
+}
+
+async function deleteStoragePath(path){
+if(!path){
+return;
+}
+
+try{
+await deleteObject(storageRef(storage,path));
+}
+catch(err){
+console.log("Storage delete skipped:", err);
+}
+}
+
 async function uploadImage(file, folder){
 const storageRoot = (role === "teacher" || role === "teacher_institute") ? "teachers" : "institutions";
 const fileRef = storageRef(storage, storageRoot + "/" + profileId + "/" + folder + "/" + makeStorageFileName(file));
@@ -612,6 +870,28 @@ await uploadBytes(fileRef, file, {
 contentType: file.type || "application/octet-stream"
 });
 return await getDownloadURL(fileRef);
+}
+
+async function uploadManagedImage(file, folder){
+const storageRoot = (role === "teacher" || role === "teacher_institute") ? "teachers" : "institutions";
+const storagePath =
+storageRoot + "/" + profileId + "/" + folder + "/" + makeStorageFileName(file);
+
+const fileRef =
+storageRef(storage, storagePath);
+
+await uploadBytes(fileRef, file, {
+contentType: file.type || "application/octet-stream"
+});
+
+const url =
+await getDownloadURL(fileRef);
+
+return {
+url,
+storagePath,
+uploadedAt:Date.now()
+};
 }
 
 function createField(key,value){
@@ -743,6 +1023,25 @@ if(!profileData.publicVisibility){
 profileData.publicVisibility = {};
 }
 
+profileData.profileImages =
+normalizeProfileImages(profileData);
+
+profileData.galleryImages =
+normalizeGalleryImages(profileData);
+
+profileData.gallery =
+profileData.galleryImages.map(item=>item.url);
+
+profileData.primaryProfileImage =
+resolvePrimaryIndex(
+profileData.profileImages,
+profileData.profileImages[
+Number(profileData.primaryProfileImage || 0)
+]?.url || ""
+);
+
+syncLegacyImageFields(profileData);
+
 if(isStudentRole){
 profileData.class = profileData.class || "";
 profileData.address = profileData.address || "";
@@ -777,20 +1076,12 @@ if(profileData.showBankDetails === undefined){
 profileData.showBankDetails = true;
 }
 
-document.getElementById(
-"logoPreview"
-).src =
-profileData.logo || profileData.profilePic || "";
-
 document.getElementById("show_logo").checked =
 getVisibility("logo");
 
 document.getElementById("show_gallery").checked =
 getVisibility("gallery");
-
-
-
-const gallery = profileData.gallery || [];
+renderProfileImages();
 renderGallery();
 
 
@@ -812,6 +1103,9 @@ if(
 key==="logo" ||
 key==="profilePic" ||
 key==="gallery" ||
+key==="profileImages" ||
+key==="primaryProfileImage" ||
+key==="galleryImages" ||
 key==="bankName" ||
 key==="accountHolderName" ||
 key==="accountNumber" ||
@@ -903,7 +1197,15 @@ saveBtn.innerText="Saving...";
 let updateData = {...profileData};
 
 if(!isStudentRole){
-updateData.gallery = profileData.gallery || [];
+updateData.profileImages =
+normalizeProfileImages(profileData);
+
+updateData.galleryImages =
+normalizeGalleryImages(profileData);
+
+updateData.gallery =
+updateData.galleryImages.map(item=>item.url);
+
 updateData.publicVisibility = {
 ...(profileData.publicVisibility || {})
 };
@@ -938,6 +1240,13 @@ document.getElementById("show_gallery").checked;
 updateData.publicVisibility.mapUrl =
 document.getElementById("show_mapUrl").checked;
 }
+
+const preferredPrimaryUrl =
+!isStudentRole
+?
+getSelectedPrimaryUrl()
+:
+"";
 
 /* DYNAMIC FIELDS */
 
@@ -1004,24 +1313,27 @@ document.getElementById("newLogo")
 if(!isStudentRole && logoFile){
 
 saveBtn.innerText=
-"Uploading Logo...";
+"Uploading Profile Image...";
 
-const logoUrl =
-await uploadImage(
+const uploadedProfileImage =
+await uploadManagedImage(
 logoFile,
-"logo"
+"profile-images"
 );
 
-updateData.logo =
-logoUrl;
+let nextProfileImages = [
+...updateData.profileImages,
+uploadedProfileImage
+];
 
-if(
-role==="teacher" ||
-role==="teacher_institute"
-){
-updateData.profilePic =
-logoUrl;
+while(nextProfileImages.length > 2){
+const removedImage =
+nextProfileImages.shift();
+await deleteStoragePath(removedImage?.storagePath || "");
 }
+
+updateData.profileImages =
+nextProfileImages;
 
 }
 
@@ -1039,32 +1351,29 @@ if(!isStudentRole && galleryFiles.length){
 saveBtn.innerText=
 "Uploading Gallery...";
 
-const oldGallery =
-Array.isArray(
-profileData.gallery
-)
-?
-profileData.gallery
-:
-[];
-
-const newGalleryUrls=[];
+let mergedGallery =
+[...updateData.galleryImages];
 
 for(const file of galleryFiles){
 
-const url =
-await uploadImage(file,"gallery");
+const uploadedGalleryImage =
+await uploadManagedImage(file,"gallery");
 
-newGalleryUrls.push(url);
+mergedGallery.push(uploadedGalleryImage);
+
+while(mergedGallery.length > 5){
+const removedImage =
+mergedGallery.shift();
+await deleteStoragePath(removedImage?.storagePath || "");
+}
 
 }
 
-updateData.gallery = [
+updateData.galleryImages =
+mergedGallery;
 
-...oldGallery,
-...newGalleryUrls
-
-];
+updateData.gallery =
+mergedGallery.map(item=>item.url);
 
 }
 
@@ -1088,6 +1397,16 @@ await uploadImage(qrFile,"bank-qr");
 updateData.qrImage =
 qrUrl;
 
+}
+
+if(!isStudentRole){
+updateData.primaryProfileImage =
+resolvePrimaryIndex(
+updateData.profileImages,
+preferredPrimaryUrl
+);
+
+syncLegacyImageFields(updateData);
 }
 /* SAVE TO FIREBASE */
 
@@ -1171,21 +1490,27 @@ function renderGallery() {
   const galleryBox = document.getElementById("galleryPreview");
   galleryBox.innerHTML = "";
 
-  const gallery = profileData.gallery || [];
+  const gallery = normalizeGalleryImages(profileData);
 
-  gallery.forEach((img, index) => {
+  if(!gallery.length){
+    galleryBox.innerHTML =
+      `<div class="emptyImageNote">No gallery image uploaded yet.</div>`;
+    return;
+  }
+
+  gallery.forEach((item, index) => {
     const wrapper = document.createElement("div");
     wrapper.style.position = "relative";
     wrapper.style.display = "inline-block";
 
     const image = document.createElement("img");
-    image.src = img;
+    image.src = item.url;
     image.style.width = "100px";
     image.style.height = "100px";
     image.style.objectFit = "cover";
 
     const btn = document.createElement("button");
-    btn.innerText = "âœ–";
+    btn.innerText = "x";
 
     btn.style.position = "absolute";
     btn.style.top = "2px";
@@ -1199,21 +1524,106 @@ function renderGallery() {
     btn.style.cursor = "pointer";
 
     btn.onclick = async () => {
-      // 1. remove from local array
-      profileData.gallery.splice(index, 1);
+      const nextGallery =
+        normalizeGalleryImages(profileData);
 
-      // 2. update Firebase immediately
+      const removedItem =
+        nextGallery.splice(index, 1)[0];
+
+      await deleteStoragePath(removedItem?.storagePath || "");
+
+      profileData.galleryImages = nextGallery;
+      profileData.gallery = nextGallery.map(entry=>entry.url);
+
       await update(ref(db, dbPath), {
+        galleryImages: profileData.galleryImages,
         gallery: profileData.gallery
       });
 
-      // 3. re-render UI
       renderGallery();
     };
 
     wrapper.appendChild(image);
     wrapper.appendChild(btn);
     galleryBox.appendChild(wrapper);
+  });
+}
+
+function renderProfileImages(){
+  const box = document.getElementById("profileImagesPreview");
+
+  if(!box){
+    return;
+  }
+
+  box.innerHTML = "";
+
+  const images =
+    normalizeProfileImages(profileData);
+
+  if(!images.length){
+    box.innerHTML =
+      `<div class="emptyImageNote">No profile image uploaded yet.</div>`;
+    return;
+  }
+
+  const currentPrimaryIndex =
+    resolvePrimaryIndex(
+      images,
+      images[Number(profileData.primaryProfileImage || 0)]?.url || ""
+    );
+
+  images.forEach((item,index)=>{
+    const card =
+      document.createElement("div");
+
+    card.className = "profileImageCard";
+
+    card.innerHTML = `
+      <img src="${item.url}" alt="Profile image ${index + 1}">
+      <div class="profileImageActions">
+        <label>
+          <input
+            type="radio"
+            name="primaryProfileImageChoice"
+            value="${item.url}"
+            ${index === currentPrimaryIndex ? "checked" : ""}>
+          Main
+        </label>
+        <button type="button" class="miniDanger">Delete</button>
+      </div>
+    `;
+
+    card.querySelector(".miniDanger").onclick =
+      async () => {
+        const nextImages =
+          normalizeProfileImages(profileData);
+
+        const removedItem =
+          nextImages.splice(index,1)[0];
+
+        await deleteStoragePath(removedItem?.storagePath || "");
+
+        profileData.profileImages = nextImages;
+        profileData.primaryProfileImage =
+          resolvePrimaryIndex(
+            nextImages,
+            nextImages[Math.max(0, Math.min(index, nextImages.length - 1))]?.url || ""
+          );
+
+        syncLegacyImageFields(profileData);
+
+        await update(ref(db, dbPath), {
+          profileImages: profileData.profileImages,
+          primaryProfileImage: profileData.primaryProfileImage,
+          logo: profileData.logo || "",
+          profilePic: profileData.profilePic || ""
+        });
+
+        renderProfileImages();
+      };
+
+    box.appendChild(card);
   });
 }
 
