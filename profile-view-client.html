@@ -1442,6 +1442,9 @@ if(viewerRole === "admin"){
 return "admin.html";
 }
 
+return "otp-login.html";
+}
+
 function getPrimaryProfileImage(data){
 const images =
 Array.isArray(data?.profileImages)
@@ -1460,9 +1463,6 @@ normalized[Number(data?.primaryProfileImage || 0)] ||
 normalized[0];
 
 return selected?.url || data?.photo || data?.profilePic || data?.logo || "https://via.placeholder.com/120";
-}
-
-return "otp-login.html";
 }
 
 window.goBackSmart = function(){
