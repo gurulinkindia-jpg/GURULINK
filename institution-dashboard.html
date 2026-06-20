@@ -1150,7 +1150,7 @@ if (d.qrImage) {
 }
 
 /*  ADD LOGO CODE HERE */
-const logoURL = d.logo || "default.png";
+const logoURL = getPrimaryProfileImage(d);
 const img = document.getElementById("profileLogo");
 
 img.src = logoURL;
@@ -1258,6 +1258,24 @@ return String(value ?? "")
 .replace(/>/g,"&gt;")
 .replace(/"/g,"&quot;")
 .replace(/'/g,"&#039;");
+}
+
+function getPrimaryProfileImage(data){
+  const images =
+    Array.isArray(data?.profileImages)
+      ? data.profileImages
+      : [];
+
+  const normalized =
+    images
+      .map(item => typeof item === "string" ? { url:item } : item)
+      .filter(item => item && item.url);
+
+  const selected =
+    normalized[Number(data?.primaryProfileImage || 0)] ||
+    normalized[0];
+
+  return selected?.url || data?.logo || data?.profilePic || "default.png";
 }
 
 function renderEnrollmentMessages(studentId){
