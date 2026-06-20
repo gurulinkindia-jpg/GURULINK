@@ -99,7 +99,7 @@ h2{font-size:16px!important;margin:5px 0!important}
 <div class="container">
 <div class="header">
 <div class="brandBlock">
-<img id="brandLogo" class="brandLogo" alt="Profile Logo" crossorigin="anonymous" referrerpolicy="no-referrer">
+<img id="brandLogo" class="brandLogo" alt="Profile Logo">
 <div>
 <div class="brandName" id="brandName">Teacher / Institution</div>
 <div class="brandMeta" id="brandAddress">Loading profile...</div>
@@ -362,16 +362,7 @@ function applyBrandLogo(data){
 const brandLogo =
 document.getElementById("brandLogo");
 
-const canShowLogo =
-!data.publicVisibility ||
-data.publicVisibility.logo !== false;
-
-if(!brandLogo || !canShowLogo){
-if(brandLogo){
-brandLogo.removeAttribute("src");
-brandLogo.style.display = "none";
-brandLogo.onerror = null;
-}
+if(!brandLogo){
 return;
 }
 
