@@ -217,12 +217,33 @@ color:#263238;
 .statusMsg{
 font-size:13px;
 color:#555;
+font-weight:600;
+transition:color .2s ease;
+}
+
+.statusMsg.info{
+color:#546e7a;
+}
+
+.statusMsg.success{
+color:#1b8f3a;
+font-weight:700;
+}
+
+.statusMsg.error{
+color:#c62828;
+font-weight:700;
 }
 
 .feeList{
 display:flex;
 flex-direction:column;
 gap:14px;
+}
+
+.bottomToolbar{
+margin-top:18px;
+padding-top:4px;
 }
 
 .feeCard{
@@ -486,11 +507,23 @@ padding:14px;
       </div>
     </div>
 
-    <div class="statusMsg" id="statusMsg">
+    <div class="statusMsg info" id="statusMsg">
       You can keep multiple teaching modes active and update their details anytime.
     </div>
 
     <div class="feeList" id="feeList"></div>
+
+    <div class="toolbar bottomToolbar">
+      <div class="toolbarLeft">
+        <button type="button" class="toolBtn addBtn" onclick="addFeeItem()">Add Teaching Mode</button>
+      </div>
+
+      <div class="toolbarRight">
+        <button type="button" class="toolBtn resetBtn" onclick="history.back()">Back</button>
+        <button type="button" class="toolBtn resetBtn" onclick="resetToImportedFees()">Reset</button>
+        <button type="button" class="toolBtn saveBtn" onclick="saveFeeStructure()">Save Fee Structure</button>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -929,6 +962,25 @@ function updateImportNote(){
     "No teaching modes were imported yet, so you can create a fresh custom fee structure here.";
 }
 
+function setStatusMessage(message, type){
+  const status = document.getElementById("statusMsg");
+
+  if(!status){
+    return;
+  }
+
+  status.textContent = message;
+  status.classList.remove("info", "success", "error");
+  status.classList.add(type || "info");
+}
+
+function setSaveButtons(disabled, text){
+  document.querySelectorAll(".saveBtn").forEach(button => {
+    button.disabled = disabled;
+    button.textContent = text;
+  });
+}
+
 function renderFeeItems(){
   const container = document.getElementById("feeList");
 
@@ -1143,10 +1195,12 @@ window.resetToImportedFees = function(){
   document.getElementById("showFeeStructure").checked =
     feeStructure.visible !== false;
 
-  document.getElementById("statusMsg").textContent =
+  setStatusMessage(
     hasSavedItems
       ? "Reset to your last saved fee structure."
-      : "Reset to the teaching mode rows imported from your current registration details.";
+      : "Reset to the teaching mode rows imported from your current registration details.",
+    "info"
+  );
 
   renderFeeItems();
 };
@@ -1163,12 +1217,8 @@ window.saveFeeStructure = async function(){
     return;
   }
 
-  const saveBtn = document.querySelector(".saveBtn");
-  const statusMsg = document.getElementById("statusMsg");
-
-  saveBtn.disabled = true;
-  saveBtn.textContent = "Saving...";
-  statusMsg.textContent = "Saving your fee structure...";
+  setSaveButtons(true, "Saving...");
+  setStatusMessage("Saving your fee structure...", "info");
 
   try{
     const cleanedItems = feeItems
@@ -1192,9 +1242,8 @@ window.saveFeeStructure = async function(){
 
     if(!cleanedItems.length){
       alert("Please add at least one fee row before saving.");
-      saveBtn.disabled = false;
-      saveBtn.textContent = "Save Fee Structure";
-      statusMsg.textContent = "Add at least one fee row to save.";
+      setSaveButtons(false, "Save Fee Structure");
+      setStatusMessage("Add at least one fee row to save.", "error");
       return;
     }
 
@@ -1214,12 +1263,11 @@ window.saveFeeStructure = async function(){
     feeItems = cleanedItems.map(normalizeFeeItem);
     renderFeeItems();
 
-    saveBtn.textContent = "Saved";
-    statusMsg.textContent = "Fee structure saved successfully.";
+    setSaveButtons(true, "Saved");
+    setStatusMessage("Fee structure saved successfully.", "success");
 
     setTimeout(()=>{
-      saveBtn.disabled = false;
-      saveBtn.textContent = "Save Fee Structure";
+      setSaveButtons(false, "Save Fee Structure");
     }, 900);
   }
   catch(err){
@@ -1239,9 +1287,8 @@ window.saveFeeStructure = async function(){
       alert(err.message || "Unable to save fee structure.");
     }
 
-    saveBtn.disabled = false;
-    saveBtn.textContent = "Save Fee Structure";
-    statusMsg.textContent = "Unable to save. Please try again.";
+    setSaveButtons(false, "Save Fee Structure");
+    setStatusMessage("Unable to save. Please try again.", "error");
   }
 };
 
