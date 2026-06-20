@@ -888,19 +888,21 @@ if(showValue("address")) addressLines.push(`<div><b>State:</b> ${esc(data.addres
 if(showValue("area")) addressLines.push(`<div><b>Area / City or Town:</b> ${esc(data.area)}</div>`);
 if(showValue("pinCode")) addressLines.push(`<div><b>PIN Code:</b> ${esc(data.pinCode)}</div>`);
 
-const modes = [];
-if(showValue("homeFee")) modes.push(`Home Tuition - Rs ${esc(data.homeFee)}`);
-if(showValue("groupFee")) modes.push(`Group / Team - Rs ${esc(data.groupFee)}`);
-if(showValue("superGroupFee")) modes.push(`Super Group - Rs ${esc(data.superGroupFee)}`);
-if(showValue("onlineFee")) modes.push(`Online - Rs ${esc(data.onlineFee)}`);
-if(showValue("individualFee")) modes.push(`Individual / Personal - Rs ${esc(data.individualFee)}`);
-if(showValue("otherMode") || showValue("otherModeFee")) modes.push(`${esc(data.otherMode || "Other Mode")} ${data.otherModeFee ? "- Rs " + esc(data.otherModeFee) : ""}`);
+const legacyModeLines = [];
+if(showValue("homeFee")) legacyModeLines.push(`Home Tuition - Rs ${esc(data.homeFee)}`);
+if(showValue("groupFee")) legacyModeLines.push(`Group / Team - Rs ${esc(data.groupFee)}`);
+if(showValue("superGroupFee")) legacyModeLines.push(`Super Group - Rs ${esc(data.superGroupFee)}`);
+if(showValue("onlineFee")) legacyModeLines.push(`Online - Rs ${esc(data.onlineFee)}`);
+if(showValue("individualFee")) legacyModeLines.push(`Individual / Personal - Rs ${esc(data.individualFee)}`);
+if(!teachingModes.length && (showValue("otherMode") || showValue("otherModeFee"))){
+legacyModeLines.push(`${esc(data.otherMode || "Other Mode")} ${data.otherModeFee ? "- Rs " + esc(data.otherModeFee) : ""}`);
+}
 const subjectText =
 canShow("subjects") ? (subjects.map(esc).join(", ") || "-") : "";
 const modeText =
-modes.length
-? modes.join("<br>")
-: (canShow("teachingModes") && teachingModes.length ? teachingModes.map(esc).join(", ") : "");
+(canShow("teachingModes") && teachingModes.length)
+? teachingModes.map(esc).join(", ")
+: (legacyModeLines.length ? legacyModeLines.join("<br>") : "");
 const classText =
 showValue("class") ? esc(data.class) : "";
 const experienceText =
@@ -1119,12 +1121,6 @@ ${galleryHTML}
 ${descriptionHTML}
 
 <div class="section">
-<div class="ratingCard">
-<div class="bigRating" id="avgRating">0.0</div>
-<div class="starText">*****</div>
-<div id="totalReviews">0 Reviews</div>
-</div>
-
 <div class="reviewForm">
 <h3>Write Review</h3>
 <input id="rname" placeholder="Your Name">
@@ -1166,9 +1162,6 @@ html+=`
 const avgValue =
 count ? (total/count).toFixed(1) : "0.0";
 
-document.getElementById("avgRating").innerText =
-avgValue;
-
 const roundedStars =
 Math.round(Number(avgValue));
 
@@ -1182,9 +1175,6 @@ document.getElementById("topRatingText");
 const topStars =
 document.getElementById("topStars");
 
-const bottomStars =
-document.querySelector(".starText");
-
 if(topRatingText){
 topRatingText.innerText = `Rating: ${avgValue} stars`;
 }
@@ -1192,13 +1182,6 @@ topRatingText.innerText = `Rating: ${avgValue} stars`;
 if(topStars){
 topStars.innerHTML = starLine;
 }
-
-if(bottomStars){
-bottomStars.innerHTML = starLine;
-}
-
-document.getElementById("totalReviews").innerText =
-count + " Reviews";
 
 document.getElementById("reviews").innerHTML =
 html || "No Reviews Yet";
