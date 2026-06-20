@@ -1955,7 +1955,7 @@ window.toggleStatus = async function (leadId, currentStatus, studentPhone = "") 
         alternatePhone:currentProfileData.alternatePhone || "",
         email:currentProfileData.email || "",
         website:currentProfileData.website || "",
-        logo:currentProfileData.logo || currentProfileData.profilePic || "",
+        logo:getPrimaryProfileImage(currentProfileData),
         category:currentProfileData.category || "",
         showBankDetails:currentProfileData.showBankDetails !== false,
         accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
