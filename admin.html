@@ -226,6 +226,42 @@ background:#ff9800;
 background:#8e24aa;
 }
 
+.publicTools{
+margin:10px 0 6px;
+padding:8px;
+border-radius:10px;
+background:rgba(15,23,42,.04);
+border:1px solid #d9e2ec;
+}
+
+.publicRow{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:8px;
+margin:6px 0;
+flex-wrap:wrap;
+}
+
+.publicRow label{
+font-size:12px;
+font-weight:bold;
+color:#0f172a;
+}
+
+.publicRankInput{
+width:92px;
+padding:7px 8px;
+border:1px solid #cbd5e1;
+border-radius:8px;
+font-size:12px;
+background:white;
+}
+
+.savePublic{
+background:#0f766e;
+}
+
 .badge{
 display:inline-block;
 padding:4px 7px;
@@ -594,6 +630,146 @@ Date.now()
 
 }
 
+function isProfilePublic(d){
+
+return d.publicVisible !== false &&
+d.publicVisible !== "false";
+
+}
+
+function publicRankValue(d){
+
+const rank =
+Number(d.publicRank);
+
+return Number.isFinite(rank) &&
+rank > 0
+?
+rank
+:
+null;
+
+}
+
+function sortAdminProfiles(list){
+
+return [...list].sort((a,b)=>{
+
+const aHidden =
+isProfilePublic(a) ? 0 : 1;
+
+const bHidden =
+isProfilePublic(b) ? 0 : 1;
+
+if(aHidden !== bHidden){
+return aHidden - bHidden;
+}
+
+const aRank =
+publicRankValue(a);
+
+const bRank =
+publicRankValue(b);
+
+if(
+aRank !== null ||
+bRank !== null
+){
+if(aRank === null) return 1;
+if(bRank === null) return -1;
+if(aRank !== bRank) return aRank - bRank;
+}
+
+const aApproved =
+Number(a.approvedAt || 0);
+
+const bApproved =
+Number(b.approvedAt || 0);
+
+if(bApproved !== aApproved){
+return bApproved - aApproved;
+}
+
+return (a.name || "")
+.localeCompare(b.name || "");
+
+});
+
+}
+
+window.savePublicSettings =
+async function(type,id){
+
+const visibleEl =
+document.getElementById(
+`publicVisible_${type}_${id}`
+);
+
+const rankEl =
+document.getElementById(
+`publicRank_${type}_${id}`
+);
+
+if(!visibleEl || !rankEl){
+alert("Public controls not found.");
+return;
+}
+
+const visible =
+visibleEl.checked;
+
+const rawRank =
+rankEl.value.trim();
+
+let rankValue = null;
+
+if(rawRank !== ""){
+
+const parsed =
+parseInt(rawRank,10);
+
+if(
+!Number.isFinite(parsed) ||
+parsed < 1
+){
+alert("Public rank must be 1 or higher.");
+return;
+}
+
+rankValue = parsed;
+}
+
+try{
+
+await update(
+ref(db,`${type}s/${id}`),
+{
+publicVisible:visible,
+publicRank:
+rankValue === null
+?
+null
+:
+rankValue
+}
+);
+
+alert(
+"Public profile settings saved."
+);
+
+}
+catch(err){
+
+console.log(err);
+alert(
+"Unable to save public profile settings."
+);
+
+}
+
+};
+
 /* =========================
    TEACHERS
 ========================= */
@@ -616,12 +792,12 @@ d.id=c.key;
 
 teachers.push(d);
 
-html += card(
-d,
-"teacher"
-);
-
 });
+
+html =
+sortAdminProfiles(teachers)
+.map(d=>card(d,"teacher"))
+.join("");
 
 document
 .getElementById(
@@ -656,12 +832,12 @@ d.id=c.key;
 
 inst.push(d);
 
-html += card(
-d,
-"institution"
-);
-
 });
+
+html =
+sortAdminProfiles(inst)
+.map(d=>card(d,"institution"))
+.join("");
 
 document
 .getElementById(
@@ -866,6 +1042,12 @@ remain(
 d.approvedAt
 );
 
+const isPublic =
+isProfilePublic(d);
+
+const rank =
+publicRankValue(d);
+
 return `
 
 <div class="card ${type === "teacher" ? "teacherCard" : "institutionCard"}">
@@ -909,6 +1091,16 @@ ${d.paymentStatus || "unpaid"}
 ${rem}
 </p>
 
+<p>
+<b>Public:</b>
+${isPublic ? "Visible" : "Hidden"}
+</p>
+
+<p>
+<b>Public Rank:</b>
+${rank === null ? "-" : rank}
+</p>
+
 ${exp
 ?
 `
@@ -940,6 +1132,50 @@ this.src='https://via.placeholder.com/100'
 ">
 
 <br>
+
+<div class="publicTools">
+
+<div class="publicRow">
+<label
+for="publicVisible_${type}_${d.id}">
+Visible on public pages
+</label>
+
+<input
+type="checkbox"
+id="publicVisible_${type}_${d.id}"
+${isPublic ? "checked" : ""}>
+</div>
+
+<div class="publicRow">
+<label
+for="publicRank_${type}_${d.id}">
+Public rank
+</label>
+
+<input
+type="number"
+min="1"
+step="1"
+class="publicRankInput"
+id="publicRank_${type}_${d.id}"
+value="${rank === null ? "" : rank}"
+placeholder="1 = top">
+</div>
+
+<div style="font-size:11px;line-height:1.4;color:#475569;">
+Lower rank number appears higher in all public profile pages. Leave blank to use normal rating order.
+</div>
+
+<button
+class="savePublic"
+onclick="savePublicSettings('${type}','${d.id}')">
+
+Save Public Settings
+
+</button>
+
+</div>
 
 <button
 class="approve"
@@ -1344,8 +1580,10 @@ document
 )
 .innerHTML =
 
+sortAdminProfiles(
 teachers
 .filter(match)
+)
 .map(d=>card(d,"teacher"))
 .join("");
 
@@ -1355,8 +1593,10 @@ document
 )
 .innerHTML =
 
+sortAdminProfiles(
 inst
 .filter(match)
+)
 .map(d=>card(d,"institution"))
 .join("");
 
