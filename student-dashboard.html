@@ -276,6 +276,19 @@ border-radius:8px;
 <span id="phone">Loading...</span>
 </div>
 
+<div class="row">
+<span class="label">Class:</span>
+<span id="studentClass">Loading...</span>
+</div>
+
+<div class="center" style="margin-top:12px;">
+<a
+href="edit-profile.html"
+class="btn blue">
+Edit Profile
+</a>
+</div>
+
 </div>
 
 <div class="card">
@@ -405,6 +418,9 @@ data.email || "-";
 
 document.getElementById("phone").innerHTML =
 data.phone || "-";
+
+document.getElementById("studentClass").innerHTML =
+data.class || "-";
 
 }
 catch(err){
