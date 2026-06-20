@@ -401,7 +401,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let all = [];
+let teachers = [];
+let institutions = [];
 let ratingMap = {};
 
 /* =========================
@@ -411,13 +412,17 @@ let ratingMap = {};
 function loadData() {
 
   onValue(ref(db, "teachers"), (snap) => {
+    teachers = [];
 
     snap.forEach((c) => {
 
       const d = c.val();
 
-      if (d.status === "approved") {
-        all.push({
+      if (
+        (d.status || "").toLowerCase() === "approved" &&
+        isPublicProfile(d)
+      ) {
+        teachers.push({
           ...d,
           id: c.key,
           type: "Teacher"
@@ -430,13 +435,17 @@ function loadData() {
   });
 
   onValue(ref(db, "institutions"), (snap) => {
+    institutions = [];
 
     snap.forEach((c) => {
 
       const d = c.val();
 
-      if (d.status === "approved") {
-        all.push({
+      if (
+        (d.status || "").toLowerCase() === "approved" &&
+        isPublicProfile(d)
+      ) {
+        institutions.push({
           ...d,
           id: c.key,
           type: "Institution"
@@ -489,13 +498,32 @@ function similar(a, b) {
   return (a || "").toLowerCase().includes((b || "").toLowerCase());
 }
 
+function isPublicProfile(profile) {
+  return profile.publicVisible !== false &&
+    profile.publicVisible !== "false";
+}
+
+function publicRankValue(profile) {
+  const rank = Number(profile.publicRank);
+  return Number.isFinite(rank) && rank > 0 ? rank : null;
+}
+
 function ratingInfo(profile) {
   const collection = profile.type === "Institution" ? "institutions" : "teachers";
   return ratingMap[collection + "/" + profile.id] || { avg: 0, count: 0 };
 }
 
-function sortByRating(list) {
+function sortPublicProfiles(list) {
   return [...list].sort((a, b) => {
+    const aRank = publicRankValue(a);
+    const bRank = publicRankValue(b);
+
+    if (aRank !== null || bRank !== null) {
+      if (aRank === null) return 1;
+      if (bRank === null) return -1;
+      if (aRank !== bRank) return aRank - bRank;
+    }
+
     const ar = ratingInfo(a);
     const br = ratingInfo(b);
 
@@ -504,6 +532,10 @@ function sortByRating(list) {
 
     return (a.name || "").localeCompare(b.name || "");
   });
+}
+
+function getAllProfiles() {
+  return [...teachers, ...institutions];
 }
 
 /* =========================
@@ -701,7 +733,7 @@ function render() {
   const subjectFilter = document.getElementById("subjectFilter")?.value || "";
   const classFilter = document.getElementById("classFilter")?.value || "";
 
-  const filtered = all.filter((x) => {
+  const filtered = getAllProfiles().filter((x) => {
 
     /* CATEGORY */
     if (cat && x.category !== cat) return false;
@@ -764,7 +796,7 @@ x.subjects
     return true;
   });
 
-  const sorted = sortByRating(filtered);
+  const sorted = sortPublicProfiles(filtered);
 
   if (!sorted.length) {
     grid.innerHTML = `
