@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>GURULINK Helpdesk</title>
 
 <style>
@@ -387,6 +387,9 @@ font-size:13px;
 <link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 <link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 <link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -418,6 +421,13 @@ Welcome. Choose a Quick Help Topic or type your question below.
 <button onclick="showFaq('institution')">Institution Forms</button>
 <button onclick="showFaq('dashboard')">Dashboard</button>
 <button onclick="showFaq('editprofile')">Edit Profile</button>
+<button onclick="showFaq('student')">Student / Parent</button>
+<button onclick="showFaq('fee')">Fee Structure</button>
+<button onclick="showFaq('invoice')">Invoice</button>
+<button onclick="showFaq('review')">Reviews & Demo</button>
+<button onclick="showFaq('publicprofile')">Public Profile</button>
+<button onclick="showFaq('helpdesk')">Tickets & Support</button>
+<button onclick="showFaq('settings')">Settings & Account</button>
 <button onclick="showTicketStatusBox()">Check Existing Ticket</button>
 <button onclick="showFaq('all')">Show All FAQ</button>
 </div>
@@ -561,6 +571,70 @@ const faqs = [
 {cat:"editprofile",q:"What happens if I leave a field blank?",a:"Blank fields may not appear on the public profile. If the field is important, enter the correct value and keep its visibility checkbox checked."},
 {cat:"editprofile",q:"Why should I keep my profile complete?",a:"A complete profile helps students and parents understand your subjects, modes, fees, location, experience, and contact options before contacting you."},
 
+{cat:"student",q:"How does Student / Parent login work?",a:"Student and Parent users can enter through OTP login. If the phone number is already linked with a saved student record, the user can move directly to the student dashboard. If not, the user can complete student registration first."},
+{cat:"student",q:"What is Student Registration?",a:"Student Registration is a simple form used to create a student account with name, email, password, and class. After saving, the student is redirected to the student dashboard."},
+{cat:"student",q:"Why should a student register on GURULINK?",a:"Registration unlocks useful features such as enrolled teacher access, fee payment links, dashboard use, profile-based communication, and a smoother connection between student, parent, teacher, and institution."},
+{cat:"student",q:"Can a parent use the same student flow?",a:"Yes. Student / Parent entry is designed for learners and their guardians. The main purpose is to browse, connect, enquire, and manage learning relationships."},
+{cat:"student",q:"Why can a student see Call and WhatsApp buttons?",a:"Students and parents are allowed to contact accepted or visible teachers and institutions using the public contact buttons when those fields are available."},
+{cat:"student",q:"Why are Website or Pay Fee buttons missing in student dashboard?",a:"Those buttons only appear when the linked teacher or institution has publicly available website or payment details saved in their profile. Refresh the dashboard after the teacher updates the profile."},
+{cat:"student",q:"Can students chat with teachers and institutions?",a:"Yes. Once connection or enrollment exists, student and teacher or institution can exchange chat messages through their dashboards. Each side can also clear its own chat box without deleting the other side immediately."},
+{cat:"student",q:"What happens when a teacher marks a student as enrolled?",a:"The student becomes accepted or enrolled in the teacher side workflow. The student is then encouraged to register on GURULINK to unlock payments, chat, link sharing, and website access."},
+{cat:"student",q:"What if a student opens a profile as guest?",a:"Guest users have limited access. They can browse some content, but full features such as connected dashboards and role-based access require login or registration."},
+
+{cat:"fee",q:"What is Fee Structure?",a:"Fee Structure is a separate page where teachers and institutions can manage teaching modes and detailed pricing more easily than inside the registration form."},
+{cat:"fee",q:"Why is Fee Structure separate from registration?",a:"Different teachers and institutions follow different pricing models. A separate fee structure page allows flexible updates later without editing the whole registration form again."},
+{cat:"fee",q:"How do I open Fee Structure?",a:"Use the Fee Structure button from the teacher or institution dashboard. The page carries the same profile ID, role, and category from the dashboard."},
+{cat:"fee",q:"Will the teaching modes I selected during registration appear in Fee Structure?",a:"Yes. The current selected teaching or training modes should be shown in Fee Structure. You can also add more modes later if needed."},
+{cat:"fee",q:"Can I add extra teaching modes later?",a:"Yes. Use Add Teaching Mode in the fee structure page to create additional rows beyond the modes selected during registration."},
+{cat:"fee",q:"What should I enter in Amount, Unit, Applies To, and Note?",a:"Amount is the fee, Unit explains how the charge is counted such as per class or per month, Applies To describes the class or age range, and Note can describe timing, conditions, or extra details."},
+{cat:"fee",q:"Why does Fee Structure show permission denied?",a:"This usually means your Firebase write rules are still blocking profile updates for the current teacher or institution account. The profile ID, role, and auth user must match."},
+{cat:"fee",q:"Where can students see my fee structure?",a:"Students and public viewers can see it from the Fee Structure button on the profile page when fee rows are saved and allowed to be shown."},
+{cat:"fee",q:"Can I reset the fee structure form?",a:"Yes. Use Reset to clear the unsaved changes currently shown in the fee structure page."},
+
+{cat:"invoice",q:"Who can use Invoice?",a:"Invoice is available from the teacher or institution dashboard so the profile owner can prepare and share a branded fee invoice with students."},
+{cat:"invoice",q:"Does the invoice use GURULINK branding?",a:"The current invoice is designed to be teacher or institution focused. GURULINK acts only as a linking platform and is not shown as the billing authority."},
+{cat:"invoice",q:"Can I print the invoice from mobile?",a:"Printing depends on mobile WebView and Android print support. If printing works on desktop but not mobile, the Android app must support the print flow correctly."},
+{cat:"invoice",q:"Why is the Print Invoice button hidden at first?",a:"Print Invoice only appears after an invoice is saved, marked paid, or loaded successfully. This avoids printing incomplete data."},
+{cat:"invoice",q:"Can I share an invoice by WhatsApp?",a:"Yes. The invoice page can share a payment message by WhatsApp when the required payment link and student details are available."},
+{cat:"invoice",q:"What if Save Invoice does not work?",a:"Check that the current user has permission for the invoice path in Firebase, make sure student details are filled, and confirm the invoice collections follow the correct structure."},
+{cat:"invoice",q:"Can invoice include profile logo?",a:"Yes, if the teacher or institution profile image or logo is public and available. If the image is hidden through edit profile, it should also stay hidden in invoice."},
+{cat:"invoice",q:"Who is responsible for invoice payments or disputes?",a:"Invoices are generated by the teacher or institution. GURULINK is only a linking platform and is not responsible for fee disputes, refunds, or private agreements."},
+
+{cat:"review",q:"Can anyone submit a review?",a:"Yes, public viewers can submit reviews if the review write rules allow public review creation. This is helpful when a profile is shared on social media and the visitor is not logged in."},
+{cat:"review",q:"Why is Submit Review not working?",a:"Review submit can fail if Firebase rules still require authentication, if required fields are empty, or if the review path does not match the current profile type and profile ID."},
+{cat:"review",q:"What should I enter in a review?",a:"Enter your name, choose the star rating, and write a short, honest experience. Avoid spam, abusive text, or fake reviews."},
+{cat:"review",q:"How is star rating shown on the profile?",a:"The profile page calculates the rating average from saved reviews and shows both the number value and the stars near the profile image area."},
+{cat:"review",q:"What is Request Demo Class or Practice?",a:"It is a one-way enquiry box on the public profile that allows a student or parent to send a short demo class or demo practice request to the teacher or institution."},
+{cat:"review",q:"Can a student send many demo requests?",a:"No. The demo request flow is designed to limit repeated duplicate messages. After one request, the student sees a message that the teacher or institution will contact them soon."},
+{cat:"review",q:"How long do demo requests remain active?",a:"Demo requests are designed with limited validity and can expire automatically after the configured number of days so the teacher dashboard does not remain cluttered."},
+{cat:"review",q:"Why are review and demo sections important?",a:"They help public visitors build trust, ask for a first session, and understand whether the profile is active and responsive."},
+
+{cat:"publicprofile",q:"Can a profile be opened directly from social media share links?",a:"Yes. A direct shared profile-view link can open publicly without forcing OTP login. This helps teachers and institutions promote their public profile outside the app."},
+{cat:"publicprofile",q:"Why does GURULINK website ask guests to login before opening some profiles?",a:"When a guest browses from listing pages inside the app or site, login helps control access, improve lead tracking, and unlock full features. Shared direct profile links can still open publicly."},
+{cat:"publicprofile",q:"Why do some fields disappear from my public profile?",a:"Fields can be hidden by the visibility checkboxes in Edit Profile. A saved field is only shown publicly when the related checkbox is enabled."},
+{cat:"publicprofile",q:"Can I show Email, Website, YouTube, and Pay Fee buttons?",a:"Yes. These buttons appear only when the related data exists and is allowed to be shown. If a field is empty or hidden, its public button will not appear."},
+{cat:"publicprofile",q:"Why is phone number hidden on profile details but Call button still shown?",a:"The profile can hide the raw phone text while still offering a cleaner Call action button. This keeps the page neater while preserving contact access."},
+{cat:"publicprofile",q:"Can I hide logo or profile photo from public view?",a:"Yes. If logo or profile photo visibility is turned off in Edit Profile, the public profile and invoice should respect that setting."},
+{cat:"publicprofile",q:"What is the difference between pending and public profile?",a:"After successful registration and payment, a profile may still remain pending until admin approval. A pending profile can exist, but full public exposure depends on approval and display rules."},
+
+{cat:"helpdesk",q:"How do I create a support ticket?",a:"Open the Helpdesk page, type your question, then submit your issue. A ticket number is generated and you should save it for future follow-up."},
+{cat:"helpdesk",q:"How do I check ticket status later?",a:"Use Check Existing Ticket in the helpdesk page. Enter your ticket number or phone number to search for existing tickets and updates."},
+{cat:"helpdesk",q:"Can I chat with admin from helpdesk?",a:"Yes. When a ticket is opened, a ticket chat area can appear so you can continue the conversation with admin support from the same page."},
+{cat:"helpdesk",q:"Why is my ticket not visible in admin helpdesk?",a:"This can happen if Firebase rules block ticket reads or writes, if the admin account is not properly marked in the database, or if the ticket was saved to a different path than the admin page is watching."},
+{cat:"helpdesk",q:"What details should I include in a support ticket?",a:"Always include your name, registered phone number, registered email, profile type, category, and a clear description of the problem. Payment issues should include payment date and reference."},
+{cat:"helpdesk",q:"When should I create a support ticket instead of editing myself?",a:"Create a ticket for issues like wrong role, wrong category, payment mismatch, approval delay, blocked login, dashboard mismatch, or anything that profile edit cannot safely change."},
+{cat:"helpdesk",q:"Can admin reply to helpdesk tickets?",a:"Yes. Admin helpdesk is designed to list tickets and support replies so users can track the conversation."},
+{cat:"helpdesk",q:"What if the Submit Ticket button does not work?",a:"Check internet connection, make sure required inputs are filled, and verify Firebase ticket write rules. If the page is blank or refreshing, there may be a script or rules issue."},
+
+{cat:"settings",q:"What can I manage in Settings?",a:"Settings can include account settings, security settings, dark mode, cache clearing, and account deletion options based on the current version of GURULINK."},
+{cat:"settings",q:"How does dark mode work?",a:"Dark mode is intended to affect the full GURULINK theme when the shared theme files are included across pages. If only one page becomes dark, some pages may still be missing the shared theme files."},
+{cat:"settings",q:"What is Clear Cache?",a:"Clear Cache removes locally saved temporary data from the browser or app session. It can help if an old profile image, stale login, or outdated UI state keeps appearing."},
+{cat:"settings",q:"What does Logout from all devices mean?",a:"It is intended to sign the user out from every active session so the account stays secure if a device is lost or shared."},
+{cat:"settings",q:"Can I change my phone number in settings?",a:"Phone number changes are usually restricted because they may need verification or approval. If direct change is blocked, contact support."},
+{cat:"settings",q:"How do I delete my account?",a:"Use the delete-account page or the account deletion option provided by GURULINK. This is also the page you can share publicly as the Google Play account deletion URL."},
+{cat:"settings",q:"What data is deleted when I request account deletion?",a:"The goal is to remove the account and associated user data that belongs to that profile, subject to any required retention period for compliance, payment, or security review."},
+{cat:"settings",q:"Why is the delete account page important?",a:"Google Play requires a public account deletion method for apps that allow account creation. The page explains how users can request account deletion and what data may be kept temporarily if required."},
+
 {cat:"profile",q:"When will my profile be approved?",a:"After successful payment and verification, admin can approve the profile. Timing depends on verification queue and completeness of your submitted details."},
 {cat:"profile",q:"Why is my status pending?",a:"Pending means registration is saved but payment or admin approval may still be incomplete."},
 {cat:"profile",q:"What does paymentStatus pending mean?",a:"It means payment has not been confirmed in the database yet. Complete payment or contact support if you already paid."},
@@ -612,7 +686,7 @@ return `<div class="ticketChatMsg admin">No chat messages yet. Send a message to
 return list.map(msg => `
 <div class="ticketChatMsg ${msg.sender === "admin" ? "admin" : "user"}">
 ${escapeHtml(msg.text)}
-<span class="ticketChatMeta">${msg.sender === "admin" ? "Admin" : "You"} â€¢ ${formatTime(msg.time)}</span>
+<span class="ticketChatMeta">${msg.sender === "admin" ? "Admin" : "You"} - ${formatTime(msg.time)}</span>
 </div>
 `).join("");
 }
@@ -927,3 +1001,5 @@ window.location.href="index.html";
 </script>
 </body>
 </html>
+
+
