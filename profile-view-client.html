@@ -1192,14 +1192,30 @@ html || "No Reviews Yet";
 /* SUBMIT REVIEW */
 window.submitReview = async function(){
 
-const name=document.getElementById("rname").value;
+const authUser = await getAuthUser();
+
+if(!authUser){
+alert("Please login first to submit a review.");
+return;
+}
+
+const name=document.getElementById("rname").value.trim();
 const rating=Number(document.getElementById("rrating").value);
-const text=document.getElementById("rtext").value;
+const text=document.getElementById("rtext").value.trim();
+const submitBtn =
+document.querySelector(".reviewForm button");
 
 if(!name||!text){
 alert("Fill all fields");
 return;
 }
+
+if(submitBtn){
+submitBtn.disabled = true;
+submitBtn.textContent = "Submitting...";
+}
+
+try{
 
 await push(ref(db,`reviews/${type.toLowerCase()}s/${currentProfileId}`),{
 name,rating,text,time:Date.now()
@@ -1208,6 +1224,29 @@ name,rating,text,time:Date.now()
 alert("Review submitted");
 document.getElementById("rname").value="";
 document.getElementById("rtext").value="";
+
+}
+catch(err){
+console.log(err);
+
+const rawMessage =
+String(err && (err.message || err.code) || "").toLowerCase();
+
+if(
+rawMessage.includes("permission_denied") ||
+rawMessage.includes("permission denied")
+){
+alert("You do not have permission to submit a review with this login. Please login again and try.");
+}else{
+alert(err.message || "Unable to submit review. Please try again.");
+}
+}
+finally{
+if(submitBtn){
+submitBtn.disabled = false;
+submitBtn.textContent = "Submit Review";
+}
+}
 };
 
 window.submitDemoRequest = async function(){
