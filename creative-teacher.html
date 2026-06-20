@@ -677,49 +677,41 @@ No training mode selected yet. Click More to open the full chart.
 
 <div class="modeBox">
 <div class="row">
-<input type="checkbox" class="mode" value="Group Class" onchange="toggleFee('groupFeeBox')">
+<input type="checkbox" class="mode" value="Group Class">
 Group Class / Workshop
 </div>
 
-<div id="groupFeeBox" class="modeFee">
-<input id="groupFee" placeholder="Enter Group Class Fee">
-</div>
+
 
 <div class="row">
-<input type="checkbox" class="mode" value="One-to-One Training" onchange="toggleFee('individualFeeBox')">
+<input type="checkbox" class="mode" value="One-to-One Training">
 One-to-One Training
 </div>
 
-<div id="individualFeeBox" class="modeFee">
-<input id="individualFee" placeholder="Enter One-to-One Fee">
-</div>
+
 
 <div class="row">
-<input type="checkbox" class="mode" value="Home Visit" onchange="toggleFee('homeFeeBox')">
+<input type="checkbox" class="mode" value="Home Visit">
 Home Visit / Home Teaching
 </div>
 
-<div id="homeFeeBox" class="modeFee">
-<input id="homeFee" placeholder="Enter Home Visit Fee">
-</div>
+
 
 <div class="row">
-<input type="checkbox" class="mode" value="Online Classes" onchange="toggleFee('onlineFeeBox')">
+<input type="checkbox" class="mode" value="Online Classes">
 Online Classes
 </div>
 
-<div id="onlineFeeBox" class="modeFee">
-<input id="onlineFee" placeholder="Enter Online Fee">
-</div>
 
-<div class="row">
-<input type="checkbox" id="otherModeCheck" onchange="toggleFee('otherModeBox')">
-Other Training Mode
-</div>
 
-<div id="otherModeBox" class="modeFee">
-<input id="otherMode" placeholder="Write Other Training Mode">
-<input id="otherModeFee" placeholder="Enter Other Training Mode Fee">
+<div id="customModesList"></div>
+
+<button type="button" class="secondaryButton" onclick="addCustomModeField()">
+Add Teaching Mode
+</button>
+
+<div class="selectedSummary">
+Use this button if your teaching or training mode is not listed above.
 </div>
 </div>
 
@@ -830,14 +822,57 @@ tagsBox.innerHTML = selectedSkillValues.map(item=>`
 `).join("");
 }
 
+function getCustomModeValues(){
+return Array.from(document.querySelectorAll(".customModeInput"))
+.map(item=>item.value.trim())
+.filter(Boolean);
+}
+
+function addCustomModeField(value=""){
+const list = document.getElementById("customModesList");
+const row = document.createElement("div");
+row.style.display = "flex";
+row.style.gap = "8px";
+row.style.alignItems = "center";
+row.style.marginTop = "8px";
+
+const input = document.createElement("input");
+input.type = "text";
+input.className = "customModeInput";
+input.placeholder = "Write Teaching Mode";
+input.value = value;
+input.style.margin = "0";
+input.oninput = updateSelectedModes;
+
+const button = document.createElement("button");
+button.type = "button";
+button.innerText = "Remove";
+button.style.width = "auto";
+button.style.padding = "10px 12px";
+button.style.margin = "0";
+button.style.background = "#d84315";
+button.onclick = function(){
+row.remove();
+updateSelectedModes();
+};
+
+row.appendChild(input);
+row.appendChild(button);
+list.appendChild(row);
+input.focus();
+updateSelectedModes();
+}
+
+window.addCustomModeField = addCustomModeField;
+
 function updateSelectedModes(){
 const selected = Array.from(document.querySelectorAll(".mode:checked")).map(item=>item.value);
-const otherModeCheck = document.getElementById("otherModeCheck");
-const otherMode = document.getElementById("otherMode").value.trim();
 
-if(otherModeCheck.checked){
-selected.push(otherMode || "Other Training Mode");
+getCustomModeValues().forEach(item=>{
+if(!selected.includes(item)){
+selected.push(item);
 }
+});
 
 document.getElementById("selectedModes").innerText =
 selected.length ? "Selected: " + selected.join(", ") : "No training mode selected yet. Click More to open the full chart.";
@@ -931,10 +966,23 @@ return Date.now() + "-" + Math.random().toString(36).slice(2,8) + "-" + original
 }
 
 async function upload(file, folder){
+if(!file){
+return "";
+}
+
 const fileRef = storageRef(storage, folder + "/" + makeStorageFileName(file));
-await uploadBytes(fileRef, file, {
-contentType: file.type || "application/octet-stream"
+
+const uploadTask = uploadBytes(fileRef, file, {
+contentType:file.type || "application/octet-stream"
 });
+
+const timeoutTask = new Promise((_, reject)=>{
+setTimeout(()=>{
+reject(new Error("Upload timed out. Please try again with smaller images or a stronger internet connection."));
+}, 45000);
+});
+
+await Promise.race([uploadTask, timeoutTask]);
 return await getDownloadURL(fileRef);
 }
 
@@ -972,8 +1020,6 @@ document.querySelectorAll(".mode").forEach(item=>{
 item.addEventListener("change", window.updateSelectedModes);
 });
 
-document.getElementById("otherModeCheck").addEventListener("change", window.updateSelectedModes);
-document.getElementById("otherMode").addEventListener("input", window.updateSelectedModes);
 
 document.querySelectorAll(".otherSkillCheck").forEach(item=>{
 item.addEventListener("change",(e)=>{
@@ -1054,18 +1100,23 @@ localStorage.setItem("role","teacher");
 
 let logoUrl="";
 if(document.getElementById("logo").files[0]){
+submitBtn.innerText="Uploading profile image...";
 logoUrl = await upload(document.getElementById("logo").files[0], "teachers/" + uid + "/logo");
 }
 
 let idProofUrl="";
 if(document.getElementById("idUpload").files[0]){
+submitBtn.innerText="Uploading ID proof...";
 idProofUrl = await upload(document.getElementById("idUpload").files[0], "teachers/" + uid + "/id-proof");
 }
 
 let gallery=[];
-for(let file of galleryFiles){
-gallery.push(await upload(file, "teachers/" + uid + "/gallery"));
+for(let i=0;i<galleryFiles.length;i++){
+submitBtn.innerText="Uploading gallery " + (i + 1) + "/" + galleryFiles.length + "...";
+gallery.push(await upload(galleryFiles[i], "teachers/" + uid + "/gallery"));
 }
+
+submitBtn.innerText="Saving registration...";
 
 subjects = window.collectSelectedSkills();
 
@@ -1074,12 +1125,14 @@ document.querySelectorAll(".mode:checked").forEach(item=>{
 teachingModes.push(item.value);
 });
 
-if(
-document.getElementById("otherModeCheck").checked &&
-document.getElementById("otherMode").value.trim()!==""
-){
-teachingModes.push(document.getElementById("otherMode").value.trim());
+Array.from(document.querySelectorAll(".customModeInput"))
+.map(item=>item.value.trim())
+.filter(Boolean)
+.forEach(item=>{
+if(!teachingModes.includes(item)){
+teachingModes.push(item);
 }
+});
 
 const selectedIdType = document.getElementById("idType").value;
 const idTypeValue =
@@ -1105,12 +1158,12 @@ mapLink:document.getElementById("mapLink").value.trim(),
 subjects:subjects,
 class:document.getElementById("class").value,
 teachingModes:teachingModes,
-individualFee:document.getElementById("individualFee").value,
-homeFee:document.getElementById("homeFee").value,
-groupFee:document.getElementById("groupFee").value,
-onlineFee:document.getElementById("onlineFee").value,
-otherMode:document.getElementById("otherMode").value.trim(),
-otherModeFee:document.getElementById("otherModeFee").value,
+individualFee:"",
+homeFee:"",
+groupFee:"",
+onlineFee:"",
+otherMode:Array.from(document.querySelectorAll(".customModeInput")).map(item=>item.value.trim()).filter(Boolean).join(", "),
+otherModeFee:"",
 logo:logoUrl,
 profilePic:logoUrl,
 gallery:gallery,
