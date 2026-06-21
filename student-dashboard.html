@@ -686,6 +686,54 @@ function getTodayName(){
 return DAY_INDEX_TO_NAME[new Date().getDay()] || "Monday";
 }
 
+function normalizeTimeTableType(type){
+const raw = String(type || "Other").trim();
+
+if(!raw){
+return "Other";
+}
+
+if(raw === "Training" || raw === "Coaching" || raw === "Training / Coaching"){
+return "Training / Coaching";
+}
+
+if(raw === "Self Study" || raw === "Practice" || raw === "Self Study / Practice"){
+return "Self Study / Practice";
+}
+
+return raw;
+}
+
+function getTimeTableDisplayMeta(item){
+const type = normalizeTimeTableType(item.type);
+
+if(type === "Break"){
+return {
+title:item.subject || "Break",
+showSubject:false
+};
+}
+
+if(type === "Self Study / Practice"){
+return {
+title:item.subject || "Self Study / Practice",
+showSubject:false
+};
+}
+
+if(type === "Exam"){
+return {
+title:`Exam: ${item.title || "Untitled Exam"}`,
+showSubject:!!item.subject
+};
+}
+
+return {
+title:item.title || "Untitled",
+showSubject:!!item.subject
+};
+}
+
 function normalizeTimeTable(raw){
 const week = {};
 
@@ -695,7 +743,7 @@ week[day] = Array.isArray(raw?.[day])
 .map(item=>({
 title:String(item.title || "").trim(),
 subject:String(item.subject || "").trim(),
-type:String(item.type || "Other").trim() || "Other",
+type:normalizeTimeTableType(item.type || "Other"),
 startTime:String(item.startTime || "").trim(),
 endTime:String(item.endTime || "").trim(),
 location:String(item.location || "").trim(),
@@ -764,15 +812,16 @@ else{
 html += `<div class="timeTableList">`;
 
 todayItems.slice(0,4).forEach(item=>{
+const meta = getTimeTableDisplayMeta(item);
 html += `
 <div class="timeTableItem">
 <div class="timeTableItemTop">
 <div>
 <div class="timeTableTime">${escapeHTML(item.startTime || "--:--")}${item.endTime ? ` - ${escapeHTML(item.endTime)}` : ""}</div>
-<div class="timeTableTitle">${escapeHTML(item.title || "Untitled")}</div>
-${item.subject ? `<div class="timeTableSubject">Subject: ${escapeHTML(item.subject)}</div>` : ""}
+<div class="timeTableTitle">${escapeHTML(meta.title)}</div>
+${meta.showSubject ? `<div class="timeTableSubject">Subject: ${escapeHTML(item.subject)}</div>` : ""}
 </div>
-<div class="timeTableBadge">${escapeHTML(item.type || "Other")}</div>
+<div class="timeTableBadge">${escapeHTML(normalizeTimeTableType(item.type || "Other"))}</div>
 </div>
 <div class="timeTableMeta">
 ${item.location ? `<div><b>Location:</b> ${escapeHTML(item.location)}</div>` : ""}
