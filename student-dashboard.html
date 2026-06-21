@@ -282,11 +282,12 @@ border-radius:8px;
 </div>
 
 <div class="center" style="margin-top:12px;">
-<a
-href="edit-profile.html"
-class="btn blue">
+<button
+type="button"
+class="btn blue"
+onclick="openStudentEditProfile()">
 Edit Profile
-</a>
+</button>
 </div>
 
 </div>
@@ -390,6 +391,11 @@ window.location.href =
 
 }
 
+localStorage.setItem("uid",uid);
+localStorage.setItem("profileId",uid);
+localStorage.setItem("studentId",uid);
+localStorage.setItem("role","student");
+
 /* LOAD STUDENT */
 
 async function loadStudent(){
@@ -434,6 +440,14 @@ console.log(err);
 function cleanPhone(phone){
 return String(phone || "").replace(/\D/g,"");
 }
+
+window.openStudentEditProfile = function(){
+localStorage.setItem("uid",uid);
+localStorage.setItem("profileId",uid);
+localStorage.setItem("studentId",uid);
+localStorage.setItem("role","student");
+window.location.href = "edit-profile.html";
+};
 
 function callProvider(phone){
 if(!phone){
