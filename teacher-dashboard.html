@@ -200,10 +200,10 @@ vertical-align:middle;
 
 /* BUTTONS */
 
-/* PC: 6 buttons in one row */
+/* PC: 7 buttons in one row */
 .mainBtns{
   display:grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   gap:10px;
 }
 
@@ -212,7 +212,7 @@ vertical-align:middle;
   grid-column: span 1;
 }
 
-/* MOBILE: 2 + 2 + 1 layout */
+/* MOBILE: 2-column layout */
 @media (max-width:600px){
 
   .mainBtns{
@@ -247,6 +247,10 @@ background:#1976d2;
 
 .supportBtn{
 background:#ff9800;
+}
+
+.feeBtn{
+background:#5e35b1;
 }
 
 .logoutBtn{
@@ -860,6 +864,10 @@ Quick Actions
     Edit Profile
   </button>
 
+  <button class="feeBtn" onclick="openFeeStructure()">
+    Fee Structure
+  </button>
+
   <button class="supportBtn" onclick="contactDeveloper()">
      Developer Support
   </button>
@@ -1142,7 +1150,7 @@ if (d.qrImage) {
 }
 
 /*  ADD LOGO CODE HERE */
-const logoURL = d.logo || "default.png";
+const logoURL = getPrimaryProfileImage(d);
 const img = document.getElementById("profileLogo");
 
 img.src = logoURL;
@@ -1250,6 +1258,24 @@ return String(value ?? "")
 .replace(/>/g,"&gt;")
 .replace(/"/g,"&quot;")
 .replace(/'/g,"&#039;");
+}
+
+function getPrimaryProfileImage(data){
+  const images =
+    Array.isArray(data?.profileImages)
+      ? data.profileImages
+      : [];
+
+  const normalized =
+    images
+      .map(item => typeof item === "string" ? { url:item } : item)
+      .filter(item => item && item.url);
+
+  const selected =
+    normalized[Number(data?.primaryProfileImage || 0)] ||
+    normalized[0];
+
+  return selected?.url || data?.logo || data?.profilePic || "default.png";
 }
 
 function renderEnrollmentMessages(studentId){
@@ -1691,6 +1717,57 @@ location.href=
 
 };
 
+window.openFeeStructure = function(){
+  const id =
+    profileId ||
+    localStorage.getItem("profileId") ||
+    localStorage.getItem("teacherId") ||
+    localStorage.getItem("institutionId");
+
+  const type =
+    role === "institution"
+      ? "institution"
+      : "teacher";
+
+  const category =
+    String(
+      currentProfileData.category ||
+      localStorage.getItem("profileCategory") ||
+      sessionStorage.getItem("profileCategory") ||
+      ""
+    ).trim();
+
+  if (!id || id === "null" || id === "undefined") {
+    alert("Profile ID missing. Please login again.");
+    return;
+  }
+
+  localStorage.setItem("profileId", id);
+  localStorage.setItem("role", type);
+  localStorage.setItem("profileCategory", category);
+
+  sessionStorage.setItem("profileId", id);
+  sessionStorage.setItem("role", type);
+  sessionStorage.setItem("profileCategory", category);
+
+  localStorage.setItem("feeProfileId", id);
+  localStorage.setItem("feeRole", type);
+  localStorage.setItem("feeCategory", category);
+
+  sessionStorage.setItem("feeProfileId", id);
+  sessionStorage.setItem("feeRole", type);
+  sessionStorage.setItem("feeCategory", category);
+
+  location.href =
+    "fee-structure.html?id=" +
+    encodeURIComponent(id) +
+    "&role=" +
+    encodeURIComponent(type) +
+    "&category=" +
+    encodeURIComponent(category);
+
+};
+
 window.createInvoice = function () {
   const id =
     profileId ||
@@ -1878,7 +1955,7 @@ window.toggleStatus = async function (leadId, currentStatus, studentPhone = "") 
         alternatePhone:currentProfileData.alternatePhone || "",
         email:currentProfileData.email || "",
         website:currentProfileData.website || "",
-        logo:currentProfileData.logo || currentProfileData.profilePic || "",
+        logo:getPrimaryProfileImage(currentProfileData),
         category:currentProfileData.category || "",
         showBankDetails:currentProfileData.showBankDetails !== false,
         accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
