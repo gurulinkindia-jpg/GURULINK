@@ -270,6 +270,13 @@ color:#1f2937;
 margin-bottom:6px;
 }
 
+.slotSubject{
+font-size:14px;
+font-weight:bold;
+color:#0f766e;
+margin-bottom:6px;
+}
+
 .slotMeta{
 font-size:13px;
 line-height:1.6;
@@ -385,7 +392,7 @@ Create your weekly routine and keep important classes, training sessions, and se
 <div class="dayTabs" id="dayTabs"></div>
 </div>
 
-<div class="card">
+<div class="card" id="editorCard">
 <div class="sectionTitle" id="editorTitle">Add Time Slot</div>
 <div class="muted">
 Use this for school, tuition, coaching, online class, sports practice, music, art, self-study, or exams.
@@ -395,6 +402,11 @@ Use this for school, tuition, coaching, online class, sports practice, music, ar
 <div class="field">
 <label for="activityTitle">Title</label>
 <input id="activityTitle" type="text" placeholder="Example: School, Maths Tuition, Football Practice">
+</div>
+
+<div class="field">
+<label for="activitySubject">Subject</label>
+<input id="activitySubject" type="text" placeholder="Example: Mathematics, English, Physics, Guitar, Football">
 </div>
 
 <div class="field">
@@ -450,7 +462,7 @@ No weekly timetable saved yet.
 <div class="scheduleList" id="scheduleList"></div>
 </div>
 
-<div class="card">
+<div class="card" id="saveCard">
 <div class="btnRow">
 <button type="button" class="btn green" id="saveTableBtn">Save Weekly Time Table</button>
 <button type="button" class="btn orange" id="resetTableBtn">Reset Unsaved Changes</button>
@@ -506,6 +518,11 @@ localStorage.setItem("profileId",uid);
 localStorage.setItem("studentId",uid);
 localStorage.setItem("role","student");
 
+const pageMode =
+new URLSearchParams(window.location.search).get("mode") === "view"
+? "view"
+: "edit";
+
 const DAYS = [
 "Monday",
 "Tuesday",
@@ -541,6 +558,10 @@ let savedWeekData = emptyWeek();
 let selectedDay = todayIndexMap[new Date().getDay()] || "Monday";
 let editingSlotId = "";
 
+function isViewMode(){
+return pageMode === "view";
+}
+
 function cloneWeek(data){
 return JSON.parse(JSON.stringify(data || emptyWeek()));
 }
@@ -560,6 +581,7 @@ week[day] = slots
 .map((slot,index)=>({
 id:String(slot.id || `${day}-${Date.now()}-${index}`),
 title:String(slot.title || "").trim(),
+subject:String(slot.subject || "").trim(),
 type:String(slot.type || "Other").trim() || "Other",
 startTime:String(slot.startTime || "").trim(),
 endTime:String(slot.endTime || "").trim(),
@@ -567,7 +589,7 @@ location:String(slot.location || "").trim(),
 note:String(slot.note || "").trim(),
 createdAt:Number(slot.createdAt || Date.now() + index)
 }))
-.filter(slot=>slot.title || slot.startTime || slot.endTime || slot.location || slot.note)
+.filter(slot=>slot.title || slot.subject || slot.startTime || slot.endTime || slot.location || slot.note)
 .sort((a,b)=>(a.startTime || "").localeCompare(b.startTime || ""));
 });
 
@@ -585,6 +607,7 @@ editingSlotId = "";
 document.getElementById("editorTitle").innerText = "Add Time Slot";
 document.getElementById("addSlotBtn").innerText = "Add To Selected Day";
 document.getElementById("activityTitle").value = "";
+document.getElementById("activitySubject").value = "";
 document.getElementById("activityType").value = "School";
 document.getElementById("startTime").value = "";
 document.getElementById("endTime").value = "";
@@ -649,6 +672,7 @@ list.innerHTML = slots.map(slot=>`
 <div>
 <div class="slotTime">${slot.startTime || "--:--"}${slot.endTime ? ` - ${slot.endTime}` : ""}</div>
 <div class="slotTitle">${escapeHTML(slot.title || "Untitled Slot")}</div>
+${slot.subject ? `<div class="slotSubject">Subject: ${escapeHTML(slot.subject)}</div>` : ""}
 </div>
 <span class="slotType">${escapeHTML(slot.type || "Other")}</span>
 </div>
@@ -656,12 +680,18 @@ list.innerHTML = slots.map(slot=>`
 ${slot.location ? `<div><b>Location:</b> ${escapeHTML(slot.location)}</div>` : ""}
 ${slot.note ? `<div><b>Note:</b> ${escapeHTML(slot.note)}</div>` : ""}
 </div>
+${isViewMode() ? "" : `
 <div class="slotActions">
 <button type="button" class="miniBtn primary" data-action="edit" data-id="${slot.id}">Edit</button>
 <button type="button" class="miniBtn red" data-action="delete" data-id="${slot.id}">Delete</button>
 </div>
+`}
 </div>
 `).join("");
+
+if(isViewMode()){
+return;
+}
 
 list.querySelectorAll(".miniBtn").forEach(btn=>{
 btn.addEventListener("click",()=>{
@@ -695,6 +725,7 @@ editingSlotId = slotId;
 document.getElementById("editorTitle").innerText = `Edit Time Slot - ${selectedDay}`;
 document.getElementById("addSlotBtn").innerText = "Update Selected Day Slot";
 document.getElementById("activityTitle").value = slot.title || "";
+document.getElementById("activitySubject").value = slot.subject || "";
 document.getElementById("activityType").value = slot.type || "Other";
 document.getElementById("startTime").value = slot.startTime || "";
 document.getElementById("endTime").value = slot.endTime || "";
@@ -720,6 +751,8 @@ setStatus("formStatus","info",`${selectedDay} timetable updated locally. Click "
 function addOrUpdateSlot(){
 const title =
 document.getElementById("activityTitle").value.trim();
+const subject =
+document.getElementById("activitySubject").value.trim();
 const type =
 document.getElementById("activityType").value.trim();
 const startTime =
@@ -752,6 +785,7 @@ if(editingSlotId){
 slots = slots.map(slot=>slot.id === editingSlotId ? {
 ...slot,
 title,
+subject,
 type,
 startTime,
 endTime,
@@ -763,6 +797,7 @@ else{
 slots.push({
 id:`${selectedDay}-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,
 title,
+subject,
 type,
 startTime,
 endTime,
@@ -807,6 +842,11 @@ setStatus("formStatus","info",`${selectedDay} has been cleared locally. Save the
 }
 
 function resetUnsavedChanges(){
+if(isViewMode()){
+window.location.href = "student-timetable.html?mode=edit";
+return;
+}
+
 if(!confirm("Reset all unsaved timetable changes and reload the last saved weekly schedule?")){
 return;
 }
@@ -878,6 +918,24 @@ alert("Unable to load time table right now.");
 }
 }
 
+function applyPageMode(){
+if(!isViewMode()){
+document.title = "Edit Student Time Table - GURULINK";
+return;
+}
+
+document.title = "Show Student Time Table - GURULINK";
+document.querySelector("header h1").innerText = "Student Weekly Time Table";
+document.querySelector("header p").innerText =
+"View your full weekly school, tuition, and training schedule.";
+
+document.getElementById("editorCard").style.display = "none";
+document.getElementById("saveTableBtn").style.display = "none";
+document.getElementById("saveStatus").style.display = "none";
+document.getElementById("resetTableBtn").innerText = "Edit Time Table";
+document.getElementById("resetTableBtn").className = "btn primary";
+}
+
 document.getElementById("addSlotBtn").addEventListener("click",addOrUpdateSlot);
 document.getElementById("clearFormBtn").addEventListener("click",resetForm);
 document.getElementById("clearDayBtn").addEventListener("click",clearSelectedDay);
@@ -886,6 +944,8 @@ document.getElementById("resetTableBtn").addEventListener("click",resetUnsavedCh
 document.getElementById("backDashboardBtn").addEventListener("click",()=>{
 window.location.href = "student-dashboard.html";
 });
+
+applyPageMode();
 
 onAuthStateChanged(auth,(user)=>{
 if(!user){
