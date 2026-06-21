@@ -106,6 +106,11 @@ background:#2e7d32;
 color:white;
 }
 
+.orange{
+background:#ef6c00;
+color:white;
+}
+
 .red{
 background:#d32f2f;
 color:white;
@@ -158,6 +163,14 @@ flex-direction:column;
 gap:10px;
 }
 
+.timeTableActionRow{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+justify-content:center;
+margin-top:6px;
+}
+
 .timeTableItem{
 border:1px solid #d9e2ec;
 border-radius:12px;
@@ -183,6 +196,13 @@ color:#1565c0;
 font-size:16px;
 font-weight:bold;
 color:#1f2937;
+margin-bottom:4px;
+}
+
+.timeTableSubject{
+font-size:13px;
+font-weight:bold;
+color:#0f766e;
 margin-bottom:4px;
 }
 
@@ -372,6 +392,11 @@ font-size:14px;
 .timeTableItemTop{
 flex-direction:column;
 }
+
+.timeTableActionRow .btn{
+width:100%;
+margin:0;
+}
 }
 
 </style>
@@ -463,9 +488,15 @@ Browse Teachers
 </a>
 
 <a
-href="student-timetable.html"
+href="student-timetable.html?mode=view"
 class="btn blue">
-Time Table
+Show Time Table
+</a>
+
+<a
+href="student-timetable.html?mode=edit"
+class="btn orange">
+Edit Time Table
 </a>
 
 <a
@@ -663,13 +694,14 @@ week[day] = Array.isArray(raw?.[day])
 ? raw[day]
 .map(item=>({
 title:String(item.title || "").trim(),
+subject:String(item.subject || "").trim(),
 type:String(item.type || "Other").trim() || "Other",
 startTime:String(item.startTime || "").trim(),
 endTime:String(item.endTime || "").trim(),
 location:String(item.location || "").trim(),
 note:String(item.note || "").trim()
 }))
-.filter(item=>item.title || item.startTime || item.endTime || item.location || item.note)
+.filter(item=>item.title || item.subject || item.startTime || item.endTime || item.location || item.note)
 .sort((a,b)=>(a.startTime || "").localeCompare(b.startTime || ""))
 : [];
 });
@@ -702,8 +734,9 @@ box.innerHTML = `
 <div class="timeTableEmpty">
 No weekly time table added yet.<br>
 Create your school, tuition, and training schedule so you can check it quickly every day.
-<div style="margin-top:12px;">
-<a href="student-timetable.html" class="btn blue">Create Time Table</a>
+<div class="timeTableActionRow" style="margin-top:12px;">
+<a href="student-timetable.html?mode=view" class="btn blue">Show Time Table</a>
+<a href="student-timetable.html?mode=edit" class="btn orange">Edit Time Table</a>
 </div>
 </div>
 `;
@@ -737,6 +770,7 @@ html += `
 <div>
 <div class="timeTableTime">${escapeHTML(item.startTime || "--:--")}${item.endTime ? ` - ${escapeHTML(item.endTime)}` : ""}</div>
 <div class="timeTableTitle">${escapeHTML(item.title || "Untitled")}</div>
+${item.subject ? `<div class="timeTableSubject">Subject: ${escapeHTML(item.subject)}</div>` : ""}
 </div>
 <div class="timeTableBadge">${escapeHTML(item.type || "Other")}</div>
 </div>
@@ -760,8 +794,9 @@ Showing first 4 items for today. Open your full timetable to see all entries.
 }
 
 html += `
-<div class="center" style="margin-top:6px;">
-<a href="student-timetable.html" class="btn blue">Open Full Time Table</a>
+<div class="timeTableActionRow">
+<a href="student-timetable.html?mode=view" class="btn blue">Show Time Table</a>
+<a href="student-timetable.html?mode=edit" class="btn orange">Edit Time Table</a>
 </div>
 `;
 
@@ -802,13 +837,13 @@ if(!url){
 alert("Website not available.");
 return;
 }
-
-function getSafeImageUrl(url){
-return String(url || "").trim() || DEFAULT_AVATAR;
-}
 const finalUrl =
 url.startsWith("http") ? url : "https://" + url;
 window.open(finalUrl,"_blank");
+}
+
+function getSafeImageUrl(url){
+return String(url || "").trim() || DEFAULT_AVATAR;
 }
 
 async function getProviderProfile(profileId,item){
