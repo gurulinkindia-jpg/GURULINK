@@ -71,34 +71,6 @@ font-size:13px;
 font-weight:bold;
 }
 
-.overviewGrid{
-display:grid;
-grid-template-columns:repeat(7,minmax(0,1fr));
-gap:8px;
-margin-top:10px;
-}
-
-.overviewItem{
-padding:10px 8px;
-border:1px solid #d7e3f0;
-border-radius:12px;
-background:#f8fbff;
-text-align:center;
-}
-
-.overviewDay{
-font-size:12px;
-font-weight:bold;
-color:#1565c0;
-margin-bottom:6px;
-}
-
-.overviewCount{
-font-size:22px;
-font-weight:bold;
-color:#1e293b;
-}
-
 .dayTabs{
 display:grid;
 grid-template-columns:repeat(7,minmax(0,1fr));
@@ -436,7 +408,6 @@ text-align:center;
 }
 
 @media(max-width:900px){
-.overviewGrid,
 .dayTabs{
 grid-template-columns:repeat(4,minmax(0,1fr));
 }
@@ -461,7 +432,6 @@ border-radius:14px;
 font-size:20px;
 }
 
-.overviewGrid,
 .dayTabs,
 .formGrid{
 grid-template-columns:repeat(2,minmax(0,1fr));
@@ -512,7 +482,6 @@ Create your weekly routine and keep important classes, training sessions, and se
 <div class="todayBadge" id="todayBadge">Today: Loading...</div>
 </div>
 
-<div class="overviewGrid" id="overviewGrid"></div>
 </div>
 
 <div class="card">
@@ -902,14 +871,6 @@ listTitle:`Period: ${slot.title || "Untitled Period"}`
 }
 
 function renderOverview(){
-const grid = document.getElementById("overviewGrid");
-grid.innerHTML = DAYS.map(day=>`
-<div class="overviewItem">
-<div class="overviewDay">${day.slice(0,3)}</div>
-<div class="overviewCount">${weekData[day].length}</div>
-</div>
-`).join("");
-
 document.getElementById("todayBadge").innerText =
 `Today: ${getTodayName()} (${weekData[getTodayName()].length} item${weekData[getTodayName()].length === 1 ? "" : "s"})`;
 }
