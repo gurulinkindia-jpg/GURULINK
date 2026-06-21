@@ -529,7 +529,7 @@ onAuthStateChanged
 from
 "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
 
 const firebaseConfig={
 
@@ -772,6 +772,207 @@ const originalName = (file && file.name ? file.name : "image").replace(/[^a-zA-Z
 return Date.now() + "-" + Math.random().toString(36).slice(2,8) + "-" + originalName;
 }
 
+function getExtensionForMimeType(mimeType){
+const cleanType =
+String(mimeType || "").toLowerCase();
+
+if(cleanType === "image/png"){
+return ".png";
+}
+
+if(cleanType === "image/webp"){
+return ".webp";
+}
+
+if(cleanType === "image/gif"){
+return ".gif";
+}
+
+return ".jpg";
+}
+
+function buildOptimizedFileName(file, mimeType){
+const rawName =
+String((file && file.name) || "image")
+.replace(/[^a-zA-Z0-9._-]/g,"_");
+
+const baseName =
+rawName.replace(/\.[a-z0-9]+$/i,"") || "image";
+
+return baseName + getExtensionForMimeType(mimeType);
+}
+
+function canvasToBlob(canvas, mimeType, quality){
+return new Promise((resolve) => {
+if(canvas.toBlob){
+canvas.toBlob((blob) => resolve(blob), mimeType, quality);
+return;
+}
+
+try{
+const dataUrl =
+canvas.toDataURL(mimeType, quality);
+
+const parts =
+dataUrl.split(",");
+
+const mimeMatch =
+parts[0].match(/data:(.*?);base64/);
+
+const outputType =
+mimeMatch && mimeMatch[1]
+? mimeMatch[1]
+: mimeType;
+
+const binary =
+atob(parts[1] || "");
+
+const bytes =
+new Uint8Array(binary.length);
+
+for(let i = 0; i < binary.length; i++){
+bytes[i] = binary.charCodeAt(i);
+}
+
+resolve(new Blob([bytes], { type: outputType }));
+}
+catch(err){
+console.log("Canvas blob fallback failed:", err);
+resolve(null);
+}
+});
+}
+
+async function optimizeImageForUpload(file, options = {}){
+if(!file){
+return file;
+}
+
+const mimeType =
+String(file.type || "").toLowerCase();
+
+if(!mimeType.startsWith("image/")){
+return file;
+}
+
+if(
+mimeType.includes("svg") ||
+mimeType.includes("gif") ||
+mimeType.includes("heic") ||
+mimeType.includes("heif")
+){
+return file;
+}
+
+const maxDimension =
+Number(options.maxDimension || 1600);
+
+const maxFileSizeBytes =
+Number(options.maxFileSizeBytes || (2.5 * 1024 * 1024));
+
+const quality =
+Number(options.quality || 0.82);
+
+let objectUrl = "";
+
+try{
+objectUrl =
+URL.createObjectURL(file);
+
+const image =
+await new Promise((resolve, reject) => {
+const img = new Image();
+img.onload = () => resolve(img);
+img.onerror = () => reject(new Error("Image load failed"));
+img.src = objectUrl;
+});
+
+let width = image.width || 0;
+let height = image.height || 0;
+
+if(!width || !height){
+return file;
+}
+
+const needsResize =
+Math.max(width, height) > maxDimension;
+
+const needsCompression =
+file.size > maxFileSizeBytes;
+
+if(!needsResize && !needsCompression){
+return file;
+}
+
+if(needsResize){
+const scale =
+maxDimension / Math.max(width, height);
+
+width =
+Math.max(1, Math.round(width * scale));
+
+height =
+Math.max(1, Math.round(height * scale));
+}
+
+const canvas =
+document.createElement("canvas");
+
+canvas.width = width;
+canvas.height = height;
+
+const ctx =
+canvas.getContext("2d");
+
+if(!ctx){
+return file;
+}
+
+ctx.drawImage(image, 0, 0, width, height);
+
+const outputType =
+mimeType === "image/png"
+? "image/png"
+: "image/jpeg";
+
+const optimizedBlob =
+await canvasToBlob(
+canvas,
+outputType,
+outputType === "image/png" ? undefined : quality
+);
+
+if(!optimizedBlob){
+return file;
+}
+
+if(
+optimizedBlob.size >= file.size &&
+!needsResize
+){
+return file;
+}
+
+return new File(
+[optimizedBlob],
+buildOptimizedFileName(file, outputType),
+{
+type: outputType,
+lastModified: Date.now()
+}
+);
+}
+catch(err){
+console.log("Image optimization skipped:", err);
+return file;
+}
+finally{
+if(objectUrl){
+URL.revokeObjectURL(objectUrl);
+}
+}
+}
+
 function extractStoragePathFromUrl(url){
 try{
 const match = String(url || "").match(/\/o\/([^?]+)/);
@@ -947,25 +1148,100 @@ console.log("Storage delete skipped:", err);
 }
 }
 
+async function uploadWithRetry(fileRef, file, metadata = {}, timeoutMs = 180000){
+const task =
+uploadBytesResumable(fileRef, file, metadata);
+
+return await new Promise((resolve, reject) => {
+let settled = false;
+
+const timeoutId =
+setTimeout(() => {
+if(settled){
+return;
+}
+
+settled = true;
+
+try{
+task.cancel();
+}
+catch(cancelErr){
+console.log("Upload cancel skipped:", cancelErr);
+}
+
+reject(
+new Error("Image upload took too long. Please try again with a smaller image or a better internet connection.")
+);
+}, timeoutMs);
+
+task.on(
+"state_changed",
+() => {},
+(error) => {
+if(settled){
+return;
+}
+
+settled = true;
+clearTimeout(timeoutId);
+reject(error);
+},
+() => {
+if(settled){
+return;
+}
+
+settled = true;
+clearTimeout(timeoutId);
+resolve(task.snapshot);
+}
+);
+});
+}
+
 async function uploadImage(file, folder){
+const uploadFile =
+await optimizeImageForUpload(
+file,
+folder === "bank-qr"
+? {
+maxDimension: 1400,
+maxFileSizeBytes: 2 * 1024 * 1024,
+quality: 0.85
+}
+: {
+maxDimension: 1800,
+maxFileSizeBytes: 2.5 * 1024 * 1024,
+quality: 0.82
+}
+);
+
 const storageRoot = (role === "teacher" || role === "teacher_institute") ? "teachers" : "institutions";
-const fileRef = storageRef(storage, storageRoot + "/" + profileId + "/" + folder + "/" + makeStorageFileName(file));
-await uploadBytes(fileRef, file, {
-contentType: file.type || "application/octet-stream"
+const fileRef = storageRef(storage, storageRoot + "/" + profileId + "/" + folder + "/" + makeStorageFileName(uploadFile));
+await uploadWithRetry(fileRef, uploadFile, {
+contentType: uploadFile.type || file.type || "application/octet-stream"
 });
 return await getDownloadURL(fileRef);
 }
 
 async function uploadManagedImage(file, folder){
+const uploadFile =
+await optimizeImageForUpload(file,{
+maxDimension:1800,
+maxFileSizeBytes:2.5 * 1024 * 1024,
+quality:0.82
+});
+
 const storageRoot = (role === "teacher" || role === "teacher_institute") ? "teachers" : "institutions";
 const storagePath =
-storageRoot + "/" + profileId + "/" + folder + "/" + makeStorageFileName(file);
+storageRoot + "/" + profileId + "/" + folder + "/" + makeStorageFileName(uploadFile);
 
 const fileRef =
 storageRef(storage, storagePath);
 
-await uploadBytes(fileRef, file, {
-contentType: file.type || "application/octet-stream"
+await uploadWithRetry(fileRef, uploadFile, {
+contentType: uploadFile.type || file.type || "application/octet-stream"
 });
 
 const url =
