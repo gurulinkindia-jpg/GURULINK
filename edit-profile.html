@@ -430,7 +430,7 @@ accept="image/*">
 
 <br><br>
 
-<div class="field" id="mapSection">
+<div class="field" id="bankNameSection">
 <label>Bank Name</label>
 <input type="text" id="bankName">
 </div>
@@ -468,7 +468,7 @@ id="showBankDetails">
 
 
 
-<div class="field">
+<div class="field" id="mapUrlSection">
 <label>Google Maps URL</label>
 <input
 type="text"
@@ -579,15 +579,52 @@ currentUser = user;
 const profileId =
 localStorage.getItem("profileId");
 
-const role =
+const rawRole =
 String(localStorage.getItem("role") || "").toLowerCase();
+
+function normalizeRole(roleValue){
+const value =
+String(roleValue || "").toLowerCase().trim();
+
+if(
+value === "student" ||
+value === "student_guest" ||
+value === "parent" ||
+value === "parent_guest"
+){
+return "student";
+}
+
+if(
+value === "teacher" ||
+value === "teacher_institute" ||
+value === "teacher_guest"
+){
+return "teacher";
+}
+
+if(
+value === "institution" ||
+value === "institution_guest"
+){
+return "institution";
+}
+
+if(!value && localStorage.getItem("studentId")){
+return "student";
+}
+
+return value;
+}
+
+const role =
+normalizeRole(rawRole);
 
 const isStudentRole =
 role === "student";
 
 const isTeacherRole =
-role === "teacher" ||
-role === "teacher_institute";
+role === "teacher";
 
 const isInstitutionRole =
 role === "institution";
@@ -626,6 +663,7 @@ const hiddenFields = [
 "idProof",
 "role",
 "category",
+"photo",
 "profileImages",
 "primaryProfileImage",
 "galleryImages",
@@ -740,22 +778,104 @@ if(!isStudentRole){
 return;
 }
 
+document.getElementById("logoPreviewSection").style.display = "block";
+document.getElementById("logoUploadSection").style.display = "block";
+
 document.getElementById("pageTitle").innerText =
 "Edit Student Profile";
 
-document.getElementById("logoPreviewSection").style.display = "none";
-document.getElementById("logoUploadSection").style.display = "none";
 document.getElementById("gallerySection").style.display = "none";
 document.getElementById("galleryUploadSection").style.display = "none";
 document.getElementById("bankSection").style.display = "none";
-document.getElementById("mapSection").style.display = "none";
+
+const mapUrlSection =
+document.getElementById("mapUrlSection");
+
+if(mapUrlSection){
+mapUrlSection.style.display = "none";
+}
+
+const logoHeading =
+document.querySelector("#logoPreviewSection h3");
+
+if(logoHeading){
+logoHeading.innerText =
+"Current Profile Image";
+}
+
+const uploadHeading =
+document.querySelector("#logoUploadSection h3");
+
+if(uploadHeading){
+uploadHeading.innerText =
+"Upload Profile Image";
+}
+
+const logoVisibility =
+document.getElementById("show_logo")?.closest(".visibilityToggle");
+
+if(logoVisibility){
+logoVisibility.style.display = "none";
+}
+
+const logoIntroNote =
+document.querySelector("#logoUploadSection .uploadIntroNote");
+
+if(logoIntroNote){
+logoIntroNote.innerText =
+"Upload one clear profile image for your student account. This helps dashboards and connected teachers identify you more easily.";
+}
+
+const firstLogoLabel =
+document.querySelector('label[for="newLogo"]');
+
+if(firstLogoLabel){
+firstLogoLabel.innerText =
+"Student Profile Image";
+}
+
+const firstLogoHint =
+document.querySelector("#logoUploadSection .uploadFieldHint");
+
+if(firstLogoHint){
+firstLogoHint.innerText =
+"Choose a clear profile photo for your student account.";
+}
+
+const firstUploadCard =
+document.getElementById("newLogo")?.closest(".uploadFieldCard");
+
+if(firstUploadCard){
+firstUploadCard.style.display = "flex";
+}
+
+const secondUploadCard =
+document.getElementById("newLogo2")?.closest(".uploadFieldCard");
+
+if(secondUploadCard){
+secondUploadCard.style.display = "none";
+}
 
 const note =
 document.getElementById("visibilityNote");
 
 if(note){
 note.innerText =
-"Update your student details here. This profile is used for your dashboard, enrollments, and messages.";
+"Update your student details and profile image here. This profile is used for your dashboard, enrollments, and messages.";
+}
+
+const dynamicFields =
+document.getElementById("dynamicFields");
+
+const previewSection =
+document.getElementById("logoPreviewSection");
+
+const uploadSection =
+document.getElementById("logoUploadSection");
+
+if(dynamicFields && previewSection && uploadSection){
+dynamicFields.parentNode.insertBefore(previewSection,dynamicFields);
+dynamicFields.parentNode.insertBefore(uploadSection,dynamicFields);
 }
 }
 
@@ -1030,6 +1150,7 @@ existing
 if(!items.length){
 const legacy =
 [
+data.photo,
 data.logo,
 data.profilePic
 ]
@@ -1131,8 +1252,21 @@ images[primaryIndex] || images[0] || null;
 
 target.logo = primaryImage ? primaryImage.url : "";
 target.profilePic = primaryImage ? primaryImage.url : "";
+target.photo = primaryImage ? primaryImage.url : "";
 target.galleryImages = normalizeGalleryImages(target);
 target.gallery = target.galleryImages.map(item=>item.url);
+}
+
+function getStorageRoot(){
+if(isStudentRole){
+return "students";
+}
+
+if(isTeacherRole){
+return "teachers";
+}
+
+return "institutions";
 }
 
 async function deleteStoragePath(path){
@@ -1217,7 +1351,7 @@ quality: 0.82
 }
 );
 
-const storageRoot = (role === "teacher" || role === "teacher_institute") ? "teachers" : "institutions";
+const storageRoot = getStorageRoot();
 const fileRef = storageRef(storage, storageRoot + "/" + profileId + "/" + folder + "/" + makeStorageFileName(uploadFile));
 await uploadWithRetry(fileRef, uploadFile, {
 contentType: uploadFile.type || file.type || "application/octet-stream"
@@ -1233,7 +1367,7 @@ maxFileSizeBytes:2.5 * 1024 * 1024,
 quality:0.82
 });
 
-const storageRoot = (role === "teacher" || role === "teacher_institute") ? "teachers" : "institutions";
+const storageRoot = getStorageRoot();
 const storagePath =
 storageRoot + "/" + profileId + "/" + folder + "/" + makeStorageFileName(uploadFile);
 
@@ -1461,6 +1595,7 @@ continue;
 
 if(
 key==="logo" ||
+key==="photo" ||
 key==="profilePic" ||
 key==="gallery" ||
 key==="profileImages" ||
@@ -1602,11 +1737,8 @@ document.getElementById("show_mapUrl").checked;
 }
 
 const preferredPrimaryUrl =
-!isStudentRole
-?
 getSelectedPrimaryUrl()
-:
-"";
+;
 
 /* DYNAMIC FIELDS */
 
@@ -1673,7 +1805,7 @@ document.getElementById("newLogo2").files[0]
 ]
 .filter(Boolean);
 
-if(!isStudentRole && logoFiles.length){
+if(logoFiles.length){
 
 saveBtn.innerText=
 "Uploading Profile Image...";
@@ -1681,6 +1813,9 @@ saveBtn.innerText=
 let nextProfileImages = [
 ...updateData.profileImages
 ];
+
+const maxProfileImages =
+isStudentRole ? 1 : 2;
 
 for(const logoFile of logoFiles){
 
@@ -1694,7 +1829,7 @@ nextProfileImages.push(
 uploadedProfileImage
 );
 
-while(nextProfileImages.length > 2){
+while(nextProfileImages.length > maxProfileImages){
 const removedImage =
 nextProfileImages.shift();
 await deleteStoragePath(removedImage?.storagePath || "");
@@ -1769,7 +1904,6 @@ qrUrl;
 
 }
 
-if(!isStudentRole){
 updateData.primaryProfileImage =
 resolvePrimaryIndex(
 updateData.profileImages,
@@ -1777,7 +1911,6 @@ preferredPrimaryUrl
 );
 
 syncLegacyImageFields(updateData);
-}
 /* SAVE TO FIREBASE */
 
 await update(
@@ -1986,6 +2119,7 @@ function renderProfileImages(){
         await update(ref(db, dbPath), {
           profileImages: profileData.profileImages,
           primaryProfileImage: profileData.primaryProfileImage,
+          photo: profileData.photo || "",
           logo: profileData.logo || "",
           profilePic: profileData.profilePic || ""
         });
