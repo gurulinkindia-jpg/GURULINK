@@ -522,35 +522,34 @@ Create your weekly routine and keep important classes, training sessions, and se
 </div>
 
 <div class="card" id="editorCard">
-<div class="sectionTitle" id="editorTitle">Add Period</div>
+<div class="sectionTitle" id="editorTitle">Add Time Slot</div>
 <div class="muted">
-Use this for school, tuition, coaching, online class, sports practice, music, art, self-study, or exams.
+Use this for school, tuition, training/coaching, online class, self-study/practice, breaks, or exams.
 </div>
 
 <div class="formGrid">
-<div class="field">
-<label for="activityTitle">Period</label>
-<input id="activityTitle" type="text" placeholder="Example: Period 1, Morning School, Maths Tuition, Football Practice">
-</div>
-
-<div class="field">
-<label for="activitySubject">Subject</label>
-<input id="activitySubject" type="text" placeholder="Example: Mathematics, English, Physics, Guitar, Football">
-</div>
-
-<div class="field">
+<div class="field" id="activityTypeField">
 <label for="activityType">Type</label>
 <select id="activityType">
 <option value="School">School</option>
 <option value="Tuition">Tuition</option>
-<option value="Training">Training</option>
-<option value="Coaching">Coaching</option>
-<option value="Self Study">Self Study</option>
+<option value="Training / Coaching">Training / Coaching</option>
+<option value="Self Study / Practice">Self Study / Practice</option>
 <option value="Online Class">Online Class</option>
 <option value="Exam">Exam</option>
 <option value="Break">Break</option>
 <option value="Other">Other</option>
 </select>
+</div>
+
+<div class="field" id="activityTitleField">
+<label for="activityTitle">Period</label>
+<input id="activityTitle" type="text" placeholder="Example: Period 1, Morning School, Maths Tuition, Football Practice">
+</div>
+
+<div class="field" id="activitySubjectField">
+<label for="activitySubject">Subject</label>
+<input id="activitySubject" type="text" placeholder="Example: Mathematics, English, Physics, Guitar, Football">
 </div>
 
 <div class="field">
@@ -690,14 +689,93 @@ let editingSlotId = "";
 const TYPE_ORDER = [
 "School",
 "Tuition",
-"Training",
-"Coaching",
-"Self Study",
+"Training / Coaching",
+"Self Study / Practice",
 "Online Class",
 "Exam",
 "Break",
 "Other"
 ];
+
+function normalizeSlotType(type){
+const raw = String(type || "Other").trim();
+
+if(!raw){
+return "Other";
+}
+
+if(raw === "Training" || raw === "Coaching" || raw === "Training / Coaching"){
+return "Training / Coaching";
+}
+
+if(raw === "Self Study" || raw === "Practice" || raw === "Self Study / Practice"){
+return "Self Study / Practice";
+}
+
+return raw;
+}
+
+function getTypeRules(type){
+const normalized = normalizeSlotType(type);
+
+if(normalized === "Break"){
+return {
+showTitle:false,
+titleLabel:"Period",
+titlePlaceholder:"Example: Period 1",
+subjectLabel:"Subject",
+subjectPlaceholder:"Example: Lunch Break, Tiffin Break, Rest Time",
+titleRequired:false,
+subjectRequired:true
+};
+}
+
+if(normalized === "Self Study / Practice"){
+return {
+showTitle:false,
+titleLabel:"Period",
+titlePlaceholder:"Example: Period 1",
+subjectLabel:"Subject / Practice",
+subjectPlaceholder:"Example: Mathematics Revision, Coding Practice, Guitar Practice",
+titleRequired:false,
+subjectRequired:true
+};
+}
+
+if(normalized === "Exam"){
+return {
+showTitle:true,
+titleLabel:"Name of Exam",
+titlePlaceholder:"Example: Unit Test, Mid Term, NEET Mock Test",
+subjectLabel:"Subject",
+subjectPlaceholder:"Example: Mathematics, Physics, English",
+titleRequired:true,
+subjectRequired:false
+};
+}
+
+if(normalized === "Training / Coaching"){
+return {
+showTitle:true,
+titleLabel:"Period",
+titlePlaceholder:"Example: Morning Batch, Period 1, Evening Session",
+subjectLabel:"Subject / Activity",
+subjectPlaceholder:"Example: Football, Guitar, Coding, Yoga",
+titleRequired:true,
+subjectRequired:false
+};
+}
+
+return {
+showTitle:true,
+titleLabel:"Period",
+titlePlaceholder:"Example: Period 1, Morning School, Maths Tuition",
+subjectLabel:"Subject",
+subjectPlaceholder:"Example: Mathematics, English, Physics, Biology",
+titleRequired:true,
+subjectRequired:false
+};
+}
 
 function isViewMode(){
 return pageMode === "view";
@@ -723,7 +801,7 @@ week[day] = slots
 id:String(slot.id || `${day}-${Date.now()}-${index}`),
 title:String(slot.title || "").trim(),
 subject:String(slot.subject || "").trim(),
-type:String(slot.type || "Other").trim() || "Other",
+type:normalizeSlotType(slot.type || "Other"),
 startTime:String(slot.startTime || "").trim(),
 endTime:String(slot.endTime || "").trim(),
 location:String(slot.location || "").trim(),
@@ -745,7 +823,7 @@ box.innerText = text;
 
 function resetForm(){
 editingSlotId = "";
-document.getElementById("editorTitle").innerText = "Add Period";
+document.getElementById("editorTitle").innerText = "Add Time Slot";
 document.getElementById("addSlotBtn").innerText = "Add To Selected Day";
 document.getElementById("activityTitle").value = "";
 document.getElementById("activitySubject").value = "";
@@ -754,6 +832,73 @@ document.getElementById("startTime").value = "";
 document.getElementById("endTime").value = "";
 document.getElementById("activityLocation").value = "";
 document.getElementById("activityNote").value = "";
+applyTypeRules();
+}
+
+function applyTypeRules(){
+const typeSelect = document.getElementById("activityType");
+const titleField = document.getElementById("activityTitleField");
+const titleLabel = titleField.querySelector("label");
+const titleInput = document.getElementById("activityTitle");
+const subjectField = document.getElementById("activitySubjectField");
+const subjectLabel = subjectField.querySelector("label");
+const subjectInput = document.getElementById("activitySubject");
+
+const normalizedType = normalizeSlotType(typeSelect.value);
+const rules = getTypeRules(normalizedType);
+
+typeSelect.value = normalizedType;
+titleField.style.display = rules.showTitle ? "flex" : "none";
+titleLabel.innerText = rules.titleLabel;
+titleInput.placeholder = rules.titlePlaceholder;
+subjectLabel.innerText = rules.subjectLabel;
+subjectInput.placeholder = rules.subjectPlaceholder;
+
+if(!rules.showTitle){
+titleInput.value = "";
+}
+}
+
+function getSlotDisplayMeta(slot,index){
+const type = normalizeSlotType(slot.type);
+
+if(type === "Break"){
+return {
+boxLabel:"Break",
+boxName:slot.subject || "Break",
+showSubject:false,
+subjectText:"",
+listTitle:slot.subject || "Break"
+};
+}
+
+if(type === "Self Study / Practice"){
+return {
+boxLabel:"Subject",
+boxName:slot.subject || "Self Study / Practice",
+showSubject:false,
+subjectText:"",
+listTitle:slot.subject || "Self Study / Practice"
+};
+}
+
+if(type === "Exam"){
+return {
+boxLabel:"Exam",
+boxName:slot.title || "Untitled Exam",
+showSubject:!!slot.subject,
+subjectText:slot.subject || "",
+listTitle:`Exam: ${slot.title || "Untitled Exam"}`
+};
+}
+
+return {
+boxLabel:"Period",
+boxName:slot.title || `Period ${index + 1}`,
+showSubject:!!slot.subject,
+subjectText:slot.subject || "",
+listTitle:`Period: ${slot.title || "Untitled Period"}`
+};
 }
 
 function renderOverview(){
@@ -812,7 +957,7 @@ const grouped = {};
 
 slots.forEach(slot=>{
 const typeKey =
-String(slot.type || "Other").trim() || "Other";
+normalizeSlotType(slot.type || "Other");
 
 if(!grouped[typeKey]){
 grouped[typeKey] = [];
@@ -841,22 +986,25 @@ list.innerHTML = orderedTypes.map(typeName=>`
 <div class="typeGroupCard">
 <div class="typeGroupHeader">
 <div>
-<div class="typeGroupTitle">${escapeHTML(typeName).toUpperCase()}</div>
+<div class="typeGroupTitle">${escapeHTML(typeName)}</div>
 <div class="boardSubtitle">${escapeHTML(selectedDay)}</div>
 </div>
-<div class="typeGroupCount">${grouped[typeName].length} period${grouped[typeName].length === 1 ? "" : "s"}</div>
+<div class="typeGroupCount">${grouped[typeName].length} item${grouped[typeName].length === 1 ? "" : "s"}</div>
 </div>
 <div class="periodBoardWrap">
 <div class="periodBoard">
-${grouped[typeName].map((slot,index)=>`
+${grouped[typeName].map((slot,index)=>{
+const meta = getSlotDisplayMeta(slot,index);
+
+return `
 <div class="periodBox">
 <div class="periodBoxHead">
-<div class="periodBoxLabel">Period</div>
-<div class="periodBoxName">${escapeHTML(slot.title || `Period ${index + 1}`)}</div>
+<div class="periodBoxLabel">${escapeHTML(meta.boxLabel)}</div>
+<div class="periodBoxName">${escapeHTML(meta.boxName)}</div>
 </div>
 <div class="periodBoxBody">
 <div class="periodBoxTime">${slot.startTime || "--:--"}${slot.endTime ? ` - ${slot.endTime}` : ""}</div>
-<div class="periodBoxSubject">${escapeHTML(slot.subject || "-")}</div>
+${meta.showSubject ? `<div class="periodBoxSubject">${escapeHTML(meta.subjectText)}</div>` : ""}
 ${slot.location ? `
 <div class="periodBoxLine">
 <b>Place</b>
@@ -871,7 +1019,8 @@ ${slot.note ? `
 ` : ""}
 </div>
 </div>
-`).join("")}
+`;
+}).join("")}
 </div>
 </div>
 </div>
@@ -880,15 +1029,18 @@ ${slot.note ? `
 return;
 }
 
-list.innerHTML = slots.map(slot=>`
+list.innerHTML = slots.map((slot,index)=>{
+const meta = getSlotDisplayMeta(slot,index);
+
+return `
 <div class="slotCard">
 <div class="slotTop">
 <div>
 <div class="slotTime">${slot.startTime || "--:--"}${slot.endTime ? ` - ${slot.endTime}` : ""}</div>
-<div class="slotTitle">Period: ${escapeHTML(slot.title || "Untitled Period")}</div>
-${slot.subject ? `<div class="slotSubject">Subject: ${escapeHTML(slot.subject)}</div>` : ""}
+<div class="slotTitle">${escapeHTML(meta.listTitle)}</div>
+${meta.showSubject ? `<div class="slotSubject">Subject: ${escapeHTML(meta.subjectText)}</div>` : ""}
 </div>
-<span class="slotType">${escapeHTML(slot.type || "Other")}</span>
+<span class="slotType">${escapeHTML(normalizeSlotType(slot.type || "Other"))}</span>
 </div>
 <div class="slotMeta">
 ${slot.location ? `<div><b>Location:</b> ${escapeHTML(slot.location)}</div>` : ""}
@@ -901,7 +1053,8 @@ ${isViewMode() ? "" : `
 </div>
 `}
 </div>
-`).join("");
+`;
+}).join("");
 
 list.querySelectorAll(".miniBtn").forEach(btn=>{
 btn.addEventListener("click",()=>{
@@ -932,15 +1085,16 @@ return;
 }
 
 editingSlotId = slotId;
-document.getElementById("editorTitle").innerText = `Edit Period - ${selectedDay}`;
+document.getElementById("editorTitle").innerText = `Edit Time Slot - ${selectedDay}`;
 document.getElementById("addSlotBtn").innerText = "Update Selected Day Slot";
 document.getElementById("activityTitle").value = slot.title || "";
 document.getElementById("activitySubject").value = slot.subject || "";
-document.getElementById("activityType").value = slot.type || "Other";
+document.getElementById("activityType").value = normalizeSlotType(slot.type || "Other");
 document.getElementById("startTime").value = slot.startTime || "";
 document.getElementById("endTime").value = slot.endTime || "";
 document.getElementById("activityLocation").value = slot.location || "";
 document.getElementById("activityNote").value = slot.note || "";
+applyTypeRules();
 window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -964,7 +1118,7 @@ document.getElementById("activityTitle").value.trim();
 const subject =
 document.getElementById("activitySubject").value.trim();
 const type =
-document.getElementById("activityType").value.trim();
+normalizeSlotType(document.getElementById("activityType").value.trim());
 const startTime =
 document.getElementById("startTime").value;
 const endTime =
@@ -973,9 +1127,15 @@ const location =
 document.getElementById("activityLocation").value.trim();
 const note =
 document.getElementById("activityNote").value.trim();
+const rules = getTypeRules(type);
 
-if(!title){
-alert("Please enter a period name.");
+if(rules.titleRequired && !title){
+alert(type === "Exam" ? "Please enter the name of exam." : "Please enter a period name.");
+return;
+}
+
+if(rules.subjectRequired && !subject){
+alert("Please enter the subject.");
 return;
 }
 
@@ -994,7 +1154,7 @@ let slots = [...(weekData[selectedDay] || [])];
 if(editingSlotId){
 slots = slots.map(slot=>slot.id === editingSlotId ? {
 ...slot,
-title,
+title:rules.showTitle ? title : "",
 subject,
 type,
 startTime,
@@ -1006,7 +1166,7 @@ note
 else{
 slots.push({
 id:`${selectedDay}-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,
-title,
+title:rules.showTitle ? title : "",
 subject,
 type,
 startTime,
@@ -1028,7 +1188,7 @@ setStatus(
 "info",
 editingSlotId
 ? `${selectedDay} slot updated locally. Click "Save Weekly Time Table" to save it permanently.`
-: `${title} added to ${selectedDay}. Click "Save Weekly Time Table" to save it permanently.`
+: `${(rules.showTitle ? title : subject) || type} added to ${selectedDay}. Click "Save Weekly Time Table" to save it permanently.`
 );
 
 resetForm();
@@ -1154,8 +1314,10 @@ document.getElementById("resetTableBtn").addEventListener("click",resetUnsavedCh
 document.getElementById("backDashboardBtn").addEventListener("click",()=>{
 window.location.href = "student-dashboard.html";
 });
+document.getElementById("activityType").addEventListener("change",applyTypeRules);
 
 applyPageMode();
+applyTypeRules();
 
 onAuthStateChanged(auth,(user)=>{
 if(!user){
