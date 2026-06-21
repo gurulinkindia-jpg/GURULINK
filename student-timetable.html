@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover">
+<title>Student Time Table - GURULINK</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef2f7;
+color:#1f2937;
+}
+
+header{
+background:#1565c0;
+color:white;
+padding:18px;
+text-align:center;
+}
+
+.container{
+max-width:980px;
+margin:20px auto;
+padding:15px;
+}
+
+.card{
+background:white;
+border-radius:16px;
+padding:18px;
+margin-bottom:18px;
+box-shadow:0 5px 18px rgba(0,0,0,.08);
+}
+
+.sectionTitle{
+font-size:22px;
+color:#1565c0;
+margin-bottom:10px;
+}
+
+.muted{
+font-size:14px;
+line-height:1.6;
+color:#607d8b;
+}
+
+.todayBanner{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+flex-wrap:wrap;
+}
+
+.todayBadge{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:8px 12px;
+border-radius:999px;
+background:#e3f2fd;
+color:#0d47a1;
+font-size:13px;
+font-weight:bold;
+}
+
+.overviewGrid{
+display:grid;
+grid-template-columns:repeat(7,minmax(0,1fr));
+gap:10px;
+margin-top:14px;
+}
+
+.overviewItem{
+padding:12px 10px;
+border:1px solid #d7e3f0;
+border-radius:12px;
+background:#f8fbff;
+text-align:center;
+}
+
+.overviewDay{
+font-size:12px;
+font-weight:bold;
+color:#1565c0;
+margin-bottom:6px;
+}
+
+.overviewCount{
+font-size:22px;
+font-weight:bold;
+color:#1e293b;
+}
+
+.dayTabs{
+display:grid;
+grid-template-columns:repeat(7,minmax(0,1fr));
+gap:8px;
+margin-top:12px;
+}
+
+.dayBtn{
+padding:12px 8px;
+border:1px solid #cfd8e3;
+border-radius:12px;
+background:#f7fafc;
+color:#334155;
+font-size:13px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.dayBtn.active{
+background:#1565c0;
+color:white;
+border-color:#1565c0;
+}
+
+.formGrid{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:14px;
+margin-top:14px;
+}
+
+.field{
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.field.full{
+grid-column:1 / -1;
+}
+
+.field label{
+font-size:14px;
+font-weight:bold;
+color:#334155;
+}
+
+.field input,
+.field select,
+.field textarea{
+width:100%;
+padding:12px;
+border:1px solid #cfd8e3;
+border-radius:10px;
+font-size:14px;
+background:white;
+}
+
+.field textarea{
+min-height:88px;
+resize:vertical;
+}
+
+.btnRow{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:14px;
+}
+
+.btn{
+padding:12px 16px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-size:14px;
+font-weight:bold;
+}
+
+.primary{
+background:#1565c0;
+color:white;
+}
+
+.green{
+background:#2e7d32;
+color:white;
+}
+
+.orange{
+background:#ef6c00;
+color:white;
+}
+
+.gray{
+background:#eceff1;
+color:#263238;
+}
+
+.red{
+background:#d32f2f;
+color:white;
+}
+
+.statusNote{
+margin-top:12px;
+padding:12px 14px;
+border-radius:10px;
+font-size:13px;
+display:none;
+}
+
+.statusNote.success{
+display:block;
+background:#e8f5e9;
+color:#1b5e20;
+border:1px solid #a5d6a7;
+}
+
+.statusNote.info{
+display:block;
+background:#fff8e1;
+color:#6d4c41;
+border:1px solid #ffe082;
+}
+
+.scheduleList{
+display:flex;
+flex-direction:column;
+gap:12px;
+margin-top:14px;
+}
+
+.slotCard{
+border:1px solid #d9e2ec;
+border-radius:14px;
+padding:14px;
+background:#fff;
+}
+
+.slotTop{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:12px;
+margin-bottom:10px;
+}
+
+.slotTime{
+font-size:15px;
+font-weight:bold;
+color:#1565c0;
+}
+
+.slotType{
+display:inline-block;
+padding:5px 10px;
+border-radius:999px;
+background:#e8f5e9;
+color:#2e7d32;
+font-size:12px;
+font-weight:bold;
+}
+
+.slotTitle{
+font-size:17px;
+font-weight:bold;
+color:#1f2937;
+margin-bottom:6px;
+}
+
+.slotMeta{
+font-size:13px;
+line-height:1.6;
+color:#475569;
+}
+
+.slotActions{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-top:12px;
+}
+
+.miniBtn{
+padding:8px 12px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-size:12px;
+font-weight:bold;
+}
+
+.emptyState{
+padding:18px;
+border:1px dashed #cbd5e1;
+border-radius:12px;
+background:#f8fafc;
+font-size:14px;
+line-height:1.6;
+color:#475569;
+text-align:center;
+}
+
+@media(max-width:900px){
+.overviewGrid,
+.dayTabs{
+grid-template-columns:repeat(4,minmax(0,1fr));
+}
+}
+
+@media(max-width:640px){
+header{
+padding:16px 12px;
+}
+
+.container{
+padding:10px;
+margin:14px auto;
+}
+
+.card{
+padding:14px;
+border-radius:14px;
+}
+
+.sectionTitle{
+font-size:20px;
+}
+
+.overviewGrid,
+.dayTabs,
+.formGrid{
+grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
+.field.full{
+grid-column:1 / -1;
+}
+
+.btnRow{
+flex-direction:column;
+}
+
+.btn{
+width:100%;
+}
+
+.slotTop{
+flex-direction:column;
+}
+}
+</style>
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
+</head>
+<body>
+
+<header>
+<h1>Student Weekly Time Table</h1>
+<p>Plan school, tuition, coaching, practice, and study time in one place.</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+<div class="todayBanner">
+<div>
+<div class="sectionTitle">This Week at a Glance</div>
+<div class="muted">
+Create your weekly routine and keep important classes, training sessions, and self-study neatly organised.
+</div>
+</div>
+<div class="todayBadge" id="todayBadge">Today: Loading...</div>
+</div>
+
+<div class="overviewGrid" id="overviewGrid"></div>
+</div>
+
+<div class="card">
+<div class="sectionTitle">Choose Day</div>
+<div class="muted">Tap a day below, then add your timings for that day.</div>
+<div class="dayTabs" id="dayTabs"></div>
+</div>
+
+<div class="card">
+<div class="sectionTitle" id="editorTitle">Add Time Slot</div>
+<div class="muted">
+Use this for school, tuition, coaching, online class, sports practice, music, art, self-study, or exams.
+</div>
+
+<div class="formGrid">
+<div class="field">
+<label for="activityTitle">Title</label>
+<input id="activityTitle" type="text" placeholder="Example: School, Maths Tuition, Football Practice">
+</div>
+
+<div class="field">
+<label for="activityType">Type</label>
+<select id="activityType">
+<option value="School">School</option>
+<option value="Tuition">Tuition</option>
+<option value="Training">Training</option>
+<option value="Coaching">Coaching</option>
+<option value="Self Study">Self Study</option>
+<option value="Online Class">Online Class</option>
+<option value="Exam">Exam</option>
+<option value="Break">Break</option>
+<option value="Other">Other</option>
+</select>
+</div>
+
+<div class="field">
+<label for="startTime">Start Time</label>
+<input id="startTime" type="time">
+</div>
+
+<div class="field">
+<label for="endTime">End Time</label>
+<input id="endTime" type="time">
+</div>
+
+<div class="field full">
+<label for="activityLocation">Location</label>
+<input id="activityLocation" type="text" placeholder="Example: School Campus, Home, Online, Beltola Coaching Centre">
+</div>
+
+<div class="field full">
+<label for="activityNote">Note</label>
+<textarea id="activityNote" placeholder="Example: Carry notebook, Zoom link, school bag, sports kit, revision test"></textarea>
+</div>
+ </div>
+
+<div class="btnRow">
+<button type="button" class="btn primary" id="addSlotBtn">Add To Selected Day</button>
+<button type="button" class="btn gray" id="clearFormBtn">Clear Form</button>
+<button type="button" class="btn red" id="clearDayBtn">Clear Selected Day</button>
+</div>
+
+<div class="statusNote info" id="formStatus">
+No weekly timetable saved yet.
+</div>
+</div>
+
+<div class="card">
+<div class="sectionTitle" id="dayScheduleTitle">Day Schedule</div>
+<div class="muted">Your items are shown in time order. You can edit or delete each one.</div>
+<div class="scheduleList" id="scheduleList"></div>
+</div>
+
+<div class="card">
+<div class="btnRow">
+<button type="button" class="btn green" id="saveTableBtn">Save Weekly Time Table</button>
+<button type="button" class="btn orange" id="resetTableBtn">Reset Unsaved Changes</button>
+<button type="button" class="btn gray" id="backDashboardBtn">Back To Dashboard</button>
+</div>
+<div class="statusNote" id="saveStatus"></div>
+</div>
+
+</div>
+
+<script type="module">
+import {
+initializeApp
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+import {
+getDatabase,
+ref,
+get,
+update
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+const uid =
+localStorage.getItem("studentId") ||
+localStorage.getItem("profileId") ||
+localStorage.getItem("uid");
+
+if(!uid || localStorage.getItem("role") !== "student"){
+window.location.href = "otp-login.html";
+}
+
+localStorage.setItem("uid",uid);
+localStorage.setItem("profileId",uid);
+localStorage.setItem("studentId",uid);
+localStorage.setItem("role","student");
+
+const DAYS = [
+"Monday",
+"Tuesday",
+"Wednesday",
+"Thursday",
+"Friday",
+"Saturday",
+"Sunday"
+];
+
+const todayIndexMap = {
+1:"Monday",
+2:"Tuesday",
+3:"Wednesday",
+4:"Thursday",
+5:"Friday",
+6:"Saturday",
+0:"Sunday"
+};
+
+const emptyWeek = () => ({
+Monday:[],
+Tuesday:[],
+Wednesday:[],
+Thursday:[],
+Friday:[],
+Saturday:[],
+Sunday:[]
+});
+
+let weekData = emptyWeek();
+let savedWeekData = emptyWeek();
+let selectedDay = todayIndexMap[new Date().getDay()] || "Monday";
+let editingSlotId = "";
+
+function cloneWeek(data){
+return JSON.parse(JSON.stringify(data || emptyWeek()));
+}
+
+function getTodayName(){
+return todayIndexMap[new Date().getDay()] || "Monday";
+}
+
+function normalizeWeek(raw){
+const week = emptyWeek();
+
+DAYS.forEach(day=>{
+const slots =
+Array.isArray(raw?.[day]) ? raw[day] : [];
+
+week[day] = slots
+.map((slot,index)=>({
+id:String(slot.id || `${day}-${Date.now()}-${index}`),
+title:String(slot.title || "").trim(),
+type:String(slot.type || "Other").trim() || "Other",
+startTime:String(slot.startTime || "").trim(),
+endTime:String(slot.endTime || "").trim(),
+location:String(slot.location || "").trim(),
+note:String(slot.note || "").trim(),
+createdAt:Number(slot.createdAt || Date.now() + index)
+}))
+.filter(slot=>slot.title || slot.startTime || slot.endTime || slot.location || slot.note)
+.sort((a,b)=>(a.startTime || "").localeCompare(b.startTime || ""));
+});
+
+return week;
+}
+
+function setStatus(id, type, text){
+const box = document.getElementById(id);
+box.className = "statusNote " + type;
+box.innerText = text;
+}
+
+function resetForm(){
+editingSlotId = "";
+document.getElementById("editorTitle").innerText = "Add Time Slot";
+document.getElementById("addSlotBtn").innerText = "Add To Selected Day";
+document.getElementById("activityTitle").value = "";
+document.getElementById("activityType").value = "School";
+document.getElementById("startTime").value = "";
+document.getElementById("endTime").value = "";
+document.getElementById("activityLocation").value = "";
+document.getElementById("activityNote").value = "";
+}
+
+function renderOverview(){
+const grid = document.getElementById("overviewGrid");
+grid.innerHTML = DAYS.map(day=>`
+<div class="overviewItem">
+<div class="overviewDay">${day.slice(0,3)}</div>
+<div class="overviewCount">${weekData[day].length}</div>
+</div>
+`).join("");
+
+document.getElementById("todayBadge").innerText =
+`Today: ${getTodayName()} (${weekData[getTodayName()].length} item${weekData[getTodayName()].length === 1 ? "" : "s"})`;
+}
+
+function renderDayTabs(){
+const box = document.getElementById("dayTabs");
+box.innerHTML = DAYS.map(day=>`
+<button
+type="button"
+class="dayBtn ${day === selectedDay ? "active" : ""}"
+data-day="${day}">
+${day}
+</button>
+`).join("");
+
+box.querySelectorAll(".dayBtn").forEach(btn=>{
+btn.addEventListener("click",()=>{
+selectedDay = btn.dataset.day;
+resetForm();
+renderDayTabs();
+renderSelectedDay();
+});
+});
+}
+
+function renderSelectedDay(){
+document.getElementById("dayScheduleTitle").innerText =
+selectedDay + " Schedule";
+
+const list = document.getElementById("scheduleList");
+const slots = weekData[selectedDay] || [];
+
+if(!slots.length){
+list.innerHTML = `
+<div class="emptyState">
+No time slot added for ${selectedDay} yet.<br>
+Add classes, school, tuition, training, or self-study above.
+</div>
+`;
+return;
+}
+
+list.innerHTML = slots.map(slot=>`
+<div class="slotCard">
+<div class="slotTop">
+<div>
+<div class="slotTime">${slot.startTime || "--:--"}${slot.endTime ? ` - ${slot.endTime}` : ""}</div>
+<div class="slotTitle">${escapeHTML(slot.title || "Untitled Slot")}</div>
+</div>
+<span class="slotType">${escapeHTML(slot.type || "Other")}</span>
+</div>
+<div class="slotMeta">
+${slot.location ? `<div><b>Location:</b> ${escapeHTML(slot.location)}</div>` : ""}
+${slot.note ? `<div><b>Note:</b> ${escapeHTML(slot.note)}</div>` : ""}
+</div>
+<div class="slotActions">
+<button type="button" class="miniBtn primary" data-action="edit" data-id="${slot.id}">Edit</button>
+<button type="button" class="miniBtn red" data-action="delete" data-id="${slot.id}">Delete</button>
+</div>
+</div>
+`).join("");
+
+list.querySelectorAll(".miniBtn").forEach(btn=>{
+btn.addEventListener("click",()=>{
+const slotId = btn.dataset.id;
+const action = btn.dataset.action;
+if(action === "edit"){
+startEditSlot(slotId);
+return;
+}
+deleteSlot(slotId);
+});
+});
+}
+
+function escapeHTML(value){
+return String(value ?? "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+}
+
+function startEditSlot(slotId){
+const slot = (weekData[selectedDay] || []).find(item=>item.id === slotId);
+if(!slot){
+return;
+}
+
+editingSlotId = slotId;
+document.getElementById("editorTitle").innerText = `Edit Time Slot - ${selectedDay}`;
+document.getElementById("addSlotBtn").innerText = "Update Selected Day Slot";
+document.getElementById("activityTitle").value = slot.title || "";
+document.getElementById("activityType").value = slot.type || "Other";
+document.getElementById("startTime").value = slot.startTime || "";
+document.getElementById("endTime").value = slot.endTime || "";
+document.getElementById("activityLocation").value = slot.location || "";
+document.getElementById("activityNote").value = slot.note || "";
+window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function deleteSlot(slotId){
+weekData[selectedDay] = (weekData[selectedDay] || [])
+.filter(item=>item.id !== slotId)
+.sort((a,b)=>(a.startTime || "").localeCompare(b.startTime || ""));
+
+if(editingSlotId === slotId){
+resetForm();
+}
+
+renderOverview();
+renderSelectedDay();
+setStatus("formStatus","info",`${selectedDay} timetable updated locally. Click "Save Weekly Time Table" to keep changes.`);
+}
+
+function addOrUpdateSlot(){
+const title =
+document.getElementById("activityTitle").value.trim();
+const type =
+document.getElementById("activityType").value.trim();
+const startTime =
+document.getElementById("startTime").value;
+const endTime =
+document.getElementById("endTime").value;
+const location =
+document.getElementById("activityLocation").value.trim();
+const note =
+document.getElementById("activityNote").value.trim();
+
+if(!title){
+alert("Please enter a title for this time slot.");
+return;
+}
+
+if(!startTime){
+alert("Please choose a start time.");
+return;
+}
+
+if(endTime && endTime < startTime){
+alert("End time should be after start time.");
+return;
+}
+
+let slots = [...(weekData[selectedDay] || [])];
+
+if(editingSlotId){
+slots = slots.map(slot=>slot.id === editingSlotId ? {
+...slot,
+title,
+type,
+startTime,
+endTime,
+location,
+note
+} : slot);
+}
+else{
+slots.push({
+id:`${selectedDay}-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,
+title,
+type,
+startTime,
+endTime,
+location,
+note,
+createdAt:Date.now()
+});
+}
+
+weekData[selectedDay] = slots
+.sort((a,b)=>(a.startTime || "").localeCompare(b.startTime || ""));
+
+renderOverview();
+renderSelectedDay();
+
+setStatus(
+"formStatus",
+"info",
+editingSlotId
+? `${selectedDay} slot updated locally. Click "Save Weekly Time Table" to save it permanently.`
+: `${title} added to ${selectedDay}. Click "Save Weekly Time Table" to save it permanently.`
+);
+
+resetForm();
+}
+
+function clearSelectedDay(){
+if(!(weekData[selectedDay] || []).length){
+alert(`No slot added for ${selectedDay} yet.`);
+return;
+}
+
+if(!confirm(`Clear all timetable entries for ${selectedDay}?`)){
+return;
+}
+
+weekData[selectedDay] = [];
+resetForm();
+renderOverview();
+renderSelectedDay();
+setStatus("formStatus","info",`${selectedDay} has been cleared locally. Save the weekly timetable to apply it.`);
+}
+
+function resetUnsavedChanges(){
+if(!confirm("Reset all unsaved timetable changes and reload the last saved weekly schedule?")){
+return;
+}
+
+weekData = cloneWeek(savedWeekData);
+selectedDay = getTodayName();
+resetForm();
+renderOverview();
+renderDayTabs();
+renderSelectedDay();
+setStatus("formStatus","info","Unsaved changes were cleared. The last saved timetable is now restored.");
+}
+
+async function saveWeekData(){
+const btn = document.getElementById("saveTableBtn");
+btn.disabled = true;
+btn.innerText = "Saving...";
+
+try{
+await update(ref(db,`students/${uid}`),{
+timeTable:weekData,
+timeTableUpdatedAt:Date.now()
+});
+
+savedWeekData = cloneWeek(weekData);
+
+setStatus("saveStatus","success","Weekly time table saved successfully.");
+setStatus("formStatus","success","Your weekly schedule is now saved and linked with your student dashboard.");
+}
+catch(err){
+console.log(err);
+setStatus("saveStatus","info",err.message || "Unable to save weekly time table right now.");
+}
+finally{
+btn.disabled = false;
+btn.innerText = "Save Weekly Time Table";
+}
+}
+
+async function loadTimeTable(){
+try{
+const snap = await get(ref(db,`students/${uid}`));
+
+if(!snap.exists()){
+alert("Student profile not found.");
+window.location.href = "student-dashboard.html";
+return;
+}
+
+const data = snap.val() || {};
+weekData = normalizeWeek(data.timeTable || {});
+savedWeekData = cloneWeek(weekData);
+selectedDay = getTodayName();
+
+renderOverview();
+renderDayTabs();
+renderSelectedDay();
+
+if(DAYS.every(day=>!weekData[day].length)){
+setStatus("formStatus","info","No weekly timetable saved yet.");
+}
+else{
+setStatus("formStatus","success","Your saved weekly timetable is loaded below.");
+}
+}
+catch(err){
+console.log(err);
+alert("Unable to load time table right now.");
+}
+}
+
+document.getElementById("addSlotBtn").addEventListener("click",addOrUpdateSlot);
+document.getElementById("clearFormBtn").addEventListener("click",resetForm);
+document.getElementById("clearDayBtn").addEventListener("click",clearSelectedDay);
+document.getElementById("saveTableBtn").addEventListener("click",saveWeekData);
+document.getElementById("resetTableBtn").addEventListener("click",resetUnsavedChanges);
+document.getElementById("backDashboardBtn").addEventListener("click",()=>{
+window.location.href = "student-dashboard.html";
+});
+
+onAuthStateChanged(auth,(user)=>{
+if(!user){
+window.location.href = "otp-login.html";
+return;
+}
+
+loadTimeTable();
+});
+</script>
+
+</body>
+</html>
