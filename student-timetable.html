@@ -277,6 +277,77 @@ color:#0f766e;
 margin-bottom:6px;
 }
 
+.typeGroupCard{
+border:1px solid #d7e3f0;
+border-radius:14px;
+padding:14px;
+background:#f8fbff;
+}
+
+.typeGroupHeader{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+margin-bottom:12px;
+}
+
+.typeGroupTitle{
+font-size:18px;
+font-weight:bold;
+color:#1565c0;
+}
+
+.typeGroupCount{
+display:inline-block;
+padding:5px 10px;
+border-radius:999px;
+background:#e3f2fd;
+color:#1565c0;
+font-size:12px;
+font-weight:bold;
+}
+
+.typeGroupList{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.periodRow{
+border:1px solid #d9e2ec;
+border-radius:12px;
+padding:12px;
+background:#fff;
+}
+
+.periodRowTop{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:10px;
+margin-bottom:8px;
+}
+
+.periodTime{
+font-size:14px;
+font-weight:bold;
+color:#1565c0;
+}
+
+.periodName{
+font-size:16px;
+font-weight:bold;
+color:#1f2937;
+margin-bottom:4px;
+}
+
+.periodMeta{
+font-size:13px;
+line-height:1.6;
+color:#475569;
+}
+
 .slotMeta{
 font-size:13px;
 line-height:1.6;
@@ -357,6 +428,11 @@ width:100%;
 .slotTop{
 flex-direction:column;
 }
+
+.typeGroupHeader,
+.periodRowTop{
+flex-direction:column;
+}
 }
 </style>
 
@@ -393,15 +469,15 @@ Create your weekly routine and keep important classes, training sessions, and se
 </div>
 
 <div class="card" id="editorCard">
-<div class="sectionTitle" id="editorTitle">Add Time Slot</div>
+<div class="sectionTitle" id="editorTitle">Add Period</div>
 <div class="muted">
 Use this for school, tuition, coaching, online class, sports practice, music, art, self-study, or exams.
 </div>
 
 <div class="formGrid">
 <div class="field">
-<label for="activityTitle">Title</label>
-<input id="activityTitle" type="text" placeholder="Example: School, Maths Tuition, Football Practice">
+<label for="activityTitle">Period</label>
+<input id="activityTitle" type="text" placeholder="Example: Period 1, Morning School, Maths Tuition, Football Practice">
 </div>
 
 <div class="field">
@@ -558,6 +634,18 @@ let savedWeekData = emptyWeek();
 let selectedDay = todayIndexMap[new Date().getDay()] || "Monday";
 let editingSlotId = "";
 
+const TYPE_ORDER = [
+"School",
+"Tuition",
+"Training",
+"Coaching",
+"Self Study",
+"Online Class",
+"Exam",
+"Break",
+"Other"
+];
+
 function isViewMode(){
 return pageMode === "view";
 }
@@ -604,7 +692,7 @@ box.innerText = text;
 
 function resetForm(){
 editingSlotId = "";
-document.getElementById("editorTitle").innerText = "Add Time Slot";
+document.getElementById("editorTitle").innerText = "Add Period";
 document.getElementById("addSlotBtn").innerText = "Add To Selected Day";
 document.getElementById("activityTitle").value = "";
 document.getElementById("activitySubject").value = "";
@@ -666,12 +754,71 @@ Add classes, school, tuition, training, or self-study above.
 return;
 }
 
+if(isViewMode()){
+const grouped = {};
+
+slots.forEach(slot=>{
+const typeKey =
+String(slot.type || "Other").trim() || "Other";
+
+if(!grouped[typeKey]){
+grouped[typeKey] = [];
+}
+
+grouped[typeKey].push(slot);
+});
+
+const orderedTypes =
+Object.keys(grouped)
+.sort((a,b)=>{
+const aIndex = TYPE_ORDER.indexOf(a);
+const bIndex = TYPE_ORDER.indexOf(b);
+
+const safeA = aIndex === -1 ? 999 : aIndex;
+const safeB = bIndex === -1 ? 999 : bIndex;
+
+if(safeA !== safeB){
+return safeA - safeB;
+}
+
+return a.localeCompare(b);
+});
+
+list.innerHTML = orderedTypes.map(typeName=>`
+<div class="typeGroupCard">
+<div class="typeGroupHeader">
+<div class="typeGroupTitle">${escapeHTML(typeName)}</div>
+<div class="typeGroupCount">${grouped[typeName].length} period${grouped[typeName].length === 1 ? "" : "s"}</div>
+</div>
+<div class="typeGroupList">
+${grouped[typeName].map(slot=>`
+<div class="periodRow">
+<div class="periodRowTop">
+<div>
+<div class="periodTime">${slot.startTime || "--:--"}${slot.endTime ? ` - ${slot.endTime}` : ""}</div>
+<div class="periodName">Period: ${escapeHTML(slot.title || "Untitled Period")}</div>
+${slot.subject ? `<div class="slotSubject">Subject: ${escapeHTML(slot.subject)}</div>` : ""}
+</div>
+</div>
+<div class="periodMeta">
+${slot.location ? `<div><b>Location:</b> ${escapeHTML(slot.location)}</div>` : ""}
+${slot.note ? `<div><b>Note:</b> ${escapeHTML(slot.note)}</div>` : ""}
+</div>
+</div>
+`).join("")}
+</div>
+</div>
+`).join("");
+
+return;
+}
+
 list.innerHTML = slots.map(slot=>`
 <div class="slotCard">
 <div class="slotTop">
 <div>
 <div class="slotTime">${slot.startTime || "--:--"}${slot.endTime ? ` - ${slot.endTime}` : ""}</div>
-<div class="slotTitle">${escapeHTML(slot.title || "Untitled Slot")}</div>
+<div class="slotTitle">Period: ${escapeHTML(slot.title || "Untitled Period")}</div>
 ${slot.subject ? `<div class="slotSubject">Subject: ${escapeHTML(slot.subject)}</div>` : ""}
 </div>
 <span class="slotType">${escapeHTML(slot.type || "Other")}</span>
@@ -688,10 +835,6 @@ ${isViewMode() ? "" : `
 `}
 </div>
 `).join("");
-
-if(isViewMode()){
-return;
-}
 
 list.querySelectorAll(".miniBtn").forEach(btn=>{
 btn.addEventListener("click",()=>{
@@ -722,7 +865,7 @@ return;
 }
 
 editingSlotId = slotId;
-document.getElementById("editorTitle").innerText = `Edit Time Slot - ${selectedDay}`;
+document.getElementById("editorTitle").innerText = `Edit Period - ${selectedDay}`;
 document.getElementById("addSlotBtn").innerText = "Update Selected Day Slot";
 document.getElementById("activityTitle").value = slot.title || "";
 document.getElementById("activitySubject").value = slot.subject || "";
@@ -765,7 +908,7 @@ const note =
 document.getElementById("activityNote").value.trim();
 
 if(!title){
-alert("Please enter a title for this time slot.");
+alert("Please enter a period name.");
 return;
 }
 
