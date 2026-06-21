@@ -40,6 +40,37 @@ margin-bottom:20px;
 box-shadow:0 5px 15px rgba(0,0,0,.08);
 }
 
+.studentProfileTop{
+display:flex;
+align-items:center;
+gap:16px;
+margin-bottom:12px;
+}
+
+.studentProfileImage{
+width:82px;
+height:82px;
+border-radius:16px;
+object-fit:cover;
+background:#eef2f7;
+border:1px solid #d9e2ec;
+flex-shrink:0;
+}
+
+.studentProfileMeta{
+min-width:0;
+}
+
+.studentProfileMeta h2{
+margin-bottom:6px;
+}
+
+.studentProfileSub{
+font-size:13px;
+color:#607d8b;
+line-height:1.4;
+}
+
 h2{
 margin-bottom:15px;
 color:#1565c0;
@@ -91,6 +122,85 @@ padding:15px;
 margin:12px 0;
 background:#fff;
 box-shadow:0 3px 10px rgba(0,0,0,.06);
+}
+
+.timeTableSummary{
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+.timeTableToday{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+flex-wrap:wrap;
+padding:12px 14px;
+border-radius:12px;
+background:#f8fbff;
+border:1px solid #d7e3f0;
+}
+
+.timeTableBadge{
+display:inline-block;
+padding:6px 10px;
+border-radius:999px;
+background:#e3f2fd;
+color:#1565c0;
+font-size:12px;
+font-weight:bold;
+}
+
+.timeTableList{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.timeTableItem{
+border:1px solid #d9e2ec;
+border-radius:12px;
+padding:12px;
+background:#fff;
+}
+
+.timeTableItemTop{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:10px;
+margin-bottom:8px;
+}
+
+.timeTableTime{
+font-size:14px;
+font-weight:bold;
+color:#1565c0;
+}
+
+.timeTableTitle{
+font-size:16px;
+font-weight:bold;
+color:#1f2937;
+margin-bottom:4px;
+}
+
+.timeTableMeta{
+font-size:13px;
+line-height:1.55;
+color:#475569;
+}
+
+.timeTableEmpty{
+padding:16px;
+border:1px dashed #cbd5e1;
+border-radius:12px;
+background:#f8fafc;
+font-size:14px;
+line-height:1.6;
+color:#475569;
+text-align:center;
 }
 
 .providerTop{
@@ -239,6 +349,31 @@ border:1px solid #ccc;
 border-radius:8px;
 }
 
+@media(max-width:640px){
+.studentProfileTop{
+align-items:flex-start;
+gap:12px;
+}
+
+.studentProfileImage{
+width:72px;
+height:72px;
+border-radius:14px;
+}
+
+.studentProfileMeta h2{
+font-size:22px;
+}
+
+.row{
+font-size:14px;
+}
+
+.timeTableItemTop{
+flex-direction:column;
+}
+}
+
 </style>
 
 <link rel="stylesheet" href="gurulink-theme.css?v=2">
@@ -259,7 +394,20 @@ border-radius:8px;
 
 <div class="card">
 
+<div class="studentProfileTop">
+<img
+id="studentProfileImage"
+class="studentProfileImage"
+src="https://i.ibb.co/4wz0V8Q/user.png"
+alt="Student Profile Image">
+
+<div class="studentProfileMeta">
 <h2>My Profile</h2>
+<div class="studentProfileSub">
+Your student account details and connected learning profile.
+</div>
+</div>
+</div>
 
 <div class="row">
 <span class="label">Name:</span>
@@ -293,6 +441,13 @@ Edit Profile
 </div>
 
 <div class="card">
+<h2>Today&apos;s Time Table</h2>
+<div id="timeTableSummary" class="timeTableSummary">
+Loading schedule...
+</div>
+</div>
+
+<div class="card">
 <h2>My Teachers / Institutes</h2>
 <div id="enrollmentList">Loading...</div>
 </div>
@@ -305,6 +460,12 @@ Edit Profile
 href="find-teacher.html"
 class="btn blue">
 Browse Teachers
+</a>
+
+<a
+href="student-timetable.html"
+class="btn blue">
+Time Table
 </a>
 
 <a
@@ -396,6 +557,26 @@ localStorage.setItem("profileId",uid);
 localStorage.setItem("studentId",uid);
 localStorage.setItem("role","student");
 
+const WEEK_DAYS = [
+"Monday",
+"Tuesday",
+"Wednesday",
+"Thursday",
+"Friday",
+"Saturday",
+"Sunday"
+];
+
+const DAY_INDEX_TO_NAME = {
+1:"Monday",
+2:"Tuesday",
+3:"Wednesday",
+4:"Thursday",
+5:"Friday",
+6:"Saturday",
+0:"Sunday"
+};
+
 /* LOAD STUDENT */
 
 async function loadStudent(){
@@ -416,6 +597,17 @@ return;
 
 const data = snap.val();
 
+const studentImage =
+data.photo ||
+data.logo ||
+data.profilePic ||
+"https://i.ibb.co/4wz0V8Q/user.png";
+
+document.getElementById("studentProfileImage").src =
+studentImage;
+
+localStorage.setItem("profilePhoto",studentImage);
+
 document.getElementById("name").innerHTML =
 data.name || "-";
 
@@ -428,6 +620,8 @@ data.phone || "-";
 document.getElementById("studentClass").innerHTML =
 data.class || "-";
 
+renderTimeTableSummary(data.timeTable || {});
+
 }
 catch(err){
 
@@ -435,6 +629,132 @@ console.log(err);
 
 }
 
+}
+
+function escapeHTML(value){
+return String(value ?? "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+}
+
+function getTodayName(){
+return DAY_INDEX_TO_NAME[new Date().getDay()] || "Monday";
+}
+
+function normalizeTimeTable(raw){
+const week = {};
+
+WEEK_DAYS.forEach(day=>{
+week[day] = Array.isArray(raw?.[day])
+? raw[day]
+.map(item=>({
+title:String(item.title || "").trim(),
+type:String(item.type || "Other").trim() || "Other",
+startTime:String(item.startTime || "").trim(),
+endTime:String(item.endTime || "").trim(),
+location:String(item.location || "").trim(),
+note:String(item.note || "").trim()
+}))
+.filter(item=>item.title || item.startTime || item.endTime || item.location || item.note)
+.sort((a,b)=>(a.startTime || "").localeCompare(b.startTime || ""))
+: [];
+});
+
+return week;
+}
+
+function renderTimeTableSummary(rawTimeTable){
+const box =
+document.getElementById("timeTableSummary");
+
+if(!box){
+return;
+}
+
+const week =
+normalizeTimeTable(rawTimeTable);
+
+const todayName =
+getTodayName();
+
+const todayItems =
+week[todayName] || [];
+
+const weeklyCount =
+WEEK_DAYS.reduce((sum,day)=>sum + (week[day]?.length || 0),0);
+
+if(!weeklyCount){
+box.innerHTML = `
+<div class="timeTableEmpty">
+No weekly time table added yet.<br>
+Create your school, tuition, and training schedule so you can check it quickly every day.
+<div style="margin-top:12px;">
+<a href="student-timetable.html" class="btn blue">Create Time Table</a>
+</div>
+</div>
+`;
+return;
+}
+
+let html = `
+<div class="timeTableToday">
+<div>
+<div class="label">Today</div>
+<div style="font-size:18px;font-weight:bold;color:#1f2937;">${todayName}</div>
+</div>
+<div class="timeTableBadge">${todayItems.length} item${todayItems.length === 1 ? "" : "s"} today</div>
+</div>
+`;
+
+if(!todayItems.length){
+html += `
+<div class="timeTableEmpty">
+No class or session saved for ${todayName}. You can still update your weekly plan anytime.
+</div>
+`;
+}
+else{
+html += `<div class="timeTableList">`;
+
+todayItems.slice(0,4).forEach(item=>{
+html += `
+<div class="timeTableItem">
+<div class="timeTableItemTop">
+<div>
+<div class="timeTableTime">${escapeHTML(item.startTime || "--:--")}${item.endTime ? ` - ${escapeHTML(item.endTime)}` : ""}</div>
+<div class="timeTableTitle">${escapeHTML(item.title || "Untitled")}</div>
+</div>
+<div class="timeTableBadge">${escapeHTML(item.type || "Other")}</div>
+</div>
+<div class="timeTableMeta">
+${item.location ? `<div><b>Location:</b> ${escapeHTML(item.location)}</div>` : ""}
+${item.note ? `<div><b>Note:</b> ${escapeHTML(item.note)}</div>` : ""}
+</div>
+</div>
+`;
+});
+
+html += `</div>`;
+
+if(todayItems.length > 4){
+html += `
+<div class="muted">
+Showing first 4 items for today. Open your full timetable to see all entries.
+</div>
+`;
+}
+}
+
+html += `
+<div class="center" style="margin-top:6px;">
+<a href="student-timetable.html" class="btn blue">Open Full Time Table</a>
+</div>
+`;
+
+box.innerHTML = html;
 }
 
 function cleanPhone(phone){
@@ -474,15 +794,6 @@ return;
 const finalUrl =
 url.startsWith("http") ? url : "https://" + url;
 window.open(finalUrl,"_blank");
-}
-
-function escapeHTML(value){
-return String(value ?? "")
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
 }
 
 async function getProviderProfile(profileId,item){
