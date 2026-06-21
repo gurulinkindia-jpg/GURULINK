@@ -398,7 +398,7 @@ flex-direction:column;
 <img
 id="studentProfileImage"
 class="studentProfileImage"
-src="https://i.ibb.co/4wz0V8Q/user.png"
+src="default-avatar.svg"
 alt="Student Profile Image">
 
 <div class="studentProfileMeta">
@@ -577,6 +577,9 @@ const DAY_INDEX_TO_NAME = {
 0:"Sunday"
 };
 
+const DEFAULT_AVATAR =
+"default-avatar.svg";
+
 /* LOAD STUDENT */
 
 async function loadStudent(){
@@ -601,12 +604,20 @@ const studentImage =
 data.photo ||
 data.logo ||
 data.profilePic ||
-"https://i.ibb.co/4wz0V8Q/user.png";
+"";
 
-document.getElementById("studentProfileImage").src =
-studentImage;
+const studentProfileImage =
+document.getElementById("studentProfileImage");
 
-localStorage.setItem("profilePhoto",studentImage);
+studentProfileImage.onerror = function(){
+this.onerror = null;
+this.src = DEFAULT_AVATAR;
+};
+
+studentProfileImage.src =
+studentImage || DEFAULT_AVATAR;
+
+localStorage.setItem("profilePhoto",studentImage || DEFAULT_AVATAR);
 
 document.getElementById("name").innerHTML =
 data.name || "-";
@@ -790,6 +801,10 @@ function providerWebsite(url){
 if(!url){
 alert("Website not available.");
 return;
+}
+
+function getSafeImageUrl(url){
+return String(url || "").trim() || DEFAULT_AVATAR;
 }
 const finalUrl =
 url.startsWith("http") ? url : "https://" + url;
@@ -1013,7 +1028,7 @@ ${item.qrImage ? `<img src="${escapeHTML(item.qrImage)}" alt="Payment QR">` : ""
 html += `
 <div class="providerCard">
 <div class="providerTop">
-<img class="providerLogo" src="${item.logo || "https://i.ibb.co/4pDNDk1/user.png"}">
+<img class="providerLogo" src="${getSafeImageUrl(item.logo)}" onerror="this.onerror=null;this.src='default-avatar.svg';">
 <div>
 <div class="providerName">${item.name || "Teacher / Institution"}</div>
 <span class="status ${accepted ? "accepted" : ""}">${accepted ? "Accepted" : "Waiting for your acceptance"}</span>
