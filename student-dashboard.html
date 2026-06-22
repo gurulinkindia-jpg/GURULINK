@@ -120,6 +120,36 @@ color:white;
 text-align:center;
 }
 
+.quickActionsGrid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+gap:10px;
+margin-top:4px;
+}
+
+.quickActionsGrid .btn{
+margin:0;
+width:100%;
+}
+
+.quickActionBtn{
+padding:10px 12px;
+font-size:14px;
+border-radius:12px;
+text-align:center;
+font-weight:bold;
+}
+
+.quickActionHighlight{
+border:2px solid #fbc02d;
+box-shadow:0 0 0 2px rgba(251,192,45,.16);
+}
+
+.quickActionHelp{
+background:#00897b;
+color:white;
+}
+
 .providerCard{
 border:1px solid #d9e2ec;
 border-radius:12px;
@@ -389,18 +419,49 @@ align-items:center;
 margin-bottom:10px;
 }
 
+.providerHeaderBtn{
+width:100%;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:12px;
+padding:0;
+border:none;
+background:transparent;
+cursor:pointer;
+text-align:left;
+}
+
+.providerHeaderMain{
+display:flex;
+gap:12px;
+align-items:center;
+min-width:0;
+flex:1;
+}
+
+.providerHeaderMeta{
+display:flex;
+flex-direction:column;
+gap:6px;
+min-width:0;
+}
+
 .providerLogo{
 width:54px;
 height:54px;
 border-radius:10px;
 object-fit:cover;
 background:#eef2f7;
+flex-shrink:0;
 }
 
 .providerName{
 font-size:18px;
 font-weight:bold;
 color:#1565c0;
+line-height:1.4;
+word-break:break-word;
 }
 
 .status{
@@ -416,6 +477,31 @@ color:#ef6c00;
 .accepted{
 background:#e8f5e9;
 color:#2e7d32;
+}
+
+.providerToggleIcon{
+width:34px;
+height:34px;
+border-radius:999px;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+background:#eef5ff;
+color:#1565c0;
+font-size:22px;
+font-weight:bold;
+flex-shrink:0;
+}
+
+.providerBody{
+display:none;
+margin-top:14px;
+padding-top:14px;
+border-top:1px solid #e5edf5;
+}
+
+.providerCard.open .providerBody{
+display:block;
 }
 
 .chatBox{
@@ -548,6 +634,10 @@ font-size:22px;
 font-size:14px;
 }
 
+.quickActionsGrid{
+grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
 .timeTableDayTabs{
 grid-template-columns:repeat(2,minmax(0,1fr));
 }
@@ -562,6 +652,16 @@ grid-auto-columns:minmax(130px,1fr);
 
 .timeTableItemTop{
 flex-direction:column;
+}
+
+.providerHeaderBtn{
+align-items:flex-start;
+}
+
+.providerToggleIcon{
+width:30px;
+height:30px;
+font-size:20px;
 }
 
 .timeTableActionRow .btn{
@@ -641,29 +741,37 @@ Edit Profile
 
 <h2>Quick Actions</h2>
 
+<div class="quickActionsGrid">
 <a
 href="find-teacher.html"
-class="btn blue">
-Browse Teachers
+class="btn blue quickActionBtn quickActionHighlight">
+Find Teacher / Trainer
 </a>
 
 <a
 href="student-timetable.html?mode=view"
-class="btn blue">
+class="btn blue quickActionBtn">
 Show Time Table
 </a>
 
 <a
+href="helpdesk.html"
+class="btn quickActionBtn quickActionHelp">
+Help
+</a>
+
+<a
 href="index.html"
-class="btn green">
+class="btn green quickActionBtn">
 Home Page
 </a>
 
 <button
-class="btn red"
+class="btn red quickActionBtn"
 onclick="logout()">
 Logout
 </button>
+</div>
 
 </div>
 
@@ -783,6 +891,8 @@ const TIME_TABLE_TYPE_ORDER = [
 
 let dashboardSelectedDay =
 getTodayName();
+
+let activeEnrollmentProfileId = "";
 
 /* LOAD STUDENT */
 
@@ -1330,6 +1440,40 @@ ${escapeHTML(msg.text || "")}
 );
 }
 
+function syncEnrollmentAccordion(){
+const list =
+document.getElementById("enrollmentList");
+
+if(!list){
+return;
+}
+
+list.querySelectorAll(".providerCard").forEach(card=>{
+const profileId =
+card.dataset.profileId || "";
+const isOpen =
+profileId && profileId === activeEnrollmentProfileId;
+
+card.classList.toggle("open",isOpen);
+
+const icon =
+card.querySelector(".providerToggleIcon");
+
+if(icon){
+icon.textContent = isOpen ? "-" : "+";
+}
+});
+}
+
+window.toggleEnrollmentCard = function(profileId){
+activeEnrollmentProfileId =
+activeEnrollmentProfileId === profileId
+? ""
+: profileId;
+
+syncEnrollmentAccordion();
+};
+
 async function loadEnrollments(){
 const list =
 document.getElementById("enrollmentList");
@@ -1403,15 +1547,18 @@ ${item.qrImage ? `<img src="${escapeHTML(item.qrImage)}" alt="Payment QR">` : ""
 ` : "";
 
 html += `
-<div class="providerCard">
-<div class="providerTop">
+<div class="providerCard ${activeEnrollmentProfileId === profileId ? "open" : ""}" data-profile-id="${profileId}">
+<button type="button" class="providerHeaderBtn" onclick="toggleEnrollmentCard('${profileId}')">
+<span class="providerHeaderMain">
 <img class="providerLogo" src="${getSafeImageUrl(item.logo)}" onerror="this.onerror=null;this.src='default-avatar.svg';">
-<div>
-<div class="providerName">${item.name || "Teacher / Institution"}</div>
+<span class="providerHeaderMeta">
+<span class="providerName">${item.name || "Teacher / Institution"}</span>
 <span class="status ${accepted ? "accepted" : ""}">${accepted ? "Accepted" : "Waiting for your acceptance"}</span>
-</div>
-</div>
-
+</span>
+</span>
+<span class="providerToggleIcon">${activeEnrollmentProfileId === profileId ? "-" : "+"}</span>
+</button>
+<div class="providerBody">
 <div class="row"><span class="label">Category:</span> ${item.category || "-"}</div>
 <div class="row"><span class="label">Phone:</span> ${phone || "-"}</div>
 ${item.email ? `<div class="row"><span class="label">Email:</span> ${item.email}</div>` : ""}
@@ -1439,10 +1586,17 @@ ${paymentDetailsHTML}
 <button class="btn red" onclick="rejectEnrollment('${profileId}')">Reject</button>
 `}
 </div>
+</div>
 `;
 }
 
 list.innerHTML = html;
+
+if(activeEnrollmentProfileId && !ids.includes(activeEnrollmentProfileId)){
+activeEnrollmentProfileId = "";
+}
+
+syncEnrollmentAccordion();
 
 ids.forEach(profileId=>{
 const itemSnap = snap.child(profileId);
