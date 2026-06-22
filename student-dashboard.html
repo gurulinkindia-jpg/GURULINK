@@ -135,18 +135,6 @@ flex-direction:column;
 gap:12px;
 }
 
-.timeTableToday{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:12px;
-flex-wrap:wrap;
-padding:12px 14px;
-border-radius:12px;
-background:#f8fbff;
-border:1px solid #d7e3f0;
-}
-
 .timeTableBadge{
 display:inline-block;
 padding:6px 10px;
@@ -791,15 +779,7 @@ Create your school, tuition, and training schedule so you can check it quickly e
 return;
 }
 
-let html = `
-<div class="timeTableToday">
-<div>
-<div class="label">Today</div>
-<div style="font-size:18px;font-weight:bold;color:#1f2937;">${todayName}</div>
-</div>
-<div class="timeTableBadge">${todayItems.length} item${todayItems.length === 1 ? "" : "s"} today</div>
-</div>
-`;
+let html = ``;
 
 if(!todayItems.length){
 html += `
@@ -811,7 +791,7 @@ No class or session saved for ${todayName}. You can still update your weekly pla
 else{
 html += `<div class="timeTableList">`;
 
-todayItems.slice(0,4).forEach(item=>{
+todayItems.forEach(item=>{
 const meta = getTimeTableDisplayMeta(item);
 html += `
 <div class="timeTableItem">
@@ -832,14 +812,6 @@ ${item.note ? `<div><b>Note:</b> ${escapeHTML(item.note)}</div>` : ""}
 });
 
 html += `</div>`;
-
-if(todayItems.length > 4){
-html += `
-<div class="muted">
-Showing first 4 items for today. Open your full timetable to see all entries.
-</div>
-`;
-}
 }
 
 html += `
