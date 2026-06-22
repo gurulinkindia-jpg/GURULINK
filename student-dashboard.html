@@ -151,6 +151,14 @@ flex-direction:column;
 gap:10px;
 }
 
+.timeTableActionRow{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+justify-content:center;
+margin-top:6px;
+}
+
 .timeTableItem{
 border:1px solid #d9e2ec;
 border-radius:12px;
@@ -373,6 +381,11 @@ font-size:14px;
 flex-direction:column;
 }
 
+.timeTableActionRow .btn{
+width:100%;
+margin:0;
+}
+
 }
 
 </style>
@@ -461,6 +474,18 @@ Loading schedule...
 href="find-teacher.html"
 class="btn blue">
 Browse Teachers
+</a>
+
+<a
+href="student-timetable.html?mode=view"
+class="btn blue">
+Show Time Table
+</a>
+
+<a
+href="student-timetable.html?mode=edit"
+class="btn orange">
+Edit Time Table
 </a>
 
 <a
@@ -746,6 +771,10 @@ box.innerHTML = `
 <div class="timeTableEmpty">
 No weekly time table added yet.<br>
 Create your school, tuition, and training schedule so you can check it quickly every day.
+<div class="timeTableActionRow" style="margin-top:12px;">
+<a href="student-timetable.html?mode=view" class="btn blue">Show Time Table</a>
+<a href="student-timetable.html?mode=edit" class="btn orange">Edit Time Table</a>
+</div>
 </div>
 `;
 return;
@@ -785,6 +814,13 @@ ${item.note ? `<div><b>Note:</b> ${escapeHTML(item.note)}</div>` : ""}
 
 html += `</div>`;
 }
+
+html += `
+<div class="timeTableActionRow">
+<a href="student-timetable.html?mode=view" class="btn blue">Show Time Table</a>
+<a href="student-timetable.html?mode=edit" class="btn orange">Edit Time Table</a>
+</div>
+`;
 
 box.innerHTML = html;
 }
