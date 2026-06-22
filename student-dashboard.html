@@ -59,16 +59,28 @@ flex-shrink:0;
 
 .studentProfileMeta{
 min-width:0;
+flex:1;
+}
+
+.studentProfileHeader{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+flex-wrap:wrap;
 }
 
 .studentProfileMeta h2{
-margin-bottom:6px;
+margin:0;
 }
 
-.studentProfileSub{
+.studentProfileEditBtn{
+margin:0;
+padding:8px 12px;
 font-size:13px;
-color:#607d8b;
-line-height:1.4;
+border-radius:10px;
+line-height:1.2;
+white-space:nowrap;
 }
 
 h2{
@@ -630,6 +642,15 @@ border-radius:14px;
 font-size:22px;
 }
 
+.studentProfileHeader{
+align-items:flex-start;
+}
+
+.studentProfileEditBtn{
+padding:8px 10px;
+font-size:12px;
+}
+
 .row{
 font-size:14px;
 }
@@ -699,9 +720,14 @@ src="default-avatar.svg"
 alt="Student Profile Image">
 
 <div class="studentProfileMeta">
+<div class="studentProfileHeader">
 <h2>My Profile</h2>
-<div class="studentProfileSub">
-Your student account details and connected learning profile.
+<button
+type="button"
+class="btn blue studentProfileEditBtn"
+onclick="openStudentEditProfile()">
+Edit Profile
+</button>
 </div>
 </div>
 </div>
@@ -724,15 +750,6 @@ Your student account details and connected learning profile.
 <div class="row">
 <span class="label">Class:</span>
 <span id="studentClass">Loading...</span>
-</div>
-
-<div class="center" style="margin-top:12px;">
-<button
-type="button"
-class="btn blue"
-onclick="openStudentEditProfile()">
-Edit Profile
-</button>
 </div>
 
 </div>
