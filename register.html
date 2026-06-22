@@ -5,8 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>GURULINK Registration Portal</title>
 <style>
-body{margin:0;font-family:Arial,sans-serif;background:#eef4ff}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
 
+body{
+background:#eef4ff;
+color:#1f2937;
+}
 
 header{
 background:#1565c0;
@@ -29,7 +38,7 @@ display:flex;
 flex-direction:column;
 align-items:center;
 justify-content:center;
-gap:10px;
+gap:8px;
 cursor:pointer;
 }
 
@@ -60,7 +69,7 @@ align-items:center;
 gap:10px;
 }
 
-.dashboardBtn{
+.headerBtn{
 background:#fff;
 color:#1565c0;
 text-decoration:none;
@@ -70,38 +79,259 @@ font-weight:bold;
 transition:.3s;
 }
 
-.dashboardBtn:hover{
+.headerBtn:hover{
 background:#e3f2fd;
 }
 
-.registerBtn{
-background:#4caf50;
-color:white;
+.hero{
+background:linear-gradient(135deg,#1565c0,#0d47a1);
+color:#fff;
+text-align:center;
+padding:42px 20px;
 }
 
-.registerBtn:hover{
-background:#43a047;
+.hero h1{
+margin:0 0 8px;
+font-size:34px;
 }
 
+.hero p{
+max-width:760px;
+margin:auto;
+font-size:15px;
+line-height:1.7;
+}
 
-.topbtns button{padding:10px 14px;border:none;border-radius:8px;background:#fff;color:#1565c0;font-weight:bold;cursor:pointer}
-.hero{background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;text-align:center;padding:40px 20px}
-.hero h1{margin:0}
-.info{max-width:1200px;margin:auto;padding:20px}
-.infoCard{background:#fff;padding:20px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,.08)}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;max-width:1200px;margin:auto;padding:20px}
-.card{background:#fff;padding:16px;border-radius:15px;text-align:center;box-shadow:0 5px 15px rgba(0,0,0,.08)}
-.card img{width:70px;height:70px;border-radius:50%;object-fit:cover;border:3px solid #1565c0}
-.card h3{color:#1565c0;margin:10px 0 6px;font-size:18px}
-.card p{font-size:13px;color:#555;line-height:1.4;margin:0 0 12px}
-.card a{display:inline-block;padding:10px 15px;background:#1565c0;color:#fff;text-decoration:none;border-radius:8px}
-footer{background:#0d47a1;color:#fff;text-align:center;padding:20px}
-@media(max-width:768px){
+.info{
+max-width:1200px;
+margin:auto;
+padding:20px;
+}
+
+.infoCard{
+background:#fff;
+padding:22px;
+border-radius:16px;
+box-shadow:0 5px 20px rgba(0,0,0,.08);
+border:1px solid #d8e5f5;
+}
+
+.infoCard h3{
+margin-bottom:10px;
+color:#1565c0;
+font-size:24px;
+}
+
+.infoCard p{
+font-size:14px;
+line-height:1.7;
+color:#475569;
+}
+
+.sectionWrap{
+max-width:1200px;
+margin:auto;
+padding:0 20px 24px;
+}
+
+.sectionTitle{
+font-size:30px;
+color:#1565c0;
+margin-bottom:8px;
+}
+
+.sectionIntro{
+font-size:14px;
+line-height:1.7;
+color:#64748b;
+margin-bottom:18px;
+}
 
 .grid{
-grid-template-columns:repeat(2,1fr);
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+gap:16px;
 }
 
+.card{
+background:#fff;
+padding:18px;
+border-radius:16px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+border:1px solid #d8e5f5;
+display:flex;
+flex-direction:column;
+gap:12px;
+height:100%;
+}
+
+.cardTop{
+display:flex;
+align-items:flex-start;
+gap:12px;
+}
+
+.categoryIcon{
+width:64px;
+height:64px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#e3f2fd;
+border:3px solid #1565c0;
+color:#1565c0;
+flex-shrink:0;
+}
+
+.categoryIcon svg{
+width:36px;
+height:36px;
+stroke:currentColor;
+fill:none;
+stroke-width:2;
+stroke-linecap:round;
+stroke-linejoin:round;
+}
+
+.creativeIcon{
+background:#fff3e0;
+border-color:#ef6c00;
+color:#ef6c00;
+}
+
+.skillIcon{
+background:#e8f5e9;
+border-color:#2e7d32;
+color:#2e7d32;
+}
+
+.sportIcon{
+background:#fce4ec;
+border-color:#c2185b;
+color:#c2185b;
+}
+
+.studentIcon{
+background:#ede9fe;
+border-color:#7c3aed;
+color:#7c3aed;
+}
+
+.cardMeta{
+min-width:0;
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
+.roleBadge{
+display:inline-flex;
+align-items:center;
+width:fit-content;
+padding:5px 10px;
+border-radius:999px;
+font-size:11px;
+font-weight:bold;
+letter-spacing:.25px;
+background:#eff6ff;
+color:#1565c0;
+}
+
+.studentBadge{
+background:#f3e8ff;
+color:#7c3aed;
+}
+
+.card h3{
+color:#1565c0;
+font-size:18px;
+line-height:1.35;
+margin:0;
+}
+
+.card p{
+font-size:13px;
+color:#555;
+line-height:1.6;
+margin:0;
+}
+
+.cardAction{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+margin-top:auto;
+padding:11px 16px;
+background:linear-gradient(135deg,#1565c0,#0d47a1);
+color:#fff;
+text-decoration:none;
+border-radius:10px;
+font-weight:bold;
+}
+
+footer{
+background:#0d47a1;
+color:#fff;
+text-align:center;
+padding:20px;
+margin-top:10px;
+}
+
+footer a{
+color:#fff;
+}
+
+html.gurulink-dark body{
+background:#0f172a;
+}
+
+html.gurulink-dark .infoCard,
+html.gurulink-dark .card{
+border-color:#2f3b46 !important;
+}
+
+html.gurulink-dark .infoCard p,
+html.gurulink-dark .sectionIntro,
+html.gurulink-dark .card p{
+color:#c9d4df !important;
+}
+
+html.gurulink-dark .roleBadge{
+background:#102a43 !important;
+color:#90caf9 !important;
+}
+
+html.gurulink-dark .studentBadge{
+background:#2b1f46 !important;
+color:#d8b4fe !important;
+}
+
+html.gurulink-dark .creativeIcon{
+background:#3d2a16 !important;
+border-color:#ffb74d !important;
+color:#ffcc80 !important;
+}
+
+html.gurulink-dark .skillIcon{
+background:#17301c !important;
+border-color:#81c784 !important;
+color:#a5d6a7 !important;
+}
+
+html.gurulink-dark .sportIcon{
+background:#3c1526 !important;
+border-color:#f48fb1 !important;
+color:#f8bbd0 !important;
+}
+
+html.gurulink-dark .studentIcon{
+background:#26173d !important;
+border-color:#b39ddb !important;
+color:#d1c4e9 !important;
+}
+
+@media(max-width:768px){
 header{
 flex-direction:row;
 gap:0;
@@ -112,58 +342,63 @@ font-size:18px;
 }
 
 .header-right{
-gap:5px;
+gap:6px;
 }
 
-.dashboardBtn{
-padding:6px 10px;
+.headerBtn{
+padding:7px 10px;
 font-size:12px;
 border-radius:6px;
 }
 
+.hero{
+padding:30px 14px;
+}
+
+.hero h1{
+font-size:28px;
+}
+
+.info,
+.sectionWrap{
+padding-left:12px;
+padding-right:12px;
+}
+
+.sectionTitle{
+font-size:24px;
+}
 }
 
 @media(max-width:480px){
 .grid{
 grid-template-columns:1fr;
-padding:12px;
-}
-
-.hero{
-padding:28px 14px;
-}
-
-.hero h1{
-font-size:25px;
-}
-
-.info{
-padding:12px;
 }
 
 .card{
-display:grid;
-grid-template-columns:72px 1fr;
-text-align:left;
-gap:10px;
+padding:16px;
+}
+
+.cardTop{
 align-items:center;
 }
 
-.card img{
-grid-row:1 / span 3;
+.categoryIcon{
+width:58px;
+height:58px;
+}
+
+.categoryIcon svg{
+width:32px;
+height:32px;
 }
 
 .card h3{
-margin:0;
-font-size:16px;
+font-size:17px;
 }
 
-.card p{
-margin:0;
-}
-
-.card a{
-text-align:center;
+.cardAction{
+width:100%;
 }
 }
 </style>
@@ -193,12 +428,12 @@ class="logoImg">
 
 <div class="header-right">
 
-<a href="register.html" class="dashboardBtn registerBtn">
- Register
+<a href="index.html" class="headerBtn">
+Home
 </a>
 
-<a href="#" id="dashboardBtn" class="dashboardBtn">
- Dashboard
+<a href="#" id="dashboardBtn" class="headerBtn">
+Dashboard
 </a>
 
 </div>
@@ -207,13 +442,13 @@ class="logoImg">
 
 <section class="hero">
 <h1>Join GURULINK Today</h1>
-<p>Register as a Teacher or Institution in your correct category.</p>
+<p>Register in the correct category as a teacher, institution, or student to start building your profile, dashboard, and learning network.</p>
 </section>
 
 <div class="info">
 <div class="infoCard">
 <h3>Welcome to GURULINK</h3>
-<p>Select the correct Teacher or Institution form below. Your profile will be saved for login, payment, approval, dashboard, and future editing.</p>
+<p>Select the correct registration type below. Your profile will be used for login, payment, approval, dashboard access, and future profile editing.</p>
 <p style="margin-top:10px;font-size:13px;color:#555;">
 By registering, you agree to the
 <a href="terms-of-use.html" style="color:#1565c0;font-weight:bold;">Terms of Use</a>,
@@ -225,25 +460,199 @@ and can later request deletion through
 </div>
 </div>
 
+<div class="sectionWrap">
+<h2 class="sectionTitle">Choose Registration Type</h2>
+<p class="sectionIntro">Pick the category that matches your role so your form, dashboard, and public profile stay aligned across GURULINK.</p>
+
 <div class="grid">
-<div class="card"><img src="https://i.ibb.co/pvkp0Ggb/Academic-teacher.jpg"><h3>Academics Teacher</h3><p>Education, tuition, exams, career guidance.</p><a href="academic-teacher.html">Register</a></div>
-<div class="card"><img src="https://i.ibb.co/wZjcSNVx/Academic-institute.jpg"><h3>Academics Institution</h3><p>School, coaching center, academy, institute.</p><a href="academic-institute.html">Register</a></div>
-<div class="card"><img src="https://i.ibb.co/BVdt2sgL/Whats-App-Image-2026-06-07-at-9-14-10-PM-1.jpg"><h3>Professional Skills Teacher</h3><p>Technology, business, trade, culinary, fashion.</p><a href="skill-teacher.html">Register</a></div>
-<div class="card"><img src="https://i.ibb.co/jXrPhw0/skill-teacher.avif"><h3>Professional Skills Institution</h3><p>Training center, skill academy, professional courses.</p><a href="skill-institute.html">Register</a></div>
-<div class="card"><img src="https://i.ibb.co/4gXxG3Xg/Whats-App-Image-2026-06-07-at-9-14-12-PM-1.jpg"><h3>Sports & Fitness Teacher</h3><p>Coach, trainer, fitness mentor, sports instructor.</p><a href="sport-teacher.html">Register</a></div>
-<div class="card"><img src="https://i.ibb.co/Nv27qn9/Whats-App-Image-2026-06-07-at-9-14-12-PM.jpg"><h3>Sports & Fitness Institution</h3><p>Gym, club, sports academy, fitness center.</p><a href="sport-institution.html">Register</a></div>
-<div class="card"><img src="https://i.ibb.co/v6XG6gQ3/Whats-App-Image-2026-06-07-at-9-14-11-PM-1.jpg"><h3>Arts & Creativity Teacher</h3><p>Music, dance, art, media, craft, performance.</p><a href="creative-teacher.html">Register</a></div>
-<div class="card"><img src="https://i.ibb.co/HpDcGbCY/Whats-App-Image-2026-06-07-at-9-14-09-PM-1.jpg"><h3>Arts & Creativity Institution</h3><p>Studio, creative academy, art and music school.</p><a href="creative-institute.html">Register</a></div>
+
+<div class="card">
+<div class="cardTop">
+<div class="categoryIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"></path>
+<path d="M8 6h8"></path>
+<path d="M8 10h8"></path>
+</svg>
+</div>
+<div class="cardMeta">
+<span class="roleBadge">Teacher Registration</span>
+<h3>Academic, Education & Career Development</h3>
+</div>
+</div>
+<p>For academic subjects, tuition, exam guidance, languages, and career support.</p>
+<a href="academic-teacher.html" class="cardAction">Register</a>
+</div>
+
+<div class="card">
+<div class="cardTop">
+<div class="categoryIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"></path>
+<path d="M8 6h8"></path>
+<path d="M8 10h8"></path>
+</svg>
+</div>
+<div class="cardMeta">
+<span class="roleBadge">Institution Registration</span>
+<h3>Academic, Education & Career Development</h3>
+</div>
+</div>
+<p>For schools, coaching centres, academies, educational institutes, and career platforms.</p>
+<a href="academic-institute.html" class="cardAction">Register</a>
+</div>
+
+<div class="card">
+<div class="cardTop">
+<div class="categoryIcon creativeIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<circle cx="13.5" cy="6.5" r=".5"></circle>
+<circle cx="17.5" cy="10.5" r=".5"></circle>
+<circle cx="8.5" cy="7.5" r=".5"></circle>
+<circle cx="6.5" cy="12.5" r=".5"></circle>
+<path d="M12 3C7 3 3 6.8 3 11.4c0 3.4 2.7 6.3 6.3 7.5 1.2.4 1.7-.2 1.7-1.1 0-.6-.4-1.1-.4-1.7 0-1.1.9-2.1 2.1-2.1h1.8c3 0 5.5-2.3 5.5-5.1C20 5.6 16.4 3 12 3z"></path>
+</svg>
+</div>
+<div class="cardMeta">
+<span class="roleBadge">Teacher Registration</span>
+<h3>Arts & Creativity</h3>
+</div>
+</div>
+<p>For music, dance, painting, craft, theatre, media, and creative performance teaching.</p>
+<a href="creative-teacher.html" class="cardAction">Register</a>
+</div>
+
+<div class="card">
+<div class="cardTop">
+<div class="categoryIcon creativeIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<circle cx="13.5" cy="6.5" r=".5"></circle>
+<circle cx="17.5" cy="10.5" r=".5"></circle>
+<circle cx="8.5" cy="7.5" r=".5"></circle>
+<circle cx="6.5" cy="12.5" r=".5"></circle>
+<path d="M12 3C7 3 3 6.8 3 11.4c0 3.4 2.7 6.3 6.3 7.5 1.2.4 1.7-.2 1.7-1.1 0-.6-.4-1.1-.4-1.7 0-1.1.9-2.1 2.1-2.1h1.8c3 0 5.5-2.3 5.5-5.1C20 5.6 16.4 3 12 3z"></path>
+</svg>
+</div>
+<div class="cardMeta">
+<span class="roleBadge">Institution Registration</span>
+<h3>Arts & Creativity</h3>
+</div>
+</div>
+<p>For studios, art schools, music academies, creative centres, and performance institutes.</p>
+<a href="creative-institute.html" class="cardAction">Register</a>
+</div>
+
+<div class="card">
+<div class="cardTop">
+<div class="categoryIcon skillIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<rect x="3" y="7" width="18" height="13" rx="2"></rect>
+<path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+<path d="M3 13h18"></path>
+<path d="M9 13v2"></path>
+<path d="M15 13v2"></path>
+</svg>
+</div>
+<div class="cardMeta">
+<span class="roleBadge">Teacher Registration</span>
+<h3>Professional Skills</h3>
+</div>
+</div>
+<p>For technology, business, trade, digital, culinary, fashion, and career skill training.</p>
+<a href="skill-teacher.html" class="cardAction">Register</a>
+</div>
+
+<div class="card">
+<div class="cardTop">
+<div class="categoryIcon skillIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<rect x="3" y="7" width="18" height="13" rx="2"></rect>
+<path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+<path d="M3 13h18"></path>
+<path d="M9 13v2"></path>
+<path d="M15 13v2"></path>
+</svg>
+</div>
+<div class="cardMeta">
+<span class="roleBadge">Institution Registration</span>
+<h3>Professional Skills</h3>
+</div>
+</div>
+<p>For skill academies, training centres, vocational programmes, and professional course institutes.</p>
+<a href="skill-institute.html" class="cardAction">Register</a>
+</div>
+
+<div class="card">
+<div class="cardTop">
+<div class="categoryIcon sportIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<circle cx="12" cy="12" r="9"></circle>
+<path d="M5.6 5.6c4.2 1.4 7.4 4.6 8.8 8.8"></path>
+<path d="M18.4 5.6c-4.2 1.4-7.4 4.6-8.8 8.8"></path>
+<path d="M5.6 18.4c4.2-1.4 7.4-4.6 8.8-8.8"></path>
+<path d="M18.4 18.4c-4.2-1.4-7.4-4.6-8.8-8.8"></path>
+</svg>
+</div>
+<div class="cardMeta">
+<span class="roleBadge">Teacher Registration</span>
+<h3>Sports & Fitness</h3>
+</div>
+</div>
+<p>For coaches, trainers, fitness mentors, yoga teachers, and sports instructors.</p>
+<a href="sport-teacher.html" class="cardAction">Register</a>
+</div>
+
+<div class="card">
+<div class="cardTop">
+<div class="categoryIcon sportIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<circle cx="12" cy="12" r="9"></circle>
+<path d="M5.6 5.6c4.2 1.4 7.4 4.6 8.8 8.8"></path>
+<path d="M18.4 5.6c-4.2 1.4-7.4 4.6-8.8 8.8"></path>
+<path d="M5.6 18.4c4.2-1.4 7.4-4.6 8.8-8.8"></path>
+<path d="M18.4 18.4c-4.2-1.4-7.4-4.6-8.8-8.8"></path>
+</svg>
+</div>
+<div class="cardMeta">
+<span class="roleBadge">Institution Registration</span>
+<h3>Sports & Fitness</h3>
+</div>
+</div>
+<p>For gyms, clubs, sports academies, wellness centres, and fitness institutes.</p>
+<a href="sport-institution.html" class="cardAction">Register</a>
+</div>
+
+<div class="card">
+<div class="cardTop">
+<div class="categoryIcon studentIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="M12 5 3 9.5 12 14l9-4.5L12 5z"></path>
+<path d="M7 12.5V16c0 .9 2.2 2 5 2s5-1.1 5-2v-3.5"></path>
+<path d="M21 9.5V15"></path>
+</svg>
+</div>
+<div class="cardMeta">
+<span class="roleBadge studentBadge">Student Registration</span>
+<h3>Student Registration</h3>
+</div>
+</div>
+<p>For students who want their own dashboard, timetable, profile, and teacher connections.</p>
+<a href="student-registration.html" class="cardAction">Register</a>
+</div>
+
+</div>
 </div>
 
 <footer>
-© GURULINK Powered by G10 Group
+&copy; GURULINK Powered by G10 Group
 <div style="margin-top:8px;">
-<a href="terms-of-use.html" style="color:#fff;">Terms of Use</a>
+<a href="terms-of-use.html">Terms of Use</a>
  |
-<a href="privacy-policy.html" style="color:#fff;">Privacy Policy</a>
+<a href="privacy-policy.html">Privacy Policy</a>
  |
-<a href="delete-account.html" style="color:#fff;">Delete Account</a>
+<a href="delete-account.html">Delete Account</a>
 </div>
 </footer>
 
@@ -259,5 +668,3 @@ else location.href="login.html";
 
 </body>
 </html>
-
-
