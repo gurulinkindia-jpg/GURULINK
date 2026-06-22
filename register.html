@@ -149,26 +149,37 @@ margin-bottom:18px;
 
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-gap:16px;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:18px;
 }
 
 .card{
 background:#fff;
-padding:18px;
-border-radius:16px;
-box-shadow:0 5px 15px rgba(0,0,0,.08);
+padding:20px;
+border-radius:18px;
+box-shadow:0 8px 24px rgba(15,23,42,.08);
 border:1px solid #d8e5f5;
 display:flex;
 flex-direction:column;
 gap:12px;
 height:100%;
+position:relative;
+overflow:hidden;
 }
 
 .cardTop{
 display:flex;
 align-items:flex-start;
 gap:12px;
+}
+
+.card::before{
+content:"";
+position:absolute;
+inset:0 auto auto 0;
+width:100%;
+height:5px;
+background:#1565c0;
 }
 
 .categoryIcon{
@@ -218,6 +229,55 @@ border-color:#7c3aed;
 color:#7c3aed;
 }
 
+.academicCard{
+background:linear-gradient(180deg,#ffffff 0%,#f7fbff 100%);
+border-color:#cfe4ff;
+}
+
+.academicCard::before{
+background:#1565c0;
+}
+
+.creativeCard{
+background:linear-gradient(180deg,#ffffff 0%,#fff8f2 100%);
+border-color:#ffd9b0;
+}
+
+.creativeCard::before{
+background:#ef6c00;
+}
+
+.skillCard{
+background:linear-gradient(180deg,#ffffff 0%,#f6fff7 100%);
+border-color:#cce8cf;
+}
+
+.skillCard::before{
+background:#2e7d32;
+}
+
+.sportCard{
+background:linear-gradient(180deg,#ffffff 0%,#fff5f9 100%);
+border-color:#f5c5d7;
+}
+
+.sportCard::before{
+background:#c2185b;
+}
+
+.studentCard{
+background:linear-gradient(180deg,#ffffff 0%,#faf7ff 100%);
+border-color:#ddd2ff;
+}
+
+.studentCard::before{
+background:#7c3aed;
+}
+
+.wideCard{
+grid-column:1 / -1;
+}
+
 .cardMeta{
 min-width:0;
 display:flex;
@@ -257,6 +317,13 @@ line-height:1.6;
 margin:0;
 }
 
+.cardActions{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:10px;
+margin-top:auto;
+}
+
 .cardAction{
 display:inline-flex;
 align-items:center;
@@ -268,6 +335,26 @@ color:#fff;
 text-decoration:none;
 border-radius:10px;
 font-weight:bold;
+}
+
+.academicCard .cardAction{
+background:linear-gradient(135deg,#1565c0,#0d47a1);
+}
+
+.creativeCard .cardAction{
+background:linear-gradient(135deg,#ef6c00,#c75a00);
+}
+
+.skillCard .cardAction{
+background:linear-gradient(135deg,#2e7d32,#1b5e20);
+}
+
+.sportCard .cardAction{
+background:linear-gradient(135deg,#c2185b,#880e4f);
+}
+
+.studentCard .cardAction{
+background:linear-gradient(135deg,#7c3aed,#5b21b6);
 }
 
 footer{
@@ -305,6 +392,31 @@ color:#90caf9 !important;
 html.gurulink-dark .studentBadge{
 background:#2b1f46 !important;
 color:#d8b4fe !important;
+}
+
+html.gurulink-dark .grid .academicCard{
+background:linear-gradient(180deg,#16253a 0%,#11263f 100%) !important;
+border-color:#305b88 !important;
+}
+
+html.gurulink-dark .grid .creativeCard{
+background:linear-gradient(180deg,#322314 0%,#2a1f17 100%) !important;
+border-color:#9a6231 !important;
+}
+
+html.gurulink-dark .grid .skillCard{
+background:linear-gradient(180deg,#17281c 0%,#142319 100%) !important;
+border-color:#416c47 !important;
+}
+
+html.gurulink-dark .grid .sportCard{
+background:linear-gradient(180deg,#311a24 0%,#281720 100%) !important;
+border-color:#8f3b5a !important;
+}
+
+html.gurulink-dark .grid .studentCard{
+background:linear-gradient(180deg,#241b36 0%,#1f1830 100%) !important;
+border-color:#5c46a1 !important;
 }
 
 html.gurulink-dark .creativeIcon{
@@ -397,6 +509,10 @@ height:32px;
 font-size:17px;
 }
 
+.cardActions{
+grid-template-columns:1fr;
+}
+
 .cardAction{
 width:100%;
 }
@@ -466,7 +582,7 @@ and can later request deletion through
 
 <div class="grid">
 
-<div class="card">
+<div class="card academicCard">
 <div class="cardTop">
 <div class="categoryIcon">
 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -477,34 +593,18 @@ and can later request deletion through
 </svg>
 </div>
 <div class="cardMeta">
-<span class="roleBadge">Teacher Registration</span>
+<span class="roleBadge">Academic Category</span>
 <h3>Academic, Education & Career Development</h3>
 </div>
 </div>
-<p>For academic subjects, tuition, exam guidance, languages, and career support.</p>
-<a href="academic-teacher.html" class="cardAction">Register</a>
+<p>For academic subjects, tuition, school support, languages, exam preparation, and career guidance.</p>
+<div class="cardActions">
+<a href="academic-teacher.html" class="cardAction">Teacher</a>
+<a href="academic-institute.html" class="cardAction">Institution</a>
+</div>
 </div>
 
-<div class="card">
-<div class="cardTop">
-<div class="categoryIcon">
-<svg viewBox="0 0 24 24" aria-hidden="true">
-<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-<path d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5z"></path>
-<path d="M8 6h8"></path>
-<path d="M8 10h8"></path>
-</svg>
-</div>
-<div class="cardMeta">
-<span class="roleBadge">Institution Registration</span>
-<h3>Academic, Education & Career Development</h3>
-</div>
-</div>
-<p>For schools, coaching centres, academies, educational institutes, and career platforms.</p>
-<a href="academic-institute.html" class="cardAction">Register</a>
-</div>
-
-<div class="card">
+<div class="card creativeCard">
 <div class="cardTop">
 <div class="categoryIcon creativeIcon">
 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -516,35 +616,18 @@ and can later request deletion through
 </svg>
 </div>
 <div class="cardMeta">
-<span class="roleBadge">Teacher Registration</span>
+<span class="roleBadge">Arts Category</span>
 <h3>Arts & Creativity</h3>
 </div>
 </div>
-<p>For music, dance, painting, craft, theatre, media, and creative performance teaching.</p>
-<a href="creative-teacher.html" class="cardAction">Register</a>
+<p>For music, dance, painting, theatre, craft, creative media, and performance learning.</p>
+<div class="cardActions">
+<a href="creative-teacher.html" class="cardAction">Teacher</a>
+<a href="creative-institute.html" class="cardAction">Institution</a>
+</div>
 </div>
 
-<div class="card">
-<div class="cardTop">
-<div class="categoryIcon creativeIcon">
-<svg viewBox="0 0 24 24" aria-hidden="true">
-<circle cx="13.5" cy="6.5" r=".5"></circle>
-<circle cx="17.5" cy="10.5" r=".5"></circle>
-<circle cx="8.5" cy="7.5" r=".5"></circle>
-<circle cx="6.5" cy="12.5" r=".5"></circle>
-<path d="M12 3C7 3 3 6.8 3 11.4c0 3.4 2.7 6.3 6.3 7.5 1.2.4 1.7-.2 1.7-1.1 0-.6-.4-1.1-.4-1.7 0-1.1.9-2.1 2.1-2.1h1.8c3 0 5.5-2.3 5.5-5.1C20 5.6 16.4 3 12 3z"></path>
-</svg>
-</div>
-<div class="cardMeta">
-<span class="roleBadge">Institution Registration</span>
-<h3>Arts & Creativity</h3>
-</div>
-</div>
-<p>For studios, art schools, music academies, creative centres, and performance institutes.</p>
-<a href="creative-institute.html" class="cardAction">Register</a>
-</div>
-
-<div class="card">
+<div class="card skillCard">
 <div class="cardTop">
 <div class="categoryIcon skillIcon">
 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -556,35 +639,18 @@ and can later request deletion through
 </svg>
 </div>
 <div class="cardMeta">
-<span class="roleBadge">Teacher Registration</span>
+<span class="roleBadge">Skills Category</span>
 <h3>Professional Skills</h3>
 </div>
 </div>
-<p>For technology, business, trade, digital, culinary, fashion, and career skill training.</p>
-<a href="skill-teacher.html" class="cardAction">Register</a>
+<p>For technology, business, trade, digital work, culinary, fashion, and vocational skill training.</p>
+<div class="cardActions">
+<a href="skill-teacher.html" class="cardAction">Teacher</a>
+<a href="skill-institute.html" class="cardAction">Institution</a>
+</div>
 </div>
 
-<div class="card">
-<div class="cardTop">
-<div class="categoryIcon skillIcon">
-<svg viewBox="0 0 24 24" aria-hidden="true">
-<rect x="3" y="7" width="18" height="13" rx="2"></rect>
-<path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-<path d="M3 13h18"></path>
-<path d="M9 13v2"></path>
-<path d="M15 13v2"></path>
-</svg>
-</div>
-<div class="cardMeta">
-<span class="roleBadge">Institution Registration</span>
-<h3>Professional Skills</h3>
-</div>
-</div>
-<p>For skill academies, training centres, vocational programmes, and professional course institutes.</p>
-<a href="skill-institute.html" class="cardAction">Register</a>
-</div>
-
-<div class="card">
+<div class="card sportCard">
 <div class="cardTop">
 <div class="categoryIcon sportIcon">
 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -596,35 +662,18 @@ and can later request deletion through
 </svg>
 </div>
 <div class="cardMeta">
-<span class="roleBadge">Teacher Registration</span>
+<span class="roleBadge">Sports Category</span>
 <h3>Sports & Fitness</h3>
 </div>
 </div>
-<p>For coaches, trainers, fitness mentors, yoga teachers, and sports instructors.</p>
-<a href="sport-teacher.html" class="cardAction">Register</a>
+<p>For sports coaching, fitness mentoring, yoga, gym training, wellness, and physical development.</p>
+<div class="cardActions">
+<a href="sport-teacher.html" class="cardAction">Teacher</a>
+<a href="sport-institution.html" class="cardAction">Institution</a>
+</div>
 </div>
 
-<div class="card">
-<div class="cardTop">
-<div class="categoryIcon sportIcon">
-<svg viewBox="0 0 24 24" aria-hidden="true">
-<circle cx="12" cy="12" r="9"></circle>
-<path d="M5.6 5.6c4.2 1.4 7.4 4.6 8.8 8.8"></path>
-<path d="M18.4 5.6c-4.2 1.4-7.4 4.6-8.8 8.8"></path>
-<path d="M5.6 18.4c4.2-1.4 7.4-4.6 8.8-8.8"></path>
-<path d="M18.4 18.4c-4.2-1.4-7.4-4.6-8.8-8.8"></path>
-</svg>
-</div>
-<div class="cardMeta">
-<span class="roleBadge">Institution Registration</span>
-<h3>Sports & Fitness</h3>
-</div>
-</div>
-<p>For gyms, clubs, sports academies, wellness centres, and fitness institutes.</p>
-<a href="sport-institution.html" class="cardAction">Register</a>
-</div>
-
-<div class="card">
+<div class="card studentCard wideCard">
 <div class="cardTop">
 <div class="categoryIcon studentIcon">
 <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -634,12 +683,14 @@ and can later request deletion through
 </svg>
 </div>
 <div class="cardMeta">
-<span class="roleBadge studentBadge">Student Registration</span>
+<span class="roleBadge studentBadge">Student Category</span>
 <h3>Student Registration</h3>
 </div>
 </div>
-<p>For students who want their own dashboard, timetable, profile, and teacher connections.</p>
-<a href="student-registration.html" class="cardAction">Register</a>
+<p>For students who want their own dashboard, timetable, profile, and connections with teachers or institutions.</p>
+<div class="cardActions" style="grid-template-columns:1fr;">
+<a href="student-registration.html" class="cardAction">Student Register</a>
+</div>
 </div>
 
 </div>
