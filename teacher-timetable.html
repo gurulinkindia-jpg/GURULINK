@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover">
+<title>Teacher Time Table - GURULINK</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef2f7;
+color:#1f2937;
+}
+
+header{
+background:#1565c0;
+color:white;
+padding:18px;
+text-align:center;
+}
+
+.container{
+max-width:980px;
+margin:16px auto;
+padding:12px;
+}
+
+.card{
+background:white;
+border-radius:16px;
+padding:15px;
+margin-bottom:14px;
+box-shadow:0 5px 18px rgba(0,0,0,.08);
+}
+
+.sectionTitle{
+font-size:22px;
+color:#1565c0;
+margin-bottom:10px;
+}
+
+.muted{
+font-size:14px;
+line-height:1.6;
+color:#607d8b;
+}
+
+.todayBanner{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+flex-wrap:wrap;
+}
+
+.todayBadge{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:8px 12px;
+border-radius:999px;
+background:#e3f2fd;
+color:#0d47a1;
+font-size:13px;
+font-weight:bold;
+}
+
+.dayTabs{
+display:grid;
+grid-template-columns:repeat(7,minmax(0,1fr));
+gap:6px;
+margin-top:10px;
+}
+
+.dayBtn{
+padding:10px 8px;
+border:1px solid #cfd8e3;
+border-radius:12px;
+background:#f7fafc;
+color:#334155;
+font-size:13px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.dayBtn.active{
+background:#1565c0;
+color:white;
+border-color:#1565c0;
+}
+
+.formGrid{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:12px;
+margin-top:12px;
+}
+
+.field{
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.field.full{
+grid-column:1 / -1;
+}
+
+.field label{
+font-size:14px;
+font-weight:bold;
+color:#334155;
+}
+
+.field input,
+.field select,
+.field textarea{
+width:100%;
+padding:12px;
+border:1px solid #cfd8e3;
+border-radius:10px;
+font-size:14px;
+background:white;
+}
+
+.field textarea{
+min-height:88px;
+resize:vertical;
+}
+
+.btnRow{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:12px;
+}
+
+.btn{
+padding:12px 16px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-size:14px;
+font-weight:bold;
+}
+
+.primary{
+background:#1565c0;
+color:white;
+}
+
+.green{
+background:#2e7d32;
+color:white;
+}
+
+.orange{
+background:#ef6c00;
+color:white;
+}
+
+.gray{
+background:#eceff1;
+color:#263238;
+}
+
+.red{
+background:#d32f2f;
+color:white;
+}
+
+.statusNote{
+margin-top:12px;
+padding:12px 14px;
+border-radius:10px;
+font-size:13px;
+display:none;
+}
+
+.statusNote.success{
+display:block;
+background:#e8f5e9;
+color:#1b5e20;
+border:1px solid #a5d6a7;
+}
+
+.statusNote.info{
+display:block;
+background:#fff8e1;
+color:#6d4c41;
+border:1px solid #ffe082;
+}
+
+.scheduleList{
+display:flex;
+flex-direction:column;
+gap:10px;
+margin-top:10px;
+}
+
+.slotCard{
+border:1px solid #d9e2ec;
+border-radius:14px;
+padding:14px;
+background:#fff;
+}
+
+.slotTop{
+display:flex;
+justify-content:space-between;
+align-items:flex-start;
+gap:12px;
+margin-bottom:10px;
+}
+
+.slotTime{
+font-size:15px;
+font-weight:bold;
+color:#1565c0;
+}
+
+.slotType{
+display:inline-block;
+padding:5px 10px;
+border-radius:999px;
+background:#e8f5e9;
+color:#2e7d32;
+font-size:12px;
+font-weight:bold;
+}
+
+.slotTitle{
+font-size:17px;
+font-weight:bold;
+color:#1f2937;
+margin-bottom:6px;
+}
+
+.slotSubject{
+font-size:14px;
+font-weight:bold;
+color:#0f766e;
+margin-bottom:6px;
+}
+
+.typeGroupCard{
+border:1px solid #d7e3f0;
+border-radius:14px;
+padding:12px;
+background:#ffffff;
+}
+
+.typeGroupHeader{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:10px;
+margin-bottom:8px;
+}
+
+.typeGroupTitle{
+font-size:18px;
+font-weight:bold;
+color:#1565c0;
+}
+
+.typeGroupCount{
+display:inline-block;
+padding:5px 10px;
+border-radius:999px;
+background:#e3f2fd;
+color:#1565c0;
+font-size:12px;
+font-weight:bold;
+}
+
+.typeGroupList{
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
+.boardSubtitle{
+font-size:12px;
+color:#64748b;
+font-weight:bold;
+letter-spacing:.4px;
+text-transform:uppercase;
+}
+
+.periodBoardWrap{
+overflow-x:auto;
+padding-bottom:2px;
+}
+
+.periodBoard{
+display:grid;
+grid-auto-flow:column;
+grid-auto-columns:minmax(138px,1fr);
+gap:8px;
+align-items:stretch;
+min-width:max-content;
+}
+
+.periodBox{
+border:1px solid #d9e2ec;
+border-radius:12px;
+background:#fff;
+overflow:hidden;
+}
+
+.periodBoxHead{
+padding:8px 10px;
+border-bottom:1px solid #e5edf5;
+background:#f8fbff;
+}
+
+.periodBoxLabel{
+font-size:11px;
+font-weight:bold;
+letter-spacing:.4px;
+text-transform:uppercase;
+color:#64748b;
+margin-bottom:3px;
+}
+
+.periodBoxName{
+font-size:14px;
+font-weight:bold;
+color:#1f2937;
+line-height:1.35;
+}
+
+.periodBoxBody{
+padding:10px;
+display:flex;
+flex-direction:column;
+gap:7px;
+}
+
+.periodBoxTime{
+font-size:13px;
+font-weight:bold;
+color:#1565c0;
+line-height:1.4;
+}
+
+.periodBoxSubject{
+font-size:14px;
+font-weight:bold;
+color:#0f766e;
+line-height:1.4;
+}
+
+.periodBoxLine{
+display:grid;
+grid-template-columns:58px 1fr;
+gap:6px;
+font-size:12px;
+line-height:1.45;
+color:#475569;
+}
+
+.periodBoxLine b{
+color:#64748b;
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:.35px;
+}
+
+.slotMeta{
+font-size:13px;
+line-height:1.6;
+color:#475569;
+}
+
+.slotActions{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin-top:12px;
+}
+
+.miniBtn{
+padding:8px 12px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-size:12px;
+font-weight:bold;
+}
+
+.emptyState{
+padding:18px;
+border:1px dashed #cbd5e1;
+border-radius:12px;
+background:#f8fafc;
+font-size:14px;
+line-height:1.6;
+color:#475569;
+text-align:center;
+}
+
+@media(max-width:900px){
+.dayTabs{
+grid-template-columns:repeat(4,minmax(0,1fr));
+}
+}
+
+@media(max-width:640px){
+header{
+padding:16px 12px;
+}
+
+.container{
+padding:8px;
+margin:10px auto;
+}
+
+.card{
+padding:12px;
+border-radius:14px;
+}
+
+.sectionTitle{
+font-size:20px;
+}
+
+.dayTabs,
+.formGrid{
+grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
+.field.full{
+grid-column:1 / -1;
+}
+
+.btnRow{
+flex-direction:column;
+}
+
+.btn{
+width:100%;
+}
+
+.typeGroupHeader{
+flex-direction:column;
+}
+
+.periodBoard{
+grid-auto-columns:minmax(130px,1fr);
+}
+}
+</style>
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
+</head>
+<body>
+
+<header>
+<h1>Teacher / Institution Weekly Time Table</h1>
+<p>Plan classes, batches, demo sessions, and teaching schedules in one place.</p>
+</header>
+
+<div class="container">
+
+<div class="card">
+<div class="todayBanner">
+<div>
+<div class="sectionTitle">This Week at a Glance</div>
+<div class="muted">
+Create your weekly teaching routine and keep important classes, batches, and sessions neatly organised.
+</div>
+</div>
+<div class="todayBadge" id="todayBadge">Today: Loading...</div>
+</div>
+
+</div>
+
+<div class="card">
+<div class="sectionTitle">Choose Day</div>
+<div class="muted">Tap a day below, then add your classes and sessions for that day.</div>
+<div class="dayTabs" id="dayTabs"></div>
+</div>
+
+<div class="card" id="editorCard">
+<div class="sectionTitle" id="editorTitle">Add Time Slot</div>
+<div class="muted">
+Use this for individual coaching, group batches, home tuition, online class, training/coaching, breaks, or tests.
+</div>
+
+<div class="formGrid">
+<div class="field" id="activityTypeField">
+<label for="activityType">Type</label>
+<select id="activityType">
+<option value="Individual Coaching">Individual Coaching</option>
+<option value="Group Coaching">Group Coaching</option>
+<option value="Super Group Coaching">Super Group Coaching</option>
+<option value="Home Tuition">Home Tuition</option>
+<option value="Online Class">Online Class</option>
+<option value="Training / Coaching">Training / Coaching</option>
+<option value="Demo Class">Demo Class</option>
+<option value="Exam / Test">Exam / Test</option>
+<option value="Break">Break</option>
+<option value="Other">Other</option>
+</select>
+</div>
+
+<div class="field" id="activityTitleField">
+<label for="activityTitle">Batch / Session</label>
+<input id="activityTitle" type="text" placeholder="Example: Morning Batch, Session 1, Demo Slot, Evening Batch">
+</div>
+
+<div class="field" id="activitySubjectField">
+<label for="activitySubject">Subject / Skill / Activity</label>
+<input id="activitySubject" type="text" placeholder="Example: Mathematics, English, Coding, Guitar, Football">
+</div>
+
+<div class="field">
+<label for="startTime">Start Time</label>
+<input id="startTime" type="time">
+</div>
+
+<div class="field">
+<label for="endTime">End Time</label>
+<input id="endTime" type="time">
+</div>
+
+<div class="field full">
+<label for="activityLocation">Location / Branch / Platform</label>
+<input id="activityLocation" type="text" placeholder="Example: Main Branch, Beltola Centre, Student Home, Zoom, Online Batch">
+</div>
+
+<div class="field full">
+<label for="activityNote">Note</label>
+<textarea id="activityNote" placeholder="Example: Bring worksheet, Zoom link, test paper, sports kit, batch reminder"></textarea>
+</div>
+ </div>
+
+<div class="btnRow">
+<button type="button" class="btn primary" id="addSlotBtn">Add To Selected Day</button>
+<button type="button" class="btn gray" id="clearFormBtn">Clear Form</button>
+<button type="button" class="btn red" id="clearDayBtn">Clear Selected Day</button>
+</div>
+
+<div class="statusNote info" id="formStatus">
+No weekly teaching timetable saved yet.
+</div>
+</div>
+
+<div class="card">
+<div class="sectionTitle" id="dayScheduleTitle">Day Schedule</div>
+<div class="muted">Your items are shown in time order. You can edit or delete each one.</div>
+<div class="scheduleList" id="scheduleList"></div>
+</div>
+
+<div class="card" id="saveCard">
+<div class="btnRow">
+<button type="button" class="btn green" id="saveTableBtn">Save Weekly Time Table</button>
+<button type="button" class="btn orange" id="resetTableBtn">Reset Unsaved Changes</button>
+<button type="button" class="btn gray" id="backDashboardBtn">Back To Dashboard</button>
+</div>
+<div class="statusNote" id="saveStatus"></div>
+</div>
+
+</div>
+
+<script type="module">
+import {
+initializeApp
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+import {
+getDatabase,
+ref,
+get,
+update
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+function normalizeRole(roleValue){
+const value =
+String(roleValue || "").toLowerCase().trim();
+
+if(
+value === "teacher" ||
+value === "teacher_institute" ||
+value === "teacher_guest"
+){
+return "teacher";
+}
+
+if(
+value === "institution" ||
+value === "institution_guest"
+){
+return "institution";
+}
+
+return value;
+}
+
+const role =
+normalizeRole(localStorage.getItem("role"));
+
+const isTeacherRole =
+role === "teacher";
+
+const isInstitutionRole =
+role === "institution";
+
+const profileId =
+isInstitutionRole
+? (
+localStorage.getItem("institutionId") ||
+localStorage.getItem("profileId") ||
+localStorage.getItem("uid") ||
+localStorage.getItem("teacherId")
+)
+: (
+localStorage.getItem("teacherId") ||
+localStorage.getItem("profileId") ||
+localStorage.getItem("uid") ||
+localStorage.getItem("institutionId")
+);
+
+if(!profileId || (!isTeacherRole && !isInstitutionRole)){
+window.location.href = "otp-login.html";
+}
+
+const profilePath =
+isInstitutionRole
+? `institutions/${profileId}`
+: `teachers/${profileId}`;
+
+const ownerLabel =
+isInstitutionRole
+? "Institution"
+: "Teacher";
+
+localStorage.setItem("uid",profileId);
+localStorage.setItem("profileId",profileId);
+localStorage.setItem("role",role);
+
+if(isTeacherRole){
+localStorage.setItem("teacherId",profileId);
+}
+
+if(isInstitutionRole){
+localStorage.setItem("institutionId",profileId);
+}
+
+const pageMode =
+new URLSearchParams(window.location.search).get("mode") === "view"
+? "view"
+: "edit";
+
+const DAYS = [
+"Monday",
+"Tuesday",
+"Wednesday",
+"Thursday",
+"Friday",
+"Saturday",
+"Sunday"
+];
+
+const todayIndexMap = {
+1:"Monday",
+2:"Tuesday",
+3:"Wednesday",
+4:"Thursday",
+5:"Friday",
+6:"Saturday",
+0:"Sunday"
+};
+
+const emptyWeek = () => ({
+Monday:[],
+Tuesday:[],
+Wednesday:[],
+Thursday:[],
+Friday:[],
+Saturday:[],
+Sunday:[]
+});
+
+let weekData = emptyWeek();
+let savedWeekData = emptyWeek();
+let selectedDay = todayIndexMap[new Date().getDay()] || "Monday";
+let editingSlotId = "";
+
+const TYPE_ORDER = [
+"Individual Coaching",
+"Group Coaching",
+"Super Group Coaching",
+"Home Tuition",
+"Online Class",
+"Training / Coaching",
+"Demo Class",
+"Exam / Test",
+"Break",
+"Other"
+];
+
+function normalizeSlotType(type){
+const raw = String(type || "Other").trim();
+
+if(!raw){
+return "Other";
+}
+
+if(raw === "Training" || raw === "Coaching" || raw === "Training / Coaching"){
+return "Training / Coaching";
+}
+
+if(raw === "Exam" || raw === "Test" || raw === "Exam / Test"){
+return "Exam / Test";
+}
+
+return raw;
+}
+
+function getTypeRules(type){
+const normalized = normalizeSlotType(type);
+
+if(normalized === "Break"){
+return {
+showTitle:false,
+titleLabel:"Batch / Session",
+titlePlaceholder:"Example: Session 1",
+subjectLabel:"Break Name (Optional)",
+subjectPlaceholder:"Example: Lunch Break, Tiffin Break, Rest Time",
+titleRequired:false,
+subjectRequired:false
+};
+}
+
+if(normalized === "Exam / Test"){
+return {
+showTitle:true,
+titleLabel:"Name of Exam / Test",
+titlePlaceholder:"Example: Unit Test, Weekly Mock, Revision Test",
+subjectLabel:"Subject",
+subjectPlaceholder:"Example: Mathematics, Physics, English",
+titleRequired:true,
+subjectRequired:false
+};
+}
+
+if(normalized === "Training / Coaching"){
+return {
+showTitle:true,
+titleLabel:"Batch / Session",
+titlePlaceholder:"Example: Morning Batch, Fitness Batch, Evening Session",
+subjectLabel:"Subject / Activity",
+subjectPlaceholder:"Example: Football, Guitar, Coding, Yoga",
+titleRequired:true,
+subjectRequired:false
+};
+}
+
+if(
+normalized === "Individual Coaching" ||
+normalized === "Group Coaching" ||
+normalized === "Super Group Coaching" ||
+normalized === "Home Tuition" ||
+normalized === "Online Class" ||
+normalized === "Demo Class"
+){
+return {
+showTitle:true,
+titleLabel:"Batch / Session",
+titlePlaceholder:"Example: Session 1, Morning Batch, Demo Slot",
+subjectLabel:"Subject / Skill / Activity",
+subjectPlaceholder:"Example: Mathematics, English, Coding, Painting",
+titleRequired:true,
+subjectRequired:false
+};
+}
+
+return {
+showTitle:true,
+titleLabel:"Batch / Session",
+titlePlaceholder:"Example: Session 1, Morning Batch, Evening Batch",
+subjectLabel:"Subject / Skill / Activity",
+subjectPlaceholder:"Example: Mathematics, English, Coding, Dance",
+titleRequired:true,
+subjectRequired:false
+};
+}
+
+function isViewMode(){
+return pageMode === "view";
+}
+
+function cloneWeek(data){
+return JSON.parse(JSON.stringify(data || emptyWeek()));
+}
+
+function getTodayName(){
+return todayIndexMap[new Date().getDay()] || "Monday";
+}
+
+function normalizeWeek(raw){
+const week = emptyWeek();
+
+DAYS.forEach(day=>{
+const slots =
+Array.isArray(raw?.[day]) ? raw[day] : [];
+
+week[day] = slots
+.map((slot,index)=>({
+id:String(slot.id || `${day}-${Date.now()}-${index}`),
+title:String(slot.title || "").trim(),
+subject:String(slot.subject || "").trim(),
+type:normalizeSlotType(slot.type || "Other"),
+startTime:String(slot.startTime || "").trim(),
+endTime:String(slot.endTime || "").trim(),
+location:String(slot.location || "").trim(),
+note:String(slot.note || "").trim(),
+createdAt:Number(slot.createdAt || Date.now() + index)
+}))
+.filter(slot=>slot.title || slot.subject || slot.startTime || slot.endTime || slot.location || slot.note)
+.sort((a,b)=>(a.startTime || "").localeCompare(b.startTime || ""));
+});
+
+return week;
+}
+
+function setStatus(id, type, text){
+const box = document.getElementById(id);
+box.className = "statusNote " + type;
+box.innerText = text;
+}
+
+function resetForm(){
+editingSlotId = "";
+document.getElementById("editorTitle").innerText = "Add Time Slot";
+document.getElementById("addSlotBtn").innerText = "Add To Selected Day";
+document.getElementById("activityTitle").value = "";
+document.getElementById("activitySubject").value = "";
+document.getElementById("activityType").value = "Individual Coaching";
+document.getElementById("startTime").value = "";
+document.getElementById("endTime").value = "";
+document.getElementById("activityLocation").value = "";
+document.getElementById("activityNote").value = "";
+applyTypeRules();
+}
+
+function applyTypeRules(){
+const typeSelect = document.getElementById("activityType");
+const titleField = document.getElementById("activityTitleField");
+const titleLabel = titleField.querySelector("label");
+const titleInput = document.getElementById("activityTitle");
+const subjectField = document.getElementById("activitySubjectField");
+const subjectLabel = subjectField.querySelector("label");
+const subjectInput = document.getElementById("activitySubject");
+
+const normalizedType = normalizeSlotType(typeSelect.value);
+const rules = getTypeRules(normalizedType);
+
+typeSelect.value = normalizedType;
+titleField.style.display = rules.showTitle ? "flex" : "none";
+titleLabel.innerText = rules.titleLabel;
+titleInput.placeholder = rules.titlePlaceholder;
+subjectLabel.innerText = rules.subjectLabel;
+subjectInput.placeholder = rules.subjectPlaceholder;
+
+if(!rules.showTitle){
+titleInput.value = "";
+}
+}
+
+function getSlotDisplayMeta(slot,index){
+const type = normalizeSlotType(slot.type);
+
+if(type === "Break"){
+return {
+boxLabel:"Break",
+boxName:slot.subject || "Break",
+showSubject:false,
+subjectText:"",
+listTitle:slot.subject || "Break"
+};
+}
+
+if(type === "Exam / Test"){
+return {
+boxLabel:"Exam / Test",
+boxName:slot.title || "Untitled Exam / Test",
+showSubject:!!slot.subject,
+subjectText:slot.subject || "",
+listTitle:`Exam / Test: ${slot.title || "Untitled Exam / Test"}`
+};
+}
+
+return {
+boxLabel:"Batch / Session",
+boxName:slot.title || `Session ${index + 1}`,
+showSubject:!!slot.subject,
+subjectText:slot.subject || "",
+listTitle:`Session: ${slot.title || "Untitled Session"}`
+};
+}
+
+function renderOverview(){
+document.getElementById("todayBadge").innerText =
+`Today: ${getTodayName()} (${weekData[getTodayName()].length} item${weekData[getTodayName()].length === 1 ? "" : "s"})`;
+}
+
+function renderDayTabs(){
+const box = document.getElementById("dayTabs");
+box.innerHTML = DAYS.map(day=>`
+<button
+type="button"
+class="dayBtn ${day === selectedDay ? "active" : ""}"
+data-day="${day}">
+${day}
+</button>
+`).join("");
+
+box.querySelectorAll(".dayBtn").forEach(btn=>{
+btn.addEventListener("click",()=>{
+selectedDay = btn.dataset.day;
+resetForm();
+renderDayTabs();
+renderSelectedDay();
+});
+});
+}
+
+function renderSelectedDay(){
+document.getElementById("dayScheduleTitle").innerText =
+selectedDay + " Schedule";
+
+const list = document.getElementById("scheduleList");
+const slots = weekData[selectedDay] || [];
+
+if(!slots.length){
+list.innerHTML = `
+<div class="emptyState">
+No time slot added for ${selectedDay} yet.<br>
+Add classes, batches, demo sessions, or training slots above.
+</div>
+`;
+return;
+}
+
+if(isViewMode()){
+const grouped = {};
+
+slots.forEach(slot=>{
+const typeKey =
+normalizeSlotType(slot.type || "Other");
+
+if(!grouped[typeKey]){
+grouped[typeKey] = [];
+}
+
+grouped[typeKey].push(slot);
+});
+
+const orderedTypes =
+Object.keys(grouped)
+.sort((a,b)=>{
+const aIndex = TYPE_ORDER.indexOf(a);
+const bIndex = TYPE_ORDER.indexOf(b);
+
+const safeA = aIndex === -1 ? 999 : aIndex;
+const safeB = bIndex === -1 ? 999 : bIndex;
+
+if(safeA !== safeB){
+return safeA - safeB;
+}
+
+return a.localeCompare(b);
+});
+
+list.innerHTML = orderedTypes.map(typeName=>`
+<div class="typeGroupCard">
+<div class="typeGroupHeader">
+<div>
+<div class="typeGroupTitle">${escapeHTML(typeName)}</div>
+<div class="boardSubtitle">${escapeHTML(selectedDay)}</div>
+</div>
+<div class="typeGroupCount">${grouped[typeName].length} item${grouped[typeName].length === 1 ? "" : "s"}</div>
+</div>
+<div class="periodBoardWrap">
+<div class="periodBoard">
+${grouped[typeName].map((slot,index)=>{
+const meta = getSlotDisplayMeta(slot,index);
+
+return `
+<div class="periodBox">
+<div class="periodBoxHead">
+<div class="periodBoxLabel">${escapeHTML(meta.boxLabel)}</div>
+<div class="periodBoxName">${escapeHTML(meta.boxName)}</div>
+</div>
+<div class="periodBoxBody">
+<div class="periodBoxTime">${slot.startTime || "--:--"}${slot.endTime ? ` - ${slot.endTime}` : ""}</div>
+${meta.showSubject ? `<div class="periodBoxSubject">${escapeHTML(meta.subjectText)}</div>` : ""}
+${slot.location ? `
+<div class="periodBoxLine">
+<b>Location</b>
+<span>${escapeHTML(slot.location)}</span>
+</div>
+` : ""}
+${slot.note ? `
+<div class="periodBoxLine">
+<b>Note</b>
+<span>${escapeHTML(slot.note)}</span>
+</div>
+` : ""}
+</div>
+</div>
+`;
+}).join("")}
+</div>
+</div>
+</div>
+`).join("");
+
+return;
+}
+
+list.innerHTML = slots.map((slot,index)=>{
+const meta = getSlotDisplayMeta(slot,index);
+
+return `
+<div class="slotCard">
+<div class="slotTop">
+<div>
+<div class="slotTime">${slot.startTime || "--:--"}${slot.endTime ? ` - ${slot.endTime}` : ""}</div>
+<div class="slotTitle">${escapeHTML(meta.listTitle)}</div>
+${meta.showSubject ? `<div class="slotSubject">Subject: ${escapeHTML(meta.subjectText)}</div>` : ""}
+</div>
+<span class="slotType">${escapeHTML(normalizeSlotType(slot.type || "Other"))}</span>
+</div>
+<div class="slotMeta">
+${slot.location ? `<div><b>Location:</b> ${escapeHTML(slot.location)}</div>` : ""}
+${slot.note ? `<div><b>Note:</b> ${escapeHTML(slot.note)}</div>` : ""}
+</div>
+${isViewMode() ? "" : `
+<div class="slotActions">
+<button type="button" class="miniBtn primary" data-action="edit" data-id="${slot.id}">Edit</button>
+<button type="button" class="miniBtn red" data-action="delete" data-id="${slot.id}">Delete</button>
+</div>
+`}
+</div>
+`;
+}).join("");
+
+list.querySelectorAll(".miniBtn").forEach(btn=>{
+btn.addEventListener("click",()=>{
+const slotId = btn.dataset.id;
+const action = btn.dataset.action;
+if(action === "edit"){
+startEditSlot(slotId);
+return;
+}
+deleteSlot(slotId);
+});
+});
+}
+
+function escapeHTML(value){
+return String(value ?? "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+}
+
+function startEditSlot(slotId){
+const slot = (weekData[selectedDay] || []).find(item=>item.id === slotId);
+if(!slot){
+return;
+}
+
+editingSlotId = slotId;
+document.getElementById("editorTitle").innerText = `Edit Time Slot - ${selectedDay}`;
+document.getElementById("addSlotBtn").innerText = "Update Selected Day Slot";
+document.getElementById("activityTitle").value = slot.title || "";
+document.getElementById("activitySubject").value = slot.subject || "";
+document.getElementById("activityType").value = normalizeSlotType(slot.type || "Other");
+document.getElementById("startTime").value = slot.startTime || "";
+document.getElementById("endTime").value = slot.endTime || "";
+document.getElementById("activityLocation").value = slot.location || "";
+document.getElementById("activityNote").value = slot.note || "";
+applyTypeRules();
+window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function deleteSlot(slotId){
+weekData[selectedDay] = (weekData[selectedDay] || [])
+.filter(item=>item.id !== slotId)
+.sort((a,b)=>(a.startTime || "").localeCompare(b.startTime || ""));
+
+if(editingSlotId === slotId){
+resetForm();
+}
+
+renderOverview();
+renderSelectedDay();
+setStatus("formStatus","info",`${selectedDay} timetable updated locally. Click "Save Weekly Time Table" to keep changes.`);
+}
+
+function addOrUpdateSlot(){
+const title =
+document.getElementById("activityTitle").value.trim();
+const subject =
+document.getElementById("activitySubject").value.trim();
+const type =
+normalizeSlotType(document.getElementById("activityType").value.trim());
+const startTime =
+document.getElementById("startTime").value;
+const endTime =
+document.getElementById("endTime").value;
+const location =
+document.getElementById("activityLocation").value.trim();
+const note =
+document.getElementById("activityNote").value.trim();
+const rules = getTypeRules(type);
+
+if(rules.titleRequired && !title){
+alert(type === "Exam / Test" ? "Please enter the name of exam or test." : "Please enter a batch or session name.");
+return;
+}
+
+if(rules.subjectRequired && !subject){
+alert("Please enter the subject.");
+return;
+}
+
+if(!startTime){
+alert("Please choose a start time.");
+return;
+}
+
+if(endTime && endTime < startTime){
+alert("End time should be after start time.");
+return;
+}
+
+let slots = [...(weekData[selectedDay] || [])];
+
+if(editingSlotId){
+slots = slots.map(slot=>slot.id === editingSlotId ? {
+...slot,
+title:rules.showTitle ? title : "",
+subject,
+type,
+startTime,
+endTime,
+location,
+note
+} : slot);
+}
+else{
+slots.push({
+id:`${selectedDay}-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,
+title:rules.showTitle ? title : "",
+subject,
+type,
+startTime,
+endTime,
+location,
+note,
+createdAt:Date.now()
+});
+}
+
+weekData[selectedDay] = slots
+.sort((a,b)=>(a.startTime || "").localeCompare(b.startTime || ""));
+
+renderOverview();
+renderSelectedDay();
+
+setStatus(
+"formStatus",
+"info",
+editingSlotId
+? `${selectedDay} slot updated locally. Click "Save Weekly Time Table" to save it permanently.`
+: `${(rules.showTitle ? title : subject) || type} added to ${selectedDay}. Click "Save Weekly Time Table" to save it permanently.`
+);
+
+resetForm();
+}
+
+function clearSelectedDay(){
+if(!(weekData[selectedDay] || []).length){
+alert(`No slot added for ${selectedDay} yet.`);
+return;
+}
+
+if(!confirm(`Clear all timetable entries for ${selectedDay}?`)){
+return;
+}
+
+weekData[selectedDay] = [];
+resetForm();
+renderOverview();
+renderSelectedDay();
+setStatus("formStatus","info",`${selectedDay} has been cleared locally. Save the weekly timetable to apply it.`);
+}
+
+function resetUnsavedChanges(){
+if(isViewMode()){
+window.location.href = "teacher-timetable.html?mode=edit";
+return;
+}
+
+if(!confirm("Reset all unsaved timetable changes and reload the last saved weekly schedule?")){
+return;
+}
+
+weekData = cloneWeek(savedWeekData);
+selectedDay = getTodayName();
+resetForm();
+renderOverview();
+renderDayTabs();
+renderSelectedDay();
+setStatus("formStatus","info","Unsaved changes were cleared. The last saved timetable is now restored.");
+}
+
+async function saveWeekData(){
+const btn = document.getElementById("saveTableBtn");
+btn.disabled = true;
+btn.innerText = "Saving...";
+
+try{
+await update(ref(db,profilePath),{
+timeTable:weekData,
+timeTableUpdatedAt:Date.now()
+});
+
+savedWeekData = cloneWeek(weekData);
+
+setStatus("saveStatus","success","Weekly time table saved successfully.");
+setStatus("formStatus","success",`${ownerLabel} weekly schedule is now saved and linked with your dashboard.`);
+}
+catch(err){
+console.log(err);
+setStatus("saveStatus","info",err.message || "Unable to save weekly time table right now.");
+}
+finally{
+btn.disabled = false;
+btn.innerText = "Save Weekly Time Table";
+}
+}
+
+async function loadTimeTable(){
+try{
+const snap = await get(ref(db,profilePath));
+
+if(!snap.exists()){
+alert(`${ownerLabel} profile not found.`);
+window.location.href = "teacher-dashboard.html";
+return;
+}
+
+const data = snap.val() || {};
+weekData = normalizeWeek(data.timeTable || {});
+savedWeekData = cloneWeek(weekData);
+selectedDay = getTodayName();
+
+renderOverview();
+renderDayTabs();
+renderSelectedDay();
+
+if(DAYS.every(day=>!weekData[day].length)){
+setStatus("formStatus","info","No weekly timetable saved yet.");
+}
+else{
+setStatus("formStatus","success","Your saved weekly timetable is loaded below.");
+}
+}
+catch(err){
+console.log(err);
+alert("Unable to load time table right now.");
+}
+}
+
+function applyPageMode(){
+document.querySelector("header h1").innerText =
+`${ownerLabel} Weekly Time Table`;
+
+if(!isViewMode()){
+document.title = `Edit ${ownerLabel} Time Table - GURULINK`;
+document.querySelector("header p").innerText =
+"Plan your classes, batches, demo sessions, and teaching schedule in one place.";
+return;
+}
+
+document.title = `Show ${ownerLabel} Time Table - GURULINK`;
+document.querySelector("header p").innerText =
+"View your full weekly class, batch, and teaching schedule.";
+
+document.getElementById("editorCard").style.display = "none";
+document.getElementById("saveTableBtn").style.display = "none";
+document.getElementById("saveStatus").style.display = "none";
+document.getElementById("resetTableBtn").innerText = "Edit Time Table";
+document.getElementById("resetTableBtn").className = "btn primary";
+}
+
+document.getElementById("addSlotBtn").addEventListener("click",addOrUpdateSlot);
+document.getElementById("clearFormBtn").addEventListener("click",resetForm);
+document.getElementById("clearDayBtn").addEventListener("click",clearSelectedDay);
+document.getElementById("saveTableBtn").addEventListener("click",saveWeekData);
+document.getElementById("resetTableBtn").addEventListener("click",resetUnsavedChanges);
+document.getElementById("backDashboardBtn").addEventListener("click",()=>{
+window.location.href = "teacher-dashboard.html";
+});
+document.getElementById("activityType").addEventListener("change",applyTypeRules);
+
+applyPageMode();
+applyTypeRules();
+
+onAuthStateChanged(auth,(user)=>{
+if(!user){
+window.location.href = "otp-login.html";
+return;
+}
+
+loadTimeTable();
+});
+</script>
+
+</body>
+</html>
