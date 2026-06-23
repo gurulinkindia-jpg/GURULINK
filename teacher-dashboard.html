@@ -200,10 +200,10 @@ vertical-align:middle;
 
 /* BUTTONS */
 
-/* PC: 7 buttons in one row */
+/* PC: 8 buttons in one row */
 .mainBtns{
   display:grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(8, 1fr);
   gap:10px;
 }
 
@@ -251,6 +251,10 @@ background:#ff9800;
 
 .feeBtn{
 background:#5e35b1;
+}
+
+.timeTableBtn{
+background:#00897b;
 }
 
 .logoutBtn{
@@ -866,6 +870,10 @@ Quick Actions
 
   <button class="feeBtn" onclick="openFeeStructure()">
     Fee Structure
+  </button>
+
+  <button class="timeTableBtn" onclick="openTimeTable()">
+    Time Table
   </button>
 
   <button class="supportBtn" onclick="contactDeveloper()">
@@ -1766,6 +1774,46 @@ window.openFeeStructure = function(){
     "&category=" +
     encodeURIComponent(category);
 
+};
+
+window.openTimeTable = function(){
+  const id =
+    profileId ||
+    localStorage.getItem("profileId") ||
+    localStorage.getItem("teacherId") ||
+    localStorage.getItem("institutionId");
+
+  const type =
+    role === "institution"
+      ? "institution"
+      : "teacher";
+
+  if (!id || id === "null" || id === "undefined") {
+    alert("Profile ID missing. Please login again.");
+    return;
+  }
+
+  localStorage.setItem("profileId", id);
+  localStorage.setItem("role", type);
+  localStorage.setItem("uid", id);
+
+  sessionStorage.setItem("profileId", id);
+  sessionStorage.setItem("role", type);
+  sessionStorage.setItem("uid", id);
+
+  if (type === "teacher") {
+    localStorage.setItem("teacherId", id);
+    sessionStorage.setItem("teacherId", id);
+  } else {
+    localStorage.setItem("institutionId", id);
+    sessionStorage.setItem("institutionId", id);
+  }
+
+  location.href =
+    "teacher-timetable.html?mode=edit&id=" +
+    encodeURIComponent(id) +
+    "&role=" +
+    encodeURIComponent(type);
 };
 
 window.createInvoice = function () {
