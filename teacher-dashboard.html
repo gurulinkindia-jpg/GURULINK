@@ -1071,17 +1071,6 @@ location.href="login.html";
 }
 
 function ensureTimeTableButton(){
-  const cleanRole =
-    String(role || "").toLowerCase().trim();
-
-  if(
-    cleanRole !== "teacher" &&
-    cleanRole !== "teacher_institute" &&
-    cleanRole !== "institution"
-  ){
-    return;
-  }
-
   const actionsBox =
     document.querySelector(".mainBtns");
 
@@ -1100,17 +1089,18 @@ function ensureTimeTableButton(){
     btn.innerText = "Time Table";
     btn.setAttribute("onclick","openTimeTable()");
 
-    const feeBtn =
-      actionsBox.querySelector(".feeBtn");
+    const shareBtn =
+      actionsBox.querySelector(".shareBtn");
 
-    if(feeBtn && feeBtn.nextSibling){
-      actionsBox.insertBefore(btn, feeBtn.nextSibling);
+    if(shareBtn){
+      actionsBox.insertBefore(btn, shareBtn);
     }else{
       actionsBox.appendChild(btn);
     }
   }
 
   btn.style.display = "block";
+  btn.hidden = false;
 }
 
 ensureTimeTableButton();
@@ -1288,6 +1278,8 @@ document.getElementById(
 "content"
 ).style.display=
 "block";
+
+ensureTimeTableButton();
 
 }
 
@@ -1860,6 +1852,8 @@ window.openTimeTable = function(){
     "&role=" +
     encodeURIComponent(type);
 };
+
+setTimeout(ensureTimeTableButton, 0);
 
 window.createInvoice = function () {
   const id =
