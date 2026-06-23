@@ -670,7 +670,8 @@ const hiddenFields = [
 "publicVisibility",
 "renewalStatus",
 "lastRenewalDate",
-"updatedAt"
+"updatedAt",
+"storageOwnerUid"
 
 ];
 
@@ -1269,6 +1270,18 @@ return "teachers";
 return "institutions";
 }
 
+function getStorageOwnerUid(){
+if(currentUser && currentUser.uid){
+return currentUser.uid;
+}
+
+if(profileData && profileData.storageOwnerUid){
+return String(profileData.storageOwnerUid);
+}
+
+return String(profileId || "");
+}
+
 async function deleteStoragePath(path){
 if(!path){
 return;
@@ -1352,7 +1365,11 @@ quality: 0.82
 );
 
 const storageRoot = getStorageRoot();
-const fileRef = storageRef(storage, storageRoot + "/" + profileId + "/" + folder + "/" + makeStorageFileName(uploadFile));
+const storageOwnerUid = getStorageOwnerUid();
+const fileRef = storageRef(
+storage,
+storageRoot + "/" + storageOwnerUid + "/" + folder + "/" + makeStorageFileName(uploadFile)
+);
 await uploadWithRetry(fileRef, uploadFile, {
 contentType: uploadFile.type || file.type || "application/octet-stream"
 });
@@ -1368,8 +1385,9 @@ quality:0.82
 });
 
 const storageRoot = getStorageRoot();
+const storageOwnerUid = getStorageOwnerUid();
 const storagePath =
-storageRoot + "/" + profileId + "/" + folder + "/" + makeStorageFileName(uploadFile);
+storageRoot + "/" + storageOwnerUid + "/" + folder + "/" + makeStorageFileName(uploadFile);
 
 const fileRef =
 storageRef(storage, storagePath);
@@ -1690,6 +1708,9 @@ saveBtn.innerText="Saving...";
 /* START WITH EXISTING DATA */
 
 let updateData = {...profileData};
+
+updateData.storageOwnerUid =
+getStorageOwnerUid();
 
 if(!isStudentRole){
 updateData.profileImages =
