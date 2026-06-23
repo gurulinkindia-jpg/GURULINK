@@ -200,16 +200,16 @@ vertical-align:middle;
 
 /* BUTTONS */
 
-/* PC: 8 buttons in one row */
+/* PC: responsive button grid */
 .mainBtns{
   display:grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(auto-fit,minmax(140px,1fr));
   gap:10px;
 }
 
 /* Share button normal width on PC */
 .mainBtns .full{
-  grid-column: span 1;
+  grid-column: span 2;
 }
 
 /* MOBILE: 2-column layout */
@@ -872,7 +872,7 @@ Quick Actions
     Fee Structure
   </button>
 
-  <button class="timeTableBtn" onclick="openTimeTable()">
+  <button id="timeTableActionBtn" class="timeTableBtn" onclick="openTimeTable()">
     Time Table
   </button>
 
@@ -1069,6 +1069,51 @@ alert("Please Login");
 location.href="login.html";
 
 }
+
+function ensureTimeTableButton(){
+  const cleanRole =
+    String(role || "").toLowerCase().trim();
+
+  if(
+    cleanRole !== "teacher" &&
+    cleanRole !== "teacher_institute" &&
+    cleanRole !== "institution"
+  ){
+    return;
+  }
+
+  const actionsBox =
+    document.querySelector(".mainBtns");
+
+  if(!actionsBox){
+    return;
+  }
+
+  let btn =
+    document.getElementById("timeTableActionBtn");
+
+  if(!btn){
+    btn = document.createElement("button");
+    btn.id = "timeTableActionBtn";
+    btn.className = "timeTableBtn";
+    btn.type = "button";
+    btn.innerText = "Time Table";
+    btn.setAttribute("onclick","openTimeTable()");
+
+    const feeBtn =
+      actionsBox.querySelector(".feeBtn");
+
+    if(feeBtn && feeBtn.nextSibling){
+      actionsBox.insertBefore(btn, feeBtn.nextSibling);
+    }else{
+      actionsBox.appendChild(btn);
+    }
+  }
+
+  btn.style.display = "block";
+}
+
+ensureTimeTableButton();
 
 
 
