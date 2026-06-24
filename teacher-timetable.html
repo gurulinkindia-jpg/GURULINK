@@ -538,6 +538,11 @@ Use this for individual coaching, group batches, home tuition, online class, tra
 <input id="activityLocation" type="text" placeholder="Example: Main Branch, Beltola Centre, Student Home, Zoom, Online Batch">
 </div>
 
+<div class="field" id="activityTeacherField" style="display:none;">
+<label for="activityTeacherName">Teacher / Trainer Name</label>
+<input id="activityTeacherName" type="text" placeholder="Example: Mr. Sharma, Ms. Das, Coach Amit">
+</div>
+
 <div class="field full">
 <label for="activityNote">Note</label>
 <textarea id="activityNote" placeholder="Example: Bring worksheet, Zoom link, test paper, sports kit, batch reminder"></textarea>
@@ -662,6 +667,63 @@ const ownerLabel =
 isInstitutionRole
 ? "Institution"
 : "Teacher";
+
+function applyRoleSpecificLayout(){
+const topTitle =
+document.querySelector("header h1");
+
+const topText =
+document.querySelector("header p");
+
+const introMuted =
+document.querySelector("#editorCard .muted");
+
+const teacherField =
+document.getElementById("activityTeacherField");
+
+const locationLabel =
+document.querySelector('label[for="activityLocation"]');
+
+const locationInput =
+document.getElementById("activityLocation");
+
+if(isInstitutionRole){
+if(topTitle){
+topTitle.innerText =
+"Institution Weekly Time Table";
+}
+
+if(topText){
+topText.innerText =
+"Plan batches, classrooms, assigned teachers, and institution schedules in one place.";
+}
+
+if(introMuted){
+introMuted.innerText =
+"Use this for institution batches, assigned teacher sessions, demo classes, online batches, breaks, or tests.";
+}
+
+if(teacherField){
+teacherField.style.display = "flex";
+}
+
+if(locationLabel){
+locationLabel.innerText =
+"Location / Branch / Room / Platform";
+}
+
+if(locationInput){
+locationInput.placeholder =
+"Example: Main Branch, Room 2, Beltola Centre, Zoom, Computer Lab";
+}
+
+return;
+}
+
+if(teacherField){
+teacherField.style.display = "none";
+}
+}
 
 localStorage.setItem("uid",profileId);
 localStorage.setItem("profileId",profileId);
@@ -843,6 +905,7 @@ type:normalizeSlotType(slot.type || "Other"),
 startTime:String(slot.startTime || "").trim(),
 endTime:String(slot.endTime || "").trim(),
 location:String(slot.location || "").trim(),
+teacherName:String(slot.teacherName || "").trim(),
 note:String(slot.note || "").trim(),
 createdAt:Number(slot.createdAt || Date.now() + index)
 }))
@@ -869,6 +932,7 @@ document.getElementById("activityType").value = "Individual Coaching";
 document.getElementById("startTime").value = "";
 document.getElementById("endTime").value = "";
 document.getElementById("activityLocation").value = "";
+document.getElementById("activityTeacherName").value = "";
 document.getElementById("activityNote").value = "";
 applyTypeRules();
 }
@@ -1025,6 +1089,12 @@ return `
 <div class="periodBoxBody">
 <div class="periodBoxTime">${slot.startTime || "--:--"}${slot.endTime ? ` - ${slot.endTime}` : ""}</div>
 ${meta.showSubject ? `<div class="periodBoxSubject">${escapeHTML(meta.subjectText)}</div>` : ""}
+${slot.teacherName ? `
+<div class="periodBoxLine">
+<b>Teacher</b>
+<span>${escapeHTML(slot.teacherName)}</span>
+</div>
+` : ""}
 ${slot.location ? `
 <div class="periodBoxLine">
 <b>Location</b>
@@ -1063,6 +1133,7 @@ ${meta.showSubject ? `<div class="slotSubject">Subject: ${escapeHTML(meta.subjec
 <span class="slotType">${escapeHTML(normalizeSlotType(slot.type || "Other"))}</span>
 </div>
 <div class="slotMeta">
+${slot.teacherName ? `<div><b>Teacher:</b> ${escapeHTML(slot.teacherName)}</div>` : ""}
 ${slot.location ? `<div><b>Location:</b> ${escapeHTML(slot.location)}</div>` : ""}
 ${slot.note ? `<div><b>Note:</b> ${escapeHTML(slot.note)}</div>` : ""}
 </div>
@@ -1113,6 +1184,7 @@ document.getElementById("activityType").value = normalizeSlotType(slot.type || "
 document.getElementById("startTime").value = slot.startTime || "";
 document.getElementById("endTime").value = slot.endTime || "";
 document.getElementById("activityLocation").value = slot.location || "";
+document.getElementById("activityTeacherName").value = slot.teacherName || "";
 document.getElementById("activityNote").value = slot.note || "";
 applyTypeRules();
 window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1145,6 +1217,8 @@ const endTime =
 document.getElementById("endTime").value;
 const location =
 document.getElementById("activityLocation").value.trim();
+const teacherName =
+document.getElementById("activityTeacherName").value.trim();
 const note =
 document.getElementById("activityNote").value.trim();
 const rules = getTypeRules(type);
@@ -1180,6 +1254,7 @@ type,
 startTime,
 endTime,
 location,
+teacherName,
 note
 } : slot);
 }
@@ -1192,6 +1267,7 @@ type,
 startTime,
 endTime,
 location,
+teacherName,
 note,
 createdAt:Date.now()
 });
@@ -1309,19 +1385,30 @@ alert("Unable to load time table right now.");
 }
 
 function applyPageMode(){
+applyRoleSpecificLayout();
+
+if(!isInstitutionRole){
 document.querySelector("header h1").innerText =
 `${ownerLabel} Weekly Time Table`;
+}
 
 if(!isViewMode()){
 document.title = `Edit ${ownerLabel} Time Table - GURULINK`;
+if(!isInstitutionRole){
 document.querySelector("header p").innerText =
 "Plan your classes, batches, demo sessions, and teaching schedule in one place.";
+}
 return;
 }
 
 document.title = `Show ${ownerLabel} Time Table - GURULINK`;
+document.querySelector("header h1").innerText =
+`${ownerLabel} Weekly Time Table`;
+
 document.querySelector("header p").innerText =
-"View your full weekly class, batch, and teaching schedule.";
+isInstitutionRole
+? "View your full weekly institution schedule with assigned teachers and batches."
+: "View your full weekly class, batch, and teaching schedule.";
 
 document.getElementById("editorCard").style.display = "none";
 document.getElementById("saveTableBtn").style.display = "none";
