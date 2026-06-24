@@ -462,7 +462,7 @@ width:auto;
 <div class="settingRow">
 <div class="settingInfo">
 <b>Change Password</b>
-<span>A password reset link will be sent to your registered email.</span>
+<span>Password reset works only for the email/password account linked with this profile. OTP-only login may not receive a reset email.</span>
 </div>
 <button class="actionBtn" onclick="changePassword()">Change</button>
 </div>
@@ -728,23 +728,44 @@ location.href = "index.html";
 };
 
 window.changePassword = async function(){
-const email =
+const authEmail = currentUser?.email || "";
+const profileEmail =
 profileData.email ||
-currentUser?.email ||
 localStorage.getItem("email") ||
 "";
 
+const email = authEmail || profileEmail;
+const providerIds = Array.isArray(currentUser?.providerData)
+? currentUser.providerData.map(item=>item?.providerId).filter(Boolean)
+: [];
+const hasPasswordProvider = providerIds.includes("password");
+
 if(!email){
-alert("Email is not available. Please login with email or contact support.");
+alert("No email address is available for password reset. If you use OTP login only, please contact support.");
 return;
 }
 
 try{
 await sendPasswordResetEmail(auth,email);
-alert("Password reset link sent to " + email);
+
+if(authEmail || hasPasswordProvider){
+alert(
+"Password reset link sent to " + email +
+". If it is not in Inbox, please check Spam or Promotions."
+);
+}
+else{
+alert(
+"If " + email + " is registered as an email/password login in GURULINK, a password reset link will be sent. If no email arrives, this account may currently be using OTP login only or a different email may have been used for registration."
+);
+}
 }
 catch(err){
-alert(err.message);
+if(err.code === "auth/invalid-email"){
+alert("This email address is not valid for password reset.");
+return;
+}
+alert(err.message || "Unable to send password reset email right now.");
 }
 };
 
