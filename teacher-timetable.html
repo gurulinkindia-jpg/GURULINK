@@ -748,9 +748,9 @@ localStorage.setItem("institutionId",profileId);
 }
 
 const pageMode =
-new URLSearchParams(window.location.search).get("mode") === "view"
-? "view"
-: "edit";
+new URLSearchParams(window.location.search).get("mode") === "edit"
+? "edit"
+: "view";
 
 const DAYS = [
 "Monday",
