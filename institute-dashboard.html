@@ -873,7 +873,7 @@ Quick Actions
   </button>
 
   <button id="timeTableActionBtn" class="timeTableBtn" onclick="openTimeTable()">
-    Time Table
+    Show Time Table
   </button>
 
   <button class="supportBtn" onclick="contactDeveloper()">
@@ -1086,7 +1086,7 @@ function ensureTimeTableButton(){
     btn.id = "timeTableActionBtn";
     btn.className = "timeTableBtn";
     btn.type = "button";
-    btn.innerText = "Time Table";
+    btn.innerText = "Show Time Table";
     btn.setAttribute("onclick","openTimeTable()");
 
     const shareBtn =
@@ -1847,7 +1847,7 @@ window.openTimeTable = function(){
   }
 
   location.href =
-    "teacher-timetable.html?mode=edit&id=" +
+    "teacher-timetable.html?mode=view&id=" +
     encodeURIComponent(id) +
     "&role=" +
     encodeURIComponent(type);
@@ -2227,5 +2227,3 @@ profileId;
 
 </body>
 </html>
-
-
