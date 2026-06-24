@@ -39,6 +39,21 @@ margin-bottom:14px;
 box-shadow:0 5px 18px rgba(0,0,0,.08);
 }
 
+.overviewCard{
+background:linear-gradient(135deg,#e8f4ff,#f8fbff);
+border:1px solid #cfe3ff;
+}
+
+.chooseDayCard{
+background:linear-gradient(135deg,#eefaf3,#fbfffd);
+border:1px solid #cfead9;
+}
+
+#editorCard{
+background:linear-gradient(135deg,#fff8e8,#fffdf8);
+border:1px solid #ffe0a8;
+}
+
 .sectionTitle{
 font-size:22px;
 color:#1565c0;
@@ -74,19 +89,20 @@ font-weight:bold;
 .dayTabs{
 display:grid;
 grid-template-columns:repeat(7,minmax(0,1fr));
-gap:6px;
+gap:5px;
 margin-top:10px;
 }
 
 .dayBtn{
-padding:10px 8px;
+padding:8px 4px;
 border:1px solid #cfd8e3;
 border-radius:12px;
 background:#f7fafc;
 color:#334155;
-font-size:13px;
+font-size:12px;
 font-weight:bold;
 cursor:pointer;
+min-height:40px;
 }
 
 .dayBtn.active{
@@ -471,22 +487,16 @@ grid-auto-columns:minmax(130px,1fr);
 
 <div class="container">
 
-<div class="card">
+<div class="card overviewCard">
 <div class="todayBanner">
-<div>
 <div class="sectionTitle">This Week at a Glance</div>
-<div class="muted">
-Create your weekly routine and keep important classes, training sessions, and self-study neatly organised.
-</div>
-</div>
 <div class="todayBadge" id="todayBadge">Today: Loading...</div>
 </div>
 
 </div>
 
-<div class="card">
+<div class="card chooseDayCard">
 <div class="sectionTitle">Choose Day</div>
-<div class="muted">Tap a day below, then add your timings for that day.</div>
 <div class="dayTabs" id="dayTabs"></div>
 </div>
 
@@ -629,6 +639,16 @@ const DAYS = [
 "Saturday",
 "Sunday"
 ];
+
+const DAY_SHORT_LABELS = {
+Monday:"Mon",
+Tuesday:"Tue",
+Wednesday:"Wed",
+Thursday:"Thu",
+Friday:"Fri",
+Saturday:"Sat",
+Sunday:"Sun"
+};
 
 const todayIndexMap = {
 1:"Monday",
@@ -882,7 +902,7 @@ box.innerHTML = DAYS.map(day=>`
 type="button"
 class="dayBtn ${day === selectedDay ? "active" : ""}"
 data-day="${day}">
-${day}
+${DAY_SHORT_LABELS[day] || day.slice(0,3)}
 </button>
 `).join("");
 
