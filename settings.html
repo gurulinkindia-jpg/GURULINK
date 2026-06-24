@@ -541,20 +541,53 @@ const auth = getAuth(app);
 
 let currentUser = null;
 let profileData = {};
-
-const role =
+let resolvedRole =
 (localStorage.getItem("role") || "guest").toLowerCase();
-
-const profileId =
-localStorage.getItem("profileId") ||
-localStorage.getItem("uid") ||
-"";
 
 function setText(id,value){
 document.getElementById(id).textContent = value || "Not available";
 }
 
-function setProfile(data,user){
+function formatRoleLabel(value){
+const role = String(value || "guest").trim().toLowerCase();
+if(role === "parent") return "STUDENT/PARENT";
+if(role === "student") return "STUDENT";
+if(role === "teacher") return "TEACHER";
+if(role === "institution") return "INSTITUTION";
+if(role === "admin") return "ADMIN";
+return role ? role.toUpperCase() : "GUEST";
+}
+
+function getStoredProfileId(user){
+return localStorage.getItem("profileId") ||
+localStorage.getItem("teacherId") ||
+localStorage.getItem("institutionId") ||
+localStorage.getItem("studentId") ||
+localStorage.getItem("uid") ||
+(user ? user.uid : "") ||
+"";
+}
+
+function getProfileImage(data){
+const profileImages = Array.isArray(data.profileImages) ? data.profileImages : [];
+const primaryImage = profileImages.find(item=>item && item.url && item.isPrimary);
+const backupImage = profileImages.find(item=>item && item.url);
+
+return data.profilePic ||
+data.logo ||
+data.profilePhoto ||
+data.photo ||
+data.image ||
+(primaryImage ? primaryImage.url : "") ||
+(backupImage ? backupImage.url : "") ||
+localStorage.getItem("profilePhoto") ||
+"https://i.ibb.co/4pDNDk1/user.png";
+}
+
+function setProfile(data,user,displayRole){
+const roleLabel = displayRole || data.role || resolvedRole || "guest";
+resolvedRole = String(roleLabel || "guest").toLowerCase();
+
 const name =
 data.name ||
 data.ownerName ||
@@ -575,49 +608,89 @@ user?.phoneNumber ||
 localStorage.getItem("phone") ||
 "Not available";
 
-const image =
-data.profilePic ||
-data.logo ||
-data.photo ||
-"https://i.ibb.co/4pDNDk1/user.png";
+const image = getProfileImage(data);
 
 document.getElementById("profileImg").src = image;
 setText("displayName",name);
 setText("displayEmail",email);
-setText("displayRole",(role || "guest").toUpperCase());
+setText("displayRole",formatRoleLabel(roleLabel));
 setText("accountName",name);
 setText("accountEmail",email);
 setText("accountPhone",phone);
+
+localStorage.setItem("role",resolvedRole);
+localStorage.setItem("name",name);
+if(email && email !== "Not available") localStorage.setItem("email",email);
+if(phone && phone !== "Not available") localStorage.setItem("phone",phone);
+if(image) localStorage.setItem("profilePhoto",image);
 }
 
 async function loadProfile(user){
 let data = {};
+let foundRole = "";
+let foundProfileId = "";
 
-if(profileId){
-const paths = [];
+const storedRole =
+String(localStorage.getItem("role") || "").trim().toLowerCase();
 
-if(role === "teacher"){
-paths.push("teachers/" + profileId);
-}
-else if(role === "institution"){
-paths.push("institutions/" + profileId);
-}
-else{
-paths.push("students/" + profileId);
+const candidateIds = [
+getStoredProfileId(user),
+user ? user.uid : ""
+].filter(Boolean);
+
+const candidates = [];
+const addCandidate = (path, roleName)=>{
+if(!path) return;
+candidates.push({ path, roleName });
+};
+
+for(const candidateId of candidateIds){
+if(storedRole === "teacher") addCandidate("teachers/" + candidateId,"teacher");
+if(storedRole === "institution") addCandidate("institutions/" + candidateId,"institution");
+if(storedRole === "student" || storedRole === "parent") addCandidate("students/" + candidateId,"student");
+
+addCandidate("teachers/" + candidateId,"teacher");
+addCandidate("institutions/" + candidateId,"institution");
+addCandidate("students/" + candidateId,"student");
+addCandidate("users/" + candidateId,"user");
 }
 
-paths.push("users/" + profileId);
+const tried = new Set();
 
-for(const path of paths){
-const snap = await get(ref(db,path));
-if(snap.exists()){
-data = {...data,...snap.val()};
+for(const candidate of candidates){
+if(!candidate.path || tried.has(candidate.path)) continue;
+tried.add(candidate.path);
+
+try{
+const snap = await get(ref(db,candidate.path));
+if(!snap.exists()) continue;
+
+const value = snap.val() || {};
+data = { ...data, ...value };
+
+if(!foundRole && candidate.roleName !== "user"){
+foundRole = value.role || candidate.roleName;
 }
+
+if(!foundProfileId){
+foundProfileId = value.uid || candidate.path.split("/").pop() || "";
+}
+}
+catch(err){
+console.log("Settings profile load failed for", candidate.path, err);
 }
 }
 
 profileData = data;
-setProfile(profileData,user);
+
+if(foundProfileId){
+localStorage.setItem("profileId",foundProfileId);
+}
+else if(user?.uid){
+localStorage.setItem("profileId",user.uid);
+}
+
+setProfile(profileData,user,foundRole || data.role || storedRole || "guest");
 }
 
 const savedTheme = localStorage.getItem("theme");
