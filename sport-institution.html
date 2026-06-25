@@ -984,8 +984,8 @@ updateSelectedSkills();
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
 
 const firebaseConfig = {
@@ -1003,6 +1003,60 @@ const db = getDatabase(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
 const form = document.getElementById("form");
+
+async function createOrResumeRegistrationUser(email,password,collectionName,roleName){
+try{
+return await createUserWithEmailAndPassword(auth,email,password);
+}
+catch(err){
+if(err.code !== "auth/email-already-in-use"){
+throw err;
+}
+
+try{
+const userCred = await signInWithEmailAndPassword(auth,email,password);
+const uid = userCred.user.uid;
+
+const userSnap = await get(ref(db,"users/" + uid));
+const profileSnap = await get(ref(db,collectionName + "/" + uid));
+
+const existingUser = userSnap.exists() ? (userSnap.val() || {}) : {};
+const existingProfile = profileSnap.exists() ? (profileSnap.val() || {}) : {};
+const existingRole = String(existingProfile.role || existingUser.role || "").trim().toLowerCase();
+
+if(existingRole && existingRole !== roleName){
+const roleErr = new Error("This email is already linked with a different GURULINK account type.");
+roleErr.code = "registration/different-role";
+throw roleErr;
+}
+
+if(existingProfile.paymentStatus === "paid" || existingProfile.status === "approved"){
+const activeErr = new Error("This email is already registered and active.");
+activeErr.code = "registration/already-complete";
+throw activeErr;
+}
+
+return userCred;
+}
+catch(signInErr){
+if(signInErr.code === "registration/different-role" || signInErr.code === "registration/already-complete"){
+throw signInErr;
+}
+
+if(
+signInErr.code === "auth/invalid-credential" ||
+signInErr.code === "auth/wrong-password" ||
+signInErr.code === "auth/invalid-login-credentials"
+){
+const passwordErr = new Error("This email already exists. Use the same password that was used earlier to continue the incomplete registration, or login instead.");
+passwordErr.code = "registration/password-mismatch";
+throw passwordErr;
+}
+
+throw signInErr;
+}
+}
+}
 
 function makeStorageFileName(file){
 const originalName = (file && file.name ? file.name : "image").replace(/[^a-zA-Z0-9._-]/g,"_");
@@ -1134,7 +1188,7 @@ submitBtn.innerText="Continue To Payment";
 return;
 }
 
-const userCred = await createUserWithEmailAndPassword(auth,email,password);
+const userCred = await createOrResumeRegistrationUser(email,password,"institutions","institution");
 const uid = userCred.user.uid;
 await auth.currentUser.getIdToken(true);
 
