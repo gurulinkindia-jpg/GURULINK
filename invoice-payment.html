@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GURULINK Invoice Feature Payment</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#eef2f7;min-height:100vh;min-height:100dvh;padding:20px;display:flex;align-items:center;justify-content:center;color:#1f2933}
+.container{width:100%;max-width:500px;background:white;padding:26px;border-radius:15px;text-align:center;box-shadow:0 5px 15px rgba(0,0,0,.15)}
+h2{margin:0 0 10px;font-size:24px;color:#1f2933;line-height:1.25}
+p{font-size:14px;line-height:1.55;color:#4b5563;margin:10px 0}.amount{font-size:25px;font-weight:bold;margin:20px 0;color:#0f766e;word-break:break-word}button{width:100%;min-height:48px;padding:14px;border:none;border-radius:10px;background:#1b5e20;color:white;font-size:16px;font-weight:bold;cursor:pointer}button:disabled{opacity:.75;cursor:not-allowed}.note{background:#fff8e1;border:1px solid #ffe082;border-radius:10px;padding:10px;color:#5d4037;font-size:13px}
+@media(max-width:480px){body{padding:12px;align-items:flex-start;padding-top:calc(env(safe-area-inset-top) + 24px)}.container{padding:20px;border-radius:14px}h2{font-size:21px}.amount{font-size:22px;margin:18px 0}button{font-size:15px;min-height:46px}}
+</style>
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
+</head>
+<body>
+<div class="container">
+<h2>Activate Create Invoice</h2>
+<p>This is an additional GURULINK feature for teachers and institutions.</p>
+<div id="feeText" class="amount"></div>
+<p class="note">After successful payment, Create Invoice will be activated automatically for this profile.</p>
+<button id="payBtn">Continue To Payment</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const params = new URLSearchParams(window.location.search);
+
+const amount = 1500;
+
+const invoicePaymentLinks = {
+  teacher: "https://rzp.io/rzp/yrSjZQN4",
+  institution: "https://rzp.io/rzp/yrSjZQN4"
+};
+
+function cleanValue(value){
+  if(!value) return "";
+  value = String(value).trim();
+  if(value === "null" || value === "undefined" || value === "..." || value === "[object Object]") return "";
+  return value;
+}
+
+let type = cleanValue(
+  params.get("type") ||
+  localStorage.getItem("invoicePaymentRole") ||
+  localStorage.getItem("invoiceRole") ||
+  localStorage.getItem("role") ||
+  "teacher"
+).toLowerCase();
+
+if(type === "teacher_institute") type = "teacher";
+
+let id = cleanValue(
+  params.get("id") ||
+  localStorage.getItem("invoicePaymentProfileId") ||
+  localStorage.getItem("invoiceProfileId") ||
+  localStorage.getItem("profileId") ||
+  localStorage.getItem("teacherId") ||
+  localStorage.getItem("institutionId") ||
+  ""
+);
+
+if(!id){
+  alert("Profile ID missing. Please open invoice activation from your dashboard.");
+  throw new Error("Missing profileId");
+}
+
+if(type !== "teacher" && type !== "institution"){
+  alert("Invalid account type: " + type);
+  throw new Error("Invalid type");
+}
+
+function savePaymentData(){
+  localStorage.setItem("profileId", id);
+  localStorage.setItem("invoicePaymentProfileId", id);
+  localStorage.setItem("invoiceProfileId", id);
+  localStorage.setItem("role", type);
+  localStorage.setItem("invoicePaymentRole", type);
+  localStorage.setItem("invoiceRole", type);
+
+  sessionStorage.setItem("profileId", id);
+  sessionStorage.setItem("invoicePaymentProfileId", id);
+  sessionStorage.setItem("invoiceProfileId", id);
+  sessionStorage.setItem("role", type);
+  sessionStorage.setItem("invoicePaymentRole", type);
+  sessionStorage.setItem("invoiceRole", type);
+}
+
+function createToken(){
+  return "invoice_feature_" + type + "_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+}
+
+async function createPaymentLink(){
+  const paymentBaseUrl = invoicePaymentLinks[type];
+
+  if(!paymentBaseUrl || paymentBaseUrl.includes("PASTE_RAZORPAY")){
+    throw new Error("Razorpay Rs.1500 invoice feature payment link is not added yet.");
+  }
+
+  const token = createToken();
+  const pendingData = {
+    token: token,
+    profileId: id,
+    type: type,
+    flow: "invoice_feature",
+    amount: amount,
+    status: "pending",
+    createdAt: Date.now()
+  };
+
+  await set(ref(db, "pendingPayments/" + token), pendingData);
+  await set(ref(db, "pendingInvoiceFeaturePaymentsLatest/" + type), pendingData);
+
+  const successUrl =
+    "https://www.gurulink.co.in/invoice-payment-success.html?token=" +
+    encodeURIComponent(token) +
+    "&type=" +
+    encodeURIComponent(type);
+
+  return paymentBaseUrl +
+    "?redirect=true" +
+    "&reference_id=" + encodeURIComponent(token) +
+    "&redirect_url=" + encodeURIComponent(successUrl);
+}
+
+document.getElementById("feeText").innerText = "Invoice Feature Fee Rs." + amount;
+
+document.getElementById("payBtn").onclick = async function(){
+  const btn = document.getElementById("payBtn");
+  try{
+    btn.disabled = true;
+    btn.innerText = "Opening Payment...";
+    savePaymentData();
+    const paymentLink = await createPaymentLink();
+    setTimeout(function(){ window.location.href = paymentLink; }, 300);
+  }catch(err){
+    alert("Unable to start payment: " + err.message);
+    btn.disabled = false;
+    btn.innerText = "Continue To Payment";
+  }
+};
+</script>
+</body>
+</html>

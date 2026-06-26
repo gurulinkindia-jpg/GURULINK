@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover">
+<title>Invoice Feature Payment Success</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#eef2f7;display:flex;justify-content:center;align-items:center;height:100vh;padding:12px;box-sizing:border-box}.box{width:90%;max-width:400px;background:white;padding:30px;border-radius:15px;text-align:center;box-shadow:0 5px 15px rgba(0,0,0,.15)}h2{color:#1565c0;margin-top:0}p{font-size:15px;line-height:1.6}.loader{width:50px;height:50px;border:5px solid #ddd;border-top:5px solid #1565c0;border-radius:50%;margin:20px auto;animation:spin 1s linear infinite}@keyframes spin{100%{transform:rotate(360deg)}}.success{color:green;font-weight:bold}.error{color:red;font-weight:bold}.debug{font-size:12px;color:#555;word-break:break-all}</style>
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
+</head>
+<body>
+<div class="box">
+<h2>Invoice Feature Payment</h2>
+<div class="loader" id="loader"></div>
+<p id="msg">Activating Create Invoice...</p>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getDatabase, ref, push, get, set, update, remove } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const loader = document.getElementById("loader");
+const msg = document.getElementById("msg");
+const params = new URLSearchParams(window.location.search);
+const amount = 1500;
+
+function cleanValue(value){
+  if(!value) return "";
+  value = String(value).trim();
+  if(value === "..." || value === "null" || value === "undefined" || value === "[object Object]" || value.includes("#") || value.includes("$") || value.includes("[") || value.includes("]")) return "";
+  return value;
+}
+
+let token = cleanValue(params.get("token") || params.get("reference_id") || params.get("razorpay_payment_link_reference_id"));
+let type = cleanValue(params.get("type")).toLowerCase();
+let id = "";
+
+if(type === "teacher_institute") type = "teacher";
+
+async function loadPendingByToken(){
+  if(!token) return false;
+  const pendingSnap = await get(ref(db, "pendingPayments/" + token));
+  if(!pendingSnap.exists()) return false;
+  const pending = pendingSnap.val();
+
+  if(pending.flow !== "invoice_feature") return false;
+
+  id = cleanValue(pending.profileId);
+  type = cleanValue(pending.type).toLowerCase();
+  token = cleanValue(pending.token) || token;
+  if(type === "teacher_institute") type = "teacher";
+  return !!id && !!type;
+}
+
+async function loadPendingByType(){
+  if(!type) return false;
+  const latestSnap = await get(ref(db, "pendingInvoiceFeaturePaymentsLatest/" + type));
+  if(!latestSnap.exists()) return false;
+  const pending = latestSnap.val();
+  const createdAt = Number(pending.createdAt || 0);
+  const age = Date.now() - createdAt;
+
+  if(age > 30 * 60 * 1000 || pending.flow !== "invoice_feature") return false;
+
+  id = cleanValue(pending.profileId);
+  type = cleanValue(pending.type).toLowerCase();
+  token = cleanValue(pending.token) || token;
+  if(type === "teacher_institute") type = "teacher";
+  return !!id && !!type;
+}
+
+function fallbackFromUrlAndStorage(){
+  type =
+    cleanValue(type).toLowerCase() ||
+    cleanValue(params.get("type")).toLowerCase() ||
+    cleanValue(sessionStorage.getItem("invoicePaymentRole")).toLowerCase() ||
+    cleanValue(sessionStorage.getItem("invoiceRole")).toLowerCase() ||
+    cleanValue(sessionStorage.getItem("role")).toLowerCase() ||
+    cleanValue(localStorage.getItem("invoicePaymentRole")).toLowerCase() ||
+    cleanValue(localStorage.getItem("invoiceRole")).toLowerCase() ||
+    cleanValue(localStorage.getItem("role")).toLowerCase();
+
+  if(type === "teacher_institute") type = "teacher";
+
+  id =
+    cleanValue(id) ||
+    cleanValue(params.get("id")) ||
+    cleanValue(sessionStorage.getItem("invoicePaymentProfileId")) ||
+    cleanValue(sessionStorage.getItem("invoiceProfileId")) ||
+    cleanValue(sessionStorage.getItem("profileId")) ||
+    cleanValue(sessionStorage.getItem("teacherId")) ||
+    cleanValue(sessionStorage.getItem("institutionId")) ||
+    cleanValue(localStorage.getItem("invoicePaymentProfileId")) ||
+    cleanValue(localStorage.getItem("invoiceProfileId")) ||
+    cleanValue(localStorage.getItem("profileId")) ||
+    cleanValue(localStorage.getItem("teacherId")) ||
+    cleanValue(localStorage.getItem("institutionId"));
+}
+
+async function resolvePaymentContext(){
+  let ok = await loadPendingByToken();
+  if(!ok) ok = await loadPendingByType();
+  if(!ok) fallbackFromUrlAndStorage();
+
+  if(!id){
+    loader.style.display = "none";
+    msg.innerHTML = '<span class="error">Profile ID missing after payment.</span><br><br><span class="debug">' + window.location.href + '</span>';
+    throw new Error("Profile ID Missing");
+  }
+}
+
+async function cleanupPending(finalType){
+  try{
+    if(token) await remove(ref(db, "pendingPayments/" + token));
+    if(finalType) await remove(ref(db, "pendingInvoiceFeaturePaymentsLatest/" + finalType));
+  }catch(err){
+    console.log("Cleanup failed:", err);
+  }
+}
+
+async function savePayment(){
+  try{
+    await resolvePaymentContext();
+
+    let profilePath = type.includes("institution") ? "institutions/" + id : "teachers/" + id;
+    let finalType = type.includes("institution") ? "institution" : "teacher";
+    let snap = await get(ref(db, profilePath));
+
+    if(!snap.exists()){
+      const teacherSnap = await get(ref(db, "teachers/" + id));
+      const institutionSnap = await get(ref(db, "institutions/" + id));
+      if(teacherSnap.exists()){
+        snap = teacherSnap;
+        profilePath = "teachers/" + id;
+        finalType = "teacher";
+      }else if(institutionSnap.exists()){
+        snap = institutionSnap;
+        profilePath = "institutions/" + id;
+        finalType = "institution";
+      }else{
+        throw new Error("Profile not found in database");
+      }
+    }
+
+    const user = snap.val();
+    const paymentRef = push(ref(db, "invoiceFeaturePayments"));
+
+    await set(paymentRef, {
+      paymentId: paymentRef.key,
+      profileId: id,
+      uid: id,
+      type: finalType,
+      feature: "invoice",
+      name: user.name || "",
+      ownerName: user.ownerName || "",
+      email: user.email || "",
+      phone: user.phone || "",
+      amount: amount,
+      status: "paid",
+      date: new Date().toLocaleString(),
+      createdAt: Date.now(),
+      token: token || ""
+    });
+
+    await update(ref(db, profilePath), {
+      invoiceFeatureActive: true,
+      invoiceFeatureAmount: amount,
+      invoiceFeatureActivatedAt: Date.now(),
+      invoiceFeaturePaymentStatus: "paid",
+      lastInvoiceFeaturePaymentToken: token || ""
+    });
+
+    localStorage.setItem("invoiceFeatureActive", "true");
+    localStorage.setItem("invoiceProfileId", id);
+    localStorage.setItem("invoiceRole", finalType);
+
+    await cleanupPending(finalType);
+
+    loader.style.display = "none";
+    msg.innerHTML = '<span class="success">Create Invoice activated! Redirecting...</span>';
+
+    setTimeout(function(){
+      window.location.href = "teacher-dashboard.html?id=" + encodeURIComponent(id) + "&type=" + encodeURIComponent(finalType);
+    }, 2000);
+
+  }catch(err){
+    console.log(err);
+    loader.style.display = "none";
+    msg.innerHTML = '<span class="error">Payment activation failed.</span><br><br>' + err.message + '<br><br><span class="debug">' + window.location.href + '</span>';
+  }
+}
+
+savePayment();
+</script>
+</body>
+</html>
