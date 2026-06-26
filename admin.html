@@ -166,6 +166,7 @@ overflow:hidden;
 .studentCard{border-left-color:#7b1fa2;background:#fcf5ff;}
 .registrationPaymentCard{border-left-color:#f57c00;background:#fffaf0;}
 .renewalPaymentCard{border-left-color:#8e24aa;background:#fbf5ff;}
+.invoicePaymentCard{border-left-color:#1565c0;background:#f0f7ff;}
 
 .card h3,
 .card h4{
@@ -519,6 +520,12 @@ Renewal Payments
 
 <div id="renewPayments" class="list"></div>
 
+<h3 class="invoicePanelTitle" style="margin-top:20px;background:#1565c0;">
+Invoice Feature Payments
+</h3>
+
+<div id="invoicePayments" class="list"></div>
+
 </div>
 
 </div>
@@ -597,6 +604,8 @@ document.getElementById("payments").innerHTML = "";
 
 document.getElementById("renewPayments").innerHTML = "";
 
+document.getElementById("invoicePayments").innerHTML = "";
+
 }
 
 let teachers=[];
@@ -604,6 +613,20 @@ let inst=[];
 let students=[];
 let payments=[];
 let renewPayments=[];
+let invoicePayments=[];
+
+const paymentTotals = {
+  registration:0,
+  renewal:0,
+  invoice:0
+};
+
+function updatePaymentTotal(){
+  document.getElementById("pTotal").innerText =
+    paymentTotals.registration +
+    paymentTotals.renewal +
+    paymentTotals.invoice;
+}
 function expired(t){
 
 return t &&
@@ -920,10 +943,8 @@ document
 "payments"
 ).innerHTML = html;
 
-document
-.getElementById(
-"pTotal"
-).innerText = total;
+paymentTotals.registration = total;
+updatePaymentTotal();
 
 });
 
@@ -1008,24 +1029,98 @@ document
 "renewPayments"
 ).innerHTML = html;
 
-const currentTotal =
-Number(
-document.getElementById(
-"pTotal"
-).innerText || 0
-);
-
-document
-.getElementById(
-"pTotal"
-).innerText =
-currentTotal +
-totalRenew;
+paymentTotals.renewal = totalRenew;
+updatePaymentTotal();
 
 });
 
 }
 
+
+/* =========================
+   INVOICE FEATURE PAYMENTS
+========================= */
+
+onValue(
+ref(db,"invoiceFeaturePayments"),
+snap=>{
+
+invoicePayments=[];
+
+let html="";
+
+let totalInvoice=0;
+
+snap.forEach(c=>{
+
+const d=c.val();
+
+invoicePayments.push(d);
+
+totalInvoice +=
+Number(
+d.amount || 0
+);
+
+html += `
+
+<div class="card paymentCard invoicePaymentCard">
+
+<h4>
+${d.name || "-"}
+</h4>
+
+<p>
+<b>Invoice Feature</b>
+</p>
+
+<p>
+${d.phone || "-"}
+</p>
+
+<p>
+Rs. ${d.amount || 0}
+</p>
+
+<p>
+${d.status || "paid"}
+</p>
+
+<p>
+${d.date || ""}
+</p>
+
+<button
+class="approve"
+onclick="approveInvoiceFeatureFromPayment(
+'${c.key}',
+'${d.profileId}',
+'${d.type}'
+)">
+Activate Invoice
+</button>
+
+<button
+class="delete"
+onclick="delInvoicePay('${c.key}')">
+Delete
+</button>
+
+</div>
+
+`;
+
+});
+
+document
+.getElementById(
+"invoicePayments"
+).innerHTML = html;
+
+paymentTotals.invoice = totalInvoice;
+updatePaymentTotal();
+
+});
 /* =========================
    PROFILE CARD
 ========================= */
@@ -1483,6 +1578,81 @@ db,
 "payment2/" + id
 )
 );
+
+};
+
+/* =========================
+   DELETE INVOICE FEATURE PAYMENT
+========================= */
+
+window.delInvoicePay =
+function(id){
+
+if(
+!confirm(
+"Delete this invoice feature payment?"
+)
+){
+return;
+}
+
+remove(
+ref(
+db,
+"invoiceFeaturePayments/" + id
+)
+);
+
+};
+
+/* =========================
+   APPROVE INVOICE FEATURE PAYMENT
+========================= */
+
+window.approveInvoiceFeatureFromPayment =
+async function(paymentId, profileId, type){
+
+  if(!confirm("Activate Create Invoice for this payment?")){
+    return;
+  }
+
+  try{
+    const finalType =
+      String(type || "teacher").includes("institution")
+        ? "institution"
+        : "teacher";
+
+    const profilePath =
+      finalType === "institution"
+        ? "institutions/" + profileId
+        : "teachers/" + profileId;
+
+    const now = Date.now();
+
+    await update(
+      ref(db, profilePath),
+      {
+        invoiceFeatureActive:true,
+        invoiceFeatureAmount:1500,
+        invoiceFeatureActivatedAt:now,
+        invoiceFeaturePaymentStatus:"paid",
+        lastInvoiceFeatureAdminPaymentId:paymentId
+      }
+    );
+
+    await update(
+      ref(db, "invoiceFeaturePayments/" + paymentId),
+      {
+        status:"approved",
+        approvedAt:now
+      }
+    );
+
+    alert("Invoice feature activated successfully");
+  }
+  catch(err){
+    alert("Unable to activate invoice feature: " + (err.message || err));
+  }
 
 };
 /* =========================
