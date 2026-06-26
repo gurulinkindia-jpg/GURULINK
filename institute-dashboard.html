@@ -1118,7 +1118,11 @@ role === "teacher" || role === "teacher_institute"
 let currentProfileData = {};
 
 function isInvoiceFeatureActive(data){
-  return data && data.invoiceFeatureActive === true;
+  const localActive =
+    (localStorage.getItem("invoiceFeatureActive") === "true" && localStorage.getItem("invoiceProfileId") === profileId) ||
+    (sessionStorage.getItem("invoiceFeatureActive") === "true" && sessionStorage.getItem("invoiceProfileId") === profileId);
+
+  return (data && data.invoiceFeatureActive === true) || localActive;
 }
 
 function updateInvoiceButton(data){
@@ -1200,6 +1204,7 @@ return;
 
 const d = snap.val();
 currentProfileData = d;
+updateInvoiceButton(d);
 /* BANK DETAILS */
 document.getElementById("accountHolderName").innerText =
 d.accountHolderName || "Not Added";
