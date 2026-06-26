@@ -282,7 +282,11 @@ currentUserIsAdmin ||
 }
 
 function invoiceFeatureIsActive(){
-return profileData && profileData.invoiceFeatureActive === true;
+const localActive =
+(localStorage.getItem("invoiceFeatureActive") === "true" && localStorage.getItem("invoiceProfileId") === profileId) ||
+(sessionStorage.getItem("invoiceFeatureActive") === "true" && sessionStorage.getItem("invoiceProfileId") === profileId);
+
+return (profileData && profileData.invoiceFeatureActive === true) || localActive;
 }
 
 function profilePaths(){
