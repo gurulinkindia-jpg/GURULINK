@@ -1101,6 +1101,11 @@ ${isPublic ? "Visible" : "Hidden"}
 ${rank === null ? "-" : rank}
 </p>
 
+<p>
+<b>Invoice Feature:</b>
+${d.invoiceFeatureActive ? "Active (Rs.1500 paid)" : "Not Active"}
+</p>
+
 ${exp
 ?
 `
@@ -1176,6 +1181,22 @@ Save Public Settings
 </button>
 
 </div>
+
+<button
+class="approve"
+onclick="setInvoiceFeature('${type}','${d.id}',true)">
+
+Activate Invoice Rs.1500
+
+</button>
+
+<button
+class="reject"
+onclick="setInvoiceFeature('${type}','${d.id}',false)">
+
+Disable Invoice
+
+</button>
 
 <button
 class="approve"
@@ -1340,6 +1361,36 @@ window.renew = async function(type,id){
   });
 
   alert("Renewal approved successfully");
+};
+
+/* =========================
+   INVOICE FEATURE ACCESS
+========================= */
+
+window.setInvoiceFeature = async function(type,id,active){
+
+  const message = active
+    ? "Activate Create Invoice for this profile after Rs.1500 payment?"
+    : "Disable Create Invoice for this profile?";
+
+  if(!confirm(message)){
+    return;
+  }
+
+  const now = Date.now();
+
+  await update(
+    ref(db,`${type}s/${id}`),
+    {
+      invoiceFeatureActive: active,
+      invoiceFeatureAmount: active ? 1500 : null,
+      invoiceFeatureActivatedAt: active ? now : null,
+      invoiceFeatureDisabledAt: active ? null : now
+    }
+  );
+
+  alert(active ? "Invoice feature activated." : "Invoice feature disabled.");
+
 };
 
 /* =========================
