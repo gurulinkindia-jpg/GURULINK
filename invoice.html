@@ -281,6 +281,10 @@ currentUserIsAdmin ||
 (authEmail && authEmail === profileEmail);
 }
 
+function invoiceFeatureIsActive(){
+return profileData && profileData.invoiceFeatureActive === true;
+}
+
 function profilePaths(){
 const preferred = role === "institution" ? "institutions/" + profileId : "teachers/" + profileId;
 const fallback = role === "institution" ? "teachers/" + profileId : "institutions/" + profileId;
@@ -441,6 +445,12 @@ document.getElementById("brandAddress").textContent = [profileData.area, profile
 document.getElementById("brandContact").textContent = [profileData.phone, profileData.email].filter(Boolean).join(" | ");
 document.getElementById("upiText").textContent = "UPI ID: " + (profileData.upiId || "Not Added");
 updateQRCode(0);
+
+if(!invoiceFeatureIsActive()){
+document.getElementById("brandAddress").textContent = "Create Invoice is locked. Pay Rs.1500 and ask admin to activate this feature.";
+return false;
+}
+
 return true;
 }
 
@@ -580,6 +590,11 @@ location.href = "otp-login.html";
 return;
 }
 
+if(!invoiceFeatureIsActive()){
+alert("Create Invoice is an additional feature. Please pay Rs.1500 and ask admin to activate it.");
+return;
+}
+
 const name = document.getElementById("studentName").value.trim();
 if(!name){
 alert("Enter student/client name.");
@@ -645,6 +660,7 @@ await populateDropdowns();
 document.getElementById("invoiceSelect").value = invoiceNo;
 document.getElementById("printBtn").style.display = "inline-block";
 alert("Invoice saved successfully: " + invoiceNo);
+return true;
 
 }
 catch(err){
@@ -658,6 +674,7 @@ else{
 alert("Invoice save failed: " + (err.message || err));
 }
 
+return false;
 }
 }
 
@@ -729,8 +746,10 @@ calculateTotal();
 const total = parseFloat(document.getElementById("grandTotal").textContent.replace("Total Amount: Rs","").trim()) || 0;
 document.getElementById("amountPaid").value = total.toFixed(2);
 calculateTotal();
-await saveInvoice();
+const saved = await saveInvoice();
+if(saved){
 alert("Invoice marked as fully paid.");
+}
 }
 
 async function exportToExcel(){
@@ -817,7 +836,12 @@ await get(ref(db,"admins/" + user.uid));
 
 currentUserIsAdmin = adminSnap.exists();
 
-await loadProfile();
+const profileLoaded = await loadProfile();
+
+if(!profileLoaded){
+alert("Create Invoice is locked. Please pay Rs.1500 and ask admin to activate it.");
+return;
+}
 
 if(!userCanUseInvoice()){
 document.getElementById("brandAddress").textContent =
