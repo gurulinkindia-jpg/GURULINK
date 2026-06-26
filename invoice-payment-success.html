@@ -79,11 +79,7 @@ async function loadPendingByToken(){
   return !!id && !!type;
 }
 
-async function loadPendingByType(){
-  if(!type) return false;
-  const latestSnap = await get(ref(db, "pendingInvoiceFeaturePaymentsLatest/" + type));
-  if(!latestSnap.exists()) return false;
-  const pending = latestSnap.val();
+async function applyPendingPayment(pending){
   const createdAt = Number(pending.createdAt || 0);
   const age = Date.now() - createdAt;
 
@@ -94,6 +90,49 @@ async function loadPendingByType(){
   token = cleanValue(pending.token) || token;
   if(type === "teacher_institute") type = "teacher";
   return !!id && !!type;
+}
+
+async function loadPendingByType(){
+  if(!type) return false;
+  const latestSnap = await get(ref(db, "pendingInvoiceFeaturePaymentsLatest/" + type));
+  if(!latestSnap.exists()) return false;
+  return await applyPendingPayment(latestSnap.val());
+}
+
+async function loadLatestPendingAnyType(){
+  const types = ["teacher", "institution"];
+  let newest = null;
+
+  for(const itemType of types){
+    const latestSnap = await get(ref(db, "pendingInvoiceFeaturePaymentsLatest/" + itemType));
+
+    if(!latestSnap.exists()){
+      continue;
+    }
+
+    const pending = latestSnap.val();
+
+    if(pending.flow !== "invoice_feature"){
+      continue;
+    }
+
+    const createdAt = Number(pending.createdAt || 0);
+    const age = Date.now() - createdAt;
+
+    if(age > 30 * 60 * 1000){
+      continue;
+    }
+
+    if(!newest || createdAt > Number(newest.createdAt || 0)){
+      newest = pending;
+    }
+  }
+
+  if(!newest){
+    return false;
+  }
+
+  return await applyPendingPayment(newest);
 }
 
 function fallbackFromUrlAndStorage(){
@@ -134,6 +173,10 @@ async function resolvePaymentContext(){
 
   if(!ok){
     ok = await loadPendingByType();
+  }
+
+  if(!ok){
+    ok = await loadLatestPendingAnyType();
   }
 
   if(!ok){
