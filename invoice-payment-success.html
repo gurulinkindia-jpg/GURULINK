@@ -211,6 +211,9 @@ async function savePayment(){
     localStorage.setItem("invoiceFeatureActive", "true");
     localStorage.setItem("invoiceProfileId", id);
     localStorage.setItem("invoiceRole", finalType);
+    sessionStorage.setItem("invoiceFeatureActive", "true");
+    sessionStorage.setItem("invoiceProfileId", id);
+    sessionStorage.setItem("invoiceRole", finalType);
     localStorage.removeItem("invoicePaymentToken");
     sessionStorage.removeItem("invoicePaymentToken");
 
