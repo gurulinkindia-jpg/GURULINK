@@ -44,8 +44,22 @@ function cleanValue(value){
   return value;
 }
 
-let token = cleanValue(params.get("token") || params.get("reference_id") || params.get("razorpay_payment_link_reference_id"));
-let type = cleanValue(params.get("type")).toLowerCase();
+let token = cleanValue(
+  params.get("token") ||
+  params.get("reference_id") ||
+  params.get("razorpay_payment_link_reference_id") ||
+  sessionStorage.getItem("invoicePaymentToken") ||
+  localStorage.getItem("invoicePaymentToken")
+);
+let type = cleanValue(
+  params.get("type") ||
+  sessionStorage.getItem("invoicePaymentRole") ||
+  localStorage.getItem("invoicePaymentRole") ||
+  sessionStorage.getItem("invoiceRole") ||
+  localStorage.getItem("invoiceRole") ||
+  sessionStorage.getItem("role") ||
+  localStorage.getItem("role")
+).toLowerCase();
 let id = "";
 
 if(type === "teacher_institute") type = "teacher";
@@ -112,8 +126,19 @@ function fallbackFromUrlAndStorage(){
 
 async function resolvePaymentContext(){
   let ok = await loadPendingByToken();
-  if(!ok) ok = await loadPendingByType();
-  if(!ok) fallbackFromUrlAndStorage();
+
+  if(!ok){
+    fallbackFromUrlAndStorage();
+    ok = await loadPendingByToken();
+  }
+
+  if(!ok){
+    ok = await loadPendingByType();
+  }
+
+  if(!ok){
+    fallbackFromUrlAndStorage();
+  }
 
   if(!id){
     loader.style.display = "none";
@@ -186,6 +211,8 @@ async function savePayment(){
     localStorage.setItem("invoiceFeatureActive", "true");
     localStorage.setItem("invoiceProfileId", id);
     localStorage.setItem("invoiceRole", finalType);
+    localStorage.removeItem("invoicePaymentToken");
+    sessionStorage.removeItem("invoicePaymentToken");
 
     await cleanupPending(finalType);
 
