@@ -1117,6 +1117,36 @@ role === "teacher" || role === "teacher_institute"
 
 let currentProfileData = {};
 
+function isInvoiceFeatureActive(data){
+  const localActive =
+    (localStorage.getItem("invoiceFeatureActive") === "true" && localStorage.getItem("invoiceProfileId") === profileId) ||
+    (sessionStorage.getItem("invoiceFeatureActive") === "true" && sessionStorage.getItem("invoiceProfileId") === profileId);
+
+  return (data && data.invoiceFeatureActive === true) || localActive;
+}
+
+function updateInvoiceButton(data){
+  const btn = document.querySelector(".invoiceBtn");
+
+  if(!btn){
+    return;
+  }
+
+  if(isInvoiceFeatureActive(data)){
+    btn.disabled = false;
+    btn.style.opacity = "1";
+    btn.style.cursor = "pointer";
+    btn.title = "";
+    btn.innerText = "Create Invoice";
+  }else{
+    btn.disabled = false;
+    btn.style.opacity = ".55";
+    btn.style.cursor = "not-allowed";
+    btn.title = "Admin activation required after Rs.1500 payment";
+    btn.innerText = "Activate Invoice Rs.1500";
+  }
+}
+
 
 
 
@@ -1174,6 +1204,7 @@ return;
 
 const d = snap.val();
 currentProfileData = d;
+updateInvoiceButton(d);
 /* BANK DETAILS */
 document.getElementById("accountHolderName").innerText =
 d.accountHolderName || "Not Added";
@@ -1872,6 +1903,24 @@ window.createInvoice = function () {
     return;
   }
 
+  if(!isInvoiceFeatureActive(currentProfileData)){
+    localStorage.setItem("invoicePaymentProfileId", id);
+    localStorage.setItem("invoicePaymentRole", type);
+    localStorage.setItem("invoiceProfileId", id);
+    localStorage.setItem("invoiceRole", type);
+    sessionStorage.setItem("invoicePaymentProfileId", id);
+    sessionStorage.setItem("invoicePaymentRole", type);
+    sessionStorage.setItem("invoiceProfileId", id);
+    sessionStorage.setItem("invoiceRole", type);
+
+    location.href =
+      "invoice-payment.html?id=" +
+      encodeURIComponent(id) +
+      "&type=" +
+      encodeURIComponent(type);
+    return;
+  }
+
   localStorage.setItem("invoiceProfileId", id);
   localStorage.setItem("invoiceRole", type);
   sessionStorage.setItem("invoiceProfileId", id);
@@ -1883,7 +1932,6 @@ window.createInvoice = function () {
     "&type=" +
     encodeURIComponent(type);
 };
-
 
 
 
@@ -2227,3 +2275,4 @@ profileId;
 
 </body>
 </html>
+
