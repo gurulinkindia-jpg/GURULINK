@@ -114,6 +114,9 @@ async function createPaymentLink(){
   }
 
   const token = createToken();
+  localStorage.setItem("invoicePaymentToken", token);
+  sessionStorage.setItem("invoicePaymentToken", token);
+
   const pendingData = {
     token: token,
     profileId: id,
