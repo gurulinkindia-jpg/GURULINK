@@ -56,11 +56,11 @@ padding:25px;
 display:grid;
 
 grid-template-columns:
-repeat(auto-fit,minmax(220px,1fr));
+repeat(3,minmax(0,1fr));
 
-gap:15px;
+gap:10px;
 
-padding:20px;
+padding:16px;
 
 background:
 rgba(255,255,255,.4);
@@ -70,7 +70,7 @@ blur(25px);
 
 border-radius:25px;
 
-margin-bottom:30px;
+margin-bottom:22px;
 
 box-shadow:
 0 10px 30px rgba(0,0,0,.05);
@@ -80,13 +80,15 @@ box-shadow:
 .filters input,
 .filters select{
 
-padding:14px;
+min-width:0;
+padding:12px;
+font-size:13px;
 
 border:none;
 
 outline:none;
 
-border-radius:15px;
+border-radius:14px;
 
 background:
 rgba(255,255,255,.8);
@@ -98,9 +100,9 @@ rgba(255,255,255,.8);
 display:grid;
 
 grid-template-columns:
-repeat(auto-fit,minmax(220px,1fr));
+repeat(3,minmax(0,1fr));
 
-gap:15px;
+gap:10px;
 
 grid-column:1/-1;
 
@@ -284,7 +286,7 @@ background:white;
 .floating-buttons{
 position:fixed;
 right:14px;
-bottom:16px;
+bottom:24px;
 display:flex;
 flex-direction:row;
 gap:10px;
@@ -334,7 +336,7 @@ color:#fff;
 @media(max-width:768px){
 .floating-buttons{
 right:12px;
-bottom:14px;
+bottom:48px;
 gap:8px;
 }
 
@@ -372,7 +374,7 @@ box-shadow:0 8px 18px rgba(0,0,0,.16);
 
 <input
 id="search"
-placeholder="Search name / state">
+placeholder="Search">
 
 <select id="category">
 
@@ -408,7 +410,7 @@ placeholder="Area">
 
 <input
 id="subjectSearch"
-placeholder="Subject / Skill / Activity">
+placeholder="Subject">
 
 <div id="dynamicFilters"></div>
 
