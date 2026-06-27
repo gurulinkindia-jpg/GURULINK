@@ -1,149 +1,343 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Academic Profile - GURULINK</title>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial, sans-serif;
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
 }
 
-body {
-  background: linear-gradient(135deg, #d9efff, #f4f9ff, #ffffff);
-  padding-bottom: 40px;
+body{
+min-height:100vh;
+background:linear-gradient(135deg,#dcefff,#eef7ff,#ffffff);
+padding-bottom:24px;
 }
 
-header {
-  padding: 30px;
-  text-align: center;
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+header{
+background:#1565c0;
+color:#fff;
+padding-top:calc(env(safe-area-inset-top) + 12px);
+padding-right:16px;
+padding-bottom:12px;
+padding-left:16px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+position:sticky;
+top:0;
+z-index:1000;
+box-shadow:0 6px 18px rgba(13,71,161,.22);
 }
 
-.container {
-  width: 95%;
-  max-width: 1300px;
-  margin: auto;
-  padding: 20px;
+.brand{
+display:flex;
+flex-direction:row;
+align-items:center;
+gap:8px;
+min-width:0;
 }
 
-.filters {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  padding: 20px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 0.45);
-  border-radius: 20px;
+.logoImg{
+width:44px;
+height:44px;
+object-fit:contain;
+flex-shrink:0;
+}
+
+.logoText{
+display:flex;
+flex-direction:row;
+align-items:center;
+font-size:22px;
+font-weight:bold;
+line-height:1;
+white-space:nowrap;
+text-shadow:0 1px 2px rgba(255,255,255,.2);
+}
+
+.guru{
+color:#2196f3;
+}
+
+.link{
+color:#4caf50;
+}
+
+.header-nav{
+display:flex;
+align-items:center;
+gap:8px;
+flex-shrink:0;
+}
+
+.header-link{
+height:38px;
+padding:0 14px;
+border:none;
+border-radius:10px;
+background:#fff;
+color:#1565c0;
+text-decoration:none;
+font-size:13px;
+font-weight:700;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+box-shadow:0 4px 12px rgba(0,0,0,.14);
+}
+
+.container{
+width:95%;
+max-width:1400px;
+margin:auto;
+padding:25px;
+}
+
+.filters{
+display:grid;
+grid-template-columns:repeat(3,minmax(0,1fr));
+gap:10px;
+padding:16px;
+background:rgba(255,255,255,.4);
+backdrop-filter:blur(25px);
+border-radius:25px;
+margin-bottom:22px;
+box-shadow:0 10px 30px rgba(0,0,0,.05);
 }
 
 .filters input,
-.filters select {
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  outline: none;
-  font-size: 14px;
+.filters select{
+min-width:0;
+padding:12px;
+font-size:13px;
+border:none;
+outline:none;
+border-radius:14px;
+background:rgba(255,255,255,.8);
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 20px;
+#search{
+grid-column:1/span 2;
 }
 
-.card {
-  background: rgba(255, 255, 255, 0.45);
-  border-radius: 20px;
-  padding: 15px;
-  border: 1px solid #ddd;
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+gap:25px;
 }
 
-.card.teacher {
-  border-left: 6px solid #1976d2;
+.card{
+background:rgba(255,255,255,.35);
+backdrop-filter:blur(25px);
+border-radius:25px;
+padding:20px;
+border:1px solid rgba(255,255,255,.5);
+box-shadow:0 10px 30px rgba(0,0,0,.06);
+transition:.4s;
 }
 
-.card.institution {
-  border-left: 6px solid #e91e63;
+.card:hover{
+transform:translateY(-8px);
 }
 
-.top {
-  display: flex;
-  gap: 15px;
+.card.teacher{
+border-left:6px solid #1976d2;
 }
 
-.photo {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  object-fit: cover;
+.card.institution{
+border-left:6px solid #e91e63;
 }
 
-.badge {
-  display: inline-block;
-  margin: 3px;
-  padding: 5px 10px;
-  background: #fff;
-  border-radius: 20px;
-  font-size: 12px;
+.top{
+display:flex;
+gap:15px;
+align-items:center;
 }
 
-.verify {
-  background: #2196f3;
-  color: white;
+.photo{
+width:90px;
+height:90px;
+border-radius:50%;
+object-fit:cover;
+border:4px solid white;
 }
 
-.btn {
-  margin-top: 10px;
-  padding: 7px 12px;
-  border: none;
-  border-radius: 8px;
-  background: #1976d2;
-  color: white;
-  cursor: pointer;
+.badges{
+margin-top:8px;
 }
 
-.details {
-  margin-top: 10px;
-  font-size: 14px;
-  line-height: 1.6;
+.badge{
+display:inline-block;
+padding:6px 12px;
+margin:3px;
+font-size:12px;
+border-radius:20px;
+background:white;
+color:#1976d2;
 }
 
-.empty {
-  text-align: center;
-  padding: 20px;
-  background: white;
-  border-radius: 15px;
+.verify{
+background:#2196f3;
+color:white;
+}
+
+.rating-badge{
+background:#fff3cd;
+color:#c77700;
+font-weight:bold;
+}
+
+.details{
+margin-top:15px;
+line-height:1.8;
+color:#444;
+font-size:14px;
+}
+
+.btn{
+margin-top:16px;
+width:100%;
+padding:12px 14px;
+border:none;
+border-radius:14px;
+background:linear-gradient(135deg,#1565c0,#1e88e5);
+color:#fff;
+font-size:14px;
+font-weight:700;
+cursor:pointer;
+box-shadow:0 10px 20px rgba(21,101,192,.18);
+transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+}
+
+.btn:hover{
+transform:translateY(-1px);
+box-shadow:0 14px 24px rgba(21,101,192,.22);
+}
+
+.btn:active{
+transform:translateY(0);
+opacity:.94;
+}
+
+.empty{
+padding:30px;
+text-align:center;
+border-radius:20px;
+background:white;
+}
+
+@media(max-width:768px){
+header{
+padding-right:12px;
+padding-bottom:10px;
+padding-left:12px;
+gap:10px;
+}
+
+.brand{
+gap:7px;
+}
+
+.logoImg{
+width:38px;
+height:38px;
+}
+
+.logoText{
+font-size:16px;
+line-height:1;
+}
+
+.header-nav{
+gap:6px;
+}
+
+.header-link{
+height:34px;
+padding:0 12px;
+font-size:12px;
+border-radius:9px;
+}
+
+.container{
+padding:16px;
+}
+
+.filters{
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:8px;
+padding:12px;
+}
+
+#search{
+grid-column:1/-1;
+}
+
+.filters input,
+.filters select{
+padding:11px;
+font-size:12px;
+}
+
+.grid{
+grid-template-columns:1fr;
+gap:16px;
+}
+
+.card{
+padding:16px;
+border-radius:20px;
+}
+
+.photo{
+width:76px;
+height:76px;
+}
+
+.btn{
+font-size:13px;
+padding:11px 12px;
+border-radius:12px;
+}
 }
 </style>
 <link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 <link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 <link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
-
 <link rel="stylesheet" href="gurulink-theme.css?v=2">
 <script src="gurulink-theme.js?v=2"></script>
 </head>
-
 <body>
 
 <header>
-<h1>Academic Profile</h1>
-<p>Find Teachers & Institutes</p>
+<div class="brand">
+<img 
+src="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png"
+alt="GL"
+class="logoImg">
+<div class="logoText">
+<span class="guru">GURU</span><span class="link">LINK</span>
+</div>
+</div>
+
+<div class="header-nav">
+<button class="header-link" type="button" onclick="history.back()">Back</button>
+<a href="index.html" class="header-link">Home</a>
+</div>
 </header>
 
 <div class="container">
 
 <div class="filters">
-
-<input type="text" id="search" placeholder="Search teacher, location" />
+<input type="text" id="search" placeholder="Search Name / Location">
 
 <select id="classFilter">
 <option value="">All Classes</option>
@@ -167,6 +361,12 @@ header {
 <option value="neet">NEET</option>
 </select>
 
+<select id="stateFilter">
+<option value="">State</option>
+</select>
+
+<input type="text" id="areaFilter" placeholder="Area">
+<input type="text" id="subjectSearch" placeholder="Subject">
 </div>
 
 <div id="grid" class="grid"></div>
@@ -174,7 +374,6 @@ header {
 </div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
@@ -194,95 +393,6 @@ const db = getDatabase(app);
 let teachers = [];
 let institutes = [];
 let ratingMap = {};
-
-/* ONLY ACADEMIC */
-onValue(ref(db, "teachers"), (snap) => {
-teachers = [];
-
-snap.forEach((c) => {
-const d = c.val();
-
-if (
-(d.status || "").toLowerCase() === "approved" &&
-(isPublicProfile(d)) &&
-(d.category || "").toLowerCase() === "academic"
-) {
-teachers.push({ ...d, id: c.key, type: "Teacher" });
-}
-});
-
-render();
-});
-
-onValue(ref(db, "institutions"), (snap) => {
-institutes = [];
-
-snap.forEach((c) => {
-const d = c.val();
-
-if (
-(d.status || "").toLowerCase() === "approved" &&
-(isPublicProfile(d)) &&
-(d.category || "").toLowerCase() === "academic"
-) {
-institutes.push({ ...d, id: c.key, type: "Institution" });
-}
-});
-
-render();
-});
-
-onValue(ref(db, "reviews"), (snap) => {
-ratingMap = {};
-
-snap.forEach((typeSnap) => {
-const collection = typeSnap.key;
-
-typeSnap.forEach((profileSnap) => {
-let total = 0;
-let count = 0;
-
-profileSnap.forEach((reviewSnap) => {
-const rating = Number(reviewSnap.val()?.rating || 0);
-if(rating > 0){
-total += rating;
-count++;
-}
-});
-
-if(count){
-ratingMap[collection + "/" + profileSnap.key] = {
-avg: total / count,
-count
-};
-}
-});
-});
-
-render();
-});
-
-function getAllProfiles() {
-return [...teachers, ...institutes];
-}
-
-/* CLASS FIX */
-function classMatch(userClass, selectedClass) {
-if (!selectedClass) return true;
-if (!userClass) return false;
-
-const list = (userClass + "")
-.toLowerCase()
-.split(",")
-.map(x => x.trim());
-
-return list.includes(selectedClass.toLowerCase());
-}
-
-/* SEARCH */
-function similar(a, b) {
-return (a || "").toLowerCase().includes((b || "").toLowerCase());
-}
 
 function isPublicProfile(profile){
 return profile.publicVisible !== false &&
@@ -320,11 +430,152 @@ return (a.name || "").localeCompare(b.name || "");
 });
 }
 
-/* VIEW BUTTON FIX */
-function showGuestAccessPopup(onLogin){
-const oldPopup = document.getElementById("guestAccessPopup");
-if(oldPopup) oldPopup.remove();
+function getAllProfiles() {
+return [...teachers, ...institutes];
+}
 
+function similar(a, b) {
+return (a || "").toLowerCase().includes((b || "").toLowerCase());
+}
+
+function getStateText(profile) {
+return profile.address || profile.state || profile.location || "";
+}
+
+function getAreaText(profile) {
+return profile.area || profile.city || profile.town || "";
+}
+
+function getSubjectText(profile) {
+if (profile.subjects) {
+if (Array.isArray(profile.subjects)) return profile.subjects.join(", ");
+if (typeof profile.subjects === "object") return Object.values(profile.subjects).join(", ");
+return String(profile.subjects);
+}
+
+return profile.subject || profile.course || "Not Mentioned";
+}
+
+function getModesText(profile) {
+if (profile.teachingModes) {
+if (Array.isArray(profile.teachingModes)) return profile.teachingModes.join(", ");
+if (typeof profile.teachingModes === "object") return Object.values(profile.teachingModes).join(", ");
+return String(profile.teachingModes);
+}
+
+return "Not Mentioned";
+}
+
+function populateStateFilter() {
+const select = document.getElementById("stateFilter");
+if (!select) return;
+
+const current = select.value || "";
+const states = [...new Set(
+getAllProfiles()
+.map(profile => getStateText(profile))
+.filter(Boolean)
+)].sort((a, b) => a.localeCompare(b));
+
+select.innerHTML = `<option value="">State</option>`;
+
+states.forEach((state) => {
+const option = document.createElement("option");
+option.value = state;
+option.textContent = state;
+select.appendChild(option);
+});
+
+if (current && states.includes(current)) {
+select.value = current;
+}
+}
+
+function classMatch(userClass, selectedClass) {
+if (!selectedClass) return true;
+if (!userClass) return false;
+
+const list = (userClass + "")
+.toLowerCase()
+.split(",")
+.map(x => x.trim());
+
+return list.includes(selectedClass.toLowerCase());
+}
+
+function loadData() {
+onValue(ref(db, "teachers"), (snap) => {
+teachers = [];
+
+snap.forEach((c) => {
+const d = c.val();
+
+if (
+(d.status || "").toLowerCase() === "approved" &&
+isPublicProfile(d) &&
+(d.category || "").toLowerCase() === "academic"
+) {
+teachers.push({ ...d, id: c.key, type: "Teacher" });
+}
+});
+
+populateStateFilter();
+render();
+});
+
+onValue(ref(db, "institutions"), (snap) => {
+institutes = [];
+
+snap.forEach((c) => {
+const d = c.val();
+
+if (
+(d.status || "").toLowerCase() === "approved" &&
+isPublicProfile(d) &&
+(d.category || "").toLowerCase() === "academic"
+) {
+institutes.push({ ...d, id: c.key, type: "Institution" });
+}
+});
+
+populateStateFilter();
+render();
+});
+}
+
+loadData();
+
+onValue(ref(db, "reviews"), (snap) => {
+ratingMap = {};
+
+snap.forEach((typeSnap) => {
+const collection = typeSnap.key;
+
+typeSnap.forEach((profileSnap) => {
+let total = 0;
+let count = 0;
+
+profileSnap.forEach((reviewSnap) => {
+const rating = Number(reviewSnap.val()?.rating || 0);
+if(rating > 0){
+total += rating;
+count++;
+}
+});
+
+if(count){
+ratingMap[collection + "/" + profileSnap.key] = {
+avg: total / count,
+count
+};
+}
+});
+});
+
+render();
+});
+
+function showGuestAccessPopup(onLogin){
 const popup = document.createElement("div");
 popup.id = "guestAccessPopup";
 popup.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:18px;z-index:9999;";
@@ -377,45 +628,47 @@ window.location.href = profileUrl;
 }
 
 document.addEventListener("click", (event) => {
-
 const button = event.target.closest(".view");
 if (!button) return;
-
-const profileId = button.dataset.id;
-
-openProfileWithLogin(profileId);
+openProfileWithLogin(button.dataset.id);
 });
 
-/* EVENTS */
 document.getElementById("search").addEventListener("input", render);
 document.getElementById("classFilter").addEventListener("change", render);
+document.getElementById("stateFilter").addEventListener("change", render);
+document.getElementById("areaFilter").addEventListener("input", render);
+document.getElementById("subjectSearch").addEventListener("input", render);
 
-/* RENDER */
 function render() {
-
 const all = getAllProfiles();
-
 const search = document.getElementById("search").value.trim().toLowerCase();
 const selectedClass = document.getElementById("classFilter").value;
+const selectedState = document.getElementById("stateFilter").value.trim().toLowerCase();
+const areaFilter = document.getElementById("areaFilter").value.trim().toLowerCase();
+const subjectSearch = document.getElementById("subjectSearch").value.trim().toLowerCase();
 
 const filtered = all.filter((item) => {
+const stateText = getStateText(item);
+const areaText = getAreaText(item);
+const subjectText = getSubjectText(item);
+const searchableText = `
+${item.name || ""}
+${stateText}
+${areaText}
+${item.address || ""}
+${subjectText}
+`.toLowerCase();
 
-const name = (item.name || "").toLowerCase();
-const location = (item.location || item.address || "").toLowerCase();
-
-if (search && !(similar(name, search) || similar(location, search))) {
-return false;
-}
-
-if (selectedClass && !classMatch(item.class, selectedClass)) {
-return false;
-}
+if (search && !searchableText.includes(search)) return false;
+if (selectedClass && !classMatch(item.class, selectedClass)) return false;
+if (selectedState && !stateText.toLowerCase().includes(selectedState)) return false;
+if (areaFilter && !areaText.toLowerCase().includes(areaFilter)) return false;
+if (subjectSearch && !subjectText.toLowerCase().includes(subjectSearch)) return false;
 
 return true;
 });
 
 const grid = document.getElementById("grid");
-
 const sorted = sortPublicProfiles(filtered);
 
 if (!sorted.length) {
@@ -423,43 +676,42 @@ grid.innerHTML = `<div class="empty">No Academic Profiles Found</div>`;
 return;
 }
 
-grid.innerHTML = sorted.map((item) => `
+grid.innerHTML = sorted.map((item) => {
+const rating = ratingInfo(item);
+const subject = getSubjectText(item);
+const stateText = getStateText(item) || "-";
+const areaText = getAreaText(item) || "-";
+const modeText = getModesText(item);
+
+return `
 <div class="card ${item.type.toLowerCase()}">
-
 <div class="top">
-
 <img class="photo" src="${item.photo || item.logo || 'https://via.placeholder.com/100'}">
-
 <div>
-
-<h3>${item.name || "-"}</h3>
-
-<div class="badge">${item.type}</div>
-
-<div class="badge verify">
-${(item.status || "").toLowerCase() === "approved" ? "Verified" : "Not Verified"}
+<h2>${item.name || "-"}</h2>
+<div class="badges">
+<span class="badge">${item.type}</span>
+<span class="badge">Academic</span>
+<span class="badge rating-badge">${rating.avg ? rating.avg.toFixed(1) + " / 5" : "No Rating"}${rating.count ? " (" + rating.count + ")" : ""}</span>
+<span class="badge verify">Verified</span>
 </div>
-
-<button class="btn view" data-id="${item.id}">
-View Details
-</button>
-
 </div>
 </div>
 
 <div class="details">
-<b>Class:</b> ${item.class || "-"} <br>
-<b>Location:</b> ${item.location || item.address || "-"}
+<b style="color:red;">Subject:</b> ${subject}<br><br>
+<b>Class:</b> ${item.class || "-"}<br>
+<b>State:</b> ${stateText}<br>
+<b>Area:</b> ${areaText}<br>
+<b>Mode:</b> ${modeText}
 </div>
 
+<button class="btn view" data-id="${item.id}">View Details</button>
 </div>
-`).join("");
-
+`;
+}).join("");
 }
-
 </script>
 
 </body>
 </html>
-
-
