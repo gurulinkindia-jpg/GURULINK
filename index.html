@@ -2,400 +2,368 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover">
-<title>GURULINK</title>
-
+<meta name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GURULINK - Home</title>
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
-body{
-min-height:100vh;
-background:
-linear-gradient(
-135deg,
-#dcefff,
-#eef7ff,
-#ffffff
-);
-padding-bottom:24px;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#eef2f7;color:#222}
 
 header{
-background:#1565c0;
+background:#1565c0; /* Purple */
 color:#fff;
+
 padding-top:calc(env(safe-area-inset-top) + 12px);
-padding-right:16px;
+padding-right:20px;
 padding-bottom:12px;
-padding-left:16px;
+padding-left:20px;
+
 display:flex;
 justify-content:space-between;
 align-items:center;
-gap:12px;
+
 position:sticky;
 top:0;
 z-index:1000;
-box-shadow:0 6px 18px rgba(13,71,161,.22);
 }
+.logo{font-size:28px;font-weight:bold}
+.header-right{display:flex;align-items:center;gap:10px}
+.dashboardBtn{background:#fff;color:#1565c0;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:bold}
+.profile{position:relative}
+.profile-btn{width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;font-size:20px}
+.dropdown{display:none;position:absolute;right:0;top:50px;background:#fff;min-width:220px;border-radius:10px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.dropdown a{display:block;padding:12px;text-decoration:none;color:#222;border-bottom:1px solid #eee}
+.dropdown a:hover{background:#f5f5f5}
+.hero{background:linear-gradient(135deg,#1565c0,#0d47a1);color:#fff;padding:70px 20px;text-align:center}
+.hero h1{font-size:42px;margin-bottom:12px}
+.hero p{max-width:800px;margin:auto;font-size:18px}
 
-.brand{
-display:flex;
-flex-direction:row;
-align-items:center;
-gap:8px;
-min-width:0;
-}
 
-.logoImg{
-width:44px;
-height:44px;
-object-fit:contain;
-flex-shrink:0;
-}
 
-.logoText{
-display:flex;
-flex-direction:row;
-align-items:center;
-font-size:22px;
-font-weight:bold;
-line-height:1;
-white-space:nowrap;
-text-shadow:0 1px 2px rgba(255,255,255,.2);
-}
 
-.guru{
-color:#2196f3;
-}
 
-.link{
-color:#4caf50;
-}
+.quick{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:20px}
 
-.header-nav{
-display:flex;
-align-items:center;
-gap:8px;
-flex-shrink:0;
-}
-
-.header-link{
-height:38px;
-padding:0 14px;
-border:none;
-border-radius:10px;
+.quick a{
 background:#fff;
 color:#1565c0;
 text-decoration:none;
-font-size:13px;
-font-weight:700;
+padding:12px 18px;
+border-radius:8px;
+font-weight:bold;
+
+border:2px solid #052961;   /* Dark Blue Border */
+box-shadow:0 2px 8px rgba(13,71,161,.15);
+transition:.3s;
+}
+
+.quick a:hover{
+background:#0d47a1;
+color:#fff;
+transform:translateY(-2px);
+}
+
+.section-title{text-align:center;padding:30px 15px 15px;font-size:30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;padding:20px}
+.card,.stat{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.08);text-align:center}
+.homeCategoryIcon{
+width:70px;
+height:70px;
+margin:0 auto 14px;
+border-radius:18px;
 display:flex;
 align-items:center;
 justify-content:center;
-cursor:pointer;
-box-shadow:0 4px 12px rgba(0,0,0,.14);
+background:linear-gradient(135deg,#e3f2fd,#ffffff);
+border:1px solid #bbdefb;
+color:#1565c0;
+box-shadow:0 6px 16px rgba(21,101,192,.12);
+}
+.homeCategoryIcon svg{
+width:42px;
+height:42px;
+fill:none;
+stroke:currentColor;
+stroke-width:2;
+stroke-linecap:round;
+stroke-linejoin:round;
+}
+.homeSkillIcon{background:linear-gradient(135deg,#e8f5e9,#ffffff);border-color:#c8e6c9;color:#2e7d32;}
+.homeCreativeIcon{background:linear-gradient(135deg,#fff3e0,#ffffff);border-color:#ffe0b2;color:#ef6c00;}
+.homeSportIcon{background:linear-gradient(135deg,#fce4ec,#ffffff);border-color:#f8bbd0;color:#c2185b;}
+.homeAllIcon{background:linear-gradient(135deg,#ede7f6,#ffffff);border-color:#d1c4e9;color:#5e35b1;}
+.card a{display:inline-block;margin-top:10px;text-decoration:none;background:#1565c0;color:#fff;padding:10px 14px;border-radius:8px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;padding:20px}
+#results{max-width:700px;margin:10px auto;background:#fff;border-radius:10px;display:none}
+#results a{display:block;padding:12px;text-decoration:none;color:#222;border-bottom:1px solid #eee}
+footer{background:#0d47a1;color:#fff;text-align:center;padding:25px;margin-top:30px}
+
+
+@media(max-width:768px){ .filterBar{ grid-template-columns:repeat(2,1fr); } }
+@media(max-width:768px){ .filterBar{grid-template-columns:repeat(2,1fr); gap:6px;}
+
+.filterBar select,
+.filterBar input{
+height:32px;
+font-size:11px;
+padding:0 4px;
 }
 
-@media(max-width:768px){
-header{
-padding-right:12px;
-padding-bottom:10px;
-padding-left:12px;
-gap:10px;
 }
 
-.brand{
-gap:7px;
-}
 
-.logoImg{
-width:38px;
-height:38px;
-}
-
-.logoText{
-font-size:16px;
-line-height:1;
-}
-
-.header-nav{
-gap:6px;
-}
-
-.header-link{
-height:34px;
-padding:0 12px;
-font-size:12px;
-border-radius:9px;
-}
-}
-
-.container{
+.search-box{
 width:95%;
-max-width:1400px;
-margin:auto;
-padding:25px;
+max-width:700px;
+margin:25px auto 10px;
+background:#fff;
+padding:8px;
+border-radius:12px;
+
+display:flex;
+align-items:center;
+
+gap:8px;
+
+box-sizing:border-box;
 }
 
-.filters{
+.search-box input{
+flex:1;
 
-display:grid;
+height:46px;
 
-grid-template-columns:
-repeat(3,minmax(0,1fr));
+border:none;
+outline:none;
 
-gap:10px;
+padding:0 12px;
 
-padding:16px;
+font-size:16px;
 
-background:
-rgba(255,255,255,.4);
+background:transparent;
 
-backdrop-filter:
-blur(25px);
-
-border-radius:25px;
-
-margin-bottom:22px;
-
-box-shadow:
-0 10px 30px rgba(0,0,0,.05);
-
+box-sizing:border-box;
 }
 
-.filters input,
-.filters select{
+.search-box button{
+height:46px;
 
-min-width:0;
-padding:12px;
-font-size:13px;
+padding:0 18px;
 
 border:none;
 
-outline:none;
+background:#1565c0;
+color:#fff;
 
-border-radius:14px;
+border-radius:8px;
 
-background:
-rgba(255,255,255,.8);
+cursor:pointer;
+
+white-space:nowrap;
+
+flex-shrink:0;
+
+box-sizing:border-box;
+}
+
+@media(max-width:768px){
+
+.search-box{
+padding:6px;
+gap:6px;
+}
+
+.search-box input{
+height:42px;
+font-size:15px;
+}
+
+.search-box button{
+height:42px;
+padding:0 12px;
+font-size:14px;
+}
 
 }
 
-#search{
-grid-column:1/span 2;
+.filter-bar{
+width:95%;
+max-width:700px;
+margin:0 auto;
 }
 
-#category,
-#stateFilter,
-#areaFilter,
-#subjectSearch{
-grid-column:auto;
-}
-
-#dynamicFilters{
-
+.filterBar{
 display:grid;
-
-grid-template-columns:
-repeat(3,minmax(0,1fr));
-
-gap:10px;
-
-grid-column:1/-1;
-
-}
-
-.grid{
-
-display:grid;
-
-grid-template-columns:
-repeat(auto-fit,minmax(340px,1fr));
-
-gap:25px;
-
-}
-
-.card{
-
-background:
-rgba(255,255,255,.35);
-
-backdrop-filter:
-blur(25px);
-
-border-radius:25px;
-
-padding:20px;
-
-border:
-1px solid rgba(255,255,255,.5);
-
-box-shadow:
-0 10px 30px rgba(0,0,0,.06);
-
-transition:.4s;
-
-}
-
-.card:hover{
-
-transform:
-translateY(-8px);
-
-}
-/* TYPE COLORS */
-
-.card.teacher{
-border-left:6px solid #1976d2;
-}
-
-.card.institution{
-border-left:6px solid #e91e63;
-}
-
-/* CATEGORY COLORS */
-
-.card.academic{
-background:linear-gradient(
-135deg,
-rgba(25,118,210,.10),
-rgba(255,255,255,.6)
-);
-}
-
-.card.creative{
-background:linear-gradient(
-135deg,
-rgba(156,39,176,.10),
-rgba(255,255,255,.6)
-);
-}
-
-.card.skill{
-background:linear-gradient(
-135deg,
-rgba(255,152,0,.10),
-rgba(255,255,255,.6)
-);
-}
-
-.card.sport{
-background:linear-gradient(
-135deg,
-rgba(76,175,80,.10),
-rgba(255,255,255,.6)
-);
-}
-.top{
-
-display:flex;
-gap:15px;
-align-items:center;
-
-}
-
-.photo{
-
-width:90px;
-height:90px;
-border-radius:50%;
-object-fit:cover;
-border:4px solid white;
-
-}
-
-.badges{
-
-margin-top:8px;
-
-}
-
-.badge{
-
-display:inline-block;
-padding:6px 12px;
-margin:3px;
-font-size:12px;
-border-radius:20px;
-background:white;
-color:#1976d2;
-
-}
-
-.verify{
-
-background:#2196f3;
-color:white;
-
-}
-
-.rating-badge{
-background:#fff3cd;
-color:#c77700;
-font-weight:bold;
-}
-
-.details{
-
-margin-top:15px;
-line-height:1.8;
-color:#444;
-
-}
-
-.mode{
-
-margin-top:15px;
-padding:12px;
-border-radius:15px;
-background:
-rgba(255,255,255,.45);
-
-}
-
-.gallery{
-
-display:flex;
+grid-template-columns:repeat(4,1fr);
 gap:8px;
-overflow:auto;
-margin-top:15px;
+width:100%;
+}
+
+
+
+
+
+
+
+.logo{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+}
+
+.logoImg{
+width:50px;
+height:50px;
+object-fit:contain;
+margin-bottom:4px;
+}
+
+.logoText{
+font-size:28px;
+font-weight:bold;
+line-height:1;
+}
+
+@media (max-width:768px){
+
+.logoText{
+font-size:18px;
+}
 
 }
 
-.gallery img{
 
-width:70px;
-height:70px;
-border-radius:10px;
-object-fit:cover;
+.guru{
+color:#2196f3;   /* Blue */
+}
+
+.link{
+color:#4caf50;   /* Green */
+}
+@media (max-width: 768px){
+
+.header-right{
+gap:5px;
+}
+
+.dashboardBtn{
+padding:6px 10px;
+font-size:12px;
+border-radius:6px;
+}
+
+}
+.mobileText{
+display:none;
+}
+
+@media (max-width:768px){
+
+.desktopText{
+display:none;
+}
+
+.mobileText{
+display:inline;
+}
 
 }
 
-.empty{
 
-padding:30px;
-text-align:center;
-border-radius:20px;
+
+
+
+.filter-bar select{
+flex:1;
+height:48px;
+padding:0 15px;
+border:none;
+border-radius:12px;
+background:#fff;
+font-size:15px;
+font-weight:500;
+color:#333;
+outline:none;
+cursor:pointer;
+box-shadow:0 2px 8px rgba(0,0,0,.12);
+transition:.3s;
+}
+
+.filter-bar select:hover{
+box-shadow:0 5px 15px rgba(0,0,0,.18);
+}
+
+.filter-bar select:focus{
+border:2px solid #1565c0;
+}
+
+@media(max-width:768px){
+
+.filter-bar{
+flex-direction:column;
+}
+
+}
+
+#loginOverlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.6);
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:99999;
+}
+
+.loginBox{
 background:white;
+padding:30px;
+border-radius:15px;
+text-align:center;
+width:320px;
+}
 
+.loginBox button{
+width:100%;
+padding:14px;
+margin-top:12px;
+border:none;
+border-radius:10px;
+background:#1565c0;
+color:white;
+font-size:16px;
+cursor:pointer;
 }
 
 
-.float-btn{
-min-width:84px;
+
+.filterBar select,
+.filterBar input{
+width:100%;
 height:38px;
-padding:0 14px;
-font-size:13px;
-box-shadow:0 8px 18px rgba(0,0,0,.16);
+font-size:12px;
+padding:0 8px;
+border:1px solid #ccc;
+border-radius:6px;
+background:#fff;
+outline:none;
+box-sizing:border-box;
 }
-}
+
+
+
+
+
+
+
+
 </style>
+
 <link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 <link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 <link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
@@ -404,12 +372,85 @@ box-shadow:0 8px 18px rgba(0,0,0,.16);
 <script src="gurulink-theme.js?v=2"></script>
 </head>
 
+
+
+
+
 <body>
+<div id="loginOverlay" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:white;
+z-index:99999;
+display:flex;
+justify-content:center;
+align-items:center;
+">
+
+<div style="
+width:90%;
+max-width:400px;
+background:#fff;
+padding:25px;
+border-radius:15px;
+box-shadow:0 5px 20px rgba(0,0,0,.2);
+text-align:center;
+">
+
+<h2>Welcome to GURULINK</h2>
+
+<p style="margin:15px 0;">
+Select Your Role
+</p>
+
+<button id="studentBtn" style="
+width:100%;
+padding:15px;
+margin-bottom:10px;
+background:#1565c0;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+">
+ Parent / Student
+</button>
+
+<button id="teacherBtn" style="
+width:100%;
+padding:15px;
+background:#2e7d32;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+">
+ Teacher / Institute
+</button>
+<button id="guestBtn" style="
+width:100%;
+padding:15px;
+margin-top:10px;
+background:#00897b;
+color:white;
+border:none;
+border-radius:10px;
+cursor:pointer;
+">
+Guest
+</button>
+
+</div>
+
+</div>
 
 <header>
+<div class="logo" onclick="location.href='index.html'">
 
-<div class="brand">
-<img 
+<img
 src="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png"
 alt="GL"
 class="logoImg">
@@ -417,69 +458,84 @@ class="logoImg">
 <div class="logoText">
 <span class="guru">GURU</span><span class="link">LINK</span>
 </div>
-</div>
 
-<div class="header-nav">
-<button class="header-link" type="button" onclick="history.back()">Back</button>
-<a href="index.html" class="header-link">Home</a>
 </div>
-
+<div class="header-right">
+<a href="register.html" class="dashboardBtn registerBtn">
+ <span class="desktopText">Register as Teacher / Institute</span>
+<span class="mobileText">Register</span>
+</a>
+<a href="#" id="dashboardBtn" class="dashboardBtn"> Dashboard</a>
+<div class="profile">
+<button class="profile-btn" id="profileBtn">
+<img
+id="headerProfilePic"
+src="https://i.ibb.co/4pDNDk1/user.png"
+style="
+width:100%;
+height:100%;
+border-radius:50%;
+object-fit:cover;
+">
+</button>
+<div class="dropdown" id="menu">
+<a href="login.html">Login</a>
+<a href="register.html">Register</a>
+<a href="#" id="menuDashboard"> Dashboard</a>
+<a href="settings.html">Settings</a>
+<a href="find-teacher.html">Find Teacher</a>
+<a href="#" onclick="openHelpdesk(event)">Helpdesk</a>
+<a href="mailto:gurulinkindia@gmail.com">Email Developer</a>
+<a href="#" id="logoutBtn">Logout</a>
+</div>
+</div>
+</div>
 </header>
 
+<section class="hero">
+<h1>Find the Right Teacher for Every Subject</h1>
+<p>Academics, Education & Career Development | Professional Skills | Arts & Creativity | Sports & Fitness</p>
 
-<div class="container">
 
-<div class="filters">
+
+
+<div class="search-box">
 
 <input
-id="search"
-placeholder="Search Name / Location">
+id="searchInput"
+oninput="searchSite()"
+placeholder="Search teacher, institute, subject...">
 
-<select id="category">
+<button onclick="searchSite()">Search</button>
 
-<option value="">
-All Categories
-</option>
+</div>
 
-<option value="academic">
-Academics, Education & Career Development
-</option>
+<div class="filter-bar">
 
-<option value="creative">
-Arts & Creativity
-</option>
 
-<option value="skill">
-Professional Skills
-</option>
 
-<option value="sport">
-Sports & Fitness
-</option>
 
+<div class="filterBar">
+
+<select id="stateFilter" onchange="searchSite()">
+<option value="">State</option>
 </select>
 
-<select id="stateFilter">
-<option value="">State</option>
+<select id="categoryFilter" onchange="searchSite()">
+<option value="">Category</option>
 </select>
 
 <input
 id="areaFilter"
-placeholder="Area">
+type="text"
+placeholder="Area / PIN"
+oninput="searchSite()">
 
-<input
-id="subjectSearch"
-placeholder="Subject">
-
-<div id="dynamicFilters"></div>
-
-</div>
-
-
-<div
-id="grid"
-class="grid">
-</div>
+<select id="roleFilter" onchange="searchSite()">
+<option value="">Both (Teacher / Trainer + Institute)</option>
+<option value="teacher">Teacher / Trainer</option>
+<option value="institution">Institute</option>
+</select>
 
 </div>
 
@@ -487,637 +543,944 @@ class="grid">
 
 
 
+</div>
 
+<div id="results"></div>
+
+
+
+<div class="quick">
+<a href="find-teacher.html">Find Teacher</a>
+<a href="profile.html">All Profiles</a>
+</div>
+</section>
+
+<h2 class="section-title">Categories</h2>
+<div class="grid">
+<div class="card">
+<div class="homeCategoryIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="M4 6.5 12 3l8 3.5-8 3.5-8-3.5z"></path>
+<path d="M6.5 9.5v4.2c0 1.5 2.5 2.8 5.5 2.8s5.5-1.3 5.5-2.8V9.5"></path>
+<path d="M20 6.5v5"></path>
+</svg>
+</div>
+<h3>Academics, Education & Career Development</h3>
+<a href="academic-profile.html">Open</a>
+</div>
+
+<div class="card">
+<div class="homeCategoryIcon homeSkillIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="M14.7 6.3a4 4 0 0 0-5 5l-5.4 5.4a2.1 2.1 0 0 0 3 3l5.4-5.4a4 4 0 0 0 5-5l-2.8 2.8-3-3 2.8-2.8z"></path>
+<path d="M5 19l2-2"></path>
+</svg>
+</div>
+<h3>Professional Skills</h3>
+<a href="skill-profile.html">Open</a>
+</div>
+
+<div class="card">
+<div class="homeCategoryIcon homeCreativeIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="M4 20c3.5-1 5.5-3.2 6-6"></path>
+<path d="M14.5 4.5 19.5 9.5"></path>
+<path d="M13 6 18 11 10.5 18.5 5.5 19.5 6.5 14.5 13 6z"></path>
+</svg>
+</div>
+<h3>Arts & Creativity</h3>
+<a href="creative-profile.html">Open</a>
+</div>
+
+<div class="card">
+<div class="homeCategoryIcon homeSportIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<path d="M8 6h8"></path>
+<path d="M8 18h8"></path>
+<path d="M10 6v12"></path>
+<path d="M14 6v12"></path>
+<path d="M6 8v8"></path>
+<path d="M18 8v8"></path>
+<path d="M3 12h3"></path>
+<path d="M18 12h3"></path>
+</svg>
+</div>
+<h3>Sports & Fitness</h3>
+<a href="sport-profile.html">Open</a>
+</div>
+
+<div class="card">
+<div class="homeCategoryIcon homeAllIcon">
+<svg viewBox="0 0 24 24" aria-hidden="true">
+<circle cx="8" cy="8" r="3"></circle>
+<circle cx="16" cy="8" r="3"></circle>
+<path d="M3.5 20c.7-3.2 2.4-5 4.5-5s3.8 1.8 4.5 5"></path>
+<path d="M11.5 20c.7-3.2 2.4-5 4.5-5s3.8 1.8 4.5 5"></path>
+</svg>
+</div>
+<h3>All Teachers & Institutes</h3>
+<a href="profile.html">Open</a>
+</div>
+</div>
+
+<h2 class="section-title">GURULINK Statistics</h2>
+<div class="stats">
+<div class="stat"><h2 id="teacherCount">0</h2><p>Teachers</p></div>
+<div class="stat"><h2 id="instCount">0</h2><p>Institutes</p></div>
+<div class="stat"><h2>100+</h2><p>Subjects</p></div>
+<div class="stat"><h2>24x7</h2><p>Access</p></div>
+</div>
+
+<footer>
+<p>Â© GURULINK Powred By G10 Group</p>
+<p>Connecting Students & Teachers</p>
+<p style="margin-top:8px;">
+<a href="privacy-policy.html" style="color:#fff;text-decoration:underline;">Privacy Policy</a>
+ |
+<a href="terms-of-use.html" style="color:#fff;text-decoration:underline;">Terms of Use</a>
+ |
+<a href="delete-account.html" style="color:#fff;text-decoration:underline;">Delete Account</a>
+</p>
+</footer>
 
 <script type="module">
+let searchData = [];
+let matches = [];
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-/* FIREBASE */
-const firebaseConfig = {
-  apiKey: "AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-  authDomain: "gurulink-59cc7.firebaseapp.com",
-  databaseURL: "https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "gurulink-59cc7",
-  storageBucket: "gurulink-59cc7.appspot.com",
-  messagingSenderId: "112148672399",
-  appId: "1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+const firebaseConfig={
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
 
-let teachers = [];
-let institutions = [];
-let ratingMap = {};
 
-/* =========================
-   LOAD DATA (FIXED STRUCTURE)
-========================= */
 
-function loadData() {
 
-  onValue(ref(db, "teachers"), (snap) => {
-    teachers = [];
 
-    snap.forEach((c) => {
-
-      const d = c.val();
-
-      if (
-        (d.status || "").toLowerCase() === "approved" &&
-        isPublicProfile(d)
-      ) {
-        teachers.push({
-          ...d,
-          id: c.key,
-          type: "Teacher"
-        });
-      }
-
-    });
-
-    populateStateFilter();
-    render();
-  });
-
-  onValue(ref(db, "institutions"), (snap) => {
-    institutions = [];
-
-    snap.forEach((c) => {
-
-      const d = c.val();
-
-      if (
-        (d.status || "").toLowerCase() === "approved" &&
-        isPublicProfile(d)
-      ) {
-        institutions.push({
-          ...d,
-          id: c.key,
-          type: "Institution"
-        });
-      }
-
-    });
-
-    populateStateFilter();
-    render();
-  });
-}
-
-loadData();
-
-onValue(ref(db, "reviews"), (snap) => {
-  ratingMap = {};
-
-  snap.forEach((typeSnap) => {
-    const collection = typeSnap.key;
-
-    typeSnap.forEach((profileSnap) => {
-      let total = 0;
-      let count = 0;
-
-      profileSnap.forEach((reviewSnap) => {
-        const rating = Number(reviewSnap.val()?.rating || 0);
-        if (rating > 0) {
-          total += rating;
-          count++;
-        }
-      });
-
-      if (count) {
-        ratingMap[collection + "/" + profileSnap.key] = {
-          avg: total / count,
-          count
-        };
-      }
-    });
-    });
-
-  render();
-});
-
-/* =========================
-   HELPERS
-========================= */
-
-function similar(a, b) {
-  return (a || "").toLowerCase().includes((b || "").toLowerCase());
-}
-
-function isPublicProfile(profile) {
-  return profile.publicVisible !== false &&
-    profile.publicVisible !== "false";
-}
-
-function publicRankValue(profile) {
-  const rank = Number(profile.publicRank);
-  return Number.isFinite(rank) && rank > 0 ? rank : null;
-}
-
-function ratingInfo(profile) {
-  const collection = profile.type === "Institution" ? "institutions" : "teachers";
-  return ratingMap[collection + "/" + profile.id] || { avg: 0, count: 0 };
-}
-
-function sortPublicProfiles(list) {
-  return [...list].sort((a, b) => {
-    const aRank = publicRankValue(a);
-    const bRank = publicRankValue(b);
-
-    if (aRank !== null || bRank !== null) {
-      if (aRank === null) return 1;
-      if (bRank === null) return -1;
-      if (aRank !== bRank) return aRank - bRank;
-    }
-
-    const ar = ratingInfo(a);
-    const br = ratingInfo(b);
-
-    if (br.avg !== ar.avg) return br.avg - ar.avg;
-    if (br.count !== ar.count) return br.count - ar.count;
-
-    return (a.name || "").localeCompare(b.name || "");
-  });
-}
-
-function getAllProfiles() {
-  return [...teachers, ...institutions];
-}
-
-function populateStateFilter() {
-  const select = document.getElementById("stateFilter");
-  if (!select) return;
-
-  const current = select.value || "";
-  const states = [...new Set(
-    getAllProfiles()
-      .map(profile => getStateText(profile))
-      .filter(Boolean)
-  )].sort((a, b) => a.localeCompare(b));
-
-  select.innerHTML = `<option value="">State</option>`;
-
-  states.forEach((state) => {
-    const option = document.createElement("option");
-    option.value = state;
-    option.textContent = state;
-    select.appendChild(option);
-  });
-
-  if (current && states.includes(current)) {
-    select.value = current;
-  }
-}
-
-const categoryLabels = {
-  academic: "Academics, Education & Career Development",
-  creative: "Arts & Creativity",
-  skill: "Professional Skills",
-  sport: "Sports & Fitness"
-};
-
-function categoryLabel(value) {
-  return categoryLabels[value] || value || "-";
-}
-
-function getStateText(profile) {
-  return profile.address || profile.state || profile.location || "";
-}
-
-function getAreaText(profile) {
-  return profile.area || profile.city || profile.town || "";
-}
-
-function getSubjectText(profile) {
-  if (profile.subjects) {
-    if (Array.isArray(profile.subjects)) return profile.subjects.join(", ");
-    if (typeof profile.subjects === "object") return Object.values(profile.subjects).join(", ");
-    return String(profile.subjects);
-  }
-
-  return profile.subject || profile.skillType || profile.creativeType || profile.course || "Not Mentioned";
-}
-
-function getModesText(profile) {
-  if (profile.teachingModes) {
-    if (Array.isArray(profile.teachingModes)) return profile.teachingModes.join(", ");
-    if (typeof profile.teachingModes === "object") return Object.values(profile.teachingModes).join(", ");
-    return String(profile.teachingModes);
-  }
-
-  return "Not Mentioned";
-}
-
-/* =========================
-   CATEGORY CHANGE -> RESET FILTERS
-========================= */
-
-const category = document.getElementById("category");
-const dynamic = document.getElementById("dynamicFilters");
-const urlParams =
-new URLSearchParams(window.location.search);
-
-
-
-
-
-const searchFromHome =
-urlParams.get("search");
-
-if(searchFromHome){
-
-document.getElementById("search").value =
-searchFromHome;
-
-setTimeout(render,500);
-
-}
-
-
-
-
-
-category.addEventListener("change", showFilters);
-
-
-
-
-
-
-
-
-
-
-function showFilters() {
-
-  let html = "";
-
-  if (category.value === "academic") {
-    html = `
-      <select id="classFilter">
-        <option value="">All Classes</option>
-        <option>Class 1-5</option>
-        <option>Class 6-8</option>
-        <option>Class 9-10</option>
-        <option>Class 11-12</option>
-      </select>
-
-      <select id="subjectFilter">
-        <option value="">All Academic Subjects</option>
-        <option>Mathematics</option>
-        <option>Physics</option>
-        <option>Chemistry</option>
-        <option>Biology</option>
-      </select>
-    `;
-  }
-
-  else if (category.value === "creative") {
-    html = `
-      <select id="subjectFilter">
-        <option value="">All Arts & Creativity</option>
-        <option>Music</option>
-        <option>Dance</option>
-        <option>Drawing</option>
-      </select>
-    `;
-  }
-
-  else if (category.value === "skill") {
-    html = `
-      <select id="subjectFilter">
-        <option value="">All Professional Skills</option>
-        <option>Computer</option>
-        <option>Embroidery</option>
-        <option>Cake Making</option>
-      </select>
-    `;
-  }
-
-  else if (category.value === "sport") {
-    html = `
-      <select id="subjectFilter">
-        <option value="">All Sports & Fitness</option>
-        <option>Cricket</option>
-        <option>Football</option>
-        <option>Yoga</option>
-      </select>
-    `;
-  }
-
-  dynamic.innerHTML = html;
-
-  document.querySelectorAll("select, input").forEach(el => {
-    el.oninput = render;
-    el.onchange = render;
-  });
-}
-
-showFilters();
-
-/* =========================
-   VIEW PROFILE (LOGIN SAFE)
-========================= */
-
-function showGuestAccessPopup(onLogin){
-  const popup = document.createElement("div");
-  popup.id = "guestAccessPopup";
-  popup.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:18px;z-index:9999;";
-  popup.innerHTML = `
-    <div style="width:100%;max-width:430px;background:white;border-radius:16px;box-shadow:0 18px 45px rgba(0,0,0,.28);overflow:hidden;">
-      <div style="background:#00897b;color:white;padding:18px 20px;">
-        <h3 style="margin:0;font-size:20px;">Limited Access</h3>
-      </div>
-      <div style="padding:20px;">
-        <p style="margin:0 0 12px;line-height:1.6;color:#333;font-size:14px;">
-          You are using limited access. For complete access, please log in as a Teacher / Institution or Student / Parent.
-        </p>
-        <p style="margin:0 0 12px;line-height:1.6;color:#333;font-size:14px;">
-          GURULINK is only a linking platform between students, parents, teachers, and institutions. GURULINK never shares or misuses your personal data.
-        </p>
-        <p style="margin:0;line-height:1.6;color:#333;font-size:14px;">
-          After login, you and the teacher or institution can contact each other directly by phone call, WhatsApp, or chat.
-        </p>
-        <div style="display:flex;gap:10px;margin-top:18px;">
-          <button type="button" id="guestCancelBtn" style="flex:1;width:auto;padding:12px;background:#eceff1;color:#263238;border:none;border-radius:10px;font-size:14px;">Cancel</button>
-          <button type="button" id="guestLoginBtn" style="flex:1;width:auto;padding:12px;background:#00897b;color:white;border:none;border-radius:10px;font-size:14px;">Login Now</button>
-        </div>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(popup);
-  document.getElementById("guestCancelBtn").onclick = () => popup.remove();
-  document.getElementById("guestLoginBtn").onclick = () => {
-    popup.remove();
-    onLogin();
-  };
-}
-
-function openProfileWithLogin(id){
-  const viewerId =
-    localStorage.getItem("uid") ||
-    localStorage.getItem("profileId");
-
-  const viewerRole =
-    (localStorage.getItem("role") || "").toLowerCase();
-
-  const profileUrl = "profile-view.html?id=" + id;
-
-  if(!viewerId || viewerRole === "guest"){
-    showGuestAccessPopup(() => {
-      localStorage.removeItem("selectedRole");
-      sessionStorage.setItem("postLoginRedirect", profileUrl);
-      window.location.href =
-        "otp-login.html?return=" + encodeURIComponent(profileUrl);
-    });
-    return;
-  }
-
-  window.location.href = profileUrl;
-}
-
-document.addEventListener("click", (e) => {
-
-  const card = e.target.closest(".card");
-  if (!card) return;
-
-  const id = card.dataset.id;
-  if (!id) return;
-
-  openProfileWithLogin(id);
-});
-
-
-function viewProfile(id){
-
-openProfileWithLogin(id);
-
-}
-
-window.viewProfile = viewProfile;
-
-/* =========================
-   RENDER
-========================= */
-
-function render() {
-
-  const grid = document.getElementById("grid");
-
-  const search = document.getElementById("search").value.trim().toLowerCase();
-  const cat = category.value;
-  const stateFilter = document.getElementById("stateFilter").value.trim().toLowerCase();
-  const areaFilter = document.getElementById("areaFilter").value.trim().toLowerCase();
-  const subjectSearch = document.getElementById("subjectSearch").value.trim().toLowerCase();
-
-  const subjectFilter = document.getElementById("subjectFilter")?.value || "";
-  const classFilter = document.getElementById("classFilter")?.value || "";
-
-  const filtered = getAllProfiles().filter((x) => {
-
-    /* CATEGORY */
-    if (cat && x.category !== cat) return false;
-
-   
-
-
-const stateText = getStateText(x);
-const areaText = getAreaText(x);
-const subject = getSubjectText(x);
-
-const searchableText = `
-${x.name || ""}
-${stateText}
-${areaText}
-${x.address || ""}
-${x.subject || ""}
-${x.skillType || ""}
-${x.creativeType || ""}
-${x.course || ""}
-${Array.isArray(x.subjects)
-? x.subjects.join(" ")
-: Object.values(x.subjects || {}).join(" ")
-}
-`.toLowerCase();
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getDatabase(app);
+const DEFAULT_HEADER_PHOTO = "https://i.ibb.co/4pDNDk1/user.png";
 
 if(
-search &&
-!searchableText.includes(search)
+localStorage.getItem("role") === "guest" ||
+(
+localStorage.getItem("role") &&
+localStorage.getItem("phone")
+)
 ){
-return false;
+
+document.getElementById("loginOverlay").style.display="none";
+
+}else{
+
+document.getElementById("loginOverlay").style.display="flex";
+
 }
 
-if (
-  stateFilter &&
-  !stateText.toLowerCase().includes(stateFilter)
-) {
-  return false;
+document.getElementById("studentBtn").onclick=()=>{
+
+localStorage.setItem("selectedRole","student");
+
+location.href="otp-login.html";
+
+};
+
+document.getElementById("teacherBtn").onclick=()=>{
+
+
+
+localStorage.setItem(
+"selectedRole",
+"teacher_institute"
+);
+
+
+
+location.href="otp-login.html";
+
+};
+
+document.getElementById("guestBtn").onclick=()=>{
+
+alert("Guest has limited access. Full features of GURULINK are available for Student / Parent and Teacher / Institution users.");
+
+localStorage.setItem("role","guest");
+localStorage.removeItem("selectedRole");
+localStorage.removeItem("otpRole");
+
+document.getElementById("loginOverlay").style.display="none";
+
+};
+
+const savedPhoto = localStorage.getItem("profilePhoto");
+
+if(savedPhoto){
+document.getElementById("headerProfilePic").src = savedPhoto;
 }
 
-if (
-  areaFilter &&
-  !areaText.toLowerCase().includes(areaFilter)
-) {
-  return false;
+async function loadHeaderProfilePhoto(authUser){
+const role =
+String(localStorage.getItem("role") || "")
+.trim()
+.toLowerCase();
+
+if(role === "guest"){
+return;
 }
 
-if (
-  subjectSearch &&
-  !subject.toLowerCase().includes(subjectSearch)
-) {
-  return false;
+const profileId =
+localStorage.getItem("profileId") ||
+localStorage.getItem("teacherId") ||
+localStorage.getItem("institutionId") ||
+localStorage.getItem("uid") ||
+(authUser ? authUser.uid : "") ||
+"";
+
+if(!profileId){
+return;
 }
 
-    /* SUBJECT */
-    if (
-      subjectFilter &&
-      !subject.toLowerCase().includes(subjectFilter.toLowerCase())
-    ) {
-      return false;
+const paths = [];
+
+if(role === "teacher"){
+paths.push("teachers/" + profileId);
+}
+
+if(role === "institution"){
+paths.push("institutions/" + profileId);
+}
+
+if(role === "student" || role === "parent"){
+paths.push("students/" + profileId);
+}
+
+paths.push("teachers/" + profileId);
+paths.push("institutions/" + profileId);
+paths.push("students/" + profileId);
+paths.push("users/" + profileId);
+
+const tried = new Set();
+
+for(const path of paths){
+if(!path || tried.has(path)) continue;
+tried.add(path);
+
+try{
+const snap = await get(ref(db, path));
+
+if(!snap.exists()) continue;
+
+const profileData = snap.val() || {};
+const photo =
+profileData.logo ||
+profileData.photo ||
+profileData.profilePhoto ||
+profileData.image ||
+"";
+
+if(photo){
+document.getElementById("headerProfilePic").src = photo;
+localStorage.setItem("profilePhoto", photo);
+return;
+}
+}
+catch(err){
+console.log("Header photo load failed for", path, err);
+}
+}
+
+if(!savedPhoto){
+document.getElementById("headerProfilePic").src =
+DEFAULT_HEADER_PHOTO;
+}
+}
+
+onAuthStateChanged(auth,(user)=>{
+loadHeaderProfilePhoto(user);
+});
+
+
+
+
+
+
+
+
+document.getElementById("profileBtn").onclick=()=>{
+const m=document.getElementById("menu");
+m.style.display=m.style.display==="block"?"none":"block";
+};
+
+
+
+
+function openDashboard(){
+const role=localStorage.getItem("role");
+if(role==="teacher") location.href="teacher-dashboard.html";
+else if(role==="institution") location.href="institute-dashboard.html";
+else if(role==="student") location.href="student-dashboard.html";
+else location.href="login.html";
+}
+
+document.getElementById("dashboardBtn").onclick=(e)=>{e.preventDefault();openDashboard();};
+document.getElementById("menuDashboard").onclick=(e)=>{e.preventDefault();openDashboard();};
+
+document.getElementById("logoutBtn").onclick = async (e) => {
+    e.preventDefault();
+
+    try {
+        await signOut(auth);
+    } catch(err) {
+        console.error(err);
     }
 
-    /* CLASS */
-    if (classFilter && x.class !== classFilter) {
-      return false;
-    }
+    localStorage.clear();
+    window.location.replace("index.html");
+};
 
-    return true;
-  });
 
-  const sorted = sortPublicProfiles(filtered);
 
-  if (!sorted.length) {
-    grid.innerHTML = `
-      <div class="empty">
-        No Results Found
-      </div>
-    `;
-    return;
-  }
+// Teachers
+try {
 
-  
-  
-  
-  
-grid.innerHTML = sorted.map((x) => {
+const teacherSnap = await get(ref(db,"teachers"));
 
-const subject = getSubjectText(x);
-const stateText = getStateText(x) || "-";
-const areaText = getAreaText(x) || "-";
-const modeText = getModesText(x);
-const rating = ratingInfo(x);
-const extraField =
-x.type === "Teacher"
-?
-`<b>Experience:</b> ${x.experience || "-"} Years`
+let teacherCount = 0;
+
+if(teacherSnap.exists()){
+
+teacherSnap.forEach(child=>{
+
+teacherCount++;
+
+const data = child.val();
+
+searchData.push({
+id: child.key,
+type: "teacher",
+
+address: data.address || "",
+category: data.category || "",
+pinCode: data.pinCode || "",
+
+name: data.name || "",
+photo: data.logo || "",
+area: data.area || "",
+teachingModes:
+Array.isArray(data.teachingModes)
+? data.teachingModes.join(" ")
+: (data.teachingModes || ""),
+
+subjects:
+Array.isArray(data.subjects)
+? data.subjects.join(" ")
 :
-`<b>Established:</b> ${
-   x.establishedDate
-   ? new Date(x.establishedDate).getFullYear()
-   : "-"
- }`;
+typeof data.subjects === "object"
+? Object.values(data.subjects).join(" ")
+: (
+data.subjects ||
+data.subject ||
+data.skillType ||
+data.creativeType ||
+data.course ||
+""
+),
 
-return `
+location: data.location || data.address || "",
+description: data.description || ""
+});
 
-<div
-class="card ${x.type.toLowerCase()} ${x.category || ''}"
-data-id="${x.id}">
+})
+} // <-- MISSING
 
-<div class="top">
+document.getElementById("teacherCount").textContent = teacherCount;
+
+const instituteSnap = await get(ref(db,"institutions"));
+
+let instituteCount = 0;
+
+if(instituteSnap.exists()){
+
+instituteSnap.forEach(child=>{
+
+instituteCount++;
+
+const data = child.val();
+
+
+
+
+
+searchData.push({
+id: child.key,
+type: "institution",
+address: data.address || "",
+category: data.category || "",
+pinCode: data.pinCode || "",
+name: data.name || "",
+photo: data.logo || "",
+area: data.area || "",
+
+teachingModes:
+Array.isArray(data.teachingModes)
+? data.teachingModes.join(" ")
+: (data.teachingModes || ""),
+
+
+
+
+
+subjects:
+Array.isArray(data.subjects)
+? data.subjects.join(" ")
+:
+typeof data.subjects === "object"
+? Object.values(data.subjects).join(" ")
+: (
+data.subjects ||
+data.subject ||
+data.skillType ||
+data.creativeType ||
+data.course ||
+""
+),
+
+location: data.location || data.address || "",
+description: data.description || ""
+});
+
+})
+} // <-- MISSING
+
+document.getElementById("instCount").textContent = instituteCount;
+loadFilters();
+
+console.log("Teachers =", teacherCount);
+console.log("Institutes =", instituteCount);
+
+}
+catch(err){
+console.error(err);
+}
+
+const pages=[
+["Academics, Education & Career Development","academic-profile.html"],
+["Professional Skills","skill-profile.html"],
+["Arts & Creativity","creative-profile.html"],
+["Sports & Fitness","sport-profile.html"],
+["All Profiles","profile.html"],
+["Find Teacher","find-teacher.html"],
+["Teacher Dashboard","teacher-dashboard.html"],
+["Institute Dashboard","institute-dashboard.html"],
+["Student Dashboard","student-dashboard.html"],
+["Settings","settings.html"],
+["Login","login.html"],
+["Register","register.html"],
+["Customer Care","ask.html"]
+];
+
+
+
+function getProfilePage(item){
+
+const s = (item.subjects || "").toLowerCase();
+
+if(
+s.includes("physics") ||
+s.includes("chemistry") ||
+s.includes("biology") ||
+s.includes("mathematics") ||
+s.includes("english")
+){
+return "academic-profile.html";
+}
+
+if(
+s.includes("computer") ||
+s.includes("programming") ||
+s.includes("coding")
+){
+return "skill-profile.html";
+}
+
+if(
+s.includes("music") ||
+s.includes("dance") ||
+s.includes("drawing") ||
+s.includes("painting")
+){
+return "creative-profile.html";
+}
+
+if(
+s.includes("cricket") ||
+s.includes("football") ||
+s.includes("badminton")
+){
+return "sport-profile.html";
+}
+
+return "profile.html";
+
+}
+
+
+
+
+
+
+
+
+
+function loadFilters(){
+
+const states = new Set();
+const categories = new Set();
+
+searchData.forEach(item=>{
+
+if(item.address)
+states.add(item.address);
+
+if(item.category)
+categories.add(item.category);
+
+});
+
+fillFilter("stateFilter", states);
+fillFilter("categoryFilter", categories);
+
+}
+
+
+function fillFilter(id,set){
+
+const select =
+document.getElementById(id);
+
+const categoryLabels = {
+academic:"Academics, Education & Career Development",
+creative:"Arts & Creativity",
+skill:"Professional Skills",
+sport:"Sports & Fitness"
+};
+
+[...set]
+.sort()
+.forEach(value=>{
+
+if(!value) return;
+
+const label =
+id==="categoryFilter"
+? (categoryLabels[value] || value)
+: value;
+
+select.innerHTML +=
+`<option value="${value}">
+${label}
+</option>`;
+
+});
+
+}
+
+
+
+
+
+
+
+
+
+
+window.searchSite = function(){
+
+
+
+
+
+const q =
+document.getElementById("searchInput")
+.value
+.toLowerCase()
+.trim();
+
+
+
+
+const state =
+document.getElementById("stateFilter").value;
+
+const category =
+document.getElementById("categoryFilter").value;
+
+const area =
+document.getElementById("areaFilter")
+.value
+.toLowerCase()
+.trim();
+
+const role =
+document.getElementById("roleFilter").value;
+
+
+
+
+
+const words =
+q.split(/\s+/);
+
+
+
+
+
+
+const r =
+document.getElementById("results");
+
+if(
+!q &&
+!state &&
+!category &&
+!area &&
+!role
+){
+r.style.display="none";
+return;
+}
+
+matches = [];
+
+/* PAGES */
+
+pages.forEach(p=>{
+
+let score = 0;
+
+if(p[0].toLowerCase() === q)
+score = 100;
+
+else if(p[0].toLowerCase().includes(q))
+score = 50;
+
+if(score>0){
+
+matches.push({
+score,
+html:`
+<a href="${p[1]}">
+ ${p[0]}
+</a>`
+});
+
+}
+
+});
+
+/* TEACHERS + INSTITUTES */
+
+/* TEACHERS + INSTITUTES */
+
+searchData.forEach(item=>{
+
+
+
+
+
+if(
+state &&
+item.address !== state
+){
+return;
+}
+
+if(
+category &&
+item.category !== category
+){
+return;
+}
+
+if(
+area &&
+!(
+(item.area || "")
+.toLowerCase()
+.includes(area)
+||
+(item.pinCode || "")
+.toLowerCase()
+.includes(area)
+)
+){
+return;
+}
+
+if(
+role &&
+item.type !== role
+){
+return;
+}
+
+
+
+
+
+
+const text = `
+${item.name}
+${item.subjects}
+${item.location}
+${item.description}
+`.toLowerCase();
+
+let score = 0;
+
+const words = q.split(/\s+/);
+
+/* score every word separately */
+
+words.forEach(word=>{
+
+if(!word) return;
+
+/* exact name */
+if(item.name.toLowerCase() === word)
+score += 100;
+
+/* name contains */
+if(item.name.toLowerCase().includes(word))
+score += 80;
+
+/* subject contains */
+if(item.subjects.toLowerCase().includes(word))
+score += 100;
+
+/* location contains */
+if(item.location.toLowerCase().includes(word))
+score += 30;
+
+/* description contains */
+if(item.description.toLowerCase().includes(word))
+score += 10;
+
+/* teacher */
+if(word==="teacher" && item.type==="teacher")
+score += 20;
+
+/* institute */
+if(word==="institute" && item.type==="institution")
+score += 20;
+
+/* home tuition */
+if(
+word==="home" ||
+word==="tuition" ||
+word==="online"
+)
+score += 10;
+
+});
+
+/* bonus if full query matches */
+if(text.includes(q))
+score += 150;
+
+if(score>0){
+
+matches.push({
+
+score,
+
+html:`
+<a
+href="profile.html?search=${encodeURIComponent(item.name)}"
+style="
+display:flex;
+align-items:center;
+gap:8px;
+text-align:left;
+justify-content:flex-start;
+">
 
 <img
-class="photo"
-src="${x.photo || x.logo || 'https://via.placeholder.com/100'}"
->
-
-<div>
-
-<h2>${x.name || "-"}</h2>
-
-<div class="badges">
-
-<span class="badge">${x.type}</span>
-
-<span class="badge">
-${x.categoryName || categoryLabel(x.category)}
-</span>
-
-<span class="badge rating-badge">
-${rating.avg ? rating.avg.toFixed(1) + " / 5" : "No Rating"}${rating.count ? " (" + rating.count + ")" : ""}
-</span>
-
-<span class="badge verify">
-Verified
-</span>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="details">
-
-<b style="color:red;">
-Subject:
-</b>
-
-<span>
-${subject}
-</span>
-
-<br><br>
-
-${extraField}
-
-<br>
-
-<b>State:</b>
-${stateText}
-
-<br>
-
-<b>Area:</b>
-${areaText}
-
-<br>
-<b>Mode:</b>
-${modeText}
-
-</div>
-
-<div style="margin-top:15px;">
-
-<button
-onclick="event.stopPropagation();window.viewProfile('${x.id}')"
+src="${item.photo || 'https://i.ibb.co/4pDNDk1/user.png'}"
+alt=""
 style="
-width:100%;
-padding:12px;
-border:none;
-border-radius:12px;
-background:#1976d2;
-color:white;
-font-size:15px;
-font-weight:bold;
-cursor:pointer;
+width:25px;
+height:25px;
+border-radius:50%;
+object-fit:cover;
+border:1px solid #ddd;
+flex-shrink:0;
 ">
-View Details
-</button>
+
+<div style="
+text-align:left;
+flex:1;
+">
+
+<div style="
+font-weight:bold;
+text-align:left;
+">
+${item.name}
+</div>
+
+<small style="
+display:block;
+text-align:left;
+">
+${item.subjects}
+</small>
 
 </div>
 
-</div>
+</a>
+`
 
-`;
 
-}).join("");
+});
+
 }
 
+});
+
+/* sort highest score first */
+
+matches.sort((a,b)=>b.score-a.score);
+
+
+
+
+
+
+let html = "";
+
+const visibleResults = matches.slice(0,6);
+
+visibleResults.forEach(x=>{
+html += x.html;
+});
+
+if(matches.length > 6){
+
+html += `
+<a href="#"
+id="moreResultsBtn"
+style="
+font-weight:bold;
+text-align:center;
+background:#f5f5f5;
+">
+More Results... (${matches.length-6} more)
+</a>
+`;
+
+}
+
+
+
+
+if(!html){
+html = "<a>No Results Found</a>";
+}
+
+r.innerHTML = html;
+r.style.display = "block";
+
+const moreBtn =
+document.getElementById("moreResultsBtn");
+
+if(moreBtn){
+
+
+
+
+
+moreBtn.addEventListener("click",(e)=>{
+
+e.preventDefault();
+e.stopPropagation();
+
+let allHtml = "";
+
+matches.forEach(x=>{
+allHtml += x.html;
+});
+
+r.innerHTML = allHtml;
+r.style.display = "block";
+
+});
+
+}
+
+};
+
+
+
+
+globalThis.showMoreResults = function(e){
+
+e.preventDefault();
+
+const r =
+document.getElementById("results");
+
+let html = "";
+
+matches.forEach(x=>{
+html += x.html;
+});
+
+r.innerHTML = html;
+
+};
+
+
+
+
+
+
+
+document.addEventListener("click",(e)=>{
+
+const searchBox =
+document.querySelector(".search-box");
+
+const results =
+document.getElementById("results");
+
+if(
+!searchBox.contains(e.target) &&
+!results.contains(e.target) &&
+e.target.id !== "moreResultsBtn"
+){
+results.style.display = "none";
+}
+
+});
+window.openHelpdesk = function(e){
+  e.preventDefault();
+
+  sessionStorage.setItem("helpdeskReturn", window.location.href);
+  window.location.href = "helpdesk.html";
+};
 </script>
+
 </body>
 </html>
 
