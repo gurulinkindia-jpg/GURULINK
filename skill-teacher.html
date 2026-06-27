@@ -964,7 +964,7 @@ updateSelectedSkills();
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
 
 const firebaseConfig = {
@@ -1037,6 +1037,42 @@ throw signInErr;
 }
 }
 
+async function ensureEmailVerification(user,email,submitBtn){
+if(!user){
+const authErr = new Error("Unable to verify email because the registration session was lost.");
+authErr.code = "registration/no-auth-user";
+throw authErr;
+}
+
+await user.reload();
+if(user.emailVerified){
+return true;
+}
+
+const verifyKey = "emailVerificationSent:" + email;
+const lastSentAt = Number(sessionStorage.getItem(verifyKey) || 0);
+const shouldSendNewMail = !lastSentAt || (Date.now() - lastSentAt > 60000);
+
+if(shouldSendNewMail){
+submitBtn.innerText = "Sending verification email...";
+await sendEmailVerification(user);
+sessionStorage.setItem(verifyKey, String(Date.now()));
+alert("A verification email has been sent to " + email + ". Please open your email, verify it, then return here and submit again or press OK to check now.");
+}
+else{
+alert("A verification email was already sent to " + email + ". Please verify it first, then press OK to check now.");
+}
+
+submitBtn.innerText = "Checking email verification...";
+await user.reload();
+if(user.emailVerified){
+return true;
+}
+
+const verifyErr = new Error("Email verification is required before continuing. Please verify your email first, then submit again.");
+verifyErr.code = "registration/email-not-verified";
+throw verifyErr;
+}
 function makeStorageFileName(file){
 const originalName = (file && file.name ? file.name : "image").replace(/[^a-zA-Z0-9._-]/g,"_");
 return Date.now() + "-" + Math.random().toString(36).slice(2,8) + "-" + originalName;
@@ -1169,6 +1205,7 @@ return;
 
 const userCred = await createOrResumeRegistrationUser(email,password,"teachers","teacher");
 const uid = userCred.user.uid;
+await ensureEmailVerification(userCred.user,email,submitBtn);
 await auth.currentUser.getIdToken(true);
 
 localStorage.setItem("uid",uid);
@@ -1226,6 +1263,7 @@ experience:document.getElementById("experience").value,
 phone:document.getElementById("phone").value,
 alternatePhone:document.getElementById("alternatePhone").value,
 email:email,
+emailVerified:true,
 website:document.getElementById("website").value,
 address:document.getElementById("address").value,
 area:document.getElementById("area").value,
@@ -1260,6 +1298,7 @@ await set(ref(db,"users/"+uid),{
 uid:uid,
 name:document.getElementById("name").value,
 email:email,
+emailVerified:true,
 role:"teacher",
 profileId:uid,
 createdAt:Date.now()
@@ -1276,6 +1315,17 @@ console.log(err);
 
 if(err.code==="auth/email-already-in-use"){
 alert("This email already exists.\nPlease login instead.");
+}
+else if(err.code==="registration/email-not-verified"){
+}
+else if(err.code==="registration/password-mismatch"){
+alert("This email already exists. Use the same password that was used earlier to continue the incomplete registration, or login instead.");
+}
+else if(err.code==="registration/different-role"){
+alert("This email is already linked with a different GURULINK account type. Please login with that account or use another email.");
+}
+else if(err.code==="registration/already-complete"){
+alert("This email is already connected to an existing GURULINK profile. Please login instead.");
 }
 else if(err.code==="auth/weak-password"){
 alert("Password must be minimum 6 characters.");
