@@ -1068,15 +1068,27 @@ function fillFilter(id,set){
 const select =
 document.getElementById(id);
 
+const categoryLabels = {
+academic:"Academics, Education & Career Development",
+creative:"Arts & Creativity",
+skill:"Professional Skills",
+sport:"Sports & Fitness"
+};
+
 [...set]
 .sort()
 .forEach(value=>{
 
 if(!value) return;
 
+const label =
+id==="categoryFilter"
+? (categoryLabels[value] || value)
+: value;
+
 select.innerHTML +=
 `<option value="${value}">
-${value}
+${label}
 </option>`;
 
 });
