@@ -99,6 +99,7 @@ grid-template-columns:repeat(3,minmax(0,1fr));
 .emailBtn{background:#3949ab}
 .website{background:#1565c0}
 .youtubeBtn{background:#d32f2f}
+.feeToggleBtn{background:#6a1b9a}
 
 
 
@@ -217,6 +218,10 @@ gap:4px;
 .infoGrid{
 grid-template-columns:1fr;
 }
+
+.feeGrid{
+grid-template-columns:1fr;
+}
 }
 
 .detailsDescription{
@@ -225,6 +230,82 @@ background:white;
 border:1px solid #d9e3f5;
 border-radius:12px;
 line-height:1.6;
+word-break:break-word;
+}
+
+.feeSectionBox{
+display:none;
+padding:15px;
+background:#f9f9ff;
+border-radius:12px;
+margin-top:20px;
+}
+
+.feeSectionBox.open{
+display:block;
+}
+
+.feeSectionBox h3{
+margin:0 0 12px;
+}
+
+.feeGrid{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:10px;
+}
+
+.feeCard{
+background:white;
+border:1px solid #d9e3f5;
+border-radius:12px;
+padding:12px;
+display:flex;
+flex-direction:column;
+gap:7px;
+min-width:0;
+}
+
+.feeCardTitle{
+font-size:14px;
+font-weight:bold;
+color:#1e3a66;
+line-height:1.4;
+}
+
+.feeCardAmount{
+font-size:16px;
+font-weight:bold;
+color:#2e7d32;
+line-height:1.4;
+}
+
+.feeCardAmount span{
+font-size:12px;
+font-weight:bold;
+color:#607d8b;
+}
+
+.feeCardMeta{
+font-size:13px;
+line-height:1.5;
+color:#333;
+word-break:break-word;
+}
+
+.feeCardMeta b{
+color:#1e3a66;
+}
+
+.feeSectionNote{
+margin-top:12px;
+padding:12px;
+background:white;
+border:1px solid #d9e3f5;
+border-radius:12px;
+font-size:13px;
+line-height:1.6;
+color:#333;
 word-break:break-word;
 }
 
@@ -410,7 +491,7 @@ padding:12px 12px 150px;
 .floatingNav{
 left:12px;
 right:12px;
-bottom:calc(env(safe-area-inset-bottom, 0px) + 54px);
+bottom:calc(env(safe-area-inset-bottom, 0px) + 40px);
 flex-direction:row;
 gap:8px;
 padding:7px;
@@ -428,7 +509,7 @@ border-radius:12px;
 
 .shareFab{
 right:16px;
-bottom:calc(env(safe-area-inset-bottom, 0px) + 102px);
+bottom:calc(env(safe-area-inset-bottom, 0px) + 88px);
 width:38px;
 height:38px;
 }
@@ -765,8 +846,32 @@ if(normalized === "academic") return "Academic";
 return esc(raw);
 }
 
-const subjects = Array.isArray(data.subjects) ? data.subjects : [];
-const teachingModes = Array.isArray(data.teachingModes) ? data.teachingModes : [];
+function listFromValue(value){
+if(Array.isArray(value)) return value.filter(Boolean);
+if(value && typeof value === "object") return Object.values(value).filter(Boolean);
+return String(value || "").trim() ? [String(value).trim()] : [];
+}
+
+const subjects = listFromValue(data.subjects);
+const teachingModes = listFromValue(data.teachingModes);
+const feeStructure =
+  data.feeStructure && typeof data.feeStructure === "object"
+    ? data.feeStructure
+    : {};
+const feeItems = Array.isArray(feeStructure.items)
+  ? feeStructure.items
+      .map((item, index)=>({
+        title:String(item && item.title || "").trim(),
+        amount:String(item && item.amount || "").trim(),
+        unit:String(item && item.unit || "").trim(),
+        appliesTo:String(item && item.appliesTo || "").trim(),
+        note:String(item && item.note || "").trim(),
+        active:item && item.active !== false,
+        sortOrder:Number(item && item.sortOrder || (index + 1))
+      }))
+      .filter(item => item.active && item.title)
+      .sort((a,b)=>a.sortOrder - b.sortOrder)
+  : [];
 const addressLines = [];
 const categoryLabel = canShow("categoryName") ? getCategoryLabel() : "";
 const websiteLink = showValue("website") ? externalUrl(data.website) : "";
@@ -783,19 +888,21 @@ if(showValue("address")) addressLines.push(`<div><b>State:</b> ${esc(data.addres
 if(showValue("area")) addressLines.push(`<div><b>Area / City or Town:</b> ${esc(data.area)}</div>`);
 if(showValue("pinCode")) addressLines.push(`<div><b>PIN Code:</b> ${esc(data.pinCode)}</div>`);
 
-const modes = [];
-if(showValue("homeFee")) modes.push(`Home Tuition - Rs ${esc(data.homeFee)}`);
-if(showValue("groupFee")) modes.push(`Group / Team - Rs ${esc(data.groupFee)}`);
-if(showValue("superGroupFee")) modes.push(`Super Group - Rs ${esc(data.superGroupFee)}`);
-if(showValue("onlineFee")) modes.push(`Online - Rs ${esc(data.onlineFee)}`);
-if(showValue("individualFee")) modes.push(`Individual / Personal - Rs ${esc(data.individualFee)}`);
-if(showValue("otherMode") || showValue("otherModeFee")) modes.push(`${esc(data.otherMode || "Other Mode")} ${data.otherModeFee ? "- Rs " + esc(data.otherModeFee) : ""}`);
+const legacyModeLines = [];
+if(showValue("homeFee")) legacyModeLines.push(`Home Tuition - Rs ${esc(data.homeFee)}`);
+if(showValue("groupFee")) legacyModeLines.push(`Group / Team - Rs ${esc(data.groupFee)}`);
+if(showValue("superGroupFee")) legacyModeLines.push(`Super Group - Rs ${esc(data.superGroupFee)}`);
+if(showValue("onlineFee")) legacyModeLines.push(`Online - Rs ${esc(data.onlineFee)}`);
+if(showValue("individualFee")) legacyModeLines.push(`Individual / Personal - Rs ${esc(data.individualFee)}`);
+if(!teachingModes.length && (showValue("otherMode") || showValue("otherModeFee"))){
+legacyModeLines.push(`${esc(data.otherMode || "Other Mode")} ${data.otherModeFee ? "- Rs " + esc(data.otherModeFee) : ""}`);
+}
 const subjectText =
 canShow("subjects") ? (subjects.map(esc).join(", ") || "-") : "";
 const modeText =
-modes.length
-? modes.join("<br>")
-: (canShow("teachingModes") && teachingModes.length ? teachingModes.map(esc).join(", ") : "");
+(canShow("teachingModes") && teachingModes.length)
+? teachingModes.map(esc).join(", ")
+: (legacyModeLines.length ? legacyModeLines.join("<br>") : "");
 const classText =
 showValue("class") ? esc(data.class) : "";
 const experienceText =
@@ -808,9 +915,35 @@ const ownerText =
 showValue("ownerName") ? esc(data.ownerName) : "";
 const establishedText =
 showValue("establishedDate") ? esc(data.establishedDate) : "";
+const hasPublicFeeStructure =
+  feeStructure.visible !== false &&
+  feeItems.length;
+const feeStructureHTML =
+(
+  hasPublicFeeStructure
+)
+? `
+<div class="feeSectionBox" id="feeStructureBox">
+<h3>Fee Structure</h3>
+<div class="feeGrid">
+${feeItems.map(item => `
+<div class="feeCard">
+<div class="feeCardTitle">${esc(item.title)}</div>
+${item.amount ? `<div class="feeCardAmount">Rs ${esc(item.amount)}${item.unit ? ` <span>${esc(item.unit)}</span>` : ""}</div>` : ""}
+${item.appliesTo ? `<div class="feeCardMeta"><b>Applies To:</b> ${esc(item.appliesTo)}</div>` : ""}
+${item.note ? `<div class="feeCardMeta"><b>Note:</b> ${esc(item.note)}</div>` : ""}
+</div>
+`).join("")}
+</div>
+${feeStructure.note ? `<div class="feeSectionNote"><b>General Note:</b> ${esc(feeStructure.note)}</div>` : ""}
+</div>
+`
+: "";
 
 let galleryHTML = "";
-let gallery = data.gallery || [];
+let gallery = Array.isArray(data.galleryImages)
+? data.galleryImages.map(item => typeof item === "string" ? item : item?.url)
+: (data.gallery || []);
 
 if (typeof gallery === "object" && !Array.isArray(gallery)) {
 gallery = Object.values(gallery);
@@ -860,7 +993,7 @@ ${iframeHTML}
 `;
 }
 
-const profileImage = data.photo || data.profilePic || data.logo || "https://via.placeholder.com/120";
+const profileImage = getPrimaryProfileImage(data);
 
 profile.innerHTML = `
 <div class="header">
@@ -950,11 +1083,14 @@ ${showValue("email") ? `<a class="emailBtn" href="mailto:${esc(data.email)}">Ema
 ${showValue("phone") || showValue("email") ? `<button class="saveContact" onclick="saveContact()">Save Contact</button>` : ""}
 ${websiteLink ? `<a class="website" target="_blank" href="${esc(websiteLink)}">Website</a>` : ""}
 ${youtubeLink ? `<a class="youtubeBtn" target="_blank" href="${esc(youtubeLink)}">YouTube</a>` : ""}
+${hasPublicFeeStructure ? `<button class="feeToggleBtn" type="button" onclick="toggleFeeStructure()">Fee Structure</button>` : ""}
 ${(
 data.showBankDetails !== false &&
 (data.qrImage || (data.accountHolderName && data.bankName && data.accountNumber))
 ) ? `<button class="payFee" onclick="showPaymentNotice()">Pay Fee</button>` : ""}
 </div>
+
+${feeStructureHTML}
 
 <div class="demoBox">
 <h3>Request Demo Class / Practice</h3>
@@ -987,12 +1123,6 @@ ${galleryHTML}
 ${descriptionHTML}
 
 <div class="section">
-<div class="ratingCard">
-<div class="bigRating" id="avgRating">0.0</div>
-<div class="starText">*****</div>
-<div id="totalReviews">0 Reviews</div>
-</div>
-
 <div class="reviewForm">
 <h3>Write Review</h3>
 <input id="rname" placeholder="Your Name">
@@ -1034,9 +1164,6 @@ html+=`
 const avgValue =
 count ? (total/count).toFixed(1) : "0.0";
 
-document.getElementById("avgRating").innerText =
-avgValue;
-
 const roundedStars =
 Math.round(Number(avgValue));
 
@@ -1050,9 +1177,6 @@ document.getElementById("topRatingText");
 const topStars =
 document.getElementById("topStars");
 
-const bottomStars =
-document.querySelector(".starText");
-
 if(topRatingText){
 topRatingText.innerText = `Rating: ${avgValue} stars`;
 }
@@ -1060,13 +1184,6 @@ topRatingText.innerText = `Rating: ${avgValue} stars`;
 if(topStars){
 topStars.innerHTML = starLine;
 }
-
-if(bottomStars){
-bottomStars.innerHTML = starLine;
-}
-
-document.getElementById("totalReviews").innerText =
-count + " Reviews";
 
 document.getElementById("reviews").innerHTML =
 html || "No Reviews Yet";
@@ -1077,14 +1194,38 @@ html || "No Reviews Yet";
 /* SUBMIT REVIEW */
 window.submitReview = async function(){
 
-const name=document.getElementById("rname").value;
+const name=document.getElementById("rname").value.trim();
 const rating=Number(document.getElementById("rrating").value);
-const text=document.getElementById("rtext").value;
+const text=document.getElementById("rtext").value.trim();
+const submitBtn =
+document.querySelector(".reviewForm button");
 
 if(!name||!text){
 alert("Fill all fields");
 return;
 }
+
+if(name.length > 80){
+alert("Name is too long. Please keep it within 80 characters.");
+return;
+}
+
+if(text.length > 500){
+alert("Review is too long. Please keep it within 500 characters.");
+return;
+}
+
+if(!rating || rating < 1 || rating > 5){
+alert("Please select a valid star rating.");
+return;
+}
+
+if(submitBtn){
+submitBtn.disabled = true;
+submitBtn.textContent = "Submitting...";
+}
+
+try{
 
 await push(ref(db,`reviews/${type.toLowerCase()}s/${currentProfileId}`),{
 name,rating,text,time:Date.now()
@@ -1093,6 +1234,32 @@ name,rating,text,time:Date.now()
 alert("Review submitted");
 document.getElementById("rname").value="";
 document.getElementById("rtext").value="";
+
+}
+catch(err){
+console.log(err);
+
+const rawMessage =
+String(err && (err.message || err.code) || "").toLowerCase();
+
+if(
+rawMessage.includes("permission_denied") ||
+rawMessage.includes("permission denied")
+){
+alert(
+"Review submission is currently blocked by your Firebase rules.\n\n" +
+"Please update the public reviews rule in Firebase Console so guest visitors can also submit reviews."
+);
+}else{
+alert(err.message || "Unable to submit review. Please try again.");
+}
+}
+finally{
+if(submitBtn){
+submitBtn.disabled = false;
+submitBtn.textContent = "Submit Review";
+}
+}
 };
 
 window.submitDemoRequest = async function(){
@@ -1180,6 +1347,27 @@ box.style.display === "block"
 
 };
 
+window.toggleFeeStructure = function(){
+
+const box =
+document.getElementById("feeStructureBox");
+
+if(!box) return;
+
+const willOpen =
+!box.classList.contains("open");
+
+box.classList.toggle("open", willOpen);
+
+if(willOpen){
+box.scrollIntoView({
+behavior:"smooth",
+block:"start"
+});
+}
+
+};
+
 
 
 
@@ -1255,6 +1443,26 @@ return "admin.html";
 }
 
 return "otp-login.html";
+}
+
+function getPrimaryProfileImage(data){
+const images =
+Array.isArray(data?.profileImages)
+?
+data.profileImages
+:
+[];
+
+const normalized =
+images
+.map(item=>typeof item === "string" ? {url:item} : item)
+.filter(item=>item && item.url);
+
+const selected =
+normalized[Number(data?.primaryProfileImage || 0)] ||
+normalized[0];
+
+return selected?.url || data?.photo || data?.profilePic || data?.logo || "https://via.placeholder.com/120";
 }
 
 window.goBackSmart = function(){
