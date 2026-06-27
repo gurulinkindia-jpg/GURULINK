@@ -286,7 +286,7 @@ position:fixed;
 right:14px;
 bottom:16px;
 display:flex;
-flex-direction:column;
+flex-direction:row;
 gap:10px;
 z-index:99999;
 }
@@ -959,7 +959,7 @@ ${x.categoryName || categoryLabel(x.category)}
 </span>
 
 <span class="badge rating-badge">
-${rating.avg ? rating.avg.toFixed(1) + " / 5" : "New"}${rating.count ? " (" + rating.count + ")" : ""}
+${rating.avg ? rating.avg.toFixed(1) + " / 5" : "No Rating"}${rating.count ? " (" + rating.count + ")" : ""}
 </span>
 
 <span class="badge verify">
