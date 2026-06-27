@@ -23,25 +23,122 @@ linear-gradient(
 #eef7ff,
 #ffffff
 );
-padding-bottom:50px;
+padding-bottom:24px;
 }
 
 header{
-padding:35px;
-text-align:center;
-background:rgba(255,255,255,.35);
-backdrop-filter:blur(25px);
-border-bottom:1px solid rgba(255,255,255,.5);
+background:#1565c0;
+color:#fff;
+padding-top:calc(env(safe-area-inset-top) + 12px);
+padding-right:16px;
+padding-bottom:12px;
+padding-left:16px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+position:sticky;
+top:0;
+z-index:1000;
+box-shadow:0 6px 18px rgba(13,71,161,.22);
 }
 
-header h1{
-font-size:38px;
-color:#1976d2;
+.brand{
+display:flex;
+align-items:center;
+gap:12px;
+min-width:0;
 }
 
-header p{
-margin-top:8px;
-color:#555;
+.brand-logo{
+width:46px;
+height:46px;
+border-radius:12px;
+background:#fff;
+padding:6px;
+object-fit:contain;
+flex-shrink:0;
+box-shadow:0 4px 10px rgba(0,0,0,.15);
+}
+
+.brand-text{
+min-width:0;
+}
+
+.brand-text h1{
+font-size:24px;
+line-height:1.1;
+color:#fff;
+margin:0;
+}
+
+.brand-text p{
+margin-top:4px;
+color:rgba(255,255,255,.88);
+font-size:13px;
+}
+
+.header-nav{
+display:flex;
+align-items:center;
+gap:8px;
+flex-shrink:0;
+}
+
+.header-link{
+height:38px;
+padding:0 14px;
+border:none;
+border-radius:10px;
+background:#fff;
+color:#1565c0;
+text-decoration:none;
+font-size:13px;
+font-weight:700;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:pointer;
+box-shadow:0 4px 12px rgba(0,0,0,.14);
+}
+
+@media(max-width:768px){
+header{
+padding-right:12px;
+padding-bottom:10px;
+padding-left:12px;
+gap:10px;
+}
+
+.brand{
+gap:10px;
+}
+
+.brand-logo{
+width:40px;
+height:40px;
+padding:5px;
+}
+
+.brand-text h1{
+font-size:20px;
+}
+
+.brand-text p{
+font-size:11px;
+margin-top:2px;
+}
+
+.header-nav{
+gap:6px;
+}
+
+.header-link{
+height:34px;
+padding:0 12px;
+font-size:12px;
+border-radius:9px;
+}
 }
 
 .container{
@@ -294,62 +391,7 @@ border-radius:20px;
 background:white;
 
 }
-.floating-buttons{
-position:fixed;
-right:14px;
-bottom:24px;
-display:flex;
-flex-direction:row;
-gap:10px;
-z-index:99999;
-}
 
-.float-btn{
-min-width:92px;
-height:42px;
-padding:0 16px;
-border:none;
-border-radius:999px;
-display:flex;
-align-items:center;
-justify-content:center;
-text-decoration:none;
-font-size:14px;
-font-weight:700;
-letter-spacing:0;
-cursor:pointer;
-box-shadow:0 10px 22px rgba(0,0,0,.18);
-backdrop-filter:blur(14px);
--webkit-backdrop-filter:blur(14px);
-transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease;
-}
-
-.float-btn:hover{
-transform:translateY(-2px);
-box-shadow:0 14px 28px rgba(0,0,0,.22);
-}
-
-.float-btn:active{
-transform:translateY(0);
-opacity:.92;
-}
-
-.home-btn{
-background:linear-gradient(135deg,#1976d2,#1257a6);
-color:#fff;
-}
-
-.back-btn{
-background:linear-gradient(135deg,#43a047,#2e7d32);
-color:#fff;
-}
-
-@media(max-width:768px){
-.floating-buttons{
-right:12px;
-bottom:48px;
-gap:8px;
-}
 
 .float-btn{
 min-width:84px;
@@ -372,9 +414,21 @@ box-shadow:0 8px 18px rgba(0,0,0,.16);
 
 <header>
 
+<div class="brand">
+<img
+class="brand-logo"
+src="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png"
+alt="GURULINK Logo">
+<div class="brand-text">
 <h1>GURULINK</h1>
-
 <p>Find Teachers & Institutions</p>
+</div>
+</div>
+
+<div class="header-nav">
+<button class="header-link" type="button" onclick="history.back()">Back</button>
+<a href="index.html" class="header-link">Home</a>
+</div>
 
 </header>
 
@@ -411,9 +465,9 @@ Sports & Fitness
 
 </select>
 
-<input
-id="stateFilter"
-placeholder="State">
+<select id="stateFilter">
+<option value="">State</option>
+</select>
 
 <input
 id="areaFilter"
@@ -490,6 +544,7 @@ function loadData() {
 
     });
 
+    populateStateFilter();
     render();
   });
 
@@ -513,6 +568,7 @@ function loadData() {
 
     });
 
+    populateStateFilter();
     render();
   });
 }
@@ -544,10 +600,8 @@ onValue(ref(db, "reviews"), (snap) => {
         };
       }
     });
-  });
-
-  render();
-});
+  });`n`n    populateStateFilter();`n    populateStateFilter();
+    render();`n  });
 
 /* =========================
    HELPERS
@@ -595,6 +649,31 @@ function sortPublicProfiles(list) {
 
 function getAllProfiles() {
   return [...teachers, ...institutions];
+}
+
+function populateStateFilter() {
+  const select = document.getElementById("stateFilter");
+  if (!select) return;
+
+  const current = select.value || "";
+  const states = [...new Set(
+    getAllProfiles()
+      .map(profile => getStateText(profile))
+      .filter(Boolean)
+  )].sort((a, b) => a.localeCompare(b));
+
+  select.innerHTML = `<option value="">State</option>`;
+
+  states.forEach((state) => {
+    const option = document.createElement("option");
+    option.value = state;
+    option.textContent = state;
+    select.appendChild(option);
+  });
+
+  if (current && states.includes(current)) {
+    select.value = current;
+  }
 }
 
 const categoryLabels = {
@@ -1043,18 +1122,6 @@ View Details
 }
 
 </script>
-<!-- Floating Buttons -->
-<div class="floating-buttons">
-
-<a href="index.html" class="float-btn home-btn">
-Home
-</a>
-
-<button class="float-btn back-btn" onclick="history.back()">
-Back
-</button>
-
-</div>
 </body>
 </html>
 
