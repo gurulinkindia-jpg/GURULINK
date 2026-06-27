@@ -231,6 +231,12 @@ color:white;
 
 }
 
+.rating-badge{
+background:#fff3cd;
+color:#c77700;
+font-weight:bold;
+}
+
 .details{
 
 margin-top:15px;
@@ -277,8 +283,8 @@ background:white;
 }
 .floating-buttons{
 position:fixed;
-right:15px;
-bottom:15px;
+right:14px;
+bottom:16px;
 display:flex;
 flex-direction:column;
 gap:10px;
@@ -286,34 +292,58 @@ z-index:99999;
 }
 
 .float-btn{
-width:55px;
-height:55px;
+min-width:92px;
+height:42px;
+padding:0 16px;
 border:none;
-border-radius:50%;
+border-radius:999px;
 display:flex;
 align-items:center;
 justify-content:center;
 text-decoration:none;
-font-size:24px;
+font-size:14px;
+font-weight:700;
+letter-spacing:0;
 cursor:pointer;
-box-shadow:0 4px 12px rgba(0,0,0,.25);
+box-shadow:0 10px 22px rgba(0,0,0,.18);
+backdrop-filter:blur(14px);
+-webkit-backdrop-filter:blur(14px);
+transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+}
+
+.float-btn:hover{
+transform:translateY(-2px);
+box-shadow:0 14px 28px rgba(0,0,0,.22);
+}
+
+.float-btn:active{
+transform:translateY(0);
+opacity:.92;
 }
 
 .home-btn{
-background:#1976d2;
+background:linear-gradient(135deg,#1976d2,#1257a6);
 color:#fff;
 }
 
 .back-btn{
-background:#4caf50;
+background:linear-gradient(135deg,#43a047,#2e7d32);
 color:#fff;
 }
 
 @media(max-width:768px){
+.floating-buttons{
+right:12px;
+bottom:14px;
+gap:8px;
+}
+
 .float-btn{
-width:50px;
-height:50px;
-font-size:22px;
+min-width:84px;
+height:38px;
+padding:0 14px;
+font-size:13px;
+box-shadow:0 8px 18px rgba(0,0,0,.16);
 }
 }
 </style>
@@ -342,7 +372,7 @@ font-size:22px;
 
 <input
 id="search"
-placeholder="Search name/location">
+placeholder="Search name / state">
 
 <select id="category">
 
@@ -351,18 +381,34 @@ All Categories
 </option>
 
 <option value="academic">
-Academic
+Academics, Education & Career Development
 </option>
 
 <option value="creative">
-Creative
+Arts & Creativity
 </option>
 
 <option value="skill">
-Skill
+Professional Skills
+</option>
+
+<option value="sport">
+Sports & Fitness
 </option>
 
 </select>
+
+<input
+id="stateFilter"
+placeholder="State">
+
+<input
+id="areaFilter"
+placeholder="Area">
+
+<input
+id="subjectSearch"
+placeholder="Subject / Skill / Activity">
 
 <div id="dynamicFilters"></div>
 
@@ -538,6 +584,45 @@ function getAllProfiles() {
   return [...teachers, ...institutions];
 }
 
+const categoryLabels = {
+  academic: "Academics, Education & Career Development",
+  creative: "Arts & Creativity",
+  skill: "Professional Skills",
+  sport: "Sports & Fitness"
+};
+
+function categoryLabel(value) {
+  return categoryLabels[value] || value || "-";
+}
+
+function getStateText(profile) {
+  return profile.address || profile.state || profile.location || "";
+}
+
+function getAreaText(profile) {
+  return profile.area || profile.city || profile.town || "";
+}
+
+function getSubjectText(profile) {
+  if (profile.subjects) {
+    if (Array.isArray(profile.subjects)) return profile.subjects.join(", ");
+    if (typeof profile.subjects === "object") return Object.values(profile.subjects).join(", ");
+    return String(profile.subjects);
+  }
+
+  return profile.subject || profile.skillType || profile.creativeType || profile.course || "Not Mentioned";
+}
+
+function getModesText(profile) {
+  if (profile.teachingModes) {
+    if (Array.isArray(profile.teachingModes)) return profile.teachingModes.join(", ");
+    if (typeof profile.teachingModes === "object") return Object.values(profile.teachingModes).join(", ");
+    return String(profile.teachingModes);
+  }
+
+  return "Not Mentioned";
+}
+
 /* =========================
    CATEGORY CHANGE -> RESET FILTERS
 ========================= */
@@ -593,7 +678,7 @@ function showFilters() {
       </select>
 
       <select id="subjectFilter">
-        <option value="">All Subjects</option>
+        <option value="">All Academic Subjects</option>
         <option>Mathematics</option>
         <option>Physics</option>
         <option>Chemistry</option>
@@ -605,7 +690,7 @@ function showFilters() {
   else if (category.value === "creative") {
     html = `
       <select id="subjectFilter">
-        <option value="">All Creative Subjects</option>
+        <option value="">All Arts & Creativity</option>
         <option>Music</option>
         <option>Dance</option>
         <option>Drawing</option>
@@ -616,10 +701,21 @@ function showFilters() {
   else if (category.value === "skill") {
     html = `
       <select id="subjectFilter">
-        <option value="">All Skills</option>
+        <option value="">All Professional Skills</option>
         <option>Computer</option>
         <option>Embroidery</option>
         <option>Cake Making</option>
+      </select>
+    `;
+  }
+
+  else if (category.value === "sport") {
+    html = `
+      <select id="subjectFilter">
+        <option value="">All Sports & Fitness</option>
+        <option>Cricket</option>
+        <option>Football</option>
+        <option>Yoga</option>
       </select>
     `;
   }
@@ -639,9 +735,6 @@ showFilters();
 ========================= */
 
 function showGuestAccessPopup(onLogin){
-  const oldPopup = document.getElementById("guestAccessPopup");
-  if(oldPopup) oldPopup.remove();
-
   const popup = document.createElement("div");
   popup.id = "guestAccessPopup";
   popup.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:18px;z-index:9999;";
@@ -729,6 +822,9 @@ function render() {
 
   const search = document.getElementById("search").value.trim().toLowerCase();
   const cat = category.value;
+  const stateFilter = document.getElementById("stateFilter").value.trim().toLowerCase();
+  const areaFilter = document.getElementById("areaFilter").value.trim().toLowerCase();
+  const subjectSearch = document.getElementById("subjectSearch").value.trim().toLowerCase();
 
   const subjectFilter = document.getElementById("subjectFilter")?.value || "";
   const classFilter = document.getElementById("classFilter")?.value || "";
@@ -741,9 +837,14 @@ function render() {
    
 
 
+const stateText = getStateText(x);
+const areaText = getAreaText(x);
+const subject = getSubjectText(x);
+
 const searchableText = `
 ${x.name || ""}
-${x.location || ""}
+${stateText}
+${areaText}
 ${x.address || ""}
 ${x.subject || ""}
 ${x.skillType || ""}
@@ -761,30 +862,33 @@ search &&
 ){
 return false;
 }
-	
-	
-	
+
+if (
+  stateFilter &&
+  !stateText.toLowerCase().includes(stateFilter)
+) {
+  return false;
+}
+
+if (
+  areaFilter &&
+  !areaText.toLowerCase().includes(areaFilter)
+) {
+  return false;
+}
+
+if (
+  subjectSearch &&
+  !subject.toLowerCase().includes(subjectSearch)
+) {
+  return false;
+}
 
     /* SUBJECT */
-const subject =
-
-x.subjects
-? (
-    Array.isArray(x.subjects)
-    ? x.subjects.join(", ")
-    : Object.values(x.subjects).join(", ")
-  )
-: (
-    x.subject ||
-    x.skillType ||
-    x.creativeType ||
-    x.course ||
-    "Not Mentioned"
-  );
-
-
-
-    if (subjectFilter && subject !== subjectFilter) {
+    if (
+      subjectFilter &&
+      !subject.toLowerCase().includes(subjectFilter.toLowerCase())
+    ) {
       return false;
     }
 
@@ -813,32 +917,11 @@ x.subjects
   
 grid.innerHTML = sorted.map((x) => {
 
-let subject = "Not Mentioned";
-
-if(x.subjects){
-
-  if(Array.isArray(x.subjects)){
-    subject = x.subjects.join(", ");
-  }
-  else if(typeof x.subjects === "object"){
-    subject = Object.values(x.subjects).join(", ");
-  }
-  else{
-    subject = x.subjects;
-  }
-
-}
-else{
-
-  subject =
-  x.subject ||
-  x.skillType ||
-  x.creativeType ||
-  x.course ||
-  "Not Mentioned";
-
-}
-
+const subject = getSubjectText(x);
+const stateText = getStateText(x) || "-";
+const areaText = getAreaText(x) || "-";
+const modeText = getModesText(x);
+const rating = ratingInfo(x);
 const extraField =
 x.type === "Teacher"
 ?
@@ -872,7 +955,11 @@ src="${x.photo || x.logo || 'https://via.placeholder.com/100'}"
 <span class="badge">${x.type}</span>
 
 <span class="badge">
-${x.category || "-"}
+${x.categoryName || categoryLabel(x.category)}
+</span>
+
+<span class="badge rating-badge">
+${rating.avg ? rating.avg.toFixed(1) + " / 5" : "New"}${rating.count ? " (" + rating.count + ")" : ""}
 </span>
 
 <span class="badge verify">
@@ -901,16 +988,17 @@ ${extraField}
 
 <br>
 
-<b>Location:</b>
-${x.location || x.address || "-"}
+<b>State:</b>
+${stateText}
 
 <br>
 
-<b>Qualification:</b>
-${x.qualification || x.education || "-"}
+<b>Area:</b>
+${areaText}
+
 <br>
 <b>Mode:</b>
-${x.teachingModes || "Not Mentioned"}
+${modeText}
 
 </div>
 
