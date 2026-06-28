@@ -65,6 +65,65 @@ color:#0f766e;
 word-break:break-word;
 }
 
+.featureTableWrap{
+margin:22px 0 18px;
+text-align:left;
+overflow-x:auto;
+}
+
+.featureTitle{
+margin:0 0 12px;
+font-size:17px;
+font-weight:700;
+color:#1d4ed8;
+text-align:center;
+}
+
+.featureTable{
+width:100%;
+min-width:720px;
+border-collapse:separate;
+border-spacing:10px 0;
+}
+
+.featureTable td{
+width:33.33%;
+vertical-align:top;
+background:#f8fafc;
+border:1px solid #dbe7f5;
+border-radius:14px;
+padding:16px 14px;
+box-shadow:0 3px 10px rgba(15,23,42,.05);
+}
+
+.planName{
+margin:0 0 6px;
+font-size:16px;
+font-weight:700;
+color:#1f2933;
+text-align:center;
+}
+
+.planAmount{
+margin:0 0 12px;
+font-size:18px;
+font-weight:800;
+color:#0f766e;
+text-align:center;
+}
+
+.planFeatures{
+margin:0;
+padding-left:18px;
+color:#475467;
+font-size:13px;
+line-height:1.6;
+}
+
+.planFeatures li+li{
+margin-top:6px;
+}
+
 @media(max-width:480px){
 body{
 padding:12px;
@@ -90,14 +149,85 @@ button{
 font-size:15px;
 min-height:46px;
 }
+
+.featureTitle{
+font-size:16px;
+}
+
+.featureTable{
+min-width:690px;
+border-spacing:8px 0;
+}
+
+.featureTable td{
+padding:14px 12px;
+}
+
+.planName{
+font-size:15px;
+}
+
+.planAmount{
+font-size:17px;
+}
+
+.planFeatures{
+font-size:12px;
+}
 }
 </style>
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
 <div class="container">
 <h2>GURULINK Payment</h2>
 <div id="feeText" class="amount"></div>
+<div class="featureTableWrap">
+<div class="featureTitle">GURULINK Payment Feature Table</div>
+<table class="featureTable">
+<tr>
+<td>
+<div class="planName">Basic Public Plan</div>
+<div class="planAmount">Rs. 50</div>
+<ul class="planFeatures">
+<li>Public profile activation</li>
+<li>Rating and review based organic visibility</li>
+<li>Business card and social media sharing active</li>
+<li>Demo class form and student enquiries active</li>
+<li>Time table, fee structure, gallery and visibility control active</li>
+<li>Invoice inactive</li>
+</ul>
+</td>
+<td>
+<div class="planName">Priority Public Plan</div>
+<div class="planAmount">Rs. 51 to Rs. 1799</div>
+<ul class="planFeatures">
+<li>All features of the Rs. 50 plan</li>
+<li>Eligible for priority and sponsored card visibility</li>
+<li>Top placement controlled from admin panel</li>
+<li>Better promotional visibility</li>
+<li>Public profile remains fully active</li>
+<li>Invoice inactive</li>
+</ul>
+</td>
+<td>
+<div class="planName">Full Access Plan</div>
+<div class="planAmount">Rs. 1800 to Rs. 2000</div>
+<ul class="planFeatures">
+<li>All features active</li>
+<li>Priority and premium visibility active</li>
+<li>Full profile tools and public controls active</li>
+<li>Business card, enquiry, timetable and fee structure active</li>
+<li>Invoice active</li>
+<li>Best plan for complete access</li>
+</ul>
+</td>
+</tr>
+</table>
+</div>
 <button id="payBtn">Continue To Payment</button>
 </div>
 
@@ -232,7 +362,7 @@ async function createPaymentLink() {
 }
 
 document.getElementById("feeText").innerHTML =
-  "Registration Fee ₹" + amount;
+  "Registration Fee Rs." + amount;
 
 document.getElementById("payBtn").onclick = async function () {
   try {
@@ -258,3 +388,5 @@ document.getElementById("payBtn").onclick = async function () {
 </script>
 </body>
 </html>
+
+
