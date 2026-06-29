@@ -7,7 +7,7 @@
 <title>GURULINK - Home</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-body{background:#eef2f7;color:#222}
+body{background:#eef2f7;color:#222;overflow-x:hidden}
 
 header{
 background:#1565c0; /* Purple */
@@ -311,8 +311,8 @@ flex-direction:column;
 position:fixed;
 top:0;
 left:0;
-width:100%;
-height:100%;
+width:100vw;
+height:100vh;
 padding:20px;
 background:
 linear-gradient(135deg,rgba(13,71,161,.92),rgba(21,101,192,.84)),
@@ -320,11 +320,15 @@ url("https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fi
 display:flex;
 justify-content:center;
 align-items:center;
+overflow-x:hidden;
+overflow-y:auto;
 z-index:99999;
 }
 
 .loginBox{
-width:min(100%,420px);
+width:100%;
+max-width:420px;
+margin:0 auto;
 background:rgba(255,255,255,.97);
 padding:28px 24px 24px;
 border-radius:24px;
@@ -479,9 +483,16 @@ border:1px solid #d7e7fb;
 }
 
 @media (max-width:768px){
+#loginOverlay{
+padding:14px;
+}
+
 .loginBox{
+width:100%;
+max-width:360px;
 padding:24px 18px 20px;
 border-radius:22px;
+margin:0 auto;
 }
 
 .welcomeBrand img{
@@ -812,7 +823,7 @@ oninput="searchSite()">
 </div>
 
 <footer>
-<p>ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© GURULINK Powred By G10 Group</p>
+<p>ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© GURULINK Powred By G10 Group</p>
 <p>Connecting Students & Teachers</p>
 <p style="margin-top:8px;">
 <a href="privacy-policy.html" style="color:#fff;text-decoration:underline;">Privacy Policy</a>
