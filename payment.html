@@ -60,9 +60,17 @@ cursor:not-allowed;
 .amount{
 font-size:25px;
 font-weight:bold;
-margin:20px 0;
+margin:20px 0 10px;
 color:#0f766e;
 word-break:break-word;
+line-height:1.4;
+}
+
+.planStatus{
+margin:0 0 16px;
+font-size:13px;
+line-height:1.5;
+color:#475467;
 }
 
 .featureTableWrap{
@@ -124,6 +132,58 @@ line-height:1.6;
 margin-top:6px;
 }
 
+.planChooser{
+margin:0 0 18px;
+text-align:left;
+}
+
+.planChooserTitle{
+margin:0 0 10px;
+font-size:16px;
+font-weight:700;
+color:#1f2933;
+text-align:center;
+}
+
+.planGrid{
+display:grid;
+grid-template-columns:repeat(3,minmax(0,1fr));
+gap:10px;
+}
+
+.planOption{
+width:100%;
+min-height:auto;
+padding:12px;
+border:2px solid #dbe7f5;
+border-radius:12px;
+background:#fff;
+color:#1f2933;
+font-size:14px;
+font-weight:700;
+text-align:left;
+box-shadow:none;
+}
+
+.planOption small{
+display:block;
+margin-top:4px;
+font-size:12px;
+font-weight:400;
+line-height:1.45;
+color:#667085;
+}
+
+.planOption.active{
+border-color:#1d4ed8;
+background:#eff6ff;
+color:#1d4ed8;
+}
+
+.planOption.active small{
+color:#1d4ed8;
+}
+
 @media(max-width:480px){
 body{
 padding:12px;
@@ -142,12 +202,17 @@ font-size:21px;
 
 .amount{
 font-size:22px;
-margin:18px 0;
+margin:18px 0 8px;
 }
 
 button{
 font-size:15px;
 min-height:46px;
+}
+
+.planStatus{
+font-size:12px;
+margin:0 0 14px;
 }
 
 .featureTitle{
@@ -174,6 +239,24 @@ font-size:17px;
 .planFeatures{
 font-size:12px;
 }
+
+.planChooserTitle{
+font-size:15px;
+}
+
+.planGrid{
+grid-template-columns:1fr;
+gap:8px;
+}
+
+.planOption{
+font-size:13px;
+padding:11px;
+}
+
+.planOption small{
+font-size:11px;
+}
 }
 </style>
 
@@ -185,6 +268,8 @@ font-size:12px;
 <div class="container">
 <h2>GURULINK Payment</h2>
 <div id="feeText" class="amount"></div>
+<div id="planStatus" class="planStatus"></div>
+
 <div class="featureTableWrap">
 <div class="featureTitle">GURULINK Payment Feature Table</div>
 <table class="featureTable">
@@ -228,6 +313,16 @@ font-size:12px;
 </tr>
 </table>
 </div>
+
+<div class="planChooser">
+<div class="planChooserTitle">Choose Your Plan Before Payment</div>
+<div class="planGrid">
+<button type="button" class="planOption" data-plan="basic">Basic Public Plan<small>Basic visibility and public profile tools.</small></button>
+<button type="button" class="planOption" data-plan="priority">Priority Public Plan<small>Priority listing with admin-controlled top visibility.</small></button>
+<button type="button" class="planOption" data-plan="full">Full Access Plan<small>All features active with invoice support.</small></button>
+</div>
+</div>
+
 <button id="payBtn">Continue To Payment</button>
 </div>
 
@@ -297,18 +392,51 @@ if (type !== "teacher" && type !== "institution") {
   throw new Error("Invalid Type");
 }
 
-let amount = type === "institution" ? 2 : 1;
+const BASE_DISPLAY_AMOUNT = 399;
+const DISCOUNT_MULTIPLIER = type === "institution" ? 2 : 1;
+let amount = DISCOUNT_MULTIPLIER;
+const priceExpression = type === "institution" ? "399 x 2" : "399 x 1";
+const planConfig = {
+  basic: { label: "Basic Public Plan" },
+  priority: { label: "Priority Public Plan" },
+  full: { label: "Full Access Plan" }
+};
+
+let selectedPlan = cleanValue(
+  localStorage.getItem("selectedRegistrationPlan") ||
+  sessionStorage.getItem("selectedRegistrationPlan")
+);
+
+function updatePlanSelectionUI() {
+  document.querySelectorAll(".planOption").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.plan === selectedPlan);
+  });
+}
+
+function updateFeeText() {
+  const roleLabel = type === "institution" ? "Institution" : "Teacher";
+  document.getElementById("feeText").innerHTML =
+    roleLabel + " Registration Fee Rs." + priceExpression + " discounted to Rs." + amount;
+
+  document.getElementById("planStatus").innerText = selectedPlan
+    ? "Selected Plan: " + planConfig[selectedPlan].label
+    : "Choose a plan before continuing to payment.";
+}
 
 function savePaymentData() {
   localStorage.setItem("profileId", id);
   localStorage.setItem("paymentProfileId", id);
   localStorage.setItem("role", type);
   localStorage.setItem("paymentType", type);
+  localStorage.setItem("selectedRegistrationPlan", selectedPlan);
+  localStorage.setItem("selectedRegistrationPlanLabel", selectedPlan ? planConfig[selectedPlan].label : "");
 
   sessionStorage.setItem("profileId", id);
   sessionStorage.setItem("paymentProfileId", id);
   sessionStorage.setItem("role", type);
   sessionStorage.setItem("paymentType", type);
+  sessionStorage.setItem("selectedRegistrationPlan", selectedPlan);
+  sessionStorage.setItem("selectedRegistrationPlanLabel", selectedPlan ? planConfig[selectedPlan].label : "");
 
   if (window.AndroidPayment) {
     AndroidPayment.savePaymentContext(id, type);
@@ -328,12 +456,16 @@ async function createPaymentLink() {
     type: type,
     flow: "registration",
     amount: amount,
+    planType: selectedPlan,
+    planLabel: selectedPlan ? planConfig[selectedPlan].label : "",
+    displayBaseAmount: BASE_DISPLAY_AMOUNT,
+    promoAmount: amount,
+    priceExpression: priceExpression,
     status: "pending",
     createdAt: Date.now()
   };
 
   await set(ref(db, "pendingPayments/" + token), pendingData);
-
   await set(ref(db, "pendingPaymentsLatestRegister/" + type), pendingData);
 
   const successUrl =
@@ -361,10 +493,23 @@ async function createPaymentLink() {
   throw new Error("Invalid type: " + type);
 }
 
-document.getElementById("feeText").innerHTML =
-  "Registration Fee Rs." + amount;
+document.querySelectorAll(".planOption").forEach(btn => {
+  btn.addEventListener("click", function () {
+    selectedPlan = this.dataset.plan || "";
+    updatePlanSelectionUI();
+    updateFeeText();
+  });
+});
+
+updatePlanSelectionUI();
+updateFeeText();
 
 document.getElementById("payBtn").onclick = async function () {
+  if (!selectedPlan) {
+    alert("Please choose a plan before continuing to payment.");
+    return;
+  }
+
   try {
     const btn = document.getElementById("payBtn");
     btn.disabled = true;
@@ -388,5 +533,3 @@ document.getElementById("payBtn").onclick = async function () {
 </script>
 </body>
 </html>
-
-
