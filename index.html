@@ -313,7 +313,10 @@ top:0;
 left:0;
 width:100%;
 height:100%;
-background:rgba(0,0,0,.6);
+padding:20px;
+background:
+linear-gradient(135deg,rgba(13,71,161,.92),rgba(21,101,192,.84)),
+url("https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=1200&q=80") center/cover no-repeat;
 display:flex;
 justify-content:center;
 align-items:center;
@@ -321,27 +324,188 @@ z-index:99999;
 }
 
 .loginBox{
-background:white;
-padding:30px;
-border-radius:15px;
+width:min(100%,420px);
+background:rgba(255,255,255,.97);
+padding:28px 24px 24px;
+border-radius:24px;
 text-align:center;
-width:320px;
+box-shadow:0 22px 55px rgba(4,26,64,.28);
+border:1px solid rgba(255,255,255,.72);
 }
 
 .loginBox button{
 width:100%;
-padding:14px;
-margin-top:12px;
 border:none;
-border-radius:10px;
-background:#1565c0;
-color:white;
-font-size:16px;
 cursor:pointer;
 }
 
+.welcomeBrand{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:10px;
+margin-bottom:12px;
+}
 
+.welcomeBrand img{
+width:76px;
+height:76px;
+object-fit:contain;
+filter:drop-shadow(0 10px 20px rgba(21,101,192,.18));
+}
 
+.welcomeBrandWord{
+font-size:31px;
+font-weight:800;
+letter-spacing:.4px;
+line-height:1;
+}
+
+.welcomeBrandWord .guru{
+color:#1976d2;
+}
+
+.welcomeBrandWord .link{
+color:#2e7d32;
+}
+
+.welcomeTitle{
+font-size:24px;
+font-weight:800;
+color:#102a43;
+margin-bottom:8px;
+}
+
+.welcomeSubtitle{
+font-size:14px;
+line-height:1.6;
+color:#486581;
+margin:0 0 18px;
+}
+
+.welcomeRoleLabel{
+font-size:12px;
+font-weight:700;
+letter-spacing:.8px;
+text-transform:uppercase;
+color:#1565c0;
+margin-bottom:14px;
+}
+
+.welcomeActions{
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+.welcomeRoleBtn{
+display:flex;
+align-items:flex-start;
+gap:12px;
+padding:15px 16px;
+border-radius:16px;
+text-align:left;
+color:#fff;
+box-shadow:0 10px 24px rgba(21,101,192,.12);
+transition:transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+}
+
+.welcomeRoleBtn:hover{
+transform:translateY(-1px);
+box-shadow:0 12px 26px rgba(16,42,67,.18);
+}
+
+.welcomeRoleBtn.primaryStudent{
+background:linear-gradient(135deg,#1565c0,#1e88e5);
+}
+
+.welcomeRoleBtn.primaryTeacher{
+background:linear-gradient(135deg,#2e7d32,#43a047);
+}
+
+.welcomeRoleBtn.guestAccess{
+background:linear-gradient(135deg,#00897b,#26a69a);
+}
+
+.welcomeRoleIcon{
+width:42px;
+height:42px;
+border-radius:14px;
+background:rgba(255,255,255,.18);
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
+font-weight:800;
+flex-shrink:0;
+}
+
+.welcomeRoleText{
+display:flex;
+flex-direction:column;
+gap:4px;
+}
+
+.welcomeRoleTitle{
+font-size:16px;
+font-weight:800;
+line-height:1.25;
+}
+
+.welcomeRoleDesc{
+font-size:12px;
+line-height:1.45;
+opacity:.96;
+}
+
+.welcomeFootnote{
+margin-top:16px;
+padding:11px 13px;
+border-radius:14px;
+background:#f3f8ff;
+color:#52606d;
+font-size:12px;
+line-height:1.5;
+border:1px solid #d7e7fb;
+}
+
+@media (max-width:768px){
+.loginBox{
+padding:24px 18px 20px;
+border-radius:22px;
+}
+
+.welcomeBrand img{
+width:68px;
+height:68px;
+}
+
+.welcomeBrandWord{
+font-size:27px;
+}
+
+.welcomeTitle{
+font-size:21px;
+}
+
+.welcomeSubtitle{
+font-size:13px;
+margin-bottom:16px;
+}
+
+.welcomeRoleBtn{
+padding:14px;
+border-radius:14px;
+}
+
+.welcomeRoleTitle{
+font-size:15px;
+}
+
+.welcomeRoleDesc{
+font-size:11.5px;
+}
+}
 .filterBar select,
 .filterBar input{
 width:100%;
@@ -377,76 +541,60 @@ box-sizing:border-box;
 
 
 <body>
-<div id="loginOverlay" style="
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:white;
-z-index:99999;
-display:flex;
-justify-content:center;
-align-items:center;
-">
+<div id="loginOverlay">
 
-<div style="
-width:90%;
-max-width:400px;
-background:#fff;
-padding:25px;
-border-radius:15px;
-box-shadow:0 5px 20px rgba(0,0,0,.2);
-text-align:center;
-">
+<div class="loginBox">
 
-<h2>Welcome to GURULINK</h2>
+<div class="welcomeBrand">
+<img
+src="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png"
+alt="GURULINK Logo">
+<div class="welcomeBrandWord">
+<span class="guru">GURU</span><span class="link">LINK</span>
+</div>
+</div>
 
-<p style="margin:15px 0;">
-Select Your Role
+<h2 class="welcomeTitle">Welcome to GURULINK</h2>
+
+<p class="welcomeSubtitle">
+Connect with trusted teachers, trainers, institutes, and learning opportunities across Academics, Education & Career Development, Arts & Creativity, Professional Skills, and Sports & Fitness.
 </p>
 
-<button id="studentBtn" style="
-width:100%;
-padding:15px;
-margin-bottom:10px;
-background:#1565c0;
-color:white;
-border:none;
-border-radius:10px;
-cursor:pointer;
-">
- Parent / Student
+<div class="welcomeRoleLabel">Select Your Role</div>
+
+<div class="welcomeActions">
+<button id="studentBtn" class="welcomeRoleBtn primaryStudent">
+<span class="welcomeRoleIcon">S</span>
+<span class="welcomeRoleText">
+<span class="welcomeRoleTitle">Parent / Student</span>
+<span class="welcomeRoleDesc">View full profiles, contact educators, manage enrolments, and use student tools.</span>
+</span>
 </button>
 
-<button id="teacherBtn" style="
-width:100%;
-padding:15px;
-background:#2e7d32;
-color:white;
-border:none;
-border-radius:10px;
-cursor:pointer;
-">
- Teacher / Institute
-</button>
-<button id="guestBtn" style="
-width:100%;
-padding:15px;
-margin-top:10px;
-background:#00897b;
-color:white;
-border:none;
-border-radius:10px;
-cursor:pointer;
-">
-Guest
+<button id="teacherBtn" class="welcomeRoleBtn primaryTeacher">
+<span class="welcomeRoleIcon">T</span>
+<span class="welcomeRoleText">
+<span class="welcomeRoleTitle">Teacher / Institute</span>
+<span class="welcomeRoleDesc">Manage your profile, receive enquiries, share your learning offer, and grow visibility.</span>
+</span>
 </button>
 
+<button id="guestBtn" class="welcomeRoleBtn guestAccess">
+<span class="welcomeRoleIcon">G</span>
+<span class="welcomeRoleText">
+<span class="welcomeRoleTitle">Continue as Guest</span>
+<span class="welcomeRoleDesc">Browse with limited access first, then log in later for contact and dashboard features.</span>
+</span>
+</button>
+</div>
+
+<div class="welcomeFootnote">
+You can explore first, then choose full access whenever you are ready.
 </div>
 
 </div>
 
+</div>
 <header>
 <div class="logo" onclick="location.href='index.html'">
 
@@ -632,7 +780,7 @@ oninput="searchSite()">
 </div>
 
 <footer>
-<p>Â© GURULINK Powred By G10 Group</p>
+<p>ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© GURULINK Powred By G10 Group</p>
 <p>Connecting Students & Teachers</p>
 <p style="margin-top:8px;">
 <a href="privacy-policy.html" style="color:#fff;text-decoration:underline;">Privacy Policy</a>
