@@ -184,6 +184,52 @@ color:#1d4ed8;
 color:#1d4ed8;
 }
 
+.amountInputWrap{
+display:none;
+margin:0 0 18px;
+padding:14px;
+border:1px solid #cfe0f6;
+border-radius:14px;
+background:#f8fbff;
+text-align:left;
+}
+
+.amountInputWrap.show{
+display:block;
+}
+
+.amountInputLabel{
+display:block;
+margin:0 0 8px;
+font-size:14px;
+font-weight:700;
+color:#1f2933;
+}
+
+.amountInputNote{
+margin:0 0 10px;
+font-size:12px;
+color:#667085;
+line-height:1.5;
+}
+
+.amountInput{
+width:100%;
+padding:12px 14px;
+border:2px solid #dbe7f5;
+border-radius:12px;
+font-size:15px;
+font-weight:600;
+color:#1f2933;
+background:#fff;
+outline:none;
+}
+
+.amountInput:focus{
+border-color:#1d4ed8;
+box-shadow:0 0 0 3px rgba(29,78,216,0.12);
+}
+
 @media(max-width:480px){
 body{
 padding:12px;
@@ -257,6 +303,15 @@ padding:11px;
 .planOption small{
 font-size:11px;
 }
+
+.amountInputWrap{
+padding:12px;
+}
+
+.amountInput{
+font-size:14px;
+padding:11px 12px;
+}
 }
 </style>
 
@@ -317,10 +372,16 @@ font-size:11px;
 <div class="planChooser">
 <div class="planChooserTitle">Choose Your Plan Before Payment</div>
 <div class="planGrid">
-<button type="button" class="planOption" data-plan="basic">Basic Public Plan<small>Basic visibility and public profile tools.</small></button>
-<button type="button" class="planOption" data-plan="priority">Priority Public Plan<small>Priority listing with admin-controlled top visibility.</small></button>
-<button type="button" class="planOption" data-plan="full">Full Access Plan<small>All features active with invoice support.</small></button>
+<button type="button" class="planOption" data-plan="basic">Basic Public Plan<small>Fixed amount Rs. 50 only.</small></button>
+<button type="button" class="planOption" data-plan="priority">Priority Public Plan<small>Enter any amount from Rs. 51 to Rs. 1799.</small></button>
+<button type="button" class="planOption" data-plan="full">Full Access Plan<small>Enter any amount from Rs. 1800 to Rs. 2000.</small></button>
 </div>
+</div>
+
+<div id="customAmountWrap" class="amountInputWrap">
+<label for="customAmountInput" id="customAmountLabel" class="amountInputLabel">Enter plan amount</label>
+<p id="customAmountNote" class="amountInputNote"></p>
+<input id="customAmountInput" class="amountInput" type="number" inputmode="numeric" min="0" step="1" placeholder="Enter amount">
 </div>
 
 <button id="payBtn">Continue To Payment</button>
@@ -393,19 +454,31 @@ if (type !== "teacher" && type !== "institution") {
 }
 
 const BASE_DISPLAY_AMOUNT = 399;
-const DISCOUNT_MULTIPLIER = type === "institution" ? 2 : 1;
-let amount = DISCOUNT_MULTIPLIER;
+const REGISTRATION_DISCOUNT_AMOUNT = type === "institution" ? 2 : 1;
 const priceExpression = type === "institution" ? "399 x 2" : "399 x 1";
 const planConfig = {
-  basic: { label: "Basic Public Plan" },
-  priority: { label: "Priority Public Plan" },
-  full: { label: "Full Access Plan" }
+  basic: { label: "Basic Public Plan", amount: 50, rangeLabel: "Rs. 50", requiresInput: false, min: 50, max: 50 },
+  priority: { label: "Priority Public Plan", amount: 51, rangeLabel: "Rs. 51 to Rs. 1799", requiresInput: true, min: 51, max: 1799 },
+  full: { label: "Full Access Plan", amount: 1800, rangeLabel: "Rs. 1800 to Rs. 2000", requiresInput: true, min: 1800, max: 2000 }
 };
+
+const customAmountWrap = document.getElementById("customAmountWrap");
+const customAmountInput = document.getElementById("customAmountInput");
+const customAmountLabel = document.getElementById("customAmountLabel");
+const customAmountNote = document.getElementById("customAmountNote");
 
 let selectedPlan = cleanValue(
   localStorage.getItem("selectedRegistrationPlan") ||
   sessionStorage.getItem("selectedRegistrationPlan")
 );
+
+const storedSelectedPlanAmount = cleanValue(
+  localStorage.getItem("selectedRegistrationPlanAmount") ||
+  sessionStorage.getItem("selectedRegistrationPlanAmount")
+);
+if (storedSelectedPlanAmount) {
+  customAmountInput.value = storedSelectedPlanAmount;
+}
 
 function updatePlanSelectionUI() {
   document.querySelectorAll(".planOption").forEach(btn => {
@@ -413,14 +486,62 @@ function updatePlanSelectionUI() {
   });
 }
 
+function getSelectedPlanAmount() {
+  if (!selectedPlan || !planConfig[selectedPlan]) return null;
+
+  const config = planConfig[selectedPlan];
+  if (!config.requiresInput) {
+    return config.amount;
+  }
+
+  const rawValue = cleanValue(customAmountInput.value);
+  if (!rawValue) return null;
+
+  const numericValue = Number(rawValue);
+  if (!Number.isFinite(numericValue)) return null;
+  return Math.round(numericValue);
+}
+
+function updateCustomAmountUI() {
+  const config = selectedPlan ? planConfig[selectedPlan] : null;
+
+  if (!config || !config.requiresInput) {
+    customAmountWrap.classList.remove("show");
+    customAmountInput.value = "";
+    customAmountInput.min = "0";
+    customAmountInput.max = "0";
+    customAmountInput.placeholder = "Enter amount";
+    return;
+  }
+
+  customAmountWrap.classList.add("show");
+  customAmountLabel.innerText = config.label + " Amount";
+  customAmountNote.innerText = "Enter any amount from Rs. " + config.min + " to Rs. " + config.max + ".";
+  customAmountInput.min = String(config.min);
+  customAmountInput.max = String(config.max);
+  customAmountInput.placeholder = "Enter amount between Rs. " + config.min + " and Rs. " + config.max;
+}
+
 function updateFeeText() {
   const roleLabel = type === "institution" ? "Institute" : "Teacher";
   document.getElementById("feeText").innerHTML =
-    roleLabel + ' Registration Fee Rs. <span style="text-decoration:line-through;text-decoration-thickness:2px;opacity:0.85;">399</span> Promotional discount Rs ' + amount + " only";
+    roleLabel + ' Registration Fee Rs. <span style="text-decoration:line-through;text-decoration-thickness:2px;opacity:0.85;">399</span> Promotional discount Rs ' + REGISTRATION_DISCOUNT_AMOUNT + " only";
 
-  document.getElementById("planStatus").innerText = selectedPlan
-    ? "Selected Plan: " + planConfig[selectedPlan].label
-    : "Choose a plan before continuing to payment.";
+  if (!selectedPlan) {
+    document.getElementById("planStatus").innerText = "Choose a plan before continuing to payment.";
+    return;
+  }
+
+  const config = planConfig[selectedPlan];
+  const chosenAmount = getSelectedPlanAmount();
+
+  if (config.requiresInput) {
+    document.getElementById("planStatus").innerText = chosenAmount
+      ? "Selected Plan: " + config.label + " (Rs. " + chosenAmount + ")"
+      : "Selected Plan: " + config.label + " - Enter amount between Rs. " + config.min + " and Rs. " + config.max + ".";
+  } else {
+    document.getElementById("planStatus").innerText = "Selected Plan: " + config.label + " (Rs. " + config.amount + ")";
+  }
 }
 
 function savePaymentData() {
@@ -428,8 +549,11 @@ function savePaymentData() {
   localStorage.setItem("paymentProfileId", id);
   localStorage.setItem("role", type);
   localStorage.setItem("paymentType", type);
+  const chosenAmount = getSelectedPlanAmount();
   localStorage.setItem("selectedRegistrationPlan", selectedPlan);
   localStorage.setItem("selectedRegistrationPlanLabel", selectedPlan ? planConfig[selectedPlan].label : "");
+  localStorage.setItem("selectedRegistrationPlanAmount", chosenAmount != null ? String(chosenAmount) : "");
+  localStorage.setItem("selectedRegistrationPlanRange", selectedPlan ? planConfig[selectedPlan].rangeLabel : "");
 
   sessionStorage.setItem("profileId", id);
   sessionStorage.setItem("paymentProfileId", id);
@@ -437,6 +561,8 @@ function savePaymentData() {
   sessionStorage.setItem("paymentType", type);
   sessionStorage.setItem("selectedRegistrationPlan", selectedPlan);
   sessionStorage.setItem("selectedRegistrationPlanLabel", selectedPlan ? planConfig[selectedPlan].label : "");
+  sessionStorage.setItem("selectedRegistrationPlanAmount", chosenAmount != null ? String(chosenAmount) : "");
+  sessionStorage.setItem("selectedRegistrationPlanRange", selectedPlan ? planConfig[selectedPlan].rangeLabel : "");
 
   if (window.AndroidPayment) {
     AndroidPayment.savePaymentContext(id, type);
@@ -449,17 +575,23 @@ function createToken() {
 
 async function createPaymentLink() {
   const token = createToken();
+  const selectedPlanAmount = getSelectedPlanAmount() != null
+    ? getSelectedPlanAmount()
+    : REGISTRATION_DISCOUNT_AMOUNT;
 
   const pendingData = {
     token: token,
     profileId: id,
     type: type,
     flow: "registration",
-    amount: amount,
+    amount: selectedPlanAmount,
     planType: selectedPlan,
     planLabel: selectedPlan ? planConfig[selectedPlan].label : "",
+    planAmount: selectedPlanAmount,
+    planRangeLabel: selectedPlan ? planConfig[selectedPlan].rangeLabel : "",
     displayBaseAmount: BASE_DISPLAY_AMOUNT,
-    promoAmount: amount,
+    promoAmount: selectedPlanAmount,
+    registrationDiscountAmount: REGISTRATION_DISCOUNT_AMOUNT,
     priceExpression: priceExpression,
     status: "pending",
     createdAt: Date.now()
@@ -497,17 +629,38 @@ document.querySelectorAll(".planOption").forEach(btn => {
   btn.addEventListener("click", function () {
     selectedPlan = this.dataset.plan || "";
     updatePlanSelectionUI();
+    updateCustomAmountUI();
     updateFeeText();
   });
 });
 
+customAmountInput.addEventListener("input", () => {
+  updateFeeText();
+});
+
 updatePlanSelectionUI();
+updateCustomAmountUI();
 updateFeeText();
 
 document.getElementById("payBtn").onclick = async function () {
   if (!selectedPlan) {
     alert("Please choose a plan before continuing to payment.");
     return;
+  }
+
+  const config = planConfig[selectedPlan];
+  const chosenAmount = getSelectedPlanAmount();
+  if (config.requiresInput) {
+    if (chosenAmount == null) {
+      alert("Please enter your payment amount before continuing.");
+      customAmountInput.focus();
+      return;
+    }
+    if (chosenAmount < config.min || chosenAmount > config.max) {
+      alert("Please enter an amount between Rs. " + config.min + " and Rs. " + config.max + ".");
+      customAmountInput.focus();
+      return;
+    }
   }
 
   try {
