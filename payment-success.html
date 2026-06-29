@@ -107,8 +107,11 @@ let type = cleanValue(params.get("type")).toLowerCase();
 let id = "";
 let pendingPlanType = "";
 let pendingPlanLabel = "";
+let pendingPlanAmount = 0;
+let pendingPlanRangeLabel = "";
 let pendingBaseAmount = 399;
 let pendingPromoAmount = 0;
+let pendingRegistrationDiscountAmount = 0;
 let pendingPriceExpression = "";
 
 if (type === "teacher_institute") {
@@ -118,8 +121,11 @@ if (type === "teacher_institute") {
 function applyPendingMeta(pending) {
   pendingPlanType = cleanValue(pending.planType || pending.selectedPlan || "");
   pendingPlanLabel = cleanValue(pending.planLabel || "");
+  pendingPlanAmount = Number(pending.planAmount || pending.amount || pending.promoAmount || 0) || 0;
+  pendingPlanRangeLabel = cleanValue(pending.planRangeLabel || "");
   pendingBaseAmount = Number(pending.displayBaseAmount || pending.baseAmount || 399) || 399;
   pendingPromoAmount = Number(pending.promoAmount || pending.amount || 0) || 0;
+  pendingRegistrationDiscountAmount = Number(pending.registrationDiscountAmount || 0) || 0;
   pendingPriceExpression = cleanValue(pending.priceExpression || "");
 }
 
@@ -216,6 +222,8 @@ function fallbackFromUrlAndStorage() {
 
   pendingPlanType = cleanValue(sessionStorage.getItem("selectedRegistrationPlan") || localStorage.getItem("selectedRegistrationPlan"));
   pendingPlanLabel = cleanValue(sessionStorage.getItem("selectedRegistrationPlanLabel") || localStorage.getItem("selectedRegistrationPlanLabel"));
+  pendingPlanAmount = Number(sessionStorage.getItem("selectedRegistrationPlanAmount") || localStorage.getItem("selectedRegistrationPlanAmount") || 0) || 0;
+  pendingPlanRangeLabel = cleanValue(sessionStorage.getItem("selectedRegistrationPlanRange") || localStorage.getItem("selectedRegistrationPlanRange"));
 }
 
 async function resolvePaymentContext() {
@@ -250,6 +258,12 @@ async function resolvePaymentContext() {
     throw new Error("Payment Type Missing");
   }
 }
+
+const planAmountMap = {
+  basic: 50,
+  priority: 51,
+  full: 1800
+};
 
 const amountMap = {
   teacher: 1,
@@ -306,7 +320,7 @@ async function savePayment() {
 
     const user = snap.val();
     const paymentRef = push(ref(db, "payments"));
-    const amount = pendingPromoAmount || amountMap[finalType] || 1;
+    const amount = pendingPlanAmount || pendingPromoAmount || planAmountMap[pendingPlanType] || amountMap[finalType] || 1;
 
     await set(paymentRef, {
       paymentId: paymentRef.key,
@@ -336,8 +350,11 @@ async function savePayment() {
       amount: amount,
       planType: pendingPlanType || "",
       planLabel: pendingPlanLabel || "",
+      planAmount: amount,
+      planRangeLabel: pendingPlanRangeLabel || "",
       displayBaseAmount: pendingBaseAmount || 399,
       promoAmount: amount,
+      registrationDiscountAmount: pendingRegistrationDiscountAmount || amountMap[finalType] || 0,
       priceExpression: pendingPriceExpression || "",
       status: "paid",
       date: new Date().toLocaleString(),
@@ -350,8 +367,11 @@ async function savePayment() {
       lastPaymentToken: token || "",
       registrationPlanType: pendingPlanType || "",
       registrationPlanLabel: pendingPlanLabel || "",
+      registrationPlanAmount: amount,
+      registrationPlanRangeLabel: pendingPlanRangeLabel || "",
       registrationBaseAmount: pendingBaseAmount || 399,
       registrationPromoAmount: amount,
+      registrationDiscountAmount: pendingRegistrationDiscountAmount || amountMap[finalType] || 0,
       registrationPriceExpression: pendingPriceExpression || ""
     });
 
@@ -361,10 +381,14 @@ async function savePayment() {
     localStorage.removeItem("paymentType");
     localStorage.removeItem("selectedRegistrationPlan");
     localStorage.removeItem("selectedRegistrationPlanLabel");
+    localStorage.removeItem("selectedRegistrationPlanAmount");
+    localStorage.removeItem("selectedRegistrationPlanRange");
     sessionStorage.removeItem("paymentProfileId");
     sessionStorage.removeItem("paymentType");
     sessionStorage.removeItem("selectedRegistrationPlan");
     sessionStorage.removeItem("selectedRegistrationPlanLabel");
+    sessionStorage.removeItem("selectedRegistrationPlanAmount");
+    sessionStorage.removeItem("selectedRegistrationPlanRange");
 
     loader.style.display = "none";
     msg.innerHTML =
