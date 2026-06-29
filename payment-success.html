@@ -105,9 +105,22 @@ let token = cleanValue(
 
 let type = cleanValue(params.get("type")).toLowerCase();
 let id = "";
+let pendingPlanType = "";
+let pendingPlanLabel = "";
+let pendingBaseAmount = 399;
+let pendingPromoAmount = 0;
+let pendingPriceExpression = "";
 
 if (type === "teacher_institute") {
   type = "teacher";
+}
+
+function applyPendingMeta(pending) {
+  pendingPlanType = cleanValue(pending.planType || pending.selectedPlan || "");
+  pendingPlanLabel = cleanValue(pending.planLabel || "");
+  pendingBaseAmount = Number(pending.displayBaseAmount || pending.baseAmount || 399) || 399;
+  pendingPromoAmount = Number(pending.promoAmount || pending.amount || 0) || 0;
+  pendingPriceExpression = cleanValue(pending.priceExpression || "");
 }
 
 async function loadPendingByToken() {
@@ -119,6 +132,7 @@ async function loadPendingByToken() {
 
   const pending = pendingSnap.val();
 
+  applyPendingMeta(pending);
   id = cleanValue(pending.profileId);
   type = cleanValue(pending.type).toLowerCase();
   token = cleanValue(pending.token) || token;
@@ -146,6 +160,7 @@ async function loadPendingByType() {
     return false;
   }
 
+  applyPendingMeta(pending);
   id = cleanValue(pending.profileId);
   type = cleanValue(pending.type).toLowerCase();
   token = cleanValue(pending.token) || token;
@@ -198,6 +213,9 @@ function fallbackFromUrlAndStorage() {
     cleanValue(localStorage.getItem("teacherId")) ||
     cleanValue(localStorage.getItem("institutionId")) ||
     cleanValue(localStorage.getItem(type + "Id"));
+
+  pendingPlanType = cleanValue(sessionStorage.getItem("selectedRegistrationPlan") || localStorage.getItem("selectedRegistrationPlan"));
+  pendingPlanLabel = cleanValue(sessionStorage.getItem("selectedRegistrationPlanLabel") || localStorage.getItem("selectedRegistrationPlanLabel"));
 }
 
 async function resolvePaymentContext() {
@@ -288,7 +306,7 @@ async function savePayment() {
 
     const user = snap.val();
     const paymentRef = push(ref(db, "payments"));
-    const amount = amountMap[finalType] || 1;
+    const amount = pendingPromoAmount || amountMap[finalType] || 1;
 
     await set(paymentRef, {
       paymentId: paymentRef.key,
@@ -316,6 +334,11 @@ async function savePayment() {
       onlineFee: user.onlineFee || "",
 
       amount: amount,
+      planType: pendingPlanType || "",
+      planLabel: pendingPlanLabel || "",
+      displayBaseAmount: pendingBaseAmount || 399,
+      promoAmount: amount,
+      priceExpression: pendingPriceExpression || "",
       status: "paid",
       date: new Date().toLocaleString(),
       createdAt: Date.now(),
@@ -324,15 +347,24 @@ async function savePayment() {
 
     await update(ref(db, profilePath), {
       paymentStatus: "paid",
-      lastPaymentToken: token || ""
+      lastPaymentToken: token || "",
+      registrationPlanType: pendingPlanType || "",
+      registrationPlanLabel: pendingPlanLabel || "",
+      registrationBaseAmount: pendingBaseAmount || 399,
+      registrationPromoAmount: amount,
+      registrationPriceExpression: pendingPriceExpression || ""
     });
 
     await cleanupPending(finalType);
 
     localStorage.removeItem("paymentProfileId");
     localStorage.removeItem("paymentType");
+    localStorage.removeItem("selectedRegistrationPlan");
+    localStorage.removeItem("selectedRegistrationPlanLabel");
     sessionStorage.removeItem("paymentProfileId");
     sessionStorage.removeItem("paymentType");
+    sessionStorage.removeItem("selectedRegistrationPlan");
+    sessionStorage.removeItem("selectedRegistrationPlanLabel");
 
     loader.style.display = "none";
     msg.innerHTML =
