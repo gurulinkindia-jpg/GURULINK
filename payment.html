@@ -414,9 +414,9 @@ function updatePlanSelectionUI() {
 }
 
 function updateFeeText() {
-  const roleLabel = type === "institution" ? "Institution" : "Teacher";
+  const roleLabel = type === "institution" ? "Institute" : "Teacher";
   document.getElementById("feeText").innerHTML =
-    roleLabel + " Registration Fee Rs." + priceExpression + " discounted to Rs." + amount;
+    roleLabel + ' Registration Fee Rs. <span style="text-decoration:line-through;text-decoration-thickness:2px;opacity:0.85;">399</span> Promotional discount Rs ' + amount + " only";
 
   document.getElementById("planStatus").innerText = selectedPlan
     ? "Selected Plan: " + planConfig[selectedPlan].label
