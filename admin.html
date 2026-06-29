@@ -277,6 +277,59 @@ font-weight:bold;
 background:#fff8e1;
 }
 
+.paymentTeacherCard{
+background:linear-gradient(135deg,#eef5ff 0%,#ffffff 100%);
+border-left:5px solid #1565c0;
+}
+
+.paymentInstitutionCard{
+background:linear-gradient(135deg,#ecfffb 0%,#ffffff 100%);
+border-left:5px solid #00897b;
+}
+
+.paymentRoleBadge{
+display:inline-flex;
+align-items:center;
+padding:5px 8px;
+border-radius:999px;
+font-size:10px;
+font-weight:bold;
+color:white;
+margin:2px 4px 6px 0;
+}
+
+.paymentRoleTeacher{
+background:#1565c0;
+}
+
+.paymentRoleInstitution{
+background:#00897b;
+}
+
+.paymentActionRow{
+display:flex;
+flex-wrap:wrap;
+gap:4px;
+margin-top:8px;
+}
+
+.jumpProfile{
+background:#0f766e;
+}
+
+.linkPayment{
+background:#ef6c00;
+}
+
+.linkRenewal{
+background:#8e24aa;
+}
+
+.flashFocus{
+outline:3px solid rgba(245,124,0,.5);
+box-shadow:0 0 0 4px rgba(245,124,0,.12);
+}
+
 h3{
 margin-top:0;
 }
@@ -627,6 +680,55 @@ function updatePaymentTotal(){
     paymentTotals.renewal +
     paymentTotals.invoice;
 }
+
+function normalizeProfileType(type){
+  return String(type || "teacher").toLowerCase().includes("institution")
+    ? "institution"
+    : "teacher";
+}
+
+function paymentRoleLabel(type){
+  return normalizeProfileType(type) === "institution"
+    ? "Institute"
+    : "Teacher";
+}
+
+function paymentRoleClass(type){
+  return normalizeProfileType(type) === "institution"
+    ? "paymentRoleInstitution"
+    : "paymentRoleTeacher";
+}
+
+function findLatestPaymentForProfile(list, profileId){
+  return list
+    .filter(item => String(item.profileId || item.uid || "") === String(profileId || ""))
+    .sort((a, b) => {
+      const aTime = Number(a.createdAt || a.approvedAt || 0);
+      const bTime = Number(b.createdAt || b.approvedAt || 0);
+      return bTime - aTime;
+    })[0] || null;
+}
+
+function flashAndScrollTo(el){
+  if(!el) return;
+  el.scrollIntoView({ behavior:"smooth", block:"center" });
+  el.classList.add("flashFocus");
+  setTimeout(() => el.classList.remove("flashFocus"), 1800);
+}
+
+window.scrollToProfileCard = function(type,id){
+  const finalType = normalizeProfileType(type);
+  flashAndScrollTo(document.getElementById(`profileCard_${finalType}_${id}`));
+};
+
+window.scrollToRegistrationPayment = function(paymentId){
+  flashAndScrollTo(document.getElementById(`registrationPaymentCard_${paymentId}`));
+};
+
+window.scrollToRenewalPayment = function(paymentId){
+  flashAndScrollTo(document.getElementById(`renewalPaymentCard_${paymentId}`));
+};
+
 function expired(t){
 
 return t &&
@@ -893,7 +995,26 @@ snap.forEach(c=>{
 
 const d=c.val();
 
-payments.push(d);
+const paymentType =
+normalizeProfileType(
+d.type
+);
+
+const linkedProfileId =
+d.profileId ||
+d.uid ||
+"";
+
+const paymentRecord = {
+...d,
+_key:c.key,
+_type:paymentType,
+_profileId:linkedProfileId
+};
+
+payments.push(
+paymentRecord
+);
 
 total +=
 Number(
@@ -902,27 +1023,48 @@ d.amount || 0
 
 html += `
 
-<div class="card paymentCard registrationPaymentCard">
+<div id="registrationPaymentCard_${c.key}" class="card paymentCard registrationPaymentCard ${paymentType === "institution" ? "paymentInstitutionCard" : "paymentTeacherCard"}">
 
 <h4>
 ${d.name || "-"}
 </h4>
+
+<span class="paymentRoleBadge ${paymentRoleClass(paymentType)}">
+${paymentRoleLabel(paymentType)}
+</span>
 
 <p>
 <b>Registration</b>
 </p>
 
 <p>
+<b>Email:</b>
+${d.email || "-"}
+</p>
+
+<p>
+<b>Phone:</b>
 ${d.phone || "-"}
 </p>
 
 <p>
+<b>Amount:</b>
 Rs. ${d.amount || 0}
 </p>
 
 <p>
+<b>Status:</b>
 ${d.status || "paid"}
 </p>
+
+<div class="paymentActionRow">
+<button
+class="jumpProfile"
+onclick="scrollToProfileCard('${paymentType}','${linkedProfileId}')">
+
+See Profile Card
+
+</button>
 
 <button
 class="delete"
@@ -931,6 +1073,8 @@ onclick="delPay('${c.key}')">
 Delete
 
 </button>
+
+</div>
 
 </div>
 
@@ -945,6 +1089,7 @@ document
 
 paymentTotals.registration = total;
 updatePaymentTotal();
+if(typeof window.renderAll === 'function') window.renderAll();
 
 });
 
@@ -968,7 +1113,26 @@ snap.forEach(c=>{
 
 const d=c.val();
 
-renewPayments.push(d);
+const paymentType =
+normalizeProfileType(
+d.type
+);
+
+const linkedProfileId =
+d.profileId ||
+d.uid ||
+"";
+
+const paymentRecord = {
+...d,
+_key:c.key,
+_type:paymentType,
+_profileId:linkedProfileId
+};
+
+renewPayments.push(
+paymentRecord
+);
 
 totalRenew +=
 Number(
@@ -977,37 +1141,53 @@ d.amount || 0
 
 html += `
 
-<div class="card paymentCard renewalPaymentCard">
+<div id="renewalPaymentCard_${c.key}" class="card paymentCard renewalPaymentCard ${paymentType === "institution" ? "paymentInstitutionCard" : "paymentTeacherCard"}">
 
 <h4>
 ${d.name || "-"}
 </h4>
+
+<span class="paymentRoleBadge ${paymentRoleClass(paymentType)}">
+${paymentRoleLabel(paymentType)}
+</span>
 
 <p>
 <b>Renewal</b>
 </p>
 
 <p>
+<b>Email:</b>
+${d.email || "-"}
+</p>
+
+<p>
+<b>Phone:</b>
 ${d.phone || "-"}
 </p>
 
 <p>
+<b>Amount:</b>
 Rs. ${d.amount || 0}
-
 </p>
-
-
 
 <p>
+<b>Status:</b>
 ${d.status || "paid"}
 </p>
+
+<div class="paymentActionRow">
+<button
+class="jumpProfile"
+onclick="scrollToProfileCard('${paymentType}','${linkedProfileId}')">
+See Profile Card
+</button>
 
 <button
 class="renew"
 onclick="approveRenewalFromPayment(
 '${c.key}',
-'${d.profileId}',
-'${d.type}'
+'${linkedProfileId}',
+'${paymentType}'
 )">
 Approve Renewal
 </button>
@@ -1017,6 +1197,8 @@ class="delete"
 onclick="delRenewPay('${c.key}')">
 Delete
 </button>
+
+</div>
 
 </div>
 
@@ -1031,11 +1213,11 @@ document
 
 paymentTotals.renewal = totalRenew;
 updatePaymentTotal();
+if(typeof window.renderAll === 'function') window.renderAll();
 
 });
 
 }
-
 
 /* =========================
    INVOICE FEATURE PAYMENTS
@@ -1143,9 +1325,15 @@ isProfilePublic(d);
 const rank =
 publicRankValue(d);
 
+const registrationPayment =
+findLatestPaymentForProfile(payments, d.id);
+
+const renewalPayment =
+findLatestPaymentForProfile(renewPayments, d.id);
+
 return `
 
-<div class="card ${type === "teacher" ? "teacherCard" : "institutionCard"}">
+<div id="profileCard_${type}_${d.id}" class="card ${type === "teacher" ? "teacherCard" : "institutionCard"}">
 
 <h3>
 ${d.name || "-"}
@@ -1318,11 +1506,18 @@ Delete
 </button>
 
 <button
-class="renew"
-disabled
-style="opacity:.5;cursor:not-allowed;">
+class="linkPayment"
+${registrationPayment ? `onclick="scrollToRegistrationPayment('${registrationPayment._key}')"` : 'disabled style="opacity:.5;cursor:not-allowed;"'}>
 
-Renew via Payment
+See Registration Payment
+
+</button>
+
+<button
+class="linkRenewal"
+${renewalPayment ? `onclick="scrollToRenewalPayment('${renewalPayment._key}')"` : 'disabled style="opacity:.5;cursor:not-allowed;"'}>
+
+See Renewal Payment
 
 </button>
 
