@@ -16,7 +16,7 @@ font-family:Arial,sans-serif;
 background:#eef2f7;
 min-height:100vh;
 min-height:100dvh;
-padding:20px;
+padding:20px 20px 28px;
 display:flex;
 align-items:center;
 justify-content:center;
@@ -58,9 +58,9 @@ cursor:not-allowed;
 }
 
 .amount{
-font-size:25px;
+font-size:18px;
 font-weight:bold;
-margin:20px 0 10px;
+margin:14px 0 8px;
 color:#0f766e;
 word-break:break-word;
 line-height:1.4;
@@ -154,7 +154,7 @@ gap:10px;
 .planOption{
 width:100%;
 min-height:auto;
-padding:12px;
+padding:11px;
 border:2px solid #dbe7f5;
 border-radius:12px;
 background:#fff;
@@ -163,6 +163,12 @@ font-size:14px;
 font-weight:700;
 text-align:left;
 box-shadow:none;
+cursor:pointer;
+transition:border-color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+
+.planOptionMain{
+pointer-events:none;
 }
 
 .planOption small{
@@ -178,24 +184,49 @@ color:#667085;
 border-color:#1d4ed8;
 background:#eff6ff;
 color:#1d4ed8;
+box-shadow:0 8px 18px rgba(29,78,216,.12);
 }
 
 .planOption.active small{
 color:#1d4ed8;
 }
 
+.planOptionInline{
+display:none;
+margin-top:10px;
+padding-top:10px;
+border-top:1px solid rgba(29,78,216,.14);
+}
+
+.planOption.active .planOptionInline{
+display:block;
+}
+
 .amountInputWrap{
 display:none;
-margin:0 0 18px;
-padding:14px;
+margin:0;
+padding:10px;
 border:1px solid #cfe0f6;
-border-radius:14px;
+border-radius:12px;
 background:#f8fbff;
 text-align:left;
 }
 
 .amountInputWrap.show{
 display:block;
+}
+
+.payBtnWrap{
+position:sticky;
+bottom:10px;
+z-index:25;
+margin-top:14px;
+padding-top:8px;
+background:linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,.9) 22%, rgba(255,255,255,1));
+}
+
+#payBtn{
+box-shadow:0 14px 28px rgba(27,94,32,.25);
 }
 
 .amountInputLabel{
@@ -238,7 +269,7 @@ padding-top:calc(env(safe-area-inset-top) + 24px);
 }
 
 .container{
-padding:20px;
+padding:20px 20px 28px;
 border-radius:14px;
 }
 
@@ -247,8 +278,8 @@ font-size:21px;
 }
 
 .amount{
-font-size:22px;
-margin:18px 0 8px;
+font-size:15px;
+margin:10px 0 6px;
 }
 
 button{
@@ -292,7 +323,7 @@ font-size:15px;
 
 .planGrid{
 grid-template-columns:1fr;
-gap:8px;
+gap:6px;
 }
 
 .planOption{
@@ -309,8 +340,18 @@ padding:12px;
 }
 
 .amountInput{
+font-size:13px;
+padding:10px 11px;
+}
+
+.payBtnWrap{
+bottom:8px;
+margin-top:10px;
+}
+
+#payBtn{
+min-height:44px;
 font-size:14px;
-padding:11px 12px;
 }
 }
 </style>
@@ -372,9 +413,18 @@ padding:11px 12px;
 <div class="planChooser">
 <div class="planChooserTitle">Choose Your Plan Before Payment</div>
 <div class="planGrid">
-<button type="button" class="planOption" data-plan="basic">Basic Public Plan<small>Fixed amount Rs. 50 only.</small></button>
-<button type="button" class="planOption" data-plan="priority">Priority Public Plan<small>Enter any amount from Rs. 51 to Rs. 1799.</small></button>
-<button type="button" class="planOption" data-plan="full">Full Access Plan<small>Enter any amount from Rs. 1800 to Rs. 2000.</small></button>
+<div class="planOption" data-plan="basic" role="button" tabindex="0">
+<div class="planOptionMain">Basic Public Plan<small>Fixed amount Rs. 50 only.</small></div>
+<div class="planOptionInline" data-inline-for="basic"></div>
+</div>
+<div class="planOption" data-plan="priority" role="button" tabindex="0">
+<div class="planOptionMain">Priority Public Plan<small>Enter any amount from Rs. 51 to Rs. 1799.</small></div>
+<div class="planOptionInline" data-inline-for="priority"></div>
+</div>
+<div class="planOption" data-plan="full" role="button" tabindex="0">
+<div class="planOptionMain">Full Access Plan<small>Enter any amount from Rs. 1800 to Rs. 2000.</small></div>
+<div class="planOptionInline" data-inline-for="full"></div>
+</div>
 </div>
 </div>
 
@@ -384,7 +434,9 @@ padding:11px 12px;
 <input id="customAmountInput" class="amountInput" type="number" inputmode="numeric" min="0" step="1" placeholder="Enter amount">
 </div>
 
+<div class="payBtnWrap">
 <button id="payBtn">Continue To Payment</button>
+</div>
 </div>
 
 <script type="module">
@@ -504,6 +556,15 @@ function getSelectedPlanAmount() {
 
 function updateCustomAmountUI() {
   const config = selectedPlan ? planConfig[selectedPlan] : null;
+  const currentSlot = selectedPlan
+    ? document.querySelector('.planOptionInline[data-inline-for="' + selectedPlan + '"]')
+    : null;
+
+  document.querySelectorAll(".planOptionInline").forEach(slot => {
+    if (slot !== currentSlot) {
+      slot.innerHTML = "";
+    }
+  });
 
   if (!config || !config.requiresInput) {
     customAmountWrap.classList.remove("show");
@@ -512,6 +573,11 @@ function updateCustomAmountUI() {
     customAmountInput.max = "0";
     customAmountInput.placeholder = "Enter amount";
     return;
+  }
+
+  if (currentSlot) {
+    currentSlot.innerHTML = "";
+    currentSlot.appendChild(customAmountWrap);
   }
 
   customAmountWrap.classList.add("show");
@@ -632,6 +698,24 @@ document.querySelectorAll(".planOption").forEach(btn => {
     updateCustomAmountUI();
     updateFeeText();
   });
+
+  btn.addEventListener("keydown", function (event) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      selectedPlan = this.dataset.plan || "";
+      updatePlanSelectionUI();
+      updateCustomAmountUI();
+      updateFeeText();
+    }
+  });
+});
+
+customAmountWrap.addEventListener("click", event => {
+  event.stopPropagation();
+});
+
+customAmountInput.addEventListener("click", event => {
+  event.stopPropagation();
 });
 
 customAmountInput.addEventListener("input", () => {
