@@ -212,6 +212,21 @@ return String(num || "")
 .replace(/\D/g,"");
 }
 
+function applyLimitedAccessRole(){
+if(otpRole === "student"){
+localStorage.setItem("role","student_guest");
+}
+else if(otpRole === "teacher" || otpRole === "teacher_institute"){
+localStorage.setItem("role","teacher_guest");
+}
+else if(otpRole === "institution"){
+localStorage.setItem("role","institution_guest");
+}
+else{
+localStorage.setItem("role","guest");
+}
+}
+
 window.goRegister = function(page){
 
 const agree =
@@ -240,17 +255,9 @@ alert("Please accept the Terms & Conditions.");
 return;
 }
 
-if(otpRole === "student"){
-localStorage.setItem("role","student_guest");
-}
-else if(otpRole === "teacher" || otpRole === "teacher_institute"){
-localStorage.setItem("role","teacher_guest");
-}
-else if(otpRole === "institution"){
-localStorage.setItem("role","institution_guest");
-}
+ applyLimitedAccessRole();
 
-finishRedirect("index.html");
+ finishRedirect("index.html");
 
 };
 
@@ -326,9 +333,8 @@ showRegisterChoice(titleText,message,registerPage);
 return;
 }
 
-sessionStorage.removeItem("postLoginRedirect");
-localStorage.setItem("role","guest");
-location.href = "index.html";
+applyLimitedAccessRole();
+finishRedirect("index.html");
 }
 
 async function findByPhone(path, phone){
