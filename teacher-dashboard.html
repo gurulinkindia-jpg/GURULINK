@@ -1014,7 +1014,8 @@ from
 
 import {
 getAuth,
-signOut
+signOut,
+onAuthStateChanged
 }
 from
 "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
@@ -1050,6 +1051,21 @@ getDatabase(app);
 
 const auth=
 getAuth(app);
+
+let authReadyResolver = null;
+const authReadyPromise = new Promise(resolve=>{
+  authReadyResolver = resolve;
+});
+
+let dashboardAuthUser = null;
+
+onAuthStateChanged(auth,(user)=>{
+  dashboardAuthUser = user || null;
+  if(authReadyResolver){
+    authReadyResolver(user || null);
+    authReadyResolver = null;
+  }
+});
 
 
 
@@ -1334,6 +1350,28 @@ return String(value ?? "")
 .replace(/>/g,"&gt;")
 .replace(/"/g,"&quot;")
 .replace(/'/g,"&#039;");
+}
+
+async function ensureDashboardAuth(actionText = "continue"){
+  if(auth.currentUser){
+    dashboardAuthUser = auth.currentUser;
+    return auth.currentUser;
+  }
+
+  const waitedUser = await Promise.race([
+    authReadyPromise,
+    new Promise(resolve=>setTimeout(()=>resolve(auth.currentUser || null),4000))
+  ]);
+
+  const finalUser = waitedUser || auth.currentUser || dashboardAuthUser || null;
+
+  if(finalUser){
+    dashboardAuthUser = finalUser;
+    return finalUser;
+  }
+
+  alert(`Your login session was not found. Please log in again to ${actionText}.`);
+  return null;
 }
 
 function normalizePhoneDigits(value){
@@ -2156,6 +2194,13 @@ window.contactWhatsApp = function(phone) {
 
 window.toggleStatus = async function (leadId, currentStatus, studentPhone = "") {
   try{
+    const activeUser =
+      await ensureDashboardAuth("mark a student as enrolled");
+
+    if(!activeUser){
+      return;
+    }
+
     const newStatus =
       currentStatus === "enrolled" || currentStatus === "accepted"
         ? "pending"
@@ -2225,7 +2270,7 @@ window.toggleStatus = async function (leadId, currentStatus, studentPhone = "") 
   }
   catch(err){
     console.error("Mark enrolled failed", err);
-    alert("Unable to update enrolled status right now.");
+    alert("Unable to update enrolled status right now.\n\n" + (err && err.message ? err.message : "Unknown error"));
   }
 
 };
