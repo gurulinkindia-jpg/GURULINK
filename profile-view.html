@@ -725,15 +725,17 @@ return authBootstrapPromise;
 }
 
 function getStoredReviewRole(){
-return String(
-localStorage.getItem("role") ||
-sessionStorage.getItem("role") ||
-localStorage.getItem("otpRole") ||
-sessionStorage.getItem("otpRole") ||
-""
-)
-.trim()
-.toLowerCase();
+const allowedRoles = ["student","parent","teacher","institution","teacher_institute"];
+const candidates = [
+sessionStorage.getItem("otpRole"),
+localStorage.getItem("otpRole"),
+sessionStorage.getItem("role"),
+localStorage.getItem("role")
+]
+.map(value => String(value || "").trim().toLowerCase())
+.filter(Boolean);
+
+return candidates.find(role => allowedRoles.includes(role)) || "";
 }
 
 async function getLinkedReviewRole(authUid, forceRefresh = false){
@@ -785,7 +787,7 @@ const linkedRole =
 authUser && authUser.uid
 ? await getLinkedReviewRole(authUser.uid, forceRefresh)
 : "";
-const viewerRole = storedRole || linkedRole;
+const viewerRole = linkedRole || storedRole;
 const allowedRoles = ["student","parent","teacher","institution","teacher_institute"];
 const authPhone = normalizeReviewPhone(authUser ? authUser.phoneNumber : "");
 const storedPhone = normalizeReviewPhone(
@@ -806,7 +808,7 @@ message = "Please log in through GURULINK Mobile OTP to submit a review.";
 else if(!authPhone){
 message = "Please log in through GURULINK Mobile OTP to submit a review.";
 }
-else if(storedPhone && authPhone !== storedPhone){
+else if(!linkedRole && storedPhone && authPhone !== storedPhone){
 message = "Please re-login through GURULINK Mobile OTP before submitting a review.";
 }
 else{
