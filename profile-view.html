@@ -686,17 +686,41 @@ uid:"",
 phone:""
 };
 
-function getAuthUser(){
-return new Promise((resolve)=>{
-const unsubscribe = onAuthStateChanged(auth,(user)=>{
-unsubscribe();
+let authBootstrapPromise = null;
+let linkedReviewRoleCache = "";
+
+function getAuthUser(forceRefresh = false){
+if(!forceRefresh && auth.currentUser){
+return Promise.resolve(auth.currentUser);
+}
+
+if(!forceRefresh && authBootstrapPromise){
+return authBootstrapPromise;
+}
+
+authBootstrapPromise = new Promise((resolve)=>{
+let settled = false;
+let unsubscribe = null;
+const timer = setTimeout(()=>{
+finish(auth.currentUser || null);
+},5000);
+
+const finish = (user)=>{
+if(settled) return;
+settled = true;
+clearTimeout(timer);
+if(typeof unsubscribe === "function"){
+try{ unsubscribe(); }catch(err){}
+}
 resolve(user || null);
+};
+
+unsubscribe = onAuthStateChanged(auth,(user)=>{
+finish(user || auth.currentUser || null);
+});
 });
 
-setTimeout(()=>{
-resolve(auth.currentUser || null);
-},1200);
-});
+return authBootstrapPromise;
 }
 
 function getStoredReviewRole(){
@@ -704,10 +728,41 @@ return String(
 localStorage.getItem("role") ||
 sessionStorage.getItem("role") ||
 localStorage.getItem("otpRole") ||
+sessionStorage.getItem("otpRole") ||
 ""
 )
 .trim()
 .toLowerCase();
+}
+
+async function getLinkedReviewRole(authUid, forceRefresh = false){
+if(!authUid) return "";
+if(linkedReviewRoleCache && !forceRefresh){
+return linkedReviewRoleCache;
+}
+
+try{
+const userSnap = await get(child(ref(db),"users/" + authUid));
+if(!userSnap.exists()){
+return "";
+}
+
+const userData = userSnap.val() || {};
+const resolvedRole = String(
+userData.linkedRole ||
+userData.role ||
+""
+)
+.trim()
+.toLowerCase();
+
+linkedReviewRoleCache = resolvedRole;
+return resolvedRole;
+}
+catch(err){
+console.log("Unable to read linked review role", err);
+return "";
+}
 }
 
 function normalizeReviewPhone(phone){
@@ -723,8 +778,13 @@ if(reviewAccessState.checked && !forceRefresh){
 return reviewAccessState;
 }
 
-const authUser = await getAuthUser();
-const viewerRole = getStoredReviewRole();
+const authUser = await getAuthUser(forceRefresh);
+const storedRole = getStoredReviewRole();
+const linkedRole =
+authUser && authUser.uid
+? await getLinkedReviewRole(authUser.uid, forceRefresh)
+: "";
+const viewerRole = storedRole || linkedRole;
 const allowedRoles = ["student","parent","teacher","institution","teacher_institute"];
 const authPhone = normalizeReviewPhone(authUser ? authUser.phoneNumber : "");
 const storedPhone = normalizeReviewPhone(
@@ -804,6 +864,11 @@ if(!form) return;
 const access = await resolveReviewAccess(forceRefresh);
 setReviewFormState(access);
 }
+
+onAuthStateChanged(auth,()=>{
+reviewAccessState.checked = false;
+applyReviewAccessUI(true);
+});
 
 /* MARK VIEW */
 async function markView() {
