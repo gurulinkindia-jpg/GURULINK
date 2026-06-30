@@ -1014,8 +1014,7 @@ from
 
 import {
 getAuth,
-signOut,
-onAuthStateChanged
+signOut
 }
 from
 "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
@@ -1051,21 +1050,6 @@ getDatabase(app);
 
 const auth=
 getAuth(app);
-
-let authReadyResolver = null;
-const authReadyPromise = new Promise(resolve=>{
-  authReadyResolver = resolve;
-});
-
-let dashboardAuthUser = null;
-
-onAuthStateChanged(auth,(user)=>{
-  dashboardAuthUser = user || null;
-  if(authReadyResolver){
-    authReadyResolver(user || null);
-    authReadyResolver = null;
-  }
-});
 
 
 
@@ -1133,36 +1117,6 @@ role === "teacher" || role === "teacher_institute"
 
 let currentProfileData = {};
 
-function isInvoiceFeatureActive(data){
-  const localActive =
-    (localStorage.getItem("invoiceFeatureActive") === "true" && localStorage.getItem("invoiceProfileId") === profileId) ||
-    (sessionStorage.getItem("invoiceFeatureActive") === "true" && sessionStorage.getItem("invoiceProfileId") === profileId);
-
-  return (data && data.invoiceFeatureActive === true) || localActive;
-}
-
-function updateInvoiceButton(data){
-  const btn = document.querySelector(".invoiceBtn");
-
-  if(!btn){
-    return;
-  }
-
-  if(isInvoiceFeatureActive(data)){
-    btn.disabled = false;
-    btn.style.opacity = "1";
-    btn.style.cursor = "pointer";
-    btn.title = "";
-    btn.innerText = "Create Invoice";
-  }else{
-    btn.disabled = false;
-    btn.style.opacity = ".55";
-    btn.style.cursor = "not-allowed";
-    btn.title = "Admin activation required after Rs.1500 payment";
-    btn.innerText = "Activate Invoice Rs.1500";
-  }
-}
-
 
 
 
@@ -1220,7 +1174,6 @@ return;
 
 const d = snap.val();
 currentProfileData = d;
-updateInvoiceButton(d);
 /* BANK DETAILS */
 document.getElementById("accountHolderName").innerText =
 d.accountHolderName || "Not Added";
@@ -1352,32 +1305,6 @@ return String(value ?? "")
 .replace(/'/g,"&#039;");
 }
 
-async function ensureDashboardAuth(actionText = "continue"){
-  if(auth.currentUser){
-    dashboardAuthUser = auth.currentUser;
-    return auth.currentUser;
-  }
-
-  const waitedUser = await Promise.race([
-    authReadyPromise,
-    new Promise(resolve=>setTimeout(()=>resolve(auth.currentUser || null),4000))
-  ]);
-
-  const finalUser = waitedUser || auth.currentUser || dashboardAuthUser || null;
-
-  if(finalUser){
-    dashboardAuthUser = finalUser;
-    return finalUser;
-  }
-
-  alert(`Your login session was not found. Please log in again to ${actionText}.`);
-  return null;
-}
-
-function normalizePhoneDigits(value){
-return String(value || "").replace(/\D/g,"");
-}
-
 function getPrimaryProfileImage(data){
   const images =
     Array.isArray(data?.profileImages)
@@ -1468,89 +1395,6 @@ qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.
 updatedAt:Date.now()
 }
 );
-}
-
-async function resolveStudentEnrollmentTarget(leadId, leadPhone = ""){
-  const leadSnap =
-    await get(ref(db, `profileViews/${profileId}/${leadId}`));
-
-  const leadData =
-    leadSnap.exists()
-      ? (leadSnap.val() || {})
-      : {};
-
-  const directCandidates = [
-    leadData.studentId,
-    leadData.viewerProfileId,
-    leadData.profileId,
-    leadId
-  ]
-  .map(value => String(value || "").trim())
-  .filter(Boolean);
-
-  for(const candidateId of directCandidates){
-    const studentSnap =
-      await get(ref(db, `students/${candidateId}`));
-
-    if(studentSnap.exists()){
-      return {
-        studentId:candidateId,
-        leadData,
-        studentData:studentSnap.val() || {}
-      };
-    }
-  }
-
-  const phoneDigits =
-    normalizePhoneDigits(
-      leadPhone ||
-      leadData.phone ||
-      ""
-    );
-
-  if(phoneDigits){
-    const studentsSnap =
-      await get(ref(db, "students"));
-
-    if(studentsSnap.exists()){
-      let foundId = "";
-      let foundData = {};
-
-      studentsSnap.forEach(child=>{
-        if(foundId){
-          return;
-        }
-
-        const candidate = child.val() || {};
-        const candidatePhones = [
-          candidate.phone,
-          candidate.alternatePhone,
-          candidate.mobile
-        ]
-        .map(normalizePhoneDigits)
-        .filter(Boolean);
-
-        if(candidatePhones.includes(phoneDigits)){
-          foundId = child.key;
-          foundData = candidate;
-        }
-      });
-
-      if(foundId){
-        return {
-          studentId:foundId,
-          leadData,
-          studentData:foundData
-        };
-      }
-    }
-  }
-
-  return {
-    studentId:String(leadData.studentId || leadData.viewerProfileId || leadId || "").trim(),
-    leadData,
-    studentData:{}
-  };
 }
 
 function loadDemoRequests(){
@@ -1665,7 +1509,6 @@ const lead=child.val();
 const status=lead.status || "pending";
 const isAccepted = status === "accepted";
 const leadRole=(lead.viewerRole || "").toLowerCase();
-const resolvedStudentId=String(lead.studentId || lead.viewerProfileId || id || "").trim();
 const hasPhone=lead.phone && lead.phone.toString().trim();
 const cleanPhone=hasPhone ? lead.phone.toString().replace(/\D/g,"") : "";
 const leadType=lead.name || (hasPhone ? "Student" : (leadRole === "institution" ? "Institution" : "Teacher/Institution"));
@@ -1677,11 +1520,11 @@ pending++;
 }
 
 if(isAccepted){
-acceptedStudentIds.push(resolvedStudentId);
+acceptedStudentIds.push(id);
 }
 
 if(status === "enrolled" || status === "accepted"){
-syncEnrollmentDetails(resolvedStudentId);
+syncEnrollmentDetails(id);
 }
 
 html+=`
@@ -1702,7 +1545,7 @@ ${hasPhone ? `
 <button class="whatsappBtn" onclick="contactWhatsApp('${cleanPhone}')">WhatsApp</button>
 <button class="callBtn" onclick="callLead('${cleanPhone}')">Call</button>
 ` : ""}
-<button class="${status === 'enrolled' ? 'pendingBtn' : 'enrollBtn'}" onclick="toggleStatus('${id}', '${status}', '${cleanPhone}', '${resolvedStudentId}')">
+<button class="${status === 'enrolled' ? 'pendingBtn' : 'enrollBtn'}" onclick="toggleStatus('${id}', '${status}', '${cleanPhone}')">
 ${status === 'enrolled' || status === 'accepted' ? 'Mark Pending' : 'Mark Enrolled'}
 </button>
 <button class="deleteBtn" onclick="deleteLead('${id}')">Delete</button>
@@ -2029,24 +1872,6 @@ window.createInvoice = function () {
     return;
   }
 
-  if(!isInvoiceFeatureActive(currentProfileData)){
-    localStorage.setItem("invoicePaymentProfileId", id);
-    localStorage.setItem("invoicePaymentRole", type);
-    localStorage.setItem("invoiceProfileId", id);
-    localStorage.setItem("invoiceRole", type);
-    sessionStorage.setItem("invoicePaymentProfileId", id);
-    sessionStorage.setItem("invoicePaymentRole", type);
-    sessionStorage.setItem("invoiceProfileId", id);
-    sessionStorage.setItem("invoiceRole", type);
-
-    location.href =
-      "invoice-payment.html?id=" +
-      encodeURIComponent(id) +
-      "&type=" +
-      encodeURIComponent(type);
-    return;
-  }
-
   localStorage.setItem("invoiceProfileId", id);
   localStorage.setItem("invoiceRole", type);
   sessionStorage.setItem("invoiceProfileId", id);
@@ -2058,6 +1883,7 @@ window.createInvoice = function () {
     "&type=" +
     encodeURIComponent(type);
 };
+
 
 
 
@@ -2192,140 +2018,57 @@ window.contactWhatsApp = function(phone) {
 };
 
 
-window.toggleStatus = async function (leadId, currentStatus, studentPhone = "", knownStudentId = "") {
-  try{
-    const activeUser =
-      await ensureDashboardAuth("mark a student as enrolled");
+window.toggleStatus = async function (leadId, currentStatus, studentPhone = "") {
 
-    if(!activeUser){
-      return;
+  const newStatus =
+    currentStatus === "enrolled" || currentStatus === "accepted" ? "pending" : "enrolled";
+
+  await update(
+    ref(db, `profileViews/${profileId}/${leadId}`),
+    {
+      status: newStatus
     }
+  );
 
-    const newStatus =
-      currentStatus === "enrolled" || currentStatus === "accepted"
-        ? "pending"
-        : "enrolled";
-
-    let resolvedTarget = {
-      studentId:String(knownStudentId || "").trim(),
-      leadData:{
-        viewerProfileId:String(knownStudentId || "").trim(),
-        phone:studentPhone || ""
-      },
-      studentData:{}
-    };
-
-    if(!resolvedTarget.studentId){
-      try{
-        resolvedTarget =
-          await resolveStudentEnrollmentTarget(leadId, studentPhone);
+  if(newStatus === "enrolled"){
+    await set(
+      ref(db, `studentEnrollments/${leadId}/${profileId}`),
+      {
+        studentId:leadId,
+        profileId:profileId,
+        profileRole:role === "institution" ? "institution" : "teacher",
+        name:currentProfileData.name || "",
+        phone:currentProfileData.phone || "",
+        alternatePhone:currentProfileData.alternatePhone || "",
+        email:currentProfileData.email || "",
+        website:currentProfileData.website || "",
+        logo:getPrimaryProfileImage(currentProfileData),
+        category:currentProfileData.category || "",
+        showBankDetails:currentProfileData.showBankDetails !== false,
+        accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
+        bankName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.bankName || ""),
+        accountNumber:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountNumber || ""),
+        ifsc:currentProfileData.showBankDetails === false ? "" : (currentProfileData.ifsc || ""),
+        upiId:currentProfileData.showBankDetails === false ? "" : (currentProfileData.upiId || ""),
+        qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.qrImage || ""),
+        status:"pending_student_acceptance",
+        requestedAt:Date.now(),
+        updatedAt:Date.now()
       }
-      catch(err){
-        console.error("resolveStudentEnrollmentTarget failed", err);
-        alert(
-          "Student lookup could not be completed.\n\n" +
-          "The dashboard could not resolve the student profile needed for enrollment.\n\n" +
-          (err && err.message ? err.message : "Permission denied")
-        );
-        return;
-      }
-    }
-
-    const studentId =
-      String(resolvedTarget.studentId || "").trim();
-
-    if(!studentId){
-      alert("Student profile could not be matched. Ask the student to log in again and open your profile once more.");
-      return;
-    }
-
-    if(newStatus === "enrolled"){
-      try{
-        await set(
-          ref(db, `studentEnrollments/${studentId}/${profileId}`),
-          {
-            studentId:studentId,
-            profileId:profileId,
-            profileRole:role === "institution" ? "institution" : "teacher",
-            name:currentProfileData.name || "",
-            phone:currentProfileData.phone || "",
-            alternatePhone:currentProfileData.alternatePhone || "",
-            email:currentProfileData.email || "",
-            website:currentProfileData.website || "",
-            logo:getPrimaryProfileImage(currentProfileData),
-            category:currentProfileData.category || "",
-            showBankDetails:currentProfileData.showBankDetails !== false,
-            accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
-            bankName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.bankName || ""),
-            accountNumber:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountNumber || ""),
-            ifsc:currentProfileData.showBankDetails === false ? "" : (currentProfileData.ifsc || ""),
-            upiId:currentProfileData.showBankDetails === false ? "" : (currentProfileData.upiId || ""),
-            qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.qrImage || ""),
-            status:"pending_student_acceptance",
-            requestedAt:Date.now(),
-            updatedAt:Date.now()
-          }
-        );
-      }
-      catch(err){
-        console.error("studentEnrollments write failed", err);
-        alert(
-          "Student enrollment record could not be updated.\n\n" +
-          "Path: studentEnrollments/" + studentId + "/" + profileId + "\n\n" +
-          (err && err.message ? err.message : "Permission denied")
-        );
-        return;
-      }
-    }
-    else{
-      try{
-        await update(
-          ref(db, `studentEnrollments/${studentId}/${profileId}`),
-          {
-            status:"pending",
-            updatedAt:Date.now()
-          }
-        );
-      }
-      catch(err){
-        console.error("studentEnrollments status update failed", err);
-        alert(
-          "Student enrollment status could not be updated.\n\n" +
-          "Path: studentEnrollments/" + studentId + "/" + profileId + "\n\n" +
-          (err && err.message ? err.message : "Permission denied")
-        );
-        return;
-      }
-    }
-
-    try{
-      await update(
-        ref(db, `profileViews/${profileId}/${leadId}`),
-        {
-          status:newStatus,
-          studentId:studentId,
-          viewerProfileId:(resolvedTarget.leadData && resolvedTarget.leadData.viewerProfileId) || studentId,
-          updatedAt:Date.now()
-        }
-      );
-    }
-    catch(err){
-      console.error("profileViews write failed", err);
-      alert(
-        "Student dashboard entry was updated, but teacher enquiry status could not be updated.\n\n" +
-        "Path: profileViews/" + profileId + "/" + leadId + "\n\n" +
-        (err && err.message ? err.message : "Permission denied")
-      );
-      return;
-    }
-
-    if(newStatus === "enrolled"){
-      showEnrollModal(studentPhone || ((resolvedTarget.leadData && resolvedTarget.leadData.phone) || ""));
-    }
+    );
   }
-  catch(err){
-    console.error("Mark enrolled failed", err);
-    alert("Unable to update enrolled status right now.\n\n" + (err && err.message ? err.message : "Unknown error"));
+  else{
+    await update(
+      ref(db, `studentEnrollments/${leadId}/${profileId}`),
+      {
+        status:"pending",
+        updatedAt:Date.now()
+      }
+    );
+  }
+
+  if(newStatus === "enrolled"){
+    showEnrollModal(studentPhone);
   }
 
 };
@@ -2452,7 +2195,7 @@ window.shareProfile = function () {
   
 
   const url =
-"https://www.gurulink.co.in/profile-view.html?id=" +
+"https://guru-link.onrender.com/profile-view.html?id=" +
 profileId;
 
   const text =
@@ -2484,4 +2227,3 @@ profileId;
 
 </body>
 </html>
-
