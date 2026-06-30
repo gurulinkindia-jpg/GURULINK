@@ -1702,7 +1702,7 @@ ${hasPhone ? `
 <button class="whatsappBtn" onclick="contactWhatsApp('${cleanPhone}')">WhatsApp</button>
 <button class="callBtn" onclick="callLead('${cleanPhone}')">Call</button>
 ` : ""}
-<button class="${status === 'enrolled' ? 'pendingBtn' : 'enrollBtn'}" onclick="toggleStatus('${id}', '${status}', '${cleanPhone}')">
+<button class="${status === 'enrolled' ? 'pendingBtn' : 'enrollBtn'}" onclick="toggleStatus('${id}', '${status}', '${cleanPhone}', '${resolvedStudentId}')">
 ${status === 'enrolled' || status === 'accepted' ? 'Mark Pending' : 'Mark Enrolled'}
 </button>
 <button class="deleteBtn" onclick="deleteLead('${id}')">Delete</button>
@@ -2192,7 +2192,7 @@ window.contactWhatsApp = function(phone) {
 };
 
 
-window.toggleStatus = async function (leadId, currentStatus, studentPhone = "") {
+window.toggleStatus = async function (leadId, currentStatus, studentPhone = "", knownStudentId = "") {
   try{
     const activeUser =
       await ensureDashboardAuth("mark a student as enrolled");
@@ -2206,62 +2206,117 @@ window.toggleStatus = async function (leadId, currentStatus, studentPhone = "") 
         ? "pending"
         : "enrolled";
 
-    const resolvedTarget =
-      await resolveStudentEnrollmentTarget(leadId, studentPhone);
+    let resolvedTarget = {
+      studentId:String(knownStudentId || "").trim(),
+      leadData:{
+        viewerProfileId:String(knownStudentId || "").trim(),
+        phone:studentPhone || ""
+      },
+      studentData:{}
+    };
+
+    if(!resolvedTarget.studentId){
+      try{
+        resolvedTarget =
+          await resolveStudentEnrollmentTarget(leadId, studentPhone);
+      }
+      catch(err){
+        console.error("resolveStudentEnrollmentTarget failed", err);
+        alert(
+          "Student lookup could not be completed.\n\n" +
+          "The dashboard could not resolve the student profile needed for enrollment.\n\n" +
+          (err && err.message ? err.message : "Permission denied")
+        );
+        return;
+      }
+    }
 
     const studentId =
-      resolvedTarget.studentId;
+      String(resolvedTarget.studentId || "").trim();
 
     if(!studentId){
       alert("Student profile could not be matched. Ask the student to log in again and open your profile once more.");
       return;
     }
 
-    await update(
-      ref(db, `profileViews/${profileId}/${leadId}`),
-      {
-        status:newStatus,
-        studentId:studentId,
-        viewerProfileId:(resolvedTarget.leadData && resolvedTarget.leadData.viewerProfileId) || studentId,
-        updatedAt:Date.now()
-      }
-    );
-
     if(newStatus === "enrolled"){
-      await set(
-        ref(db, `studentEnrollments/${studentId}/${profileId}`),
+      try{
+        await set(
+          ref(db, `studentEnrollments/${studentId}/${profileId}`),
+          {
+            studentId:studentId,
+            profileId:profileId,
+            profileRole:role === "institution" ? "institution" : "teacher",
+            name:currentProfileData.name || "",
+            phone:currentProfileData.phone || "",
+            alternatePhone:currentProfileData.alternatePhone || "",
+            email:currentProfileData.email || "",
+            website:currentProfileData.website || "",
+            logo:getPrimaryProfileImage(currentProfileData),
+            category:currentProfileData.category || "",
+            showBankDetails:currentProfileData.showBankDetails !== false,
+            accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
+            bankName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.bankName || ""),
+            accountNumber:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountNumber || ""),
+            ifsc:currentProfileData.showBankDetails === false ? "" : (currentProfileData.ifsc || ""),
+            upiId:currentProfileData.showBankDetails === false ? "" : (currentProfileData.upiId || ""),
+            qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.qrImage || ""),
+            status:"pending_student_acceptance",
+            requestedAt:Date.now(),
+            updatedAt:Date.now()
+          }
+        );
+      }
+      catch(err){
+        console.error("studentEnrollments write failed", err);
+        alert(
+          "Student enrollment record could not be updated.\n\n" +
+          "Path: studentEnrollments/" + studentId + "/" + profileId + "\n\n" +
+          (err && err.message ? err.message : "Permission denied")
+        );
+        return;
+      }
+    }
+    else{
+      try{
+        await update(
+          ref(db, `studentEnrollments/${studentId}/${profileId}`),
+          {
+            status:"pending",
+            updatedAt:Date.now()
+          }
+        );
+      }
+      catch(err){
+        console.error("studentEnrollments status update failed", err);
+        alert(
+          "Student enrollment status could not be updated.\n\n" +
+          "Path: studentEnrollments/" + studentId + "/" + profileId + "\n\n" +
+          (err && err.message ? err.message : "Permission denied")
+        );
+        return;
+      }
+    }
+
+    try{
+      await update(
+        ref(db, `profileViews/${profileId}/${leadId}`),
         {
+          status:newStatus,
           studentId:studentId,
-          profileId:profileId,
-          profileRole:role === "institution" ? "institution" : "teacher",
-          name:currentProfileData.name || "",
-          phone:currentProfileData.phone || "",
-          alternatePhone:currentProfileData.alternatePhone || "",
-          email:currentProfileData.email || "",
-          website:currentProfileData.website || "",
-          logo:getPrimaryProfileImage(currentProfileData),
-          category:currentProfileData.category || "",
-          showBankDetails:currentProfileData.showBankDetails !== false,
-          accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
-          bankName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.bankName || ""),
-          accountNumber:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountNumber || ""),
-          ifsc:currentProfileData.showBankDetails === false ? "" : (currentProfileData.ifsc || ""),
-          upiId:currentProfileData.showBankDetails === false ? "" : (currentProfileData.upiId || ""),
-          qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.qrImage || ""),
-          status:"pending_student_acceptance",
-          requestedAt:Date.now(),
+          viewerProfileId:(resolvedTarget.leadData && resolvedTarget.leadData.viewerProfileId) || studentId,
           updatedAt:Date.now()
         }
       );
     }
-    else{
-      await update(
-        ref(db, `studentEnrollments/${studentId}/${profileId}`),
-        {
-          status:"pending",
-          updatedAt:Date.now()
-        }
+    catch(err){
+      console.error("profileViews write failed", err);
+      alert(
+        "Student dashboard entry was updated, but teacher enquiry status could not be updated.\n\n" +
+        "Path: profileViews/" + profileId + "/" + leadId + "\n\n" +
+        (err && err.message ? err.message : "Permission denied")
       );
+      return;
     }
 
     if(newStatus === "enrolled"){
