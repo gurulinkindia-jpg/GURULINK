@@ -882,10 +882,18 @@ applyReviewAccessUI(true);
 async function markView() {
   const authUser = await getAuthUser();
 
-  const viewerId =
-    localStorage.getItem("uid") ||
+  const viewerProfileId =
     localStorage.getItem("profileId") ||
+    localStorage.getItem("studentId") ||
+    localStorage.getItem("teacherId") ||
+    localStorage.getItem("institutionId") ||
+    localStorage.getItem("uid") ||
     (authUser ? authUser.uid : "");
+
+  const viewerAuthUid =
+    (authUser ? authUser.uid : "") ||
+    localStorage.getItem("uid") ||
+    "";
 
   const viewedProfileId = currentProfileId;
   const viewerRole = (localStorage.getItem("role") || "").toLowerCase();
@@ -898,11 +906,12 @@ async function markView() {
       viewerRole === "institution";
 
     const isGuestViewer =
-      !viewerId ||
+      !viewerProfileId ||
       viewerRole === "guest";
 
     const viewId =
-      viewerId ||
+      viewerProfileId ||
+      viewerAuthUid ||
       "guest_" + Date.now() + "_" + Math.floor(Math.random() * 9999);
 
     let viewerData = {
@@ -911,25 +920,35 @@ async function markView() {
       phone:""
     };
 
-    if (viewerId) {
+    if (viewerProfileId || viewerAuthUid) {
       const paths = [];
 
       if (viewerRole === "student" || viewerRole === "parent") {
-        paths.push("students/" + viewerId);
+        paths.push("students/" + viewerProfileId);
       }
 
       if (viewerRole === "teacher") {
-        paths.push("teachers/" + viewerId);
+        paths.push("teachers/" + viewerProfileId);
       }
 
       if (viewerRole === "institution") {
-        paths.push("institutions/" + viewerId);
+        paths.push("institutions/" + viewerProfileId);
       }
 
-      paths.push("users/" + viewerId);
-      paths.push("students/" + viewerId);
+      if(viewerAuthUid){
+        paths.push("users/" + viewerAuthUid);
+      }
+
+      if(viewerProfileId && viewerProfileId !== viewerAuthUid){
+        paths.push("users/" + viewerProfileId);
+        paths.push("students/" + viewerProfileId);
+      }
 
       for (const path of paths) {
+        if(!path || /\/$/.test(path)){
+          continue;
+        }
+
         const snap = await get(ref(db, path));
 
         if (snap.exists()) {
@@ -963,7 +982,9 @@ async function markView() {
       ref(db, `profileViews/${viewedProfileId}/${viewId}`),
       {
         viewerId:viewId,
-        studentId:viewId,
+        viewerProfileId:viewerProfileId || "",
+        authUid:viewerAuthUid || "",
+        studentId:(viewerRole === "student" || viewerRole === "parent") ? (viewerProfileId || viewId) : "",
         viewerRole:viewerRole || "guest",
         name:displayName,
         email:viewerData.email || (authUser ? authUser.email : "") || localStorage.getItem("email") || "",
