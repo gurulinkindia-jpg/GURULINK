@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1.0, viewport-fit=cover">
 
-<title>Student Dashboard - GURULINK</title>
+<title>GURULINK Dashboard</title>
 
 <style>
 
@@ -19,559 +19,474 @@ body{
 background:#eef2f7;
 }
 
+/* HEADER */
+
 header{
-background:#1565c0;
+background:linear-gradient(
+135deg,
+#1565c0,
+#0d47a1
+);
 color:white;
-padding:20px;
+padding:25px;
+}
+
+.topBar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:15px;
+}
+
+.profileInfo h1{
+font-size:28px;
+margin-bottom:8px;
+}
+
+.profileInfo h3{
+font-size:20px;
+font-weight:normal;
+}
+
+.profileInfo p{
+font-size:14px;
+opacity:.9;
+margin-top:5px;
+}
+
+.subscriptionBox{
+background:white;
+color:#222;
+padding:15px;
+border-radius:12px;
+min-width:250px;
 text-align:center;
+box-shadow:0 4px 10px rgba(0,0,0,.15);
+}
+
+.subscriptionBox h3{
+margin-bottom:10px;
+}
+
+.renewBtn{
+background:#43a047;
+color:white;
+border:none;
+padding:10px 15px;
+border-radius:8px;
+cursor:pointer;
+font-size:15px;
+width:100%;
 }
 
 .container{
-max-width:900px;
+width:95%;
+max-width:1200px;
 margin:20px auto;
-padding:15px;
 }
 
-.card{
+/* PROFILE CARD */
+
+.profileCard{
 background:white;
-border-radius:15px;
 padding:20px;
+border-radius:15px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+display:flex;
+gap:20px;
+align-items:center;
 margin-bottom:20px;
-box-shadow:0 5px 15px rgba(0,0,0,.08);
 }
 
-.studentProfileTop{
+.profileImage{
+width:90px;
+height:90px;
+border-radius:50%;
+background:#ddd;
 display:flex;
 align-items:center;
-gap:16px;
-margin-bottom:12px;
-}
-
-.studentProfileImage{
-width:82px;
-height:82px;
-border-radius:16px;
-object-fit:cover;
-background:#eef2f7;
-border:1px solid #d9e2ec;
-flex-shrink:0;
-}
-
-.studentProfileMeta{
-min-width:0;
-flex:1;
-}
-
-.studentProfileHeader{
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:10px;
-flex-wrap:wrap;
-}
-
-.studentProfileMeta h2{
-margin:0;
-}
-
-.studentProfileEditBtn{
-margin:0;
-padding:8px 12px;
-font-size:13px;
-border-radius:10px;
-line-height:1.2;
-white-space:nowrap;
-}
-
-h2{
-margin-bottom:15px;
-color:#1565c0;
-}
-
-.row{
-margin:10px 0;
-font-size:15px;
-}
-
-.label{
-font-weight:bold;
-}
-
-.btn{
-display:inline-block;
-padding:12px 18px;
-border:none;
-border-radius:10px;
-cursor:pointer;
-text-decoration:none;
-font-size:15px;
-margin:5px;
-}
-
-.blue{
-background:#1565c0;
-color:white;
-}
-
-.green{
-background:#2e7d32;
-color:white;
-}
-
-.orange{
-background:#ef6c00;
-color:white;
-}
-
-.red{
-background:#d32f2f;
-color:white;
-}
-
-.center{
-text-align:center;
-}
-
-.quickActionsGrid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-gap:10px;
-margin-top:4px;
-}
-
-.quickActionsGrid .btn{
-margin:0;
-width:100%;
-}
-
-.quickActionBtn{
-padding:10px 12px;
-font-size:14px;
-border-radius:12px;
-text-align:center;
-font-weight:bold;
-}
-
-.quickActionHighlight{
-border:2px solid #fbc02d;
-box-shadow:0 0 0 2px rgba(251,192,45,.16);
-}
-
-.quickActionHelp{
-background:#00897b;
-color:white;
-}
-
-.providerCard{
-border:1px solid #d9e2ec;
-border-radius:12px;
-padding:15px;
-margin:12px 0;
-background:#fff;
-box-shadow:0 3px 10px rgba(0,0,0,.06);
-}
-
-.timeTableSummary{
-display:flex;
-flex-direction:column;
-gap:12px;
-}
-
-.timeTableRich{
-display:flex;
-flex-direction:column;
-gap:14px;
-}
-
-.timeTablePanel{
-border:1px solid #d9e2ec;
-border-radius:16px;
-padding:16px;
-background:#fff;
-}
-
-.timeTableSectionTitle{
-font-size:18px;
-font-weight:bold;
-color:#1565c0;
-margin-bottom:10px;
-}
-
-.timeTableCopy{
-font-size:14px;
-line-height:1.7;
-color:#607d8b;
-margin-bottom:12px;
-}
-
-.timeTableBadge{
-display:inline-block;
-padding:6px 10px;
-border-radius:999px;
-background:#e3f2fd;
-color:#1565c0;
-font-size:12px;
-font-weight:bold;
-}
-
-.timeTableList{
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
-.timeTableDayTabs{
-display:grid;
-grid-template-columns:repeat(2,minmax(0,1fr));
-gap:10px;
-}
-
-.timeTableDayBtn{
-padding:14px 10px;
-border:1px solid #cfd8e3;
-border-radius:18px;
-background:#f7fafc;
-color:#334155;
-font-size:14px;
-font-weight:bold;
-cursor:pointer;
-}
-
-.timeTableDayBtn.active{
-background:#1565c0;
-color:white;
-border-color:#1565c0;
-}
-
-.timeTableActionRow{
-display:flex;
-gap:8px;
-flex-wrap:wrap;
 justify-content:center;
-margin-top:6px;
+font-size:40px;
 }
 
-.timeTypeGroup{
-border:1px solid #d7e3f0;
-border-radius:14px;
-padding:12px;
-background:#ffffff;
-margin-top:12px;
+.profileDetails h2{
+margin-bottom:5px;
 }
 
-.timeTypeHeader{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px;
-margin-bottom:8px;
+.profileDetails p{
+color:#555;
 }
 
-.timeTypeHeader h3{
-margin:0;
-font-size:18px;
-font-weight:bold;
-color:#1565c0;
-}
+/* STATS */
 
-.boardSubtitle{
-font-size:12px;
-color:#64748b;
-font-weight:bold;
-letter-spacing:.4px;
-text-transform:uppercase;
-}
-
-.typeCountBadge{
-display:inline-block;
-padding:5px 10px;
-border-radius:999px;
-background:#e3f2fd;
-color:#1565c0;
-font-size:12px;
-font-weight:bold;
-}
-
-.periodBoardWrap{
-overflow-x:auto;
-padding-bottom:2px;
-}
-
-.periodBoard{
+.statsGrid{
 display:grid;
-grid-auto-flow:column;
-grid-auto-columns:minmax(138px,1fr);
-gap:8px;
-align-items:stretch;
-min-width:max-content;
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
+margin-bottom:20px;
 }
 
-.periodBox{
-border:1px solid #d9e2ec;
-border-radius:12px;
-background:#fff;
-overflow:hidden;
-}
-
-.periodBoxHead{
-padding:8px 10px;
-border-bottom:1px solid #e5edf5;
-background:#f8fbff;
-}
-
-.periodBoxLabel{
-font-size:11px;
-font-weight:bold;
-letter-spacing:.4px;
-text-transform:uppercase;
-color:#64748b;
-margin-bottom:3px;
-}
-
-.periodBoxName{
-font-size:14px;
-font-weight:bold;
-color:#1f2937;
-line-height:1.35;
-}
-
-.periodBoxBody{
-padding:10px;
-display:flex;
-flex-direction:column;
-gap:7px;
-}
-
-.periodBoxTime{
-font-size:13px;
-font-weight:bold;
-color:#1565c0;
-line-height:1.4;
-}
-
-.periodBoxSubject{
-font-size:14px;
-font-weight:bold;
-color:#0f766e;
-line-height:1.4;
-}
-
-.periodBoxLine{
-display:grid;
-grid-template-columns:58px 1fr;
-gap:6px;
-font-size:12px;
-line-height:1.45;
-color:#475569;
-}
-
-.periodBoxLine b{
-color:#64748b;
-font-size:11px;
-text-transform:uppercase;
-letter-spacing:.35px;
-}
-
-.timeTableItem{
-border:1px solid #d9e2ec;
-border-radius:12px;
-padding:12px;
-background:#fff;
-}
-
-.timeTableItemTop{
-display:flex;
-justify-content:space-between;
-align-items:flex-start;
-gap:10px;
-margin-bottom:8px;
-}
-
-.timeTableTime{
-font-size:14px;
-font-weight:bold;
-color:#1565c0;
-}
-
-.timeTableTitle{
-font-size:16px;
-font-weight:bold;
-color:#1f2937;
-margin-bottom:4px;
-}
-
-.timeTableSubject{
-font-size:13px;
-font-weight:bold;
-color:#0f766e;
-margin-bottom:4px;
-}
-
-.timeTableMeta{
-font-size:13px;
-line-height:1.55;
-color:#475569;
-}
-
-.timeTableEmpty{
-padding:16px;
-border:1px dashed #cbd5e1;
-border-radius:12px;
-background:#f8fafc;
-font-size:14px;
-line-height:1.6;
-color:#475569;
+.statCard{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
 text-align:center;
 }
 
-.providerTop{
-display:flex;
-gap:12px;
-align-items:center;
+.statCard h2{
+font-size:35px;
+color:#1565c0;
 margin-bottom:10px;
 }
 
-.providerHeaderBtn{
-width:100%;
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:12px;
-padding:0;
-border:none;
-background:transparent;
-cursor:pointer;
-text-align:left;
-}
-
-.providerHeaderMain{
-display:flex;
-gap:12px;
-align-items:center;
-min-width:0;
-flex:1;
-}
-
-.providerHeaderMeta{
-display:flex;
-flex-direction:column;
+@media(max-width:600px){
+.statsGrid{
+grid-template-columns:repeat(4,1fr);
 gap:6px;
+}
+
+.statCard{
+padding:10px 4px;
+border-radius:10px;
 min-width:0;
 }
 
-.providerLogo{
-width:54px;
-height:54px;
-border-radius:10px;
-object-fit:cover;
-background:#eef2f7;
-flex-shrink:0;
+.statCard h2{
+font-size:22px;
+margin:0 0 4px;
 }
 
-.providerName{
-font-size:18px;
-font-weight:bold;
-color:#1565c0;
-line-height:1.4;
-word-break:break-word;
+.statCard p{
+font-size:10px;
+line-height:1.2;
+margin:0;
+word-break:normal;
+}
 }
 
-.status{
-display:inline-block;
-padding:4px 9px;
-border-radius:999px;
-font-size:12px;
-font-weight:bold;
-background:#fff3e0;
-color:#ef6c00;
+/* SECTION */
+
+.section{
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+margin-bottom:20px;
 }
 
-.accepted{
-background:#e8f5e9;
-color:#2e7d32;
+.sectionTitle{
+font-size:22px;
+margin-bottom:15px;
 }
 
-.providerToggleIcon{
-width:34px;
-height:34px;
-border-radius:999px;
+.notifyBadge{
 display:inline-flex;
 align-items:center;
 justify-content:center;
-background:#eef5ff;
-color:#1565c0;
-font-size:22px;
+min-width:26px;
+height:26px;
+padding:0 8px;
+margin-left:8px;
+background:#e53935;
+color:white;
+border-radius:999px;
+font-size:13px;
 font-weight:bold;
-flex-shrink:0;
+vertical-align:middle;
 }
 
-.providerBody{
+/* BUTTONS */
+
+/* PC: 7 buttons in one row */
+.mainBtns{
+  display:grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap:10px;
+}
+
+/* Share button normal width on PC */
+.mainBtns .full{
+  grid-column: span 1;
+}
+
+/* MOBILE: 2-column layout */
+@media (max-width:600px){
+
+  .mainBtns{
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .mainBtns .full{
+    grid-column: span 2;
+  }
+
+  .mainBtns button{
+    font-size:14px;
+    padding:12px 8px;
+  }
+}
+
+
+
+
+.mainBtns button{
+  padding:12px;
+  border-radius:10px;
+  cursor:pointer;
+  color:white;
+  font-size:15px;
+  border:2px solid transparent; /* instead of border:0 */
+}
+
+.editBtn{
+background:#1976d2;
+}
+
+.supportBtn{
+background:#ff9800;
+}
+
+.feeBtn{
+background:#5e35b1;
+}
+
+.logoutBtn{
+background:#e53935;
+}
+
+
+
+
+
+
+
+
+.leadCard{
+background:white;
+border-radius:15px;
+padding:20px;
+margin-bottom:15px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);
+}
+
+.leadHeader{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+flex-wrap:wrap;
+cursor:pointer;
+gap:8px;
+}
+
+.leadName{
+font-size:20px;
+font-weight:bold;
+}
+
+.leadHint{
+font-size:12px;
+color:#666;
+width:100%;
+margin-top:4px;
+}
+
+.leadDetails{
 display:none;
-margin-top:14px;
-padding-top:14px;
-border-top:1px solid #e5edf5;
+border-top:1px solid #eef2f7;
+padding-top:10px;
+margin-top:10px;
 }
 
-.providerCard.open .providerBody{
+.leadDetails.open{
 display:block;
 }
 
-.chatBox{
-margin-top:12px;
-border:1px solid #cfe8ff;
-background:#f5fbff;
-border-radius:12px;
-padding:12px;
+.statusBadge{
+padding:6px 12px;
+border-radius:20px;
+color:white;
+font-size:12px;
 }
 
-.chatMsg{
-padding:8px 10px;
+.pendingBadge{
+background:#ff9800;
+}
+
+.enrolledBadge{
+background:#4caf50;
+}
+
+.leadInfo{
+margin:5px 0;
+color:#555;
+}
+
+.leadActions{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(120px,1fr));
+gap:10px;
+margin-top:15px;
+}
+
+.whatsappBtn{
+background:#25D366;
+}
+
+.enrollBtn{
+background:#4caf50;
+}
+
+.pendingBtn{
+background:#ff9800;
+}
+
+.deleteBtn{
+background:#e53935;
+}
+
+.leadActions button{
+border:none;
+padding:10px;
 border-radius:8px;
-margin:6px 0;
+color:white;
+cursor:pointer;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.loading{
+padding:40px;
+text-align:center;
+font-size:18px;
+}
+
+
+
+
+.renewBtn{
+background:#43a047;
+}
+
+
+
+.profileImage{
+width:90px;
+height:90px;
+border-radius:50%;
+overflow:hidden;
+background:#ddd;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.profileImage img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+.profileImage{
+font-size:30px;
+font-weight:bold;
+color:#1565c0;
+}
+.callBtn{
+background:#1e88e5;
+}
+
+.callBtn:hover{
+background:#1565c0;
+}
+
+.messageBox{
+margin-top:12px;
+display:grid;
+grid-template-columns:1fr auto;
+gap:8px;
+}
+
+.messageBox input{
+padding:10px;
+border:1px solid #ccc;
+border-radius:8px;
+}
+
+.messageBtn{
+background:#6a1b9a;
+}
+
+.teacherChat{
+margin-top:12px;
+background:#f7f3ff;
+border:1px solid #e0d2f5;
+border-radius:10px;
+padding:10px;
 font-size:13px;
 line-height:1.4;
+}
+
+.teacherChatMsg{
+border-radius:8px;
+padding:8px;
+margin-bottom:8px;
+color:#333;
 border:1px solid transparent;
 max-width:92%;
 }
 
-.chatMeta{
+.teacherChatMsg:last-child{
+margin-bottom:0;
+}
+
+.teacherChatMeta{
 display:block;
 font-size:11px;
 font-weight:bold;
+color:#6a1b9a;
 margin-bottom:3px;
 }
 
-.chatMsg.studentMsg{
-background:#e8f5e9;
-border-color:#a5d6a7;
-margin-left:auto;
-color:#1b5e20;
-}
-
-.chatMsg.providerMsg{
+.teacherChatMsg.studentMsg{
 background:#e3f2fd;
 border-color:#90caf9;
 margin-right:auto;
 color:#0d47a1;
 }
 
-.chatMsg.systemMsg{
+.teacherChatMsg.providerMsg{
+background:#e8f5e9;
+border-color:#a5d6a7;
+margin-left:auto;
+color:#1b5e20;
+}
+
+.teacherChatMsg.systemMsg{
 background:#fff8e1;
 border-color:#ffe082;
 color:#6d4c41;
 max-width:100%;
 }
 
-.chatHeader{
+.teacherChatHeader{
 display:flex;
-align-items:center;
 justify-content:space-between;
+align-items:center;
 gap:10px;
 margin-bottom:8px;
-}
-
-.chatHeader h3{
-margin:0;
 }
 
 .clearChatBtn{
@@ -580,119 +495,264 @@ color:white;
 border:none;
 border-radius:8px;
 padding:8px 10px;
-cursor:pointer;
 font-size:12px;
+cursor:pointer;
 }
 
-.payFeeBtn{
-background:#8e24aa;
-color:white;
-}
-
-.paymentBox{
+.enrollModal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.55);
 display:none;
-margin-top:10px;
+align-items:center;
+justify-content:center;
+z-index:9999;
+padding:16px;
+}
+
+.enrollModal.show{
+display:flex;
+}
+
+.enrollCard{
+background:white;
+width:100%;
+max-width:430px;
+border-radius:16px;
+padding:20px;
+box-shadow:0 12px 35px rgba(0,0,0,.25);
+border-top:6px solid #43a047;
+}
+
+.enrollCard h2{
+margin:0 0 10px;
+color:#2e7d32;
+}
+
+.enrollCard p,
+.enrollCard li{
+font-size:14px;
+line-height:1.5;
+color:#333;
+}
+
+.enrollCard ul{
+padding-left:20px;
+margin:10px 0;
+}
+
+.enrollModalActions{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+margin-top:15px;
+}
+
+.enrollModalActions button{
+border:none;
+border-radius:10px;
 padding:12px;
-border:1px solid #ce93d8;
+color:white;
+cursor:pointer;
+font-weight:bold;
+}
+
+.enrollCallBtn{
+background:#1e88e5;
+}
+
+.enrollCloseBtn{
+background:#607d8b;
+}
+
+.demoRequestCard{
+background:white;
+border:1px solid #bbdefb;
+border-left:5px solid #1976d2;
 border-radius:12px;
-background:#fbf4ff;
-font-size:13px;
+padding:14px;
+margin:10px 0;
+box-shadow:0 3px 10px rgba(0,0,0,.06);
+}
+
+.demoRequestTop{
+display:flex;
+justify-content:space-between;
+gap:10px;
+flex-wrap:wrap;
+cursor:pointer;
+}
+
+.demoRequestName{
+font-weight:bold;
+color:#1565c0;
+font-size:17px;
+}
+
+.demoRequestMsg{
+background:#f3f9ff;
+border:1px solid #d6e8ff;
+border-radius:10px;
+padding:10px;
+margin-top:8px;
+font-size:14px;
 line-height:1.5;
 }
 
-.paymentBox h3{
-margin:0 0 8px;
-color:#6a1b9a;
-}
-
-.paymentBox img{
-max-width:150px;
-border-radius:10px;
-border:1px solid #ddd;
-background:white;
-padding:6px;
-}
-
-.replyRow{
-display:grid;
-grid-template-columns:1fr auto;
-gap:8px;
-margin-top:8px;
-}
-
-.replyRow input{
-padding:10px;
-border:1px solid #ccc;
-border-radius:8px;
-}
-
-@media(max-width:640px){
-.studentProfileTop{
-align-items:flex-start;
-gap:12px;
-}
-
-.studentProfileImage{
-width:72px;
-height:72px;
-border-radius:14px;
-}
-
-.studentProfileMeta h2{
-font-size:22px;
-}
-
-.studentProfileHeader{
-align-items:flex-start;
-}
-
-.studentProfileEditBtn{
-padding:8px 10px;
+.demoRequestHint{
 font-size:12px;
-}
-
-.row{
-font-size:14px;
-}
-
-.quickActionsGrid{
-grid-template-columns:repeat(2,minmax(0,1fr));
-}
-
-.timeTableDayTabs{
-grid-template-columns:repeat(2,minmax(0,1fr));
-}
-
-.timeTypeHeader{
-flex-direction:column;
-}
-
-.periodBoard{
-grid-auto-columns:minmax(130px,1fr);
-}
-
-.timeTableItemTop{
-flex-direction:column;
-}
-
-.providerHeaderBtn{
-align-items:flex-start;
-}
-
-.providerToggleIcon{
-width:30px;
-height:30px;
-font-size:20px;
-}
-
-.timeTableActionRow .btn{
+color:#666;
 width:100%;
-margin:0;
 }
 
+.demoRequestDetails{
+display:none;
+border-top:1px solid #eef2f7;
+padding-top:10px;
+margin-top:10px;
 }
 
+.demoRequestDetails.open{
+display:block;
+}
+
+.demoRequestActions{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
+gap:8px;
+margin-top:10px;
+}
+
+.demoRequestActions button{
+border:none;
+border-radius:8px;
+padding:10px;
+color:white;
+cursor:pointer;
+}
+
+@media(max-width:480px){
+.enrollModalActions{
+grid-template-columns:1fr;
+}
+}
+.homeBtn{
+background:#673ab7;
+}
+
+.invoiceBtn{
+background:#00897b;
+}
+
+.invoiceBtn:hover{
+background:#00695c;
+}
+
+/*  SHARE BUTTON (PUT HERE) */
+.shareBtn{
+  background:linear-gradient(135deg,#00e5ff,#2962ff);
+  border:3px solid #ffeb3b !important;
+  color:white;
+  font-weight:bold;
+  box-shadow:
+    0 0 8px rgba(255,235,59,.6),
+    0 4px 12px rgba(0,0,0,.2);
+}
+
+
+.bankRow{
+  display:flex;
+  gap:15px;
+  margin-bottom:20px;
+  align-items:flex-start;
+}
+
+.bankRow .section{
+  flex:2;
+}
+
+.bankAdBox{
+  flex:1;
+  background:#fff3cd;
+  border-left:5px solid #ff9800;
+  padding:15px;
+  border-radius:15px;
+  box-shadow:0 4px 10px rgba(0,0,0,.08);
+}
+
+.bankAdBox h3{
+  margin-bottom:10px;
+  color:#e65100;
+}
+
+.bankAdBox p{
+  font-size:14px;
+  color:#333;
+  line-height:1.5;
+}
+@media (max-width: 600px) {
+  .mainBtns {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .mainBtns button {
+    font-size: 14px;
+    padding: 12px 8px;
+  }
+
+  .bankRow{
+    gap:8px;
+    margin-bottom:12px;
+  }
+
+  .bankRow .section{
+    padding:10px;
+    border-radius:10px;
+  }
+
+  #bankSection .sectionTitle{
+    font-size:14px;
+    line-height:1.15;
+    margin-bottom:8px;
+  }
+
+  #bankSection p{
+    font-size:10px;
+    line-height:1.2;
+    margin:4px 0;
+    word-break:break-word;
+  }
+
+  #bankSection b{
+    font-size:10px;
+  }
+
+  #qrImage{
+    max-width:64px !important;
+    border-radius:6px !important;
+  }
+
+  .bankAdBox{
+    padding:8px;
+    border-radius:10px;
+    border-left-width:3px;
+  }
+
+  .bankAdBox h3{
+    font-size:12px;
+    margin:0 0 5px;
+  }
+
+  .bankAdBox p{
+    font-size:10px;
+    line-height:1.25;
+    margin:0;
+  }
+}
 </style>
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
 
 <link rel="stylesheet" href="gurulink-theme.css?v=2">
 <script src="gurulink-theme.js?v=2"></script>
@@ -702,282 +762,494 @@ margin:0;
 
 <header>
 
-<h1>Student Dashboard</h1>
+<div class="topBar">
 
-<p>Welcome to GURULINK</p>
+<div class="profileInfo">
+
+<h1>GURULINK DASHBOARD</h1>
+
+<h3 id="profileTitle">
+Loading...
+</h3>
+
+<p id="profileIdText">
+Loading...
+</p>
+
+</div>
+
+<div class="subscriptionBox">
+
+<h3 id="expiryText">
+Loading...
+</h3>
+
+<button
+class="renewBtn"
+onclick="renewProfile()">
+Renew Rs.399
+</button>
+
+</div>
+
+</div>
 
 </header>
 
 <div class="container">
 
-<div class="card">
-
-<div class="studentProfileTop">
-<img
-id="studentProfileImage"
-class="studentProfileImage"
-src="default-avatar.svg"
-alt="Student Profile Image">
-
-<div class="studentProfileMeta">
-<div class="studentProfileHeader">
-<h2>My Profile</h2>
-<button
-type="button"
-class="btn blue studentProfileEditBtn"
-onclick="openStudentEditProfile()">
-Edit Profile
-</button>
-</div>
-</div>
+<div id="loading"
+class="loading">
+Loading Dashboard...
 </div>
 
-<div class="row">
-<span class="label">Name:</span>
-<span id="name">Loading...</span>
+<div id="content"
+style="display:none;">
+
+<div class="profileCard">
+
+<div class="profileImage">
+  <img id="profileLogo" src="default.png" alt="Logo">
 </div>
 
-<div class="row">
-<span class="label">Email:</span>
-<span id="email">Loading...</span>
-</div>
+<div class="profileDetails">
 
-<div class="row">
-<span class="label">Phone:</span>
-<span id="phone">Loading...</span>
-</div>
+<h2 id="displayName">
+Loading...
+</h2>
 
-<div class="row">
-<span class="label">Class:</span>
-<span id="studentClass">Loading...</span>
+<p id="displayEmail"></p>
+
+<p id="displayPhone"></p>
+
 </div>
 
 </div>
 
-<div class="card center">
+<div class="statsGrid">
 
-<h2>Quick Actions</h2>
+<div class="statCard">
+<h2 id="totalViews">0</h2>
+<p>Total Leads</p>
+</div>
 
-<div class="quickActionsGrid">
-<a
-href="find-teacher.html"
-class="btn blue quickActionBtn quickActionHighlight">
-Find Teacher / Trainer
-</a>
+<div class="statCard">
+<h2 id="pendingCount">0</h2>
+<p>Pending</p>
+</div>
 
-<a
-href="student-timetable.html?mode=view"
-class="btn blue quickActionBtn">
-Show Time Table
-</a>
+<div class="statCard">
+<h2 id="enrolledCount">0</h2>
+<p>Enrolled</p>
+</div>
 
-<a
-href="game.html"
-class="btn orange quickActionBtn">
-Play & Learn
-</a>
-
-<a
-href="helpdesk.html"
-class="btn quickActionBtn quickActionHelp">
-Help
-</a>
-
-<a
-href="index.html"
-class="btn green quickActionBtn">
-Home Page
-</a>
-
-<button
-class="btn red quickActionBtn"
-onclick="logout()">
-Logout
-</button>
+<div class="statCard">
+<h2 id="demoCount">0</h2>
+<p>Demo Requests</p>
 </div>
 
 </div>
 
-<div class="card">
-<h2>My Teachers / Institutes</h2>
-<div id="enrollmentList">Loading...</div>
+<div class="section">
+
+<h2 class="sectionTitle">
+Quick Actions
+</h2>
+
+
+
+<div class="mainBtns">
+
+  <button class="editBtn" onclick="editProfile()">
+    Edit Profile
+  </button>
+
+  <button class="feeBtn" onclick="openFeeStructure()">
+    Fee Structure
+  </button>
+
+  <button class="supportBtn" onclick="contactDeveloper()">
+     Developer Support
+  </button>
+
+  <button class="homeBtn" onclick="goHome()">
+     Home
+  </button>
+
+  <button class="invoiceBtn" onclick="createInvoice()">
+    Create Invoice
+  </button>
+
+  <button class="logoutBtn" onclick="logout()">
+     Logout
+  </button>
+
+  <button class="shareBtn full" onclick="shareProfile()">
+    Share Business Card
+  </button>
+
 </div>
 
+
+
+
+
+
+
+
+
+
+
+
+</div>
+
+<!-- PART 1b WILL ADD LEADS HERE -->
+
+<div class="bankRow" id="bankSectionWrapper" style="display:none;">
+
+  <!-- LEFT: BANK DETAILS -->
+  <div class="section" id="bankSection">
+    <h2 class="sectionTitle"> Bank & Payment Details</h2>
+
+    <p><b>Account Holder Name:</b>
+      <span id="accountHolderName">-</span>
+    </p>
+
+    <p><b>Bank Name:</b> <span id="bankName">-</span></p>
+    <p><b>Account Number:</b> <span id="accountNumber">-</span></p>
+    <p><b>IFSC:</b> <span id="ifscCode">-</span></p>
+    <p><b>UPI ID:</b> <span id="upiId">-</span></p>
+
+    <div style="margin-top:15px;text-align:left;">
+      <img id="qrImage" style="max-width:100px;border-radius:10px;">
+    </div>
+  </div>
+
+  <!-- RIGHT: PRIVACY NOTICE -->
+  <div class="bankAdBox">
+    <h3> Privacy Notice</h3>
+    <p>
+      If you want or don't want to share your bank details publicly,  
+      uncheck the option below the bank details in your Edit Profile page.
+    </p>
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- PART 2 WILL ADD LEADS HERE -->
+
+<div id="demoRequestsSection"></div>
+
+<div id="leadsSection"></div>
+
+</div>
+
+</div>
+
+<div class="enrollModal" id="enrollModal">
+<div class="enrollCard">
+<h2>Student Enrolled</h2>
+<p><b>Ask your student to register on GURULINK.</b></p>
+<p>If the student is not registered, they should sign up to unlock features like:</p>
+<ul>
+<li>Fee payments</li>
+<li>Chat and messages</li>
+<li>Link and resource sharing</li>
+<li>Website access</li>
+</ul>
+<p>This helps both of you stay connected and manage learning more efficiently.</p>
+<div class="enrollModalActions">
+<button class="enrollCallBtn" id="enrollCallBtn">Call Student</button>
+<button class="enrollCloseBtn" onclick="closeEnrollModal()">Close</button>
+</div>
+</div>
 </div>
 
 <script type="module">
 
-import {
-initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { initializeApp }
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-import {
-getAuth,
-onAuthStateChanged,
-signOut
-}
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+
+
 
 import {
 getDatabase,
 ref,
 get,
-onValue,
 update,
-push,
-remove
+remove,
+onValue,
+set,
+push
 }
-from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-/* FIREBASE */
 
-const firebaseConfig = {
+
+
+
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+import {
+getAuth,
+signOut
+}
+from
+"https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+const firebaseConfig={
 
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
 
-authDomain:"gurulink-59cc7.firebaseapp.com",
+authDomain:
+"gurulink-59cc7.firebaseapp.com",
 
-databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+databaseURL:
+"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
 
 projectId:"gurulink-59cc7",
 
-storageBucket:"gurulink-59cc7.appspot.com",
+storageBucket:
+"gurulink-59cc7.appspot.com",
 
-messagingSenderId:"112148672399",
+messagingSenderId:
+"112148672399",
 
-appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+appId:
+"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 
 };
 
-const app = initializeApp(firebaseConfig);
+const app=
+initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
+const db=
+getDatabase(app);
 
-const db = getDatabase(app);
+const auth=
+getAuth(app);
 
-/* CHECK LOGIN */
 
-const authUid = localStorage.getItem("uid");
-const uid =
-localStorage.getItem("studentId") ||
-localStorage.getItem("profileId") ||
-authUid;
 
-const role = localStorage.getItem("role");
 
-if(!uid || role !== "student"){
 
-window.location.href =
-"otp-login.html";
+
+const profileId=
+localStorage.getItem("profileId");
+
+const role=
+localStorage.getItem("role");
+
+if(!profileId || !role){
+
+alert("Please Login");
+
+location.href="login.html";
 
 }
 
-localStorage.setItem("uid",uid);
-localStorage.setItem("profileId",uid);
-localStorage.setItem("studentId",uid);
-localStorage.setItem("role","student");
 
-const WEEK_DAYS = [
-"Monday",
-"Tuesday",
-"Wednesday",
-"Thursday",
-"Friday",
-"Saturday",
-"Sunday"
-];
 
-const DAY_INDEX_TO_NAME = {
-1:"Monday",
-2:"Tuesday",
-3:"Wednesday",
-4:"Thursday",
-5:"Friday",
-6:"Saturday",
-0:"Sunday"
-};
 
-const DEFAULT_AVATAR =
-"default-avatar.svg";
 
-const TIME_TABLE_TYPE_ORDER = [
-"School",
-"Tuition",
-"Training / Coaching",
-"Self Study / Practice",
-"Online Class",
-"Exam",
-"Break",
-"Other"
-];
 
-let dashboardSelectedDay =
-getTodayName();
+const dbPath =
+role === "teacher" || role === "teacher_institute"
+  ? "teachers/" + profileId
+  : "institutions/" + profileId;
 
-let activeEnrollmentProfileId = "";
+let currentProfileData = {};
 
-/* LOAD STUDENT */
 
-async function loadStudent(){
 
-try{
 
-const snap = await get(
-ref(db,"students/" + uid)
+
+
+function getExpiryInfo(start){
+
+  if(!start){
+    return { text:"Pending Approval", color:"#9e9e9e" };
+  }
+
+  start = Number(start);
+
+  const ONE_DAY = 24 * 60 * 60 * 1000;
+  const SUB_DAYS = 366;
+  const now = Date.now();
+  const end = start + (SUB_DAYS * ONE_DAY);
+
+  if(now > end){
+    return { text:"Expired", color:"#e53935" };
+  }
+
+  const days = Math.ceil((end - now) / ONE_DAY);
+
+  if(days <= 30){
+    return { text: days + " Days Remaining", color:"#e53935" };
+  }
+
+  if(days <= 90){
+    return { text: days + " Days Remaining", color:"#ff9800" };
+  }
+
+  return { text: days + " Days Remaining", color:"#43a047" };
+}
+
+
+
+async function loadProfile(){
+
+const snap=
+await get(
+ref(db,dbPath)
 );
 
 if(!snap.exists()){
 
-alert("Student profile not found");
+document.getElementById(
+"loading"
+).innerHTML=
+"Profile Not Found";
 
 return;
-
 }
 
-const data = snap.val();
 
-const studentImage =
-data.photo ||
-data.logo ||
-data.profilePic ||
-"";
+const d = snap.val();
+currentProfileData = d;
+/* BANK DETAILS */
+document.getElementById("accountHolderName").innerText =
+d.accountHolderName || "Not Added";
+document.getElementById("bankName").innerText = d.bankName || "Not Added";
+document.getElementById("accountNumber").innerText = d.accountNumber || "Not Added";
+document.getElementById("ifscCode").innerText = d.ifsc || "Not Added";
+document.getElementById("upiId").innerText = d.upiId || "Not Added";
 
-const studentProfileImage =
-document.getElementById("studentProfileImage");
+/* QR IMAGE */
+const qr = document.getElementById("qrImage");
 
-studentProfileImage.onerror = function(){
-this.onerror = null;
-this.src = DEFAULT_AVATAR;
+if (d.qrImage) {
+  qr.src = d.qrImage;
+  document.getElementById("bankSectionWrapper").style.display = "flex";
+} else {
+  document.getElementById("bankSectionWrapper").style.display = "none";
+}
+
+/*  ADD LOGO CODE HERE */
+const logoURL = getPrimaryProfileImage(d);
+const img = document.getElementById("profileLogo");
+
+img.src = logoURL;
+
+img.onerror = function () {
+  this.onerror = null;
+  this.src = "default.png";
 };
 
-studentProfileImage.src =
-studentImage || DEFAULT_AVATAR;
+if(role==="teacher"){
 
-localStorage.setItem("profilePhoto",studentImage || DEFAULT_AVATAR);
+document.getElementById(
+"profileTitle"
+).innerText=
+"Teacher : "+
+(d.name||"");
 
-document.getElementById("name").innerHTML =
-data.name || "-";
+}else{
 
-document.getElementById("email").innerHTML =
-data.email || "-";
-
-document.getElementById("phone").innerHTML =
-data.phone || "-";
-
-document.getElementById("studentClass").innerHTML =
-data.class || "-";
-
-renderTimeTableSummary(data.timeTable || {});
-
-}
-catch(err){
-
-console.log(err);
+document.getElementById(
+"profileTitle"
+).innerText=
+"Institute : "+
+(d.name||"");
 
 }
 
+document.getElementById(
+"profileIdText"
+).innerText=
+"Profile ID : "+
+profileId;
+
+document.getElementById(
+"displayName"
+).innerText=
+d.name||"";
+
+document.getElementById(
+"displayEmail"
+).innerText=
+d.email||"";
+
+document.getElementById(
+"displayPhone"
+).innerText=
+d.phone||"";
+
+
+
+
+
+
+const expiry=
+getExpiryInfo(
+d.approvedAt
+);
+
+const expiryEl=
+document.getElementById(
+"expiryText"
+);
+
+expiryEl.innerText=
+expiry.text;
+
+expiryEl.style.color=
+expiry.color;
+
+
+
+
+
+
+
+document.getElementById(
+"loading"
+).style.display=
+"none";
+
+document.getElementById(
+"content"
+).style.display=
+"block";
+
 }
+
+loadProfile();
+
+
+
+
+
+
+
+
+
+
+
 
 function escapeHTML(value){
 return String(value ?? "")
@@ -988,444 +1260,40 @@ return String(value ?? "")
 .replace(/'/g,"&#039;");
 }
 
-function getTodayName(){
-return DAY_INDEX_TO_NAME[new Date().getDay()] || "Monday";
+function getPrimaryProfileImage(data){
+  const images =
+    Array.isArray(data?.profileImages)
+      ? data.profileImages
+      : [];
+
+  const normalized =
+    images
+      .map(item => typeof item === "string" ? { url:item } : item)
+      .filter(item => item && item.url);
+
+  const selected =
+    normalized[Number(data?.primaryProfileImage || 0)] ||
+    normalized[0];
+
+  return selected?.url || data?.logo || data?.profilePic || "default.png";
 }
 
-function normalizeTimeTableType(type){
-const raw = String(type || "Other").trim();
+function renderEnrollmentMessages(studentId){
 
-if(!raw){
-return "Other";
-}
-
-if(raw === "Training" || raw === "Coaching" || raw === "Training / Coaching"){
-return "Training / Coaching";
-}
-
-if(raw === "Self Study" || raw === "Practice" || raw === "Self Study / Practice"){
-return "Self Study / Practice";
-}
-
-return raw;
-}
-
-function getTimeTableDisplayMeta(item){
-const type = normalizeTimeTableType(item.type);
-
-if(type === "Break"){
-return {
-title:item.subject || "Break",
-showSubject:false
-};
-}
-
-if(type === "Self Study / Practice"){
-return {
-title:item.subject || "Self Study / Practice",
-showSubject:false
-};
-}
-
-if(type === "Exam"){
-return {
-title:`Exam: ${item.title || "Untitled Exam"}`,
-showSubject:!!item.subject
-};
-}
-
-return {
-title:item.title || "Untitled",
-showSubject:!!item.subject
-};
-}
-
-function getTimeTableBoardMeta(item,index){
-const type = normalizeTimeTableType(item.type);
-
-if(type === "Break"){
-return {
-boxLabel:"Break",
-boxName:item.subject || "Break",
-showSubject:false,
-subjectText:""
-};
-}
-
-if(type === "Self Study / Practice"){
-return {
-boxLabel:"Subject",
-boxName:item.subject || "Self Study / Practice",
-showSubject:false,
-subjectText:""
-};
-}
-
-if(type === "Exam"){
-return {
-boxLabel:"Exam",
-boxName:item.title || "Untitled Exam",
-showSubject:!!item.subject,
-subjectText:item.subject || ""
-};
-}
-
-return {
-boxLabel:"Period",
-boxName:item.title || `Period ${index + 1}`,
-showSubject:!!item.subject,
-subjectText:item.subject || ""
-};
-}
-
-function normalizeTimeTable(raw){
-const week = {};
-
-WEEK_DAYS.forEach(day=>{
-week[day] = Array.isArray(raw?.[day])
-? raw[day]
-.map(item=>({
-title:String(item.title || "").trim(),
-subject:String(item.subject || "").trim(),
-type:normalizeTimeTableType(item.type || "Other"),
-startTime:String(item.startTime || "").trim(),
-endTime:String(item.endTime || "").trim(),
-location:String(item.location || "").trim(),
-note:String(item.note || "").trim()
-}))
-.filter(item=>item.title || item.subject || item.startTime || item.endTime || item.location || item.note)
-.sort((a,b)=>(a.startTime || "").localeCompare(b.startTime || ""))
-: [];
-});
-
-return week;
-}
-
-function renderDashboardDaySchedule(week,selectedDay){
-const selectedItems = week[selectedDay] || [];
-
-if(!selectedItems.length){
-return `
-<div class="timeTableEmpty">
-No class or session saved for ${escapeHTML(selectedDay)}. You can still update your weekly plan anytime.
-</div>
-`;
-}
-
-const grouped = {};
-
-selectedItems.forEach(item=>{
-const typeKey =
-normalizeTimeTableType(item.type || "Other");
-
-if(!grouped[typeKey]){
-grouped[typeKey] = [];
-}
-
-grouped[typeKey].push(item);
-});
-
-const orderedTypes =
-Object.keys(grouped)
-.sort((a,b)=>{
-const aIndex = TIME_TABLE_TYPE_ORDER.indexOf(a);
-const bIndex = TIME_TABLE_TYPE_ORDER.indexOf(b);
-const safeA = aIndex === -1 ? 999 : aIndex;
-const safeB = bIndex === -1 ? 999 : bIndex;
-
-if(safeA !== safeB){
-return safeA - safeB;
-}
-
-return a.localeCompare(b);
-});
-
-return orderedTypes.map(typeName=>`
-<div class="timeTypeGroup">
-<div class="timeTypeHeader">
-<div>
-<h3>${escapeHTML(typeName)}</h3>
-<div class="boardSubtitle">${escapeHTML(selectedDay)}</div>
-</div>
-<div class="typeCountBadge">${grouped[typeName].length} item${grouped[typeName].length === 1 ? "" : "s"}</div>
-</div>
-<div class="periodBoardWrap">
-<div class="periodBoard">
-${grouped[typeName].map((item,index)=>{
-const meta = getTimeTableBoardMeta(item,index);
-return `
-<div class="periodBox">
-<div class="periodBoxHead">
-<div class="periodBoxLabel">${escapeHTML(meta.boxLabel)}</div>
-<div class="periodBoxName">${escapeHTML(meta.boxName)}</div>
-</div>
-<div class="periodBoxBody">
-<div class="periodBoxTime">${escapeHTML(item.startTime || "--:--")}${item.endTime ? ` - ${escapeHTML(item.endTime)}` : ""}</div>
-${meta.showSubject ? `<div class="periodBoxSubject">${escapeHTML(meta.subjectText)}</div>` : ""}
-${item.location ? `
-<div class="periodBoxLine">
-<b>Place</b>
-<span>${escapeHTML(item.location)}</span>
-</div>
-` : ""}
-${item.note ? `
-<div class="periodBoxLine">
-<b>Note</b>
-<span>${escapeHTML(item.note)}</span>
-</div>
-` : ""}
-</div>
-</div>
-`;
-}).join("")}
-</div>
-</div>
-</div>
-`).join("");
-}
-
-function renderTimeTableSummary(rawTimeTable){
 const box =
-document.getElementById("timeTableSummary");
-
-if(!box){
-return;
-}
-
-const week =
-normalizeTimeTable(rawTimeTable);
-
-const todayName =
-getTodayName();
-
-const todayItems =
-week[todayName] || [];
-
-if(!WEEK_DAYS.includes(dashboardSelectedDay)){
-dashboardSelectedDay = todayName;
-}
-
-const weeklyCount =
-WEEK_DAYS.reduce((sum,day)=>sum + (week[day]?.length || 0),0);
-
-if(!weeklyCount){
-box.innerHTML = `
-<div class="timeTableEmpty">
-No weekly time table added yet.<br>
-Create your school, tuition, and training schedule so you can check it quickly every day.
-<div class="timeTableActionRow" style="margin-top:12px;">
-<a href="student-timetable.html?mode=view" class="btn blue">Show Time Table</a>
-<a href="student-timetable.html?mode=edit" class="btn orange">Edit Time Table</a>
-</div>
-</div>
-`;
-return;
-}
-
-let html = ``;
-
-html += `
-<div class="timeTableRich">
-<div class="timeTablePanel">
-<div class="timeTableSectionTitle">This Week at a Glance</div>
-<div class="timeTableCopy">
-Create your weekly routine and keep important classes, training sessions, and self-study neatly organised.
-</div>
-<div class="timeTableBadge">Today: ${escapeHTML(todayName)} (${todayItems.length} item${todayItems.length === 1 ? "" : "s"})</div>
-</div>
-
-<div class="timeTablePanel">
-<div class="timeTableSectionTitle">Choose Day</div>
-<div class="timeTableCopy">
-Tap a day below, then check your timings for that day.
-</div>
-<div class="timeTableDayTabs">
-${WEEK_DAYS.map(day=>`
-<button
-type="button"
-class="timeTableDayBtn ${day === dashboardSelectedDay ? "active" : ""}"
-data-day="${day}">
-${day}
-</button>
-`).join("")}
-</div>
-</div>
-
-<div class="timeTablePanel">
-<div class="timeTableSectionTitle">${escapeHTML(dashboardSelectedDay)} Schedule</div>
-<div class="timeTableCopy">
-Your items are shown in time order. You can review the selected day directly here.
-</div>
-${renderDashboardDaySchedule(week,dashboardSelectedDay)}
-</div>
-</div>
-`;
-
-html += `
-<div class="timeTableActionRow">
-<a href="student-timetable.html?mode=view" class="btn blue">Show Time Table</a>
-<a href="student-timetable.html?mode=edit" class="btn orange">Edit Time Table</a>
-</div>
-`;
-
-box.innerHTML = html;
-
-box.querySelectorAll(".timeTableDayBtn").forEach(btn=>{
-btn.addEventListener("click",()=>{
-dashboardSelectedDay = btn.dataset.day || todayName;
-renderTimeTableSummary(rawTimeTable);
-});
-});
-}
-
-function cleanPhone(phone){
-return String(phone || "").replace(/\D/g,"");
-}
-
-window.openStudentEditProfile = function(){
-localStorage.setItem("uid",uid);
-localStorage.setItem("profileId",uid);
-localStorage.setItem("studentId",uid);
-localStorage.setItem("role","student");
-window.location.href = "edit-profile.html";
-};
-
-function callProvider(phone){
-if(!phone){
-alert("Phone number not available.");
-return;
-}
-location.href = "tel:" + phone;
-}
-
-function whatsappProvider(phone){
-const clean = cleanPhone(phone);
-if(!clean){
-alert("WhatsApp number not available.");
-return;
-}
-window.open("https://wa.me/" + clean,"_blank");
-}
-
-function providerWebsite(url){
-if(!url){
-alert("Website not available.");
-return;
-}
-const finalUrl =
-url.startsWith("http") ? url : "https://" + url;
-window.open(finalUrl,"_blank");
-}
-
-function getSafeImageUrl(url){
-return String(url || "").trim() || DEFAULT_AVATAR;
-}
-
-async function getProviderProfile(profileId,item){
-let profile = null;
-
-if((item.profileRole || "").toLowerCase() === "institution"){
-const instSnap = await get(ref(db,"institutions/" + profileId));
-if(instSnap.exists()){
-profile = instSnap.val();
-}
-}
-
-if(!profile){
-const teacherSnap = await get(ref(db,"teachers/" + profileId));
-if(teacherSnap.exists()){
-profile = teacherSnap.val();
-}
-}
-
-if(!profile){
-const instSnap = await get(ref(db,"institutions/" + profileId));
-if(instSnap.exists()){
-profile = instSnap.val();
-}
-}
-
-if(!profile){
-const itemEmail =
-String(item.email || "").trim().toLowerCase();
-const itemPhone =
-cleanPhone(item.phone || item.alternatePhone || "");
-
-const collections =
-["teachers","institutions"];
-
-for(const collectionName of collections){
-const snap = await get(ref(db,collectionName));
-
-if(!snap.exists()){
-continue;
-}
-
-snap.forEach(child=>{
-if(profile){
-return;
-}
-
-const candidate = child.val() || {};
-const candidateEmail =
-String(candidate.email || "").trim().toLowerCase();
-const candidatePhone =
-cleanPhone(candidate.phone || candidate.alternatePhone || "");
-
-if(
-(itemEmail && candidateEmail && itemEmail === candidateEmail) ||
-(itemPhone && candidatePhone && itemPhone === candidatePhone)
-){
-profile = {
-...candidate,
-uid:child.key
-};
-}
-});
-
-if(profile){
-break;
-}
-}
-}
-
-if(!profile){
-return item;
-}
-
-return {
-...item,
-name:profile.name || item.name,
-phone:profile.phone || item.phone,
-alternatePhone:profile.alternatePhone || item.alternatePhone,
-email:profile.email || item.email,
-website:profile.website || item.website,
-logo:profile.logo || profile.profilePic || item.logo,
-category:profile.category || item.category,
-showBankDetails:profile.showBankDetails !== false,
-accountHolderName:profile.showBankDetails === false ? "" : (profile.accountHolderName || item.accountHolderName || ""),
-bankName:profile.showBankDetails === false ? "" : (profile.bankName || item.bankName || ""),
-accountNumber:profile.showBankDetails === false ? "" : (profile.accountNumber || item.accountNumber || ""),
-ifsc:profile.showBankDetails === false ? "" : (profile.ifsc || item.ifsc || ""),
-upiId:profile.showBankDetails === false ? "" : (profile.upiId || item.upiId || ""),
-qrImage:profile.showBankDetails === false ? "" : (profile.qrImage || item.qrImage || "")
-};
-}
-
-function renderMessages(profileId){
-const box =
-document.getElementById("chat_" + profileId);
+document.getElementById("chat_" + studentId);
 
 if(!box){
 return;
 }
 
 onValue(
-ref(db,`enrollmentChats/${uid}/${profileId}`),
-snap=>{
+ref(db,`enrollmentChats/${studentId}/${profileId}`),
+(snap)=>{
+
 let messages = [];
 const clearedAt =
-Number(snap.child(`clearedFor/${uid}`).val() || 0);
+Number(snap.child(`clearedFor/${profileId}`).val() || 0);
 
 const expiryTime =
 Date.now() - (7 * 24 * 60 * 60 * 1000);
@@ -1435,7 +1303,7 @@ const msg = child.val();
 const msgTime = Number(msg.time || 0);
 
 if(msgTime && msgTime < expiryTime){
-remove(ref(db,`enrollmentChats/${uid}/${profileId}/messages/${child.key}`));
+remove(ref(db,`enrollmentChats/${studentId}/${profileId}/messages/${child.key}`));
 return;
 }
 
@@ -1449,220 +1317,679 @@ messages = messages
 .slice(-5);
 
 if(!messages.length){
-box.innerHTML = `<div class="chatMsg systemMsg">No messages yet.</div>`;
+box.innerHTML =
+`<div class="teacherChatMsg systemMsg">No messages yet.</div>`;
 return;
 }
 
-box.innerHTML = messages.map(msg=>`
-<div class="chatMsg ${msg.senderRole === "student" ? "studentMsg" : "providerMsg"}">
-<span class="chatMeta">${msg.senderRole === "student" ? "You" : (msg.senderName || "Teacher / Institution")} - ${msg.time ? new Date(msg.time).toLocaleString() : ""}</span>
+box.innerHTML =
+messages.map(msg=>`
+<div class="teacherChatMsg ${msg.senderRole === "student" ? "studentMsg" : "providerMsg"}">
+<span class="teacherChatMeta">${msg.senderRole === "student" ? "Student" : "You"} - ${msg.time ? new Date(msg.time).toLocaleString() : ""}</span>
 ${escapeHTML(msg.text || "")}
 </div>
 `).join("");
+
+}
+);
+
+}
+
+async function syncEnrollmentDetails(studentId){
+await update(
+ref(db, `studentEnrollments/${studentId}/${profileId}`),
+{
+website:currentProfileData.website || "",
+showBankDetails:currentProfileData.showBankDetails !== false,
+accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
+bankName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.bankName || ""),
+accountNumber:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountNumber || ""),
+ifsc:currentProfileData.showBankDetails === false ? "" : (currentProfileData.ifsc || ""),
+upiId:currentProfileData.showBankDetails === false ? "" : (currentProfileData.upiId || ""),
+qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.qrImage || ""),
+updatedAt:Date.now()
 }
 );
 }
 
-function syncEnrollmentAccordion(){
-const list =
-document.getElementById("enrollmentList");
+function loadDemoRequests(){
 
-if(!list){
+const box =
+document.getElementById("demoRequestsSection");
+
+if(!box){
 return;
 }
-
-list.querySelectorAll(".providerCard").forEach(card=>{
-const profileId =
-card.dataset.profileId || "";
-const isOpen =
-profileId && profileId === activeEnrollmentProfileId;
-
-card.classList.toggle("open",isOpen);
-
-const icon =
-card.querySelector(".providerToggleIcon");
-
-if(icon){
-icon.textContent = isOpen ? "-" : "+";
-}
-});
-}
-
-window.toggleEnrollmentCard = function(profileId){
-activeEnrollmentProfileId =
-activeEnrollmentProfileId === profileId
-? ""
-: profileId;
-
-syncEnrollmentAccordion();
-};
-
-async function loadEnrollments(){
-const list =
-document.getElementById("enrollmentList");
 
 onValue(
-ref(db,"studentEnrollments/" + uid),
-async snap=>{
-if(!snap.exists()){
-list.innerHTML = "No enrolled teacher or institution yet.";
+ref(db,`demoRequests/${profileId}`),
+(snapshot)=>{
+
+let html = `
+<div class="section">
+<h2 class="sectionTitle">Demo Class Requests <span class="notifyBadge" id="demoNotifyBadge">0</span></h2>
+`;
+
+let count = 0;
+const nowTime = Date.now();
+
+snapshot.forEach(child=>{
+const request = child.val() || {};
+const requestId = child.key;
+const expiresAt =
+Number(request.expiresAt || 0);
+
+if(expiresAt && expiresAt < nowTime){
+remove(ref(db,`demoRequests/${profileId}/${requestId}`));
 return;
 }
 
-let html = "";
-let ids = [];
-let enrollmentItems = [];
-
-snap.forEach(child=>{
-enrollmentItems.push({
-profileId:child.key,
-item:child.val()
-});
-});
-
-for(const entry of enrollmentItems){
-
-const profileId = entry.profileId;
-const item = await getProviderProfile(profileId,entry.item);
-ids.push(profileId);
-
-if(
-item.website !== entry.item.website ||
-item.upiId !== entry.item.upiId ||
-item.qrImage !== entry.item.qrImage ||
-item.bankName !== entry.item.bankName ||
-item.accountNumber !== entry.item.accountNumber
-){
-update(ref(db,`studentEnrollments/${uid}/${profileId}`),{
-website:item.website || "",
-showBankDetails:item.showBankDetails !== false,
-accountHolderName:item.accountHolderName || "",
-bankName:item.bankName || "",
-accountNumber:item.accountNumber || "",
-ifsc:item.ifsc || "",
-upiId:item.upiId || "",
-qrImage:item.qrImage || "",
-updatedAt:Date.now()
-});
-}
-
-const accepted =
-item.status === "accepted";
+count++;
 
 const phone =
-item.phone || item.alternatePhone || "";
-
-const hasPayment =
-item.showBankDetails !== false &&
-(item.qrImage || item.upiId || (item.accountHolderName && item.bankName && item.accountNumber));
-
-const paymentDetailsHTML = hasPayment ? `
-<div class="paymentBox" id="payment_${profileId}">
-<h3>Payment Details</h3>
-<p><b>Important:</b> Please verify payment details before sending money. GURULINK is only a linking platform and does not process or verify payments.</p>
-${item.accountHolderName ? `<p><b>Account Holder:</b> ${escapeHTML(item.accountHolderName)}</p>` : ""}
-${item.bankName ? `<p><b>Bank Name:</b> ${escapeHTML(item.bankName)}</p>` : ""}
-${item.accountNumber ? `<p><b>Account Number:</b> ${escapeHTML(item.accountNumber)}</p>` : ""}
-${item.ifsc ? `<p><b>IFSC Code:</b> ${escapeHTML(item.ifsc)}</p>` : ""}
-${item.upiId ? `<p><b>UPI ID:</b> ${escapeHTML(item.upiId)}</p>` : ""}
-${item.qrImage ? `<img src="${escapeHTML(item.qrImage)}" alt="Payment QR">` : ""}
-</div>
-` : "";
+String(request.phone || "").replace(/\D/g,"");
 
 html += `
-<div class="providerCard ${activeEnrollmentProfileId === profileId ? "open" : ""}" data-profile-id="${profileId}">
-<button type="button" class="providerHeaderBtn" onclick="toggleEnrollmentCard('${profileId}')">
-<span class="providerHeaderMain">
-<img class="providerLogo" src="${getSafeImageUrl(item.logo)}" onerror="this.onerror=null;this.src='default-avatar.svg';">
-<span class="providerHeaderMeta">
-<span class="providerName">${item.name || "Teacher / Institution"}</span>
-<span class="status ${accepted ? "accepted" : ""}">${accepted ? "Accepted" : "Waiting for your acceptance"}</span>
-</span>
-</span>
-<span class="providerToggleIcon">${activeEnrollmentProfileId === profileId ? "-" : "+"}</span>
-</button>
-<div class="providerBody">
-<div class="row"><span class="label">Category:</span> ${item.category || "-"}</div>
-<div class="row"><span class="label">Phone:</span> ${phone || "-"}</div>
-${item.email ? `<div class="row"><span class="label">Email:</span> ${item.email}</div>` : ""}
-${item.website ? `<div class="row"><span class="label">Website:</span> ${item.website}</div>` : ""}
-
-${accepted ? `
-<button class="btn green" onclick="callProvider('${phone}')">Call</button>
-<button class="btn green" onclick="whatsappProvider('${phone}')">WhatsApp</button>
-${item.website ? `<button class="btn blue" onclick="providerWebsite('${item.website}')">Website</button>` : ""}
-${hasPayment ? `<button class="btn payFeeBtn" onclick="toggleProviderPayment('${profileId}')">Pay Fee</button>` : ""}
-${paymentDetailsHTML}
-<div class="chatBox">
-<div class="chatHeader">
-<h3>Messages</h3>
-<button class="clearChatBtn" onclick="clearStudentChat('${profileId}')">Clear Chat</button>
+<div class="demoRequestCard">
+<div class="demoRequestTop" onclick="toggleDemoRequestDetails('${requestId}')">
+<div class="demoRequestName">${escapeHTML(request.name || "Student")}</div>
+<div>${request.createdAt ? new Date(request.createdAt).toLocaleString() : ""}</div>
+<div class="demoRequestHint">Click to view request</div>
 </div>
-<div id="chat_${profileId}">Loading messages...</div>
-<div class="replyRow">
-<input id="reply_${profileId}" placeholder="Reply message">
-<button class="btn blue" onclick="sendStudentMessage('${profileId}')">Send</button>
+<div class="demoRequestDetails" id="demoDetails_${requestId}">
+<div class="leadInfo">Phone: ${escapeHTML(request.phone || "-")}</div>
+<div class="demoRequestMsg">${escapeHTML(request.message || "")}</div>
+<div class="demoRequestActions">
+${phone ? `<button class="callBtn" onclick="callLead('${phone}')">Call Student</button>` : ""}
+${phone ? `<button class="whatsappBtn" onclick="contactWhatsApp('${phone}')">WhatsApp</button>` : ""}
+<button class="deleteBtn" onclick="deleteDemoRequest('${requestId}')">Delete</button>
 </div>
-</div>
-` : `
-<button class="btn green" onclick="acceptEnrollment('${profileId}')">Accept</button>
-<button class="btn red" onclick="rejectEnrollment('${profileId}')">Reject</button>
-`}
 </div>
 </div>
 `;
-}
 
-list.innerHTML = html;
-
-if(activeEnrollmentProfileId && !ids.includes(activeEnrollmentProfileId)){
-activeEnrollmentProfileId = "";
-}
-
-syncEnrollmentAccordion();
-
-ids.forEach(profileId=>{
-const itemSnap = snap.child(profileId);
-if(itemSnap.exists() && itemSnap.val().status === "accepted"){
-renderMessages(profileId);
-}
 });
+
+html += count ? "</div>" : "<p>No demo class request yet.</p></div>";
+
+box.innerHTML = html;
+
+const demoCountEl =
+document.getElementById("demoCount");
+
+if(demoCountEl){
+demoCountEl.innerText = count;
+}
+
+const demoNotifyBadge =
+document.getElementById("demoNotifyBadge");
+
+if(demoNotifyBadge){
+demoNotifyBadge.innerText = count;
+}
+
 }
 );
+
 }
 
-window.acceptEnrollment = async function(profileId){
-await update(ref(db,`studentEnrollments/${uid}/${profileId}`),{
-status:"accepted",
-acceptedAt:Date.now(),
-updatedAt:Date.now(),
-unreadForStudent:false
+function loadLeads(){
+
+onValue(
+
+ref(db,
+`profileViews/${profileId}`),
+
+(snapshot)=>{
+
+let html=`
+<div class="section">
+
+<h2 class="sectionTitle">
+Student Enquiries <span class="notifyBadge">__PENDING_COUNT__</span>
+</h2>
+`;
+
+let total=0;
+let pending=0;
+let enrolled=0;
+let acceptedStudentIds=[];
+
+snapshot.forEach((child)=>{
+
+total++;
+
+const id=child.key;
+const lead=child.val();
+const status=lead.status || "pending";
+const isAccepted = status === "accepted";
+const leadRole=(lead.viewerRole || "").toLowerCase();
+const hasPhone=lead.phone && lead.phone.toString().trim();
+const cleanPhone=hasPhone ? lead.phone.toString().replace(/\D/g,"") : "";
+const leadType=lead.name || (hasPhone ? "Student" : (leadRole === "institution" ? "Institution" : "Teacher/Institution"));
+
+if(status==="enrolled" || status==="accepted"){
+enrolled++;
+}else{
+pending++;
+}
+
+if(isAccepted){
+acceptedStudentIds.push(id);
+}
+
+if(status === "enrolled" || status === "accepted"){
+syncEnrollmentDetails(id);
+}
+
+html+=`
+<div class="leadCard">
+<div class="leadHeader" onclick="toggleLeadDetails('${id}')">
+<div class="leadName">${leadType}</div>
+<div class="statusBadge ${status==="enrolled" || status==="accepted" ? "enrolledBadge" : "pendingBadge"}">${status.toUpperCase()}</div>
+<div class="leadHint">Click to view details</div>
+</div>
+
+<div class="leadDetails" id="leadDetails_${id}">
+<div class="leadInfo">Phone: ${hasPhone ? lead.phone : "Hidden / Not Available"}</div>
+<div class="leadInfo">Email: ${lead.email || "N/A"}</div>
+<div class="leadInfo">Viewed: ${lead.time ? new Date(lead.time).toLocaleString() : "N/A"}</div>
+
+<div class="leadActions">
+${hasPhone ? `
+<button class="whatsappBtn" onclick="contactWhatsApp('${cleanPhone}')">WhatsApp</button>
+<button class="callBtn" onclick="callLead('${cleanPhone}')">Call</button>
+` : ""}
+<button class="${status === 'enrolled' ? 'pendingBtn' : 'enrollBtn'}" onclick="toggleStatus('${id}', '${status}', '${cleanPhone}')">
+${status === 'enrolled' || status === 'accepted' ? 'Mark Pending' : 'Mark Enrolled'}
+</button>
+<button class="deleteBtn" onclick="deleteLead('${id}')">Delete</button>
+</div>
+${isAccepted ? `
+<div class="teacherChatHeader">
+<strong>Messages</strong>
+<button class="clearChatBtn" onclick="clearEnrollmentChat('${id}')">Clear Chat</button>
+</div>
+<div class="teacherChat" id="chat_${id}">
+Loading messages...
+</div>
+<div class="messageBox">
+<input id="msg_${id}" placeholder="Message to student">
+<button class="messageBtn" onclick="sendEnrollmentMessage('${id}')">Send</button>
+</div>
+` : ""}
+</div>
+</div>
+`;
+
+});
+html+="</div>";
+html = html.replace("__PENDING_COUNT__", pending);
+
+document.getElementById(
+"leadsSection"
+).innerHTML=html;
+
+acceptedStudentIds.forEach(studentId=>{
+renderEnrollmentMessages(studentId);
 });
 
-await update(ref(db,`profileViews/${profileId}/${uid}`),{
-status:"accepted",
-studentAccepted:true,
-acceptedAt:Date.now()
+document.getElementById(
+"totalViews"
+).innerText=total;
+
+document.getElementById(
+"pendingCount"
+).innerText=pending;
+
+document.getElementById(
+"enrolledCount"
+).innerText=enrolled;
+
 });
+
+}
+
+
+
+
+
+
+
+
+
+
+
+window.changeStatus=
+async function(
+leadId,
+status
+){
+
+await update(
+
+ref(
+db,
+`profileViews/${profileId}/${leadId}`
+),
+
+{
+status:status
+}
+
+);
+
 };
 
-window.rejectEnrollment = async function(profileId){
-await update(ref(db,`studentEnrollments/${uid}/${profileId}`),{
-status:"rejected",
-rejectedAt:Date.now(),
-updatedAt:Date.now()
+window.toggleLeadDetails = function(leadId){
+
+const box =
+document.getElementById("leadDetails_" + leadId);
+
+if(!box){
+return;
+}
+
+const shouldOpen =
+!box.classList.contains("open");
+
+document
+.querySelectorAll(".leadDetails.open")
+.forEach(item=>{
+if(item !== box){
+item.classList.remove("open");
+}
 });
 
-await update(ref(db,`profileViews/${profileId}/${uid}`),{
-status:"rejected",
-studentAccepted:false,
-rejectedAt:Date.now()
+document
+.querySelectorAll(".demoRequestDetails.open")
+.forEach(item=>{
+item.classList.remove("open");
 });
+
+if(shouldOpen){
+box.classList.add("open");
+}
+else{
+box.classList.toggle("open");
+}
+
 };
 
-window.sendStudentMessage = async function(profileId){
+window.toggleDemoRequestDetails = function(requestId){
+
+const box =
+document.getElementById("demoDetails_" + requestId);
+
+if(!box){
+return;
+}
+
+const shouldOpen =
+!box.classList.contains("open");
+
+document
+.querySelectorAll(".leadDetails.open, .demoRequestDetails.open")
+.forEach(item=>{
+if(item !== box){
+item.classList.remove("open");
+}
+});
+
+if(shouldOpen){
+box.classList.add("open");
+}
+else{
+box.classList.remove("open");
+}
+
+};
+
+
+
+
+
+
+
+
+
+window.deleteLead=
+async function(
+leadId
+){
+
+if(
+!confirm(
+"Delete this enquiry?"
+)
+){
+return;
+}
+
+await remove(
+
+ref(
+db,
+`profileViews/${profileId}/${leadId}`
+)
+
+);
+
+};
+
+window.deleteDemoRequest = async function(requestId){
+
+if(!confirm("Delete this demo request?")){
+return;
+}
+
+await remove(
+ref(db,`demoRequests/${profileId}/${requestId}`)
+);
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+loadDemoRequests();
+loadLeads();
+
+
+
+
+
+
+window.editProfile=function(){
+
+location.href=
+"edit-profile.html";
+
+};
+
+window.openFeeStructure = function(){
+  const id =
+    profileId ||
+    localStorage.getItem("profileId") ||
+    localStorage.getItem("teacherId") ||
+    localStorage.getItem("institutionId");
+
+  const type =
+    role === "institution"
+      ? "institution"
+      : "teacher";
+
+  const category =
+    String(
+      currentProfileData.category ||
+      localStorage.getItem("profileCategory") ||
+      sessionStorage.getItem("profileCategory") ||
+      ""
+    ).trim();
+
+  if (!id || id === "null" || id === "undefined") {
+    alert("Profile ID missing. Please login again.");
+    return;
+  }
+
+  localStorage.setItem("profileId", id);
+  localStorage.setItem("role", type);
+  localStorage.setItem("profileCategory", category);
+
+  sessionStorage.setItem("profileId", id);
+  sessionStorage.setItem("role", type);
+  sessionStorage.setItem("profileCategory", category);
+
+  localStorage.setItem("feeProfileId", id);
+  localStorage.setItem("feeRole", type);
+  localStorage.setItem("feeCategory", category);
+
+  sessionStorage.setItem("feeProfileId", id);
+  sessionStorage.setItem("feeRole", type);
+  sessionStorage.setItem("feeCategory", category);
+
+  location.href =
+    "fee-structure.html?id=" +
+    encodeURIComponent(id) +
+    "&role=" +
+    encodeURIComponent(type) +
+    "&category=" +
+    encodeURIComponent(category);
+
+};
+
+window.createInvoice = function () {
+  const id =
+    profileId ||
+    localStorage.getItem("profileId") ||
+    localStorage.getItem("teacherId") ||
+    localStorage.getItem("institutionId");
+
+  const type =
+    role ||
+    localStorage.getItem("role") ||
+    "teacher";
+
+  if (!id || id === "null" || id === "undefined") {
+    alert("Profile ID missing. Please login again.");
+    return;
+  }
+
+  localStorage.setItem("invoiceProfileId", id);
+  localStorage.setItem("invoiceRole", type);
+  sessionStorage.setItem("invoiceProfileId", id);
+  sessionStorage.setItem("invoiceRole", type);
+
+  location.href =
+    "invoice.html?id=" +
+    encodeURIComponent(id) +
+    "&type=" +
+    encodeURIComponent(type);
+};
+
+
+
+
+
+
+window.renewProfile = function () {
+  const id =
+    profileId ||
+    localStorage.getItem("profileId") ||
+    localStorage.getItem("teacherId") ||
+    localStorage.getItem("institutionId") ||
+    localStorage.getItem("paymentProfileId") ||
+    localStorage.getItem("renewProfileId");
+
+  const type =
+    role ||
+    localStorage.getItem("role") ||
+    localStorage.getItem("paymentType") ||
+    localStorage.getItem("renewRole") ||
+    "teacher";
+
+  if (!id || id === "null" || id === "undefined") {
+    alert("Profile ID missing. Please login again.");
+    return;
+  }
+
+  if (!type || type === "null" || type === "undefined") {
+    alert("Account type missing. Please login again.");
+    return;
+  }
+
+  localStorage.setItem("profileId", id);
+  localStorage.setItem("paymentProfileId", id);
+  localStorage.setItem("renewProfileId", id);
+
+  localStorage.setItem("role", type);
+  localStorage.setItem("paymentType", type);
+  localStorage.setItem("renewRole", type);
+
+  sessionStorage.setItem("profileId", id);
+  sessionStorage.setItem("paymentProfileId", id);
+  sessionStorage.setItem("renewProfileId", id);
+
+  sessionStorage.setItem("role", type);
+  sessionStorage.setItem("paymentType", type);
+  sessionStorage.setItem("renewRole", type);
+
+  window.location.href =
+    "https://www.gurulink.co.in/payment2.html?id=" +
+    encodeURIComponent(id) +
+    "&type=" +
+    encodeURIComponent(type);
+};
+
+
+
+
+window.contactDeveloper = function () {
+  window.location.href = "helpdesk.html";
+};
+
+
+
+
+
+
+
+
+
+
+
+
+window.logout=async function(){
+
+try{
+
+await signOut(auth);
+
+}catch(e){}
+
+localStorage.removeItem(
+"profileId"
+);
+
+localStorage.removeItem(
+"role"
+);
+
+localStorage.removeItem(
+"renewProfileId"
+);
+
+localStorage.removeItem(
+"renewRole"
+);
+
+location.href=
+"index.html";
+
+};
+
+
+
+
+
+
+
+
+window.callLead = function(phone) {
+
+  if (!phone) {
+    alert("No phone number available");
+    return;
+  }
+
+  window.location.href = "tel:" + phone;
+};
+
+
+
+
+window.contactWhatsApp = function(phone) {
+
+  if (!phone) {
+    alert("No phone number available");
+    return;
+  }
+
+  const cleanPhone = phone.replace(/\D/g, ""); // remove +, spaces, symbols
+
+  window.open("https://wa.me/" + cleanPhone, "_blank");
+};
+
+
+window.toggleStatus = async function (leadId, currentStatus, studentPhone = "") {
+
+  const newStatus =
+    currentStatus === "enrolled" || currentStatus === "accepted" ? "pending" : "enrolled";
+
+  await update(
+    ref(db, `profileViews/${profileId}/${leadId}`),
+    {
+      status: newStatus
+    }
+  );
+
+  if(newStatus === "enrolled"){
+    await set(
+      ref(db, `studentEnrollments/${leadId}/${profileId}`),
+      {
+        studentId:leadId,
+        profileId:profileId,
+        profileRole:role === "institution" ? "institution" : "teacher",
+        name:currentProfileData.name || "",
+        phone:currentProfileData.phone || "",
+        alternatePhone:currentProfileData.alternatePhone || "",
+        email:currentProfileData.email || "",
+        website:currentProfileData.website || "",
+        logo:getPrimaryProfileImage(currentProfileData),
+        category:currentProfileData.category || "",
+        showBankDetails:currentProfileData.showBankDetails !== false,
+        accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
+        bankName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.bankName || ""),
+        accountNumber:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountNumber || ""),
+        ifsc:currentProfileData.showBankDetails === false ? "" : (currentProfileData.ifsc || ""),
+        upiId:currentProfileData.showBankDetails === false ? "" : (currentProfileData.upiId || ""),
+        qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.qrImage || ""),
+        status:"pending_student_acceptance",
+        requestedAt:Date.now(),
+        updatedAt:Date.now()
+      }
+    );
+  }
+  else{
+    await update(
+      ref(db, `studentEnrollments/${leadId}/${profileId}`),
+      {
+        status:"pending",
+        updatedAt:Date.now()
+      }
+    );
+  }
+
+  if(newStatus === "enrolled"){
+    showEnrollModal(studentPhone);
+  }
+
+};
+
+window.sendEnrollmentMessage = async function(studentId){
+
 const input =
-document.getElementById("reply_" + profileId);
+document.getElementById("msg_" + studentId);
 
 const text =
 (input?.value || "").trim();
@@ -1672,97 +1999,145 @@ alert("Type a message first.");
 return;
 }
 
-await push(ref(db,`enrollmentChats/${uid}/${profileId}/messages`),{
-senderId:uid,
-senderRole:"student",
-senderName:document.getElementById("name").textContent || "Student",
+await push(
+ref(db, `enrollmentChats/${studentId}/${profileId}/messages`),
+{
+senderId:profileId,
+senderRole:role === "institution" ? "institution" : "teacher",
+senderName:currentProfileData.name || "Teacher / Institution",
 text:text,
 time:Date.now()
-});
+}
+);
 
-await update(ref(db,`studentEnrollments/${uid}/${profileId}`),{
+await update(
+ref(db, `studentEnrollments/${studentId}/${profileId}`),
+{
 lastMessage:text,
 lastMessageAt:Date.now(),
-unreadForStudent:false
-});
+unreadForStudent:true,
+website:currentProfileData.website || "",
+showBankDetails:currentProfileData.showBankDetails !== false,
+accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
+bankName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.bankName || ""),
+accountNumber:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountNumber || ""),
+ifsc:currentProfileData.showBankDetails === false ? "" : (currentProfileData.ifsc || ""),
+upiId:currentProfileData.showBankDetails === false ? "" : (currentProfileData.upiId || ""),
+qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.qrImage || "")
+}
+);
 
 input.value = "";
+alert("Message sent to student.");
+
 };
 
-window.clearStudentChat = async function(profileId){
+window.clearEnrollmentChat = async function(studentId){
+
 if(!confirm("Clear this chat from your side only?")){
 return;
 }
 
-await update(ref(db,`enrollmentChats/${uid}/${profileId}/clearedFor`),{
-[uid]:Date.now()
+await update(ref(db,`enrollmentChats/${studentId}/${profileId}/clearedFor`),{
+[profileId]:Date.now()
 });
 
-await update(ref(db,`studentEnrollments/${uid}/${profileId}`),{
+await update(
+ref(db, `studentEnrollments/${studentId}/${profileId}`),
+{
 lastMessageAt:Date.now(),
 unreadForStudent:false
-});
-};
-
-window.toggleProviderPayment = function(profileId){
-const box =
-document.getElementById("payment_" + profileId);
-
-if(!box){
-alert("Payment details are not available.");
-return;
 }
-
-if(box.style.display === "block"){
-box.style.display = "none";
-return;
-}
-
-const ok = confirm(
-"Payments are made directly between you and the teacher/institution.\n\n" +
-"GURULINK does not process or verify payments and is not responsible for failed transactions, refunds, disputes, or wrong transfers.\n\n" +
-"Please verify all details before paying."
 );
 
-if(ok){
-box.style.display = "block";
-}
 };
 
-window.callProvider = callProvider;
-window.whatsappProvider = whatsappProvider;
-window.providerWebsite = providerWebsite;
+window.showEnrollModal = function(studentPhone){
 
-onAuthStateChanged(auth,(user)=>{
+const modal =
+document.getElementById("enrollModal");
 
-if(!user){
-window.location.href = "otp-login.html";
-return;
+const callBtn =
+document.getElementById("enrollCallBtn");
+
+if(callBtn){
+callBtn.onclick = function(){
+if(studentPhone){
+location.href = "tel:" + studentPhone;
+}
+else{
+alert("Student phone number is not available.");
+}
+};
 }
 
-loadStudent();
-loadEnrollments();
-
-});
-
-/* LOGOUT */
-
-window.logout = async function(){
-
-await signOut(auth);
-
-localStorage.removeItem("uid");
-localStorage.removeItem("role");
-localStorage.removeItem("profileId");
-
-window.location.href =
-"student-login.html";
+if(modal){
+modal.classList.add("show");
+}
 
 };
 
+window.closeEnrollModal = function(){
+
+const modal =
+document.getElementById("enrollModal");
+
+if(modal){
+modal.classList.remove("show");
+}
+
+};
+
+window.goHome = function() {
+  location.href = "index.html";
+};
+
+
+window.shareProfile = function () {
+
+  const profileId = localStorage.getItem("profileId");
+  const role = localStorage.getItem("role");
+
+  if (!profileId || !role) {
+    alert("Profile not found");
+    return;
+  }
+  
+  
+  
+  
+
+  const url =
+"https://guru-link.onrender.com/profile-view.html?id=" +
+profileId;
+
+  const text =
+    `Check out this ${role === "teacher" ? "Teacher" : "Institute"} on GURULINK:\n\n` +
+    url;
+	
+	
+	
+	
+	
+
+  const whatsappURL =
+    "https://wa.me/?text=" + encodeURIComponent(text);
+
+  // Mobile native share (best)
+  if (navigator.share) {
+    navigator.share({
+      title: "GURULINK Profile",
+      text: text,
+      url: url
+    }).catch(() => {
+      window.open(whatsappURL, "_blank");
+    });
+  } else {
+    window.open(whatsappURL, "_blank");
+  }
+};
 </script>
 
 </body>
 </html>
-
 
