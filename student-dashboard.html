@@ -158,8 +158,125 @@ box-shadow:0 0 0 2px rgba(251,192,45,.16);
 }
 
 .quickActionHelp{
-background:#00897b;
-color:white;
+  background:#00897b;
+  color:white;
+}
+
+.quickActionLinks{
+  background:#6a1b9a;
+  color:white;
+}
+
+.importantLinksCard{
+  display:none;
+}
+
+.importantLinksHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:8px;
+}
+
+.importantLinksHeader h2{
+  margin:0;
+}
+
+.importantLinksCopy{
+  font-size:14px;
+  line-height:1.65;
+  color:#607d8b;
+  margin-bottom:14px;
+}
+
+.importantLinksComposer{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  align-items:start;
+  margin-bottom:10px;
+}
+
+.importantLinksComposer input{
+  width:100%;
+  padding:12px 14px;
+  border:1px solid #cfd8e3;
+  border-radius:12px;
+  font-size:14px;
+}
+
+.importantLinksComposer .btn{
+  margin:0;
+  min-width:120px;
+}
+
+.importantLinksStatus{
+  min-height:20px;
+  font-size:13px;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+
+.importantLinksStatus.success{
+  color:#2e7d32;
+}
+
+.importantLinksStatus.error{
+  color:#d32f2f;
+}
+
+.importantLinksList{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.importantLinksEmpty{
+  padding:16px;
+  border:1px dashed #cbd5e1;
+  border-radius:12px;
+  background:#f8fafc;
+  font-size:14px;
+  line-height:1.6;
+  color:#475569;
+  text-align:center;
+}
+
+.importantLinkItem{
+  border:1px solid #d9e2ec;
+  border-radius:14px;
+  padding:14px;
+  background:#fff;
+}
+
+.importantLinkTitle{
+  font-size:15px;
+  font-weight:bold;
+  color:#1565c0;
+  margin-bottom:6px;
+  word-break:break-word;
+}
+
+.importantLinkUrl{
+  font-size:13px;
+  line-height:1.6;
+  color:#475569;
+  word-break:break-all;
+}
+
+.importantLinkActions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+
+.importantLinkActions .btn{
+  margin:0;
+  padding:9px 12px;
+  font-size:13px;
 }
 
 .providerCard{
@@ -655,13 +772,21 @@ font-size:12px;
 font-size:14px;
 }
 
-.quickActionsGrid{
-grid-template-columns:repeat(2,minmax(0,1fr));
-}
+  .quickActionsGrid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  }
 
-.timeTableDayTabs{
-grid-template-columns:repeat(2,minmax(0,1fr));
-}
+  .importantLinksComposer{
+  grid-template-columns:1fr;
+  }
+
+  .importantLinksComposer .btn{
+  width:100%;
+  }
+
+  .timeTableDayTabs{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  }
 
 .timeTypeHeader{
 flex-direction:column;
@@ -783,6 +908,14 @@ class="btn quickActionBtn quickActionHelp">
 Help
 </a>
 
+<button
+type="button"
+class="btn quickActionBtn quickActionLinks"
+onclick="toggleImportantLinksCard()"
+id="importantLinksToggleBtn">
+Important Links
+</button>
+
 <a
 href="index.html"
 class="btn green quickActionBtn">
@@ -794,6 +927,44 @@ class="btn red quickActionBtn"
 onclick="logout()">
 Logout
 </button>
+</div>
+
+</div>
+
+<div class="card importantLinksCard" id="importantLinksCard">
+
+<div class="importantLinksHeader">
+<h2>Important Links</h2>
+<button
+type="button"
+class="btn blue quickActionBtn"
+onclick="toggleImportantLinksCard(false)">
+Close
+</button>
+</div>
+
+<div class="importantLinksCopy">
+Paste and save useful website links here so you can open them later anytime from your dashboard.
+</div>
+
+<div class="importantLinksComposer">
+<input
+type="url"
+id="importantLinkInput"
+placeholder="Paste important URL here">
+
+<button
+type="button"
+class="btn blue"
+onclick="saveImportantLink()">
+Save Link
+</button>
+</div>
+
+<div id="importantLinksStatus" class="importantLinksStatus"></div>
+
+<div id="importantLinksList" class="importantLinksList">
+Loading links...
 </div>
 
 </div>
@@ -916,6 +1087,7 @@ let dashboardSelectedDay =
 getTodayName();
 
 let activeEnrollmentProfileId = "";
+let importantLinksListenerStarted = false;
 
 /* LOAD STUDENT */
 
@@ -1281,6 +1453,209 @@ renderTimeTableSummary(rawTimeTable);
 function cleanPhone(phone){
 return String(phone || "").replace(/\D/g,"");
 }
+
+function setImportantLinksStatus(message,type = ""){
+const box =
+document.getElementById("importantLinksStatus");
+
+if(!box){
+return;
+}
+
+box.textContent = message || "";
+box.className = "importantLinksStatus" + (type ? " " + type : "");
+}
+
+function normalizeImportantLinkUrl(url){
+let value = String(url || "").trim();
+
+if(!value){
+return "";
+}
+
+if(!/^https?:\/\//i.test(value)){
+value = "https://" + value;
+}
+
+try{
+return new URL(value).href;
+}
+catch(err){
+return "";
+}
+}
+
+function getImportantLinkLabel(url){
+try{
+return new URL(url).hostname.replace(/^www\./i,"") || "Saved Link";
+}
+catch(err){
+return "Saved Link";
+}
+}
+
+function renderImportantLinks(rawLinks){
+const list =
+document.getElementById("importantLinksList");
+
+const toggleBtn =
+document.getElementById("importantLinksToggleBtn");
+
+if(!list){
+return;
+}
+
+const items =
+Object.entries(rawLinks || {})
+.map(([id,item])=>({
+id,
+url:String(item?.url || "").trim(),
+label:String(item?.label || "").trim(),
+createdAt:Number(item?.createdAt || 0)
+}))
+.filter(item=>item.url)
+.sort((a,b)=>b.createdAt - a.createdAt);
+
+if(toggleBtn){
+toggleBtn.textContent =
+items.length
+? `Important Links (${items.length})`
+: "Important Links";
+}
+
+if(!items.length){
+list.innerHTML = `
+<div class="importantLinksEmpty">
+No important links saved yet. Paste a useful URL above and save it for later.
+</div>
+`;
+return;
+}
+
+list.innerHTML = items.map(item=>`
+<div class="importantLinkItem">
+<div class="importantLinkTitle">${escapeHTML(item.label || getImportantLinkLabel(item.url))}</div>
+<div class="importantLinkUrl">${escapeHTML(item.url)}</div>
+<div class="importantLinkActions">
+<button type="button" class="btn blue" onclick="openImportantLink(decodeURIComponent('${encodeURIComponent(item.url)}'))">Open Link</button>
+<button type="button" class="btn red" onclick="deleteImportantLink('${item.id}')">Delete</button>
+</div>
+</div>
+`).join("");
+}
+
+function loadImportantLinks(){
+if(importantLinksListenerStarted){
+return;
+}
+
+importantLinksListenerStarted = true;
+
+onValue(
+ref(db,`students/${uid}/importantLinks`),
+snap=>{
+renderImportantLinks(snap.exists() ? snap.val() : {});
+}
+);
+}
+
+window.toggleImportantLinksCard = function(forceState){
+const card =
+document.getElementById("importantLinksCard");
+
+if(!card){
+return;
+}
+
+const willOpen =
+typeof forceState === "boolean"
+? forceState
+: card.style.display !== "block";
+
+card.style.display = willOpen ? "block" : "none";
+
+if(willOpen){
+card.scrollIntoView({
+behavior:"smooth",
+block:"start"
+});
+document.getElementById("importantLinkInput")?.focus();
+}
+};
+
+window.saveImportantLink = async function(){
+const input =
+document.getElementById("importantLinkInput");
+
+const rawUrl =
+String(input?.value || "").trim();
+
+if(!rawUrl){
+setImportantLinksStatus("Please paste a URL first.","error");
+return;
+}
+
+const finalUrl =
+normalizeImportantLinkUrl(rawUrl);
+
+if(!finalUrl){
+setImportantLinksStatus("Please enter a valid website link.","error");
+return;
+}
+
+try{
+await push(
+ref(db,`students/${uid}/importantLinks`),
+{
+url:finalUrl,
+label:getImportantLinkLabel(finalUrl),
+createdAt:Date.now()
+}
+);
+
+if(input){
+input.value = "";
+}
+
+setImportantLinksStatus("Link saved successfully.","success");
+window.toggleImportantLinksCard(true);
+}
+catch(err){
+console.log(err);
+setImportantLinksStatus("Unable to save link right now.","error");
+}
+};
+
+window.openImportantLink = function(url){
+const finalUrl =
+normalizeImportantLinkUrl(url);
+
+if(!finalUrl){
+alert("This saved link is invalid.");
+return;
+}
+
+window.open(finalUrl,"_blank");
+};
+
+window.deleteImportantLink = async function(linkId){
+if(!linkId){
+return;
+}
+
+if(!confirm("Delete this saved link?")){
+return;
+}
+
+try{
+await remove(ref(db,`students/${uid}/importantLinks/${linkId}`));
+setImportantLinksStatus("Link deleted.","success");
+}
+catch(err){
+console.log(err);
+setImportantLinksStatus("Unable to delete link right now.","error");
+}
+};
 
 window.openStudentEditProfile = function(){
 localStorage.setItem("uid",uid);
@@ -1741,6 +2116,7 @@ return;
 }
 
 loadStudent();
+loadImportantLinks();
 loadEnrollments();
 
 });
