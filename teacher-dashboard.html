@@ -1336,6 +1336,10 @@ return String(value ?? "")
 .replace(/'/g,"&#039;");
 }
 
+function normalizePhoneDigits(value){
+return String(value || "").replace(/\D/g,"");
+}
+
 function getPrimaryProfileImage(data){
   const images =
     Array.isArray(data?.profileImages)
@@ -1426,6 +1430,89 @@ qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.
 updatedAt:Date.now()
 }
 );
+}
+
+async function resolveStudentEnrollmentTarget(leadId, leadPhone = ""){
+  const leadSnap =
+    await get(ref(db, `profileViews/${profileId}/${leadId}`));
+
+  const leadData =
+    leadSnap.exists()
+      ? (leadSnap.val() || {})
+      : {};
+
+  const directCandidates = [
+    leadData.studentId,
+    leadData.viewerProfileId,
+    leadData.profileId,
+    leadId
+  ]
+  .map(value => String(value || "").trim())
+  .filter(Boolean);
+
+  for(const candidateId of directCandidates){
+    const studentSnap =
+      await get(ref(db, `students/${candidateId}`));
+
+    if(studentSnap.exists()){
+      return {
+        studentId:candidateId,
+        leadData,
+        studentData:studentSnap.val() || {}
+      };
+    }
+  }
+
+  const phoneDigits =
+    normalizePhoneDigits(
+      leadPhone ||
+      leadData.phone ||
+      ""
+    );
+
+  if(phoneDigits){
+    const studentsSnap =
+      await get(ref(db, "students"));
+
+    if(studentsSnap.exists()){
+      let foundId = "";
+      let foundData = {};
+
+      studentsSnap.forEach(child=>{
+        if(foundId){
+          return;
+        }
+
+        const candidate = child.val() || {};
+        const candidatePhones = [
+          candidate.phone,
+          candidate.alternatePhone,
+          candidate.mobile
+        ]
+        .map(normalizePhoneDigits)
+        .filter(Boolean);
+
+        if(candidatePhones.includes(phoneDigits)){
+          foundId = child.key;
+          foundData = candidate;
+        }
+      });
+
+      if(foundId){
+        return {
+          studentId:foundId,
+          leadData,
+          studentData:foundData
+        };
+      }
+    }
+  }
+
+  return {
+    studentId:String(leadData.studentId || leadData.viewerProfileId || leadId || "").trim(),
+    leadData,
+    studentData:{}
+  };
 }
 
 function loadDemoRequests(){
@@ -1540,6 +1627,7 @@ const lead=child.val();
 const status=lead.status || "pending";
 const isAccepted = status === "accepted";
 const leadRole=(lead.viewerRole || "").toLowerCase();
+const resolvedStudentId=String(lead.studentId || lead.viewerProfileId || id || "").trim();
 const hasPhone=lead.phone && lead.phone.toString().trim();
 const cleanPhone=hasPhone ? lead.phone.toString().replace(/\D/g,"") : "";
 const leadType=lead.name || (hasPhone ? "Student" : (leadRole === "institution" ? "Institution" : "Teacher/Institution"));
@@ -1551,11 +1639,11 @@ pending++;
 }
 
 if(isAccepted){
-acceptedStudentIds.push(id);
+acceptedStudentIds.push(resolvedStudentId);
 }
 
 if(status === "enrolled" || status === "accepted"){
-syncEnrollmentDetails(id);
+syncEnrollmentDetails(resolvedStudentId);
 }
 
 html+=`
@@ -2067,56 +2155,77 @@ window.contactWhatsApp = function(phone) {
 
 
 window.toggleStatus = async function (leadId, currentStatus, studentPhone = "") {
+  try{
+    const newStatus =
+      currentStatus === "enrolled" || currentStatus === "accepted"
+        ? "pending"
+        : "enrolled";
 
-  const newStatus =
-    currentStatus === "enrolled" || currentStatus === "accepted" ? "pending" : "enrolled";
+    const resolvedTarget =
+      await resolveStudentEnrollmentTarget(leadId, studentPhone);
 
-  await update(
-    ref(db, `profileViews/${profileId}/${leadId}`),
-    {
-      status: newStatus
+    const studentId =
+      resolvedTarget.studentId;
+
+    if(!studentId){
+      alert("Student profile could not be matched. Ask the student to log in again and open your profile once more.");
+      return;
     }
-  );
 
-  if(newStatus === "enrolled"){
-    await set(
-      ref(db, `studentEnrollments/${leadId}/${profileId}`),
-      {
-        studentId:leadId,
-        profileId:profileId,
-        profileRole:role === "institution" ? "institution" : "teacher",
-        name:currentProfileData.name || "",
-        phone:currentProfileData.phone || "",
-        alternatePhone:currentProfileData.alternatePhone || "",
-        email:currentProfileData.email || "",
-        website:currentProfileData.website || "",
-        logo:getPrimaryProfileImage(currentProfileData),
-        category:currentProfileData.category || "",
-        showBankDetails:currentProfileData.showBankDetails !== false,
-        accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
-        bankName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.bankName || ""),
-        accountNumber:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountNumber || ""),
-        ifsc:currentProfileData.showBankDetails === false ? "" : (currentProfileData.ifsc || ""),
-        upiId:currentProfileData.showBankDetails === false ? "" : (currentProfileData.upiId || ""),
-        qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.qrImage || ""),
-        status:"pending_student_acceptance",
-        requestedAt:Date.now(),
-        updatedAt:Date.now()
-      }
-    );
-  }
-  else{
     await update(
-      ref(db, `studentEnrollments/${leadId}/${profileId}`),
+      ref(db, `profileViews/${profileId}/${leadId}`),
       {
-        status:"pending",
+        status:newStatus,
+        studentId:studentId,
+        viewerProfileId:(resolvedTarget.leadData && resolvedTarget.leadData.viewerProfileId) || studentId,
         updatedAt:Date.now()
       }
     );
-  }
 
-  if(newStatus === "enrolled"){
-    showEnrollModal(studentPhone);
+    if(newStatus === "enrolled"){
+      await set(
+        ref(db, `studentEnrollments/${studentId}/${profileId}`),
+        {
+          studentId:studentId,
+          profileId:profileId,
+          profileRole:role === "institution" ? "institution" : "teacher",
+          name:currentProfileData.name || "",
+          phone:currentProfileData.phone || "",
+          alternatePhone:currentProfileData.alternatePhone || "",
+          email:currentProfileData.email || "",
+          website:currentProfileData.website || "",
+          logo:getPrimaryProfileImage(currentProfileData),
+          category:currentProfileData.category || "",
+          showBankDetails:currentProfileData.showBankDetails !== false,
+          accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
+          bankName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.bankName || ""),
+          accountNumber:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountNumber || ""),
+          ifsc:currentProfileData.showBankDetails === false ? "" : (currentProfileData.ifsc || ""),
+          upiId:currentProfileData.showBankDetails === false ? "" : (currentProfileData.upiId || ""),
+          qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.qrImage || ""),
+          status:"pending_student_acceptance",
+          requestedAt:Date.now(),
+          updatedAt:Date.now()
+        }
+      );
+    }
+    else{
+      await update(
+        ref(db, `studentEnrollments/${studentId}/${profileId}`),
+        {
+          status:"pending",
+          updatedAt:Date.now()
+        }
+      );
+    }
+
+    if(newStatus === "enrolled"){
+      showEnrollModal(studentPhone || ((resolvedTarget.leadData && resolvedTarget.leadData.phone) || ""));
+    }
+  }
+  catch(err){
+    console.error("Mark enrolled failed", err);
+    alert("Unable to update enrolled status right now.");
   }
 
 };
@@ -2243,7 +2352,7 @@ window.shareProfile = function () {
   
 
   const url =
-"https://guru-link.onrender.com/profile-view.html?id=" +
+"https://www.gurulink.co.in/profile-view.html?id=" +
 profileId;
 
   const text =
