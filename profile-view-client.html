@@ -402,25 +402,26 @@ box-shadow:0 5px 15px rgba(0,0,0,.08);
 .reviewNotice{
 display:none;
 margin:0 0 12px;
-padding:10px 12px;
+padding:12px;
 border-radius:10px;
 background:#fff8e1;
 border:1px solid #ffe082;
-color:#6d4c41;
-font-size:12px;
+color:#8a6d3b;
+font-size:13px;
 line-height:1.5;
 }
 
 .reviewForm.disabledReview input,
 .reviewForm.disabledReview select,
 .reviewForm.disabledReview textarea{
-background:#f5f7fb;
-color:#7b8794;
+background:#f3f5f7;
+color:#9aa4af;
 cursor:not-allowed;
 }
 
 .reviewForm.disabledReview button{
 background:#b0bec5;
+color:#fff;
 cursor:not-allowed;
 }
 
@@ -686,28 +687,85 @@ uid:"",
 phone:""
 };
 
-function getAuthUser(){
-return new Promise((resolve)=>{
-const unsubscribe = onAuthStateChanged(auth,(user)=>{
-unsubscribe();
+let authBootstrapPromise = null;
+let linkedReviewRoleCache = "";
+
+function getAuthUser(forceRefresh = false){
+if(!forceRefresh && auth.currentUser){
+return Promise.resolve(auth.currentUser);
+}
+
+if(!forceRefresh && authBootstrapPromise){
+return authBootstrapPromise;
+}
+
+authBootstrapPromise = new Promise((resolve)=>{
+let settled = false;
+let unsubscribe = null;
+const timer = setTimeout(()=>{
+finish(auth.currentUser || null);
+},5000);
+
+const finish = (user)=>{
+if(settled) return;
+settled = true;
+clearTimeout(timer);
+if(typeof unsubscribe === "function"){
+try{ unsubscribe(); }catch(err){}
+}
 resolve(user || null);
+};
+
+unsubscribe = onAuthStateChanged(auth,(user)=>{
+finish(user || auth.currentUser || null);
+});
 });
 
-setTimeout(()=>{
-resolve(auth.currentUser || null);
-},1200);
-});
+return authBootstrapPromise;
 }
 
 function getStoredReviewRole(){
-return String(
-localStorage.getItem("role") ||
-sessionStorage.getItem("role") ||
-localStorage.getItem("otpRole") ||
+const allowedRoles = ["student","parent","teacher","institution","teacher_institute"];
+const candidates = [
+sessionStorage.getItem("otpRole"),
+localStorage.getItem("otpRole"),
+sessionStorage.getItem("role"),
+localStorage.getItem("role")
+]
+.map(value => String(value || "").trim().toLowerCase())
+.filter(Boolean);
+
+return candidates.find(role => allowedRoles.includes(role)) || "";
+}
+
+async function getLinkedReviewRole(authUid, forceRefresh = false){
+if(!authUid) return "";
+if(linkedReviewRoleCache && !forceRefresh){
+return linkedReviewRoleCache;
+}
+
+try{
+const userSnap = await get(child(ref(db),"users/" + authUid));
+if(!userSnap.exists()){
+return "";
+}
+
+const userData = userSnap.val() || {};
+const resolvedRole = String(
+userData.linkedRole ||
+userData.role ||
 ""
 )
 .trim()
 .toLowerCase();
+
+linkedReviewRoleCache = resolvedRole;
+return resolvedRole;
+}
+catch(err){
+console.log("Unable to read linked review role", err);
+return "";
+}
 }
 
 function normalizeReviewPhone(phone){
@@ -723,8 +781,13 @@ if(reviewAccessState.checked && !forceRefresh){
 return reviewAccessState;
 }
 
-const authUser = await getAuthUser();
-const viewerRole = getStoredReviewRole();
+const authUser = await getAuthUser(forceRefresh);
+const storedRole = getStoredReviewRole();
+const linkedRole =
+authUser && authUser.uid
+? await getLinkedReviewRole(authUser.uid, forceRefresh)
+: "";
+const viewerRole = linkedRole || storedRole;
 const allowedRoles = ["student","parent","teacher","institution","teacher_institute"];
 const authPhone = normalizeReviewPhone(authUser ? authUser.phoneNumber : "");
 const storedPhone = normalizeReviewPhone(
@@ -745,7 +808,7 @@ message = "Please log in through GURULINK Mobile OTP to submit a review.";
 else if(!authPhone){
 message = "Please log in through GURULINK Mobile OTP to submit a review.";
 }
-else if(storedPhone && authPhone !== storedPhone){
+else if(!linkedRole && storedPhone && authPhone !== storedPhone){
 message = "Please re-login through GURULINK Mobile OTP before submitting a review.";
 }
 else{
@@ -804,6 +867,11 @@ if(!form) return;
 const access = await resolveReviewAccess(forceRefresh);
 setReviewFormState(access);
 }
+
+onAuthStateChanged(auth,()=>{
+reviewAccessState.checked = false;
+applyReviewAccessUI(true);
+});
 
 /* MARK VIEW */
 async function markView() {
@@ -1233,7 +1301,7 @@ data.showBankDetails !== false &&
 ${feeStructureHTML}
 
 <div class="demoBox">
-<h3>Request Demo Class / Session</h3>
+<h3>Request Demo Class / Practice</h3>
 <p>Send one short demo class or practice request to this ${esc(type.toLowerCase())}. Your message will be visible to them for 15 days.</p>
 <div class="demoChat" id="demoChatBox">
 <input id="demoName" placeholder="Your Name">
@@ -1404,7 +1472,7 @@ rawMessage.includes("permission_denied") ||
 rawMessage.includes("permission denied")
 ){
 alert(
-"Review submission is blocked by your Firebase rules.\n\n" +
+"Review submission is currently blocked by your Firebase rules.\n\n" +
 "Please update the reviews rule in Firebase Console so authenticated GURULINK OTP users can submit reviews."
 );
 }else{
@@ -1412,10 +1480,12 @@ alert(err.message || "Unable to submit review. Please try again.");
 }
 }
 finally{
-await applyReviewAccessUI(true);
+if(submitBtn){
+submitBtn.disabled = false;
+submitBtn.textContent = "Submit Review";
+}
 }
 };
-
 window.submitDemoRequest = async function(){
 
 const name =
@@ -1738,4 +1808,3 @@ title="Share profile">
 
 </body>
 </html>
-
