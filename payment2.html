@@ -92,6 +92,9 @@ min-height:46px;
 }
 }
 </style>
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -198,6 +201,9 @@ function createToken() {
 async function createPaymentLink() {
   const token = createToken();
 
+  localStorage.setItem("renewPaymentToken", token);
+  sessionStorage.setItem("renewPaymentToken", token);
+
   const pendingData = {
     token: token,
     profileId: id,
@@ -238,7 +244,7 @@ async function createPaymentLink() {
 }
 
 document.getElementById("feeText").innerText =
-  "Renewal Fee ₹" + amount;
+  "Renewal Fee Rs." + amount;
 
 document.getElementById("payBtn").onclick = async function () {
   try {
@@ -264,3 +270,5 @@ document.getElementById("payBtn").onclick = async function () {
 </script>
 </body>
 </html>
+
+
