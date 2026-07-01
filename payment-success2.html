@@ -290,6 +290,14 @@ async function savePayment() {
 
     const user = snap.val();
     const paymentRef = push(ref(db, "payment2"));
+    const now = Date.now();
+    const validityPeriod = 366 * 24 * 60 * 60 * 1000;
+    const currentApprovedAt = Number(user.approvedAt || 0);
+    const currentExpiry = currentApprovedAt + validityPeriod;
+    const renewedApprovedAt =
+      currentApprovedAt > 0 && currentExpiry > now
+        ? currentApprovedAt + validityPeriod
+        : now;
 
     await set(paymentRef, {
       paymentId: paymentRef.key,
@@ -304,14 +312,14 @@ async function savePayment() {
       amount: amount,
       status: "paid",
       date: new Date().toLocaleString(),
-      createdAt: Date.now(),
+      createdAt: now,
       token: token || ""
     });
 
     await update(ref(db, profilePath), {
       paymentStatus: "paid",
-      approvedAt: Date.now(),
-      lastRenewalDate: Date.now(),
+      approvedAt: renewedApprovedAt,
+      lastRenewalDate: now,
       renewalStatus: "active",
       lastPaymentToken: token || ""
     });
