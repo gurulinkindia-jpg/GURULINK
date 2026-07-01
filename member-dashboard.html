@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>GURULINK Member Dashboard</title>
+  <style>
+    :root{
+      --bg:#f4f6fb;
+      --card:#ffffff;
+      --ink:#17222f;
+      --muted:#64748b;
+      --line:#d8e0ea;
+      --blue:#1565c0;
+      --green:#1f7a47;
+      --gold:#f2b51d;
+      --red:#c0392b;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font:15px/1.45 Arial,sans-serif;
+      color:var(--ink);
+      background:linear-gradient(180deg,#eef4ff 0%, #f8fbff 220px, var(--bg) 220px);
+    }
+    header{
+      background:linear-gradient(135deg,#0f766e,#1565c0);
+      color:#fff;
+      padding:22px 16px 18px;
+      box-shadow:0 10px 30px rgba(8,31,68,.12);
+    }
+    .headerInner{
+      max-width:1100px;
+      margin:auto;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    h1{
+      margin:0;
+      font-size:28px;
+    }
+    header p{
+      margin:6px 0 0;
+      opacity:.92;
+    }
+    .wrap{
+      max-width:1100px;
+      margin:auto;
+      padding:16px 14px 56px;
+    }
+    .gate,
+    .hidden{display:none}
+    .gate.show{display:block}
+    .gateCard,
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow:0 10px 28px rgba(15,23,42,.06);
+    }
+    .gateCard{
+      max-width:520px;
+      margin:28px auto 0;
+      padding:24px;
+    }
+    .card{
+      padding:18px;
+    }
+    .grid{
+      display:grid;
+      gap:14px;
+    }
+    .stats{
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      margin-top:16px;
+    }
+    .stat b{
+      display:block;
+      margin-top:6px;
+      font-size:26px;
+      color:var(--blue);
+    }
+    .muted{color:var(--muted)}
+    label{
+      display:block;
+      font-weight:700;
+      margin:10px 0 5px;
+    }
+    input,textarea{
+      width:100%;
+      border:1px solid #cdd7e3;
+      border-radius:10px;
+      padding:11px 12px;
+      font:inherit;
+      color:var(--ink);
+      background:#fff;
+    }
+    textarea{min-height:90px;resize:vertical}
+    button,
+    .buttonLike{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:11px 14px;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      font:inherit;
+      font-weight:700;
+      text-decoration:none;
+    }
+    .primary{background:var(--blue);color:#fff}
+    .green{background:var(--green);color:#fff}
+    .secondary{background:#fff;color:var(--ink);border:1px solid var(--line)}
+    .danger{background:var(--red);color:#fff}
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:14px;
+    }
+    .twoCol{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:14px;
+      margin-top:16px;
+    }
+    .miniGrid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+    .notice{
+      background:#fff9e8;
+      border:1px solid #f4df99;
+      border-radius:12px;
+      padding:12px;
+      color:#6f5411;
+      font-size:14px;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:14px;
+    }
+    th,td{
+      padding:10px 8px;
+      border-bottom:1px solid #e8edf4;
+      text-align:left;
+      vertical-align:top;
+    }
+    th{
+      font-size:12px;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+    .scroll{overflow:auto}
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      border-radius:999px;
+      padding:4px 10px;
+      font-size:12px;
+      font-weight:700;
+    }
+    .pending{background:#fff2cc;color:#8a5b00}
+    .approved{background:#e7f7ec;color:#136b3e}
+    .rejected{background:#fdecec;color:#a1302b}
+    .sectionTitle{
+      margin:0 0 12px;
+      font-size:20px;
+      color:#11376f;
+    }
+    .empty{
+      text-align:center;
+      color:var(--muted);
+      padding:18px 0;
+    }
+    @media(max-width:900px){
+      .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .twoCol{grid-template-columns:1fr}
+    }
+    @media(max-width:560px){
+      h1{font-size:24px}
+      .stats,
+      .miniGrid{grid-template-columns:1fr}
+      .card,
+      .gateCard{padding:16px}
+      .wrap{padding:12px 10px 40px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="headerInner">
+      <div>
+        <h1>GURULINK Member Dashboard</h1>
+        <p>Track your joins, shares, incentive, and purchase requests.</p>
+      </div>
+      <div class="actions" style="margin-top:0;">
+        <button type="button" class="secondary" id="copyLinkBtn">Copy My Link</button>
+        <button type="button" class="secondary" onclick="location.href='index.html'">Home</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="accessGate" class="gate show">
+      <div class="gateCard">
+        <h2 class="sectionTitle">Open your member access</h2>
+        <p class="muted">Paste the access code from your admin or open the private member link they shared with you.</p>
+        <label for="accessInput">Member access code</label>
+        <input id="accessInput" placeholder="Paste access code">
+        <div class="actions">
+          <button type="button" class="primary" id="openAccessBtn">Open Dashboard</button>
+        </div>
+        <p class="muted" id="gateMessage" style="margin-top:12px;"></p>
+      </div>
+    </section>
+
+    <section id="appShell" class="hidden">
+      <div class="card">
+        <div class="miniGrid">
+          <div>
+            <div class="muted">Member</div>
+            <div id="memberName" style="font-size:22px;font-weight:700;margin-top:4px;"></div>
+          </div>
+          <div>
+            <div class="muted">Contact / ID</div>
+            <div id="memberContact" style="font-size:17px;font-weight:700;margin-top:4px;"></div>
+          </div>
+          <div>
+            <div class="muted">Joined team</div>
+            <div id="memberJoined" style="font-weight:700;margin-top:4px;"></div>
+          </div>
+          <div>
+            <div class="muted">Status</div>
+            <div id="memberStatus" style="font-weight:700;margin-top:4px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid stats" id="statsRow"></div>
+
+      <div class="twoCol">
+        <div class="card">
+          <h2 class="sectionTitle">Buy personal shares</h2>
+          <div class="notice">
+            Pay through Razorpay first, then submit your payment reference here. Your shares appear after admin approval.
+          </div>
+          <label for="buyQty">Number of shares</label>
+          <input id="buyQty" type="number" min="1" step="1" value="1">
+          <div class="miniGrid" style="margin-top:10px;">
+            <div class="card" style="padding:14px;">
+              <div class="muted">Current share value</div>
+              <b id="unitPriceText" style="font-size:24px;color:#1565c0;display:block;margin-top:6px;">Rs. 0</b>
+            </div>
+            <div class="card" style="padding:14px;">
+              <div class="muted">Total to pay</div>
+              <b id="buyTotalText" style="font-size:24px;color:#1f7a47;display:block;margin-top:6px;">Rs. 0</b>
+            </div>
+          </div>
+          <div class="actions">
+            <a id="paymentLinkBtn" class="buttonLike green" href="https://rzp.io/rzp/cmGYUzJG" target="_blank" rel="noopener">Open Razorpay Payment</a>
+          </div>
+          <label for="paymentRef">Payment reference / UTR</label>
+          <input id="paymentRef" placeholder="Enter UTR, transaction ID, or payment reference">
+          <label for="paymentBy">Paid by</label>
+          <input id="paymentBy" placeholder="Name used during payment">
+          <label for="paymentNote">Note</label>
+          <textarea id="paymentNote" placeholder="Any note for admin"></textarea>
+          <div class="actions">
+            <button type="button" class="primary" id="submitRequestBtn">Submit Purchase Request</button>
+          </div>
+          <p class="muted" id="requestStatusText" style="margin-top:12px;"></p>
+        </div>
+
+        <div class="card">
+          <h2 class="sectionTitle">Your progress</h2>
+          <div class="miniGrid">
+            <div>
+              <div class="muted">Qualifying joins</div>
+              <div id="qualifyingJoinsText" style="font-size:20px;font-weight:700;margin-top:4px;"></div>
+            </div>
+            <div>
+              <div class="muted">Active joins</div>
+              <div id="activeJoinsText" style="font-size:20px;font-weight:700;margin-top:4px;"></div>
+            </div>
+            <div>
+              <div class="muted">Earned shares</div>
+              <div id="earnedSharesText" style="font-size:20px;font-weight:700;margin-top:4px;"></div>
+            </div>
+            <div>
+              <div class="muted">Bought shares</div>
+              <div id="boughtSharesText" style="font-size:20px;font-weight:700;margin-top:4px;"></div>
+            </div>
+            <div>
+              <div class="muted">Available incentive</div>
+              <div id="incentiveText" style="font-size:20px;font-weight:700;margin-top:4px;"></div>
+            </div>
+            <div>
+              <div class="muted">Toward next earned share</div>
+              <div id="remainderText" style="font-size:20px;font-weight:700;margin-top:4px;"></div>
+            </div>
+          </div>
+          <p class="muted" id="shareSourceText" style="margin-top:14px;"></p>
+        </div>
+      </div>
+
+      <div class="twoCol">
+        <div class="card">
+          <h2 class="sectionTitle">Recent joining records</h2>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Person</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="joinHistoryRows"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="sectionTitle">Share ledger</h2>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Transaction</th>
+                  <th>Shares</th>
+                  <th>Rate</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="shareLedgerRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:14px;">
+        <h2 class="sectionTitle">Purchase requests</h2>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Submitted</th>
+                <th>Shares</th>
+                <th>Amount</th>
+                <th>Reference</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="requestRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey:"AIzaSyCQWKLnc7yGo7OTg8rvti7REZqDy2PhTmE",
+      authDomain:"gurulink-59cc7.firebaseapp.com",
+      databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId:"gurulink-59cc7",
+      storageBucket:"gurulink-59cc7.firebasestorage.app",
+      messagingSenderId:"112148672399",
+      appId:"1:112148672399:android:5fd7248d9ea82f7382e5fa"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const rtdb = getDatabase(app);
+
+    const SHARE_MEMBER_PORTAL_PATH = "shareManagerPortal/members";
+    const STORAGE_KEY = "grulink-member-portal-token";
+
+    let currentToken = "";
+    let currentProfile = null;
+    let stopProfile = null;
+    let stopRequests = null;
+
+    function money(value){
+      return "Rs. " + Number(value || 0).toLocaleString("en-IN");
+    }
+
+    function esc(value){
+      return String(value || "").replace(/[&<>"']/g, ch => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        "\"":"&quot;",
+        "'":"&#039;"
+      }[ch]));
+    }
+
+    function statusPill(status){
+      const safe = String(status || "pending").toLowerCase();
+      return `<span class="pill ${safe}">${esc(safe.charAt(0).toUpperCase() + safe.slice(1))}</span>`;
+    }
+
+    async function copyText(text, message){
+      try{
+        await navigator.clipboard.writeText(text);
+        alert(message);
+      }catch(_error){
+        const temp = document.createElement("textarea");
+        temp.value = text;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand("copy");
+        temp.remove();
+        alert(message);
+      }
+    }
+
+    function setGate(message){
+      document.getElementById("gateMessage").textContent = message || "";
+      document.getElementById("accessGate").classList.add("show");
+      document.getElementById("appShell").classList.add("hidden");
+    }
+
+    function showApp(){
+      document.getElementById("accessGate").classList.remove("show");
+      document.getElementById("appShell").classList.remove("hidden");
+    }
+
+    function updateBuyTotal(){
+      const qty = Math.max(1, Number(document.getElementById("buyQty").value || 1));
+      const unitPrice = Number(currentProfile?.currentShareValue || 0);
+      document.getElementById("buyQty").value = qty;
+      document.getElementById("unitPriceText").textContent = money(unitPrice);
+      document.getElementById("buyTotalText").textContent = money(qty * unitPrice);
+    }
+
+    function renderProfile(){
+      if(!currentProfile){
+        return;
+      }
+
+      document.getElementById("memberName").textContent = currentProfile.name || "Member";
+      document.getElementById("memberContact").textContent = currentProfile.contact || "-";
+      document.getElementById("memberJoined").textContent = currentProfile.joinedAt
+        ? new Date(currentProfile.joinedAt).toLocaleDateString("en-IN")
+        : "-";
+      document.getElementById("memberStatus").innerHTML = currentProfile.resigned
+        ? '<span class="pill rejected">Resigned</span>'
+        : '<span class="pill approved">Active</span>';
+
+      document.getElementById("statsRow").innerHTML = `
+        <div class="card stat"><span class="muted">Total shares</span><b>${Number(currentProfile.totalShares || 0).toLocaleString("en-IN")}</b></div>
+        <div class="card stat"><span class="muted">Current share value</span><b>${money(currentProfile.currentShareValue)}</b></div>
+        <div class="card stat"><span class="muted">Available incentive</span><b>${money(currentProfile.availableIncentive)}</b></div>
+        <div class="card stat"><span class="muted">Live teacher / institutes</span><b>${Number(currentProfile.liveActiveProfiles || 0).toLocaleString("en-IN")}</b></div>
+      `;
+
+      document.getElementById("qualifyingJoinsText").textContent = `${Number(currentProfile.totalQualifyingJoins || 0)} total`;
+      document.getElementById("activeJoinsText").textContent = `${Number(currentProfile.activeQualifyingJoins || 0)} active`;
+      document.getElementById("earnedSharesText").textContent = Number(currentProfile.earnedShares || 0).toLocaleString("en-IN");
+      document.getElementById("boughtSharesText").textContent = Number(currentProfile.boughtShares || 0).toLocaleString("en-IN");
+      document.getElementById("incentiveText").textContent = money(currentProfile.availableIncentive);
+      document.getElementById("remainderText").textContent = `${Number(currentProfile.remainderToNextShare || 0)} join(s)`;
+      document.getElementById("shareSourceText").textContent = `Share value source: ${currentProfile.shareValueSource || "-"}`;
+      document.getElementById("paymentLinkBtn").href = currentProfile.paymentLink || "https://rzp.io/rzp/cmGYUzJG";
+
+      document.getElementById("joinHistoryRows").innerHTML = Array.isArray(currentProfile.recentJoins) && currentProfile.recentJoins.length
+        ? currentProfile.recentJoins.map(item => `
+            <tr>
+              <td>${esc(item.name || "-")}</td>
+              <td>${esc(item.type || "-")}</td>
+              <td>${money(item.amount)}</td>
+              <td>${item.active ? '<span class="pill approved">Active</span>' : '<span class="pill rejected">Inactive</span>'}</td>
+            </tr>
+          `).join("")
+        : '<tr><td class="empty" colspan="4">No joining records yet</td></tr>';
+
+      document.getElementById("shareLedgerRows").innerHTML = Array.isArray(currentProfile.shareLedger) && currentProfile.shareLedger.length
+        ? currentProfile.shareLedger.map(item => `
+            <tr>
+              <td>${esc(item.label || "-")}</td>
+              <td>${Number(item.qty || 0).toLocaleString("en-IN")}</td>
+              <td>${money(item.rate)}</td>
+              <td>${item.date ? new Date(item.date).toLocaleDateString("en-IN") : "-"}</td>
+            </tr>
+          `).join("")
+        : '<tr><td class="empty" colspan="4">No share transactions yet</td></tr>';
+
+      updateBuyTotal();
+    }
+
+    function renderRequests(requests){
+      document.getElementById("requestRows").innerHTML = requests.length
+        ? requests.map(item => `
+            <tr>
+              <td>${item.submittedAt ? new Date(item.submittedAt).toLocaleString("en-IN") : "-"}</td>
+              <td>${Number(item.qty || 0).toLocaleString("en-IN")}</td>
+              <td>${money(item.totalAmount)}</td>
+              <td>${esc(item.paymentRef || "-")}</td>
+              <td>${statusPill(item.status || "pending")}</td>
+            </tr>
+          `).join("")
+        : '<tr><td class="empty" colspan="5">No purchase requests yet</td></tr>';
+    }
+
+    async function loadPortal(token){
+      const safeToken = String(token || "").trim();
+      if(!safeToken){
+        setGate("Enter your access code to continue.");
+        return;
+      }
+
+      document.getElementById("gateMessage").textContent = "Opening your dashboard...";
+
+      try{
+        const profilePath = `${SHARE_MEMBER_PORTAL_PATH}/${safeToken}/profile`;
+        const snap = await get(ref(rtdb, profilePath));
+        if(!snap.exists()){
+          setGate("This member access code is not valid yet. Please ask admin to share your updated dashboard link.");
+          return;
+        }
+
+        currentToken = safeToken;
+        localStorage.setItem(STORAGE_KEY, safeToken);
+        showApp();
+        document.getElementById("accessInput").value = safeToken;
+        history.replaceState({}, "", `member-dashboard.html?access=${encodeURIComponent(safeToken)}`);
+
+        if(stopProfile){ stopProfile(); }
+        if(stopRequests){ stopRequests(); }
+
+        stopProfile = onValue(ref(rtdb, profilePath), snapshot => {
+          currentProfile = snapshot.val() || null;
+          renderProfile();
+        });
+
+        stopRequests = onValue(ref(rtdb, `${SHARE_MEMBER_PORTAL_PATH}/${safeToken}/purchaseRequests`), snapshot => {
+          const rows = [];
+          snapshot.forEach(child => {
+            rows.push({
+              id: child.key,
+              ...(child.val() || {})
+            });
+          });
+          rows.sort((a,b) => Number(b.submittedAt || 0) - Number(a.submittedAt || 0));
+          renderRequests(rows);
+        });
+      }catch(error){
+        console.error(error);
+        setGate("Could not load your dashboard right now.");
+      }
+    }
+
+    async function submitPurchaseRequest(){
+      if(!currentProfile || !currentToken){
+        alert("Open your member dashboard first.");
+        return;
+      }
+
+      if(currentProfile.resigned){
+        alert("This member account is marked resigned. New share purchases are not allowed.");
+        return;
+      }
+
+      const qty = Math.max(1, Number(document.getElementById("buyQty").value || 1));
+      const unitPrice = Number(currentProfile.currentShareValue || 0);
+      const totalAmount = qty * unitPrice;
+      const paymentRef = document.getElementById("paymentRef").value.trim();
+      const paymentBy = document.getElementById("paymentBy").value.trim();
+      const note = document.getElementById("paymentNote").value.trim();
+
+      if(!paymentRef){
+        alert("Please enter the payment reference / UTR after paying.");
+        return;
+      }
+
+      const requestId = "req_" + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+      const payload = {
+        memberId: currentProfile.memberId,
+        memberName: currentProfile.name,
+        qty,
+        unitPrice,
+        totalAmount,
+        paymentRef,
+        paymentBy,
+        note,
+        paymentLink: currentProfile.paymentLink || "https://rzp.io/rzp/cmGYUzJG",
+        status: "pending",
+        submittedAt: Date.now()
+      };
+
+      try{
+        document.getElementById("requestStatusText").textContent = "Submitting your purchase request...";
+        await set(ref(rtdb, `${SHARE_MEMBER_PORTAL_PATH}/${currentToken}/purchaseRequests/${requestId}`), payload);
+        document.getElementById("paymentRef").value = "";
+        document.getElementById("paymentBy").value = "";
+        document.getElementById("paymentNote").value = "";
+        document.getElementById("requestStatusText").textContent = "Purchase request submitted. It will reflect in your shares after admin approval.";
+      }catch(error){
+        console.error(error);
+        document.getElementById("requestStatusText").textContent = "";
+        alert("Could not submit your purchase request.\n\n" + (error?.message || "Unknown error"));
+      }
+    }
+
+    document.getElementById("openAccessBtn").addEventListener("click", () => {
+      loadPortal(document.getElementById("accessInput").value);
+    });
+
+    document.getElementById("buyQty").addEventListener("input", updateBuyTotal);
+    document.getElementById("submitRequestBtn").addEventListener("click", submitPurchaseRequest);
+    document.getElementById("copyLinkBtn").addEventListener("click", async () => {
+      if(!currentToken){
+        alert("Open your dashboard first.");
+        return;
+      }
+      const shareUrl = new URL(`member-dashboard.html?access=${encodeURIComponent(currentToken)}`, location.href).href;
+      await copyText(shareUrl, "Dashboard link copied.");
+    });
+
+    const params = new URLSearchParams(location.search);
+    const initialToken = params.get("access") || localStorage.getItem(STORAGE_KEY) || "";
+    if(initialToken){
+      document.getElementById("accessInput").value = initialToken;
+      loadPortal(initialToken);
+    }else{
+      setGate("Paste the access code from admin to open your member dashboard.");
+    }
+  </script>
+</body>
+</html>
