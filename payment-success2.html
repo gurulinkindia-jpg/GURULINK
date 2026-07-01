@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1, viewport-fit=cover">
 <title>Payment Success2</title>
 
 <style>
@@ -16,6 +16,9 @@ p{font-size:15px;line-height:1.6;}
 .error{color:red;font-weight:bold;}
 .debug{font-size:12px;color:#555;word-break:break-all;}
 </style>
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -66,7 +69,9 @@ const params = new URLSearchParams(window.location.search);
 let token = cleanValue(
   params.get("token") ||
   params.get("reference_id") ||
-  params.get("razorpay_payment_link_reference_id")
+  params.get("razorpay_payment_link_reference_id") ||
+  sessionStorage.getItem("renewPaymentToken") ||
+  localStorage.getItem("renewPaymentToken")
 );
 
 let type = cleanValue(params.get("type")).toLowerCase();
@@ -123,6 +128,44 @@ async function loadPendingByType() {
   return !!id && !!type;
 }
 
+async function loadLatestPendingAnyType() {
+  const candidates = [];
+
+  for (const candidateType of ["teacher", "institution"]) {
+    const latestSnap = await get(
+      ref(db, "pendingPaymentsLatest/" + candidateType)
+    );
+
+    if (!latestSnap.exists()) continue;
+
+    const pending = latestSnap.val() || {};
+    const createdAt = Number(pending.createdAt || 0);
+    const age = Date.now() - createdAt;
+
+    if (
+      pending.flow === "renewal" &&
+      pending.status === "pending" &&
+      age >= 0 &&
+      age <= 30 * 60 * 1000
+    ) {
+      candidates.push(pending);
+    }
+  }
+
+  if (!candidates.length) return false;
+
+  candidates.sort(
+    (a, b) => Number(b.createdAt || 0) - Number(a.createdAt || 0)
+  );
+
+  const pending = candidates[0];
+  id = cleanValue(pending.profileId);
+  type = cleanValue(pending.type).toLowerCase();
+  token = cleanValue(pending.token) || token;
+
+  return !!id && (type === "teacher" || type === "institution");
+}
+
 function fallbackFromUrlAndStorage() {
   const returnData = cleanValue(params.get("returnData"));
 
@@ -175,6 +218,10 @@ async function resolvePaymentContext() {
 
   if (!ok) {
     fallbackFromUrlAndStorage();
+  }
+
+  if (!id || !type) {
+    ok = await loadLatestPendingAnyType();
   }
 
   console.log("SUCCESS2 URL:", window.location.href);
@@ -269,6 +316,17 @@ async function savePayment() {
       lastPaymentToken: token || ""
     });
 
+    localStorage.setItem("profileId", id);
+    localStorage.setItem("renewProfileId", id);
+    localStorage.setItem("role", finalType);
+    localStorage.setItem("renewRole", finalType);
+    sessionStorage.setItem("profileId", id);
+    sessionStorage.setItem("renewProfileId", id);
+    sessionStorage.setItem("role", finalType);
+    sessionStorage.setItem("renewRole", finalType);
+    localStorage.removeItem("renewPaymentToken");
+    sessionStorage.removeItem("renewPaymentToken");
+
     await cleanupPending(finalType);
 
     loader.style.display = "none";
@@ -299,3 +357,5 @@ savePayment();
 </script>
 </body>
 </html>
+
+
