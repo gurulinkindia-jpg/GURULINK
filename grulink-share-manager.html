@@ -1021,6 +1021,20 @@ function updateRecipients(){
   rateInput.disabled = false;
 }
 
+function updateWithdrawHint(){
+  const memberId = document.getElementById("withdrawMember").value;
+
+  if(!memberId){
+    document.getElementById("withdrawHint").textContent =
+      "Available incentive: Rs. 0. Total earned: Rs. 0. Already withdrawn: Rs. 0.";
+    return;
+  }
+
+  const stats = memberStats(memberId);
+  document.getElementById("withdrawHint").textContent =
+    `Available incentive: ${money(stats.incentive)}. Total earned: ${money(stats.incentiveEarned)}. Already withdrawn: ${money(stats.withdrawn)}.`;
+}
+
 function render(){
   const eligibleCount = eligible();
   const activeEligibleCount = activeEligible();
@@ -1043,6 +1057,7 @@ function render(){
   document.getElementById("withdrawMember").innerHTML = options();
   document.getElementById("resignMember").innerHTML = options(false, true);
   updateRecipients();
+  updateWithdrawHint();
 
   document.getElementById("feeHint").textContent =
     `Current minimum fee: ${money(bandValue(shareDb.fees, eligibleCount))}. Founder joins are excluded.`;
@@ -1621,11 +1636,7 @@ document.getElementById("shareActionForm").onsubmit = event => {
   persistDb("Share action recorded.");
 };
 
-document.getElementById("withdrawMember").onchange = () => {
-  const memberId = document.getElementById("withdrawMember").value;
-  document.getElementById("withdrawHint").textContent =
-    `Available incentive: ${money(memberId ? memberStats(memberId).incentive : 0)}. Incentive is separate from shares.`;
-};
+document.getElementById("withdrawMember").onchange = updateWithdrawHint;
 
 document.getElementById("withdrawForm").onsubmit = event => {
   event.preventDefault();
