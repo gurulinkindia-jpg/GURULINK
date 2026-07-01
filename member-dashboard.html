@@ -386,6 +386,7 @@
 
     const SHARE_MEMBER_PORTAL_PATH = "shareManagerPortal/members";
     const STORAGE_KEY = "grulink-member-portal-token";
+    const MEMBER_DASHBOARD_PUBLIC_URL = "https://www.gurulink.co.in/member-dashboard.html";
 
     let currentToken = "";
     let currentProfile = null;
@@ -625,7 +626,7 @@
         alert("Open your dashboard first.");
         return;
       }
-      const shareUrl = new URL(`member-dashboard.html?access=${encodeURIComponent(currentToken)}`, location.href).href;
+      const shareUrl = `${MEMBER_DASHBOARD_PUBLIC_URL}?access=${encodeURIComponent(currentToken)}`;
       await copyText(shareUrl, "Dashboard link copied.");
     });
 
