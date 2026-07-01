@@ -1,0 +1,1379 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>GURULINK Share Manager</title>
+  <style>
+    :root{
+      --ink:#17221d;
+      --muted:#69736e;
+      --paper:#f5f1e8;
+      --card:#fffdf8;
+      --green:#185f48;
+      --gold:#d8a93d;
+      --red:#a43d35;
+      --line:#ddd8cc;
+      --blue:#1e6bd6;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:var(--paper);
+      color:var(--ink);
+      font:15px/1.45 system-ui,Segoe UI,sans-serif;
+    }
+    header{
+      background:var(--green);
+      color:#fff;
+      padding:24px max(20px,calc((100% - 1180px)/2));
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+    h1{margin:0;font-size:30px}
+    header p{margin:5px 0 0;opacity:.82}
+    .headerActions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .wrap{
+      max-width:1180px;
+      margin:auto;
+      padding:24px 20px 60px;
+    }
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:12px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:18px;
+      box-shadow:0 2px 8px #2030280b;
+    }
+    .stat b{
+      display:block;
+      font-size:25px;
+      margin-top:5px;
+    }
+    .muted{color:var(--muted);font-size:13px}
+    .tabs{
+      display:flex;
+      gap:8px;
+      margin:22px 0 14px;
+      flex-wrap:wrap;
+    }
+    .tabs button{
+      background:transparent;
+      color:var(--ink);
+      border:1px solid var(--line);
+    }
+    .tabs button.active{
+      background:var(--ink);
+      color:#fff;
+    }
+    .panel{display:none}
+    .panel.active{display:block}
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1.35fr;
+      gap:16px;
+    }
+    h2,h3{margin-top:0}
+    label{display:block;font-weight:650;margin:10px 0 4px}
+    input,select{
+      width:100%;
+      padding:10px;
+      border:1px solid #c9c5bb;
+      border-radius:8px;
+      background:#fff;
+      color:var(--ink);
+    }
+    button{
+      border:1px solid transparent;
+      background:var(--green);
+      color:#fff;
+      border-radius:8px;
+      padding:10px 14px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    button:disabled{
+      opacity:.6;
+      cursor:not-allowed;
+    }
+    .secondary{
+      background:#fff;
+      color:var(--ink);
+      border-color:var(--line);
+    }
+    .danger{background:var(--red)}
+    .actions{
+      display:flex;
+      gap:8px;
+      margin-top:14px;
+      flex-wrap:wrap;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:14px;
+    }
+    th,td{
+      text-align:left;
+      padding:10px 8px;
+      border-bottom:1px solid var(--line);
+      vertical-align:top;
+    }
+    th{
+      color:var(--muted);
+      font-size:12px;
+      text-transform:uppercase;
+    }
+    .scroll{overflow:auto}
+    .notice{
+      border-left:4px solid var(--gold);
+      background:#fff8e5;
+      padding:12px;
+      margin-bottom:16px;
+      border-radius:6px;
+    }
+    .good{color:var(--green);font-weight:700}
+    .bad{color:var(--red);font-weight:700}
+    .band{
+      display:grid;
+      grid-template-columns:1fr 1fr 1fr auto;
+      gap:8px;
+      margin:7px 0;
+    }
+    .founders{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+      margin-bottom:16px;
+    }
+    .founders .card b{
+      font-size:20px;
+      display:block;
+    }
+    .empty{
+      text-align:center;
+      color:var(--muted);
+      padding:28px;
+    }
+    .statusBar{
+      margin-bottom:16px;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .statusPill{
+      background:#eef6ff;
+      color:var(--blue);
+      border:1px solid #cfe0ff;
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:13px;
+      font-weight:600;
+    }
+    .gate{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+    .gateCard{
+      max-width:520px;
+      width:100%;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      box-shadow:0 10px 30px #00000012;
+      padding:26px;
+      text-align:center;
+    }
+    .hidden{display:none !important}
+    @media(max-width:800px){
+      .stats,.founders{grid-template-columns:1fr 1fr}
+      .grid{grid-template-columns:1fr}
+    }
+    @media(max-width:500px){
+      .stats,.founders{grid-template-columns:1fr}
+      .band{grid-template-columns:1fr 1fr}
+      .band button{grid-column:2}
+      header{align-items:flex-start}
+    }
+  </style>
+</head>
+<body>
+<div id="accessGate" class="gate">
+  <div class="gateCard">
+    <h2 style="margin-top:0;">Checking admin access...</h2>
+    <p class="muted" id="gateMessage">Please wait while GURULINK verifies your account.</p>
+    <div class="actions" style="justify-content:center;">
+      <button type="button" class="secondary" onclick="location.href='admin-register.html'">Go To Admin Login</button>
+    </div>
+  </div>
+</div>
+
+<div id="appShell" class="hidden">
+  <header>
+    <div>
+      <h1>GURULINK</h1>
+      <p>Share, joining and incentive manager</p>
+    </div>
+    <div class="headerActions">
+      <button type="button" class="secondary" onclick="exportData()">Export Backup</button>
+      <button type="button" class="secondary" onclick="location.href='admin.html'">Back To Admin</button>
+      <button type="button" class="danger" onclick="logoutAdmin()">Logout</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="statusBar">
+      <div class="statusPill" id="syncStatus">Connecting to Firebase...</div>
+      <div class="muted" id="updatedMeta"></div>
+    </div>
+
+    <div class="notice">
+      <b>Rule interpretation:</b> A team member earns 1 share per 10 eligible teacher/institute joins.
+      Founders' joins are recorded but excluded. Incentive is 50% of the amount collected above the minimum fee.
+      Share ownership stays earned, but share value moves up or down based on the current number of active teacher/institute joins.
+    </div>
+
+    <section class="stats" id="stats"></section>
+
+    <nav class="tabs">
+      <button class="active" data-tab="dashboard">Dashboard</button>
+      <button data-tab="members">Team members</button>
+      <button data-tab="joins">Record joining</button>
+      <button data-tab="shares">Shares</button>
+      <button data-tab="payments">Withdrawals</button>
+      <button data-tab="rules">Rules</button>
+    </nav>
+
+    <section id="dashboard" class="panel active">
+      <div class="founders">
+        <div class="card"><span class="muted">Founder</span><b>Jiten Deka</b><span>40,000 locked shares · 40%</span></div>
+        <div class="card"><span class="muted">Founder</span><b>Joysmita</b><span>40,000 locked shares · 40%</span></div>
+        <div class="card"><span class="muted">Team pool</span><b>20,000 shares</b><span>Earned or purchased · 20%</span></div>
+      </div>
+      <div class="card">
+        <h2>Team summary</h2>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Qualifying joins</th>
+                <th>Earned</th>
+                <th>Purchased</th>
+                <th>Current shares</th>
+                <th>Incentive available</th>
+              </tr>
+            </thead>
+            <tbody id="summaryRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="members" class="panel">
+      <div class="grid">
+        <form class="card" id="memberForm">
+          <h2>Add team member</h2>
+          <label for="memberName">Name</label>
+          <input id="memberName" required placeholder="Full name">
+          <label for="memberContact">Phone / ID</label>
+          <input id="memberContact" placeholder="Optional">
+          <button style="margin-top:14px">Add member</button>
+        </form>
+        <div class="card">
+          <h2>Members</h2>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Contact</th>
+                  <th>Added</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="memberRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="joins" class="panel">
+      <div class="grid">
+        <form class="card" id="joinForm">
+          <h2>Record a person joining</h2>
+          <label for="joinOwner">Joined by</label>
+          <select id="joinOwner" required></select>
+          <label for="joinName">Person / institute name</label>
+          <input id="joinName" required>
+          <label for="joinType">Type</label>
+          <select id="joinType">
+            <option>Teacher</option>
+            <option>Institute</option>
+            <option>Other person</option>
+          </select>
+          <label for="joinAmount">Amount collected (Rs.)</label>
+          <input id="joinAmount" type="number" min="0" step="1" required>
+          <p class="muted" id="feeHint"></p>
+          <button>Record joining</button>
+        </form>
+        <div class="card">
+          <h2>Joining ledger</h2>
+          <div class="scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Person</th>
+                  <th>By</th>
+                  <th>Collected</th>
+                  <th>Minimum</th>
+                <th>Incentive</th>
+                <th>Status</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="joinRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="shares" class="panel">
+      <div class="grid">
+        <form class="card" id="purchaseForm">
+          <h2>Buy team shares</h2>
+          <label for="purchaseMember">Team member</label>
+          <select id="purchaseMember" required></select>
+          <label for="purchaseQty">Number of shares</label>
+          <input id="purchaseQty" type="number" min="1" step="1" value="1" required>
+          <p class="muted" id="priceHint"></p>
+          <button>Record purchase</button>
+        </form>
+
+        <form class="card" id="shareActionForm">
+          <h2>Sell or submit shares</h2>
+          <label for="shareFrom">From member</label>
+          <select id="shareFrom" required></select>
+          <label for="shareAction">Action</label>
+          <select id="shareAction">
+            <option value="founder">Submit to founder (2% cut)</option>
+            <option value="member">Sell to another team member</option>
+          </select>
+          <label for="shareTo">Recipient</label>
+          <select id="shareTo" required></select>
+          <label for="shareQty">Number of shares</label>
+          <input id="shareQty" type="number" min="1" step="1" value="1" required>
+          <label for="shareRate">Agreed price per share (Rs.)</label>
+          <input id="shareRate" type="number" min="0" step="1">
+          <p class="muted">Founder submission uses the current official share value and deducts 2%. A member sale uses the agreed price and has no automatic deduction.</p>
+          <button>Record share action</button>
+        </form>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h2>Share ledger</h2>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Transaction</th>
+                <th>Shares</th>
+                <th>Rate</th>
+                <th>Deduction</th>
+                <th>Net paid</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="shareRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="payments" class="panel">
+      <div class="grid">
+        <form class="card" id="withdrawForm">
+          <h2>Withdraw incentive</h2>
+          <label for="withdrawMember">Team member</label>
+          <select id="withdrawMember" required></select>
+          <label for="withdrawAmount">Amount (Rs.)</label>
+          <input id="withdrawAmount" type="number" min="1" step="0.01" required>
+          <p class="muted" id="withdrawHint">Incentive is separate from shares and can be withdrawn directly.</p>
+          <button>Record withdrawal</button>
+        </form>
+
+        <form class="card" id="resignForm">
+          <h2>Member resignation</h2>
+          <label for="resignMember">Team member</label>
+          <select id="resignMember" required></select>
+          <label for="resignFounder">Submit all shares to</label>
+          <select id="resignFounder">
+            <option value="jiten">Jiten Deka</option>
+            <option value="joysmita">Joysmita</option>
+          </select>
+          <p class="muted">All current shares are returned at the current value with a 2% cut. Qualifying joinings left below the next 10-person milestone receive Rs. 50 each with a 2% cut. Available incentive remains separately withdrawable.</p>
+          <button class="danger">Complete resignation</button>
+        </form>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h2>Payment ledger</h2>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Type</th>
+                <th>Gross</th>
+                <th>2% cut</th>
+                <th>Net</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="paymentRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="rules" class="panel">
+      <div class="grid">
+        <div class="card">
+          <h2>Joining-fee tiers</h2>
+          <p class="muted">Based on total eligible team joins, before the new joining is added.</p>
+          <div id="feeBands"></div>
+          <button class="secondary" type="button" onclick="addBand('fees')">Add tier</button>
+        </div>
+
+        <div class="card">
+          <h2>Share-price tiers</h2>
+          <p class="muted">Based on total eligible team joins.</p>
+          <div id="priceBands"></div>
+          <button class="secondary" type="button" onclick="addBand('prices')">Add tier</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <h2>Data</h2>
+        <div class="actions">
+          <button type="button" onclick="saveRules()">Save rules</button>
+          <button type="button" class="secondary" onclick="document.getElementById('importFile').click()">Import backup</button>
+          <button type="button" class="danger" onclick="resetAll()">Erase all data</button>
+          <input hidden type="file" id="importFile" accept="application/json">
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getDatabase, ref, get, onValue, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+  authDomain:"gurulink-59cc7.firebaseapp.com",
+  databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"gurulink-59cc7",
+  storageBucket:"gurulink-59cc7.firebasestorage.app",
+  messagingSenderId:"112148672399",
+  appId:"1:112148672399:web:60f8f4bfc0d0a4ce5b8a1f"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const rtdb = getDatabase(app);
+
+const CACHE_KEY = "grulink-share-manager-cache-v2";
+const SHARE_MANAGER_PATH = "shareManager/main";
+
+const defaults = {
+  members: [],
+  joins: [],
+  purchases: [],
+  shareActions: [],
+  withdrawals: [],
+  settlements: [],
+  fees: [
+    { min:0, max:1000, value:50 },
+    { min:1001, max:10000, value:100 },
+    { min:10001, max:50000, value:200 },
+    { min:50001, max:100000, value:400 },
+    { min:100001, max:200000, value:800 }
+  ],
+  prices: [
+    { min:0, max:1000, value:500 },
+    { min:1001, max:50000, value:1000 },
+    { min:50001, max:100000, value:2000 },
+    { min:100001, max:200000, value:4000 }
+  ],
+  meta: {
+    updatedAt: 0,
+    updatedBy: "",
+    updatedByEmail: ""
+  }
+};
+
+const founders = [
+  { id:"jiten", name:"Jiten Deka" },
+  { id:"joysmita", name:"Joysmita" }
+];
+
+let currentUser = null;
+let shareDb = clone(defaults);
+let liveTeacherActiveCount = 0;
+let liveInstitutionActiveCount = 0;
+let liveTeachersLoaded = false;
+let liveInstitutionsLoaded = false;
+
+function clone(value){
+  return JSON.parse(JSON.stringify(value));
+}
+
+function normalizeDb(value){
+  const incoming = value && typeof value === "object" ? value : {};
+  return {
+    members: Array.isArray(incoming.members) ? incoming.members : clone(defaults.members),
+    joins: Array.isArray(incoming.joins) ? incoming.joins : clone(defaults.joins),
+    purchases: Array.isArray(incoming.purchases) ? incoming.purchases : clone(defaults.purchases),
+    shareActions: Array.isArray(incoming.shareActions) ? incoming.shareActions : clone(defaults.shareActions),
+    withdrawals: Array.isArray(incoming.withdrawals) ? incoming.withdrawals : clone(defaults.withdrawals),
+    settlements: Array.isArray(incoming.settlements) ? incoming.settlements : clone(defaults.settlements),
+    fees: Array.isArray(incoming.fees) ? incoming.fees : clone(defaults.fees),
+    prices: Array.isArray(incoming.prices) ? incoming.prices : clone(defaults.prices),
+    meta: incoming.meta && typeof incoming.meta === "object"
+      ? {
+          updatedAt: Number(incoming.meta.updatedAt || 0),
+          updatedBy: String(incoming.meta.updatedBy || ""),
+          updatedByEmail: String(incoming.meta.updatedByEmail || "")
+        }
+      : clone(defaults.meta)
+  };
+}
+
+function loadCache(){
+  try{
+    return normalizeDb(JSON.parse(localStorage.getItem(CACHE_KEY) || "{}"));
+  }catch(_error){
+    return clone(defaults);
+  }
+}
+
+function saveCache(){
+  localStorage.setItem(CACHE_KEY, JSON.stringify(shareDb));
+}
+
+function hasMeaningfulData(value){
+  const data = normalizeDb(value);
+  return (
+    data.members.length > 0 ||
+    data.joins.length > 0 ||
+    data.purchases.length > 0 ||
+    data.shareActions.length > 0 ||
+    data.withdrawals.length > 0 ||
+    data.settlements.length > 0
+  );
+}
+
+function setGateMessage(text){
+  document.getElementById("gateMessage").textContent = text;
+}
+
+function setSyncStatus(text){
+  document.getElementById("syncStatus").textContent = text;
+}
+
+function updateMeta(){
+  const meta = shareDb.meta || {};
+  const updatedAt = Number(meta.updatedAt || 0);
+  const email = String(meta.updatedByEmail || "");
+
+  if(!updatedAt){
+    document.getElementById("updatedMeta").textContent = "No Firebase save yet.";
+    return;
+  }
+
+  const dateText = new Date(updatedAt).toLocaleString("en-IN");
+  document.getElementById("updatedMeta").textContent =
+    "Last saved: " + dateText + (email ? " by " + email : "");
+}
+
+function money(value){
+  return "Rs. " + Number(value || 0).toLocaleString("en-IN");
+}
+
+function uid(){
+  return Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+}
+
+function esc(value){
+  return String(value || "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    "\"":"&quot;",
+    "'":"&#039;"
+  }[ch]));
+}
+
+function eligible(){
+  return shareDb.joins.filter(item => !item.founder).length;
+}
+
+function isQualifyingJoin(item){
+  return !item?.founder && (item?.type === "Teacher" || item?.type === "Institute");
+}
+
+function isJoinActive(item){
+  return item?.active !== false;
+}
+
+function activeEligible(){
+  return shareDb.joins.filter(item => isQualifyingJoin(item) && isJoinActive(item)).length;
+}
+
+function isApprovedActiveProfile(profile){
+  return String(profile?.status || "").toLowerCase() === "approved";
+}
+
+function liveProfilesReady(){
+  return liveTeachersLoaded && liveInstitutionsLoaded;
+}
+
+function currentShareValueCount(){
+  if(liveProfilesReady()){
+    return liveTeacherActiveCount + liveInstitutionActiveCount;
+  }
+  return activeEligible();
+}
+
+function currentShareValueSourceText(){
+  if(liveProfilesReady()){
+    return `Live approved profiles: ${currentShareValueCount().toLocaleString("en-IN")}`;
+  }
+  return `Using share-manager join records: ${activeEligible().toLocaleString("en-IN")}`;
+}
+
+function bandValue(bands, count){
+  const band = [...bands]
+    .sort((a,b) => Number(a.min || 0) - Number(b.min || 0))
+    .find(item => count >= Number(item.min || 0) && count <= Number(item.max || 0));
+  return band ? Number(band.value || 0) : 0;
+}
+
+function member(id){
+  return (
+    shareDb.members.find(item => item.id === id) ||
+    founders.find(item => item.id === id) ||
+    { name:"Unknown" }
+  );
+}
+
+function memberStats(id){
+  const joins = shareDb.joins.filter(item => item.owner === id && !item.founder);
+  const qualifyingTeacherJoins = joins.filter(item => item.type === "Teacher" || item.type === "Institute");
+  const teacherCount = qualifyingTeacherJoins.length;
+  const activeTeacherCount = qualifyingTeacherJoins.filter(item => isJoinActive(item)).length;
+  const earned = Math.floor(teacherCount / 10);
+  const bought = shareDb.purchases
+    .filter(item => item.member === id)
+    .reduce((sum,item) => sum + Number(item.qty || 0), 0);
+  const incoming = shareDb.shareActions
+    .filter(item => item.action === "member" && item.to === id)
+    .reduce((sum,item) => sum + Number(item.qty || 0), 0);
+  const outgoing = shareDb.shareActions
+    .filter(item => item.from === id)
+    .reduce((sum,item) => sum + Number(item.qty || 0), 0);
+  const incentiveEarned = joins.reduce((sum,item) => sum + Number(item.incentive || 0), 0);
+  const withdrawn = shareDb.withdrawals
+    .filter(item => item.member === id)
+    .reduce((sum,item) => sum + Number(item.amount || 0), 0);
+
+  return {
+    joins: joins.length,
+    teacher: teacherCount,
+    activeTeacher: activeTeacherCount,
+    earned,
+    bought,
+    total: earned + bought + incoming - outgoing,
+    incentiveEarned,
+    withdrawn,
+    incentive: incentiveEarned - withdrawn,
+    remainder: teacherCount % 10
+  };
+}
+
+function allocated(){
+  return shareDb.members.reduce((sum,item) => sum + memberStats(item.id).total, 0);
+}
+
+function options(includeFounders = false, activeOnly = false){
+  let list = includeFounders ? [...founders, ...shareDb.members] : [...shareDb.members];
+  if(activeOnly){
+    list = list.filter(item => !item.resigned);
+  }
+
+  return list.map(item => {
+    const founderLabel = founders.some(founder => founder.id === item.id) ? " (founder)" : "";
+    const resignedLabel = !founderLabel && item.resigned ? " (resigned)" : "";
+    return `<option value="${esc(item.id)}">${esc(item.name)}${founderLabel}${resignedLabel}</option>`;
+  }).join("");
+}
+
+function renderBands(){
+  [["fees","feeBands"],["prices","priceBands"]].forEach(([key, targetId]) => {
+    document.getElementById(targetId).innerHTML = shareDb[key].map((band,index) => `
+      <div class="band">
+        <input type="number" value="${Number(band.min || 0)}" data-k="${key}" data-i="${index}" data-f="min" aria-label="Minimum">
+        <input type="number" value="${Number(band.max || 0)}" data-k="${key}" data-i="${index}" data-f="max" aria-label="Maximum">
+        <input type="number" value="${Number(band.value || 0)}" data-k="${key}" data-i="${index}" data-f="value" aria-label="Rupees">
+        <button type="button" class="danger" onclick="deleteBand('${key}',${index})">X</button>
+      </div>
+    `).join("");
+  });
+}
+
+function updateRecipients(){
+  const action = document.getElementById("shareAction").value;
+  const from = document.getElementById("shareFrom").value;
+  const target = document.getElementById("shareTo");
+  const rateInput = document.getElementById("shareRate");
+  const currentShareValue = bandValue(shareDb.prices, currentShareValueCount());
+
+  if(action === "founder"){
+    target.innerHTML = founders.map(item => `<option value="${item.id}">${esc(item.name)}</option>`).join("");
+    rateInput.disabled = true;
+    rateInput.value = currentShareValue;
+    return;
+  }
+
+  target.innerHTML = shareDb.members
+    .filter(item => !item.resigned && item.id !== from)
+    .map(item => `<option value="${item.id}">${esc(item.name)}</option>`)
+    .join("");
+
+  rateInput.disabled = false;
+}
+
+function render(){
+  const eligibleCount = eligible();
+  const activeEligibleCount = activeEligible();
+  const liveApprovedCount = currentShareValueCount();
+  const allocatedShares = allocated();
+
+  document.getElementById("stats").innerHTML = `
+    <div class="card stat"><span class="muted">Total shares</span><b>100,000</b></div>
+    <div class="card stat"><span class="muted">Team shares allocated</span><b>${allocatedShares.toLocaleString("en-IN")}</b><span class="muted">of 20,000</span></div>
+    <div class="card stat"><span class="muted">Live active teacher / institutes</span><b>${liveApprovedCount.toLocaleString("en-IN")}</b><span class="muted">${liveProfilesReady() ? `Teachers: ${liveTeacherActiveCount.toLocaleString("en-IN")} · Institutes: ${liveInstitutionActiveCount.toLocaleString("en-IN")}` : `Ledger active joins: ${activeEligibleCount.toLocaleString("en-IN")}`}</span></div>
+    <div class="card stat"><span class="muted">Current minimum / share value</span><b>${money(bandValue(shareDb.fees, eligibleCount))} / ${money(bandValue(shareDb.prices, liveApprovedCount))}</b><span class="muted">Share value source: ${currentShareValueSourceText()}</span></div>
+  `;
+
+  document.getElementById("joinOwner").innerHTML =
+    founders.map(item => `<option value="${item.id}">${esc(item.name)} (founder)</option>`).join("") +
+    options(false, true);
+
+  document.getElementById("purchaseMember").innerHTML = options(false, true);
+  document.getElementById("shareFrom").innerHTML = options(false, true);
+  document.getElementById("withdrawMember").innerHTML = options();
+  document.getElementById("resignMember").innerHTML = options(false, true);
+  updateRecipients();
+
+  document.getElementById("feeHint").textContent =
+    `Current minimum fee: ${money(bandValue(shareDb.fees, eligibleCount))}. Founder joins are excluded.`;
+  document.getElementById("priceHint").textContent =
+    `Current price per share: ${money(bandValue(shareDb.prices, liveApprovedCount))}. Based on ${currentShareValueSourceText()}. ${Math.max(0, 20000 - allocatedShares).toLocaleString("en-IN")} team shares remain.`;
+
+  document.getElementById("summaryRows").innerHTML = shareDb.members.length
+    ? shareDb.members.map(item => {
+        const stats = memberStats(item.id);
+        return `
+          <tr>
+            <td>${esc(item.name)}${item.resigned ? ' <span class="bad">(resigned)</span>' : ""}</td>
+            <td>${stats.teacher} total<br><span class="muted">${stats.activeTeacher} active · ${stats.remainder} toward next 10</span></td>
+            <td>${stats.earned}</td>
+            <td>${stats.bought}</td>
+            <td><b>${stats.total}</b></td>
+            <td>${money(stats.incentive)}</td>
+          </tr>
+        `;
+      }).join("")
+    : '<tr><td class="empty" colspan="6">No team members yet</td></tr>';
+
+  document.getElementById("memberRows").innerHTML = shareDb.members.length
+    ? shareDb.members.map(item => `
+        <tr>
+          <td>${esc(item.name)}</td>
+          <td>${esc(item.contact || "-")}</td>
+          <td>${item.date ? new Date(item.date).toLocaleDateString("en-IN") : "-"}</td>
+          <td><button type="button" class="danger" onclick="removeMember('${item.id}')">Delete</button></td>
+        </tr>
+      `).join("")
+    : '<tr><td class="empty" colspan="4">No members</td></tr>';
+
+  document.getElementById("joinRows").innerHTML = shareDb.joins.length
+    ? [...shareDb.joins].reverse().map(item => {
+        const qualifying = isQualifyingJoin(item);
+        const active = isJoinActive(item);
+        const statusHtml = qualifying
+          ? `<span class="${active ? "good" : "bad"}">${active ? "Active" : "Left / Inactive"}</span>`
+          : `<span class="muted">Not counted</span>`;
+        const toggleHtml = qualifying
+          ? `<button type="button" class="secondary" onclick="toggleJoinActive('${item.id}')">${active ? "Mark Left" : "Mark Active"}</button>`
+          : "";
+
+        return `
+          <tr>
+            <td>${esc(item.name)}<br><span class="muted">${esc(item.type)}</span></td>
+            <td>${esc(member(item.owner).name)}${item.founder ? " (excluded)" : ""}</td>
+            <td>${money(item.amount)}</td>
+            <td>${money(item.minimum)}</td>
+            <td>${money(item.incentive)}</td>
+            <td>${statusHtml}</td>
+            <td>${toggleHtml} <button type="button" class="danger" onclick="removeItem('joins','${item.id}')">X</button></td>
+          </tr>
+        `;
+      }).join("")
+    : '<tr><td class="empty" colspan="7">No joinings recorded</td></tr>';
+
+  const allShares = [
+    ...shareDb.purchases.map(item => ({ ...item, kind:"purchase" })),
+    ...shareDb.shareActions.map(item => ({ ...item, kind:"action" }))
+  ].sort((a,b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+  document.getElementById("shareRows").innerHTML = allShares.length
+    ? allShares.map(item => {
+        if(item.kind === "purchase"){
+          return `
+            <tr>
+              <td>${esc(member(item.member).name)} purchased</td>
+              <td>${Number(item.qty || 0)}</td>
+              <td>${money(item.rate)}</td>
+              <td>-</td>
+              <td>${money(Number(item.qty || 0) * Number(item.rate || 0))}</td>
+              <td><button type="button" class="danger" onclick="removeItem('purchases','${item.id}')">X</button></td>
+            </tr>
+          `;
+        }
+        return `
+          <tr>
+            <td>${esc(member(item.from).name)} -> ${esc(member(item.to).name)}</td>
+            <td>${Number(item.qty || 0)}</td>
+            <td>${money(item.rate)}</td>
+            <td>${money(item.deduction)}</td>
+            <td>${money(item.net)}</td>
+            <td><button type="button" class="danger" onclick="removeItem('shareActions','${item.id}')">X</button></td>
+          </tr>
+        `;
+      }).join("")
+    : '<tr><td class="empty" colspan="6">No share transactions</td></tr>';
+
+  const payments = [
+    ...shareDb.withdrawals.map(item => ({
+      ...item,
+      type:"Incentive withdrawal",
+      gross:item.amount,
+      deduction:0,
+      net:item.amount
+    })),
+    ...shareDb.settlements
+  ].sort((a,b) => new Date(b.date || 0) - new Date(a.date || 0));
+
+  document.getElementById("paymentRows").innerHTML = payments.length
+    ? payments.map(item => `
+        <tr>
+          <td>${esc(member(item.member).name)}</td>
+          <td>${esc(item.type)}</td>
+          <td>${money(item.gross)}</td>
+          <td>${money(item.deduction)}</td>
+          <td>${money(item.net)}</td>
+          <td>${item.date ? new Date(item.date).toLocaleDateString("en-IN") : "-"}</td>
+        </tr>
+      `).join("")
+    : '<tr><td class="empty" colspan="6">No payments</td></tr>';
+
+  renderBands();
+  updateMeta();
+}
+
+async function persistDb(successMessage = ""){
+  if(!currentUser){
+    alert("Admin session not found. Please log in again.");
+    return;
+  }
+
+  shareDb.meta = {
+    updatedAt: Date.now(),
+    updatedBy: currentUser.uid,
+    updatedByEmail: currentUser.email || ""
+  };
+
+  setSyncStatus("Saving to Firebase...");
+
+  try{
+    await set(ref(rtdb, SHARE_MANAGER_PATH), shareDb);
+    saveCache();
+    setSyncStatus(successMessage || "Saved to Firebase.");
+    render();
+  }catch(error){
+    console.error(error);
+    setSyncStatus("Save failed.");
+    alert("Could not save share manager data to Firebase.\n\n" + (error?.message || "Unknown error"));
+  }
+}
+
+function removeItem(listKey, id){
+  if(!confirm("Delete this record?")){
+    return;
+  }
+  shareDb[listKey] = shareDb[listKey].filter(item => item.id !== id);
+  persistDb("Record deleted.");
+}
+
+function removeMember(id){
+  const used =
+    shareDb.joins.some(item => item.owner === id) ||
+    shareDb.purchases.some(item => item.member === id) ||
+    shareDb.shareActions.some(item => item.from === id || item.to === id) ||
+    shareDb.withdrawals.some(item => item.member === id) ||
+    shareDb.settlements.some(item => item.member === id);
+
+  if(used){
+    alert("Delete this member's transaction records first.");
+    return;
+  }
+
+  removeItem("members", id);
+}
+
+function toggleJoinActive(id){
+  const join = shareDb.joins.find(item => item.id === id);
+
+  if(!join){
+    alert("Joining record not found.");
+    return;
+  }
+
+  if(!isQualifyingJoin(join)){
+    alert("Only teacher/institute joins affect current share value.");
+    return;
+  }
+
+  join.active = !isJoinActive(join);
+  persistDb(join.active ? "Join record marked active." : "Join record marked left/inactive.");
+}
+
+function addBand(key){
+  shareDb[key].push({ min:0, max:0, value:0 });
+  renderBands();
+}
+
+function deleteBand(key, index){
+  shareDb[key].splice(index, 1);
+  renderBands();
+}
+
+function saveRules(){
+  document.querySelectorAll(".band input").forEach(input => {
+    const key = input.dataset.k;
+    const index = Number(input.dataset.i || 0);
+    const field = input.dataset.f;
+    shareDb[key][index][field] = Number(input.value || 0);
+  });
+
+  for(const key of ["fees","prices"]){
+    shareDb[key].sort((a,b) => Number(a.min || 0) - Number(b.min || 0));
+    const invalid = shareDb[key].some((band,index) => {
+      const min = Number(band.min || 0);
+      const max = Number(band.max || 0);
+      if(min > max){
+        return true;
+      }
+      if(index === 0){
+        return false;
+      }
+      return min <= Number(shareDb[key][index - 1].max || 0);
+    });
+
+    if(invalid){
+      alert(`Fix overlapping or invalid ${key} tiers.`);
+      return;
+    }
+  }
+
+  persistDb("Rules saved to Firebase.");
+}
+
+function exportData(){
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(
+    new Blob([JSON.stringify(shareDb, null, 2)], { type:"application/json" })
+  );
+  link.download = "grulink-backup-" + new Date().toISOString().slice(0,10) + ".json";
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+function resetAll(){
+  if(!confirm("Erase every team member and transaction? This cannot be undone.")){
+    return;
+  }
+  shareDb = clone(defaults);
+  persistDb("All Firebase data erased.");
+}
+
+async function bootstrapShareManager(user){
+  currentUser = user;
+  localStorage.setItem("uid", user.uid);
+  localStorage.setItem("profileId", user.uid);
+  localStorage.setItem("role", "admin");
+
+  const remoteRef = ref(rtdb, SHARE_MANAGER_PATH);
+  const remoteSnap = await get(remoteRef);
+  const cachedData = loadCache();
+
+  if(!remoteSnap.exists() && hasMeaningfulData(cachedData)){
+    shareDb = normalizeDb(cachedData);
+    await persistDb("Local backup moved to Firebase.");
+  }
+
+  onValue(remoteRef, snapshot => {
+    if(snapshot.exists()){
+      shareDb = normalizeDb(snapshot.val());
+      saveCache();
+      setSyncStatus("Live from Firebase.");
+    }else{
+      shareDb = clone(defaults);
+      saveCache();
+      setSyncStatus("No Firebase data yet.");
+    }
+    render();
+  }, error => {
+    console.error(error);
+    setSyncStatus("Firebase read failed.");
+    alert("Could not read share manager data from Firebase.\n\n" + (error?.message || "Unknown error"));
+  });
+
+  onValue(ref(rtdb, "teachers"), snapshot => {
+    let count = 0;
+    snapshot.forEach(child => {
+      const data = child.val() || {};
+      if(isApprovedActiveProfile(data)){
+        count++;
+      }
+    });
+    liveTeacherActiveCount = count;
+    liveTeachersLoaded = true;
+    render();
+  });
+
+  onValue(ref(rtdb, "institutions"), snapshot => {
+    let count = 0;
+    snapshot.forEach(child => {
+      const data = child.val() || {};
+      if(isApprovedActiveProfile(data)){
+        count++;
+      }
+    });
+    liveInstitutionActiveCount = count;
+    liveInstitutionsLoaded = true;
+    render();
+  });
+}
+
+document.querySelectorAll(".tabs button").forEach(button => {
+  button.onclick = () => {
+    document.querySelectorAll(".tabs button,.panel").forEach(node => node.classList.remove("active"));
+    button.classList.add("active");
+    document.getElementById(button.dataset.tab).classList.add("active");
+  };
+});
+
+document.getElementById("memberForm").onsubmit = event => {
+  event.preventDefault();
+  shareDb.members.push({
+    id: uid(),
+    name: document.getElementById("memberName").value.trim(),
+    contact: document.getElementById("memberContact").value.trim(),
+    date: new Date().toISOString()
+  });
+  event.target.reset();
+  persistDb("Member added.");
+};
+
+document.getElementById("joinForm").onsubmit = event => {
+  event.preventDefault();
+  const owner = document.getElementById("joinOwner").value;
+  const founder = founders.some(item => item.id === owner);
+  const joinType = document.getElementById("joinType").value;
+  const minimum = founder ? 0 : bandValue(shareDb.fees, eligible());
+  const amount = Number(document.getElementById("joinAmount").value || 0);
+
+  if(!founder && amount < minimum && !confirm(`Collected amount is below the ${money(minimum)} minimum. Record anyway?`)){
+    return;
+  }
+
+  shareDb.joins.push({
+    id: uid(),
+    owner,
+    name: document.getElementById("joinName").value.trim(),
+    type: joinType,
+    amount,
+    minimum,
+    incentive: founder ? 0 : Math.max(0, amount - minimum) * 0.5,
+    founder,
+    active: joinType === "Teacher" || joinType === "Institute",
+    date: new Date().toISOString()
+  });
+  event.target.reset();
+  persistDb("Joining saved.");
+};
+
+document.getElementById("purchaseForm").onsubmit = event => {
+  event.preventDefault();
+  const memberId = document.getElementById("purchaseMember").value;
+  const qty = Number(document.getElementById("purchaseQty").value || 0);
+  const rate = bandValue(shareDb.prices, currentShareValueCount());
+
+  if(!memberId){
+    alert("Add a team member first.");
+    return;
+  }
+
+  if(allocated() + qty > 20000){
+    alert("This exceeds the 20,000-share team pool.");
+    return;
+  }
+
+  shareDb.purchases.push({
+    id: uid(),
+    member: memberId,
+    qty,
+    rate,
+    date: new Date().toISOString()
+  });
+  event.target.reset();
+  persistDb("Purchase recorded.");
+};
+
+document.getElementById("shareAction").onchange = updateRecipients;
+document.getElementById("shareFrom").onchange = updateRecipients;
+
+document.getElementById("shareActionForm").onsubmit = event => {
+  event.preventDefault();
+  const from = document.getElementById("shareFrom").value;
+  const to = document.getElementById("shareTo").value;
+  const action = document.getElementById("shareAction").value;
+  const qty = Number(document.getElementById("shareQty").value || 0);
+
+  if(!from || !to){
+    alert("Select both members.");
+    return;
+  }
+
+  if(qty > memberStats(from).total){
+    alert("This member does not have enough shares.");
+    return;
+  }
+
+  const rate = action === "founder"
+    ? bandValue(shareDb.prices, currentShareValueCount())
+    : Number(document.getElementById("shareRate").value || 0);
+
+  const gross = qty * rate;
+  const deduction = action === "founder" ? gross * 0.02 : 0;
+
+  shareDb.shareActions.push({
+    id: uid(),
+    from,
+    to,
+    action,
+    qty,
+    rate,
+    gross,
+    deduction,
+    net: gross - deduction,
+    date: new Date().toISOString()
+  });
+  event.target.reset();
+  persistDb("Share action recorded.");
+};
+
+document.getElementById("withdrawMember").onchange = () => {
+  const memberId = document.getElementById("withdrawMember").value;
+  document.getElementById("withdrawHint").textContent =
+    `Available incentive: ${money(memberId ? memberStats(memberId).incentive : 0)}. Incentive is separate from shares.`;
+};
+
+document.getElementById("withdrawForm").onsubmit = event => {
+  event.preventDefault();
+  const memberId = document.getElementById("withdrawMember").value;
+  const amount = Number(document.getElementById("withdrawAmount").value || 0);
+
+  if(!memberId){
+    alert("Select a member.");
+    return;
+  }
+
+  if(amount > memberStats(memberId).incentive){
+    alert("Withdrawal exceeds the available incentive.");
+    return;
+  }
+
+  shareDb.withdrawals.push({
+    id: uid(),
+    member: memberId,
+    amount,
+    date: new Date().toISOString()
+  });
+  event.target.reset();
+  persistDb("Withdrawal recorded.");
+};
+
+document.getElementById("resignForm").onsubmit = event => {
+  event.preventDefault();
+  const memberId = document.getElementById("resignMember").value;
+  const to = document.getElementById("resignFounder").value;
+
+  if(!memberId){
+    alert("Select an active member.");
+    return;
+  }
+
+  const stats = memberStats(memberId);
+  const rate = bandValue(shareDb.prices, currentShareValueCount());
+  const shareGross = stats.total * rate;
+  const remainderGross = stats.remainder * 50;
+  const gross = shareGross + remainderGross;
+  const deduction = gross * 0.02;
+
+  const confirmText =
+    `Resign ${member(memberId).name}?\n\n` +
+    `Shares returned: ${stats.total}\n` +
+    `Unconverted qualifying joins: ${stats.remainder} x Rs. 50\n` +
+    `Gross: ${money(gross)}\n` +
+    `2% cut: ${money(deduction)}\n` +
+    `Net settlement: ${money(gross - deduction)}\n\n` +
+    `Incentive remains separately withdrawable.`;
+
+  if(!confirm(confirmText)){
+    return;
+  }
+
+  if(stats.total){
+    shareDb.shareActions.push({
+      id: uid(),
+      from: memberId,
+      to,
+      action: "founder",
+      qty: stats.total,
+      rate,
+      gross: shareGross,
+      deduction: shareGross * 0.02,
+      net: shareGross * 0.98,
+      date: new Date().toISOString()
+    });
+  }
+
+  shareDb.settlements.push({
+    id: uid(),
+    member: memberId,
+    type: "Resignation settlement",
+    gross,
+    deduction,
+    net: gross - deduction,
+    remainder: stats.remainder,
+    date: new Date().toISOString()
+  });
+
+  const memberRow = shareDb.members.find(item => item.id === memberId);
+  if(memberRow){
+    memberRow.resigned = true;
+  }
+
+  persistDb("Resignation recorded.");
+};
+
+document.getElementById("importFile").onchange = async event => {
+  try{
+    const file = event.target.files?.[0];
+    if(!file){
+      return;
+    }
+
+    const imported = normalizeDb(JSON.parse(await file.text()));
+    shareDb = imported;
+    await persistDb("Backup imported to Firebase.");
+  }catch(_error){
+    alert("Invalid backup file.");
+  }finally{
+    event.target.value = "";
+  }
+};
+
+window.addBand = addBand;
+window.deleteBand = deleteBand;
+window.removeItem = removeItem;
+window.removeMember = removeMember;
+window.toggleJoinActive = toggleJoinActive;
+window.saveRules = saveRules;
+window.exportData = exportData;
+window.resetAll = resetAll;
+
+window.logoutAdmin = async function(){
+  try{
+    await signOut(auth);
+  }catch(_error){}
+  localStorage.removeItem("uid");
+  localStorage.removeItem("profileId");
+  localStorage.removeItem("role");
+  location.href = "admin-register.html";
+};
+
+onAuthStateChanged(auth, async user => {
+  if(!user){
+    setGateMessage("Please login as admin first.");
+    return;
+  }
+
+  try{
+    const adminSnap = await get(ref(rtdb, "admins/" + user.uid));
+
+    if(!adminSnap.exists()){
+      localStorage.clear();
+      setGateMessage("Access denied. This account is not an admin.");
+      return;
+    }
+
+    document.getElementById("accessGate").classList.add("hidden");
+    document.getElementById("appShell").classList.remove("hidden");
+    setSyncStatus("Firebase connected.");
+    await bootstrapShareManager(user);
+  }catch(error){
+    console.error(error);
+    setGateMessage("Could not verify admin access. " + (error?.message || "Unknown error"));
+  }
+});
+</script>
+</body>
+</html>
