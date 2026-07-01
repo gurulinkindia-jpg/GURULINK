@@ -193,7 +193,7 @@ box-shadow:0 0 0 2px rgba(251,192,45,.16);
 
 .importantLinksComposer{
   display:grid;
-  grid-template-columns:1fr auto;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;
   gap:10px;
   align-items:start;
   margin-bottom:10px;
@@ -949,6 +949,11 @@ Paste and save useful website links here so you can open them later anytime from
 
 <div class="importantLinksComposer">
 <input
+type="text"
+id="importantLinkNameInput"
+placeholder="Enter link name">
+
+<input
 type="url"
 id="importantLinkInput"
 placeholder="Paste important URL here">
@@ -1560,7 +1565,7 @@ return;
 
 list.innerHTML = items.map(item=>`
 <div class="importantLinkItem">
-<div class="importantLinkTitle">${escapeHTML(item.label || getImportantLinkLabel(item.url))}</div>
+<div class="importantLinkTitle">${escapeHTML(item.name || item.label || getImportantLinkLabel(item.url))}</div>
 <div class="importantLinkUrl">${escapeHTML(item.url)}</div>
 <div class="importantLinkActions">
 <button type="button" class="btn blue" onclick="openImportantLink(decodeURIComponent('${encodeURIComponent(item.url)}'))">Open Link</button>
@@ -1605,16 +1610,27 @@ card.scrollIntoView({
 behavior:"smooth",
 block:"start"
 });
-document.getElementById("importantLinkInput")?.focus();
+document.getElementById("importantLinkNameInput")?.focus();
 }
 };
 
 window.saveImportantLink = async function(){
+const nameInput =
+document.getElementById("importantLinkNameInput");
+
 const input =
 document.getElementById("importantLinkInput");
 
+const rawName =
+String(nameInput?.value || "").trim();
+
 const rawUrl =
 String(input?.value || "").trim();
+
+if(!rawName){
+setImportantLinksStatus("Please enter a link name first.","error");
+return;
+}
 
 if(!rawUrl){
 setImportantLinksStatus("Please paste a URL first.","error");
@@ -1634,10 +1650,15 @@ await push(
 ref(db,`students/${uid}/importantLinks`),
 {
 url:finalUrl,
-label:getImportantLinkLabel(finalUrl),
+name:rawName,
+label:rawName,
 createdAt:Date.now()
 }
 );
+
+if(nameInput){
+nameInput.value = "";
+}
 
 if(input){
 input.value = "";
