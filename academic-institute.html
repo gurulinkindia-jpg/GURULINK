@@ -136,7 +136,7 @@ display:block;
 }
 
 .secondaryButton{
-background:#263238;
+background:#1565c0;
 margin:8px 0;
 }
 
@@ -403,12 +403,12 @@ font-weight:bold;
 font-size:15px;
 animation:blink 1.2s infinite;
 ">
-Register Today! Connect with students and grow your teaching journey on <b>GURULINK</b>
+Up to 98% Promotional Discount Going On! Use Promo Code: <b>PRO-98</b>
 </div>
 
 <header>
 <h1>Academics, Education & Career Development Registration</h1>
-<p>1 Year Subscription Fee Rs.50-2000</p>
+<p>1 Year Subscription Fee Rs.5000</p>
 <a href="helpdesk.html" class="helpButton">Help</a>
 </header>
 
@@ -502,11 +502,11 @@ Mathematics, English, JEE Main, NEET UG, Career Counselling
 </div>
 
 <button type="button" id="toggleSkills" class="secondaryButton">
-More Academics & Career Options
+Choose Academics & Career Options
 </button>
 
 <div id="selectedSkills" class="selectedSummary">
-No academic subject or career option selected yet. Click More to open the full chart.
+No academic subject or career option selected yet. Click Choose to open the full chart.
 </div>
 
 <div id="skillsPanel" class="skillsPanel">
@@ -730,11 +730,11 @@ Workshop / Group Session, Super Group Coaching, Individual Coaching
 </div>
 
 <button type="button" id="toggleModes" class="secondaryButton">
-More Training Modes
+Choose Training Modes
 </button>
 
 <div id="selectedModes" class="selectedSummary">
-No training mode selected yet. Click More to open the full chart.
+No training mode selected yet. Click Choose to open the full chart.
 </div>
 
 <div id="modesPanel" class="modesPanel">
@@ -875,7 +875,7 @@ return selected;
 function updateSelectedSkills(){
 selectedSkillValues = collectSelectedSkills();
 const summary = document.getElementById("selectedSkills");
-const emptyMessage = "No academic subject or career option selected yet. Click More to open the full chart.";
+const emptyMessage = "No academic subject or career option selected yet. Click Choose to open the full chart.";
 
 summary.innerText = selectedSkillValues.length ? "Selected: " + selectedSkillValues.join(", ") : emptyMessage;
 
@@ -949,7 +949,7 @@ selected.push(item);
 });
 
 document.getElementById("selectedModes").innerText =
-selected.length ? "Selected: " + selected.join(", ") : "No training mode selected yet. Click More to open the full chart.";
+selected.length ? "Selected: " + selected.join(", ") : "No training mode selected yet. Click Choose to open the full chart.";
 }
 
 function initializeSkillCategories(){
@@ -1161,7 +1161,7 @@ const button = document.getElementById("toggleSkills");
 panel.classList.toggle("open");
 button.innerText = panel.classList.contains("open")
 ? "Hide Academics & Career Chart"
-: "More Academics & Career Options";
+: "Choose Academics & Career Options";
 });
 
 document.getElementById("toggleModes").addEventListener("click",()=>{
@@ -1170,7 +1170,7 @@ const button = document.getElementById("toggleModes");
 panel.classList.toggle("open");
 button.innerText = panel.classList.contains("open")
 ? "Hide Training Modes Chart"
-: "More Training Modes";
+: "Choose Training Modes";
 });
 
 window.initializeSkillCategories();
