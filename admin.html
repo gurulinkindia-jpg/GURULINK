@@ -73,6 +73,10 @@ background:#2e7d32;
 background:#c62828;
 }
 
+.shareManagerBtn{
+background:#6d4c41;
+}
+
 .stats{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(105px,1fr));
@@ -364,7 +368,7 @@ align-items:stretch;
 
 .topbar > div:first-child{
 display:grid;
-grid-template-columns:1fr 1fr 1fr;
+grid-template-columns:1fr 1fr;
 gap:6px;
 width:100%;
 }
@@ -442,6 +446,12 @@ Home
 style="background:#ff9800;"
 onclick="openHelpdesk()">
 Helpdesk
+</button>
+
+<button
+class="shareManagerBtn"
+onclick="location.href='grulink-share-manager.html'">
+Share Manager
 </button>
 
 <button
