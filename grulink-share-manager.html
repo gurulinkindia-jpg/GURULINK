@@ -548,6 +548,7 @@ const CACHE_KEY = "grulink-share-manager-cache-v2";
 const SHARE_MANAGER_PATH = "shareManager/main";
 const SHARE_MEMBER_PORTAL_PATH = "shareManagerPortal/members";
 const SHARE_MEMBER_PAYMENT_LINK = "https://rzp.io/rzp/cmGYUzJG";
+const MEMBER_DASHBOARD_PUBLIC_URL = "https://www.gurulink.co.in/member-dashboard.html";
 
 const defaults = {
   members: [],
@@ -695,12 +696,21 @@ function ensureMemberPortalTokens(){
 }
 
 function portalLinkForToken(token){
-  return `member-dashboard.html?access=${encodeURIComponent(token || "")}`;
+  return `${MEMBER_DASHBOARD_PUBLIC_URL}?access=${encodeURIComponent(token || "")}`;
+}
+
+function portalPreviewLinkForToken(token){
+  return new URL(`member-dashboard.html?access=${encodeURIComponent(token || "")}`, location.href).href;
 }
 
 function portalLinkForMember(memberId){
   const item = shareDb.members.find(entry => entry.id === memberId);
   return item?.portalToken ? portalLinkForToken(item.portalToken) : "";
+}
+
+function portalPreviewLinkForMember(memberId){
+  const item = shareDb.members.find(entry => entry.id === memberId);
+  return item?.portalToken ? portalPreviewLinkForToken(item.portalToken) : "";
 }
 
 async function copyTextValue(value, successMessage = "Copied."){
@@ -728,12 +738,12 @@ window.copyPortalLink = async function(memberId){
 };
 
 window.openPortalLink = function(memberId){
-  const link = portalLinkForMember(memberId);
+  const link = portalPreviewLinkForMember(memberId);
   if(!link){
     alert("Member portal link is not ready yet.");
     return;
   }
-  window.open(link, "_blank");
+  location.href = link;
 };
 
 function statusPill(status){
