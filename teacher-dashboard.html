@@ -1727,14 +1727,14 @@ ${status === 'enrolled' || status === 'accepted' ? 'Mark Pending' : 'Mark Enroll
 ${isAccepted ? `
 <div class="teacherChatHeader">
 <strong>Messages</strong>
-<button class="clearChatBtn" onclick="clearEnrollmentChat('${id}')">Clear Chat</button>
+<button class="clearChatBtn" onclick="clearEnrollmentChat('${resolvedStudentId}')">Clear Chat</button>
 </div>
-<div class="teacherChat" id="chat_${id}">
+<div class="teacherChat" id="chat_${resolvedStudentId}">
 Loading messages...
 </div>
 <div class="messageBox">
-<input id="msg_${id}" placeholder="Message to student">
-<button class="messageBtn" onclick="sendEnrollmentMessage('${id}')">Send</button>
+<input id="msg_${resolvedStudentId}" placeholder="Message to student">
+<button class="messageBtn" onclick="sendEnrollmentMessage('${resolvedStudentId}')">Send</button>
 </div>
 ` : ""}
 </div>
