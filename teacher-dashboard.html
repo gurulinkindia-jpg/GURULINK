@@ -257,6 +257,10 @@ background:#5e35b1;
 background:#00897b;
 }
 
+.websiteBtn{
+background:#2e7d32;
+}
+
 .logoutBtn{
 background:#e53935;
 }
@@ -895,6 +899,10 @@ Quick Actions
      Home
   </button>
 
+  <button id="websiteActionBtn" class="websiteBtn" onclick="openWebsite()">
+    Website
+  </button>
+
   <button class="invoiceBtn" onclick="createInvoice()">
     Create Invoice
   </button>
@@ -1183,6 +1191,40 @@ function updateInvoiceButton(data){
   }
 }
 
+function normalizeWebsiteUrl(url){
+  const clean = String(url || "").trim();
+
+  if(!clean){
+    return "";
+  }
+
+  if(/^https?:\/\//i.test(clean)){
+    return clean;
+  }
+
+  return "https://" + clean;
+}
+
+function updateWebsiteButton(data){
+  const btn = document.getElementById("websiteActionBtn");
+
+  if(!btn){
+    return;
+  }
+
+  const finalUrl = normalizeWebsiteUrl(data?.website || "");
+
+  if(finalUrl){
+    btn.style.opacity = "1";
+    btn.style.cursor = "pointer";
+    btn.title = "";
+  }else{
+    btn.style.opacity = ".55";
+    btn.style.cursor = "not-allowed";
+    btn.title = "Add your website in Edit Profile first";
+  }
+}
+
 
 
 
@@ -1241,6 +1283,7 @@ return;
 const d = snap.val();
 currentProfileData = d;
 updateInvoiceButton(d);
+updateWebsiteButton(d);
 /* BANK DETAILS */
 document.getElementById("accountHolderName").innerText =
 d.accountHolderName || "Not Added";
@@ -2471,6 +2514,18 @@ modal.classList.remove("show");
 
 window.goHome = function() {
   location.href = "index.html";
+};
+
+window.openWebsite = function() {
+  const finalUrl =
+    normalizeWebsiteUrl(currentProfileData.website || "");
+
+  if(!finalUrl){
+    alert("Website not added yet. Please add it in Edit Profile first.");
+    return;
+  }
+
+  window.open(finalUrl,"_blank","noopener");
 };
 
 
