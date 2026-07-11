@@ -327,11 +327,15 @@ textarea {
 
   .topbar {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
+    padding: 14px 16px;
+    gap: 12px;
   }
 
   .top-actions {
     width: 100%;
+    justify-content: center;
   }
 
   .top-actions button {
@@ -352,6 +356,53 @@ textarea {
 
   .business-card {
     transform: scale(0.72);
+  }
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 8px;
+  }
+
+  .topbar {
+    margin-bottom: 12px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    gap: 10px;
+  }
+
+  .header-left {
+    gap: 10px;
+    align-items: center;
+  }
+
+  .header-logo {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    padding: 4px;
+  }
+
+  .header-left h1 {
+    font-size: 16px;
+    line-height: 1.2;
+  }
+
+  .header-left p {
+    margin-top: 4px;
+    font-size: 11px;
+    line-height: 1.35;
+  }
+
+  .top-actions {
+    gap: 8px;
+  }
+
+  .top-actions button {
+    min-width: 0;
+    font-size: 11px;
+    padding: 9px 6px;
+    border-radius: 8px;
   }
 }
 /* ===========================
