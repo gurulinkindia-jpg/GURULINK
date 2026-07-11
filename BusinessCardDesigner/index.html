@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Gurulink Professional Business Card Designer. powered by G10 Group</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Montserrat:wght@400;600;800&family=Playfair+Display:wght@500;700&family=Roboto:wght@400;700&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/editor.css">
+  <link rel="stylesheet" href="css/templates.css">
+  <link rel="stylesheet" href="css/print.css">
+
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <div class="header-left">
+
+        <img
+            src="https://i.ibb.co/5ttr9T9/LOGO-PNG-2025-fab.png"
+            class="header-logo"
+            alt="GuruLink Logo">
+
+        <div>
+
+            <h1>GuruLink Professional Business Card Designer</h1>
+
+            <p>
+                Powered by <strong>G10 Group</strong><br>
+                Design premium QR business cards with professional print-ready output.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="top-actions">
+
+        <button onclick="saveProject()">💾 Save</button>
+
+        <button onclick="loadProject()">📂 Load</button>
+
+        <button onclick="resetProject()">🔄 Reset</button>
+
+    </div>
+
+</header>
+
+<main class="app">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="panel">
+      <h2>Template</h2>
+	  
+	  
+<label>Card Type</label>
+<select id="cardTypeSelect" onchange="updateCardType()">
+  <option value="business">Business Card</option>
+  <option value="student">Student ID Card</option>
+</select>
+
+
+      <label>Choose Template</label>
+      <select id="templateSelect">
+        <option value="tpl-royal-gold">Royal Gold</option>
+        <option value="tpl-black-platinum">Black Platinum</option>
+        <option value="tpl-navy-executive">Navy Executive</option>
+        <option value="tpl-white-minimal">White Minimal</option>
+        <option value="tpl-glass-blue">Glass Blue</option>
+        <option value="tpl-neon-dark">Neon Dark</option>
+        <option value="tpl-marble-gold">Marble Gold</option>
+        <option value="tpl-emerald-premium">Emerald Premium</option>
+        <option value="tpl-purple-creative">Purple Creative</option>
+        <option value="tpl-red-luxury">Red Luxury</option>
+        <option value="tpl-orange-energy">Orange Energy</option>
+        <option value="tpl-silver-tech">Silver Tech</option>
+      </select>
+
+      <label>Font Style</label>
+      <select id="fontSelect">
+        <option value="font-poppins">Poppins</option>
+        <option value="font-montserrat">Montserrat</option>
+        <option value="font-playfair">Playfair Luxury</option>
+        <option value="font-roboto">Roboto</option>
+        <option value="font-oswald">Oswald</option>
+      </select>
+    </div>
+
+<label>Card Orientation</label>
+<select id="orientationSelect">
+  <option value="horizontal">Horizontal Card</option>
+  <option value="vertical">Vertical Card</option>
+</select>
+
+
+
+   <div class="panel" id="businessFields">
+  <h2>Business Details</h2>
+
+  <label>Logo / Profile Image</label>
+  <input type="file" id="logoInput" accept="image/*">
+
+  <label>Name / Business Name</label>
+  <input type="text" id="nameInput" placeholder="Enter name">
+
+  <label>Title / Category</label>
+  <input type="text" id="titleInput" placeholder="Teacher, Trainer, Institute, Business">
+
+  <label>Phone</label>
+  <input type="text" id="phoneInput" placeholder="+91 9876543210">
+
+  <label>Email</label>
+  <input type="email" id="emailInput" placeholder="example@gmail.com">
+
+  <label>Website / Digital Card URL</label>
+  <input type="url" id="urlInput" placeholder="https://www.gurulink.co.in/profile-view.html?id=123">
+
+  <label>Address</label>
+  <textarea id="addressInput" placeholder="Enter address"></textarea>
+</div>
+	
+	
+	
+<div class="panel" id="studentFields" style="display:none;">
+  <h2>Student Details</h2>
+
+<label>School Logo</label>
+<input type="file" id="schoolLogoInput" accept="image/*">
+
+  <label>Student Photo</label>
+  <input type="file" id="studentPhotoInput" accept="image/*">
+
+  <label>Student Name</label>
+  <input type="text" id="studentNameInput" placeholder="Enter student name">
+
+  <label>School / Institute Name</label>
+  <input type="text" id="schoolNameInput" placeholder="Enter school or institute name">
+
+  <label>Class</label>
+  <input type="text" id="classInput" placeholder="Class 10">
+
+  <label>Roll Number</label>
+  <input type="text" id="rollInput" placeholder="Roll No.">
+
+  <label>Student ID</label>
+  <input type="text" id="studentIdInput" placeholder="Student ID">
+
+  <label>Valid Until</label>
+  <input type="text" id="validUntilInput" placeholder="31-03-2027">
+
+  <label>Guardian Phone</label>
+  <input type="text" id="guardianPhoneInput" placeholder="+91 9876543210">
+</div>
+	
+	
+	
+	
+	
+
+    <div class="panel">
+      <h2>QR Code</h2>
+
+      <label>QR Type</label>
+      <select id="qrType">
+        <option value="url">URL Only</option>
+        <option value="vcard">vCard Contact</option>
+        <option value="whatsapp">WhatsApp</option>
+        <option value="email">Email</option>
+        <option value="phone">Phone</option>
+      </select>
+
+      <label>QR Color</label>
+      <input type="color" id="qrColor" value="#000000">
+
+      <label>QR Background</label>
+      <input type="color" id="qrBgColor" value="#ffffff">
+    </div>
+
+  </aside>
+
+  <!-- CENTER EDITOR -->
+  <section class="editor-area">
+
+    <div class="editor-toolbar">
+      <button onclick="zoomOut()">-</button>
+      <span id="zoomLabel">100%</span>
+      <button onclick="zoomIn()">+</button>
+
+      <button onclick="bringSelectedForward()">Bring Forward</button>
+      <button onclick="sendSelectedBackward()">Send Backward</button>
+      <button onclick="deleteSelected()">Delete</button>
+    </div>
+
+    <div class="canvas-stage">
+
+      <div id="cardCanvas" class="business-card tpl-royal-gold font-poppins">
+
+        <div class="decor decor-1"></div>
+        <div class="decor decor-2"></div>
+
+        <div id="logoBlock" class="card-element logo-block" data-type="logo">
+          <img id="cardLogo" class="card-logo" alt="Logo">
+        </div>
+<div id="studentPhotoBlock" class="card-element student-photo-block" data-type="photo" style="display:none;">
+  <img id="studentPhoto" class="student-photo" alt="Student Photo">
+</div>
+
+<div id="studentExtraBlock" class="card-element text-block student-extra-block" data-type="text" style="display:none;">
+  <div id="studentExtraText">
+    Class: -<br>
+    Roll No: -<br>
+    Student ID: -<br>
+    Valid Until: -
+  </div>
+</div>
+        <div id="nameBlock" class="card-element text-block name-block" data-type="text">
+          <div id="cardName">Your Name</div>
+        </div>
+
+        <div id="titleBlock" class="card-element text-block title-block" data-type="text">
+          <div id="cardTitle">Business / Profession</div>
+        </div>
+
+        <div id="phoneBlock" class="card-element text-block phone-block" data-type="text">
+          <div id="cardPhone">📞 Phone Number</div>
+        </div>
+
+        <div id="emailBlock" class="card-element text-block email-block" data-type="text">
+          <div id="cardEmail">✉️ Email Address</div>
+        </div>
+
+        <div id="addressBlock" class="card-element text-block address-block" data-type="text">
+          <div id="cardAddress">📍 Address</div>
+        </div>
+
+        <div id="urlBlock" class="card-element text-block url-block" data-type="text">
+          <div id="cardUrl">Scan QR to open digital business card</div>
+        </div>
+
+        <div id="qrBlock" class="card-element qr-block" data-type="qr">
+          <div class="qr-frame">
+            <div id="qrPreview"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <p class="card-size-note">ATM / CR80 size ratio: 85.6mm × 53.98mm</p>
+
+  </section>
+
+  <!-- RIGHT PANEL -->
+  <aside class="right-panel">
+
+    <div class="panel">
+      <h2>Selected Element</h2>
+
+      <p id="selectedInfo">No element selected</p>
+
+      <label>Font Size</label>
+      <input type="range" id="fontSizeControl" min="8" max="36" value="16">
+
+      <label>Text Color</label>
+      <input type="color" id="textColorControl" value="#ffffff">
+
+      <label>Element Width</label>
+      <input type="range" id="widthControl" min="40" max="400" value="200">
+    </div>
+
+    <div class="panel">
+      <h2>Export</h2>
+
+      <label>Print Sheet</label>
+      <select id="sheetSelect">
+        <option value="a4">A4 Landscape - 9 Cards</option>
+        <option value="a3">A3 Landscape - 20 Cards</option>
+      </select>
+
+      <button onclick="downloadPNG()">Download PNG</button>
+      <button onclick="downloadSinglePDF()">Single Card PDF</button>
+      <button onclick="downloadPrintPDF()">Print Sheet PDF</button>
+      <button onclick="printSheet()">Print Preview</button>
+    </div>
+
+  </aside>
+
+</main>
+
+<!-- Hidden Print Area -->
+<section id="printArea" class="print-area">
+  <div id="printSheet" class="print-sheet"></div>
+</section>
+
+<!-- JS -->
+<script src="js/templates.js"></script>
+<script src="js/qr.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/export.js"></script>
+<script src="js/print.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

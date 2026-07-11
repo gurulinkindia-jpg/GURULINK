@@ -1,0 +1,120 @@
+/* Selection */
+.card-element.selected::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border: 2px dashed #00e5ff;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.card-element.selected::after {
+  content: "Drag";
+  position: absolute;
+  top: -26px;
+  left: 0;
+  background: #00e5ff;
+  color: #003044;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 3px 7px;
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+/* Resize handle */
+.resize-handle {
+  position: absolute;
+  width: 13px;
+  height: 13px;
+  right: -8px;
+  bottom: -8px;
+  background: #00e5ff;
+  border: 2px solid white;
+  border-radius: 50%;
+  cursor: nwse-resize;
+  z-index: 50;
+}
+
+/* Active editor panel */
+#selectedInfo {
+  padding: 10px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #334155;
+}
+
+/* Range inputs */
+input[type="range"] {
+  accent-color: #1565c0;
+}
+
+/* Toolbar polish */
+.editor-toolbar {
+  background: #f8fafc;
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+}
+
+.editor-toolbar button {
+  font-size: 13px;
+  padding: 9px 12px;
+}
+
+/* Canvas hover */
+.card-element:hover {
+  outline: 1px dashed rgba(0, 229, 255, 0.6);
+  outline-offset: 3px;
+}
+
+/* QR element should stay clean */
+.qr-block.selected .qr-frame {
+  box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.5);
+}
+
+/* Text editing visual */
+.text-block[contenteditable="true"] {
+  cursor: text;
+}
+
+/* Prevent image drag ghost */
+.card-logo {
+  -webkit-user-drag: none;
+}
+
+/* Layer controls */
+.layer-up {
+  z-index: 20;
+}
+
+.layer-down {
+  z-index: 3;
+}
+
+/* Small helper badges */
+.editor-badge {
+  position: absolute;
+  top: -22px;
+  right: 0;
+  background: #0d47a1;
+  color: white;
+  font-size: 10px;
+  padding: 3px 6px;
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+/* Mobile editing */
+@media (max-width: 850px) {
+  .card-element.selected::after {
+    top: -22px;
+    font-size: 10px;
+  }
+
+  .resize-handle {
+    width: 16px;
+    height: 16px;
+  }
+}

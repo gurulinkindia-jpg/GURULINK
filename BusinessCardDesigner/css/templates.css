@@ -1,0 +1,434 @@
+/* ===================================================
+   TEMPLATE 1 - ROYAL GOLD
+=================================================== */
+
+.tpl-royal-gold{
+    background:linear-gradient(135deg,#0b0b0b,#1f1f1f,#000);
+    border:2px solid #d4af37;
+}
+
+.tpl-royal-gold .decor-1{
+    width:260px;
+    height:260px;
+    border:2px solid rgba(212,175,55,.45);
+    border-radius:50%;
+    right:-90px;
+    top:-90px;
+}
+
+.tpl-royal-gold .decor-2{
+    width:100%;
+    height:7px;
+    left:0;
+    bottom:0;
+    background:linear-gradient(90deg,#d4af37,#fff2b5,#d4af37);
+}
+
+/* ===================================================
+   TEMPLATE 2 - BLACK PLATINUM
+=================================================== */
+
+.tpl-black-platinum{
+    background:linear-gradient(135deg,#000,#202020,#5d5d5d);
+    border:2px solid #d8d8d8;
+}
+
+.tpl-black-platinum .decor-1{
+    width:250px;
+    height:250px;
+    background:rgba(255,255,255,.08);
+    border-radius:50%;
+    right:-80px;
+    top:-80px;
+}
+
+.tpl-black-platinum .decor-2{
+    width:120px;
+    height:420px;
+    background:rgba(255,255,255,.08);
+    transform:rotate(28deg);
+    right:110px;
+    top:-60px;
+}
+
+/* ===================================================
+   TEMPLATE 3 - NAVY EXECUTIVE
+=================================================== */
+
+.tpl-navy-executive{
+    background:linear-gradient(135deg,#031b3d,#0a4c8b);
+}
+
+.tpl-navy-executive .decor-1{
+    width:240px;
+    height:240px;
+    border:28px solid rgba(255,255,255,.08);
+    border-radius:50%;
+    right:-90px;
+    bottom:-90px;
+}
+
+.tpl-navy-executive .decor-2{
+    width:100%;
+    height:8px;
+    left:0;
+    bottom:0;
+    background:#b0bec5;
+}
+
+/* ===================================================
+   TEMPLATE 4 - WHITE MINIMAL
+=================================================== */
+
+.tpl-white-minimal{
+
+    background:white;
+    color:#111;
+
+}
+
+.tpl-white-minimal .card-logo{
+
+    border-color:#111;
+
+}
+
+.tpl-white-minimal .decor-1{
+
+    width:180px;
+    height:100%;
+
+    right:0;
+    top:0;
+
+    background:linear-gradient(135deg,#1565c0,#64b5f6);
+
+}
+
+.tpl-white-minimal .decor-2{
+
+    width:100%;
+    height:8px;
+
+    left:0;
+    bottom:0;
+
+    background:#1565c0;
+
+}
+
+/* ===================================================
+   TEMPLATE 5 - GLASS BLUE
+=================================================== */
+
+.tpl-glass-blue{
+
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+
+}
+
+.tpl-glass-blue .decor-1{
+
+width:340px;
+height:340px;
+
+background:rgba(255,255,255,.12);
+
+border-radius:45px;
+
+transform:rotate(35deg);
+
+right:-150px;
+top:-100px;
+
+}
+
+.tpl-glass-blue .decor-2{
+
+width:180px;
+height:180px;
+
+background:rgba(0,229,255,.18);
+
+border-radius:50%;
+
+left:-60px;
+bottom:-60px;
+
+}
+
+/* ===================================================
+   TEMPLATE 6 - NEON DARK
+=================================================== */
+
+.tpl-neon-dark{
+
+background:linear-gradient(135deg,#000,#120018);
+
+border:2px solid #00e5ff;
+
+}
+
+.tpl-neon-dark .decor-1{
+
+width:250px;
+height:250px;
+
+background:rgba(0,229,255,.18);
+
+filter:blur(8px);
+
+border-radius:50%;
+
+right:-90px;
+top:-90px;
+
+}
+
+.tpl-neon-dark .decor-2{
+
+width:180px;
+height:180px;
+
+background:rgba(156,39,176,.25);
+
+filter:blur(10px);
+
+border-radius:50%;
+
+left:-70px;
+bottom:-70px;
+
+}
+
+/* ===================================================
+   TEMPLATE 7 - MARBLE GOLD
+=================================================== */
+
+.tpl-marble-gold{
+
+background:#fafafa;
+
+color:#111;
+
+border:2px solid #d4af37;
+
+}
+
+.tpl-marble-gold .decor-1{
+
+width:100%;
+height:9px;
+
+left:0;
+bottom:0;
+
+background:linear-gradient(90deg,#d4af37,#fff2b5,#d4af37);
+
+}
+
+.tpl-marble-gold .decor-2{
+
+width:230px;
+height:230px;
+
+border:24px solid rgba(212,175,55,.16);
+
+border-radius:50%;
+
+right:-80px;
+top:-80px;
+
+}
+
+/* ===================================================
+   TEMPLATE 8 - EMERALD
+=================================================== */
+
+.tpl-emerald-premium{
+
+background:linear-gradient(135deg,#004d40,#00796b,#26a69a);
+
+}
+
+.tpl-emerald-premium .decor-1{
+
+width:260px;
+height:260px;
+
+background:rgba(255,255,255,.12);
+
+border-radius:50%;
+
+right:-90px;
+top:-90px;
+
+}
+
+.tpl-emerald-premium .decor-2{
+
+width:100px;
+height:420px;
+
+background:rgba(255,255,255,.08);
+
+transform:rotate(30deg);
+
+right:120px;
+top:-50px;
+
+}
+
+/* ===================================================
+   TEMPLATE 9 - PURPLE CREATIVE
+=================================================== */
+
+.tpl-purple-creative{
+
+background:linear-gradient(135deg,#4a148c,#7b1fa2,#ba68c8);
+
+}
+
+.tpl-purple-creative .decor-1{
+
+width:300px;
+height:300px;
+
+background:rgba(255,255,255,.12);
+
+border-radius:70px;
+
+transform:rotate(25deg);
+
+right:-120px;
+top:-90px;
+
+}
+
+.tpl-purple-creative .decor-2{
+
+width:220px;
+height:220px;
+
+border:16px solid rgba(255,255,255,.15);
+
+border-radius:50%;
+
+left:-90px;
+bottom:-90px;
+
+}
+
+/* ===================================================
+   TEMPLATE 10 - RED LUXURY
+=================================================== */
+
+.tpl-red-luxury{
+
+background:linear-gradient(135deg,#3b0000,#b71c1c);
+
+border:2px solid #ffcc80;
+
+}
+
+.tpl-red-luxury .decor-1{
+
+width:260px;
+height:260px;
+
+border-radius:50%;
+
+background:rgba(255,255,255,.08);
+
+right:-90px;
+top:-90px;
+
+}
+
+.tpl-red-luxury .decor-2{
+
+width:100%;
+height:8px;
+
+left:0;
+bottom:0;
+
+background:#ffcc80;
+
+}
+
+/* ===================================================
+   TEMPLATE 11 - ORANGE ENERGY
+=================================================== */
+
+.tpl-orange-energy{
+
+background:linear-gradient(135deg,#e65100,#ff9800);
+
+}
+
+.tpl-orange-energy .decor-1{
+
+width:320px;
+height:320px;
+
+background:rgba(255,255,255,.10);
+
+border-radius:80px;
+
+transform:rotate(35deg);
+
+right:-140px;
+top:-100px;
+
+}
+
+.tpl-orange-energy .decor-2{
+
+width:110px;
+height:430px;
+
+background:rgba(255,255,255,.10);
+
+transform:rotate(30deg);
+
+right:120px;
+top:-50px;
+
+}
+
+/* ===================================================
+   TEMPLATE 12 - SILVER TECH
+=================================================== */
+
+.tpl-silver-tech{
+
+background:linear-gradient(135deg,#263238,#607d8b,#90a4ae);
+
+}
+
+.tpl-silver-tech .decor-1{
+
+width:250px;
+height:250px;
+
+border:30px solid rgba(255,255,255,.12);
+
+border-radius:50%;
+
+right:-90px;
+bottom:-90px;
+
+}
+
+.tpl-silver-tech .decor-2{
+
+width:100%;
+height:8px;
+
+left:0;
+bottom:0;
+
+background:#eceff1;
+
+}

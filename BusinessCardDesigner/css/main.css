@@ -1,0 +1,638 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 16px;
+  background: #eef4ff;
+  color: #1f2937;
+  font-family: "Poppins", Arial, sans-serif;
+}
+
+.topbar {
+  max-width: 1500px;
+  margin: 0 auto 18px;
+  padding: 18px 22px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #0d47a1, #1976d2);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.topbar p {
+  margin: 5px 0 0;
+  opacity: 0.95;
+}
+
+.top-actions {
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  border: none;
+  border-radius: 10px;
+  padding: 11px 14px;
+  background: #1565c0;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0d47a1;
+}
+
+.app {
+  max-width: 1500px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 330px 1fr 300px;
+  gap: 18px;
+}
+
+.sidebar,
+.right-panel,
+.editor-area {
+  min-height: 500px;
+}
+
+.panel {
+  background: white;
+  padding: 16px;
+  border-radius: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+}
+
+.panel h2 {
+  margin: 0 0 12px;
+  color: #0d47a1;
+  font-size: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 5px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 10px 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 14px;
+  background: white;
+}
+
+textarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+.editor-area {
+  background: white;
+  padding: 16px;
+  border-radius: 20px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+}
+
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.editor-toolbar button {
+  width: auto;
+}
+
+#zoomLabel {
+  font-weight: 800;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #e3f2fd;
+  color: #0d47a1;
+}
+
+.canvas-stage {
+  min-height: 470px;
+  background:
+    linear-gradient(45deg, #f1f5f9 25%, transparent 25%),
+    linear-gradient(-45deg, #f1f5f9 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #f1f5f9 75%),
+    linear-gradient(-45deg, transparent 75%, #f1f5f9 75%);
+  background-size: 26px 26px;
+  background-position: 0 0, 0 13px, 13px -13px, -13px 0px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
+  padding: 35px;
+}
+
+/* ATM / CR80 business card */
+.business-card {
+  width: 540px;
+  height: 340px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+  color: white;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+  transform-origin: center center;
+}
+
+.decor {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.card-element {
+  position: absolute;
+  z-index: 5;
+  cursor: move;
+  user-select: none;
+}
+
+.card-element.selected {
+  outline: 2px dashed #00e5ff;
+  outline-offset: 3px;
+}
+
+.logo-block {
+  left: 26px;
+  top: 26px;
+  width: 82px;
+  height: 82px;
+}
+
+.card-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: white;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.9);
+}
+
+.text-block {
+  min-width: 80px;
+  max-width: 360px;
+  word-break: break-word;
+}
+
+.name-block {
+  left: 124px;
+  top: 33px;
+  width: 330px;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.title-block {
+  left: 124px;
+  top: 76px;
+  width: 330px;
+  font-size: 14px;
+  opacity: 0.95;
+}
+
+.phone-block {
+  left: 26px;
+  top: 145px;
+  width: 330px;
+  font-size: 15px;
+}
+
+.email-block {
+  left: 26px;
+  top: 177px;
+  width: 330px;
+  font-size: 15px;
+}
+
+.address-block {
+  left: 26px;
+  top: 209px;
+  width: 330px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.url-block {
+  left: 26px;
+  bottom: 26px;
+  width: 335px;
+  font-size: 13px;
+}
+
+.qr-block {
+  right: 26px;
+  bottom: 26px;
+  width: 112px;
+  height: 112px;
+}
+
+.qr-frame {
+  background: white;
+  padding: 9px;
+  border-radius: 14px;
+  width: 112px;
+  height: 112px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+#qrPreview {
+  width: 94px;
+  height: 94px;
+}
+
+.card-size-note {
+  text-align: center;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.right-panel button,
+.sidebar button {
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* Fonts */
+.font-poppins,
+.font-poppins * {
+  font-family: "Poppins", Arial, sans-serif;
+}
+
+.font-montserrat,
+.font-montserrat * {
+  font-family: "Montserrat", Arial, sans-serif;
+}
+
+.font-playfair,
+.font-playfair * {
+  font-family: "Playfair Display", serif;
+}
+
+.font-roboto,
+.font-roboto * {
+  font-family: "Roboto", Arial, sans-serif;
+}
+
+.font-oswald,
+.font-oswald * {
+  font-family: "Oswald", Arial, sans-serif;
+}
+
+@media (max-width: 1200px) {
+  .app {
+    grid-template-columns: 320px 1fr;
+  }
+
+  .right-panel {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 850px) {
+  body {
+    padding: 10px;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .top-actions {
+    width: 100%;
+  }
+
+  .top-actions button {
+    flex: 1;
+  }
+
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .right-panel {
+    display: block;
+  }
+
+  .canvas-stage {
+    padding: 20px;
+  }
+
+  .business-card {
+    transform: scale(0.72);
+  }
+}
+/* ===========================
+   HEADER
+=========================== */
+
+.header-left{
+
+    display:flex;
+    align-items:center;
+    gap:18px;
+
+}
+
+.header-logo{
+
+    width:75px;
+    height:75px;
+
+    object-fit:contain;
+
+    background:white;
+
+    border-radius:15px;
+
+    padding:6px;
+
+    box-shadow:0 5px 18px rgba(0,0,0,.18);
+
+}
+
+.header-left h1{
+
+    margin:0;
+
+    font-size:30px;
+
+    font-weight:800;
+
+}
+
+.header-left p{
+
+    margin-top:6px;
+
+    line-height:1.5;
+
+    font-size:14px;
+
+    opacity:.95;
+
+}
+
+.top-actions button{
+
+    min-width:95px;
+
+    font-size:14px;
+
+}
+
+
+
+
+
+/* Vertical card */
+.business-card.vertical {
+  width: 340px;
+  height: 540px;
+}
+
+.business-card.vertical .logo-block {
+  left: 110px;
+  top: 35px;
+  width: 120px;
+  height: 120px;
+}
+
+.business-card.vertical .name-block {
+  left: 25px;
+  top: 175px;
+  width: 290px;
+  text-align: center;
+  font-size: 28px;
+}
+
+.business-card.vertical .title-block {
+  left: 25px;
+  top: 220px;
+  width: 290px;
+  text-align: center;
+}
+
+.business-card.vertical .phone-block {
+  left: 30px;
+  top: 290px;
+  width: 280px;
+}
+
+.business-card.vertical .email-block {
+  left: 30px;
+  top: 325px;
+  width: 280px;
+}
+
+.business-card.vertical .address-block {
+  left: 30px;
+  top: 360px;
+  width: 280px;
+}
+
+.business-card.vertical .url-block {
+  left: 30px;
+  bottom: 30px;
+  width: 190px;
+}
+
+.business-card.vertical .qr-block {
+  right: 30px;
+  bottom: 30px;
+}
+
+.student-photo-block {
+  left: 110px;
+  top: 95px;
+  width: 120px;
+  height: 140px;
+}
+
+.student-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: white;
+  border: 3px solid white;
+  border-radius: 14px;
+}
+
+.student-extra-block {
+  left: 35px;
+  top: 255px;
+  width: 270px;
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: left;
+}
+/* =========================
+   STUDENT ID CARD MODE FIX
+========================= */
+
+.business-card.student-mode {
+  width: 340px !important;
+  height: 540px !important;
+}
+
+/* institute/school logo */
+.business-card.student-mode .logo-block {
+  left: 18px !important;
+  top: 18px !important;
+  width: 58px !important;
+  height: 58px !important;
+}
+
+/* school name */
+.business-card.student-mode .title-block {
+  left: 85px !important;
+  top: 24px !important;
+  width: 230px !important;
+  font-size: 15px !important;
+  text-align: left !important;
+  display: block !important;
+}
+
+/* student photo */
+.business-card.student-mode .student-photo-block {
+  display: block !important;
+  left: 100px !important;
+  top: 90px !important;
+  width: 140px !important;
+  height: 150px !important;
+  z-index: 8 !important;
+}
+
+.business-card.student-mode .student-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: white;
+  border: 3px solid white;
+  border-radius: 16px;
+}
+
+/* student name */
+.business-card.student-mode .name-block {
+  left: 25px !important;
+  top: 255px !important;
+  width: 290px !important;
+  font-size: 24px !important;
+  text-align: center !important;
+  display: block !important;
+}
+
+/* student details */
+.business-card.student-mode .student-extra-block {
+  display: block !important;
+  left: 35px !important;
+  top: 305px !important;
+  width: 270px !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  text-align: left !important;
+  z-index: 8 !important;
+}
+
+/* hide business fields */
+.business-card.student-mode .phone-block,
+.business-card.student-mode .email-block,
+.business-card.student-mode .address-block {
+  display: none !important;
+}
+
+/* QR text */
+.business-card.student-mode .url-block {
+  left: 28px !important;
+  bottom: 28px !important;
+  width: 175px !important;
+  font-size: 11px !important;
+  display: block !important;
+}
+
+/* QR */
+.business-card.student-mode .qr-block {
+  right: 22px !important;
+  bottom: 20px !important;
+  width: 82px !important;
+  height: 82px !important;
+}
+
+.business-card.student-mode .qr-frame {
+  width: 82px !important;
+  height: 82px !important;
+  background: #fff;
+  border-radius: 10px;
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.business-card.student-mode #qrPreview,
+.business-card.student-mode #qrPreview canvas,
+.business-card.student-mode #qrPreview img {
+  width: 72px !important;
+  height: 72px !important;
+}
+/* Fix vertical business card URL touching QR */
+.business-card.vertical:not(.student-mode) .url-block {
+  left: 30px !important;
+  bottom: 38px !important;
+  width: 135px !important;
+  font-size: 11px !important;
+  line-height: 1.25 !important;
+}
+
+.business-card.vertical:not(.student-mode) .qr-block {
+  right: 28px !important;
+  bottom: 32px !important;
+  width: 105px !important;
+  height: 105px !important;
+}
+
+.business-card.vertical:not(.student-mode) .qr-frame {
+  width: 105px !important;
+  height: 105px !important;
+  padding: 8px !important;
+}
+
+.business-card.vertical:not(.student-mode) #qrPreview,
+.business-card.vertical:not(.student-mode) #qrPreview canvas,
+.business-card.vertical:not(.student-mode) #qrPreview img {
+  width: 89px !important;
+  height: 89px !important;
+}
