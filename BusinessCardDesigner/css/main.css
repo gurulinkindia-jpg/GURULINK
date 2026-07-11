@@ -8,6 +8,7 @@ body {
   background: #eef4ff;
   color: #1f2937;
   font-family: "Poppins", Arial, sans-serif;
+  overflow-x: hidden;
 }
 
 .topbar {
@@ -51,6 +52,15 @@ button {
 
 button:hover {
   background: #0d47a1;
+}
+
+.mobile-designer-nav {
+  display: none;
+}
+
+.mobile-nav-btn {
+  border-radius: 12px;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.14);
 }
 
 .app {
@@ -347,6 +357,14 @@ textarea {
     min-width: 0;
   }
 
+  .mobile-designer-nav {
+    max-width: 1500px;
+    margin: 0 auto 12px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
   .app {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -435,7 +453,7 @@ textarea {
 
   .business-card.vertical,
   .business-card.student-mode {
-    transform: scale(0.48);
+    transform: scale(0.45);
   }
 
   .card-size-note {
@@ -557,6 +575,17 @@ textarea {
     border-radius: 8px;
   }
 
+  .mobile-designer-nav {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .mobile-nav-btn {
+    font-size: 11px;
+    padding: 9px 10px;
+    border-radius: 10px;
+  }
+
   .app {
     gap: 10px;
   }
@@ -613,18 +642,18 @@ textarea {
   }
 
   .canvas-stage {
-    min-height: 220px;
+    min-height: 205px;
     padding: 6px 2px;
     border-radius: 12px;
   }
 
   .business-card {
-    transform: scale(0.44);
+    transform: scale(0.39);
   }
 
   .business-card.vertical,
   .business-card.student-mode {
-    transform: scale(0.4);
+    transform: scale(0.34);
   }
 
   .card-size-note {
@@ -673,16 +702,21 @@ textarea {
   }
 
   .canvas-stage {
-    min-height: 200px;
+    min-height: 188px;
   }
 
   .business-card {
-    transform: scale(0.4);
+    transform: scale(0.35);
   }
 
   .business-card.vertical,
   .business-card.student-mode {
-    transform: scale(0.36);
+    transform: scale(0.3);
+  }
+
+  .mobile-nav-btn {
+    font-size: 10px;
+    padding: 8px 8px;
   }
 }
 

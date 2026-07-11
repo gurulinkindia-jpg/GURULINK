@@ -47,15 +47,24 @@
 
     <div class="top-actions">
 
-        <button onclick="saveProject()">💾 Save</button>
+        <button id="saveProjectBtn" onclick="saveProject()">💾 Save</button>
 
-        <button onclick="loadProject()">📂 Load</button>
+        <button id="loadProjectBtn" onclick="loadProject()">📂 Load</button>
 
-        <button onclick="resetProject()">🔄 Reset</button>
+        <button id="resetProjectBtn" onclick="resetProject()">🔄 Reset</button>
 
     </div>
 
 </header>
+
+<div class="mobile-designer-nav">
+  <button type="button" class="mobile-nav-btn back-btn" onclick="goDesignerBack()">
+    Back
+  </button>
+  <button type="button" class="mobile-nav-btn dashboard-btn" onclick="goDesignerDashboard()">
+    Dashboard
+  </button>
+</div>
 
 <main class="app">
 
@@ -195,13 +204,13 @@
   <section class="editor-area">
 
     <div class="editor-toolbar">
-      <button onclick="zoomOut()">-</button>
+      <button id="zoomOutBtn" onclick="zoomOut()">-</button>
       <span id="zoomLabel">100%</span>
-      <button onclick="zoomIn()">+</button>
+      <button id="zoomInBtn" onclick="zoomIn()">+</button>
 
-      <button onclick="bringSelectedForward()">Bring Forward</button>
-      <button onclick="sendSelectedBackward()">Send Backward</button>
-      <button onclick="deleteSelected()">Delete</button>
+      <button id="bringForwardBtn" onclick="bringSelectedForward()">Bring Forward</button>
+      <button id="sendBackwardBtn" onclick="sendSelectedBackward()">Send Backward</button>
+      <button id="deleteElementBtn" onclick="deleteSelected()">Delete</button>
     </div>
 
     <div class="canvas-stage">

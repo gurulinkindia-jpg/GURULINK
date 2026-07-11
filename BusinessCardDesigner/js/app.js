@@ -404,6 +404,26 @@ function goDesignerDashboard() {
   window.location.href = getDashboardUrl();
 }
 
+function applyResponsiveButtonLabels() {
+  const isMobile = window.matchMedia("(max-width: 600px)").matches;
+
+  const labels = {
+    saveProjectBtn: isMobile ? "Save" : "💾 Save",
+    loadProjectBtn: isMobile ? "Load" : "📂 Load",
+    resetProjectBtn: isMobile ? "Reset" : "🔄 Reset",
+    bringForwardBtn: isMobile ? "Front" : "Bring Forward",
+    sendBackwardBtn: isMobile ? "Back" : "Send Backward",
+    deleteElementBtn: "Delete"
+  };
+
+  Object.keys(labels).forEach(id => {
+    const node = el(id);
+    if (node) {
+      node.textContent = labels[id];
+    }
+  });
+}
+
 window.goDesignerBack = goDesignerBack;
 window.goDesignerDashboard = goDesignerDashboard;
 
@@ -420,7 +440,9 @@ function initApp() {
   initEditor();
   updateCardType();
   loadGurulinkPrefill();
+  applyResponsiveButtonLabels();
   applyZoom();
 }
 
 document.addEventListener("DOMContentLoaded", initApp);
+window.addEventListener("resize", applyResponsiveButtonLabels);
