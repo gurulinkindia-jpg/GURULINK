@@ -34,6 +34,35 @@ function el(id) {
   return document.getElementById(id);
 }
 
+function getQueryValue(name) {
+  return new URLSearchParams(location.search).get(name) || "";
+}
+
+function isExternalAppLaunch() {
+  return getQueryValue("source") === "appmobile";
+}
+
+function getLaunchRole() {
+  return (getQueryValue("role") || localStorage.getItem("role") || "").toLowerCase();
+}
+
+function decodePrefillParam() {
+  const raw = getQueryValue("prefill");
+
+  if (!raw) return null;
+
+  try {
+    return JSON.parse(
+      decodeURIComponent(
+        escape(atob(raw))
+      )
+    );
+  } catch (err) {
+    console.error("Business card query prefill failed", err);
+    return null;
+  }
+}
+
 function getFormData() {
   return {
     cardType: el("cardTypeSelect") ? el("cardTypeSelect").value : "business",
@@ -378,12 +407,13 @@ function loadProject() {
 }
 
 function loadGurulinkPrefill() {
+  const queryPrefill = decodePrefillParam();
   const saved = localStorage.getItem("gurulinkBusinessCardPrefill");
 
-  if (!saved) return;
+  if (!queryPrefill && !saved) return;
 
   try {
-    const profile = JSON.parse(saved) || {};
+    const profile = queryPrefill || JSON.parse(saved) || {};
 
     if (el("cardTypeSelect")) el("cardTypeSelect").value = profile.cardType || "business";
     if (el("nameInput")) el("nameInput").value = profile.name || "";
@@ -405,7 +435,9 @@ function loadGurulinkPrefill() {
   } catch (err) {
     console.error("Business card prefill failed", err);
   } finally {
-    localStorage.removeItem("gurulinkBusinessCardPrefill");
+    if (!queryPrefill) {
+      localStorage.removeItem("gurulinkBusinessCardPrefill");
+    }
   }
 }
 
@@ -421,7 +453,18 @@ function wait(ms) {
 }
 
 function getDashboardUrl() {
-  const role = (localStorage.getItem("role") || "").toLowerCase();
+  const role = getLaunchRole();
+
+  if (isExternalAppLaunch()) {
+    const dashboardPath =
+      role === "student" || role === "parent" || role === "student/parent"
+        ? "student-dashboard.html"
+        : "teacher-dashboard.html";
+
+    return "intent://www.gurulink.co.in/" +
+      dashboardPath +
+      "#Intent;scheme=https;package=com.gurulinkindia.gurulink;end";
+  }
 
   if (role === "teacher" || role === "institution") {
     return "../teacher-dashboard.html";
@@ -435,6 +478,11 @@ function getDashboardUrl() {
 }
 
 function goDesignerBack() {
+  if (isExternalAppLaunch()) {
+    window.location.href = getDashboardUrl();
+    return;
+  }
+
   if (window.history.length > 1) {
     window.history.back();
     return;
@@ -469,6 +517,20 @@ function applyResponsiveButtonLabels() {
       node.textContent = labels[id];
     }
   });
+
+  const hideOnMobile = ["downloadPngBtn", "singlePdfBtn", "sheetPdfBtn"];
+
+  hideOnMobile.forEach(id => {
+    const node = el(id);
+    if (node) {
+      node.style.display = isMobile ? "none" : "";
+    }
+  });
+
+  const printBtn = el("printPreviewBtn");
+  if (printBtn) {
+    printBtn.style.display = "";
+  }
 }
 
 window.goDesignerBack = goDesignerBack;

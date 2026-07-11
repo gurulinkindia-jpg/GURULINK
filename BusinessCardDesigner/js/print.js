@@ -103,11 +103,6 @@ async function printSheet() {
     return;
   }
 
-  if (typeof isMobileDesignerDevice === "function" && isMobileDesignerDevice()) {
-    await downloadPrintPDF();
-    return;
-  }
-
   await buildPrintSheet();
 
   el("printArea").style.display = "block";
