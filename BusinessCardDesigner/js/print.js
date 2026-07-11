@@ -88,6 +88,11 @@ if (data.orientation === "vertical") {
 }
 
 async function printSheet() {
+  if (typeof isMobileDesignerDevice === "function" && isMobileDesignerDevice()) {
+    await downloadPrintPDF();
+    return;
+  }
+
   await buildPrintSheet();
 
   el("printArea").style.display = "block";

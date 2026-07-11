@@ -974,6 +974,71 @@ textarea {
   background: #1565c0;
 }
 
+.mobile-export-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 4200;
+}
+
+.mobile-export-modal.active {
+  display: flex;
+}
+
+.mobile-export-card {
+  width: min(100%, 380px);
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 18px 16px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.24);
+}
+
+.mobile-export-card h3 {
+  margin: 0 0 8px;
+  color: #0d47a1;
+  font-size: 20px;
+}
+
+.mobile-export-card p {
+  margin: 0;
+  color: #475569;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.mobile-export-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.mobile-export-btn {
+  width: 100%;
+  min-width: 0;
+  justify-content: center;
+}
+
+.mobile-export-btn.share-btn {
+  background: #00897b;
+}
+
+.mobile-export-btn.open-btn {
+  background: #1565c0;
+}
+
+.mobile-export-btn.download-btn {
+  background: #2e7d32;
+}
+
+.mobile-export-btn.close-btn {
+  background: #64748b;
+}
+
 @media (max-width: 600px) {
   .floating-designer-nav {
     right: 10px;
@@ -985,5 +1050,31 @@ textarea {
     min-width: 92px;
     padding: 9px 10px;
     font-size: 11px;
+  }
+
+  .mobile-export-card {
+    width: min(100%, 340px);
+    border-radius: 16px;
+    padding: 16px 14px;
+  }
+
+  .mobile-export-card h3 {
+    font-size: 18px;
+  }
+
+  .mobile-export-card p {
+    font-size: 13px;
+  }
+
+  .mobile-export-actions {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .mobile-export-btn {
+    font-size: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
   }
 }

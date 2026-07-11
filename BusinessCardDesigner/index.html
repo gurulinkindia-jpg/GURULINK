@@ -10,10 +10,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Montserrat:wght@400;600;800&family=Playfair+Display:wght@500;700&family=Roboto:wght@400;700&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
 
   <!-- CSS -->
-  <link rel="stylesheet" href="css/main.css?v=20260711d">
-  <link rel="stylesheet" href="css/editor.css?v=20260711d">
-  <link rel="stylesheet" href="css/templates.css?v=20260711d">
-  <link rel="stylesheet" href="css/print.css?v=20260711d">
+  <link rel="stylesheet" href="css/main.css?v=20260711e">
+  <link rel="stylesheet" href="css/editor.css?v=20260711e">
+  <link rel="stylesheet" href="css/templates.css?v=20260711e">
+  <link rel="stylesheet" href="css/print.css?v=20260711e">
 
   <!-- Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -319,18 +319,31 @@
   </button>
 </div>
 
+<div id="mobileExportModal" class="mobile-export-modal">
+  <div class="mobile-export-card">
+    <h3 id="mobileExportTitle">Export Ready</h3>
+    <p id="mobileExportText">Choose what you want to do with this file.</p>
+    <div class="mobile-export-actions">
+      <button type="button" class="mobile-export-btn share-btn" id="mobileExportShareBtn" onclick="sharePreparedExport()">Share</button>
+      <button type="button" class="mobile-export-btn open-btn" id="mobileExportOpenBtn" onclick="openPreparedExport()">Open</button>
+      <button type="button" class="mobile-export-btn download-btn" id="mobileExportDownloadBtn" onclick="downloadPreparedExport()">Download</button>
+      <button type="button" class="mobile-export-btn close-btn" onclick="closePreparedExport()">Close</button>
+    </div>
+  </div>
+</div>
+
 <!-- Hidden Print Area -->
 <section id="printArea" class="print-area">
   <div id="printSheet" class="print-sheet"></div>
 </section>
 
 <!-- JS -->
-<script src="js/templates.js?v=20260711d"></script>
-<script src="js/qr.js?v=20260711d"></script>
-<script src="js/editor.js?v=20260711d"></script>
-<script src="js/export.js?v=20260711d"></script>
-<script src="js/print.js?v=20260711d"></script>
-<script src="js/app.js?v=20260711d"></script>
+<script src="js/templates.js?v=20260711e"></script>
+<script src="js/qr.js?v=20260711e"></script>
+<script src="js/editor.js?v=20260711e"></script>
+<script src="js/export.js?v=20260711e"></script>
+<script src="js/print.js?v=20260711e"></script>
+<script src="js/app.js?v=20260711e"></script>
 
 </body>
 </html>

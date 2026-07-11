@@ -1,3 +1,127 @@
+let preparedExport = null;
+
+function revokePreparedExportUrl() {
+  if (preparedExport && preparedExport.url) {
+    URL.revokeObjectURL(preparedExport.url);
+  }
+}
+
+function closePreparedExport() {
+  const modal = document.getElementById("mobileExportModal");
+
+  if (modal) {
+    modal.classList.remove("active");
+  }
+
+  revokePreparedExportUrl();
+  preparedExport = null;
+}
+
+function showPreparedExport(title, text) {
+  const modal = document.getElementById("mobileExportModal");
+  const titleEl = document.getElementById("mobileExportTitle");
+  const textEl = document.getElementById("mobileExportText");
+  const shareBtn = document.getElementById("mobileExportShareBtn");
+
+  if (!modal || !titleEl || !textEl) {
+    return;
+  }
+
+  titleEl.textContent = title || "Export Ready";
+  textEl.textContent = text || "Choose what you want to do with this file.";
+
+  if (shareBtn) {
+    const canUseFileShare =
+      typeof File !== "undefined" &&
+      navigator.canShare &&
+      preparedExport &&
+      navigator.canShare({
+        files: [new File([preparedExport.blob], preparedExport.filename, { type: preparedExport.mimeType })]
+      });
+
+    shareBtn.style.display = canUseFileShare ? "inline-flex" : "none";
+  }
+
+  modal.classList.add("active");
+}
+
+function prepareMobileExport(blob, filename, mimeType, title, text) {
+  revokePreparedExportUrl();
+
+  preparedExport = {
+    blob,
+    filename,
+    mimeType,
+    url: URL.createObjectURL(blob)
+  };
+
+  showPreparedExport(title, text);
+}
+
+async function sharePreparedExport() {
+  if (!preparedExport || typeof File === "undefined" || !navigator.canShare) {
+    openPreparedExport();
+    return;
+  }
+
+  try {
+    const file = new File(
+      [preparedExport.blob],
+      preparedExport.filename,
+      { type: preparedExport.mimeType }
+    );
+
+    if (!navigator.canShare({ files: [file] })) {
+      openPreparedExport();
+      return;
+    }
+
+    await navigator.share({
+      title: preparedExport.filename,
+      files: [file]
+    });
+
+    closePreparedExport();
+  } catch (err) {
+    console.warn("Mobile share failed", err);
+    openPreparedExport();
+  }
+}
+
+function openPreparedExport() {
+  if (!preparedExport || !preparedExport.url) {
+    return;
+  }
+
+  const opened = window.open(preparedExport.url, "_blank");
+
+  if (!opened) {
+    window.location.href = preparedExport.url;
+  }
+}
+
+function downloadPreparedExport() {
+  if (!preparedExport || !preparedExport.url) {
+    return;
+  }
+
+  const link = document.createElement("a");
+  link.href = preparedExport.url;
+  link.download = preparedExport.filename;
+  link.target = "_blank";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function getCardCaptureScale() {
+  return isMobileDesignerDevice() ? 2.2 : 4;
+}
+
+function getSheetCaptureScale() {
+  return isMobileDesignerDevice() ? 1.4 : 2;
+}
+
 async function makeCardCanvas() {
   updateCard();
   await wait(500);
@@ -8,7 +132,7 @@ async function makeCardCanvas() {
   card.style.transform = "scale(1)";
 
   const canvas = await html2canvas(card, {
-    scale: 4,
+    scale: getCardCaptureScale(),
     backgroundColor: null,
     useCORS: true,
     allowTaint: true
@@ -24,33 +148,15 @@ function isMobileDesignerDevice() {
     window.matchMedia("(max-width: 850px)").matches;
 }
 
-function openBlobInCurrentTab(blob) {
-  const blobUrl = URL.createObjectURL(blob);
-  window.location.href = blobUrl;
-}
-
 async function deliverBlobFile(blob, filename, mimeType) {
-  const canUseFile =
-    typeof File !== "undefined";
-
-  if (canUseFile && navigator.canShare) {
-    try {
-      const file = new File([blob], filename, { type: mimeType });
-
-      if (navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          title: filename,
-          files: [file]
-        });
-        return;
-      }
-    } catch (err) {
-      console.warn("Web Share file fallback skipped", err);
-    }
-  }
-
   if (isMobileDesignerDevice()) {
-    openBlobInCurrentTab(blob);
+    prepareMobileExport(
+      blob,
+      filename,
+      mimeType,
+      "Export Ready",
+      "Tap Share, Open, or Download for your exported file."
+    );
     return;
   }
 
@@ -75,11 +181,6 @@ async function downloadPNG() {
 
   if (!blob) {
     alert("PNG export failed. Please try again.");
-    return;
-  }
-
-  if (isMobileDesignerDevice() && !(navigator.canShare && typeof File !== "undefined")) {
-    window.location.href = canvas.toDataURL("image/png");
     return;
   }
 
@@ -113,7 +214,7 @@ async function downloadPrintPDF() {
   const sheet = el("printSheet");
 
   const canvas = await html2canvas(sheet, {
-    scale: 2,
+    scale: getSheetCaptureScale(),
     backgroundColor: "#ffffff",
     useCORS: true,
     allowTaint: true
@@ -172,3 +273,8 @@ async function downloadPrintPDF() {
 
   await deliverBlobFile(blob, fileName, "application/pdf");
 }
+
+window.closePreparedExport = closePreparedExport;
+window.sharePreparedExport = sharePreparedExport;
+window.openPreparedExport = openPreparedExport;
+window.downloadPreparedExport = downloadPreparedExport;
