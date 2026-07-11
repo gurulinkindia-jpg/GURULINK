@@ -1,113 +1,360 @@
-/* =========================================
-   RESPONSIVE TABLET AND MOBILE CSS
-========================================= */
+* {
+  box-sizing: border-box;
+}
 
-html,
 body {
+  margin: 0;
+  padding: 16px;
+  background: #eef4ff;
+  color: #1f2937;
+  font-family: "Poppins", Arial, sans-serif;
+}
+
+.topbar {
+  max-width: 1500px;
+  margin: 0 auto 18px;
+  padding: 18px 22px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #0d47a1, #1976d2);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.topbar p {
+  margin: 5px 0 0;
+  opacity: 0.95;
+}
+
+.top-actions {
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  border: none;
+  border-radius: 10px;
+  padding: 11px 14px;
+  background: #1565c0;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0d47a1;
+}
+
+.app {
+  max-width: 1500px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: 330px 1fr 300px;
+  gap: 18px;
+}
+
+.sidebar,
+.right-panel,
+.editor-area {
+  min-height: 500px;
+}
+
+.panel {
+  background: white;
+  padding: 16px;
+  border-radius: 18px;
+  margin-bottom: 16px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+}
+
+.panel h2 {
+  margin: 0 0 12px;
+  color: #0d47a1;
+  font-size: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 5px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+input,
+textarea,
+select {
   width: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
+  padding: 10px 11px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font-size: 14px;
+  background: white;
 }
 
-img,
-canvas,
-svg {
-  max-width: 100%;
+textarea {
+  min-height: 72px;
+  resize: vertical;
 }
 
-/* Tablet */
+.editor-area {
+  background: white;
+  padding: 16px;
+  border-radius: 20px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+}
+
+.editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.editor-toolbar button {
+  width: auto;
+}
+
+#zoomLabel {
+  font-weight: 800;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #e3f2fd;
+  color: #0d47a1;
+}
+
+.canvas-stage {
+  min-height: 470px;
+  background:
+    linear-gradient(45deg, #f1f5f9 25%, transparent 25%),
+    linear-gradient(-45deg, #f1f5f9 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #f1f5f9 75%),
+    linear-gradient(-45deg, transparent 75%, #f1f5f9 75%);
+  background-size: 26px 26px;
+  background-position: 0 0, 0 13px, 13px -13px, -13px 0px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: auto;
+  padding: 35px;
+}
+
+/* ATM / CR80 business card */
+.business-card {
+  width: 540px;
+  height: 340px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 26px;
+  color: white;
+  box-shadow: 0 18px 45px rgba(0,0,0,0.35);
+  transform-origin: center center;
+}
+
+.decor {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.card-element {
+  position: absolute;
+  z-index: 5;
+  cursor: move;
+  user-select: none;
+}
+
+.card-element.selected {
+  outline: 2px dashed #00e5ff;
+  outline-offset: 3px;
+}
+
+.logo-block {
+  left: 26px;
+  top: 26px;
+  width: 82px;
+  height: 82px;
+}
+
+.card-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: white;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.9);
+}
+
+.text-block {
+  min-width: 80px;
+  max-width: 360px;
+  word-break: break-word;
+}
+
+.name-block {
+  left: 124px;
+  top: 33px;
+  width: 330px;
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.title-block {
+  left: 124px;
+  top: 76px;
+  width: 330px;
+  font-size: 14px;
+  opacity: 0.95;
+}
+
+.phone-block {
+  left: 26px;
+  top: 145px;
+  width: 330px;
+  font-size: 15px;
+}
+
+.email-block {
+  left: 26px;
+  top: 177px;
+  width: 330px;
+  font-size: 15px;
+}
+
+.address-block {
+  left: 26px;
+  top: 209px;
+  width: 330px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.url-block {
+  left: 26px;
+  bottom: 26px;
+  width: 335px;
+  font-size: 13px;
+}
+
+.qr-block {
+  right: 26px;
+  bottom: 26px;
+  width: 112px;
+  height: 112px;
+}
+
+.qr-frame {
+  background: white;
+  padding: 9px;
+  border-radius: 14px;
+  width: 112px;
+  height: 112px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+#qrPreview {
+  width: 94px;
+  height: 94px;
+}
+
+.card-size-note {
+  text-align: center;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.right-panel button,
+.sidebar button {
+  width: 100%;
+  margin-top: 10px;
+}
+
+/* Fonts */
+.font-poppins,
+.font-poppins * {
+  font-family: "Poppins", Arial, sans-serif;
+}
+
+.font-montserrat,
+.font-montserrat * {
+  font-family: "Montserrat", Arial, sans-serif;
+}
+
+.font-playfair,
+.font-playfair * {
+  font-family: "Playfair Display", serif;
+}
+
+.font-roboto,
+.font-roboto * {
+  font-family: "Roboto", Arial, sans-serif;
+}
+
+.font-oswald,
+.font-oswald * {
+  font-family: "Oswald", Arial, sans-serif;
+}
+
 @media (max-width: 1200px) {
   .app {
-    grid-template-columns: 300px minmax(0, 1fr);
+    grid-template-columns: 320px 1fr;
   }
 
   .right-panel {
     grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
   }
 }
 
-/* Mobile and small tablet */
 @media (max-width: 850px) {
   body {
     padding: 10px;
-    overflow-x: hidden;
   }
 
   .topbar {
-    width: 100%;
-    margin: 0 auto 12px;
-    padding: 14px;
-    border-radius: 15px;
     flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-
-  .header-left {
-    width: 100%;
-    display: flex;
     align-items: center;
-    gap: 10px;
-  }
-
-  .header-logo {
-    width: 54px;
-    height: 54px;
-    flex: 0 0 54px;
-    padding: 4px;
-    border-radius: 11px;
-  }
-
-  .header-left > div {
-    min-width: 0;
-    flex: 1;
-  }
-
-  .header-left h1 {
-    margin: 0;
-    font-size: clamp(16px, 4vw, 22px);
-    line-height: 1.2;
-    overflow-wrap: anywhere;
-  }
-
-  .header-left p {
-    margin: 4px 0 0;
-    font-size: 11px;
-    line-height: 1.4;
-    overflow-wrap: anywhere;
+    text-align: center;
+    padding: 14px 16px;
+    gap: 12px;
   }
 
   .top-actions {
     width: 100%;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 7px;
+    justify-content: center;
+    gap: 6px;
   }
 
   .top-actions button {
+    flex: none;
     width: 100%;
     min-width: 0;
-    padding: 9px 5px;
-    font-size: 11px;
-    white-space: normal;
-    line-height: 1.2;
   }
 
   .app {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+    grid-template-columns: 1fr;
     gap: 12px;
   }
 
   .sidebar,
-  .editor-area,
-  .right-panel {
-    width: 100%;
-    min-width: 0;
+  .right-panel,
+  .editor-area {
     min-height: auto;
   }
 
@@ -117,9 +364,8 @@ svg {
 
   .panel,
   .editor-area {
-    width: 100%;
-    padding: 13px;
-    border-radius: 14px;
+    padding: 14px;
+    border-radius: 16px;
   }
 
   .panel {
@@ -127,39 +373,32 @@ svg {
   }
 
   .panel h2 {
-    margin-bottom: 9px;
-    font-size: 17px;
+    font-size: 18px;
+    margin-bottom: 10px;
   }
 
   label {
-    margin-top: 9px;
+    margin-top: 10px;
     font-size: 12px;
   }
 
   input,
   textarea,
   select {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    padding: 10px;
-    font-size: 16px;
+    font-size: 13px;
+    padding: 9px 10px;
+    border-radius: 9px;
   }
 
   textarea {
-    min-height: 65px;
-  }
-
-  button {
-    max-width: 100%;
-    touch-action: manipulation;
+    min-height: 64px;
   }
 
   .editor-toolbar {
-    width: 100%;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 7px;
+    gap: 8px;
+    padding: 10px;
     margin-bottom: 12px;
   }
 
@@ -167,107 +406,546 @@ svg {
   .editor-toolbar #zoomLabel {
     width: 100%;
     min-width: 0;
-    margin: 0;
+    text-align: center;
   }
 
   .editor-toolbar button {
-    padding: 9px 4px;
-    font-size: 10px;
-    line-height: 1.2;
-    white-space: normal;
+    font-size: 11px;
+    padding: 9px 6px;
   }
 
   #zoomLabel {
-    min-height: 36px;
-    padding: 7px 4px;
-    font-size: 11px;
     display: flex;
     align-items: center;
     justify-content: center;
+    min-height: 35px;
+    font-size: 12px;
+    padding: 7px 8px;
   }
 
-  /*
-    The stage becomes a responsive viewport.
-    The inner wrapper controls the scaled card space.
-  */
   .canvas-stage {
-    width: 100%;
-    min-height: 0;
-    padding: 12px 5px;
-    border-radius: 13px;
-    overflow: auto;
-    justify-content: flex-start;
-    align-items: flex-start;
+    min-height: 285px;
+    padding: 10px 6px;
+    border-radius: 14px;
   }
 
-  /*
-    Horizontal business card:
-    540 × 340 ratio
-  */
-  .business-card:not(.vertical):not(.student-mode) {
-    width: min(540px, calc(100vw - 56px));
-    height: auto;
-    aspect-ratio: 540 / 340;
-    flex: 0 0 auto;
-    transform: none !important;
-    border-radius: clamp(13px, 4vw, 26px);
+  .business-card {
+    transform: scale(0.54);
   }
 
-  /*
-    Scale all movable elements together according
-    to the available business-card width.
-  */
-  .business-card:not(.vertical):not(.student-mode) {
-    --card-scale: min(1, calc((100vw - 56px) / 540));
-  }
-
-  /*
-    Vertical and student cards:
-    preserve 340 × 540 ratio.
-  */
   .business-card.vertical,
   .business-card.student-mode {
-    width: min(340px, calc(100vw - 56px)) !important;
-    height: auto !important;
-    aspect-ratio: 340 / 540;
-    flex: 0 0 auto;
-    transform: none !important;
-    border-radius: clamp(13px, 4vw, 26px);
+    transform: scale(0.48);
   }
 
   .card-size-note {
-    margin-top: 8px;
     font-size: 11px;
+    margin-top: 10px;
   }
 
   .right-panel button,
   .sidebar button {
-    width: 100%;
-    padding: 10px;
-    margin-top: 8px;
     font-size: 12px;
-  }
-
-  .floating-designer-nav {
-    right: 8px;
-    bottom: 8px;
-    gap: 5px;
-  }
-
-  .floating-nav-btn {
-    min-width: 88px;
-    padding: 8px 10px;
-    font-size: 10px;
+    padding: 10px 10px;
+    border-radius: 9px;
   }
 }
 
-/* Small phones */
+/* ===========================
+   HEADER
+=========================== */
+
+.header-left{
+
+    display:flex;
+    align-items:center;
+    gap:18px;
+
+}
+
+.header-logo{
+
+    width:75px;
+    height:75px;
+
+    object-fit:contain;
+
+    background:white;
+
+    border-radius:15px;
+
+    padding:6px;
+
+    box-shadow:0 5px 18px rgba(0,0,0,.18);
+
+}
+
+.header-left h1{
+
+    margin:0;
+
+    font-size:30px;
+
+    font-weight:800;
+
+}
+
+.header-left p{
+
+    margin-top:6px;
+
+    line-height:1.5;
+
+    font-size:14px;
+
+    opacity:.95;
+
+}
+
+.top-actions button{
+
+    min-width:95px;
+
+    font-size:14px;
+
+}
+
 @media (max-width: 600px) {
   body {
-    padding: 7px;
-    padding-bottom: 85px;
+    padding: 8px;
+    padding-bottom: 92px;
   }
 
   .topbar {
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    border-radius: 16px;
+    gap: 8px;
+  }
+
+  .header-left {
+    gap: 8px;
+    align-items: center;
+  }
+
+  .header-logo {
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    padding: 3px;
+  }
+
+  .header-left h1 {
+    font-size: 14px;
+    line-height: 1.15;
+  }
+
+  .header-left p {
+    margin-top: 3px;
+    font-size: 10px;
+    line-height: 1.25;
+  }
+
+  .top-actions {
+    gap: 6px;
+  }
+
+  .top-actions button {
+    min-width: 0;
+    font-size: 10px;
+    padding: 8px 5px;
+    border-radius: 8px;
+  }
+
+  .app {
+    gap: 10px;
+  }
+
+  .panel,
+  .editor-area {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .panel {
+    margin-bottom: 10px;
+  }
+
+  .panel h2 {
+    font-size: 17px;
+    margin-bottom: 8px;
+  }
+
+  label {
+    font-size: 11px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 12px;
+    padding: 8px 9px;
+    border-radius: 8px;
+  }
+
+  textarea {
+    min-height: 58px;
+  }
+
+  .editor-toolbar {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .editor-toolbar button {
+    font-size: 10px;
+    padding: 8px 4px;
+    line-height: 1.2;
+  }
+
+  #zoomLabel {
+    min-height: 32px;
+    font-size: 11px;
+    padding: 6px 6px;
+  }
+
+  .canvas-stage {
+    min-height: 220px;
+    padding: 6px 2px;
+    border-radius: 12px;
+  }
+
+  .business-card {
+    transform: scale(0.44);
+  }
+
+  .business-card.vertical,
+  .business-card.student-mode {
+    transform: scale(0.4);
+  }
+
+  .card-size-note {
+    display: none;
+  }
+
+  .right-panel button,
+  .sidebar button {
+    font-size: 11px;
+    padding: 9px 8px;
+    margin-top: 8px;
+    border-radius: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-left p {
+    display: none;
+  }
+
+  .header-left h1 {
+    font-size: 13px;
+  }
+
+  .top-actions button {
+    font-size: 9px;
+    padding: 7px 4px;
+  }
+
+  .panel,
+  .editor-area {
     padding: 10px;
-    border-radius
+  }
+
+  .panel h2 {
+    font-size: 15px;
+  }
+
+  .editor-toolbar button {
+    font-size: 9px;
+    padding: 7px 3px;
+  }
+
+  #zoomLabel {
+    font-size: 10px;
+  }
+
+  .canvas-stage {
+    min-height: 200px;
+  }
+
+  .business-card {
+    transform: scale(0.4);
+  }
+
+  .business-card.vertical,
+  .business-card.student-mode {
+    transform: scale(0.36);
+  }
+}
+
+
+
+
+
+/* Vertical card */
+.business-card.vertical {
+  width: 340px;
+  height: 540px;
+}
+
+.business-card.vertical .logo-block {
+  left: 110px;
+  top: 35px;
+  width: 120px;
+  height: 120px;
+}
+
+.business-card.vertical .name-block {
+  left: 25px;
+  top: 175px;
+  width: 290px;
+  text-align: center;
+  font-size: 28px;
+}
+
+.business-card.vertical .title-block {
+  left: 25px;
+  top: 220px;
+  width: 290px;
+  text-align: center;
+}
+
+.business-card.vertical .phone-block {
+  left: 30px;
+  top: 290px;
+  width: 280px;
+}
+
+.business-card.vertical .email-block {
+  left: 30px;
+  top: 325px;
+  width: 280px;
+}
+
+.business-card.vertical .address-block {
+  left: 30px;
+  top: 360px;
+  width: 280px;
+}
+
+.business-card.vertical .url-block {
+  left: 30px;
+  bottom: 30px;
+  width: 190px;
+}
+
+.business-card.vertical .qr-block {
+  right: 30px;
+  bottom: 30px;
+}
+
+.student-photo-block {
+  left: 110px;
+  top: 95px;
+  width: 120px;
+  height: 140px;
+}
+
+.student-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: white;
+  border: 3px solid white;
+  border-radius: 14px;
+}
+
+.student-extra-block {
+  left: 35px;
+  top: 255px;
+  width: 270px;
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: left;
+}
+/* =========================
+   STUDENT ID CARD MODE FIX
+========================= */
+
+.business-card.student-mode {
+  width: 340px !important;
+  height: 540px !important;
+}
+
+/* institute/school logo */
+.business-card.student-mode .logo-block {
+  left: 18px !important;
+  top: 18px !important;
+  width: 58px !important;
+  height: 58px !important;
+}
+
+/* school name */
+.business-card.student-mode .title-block {
+  left: 85px !important;
+  top: 24px !important;
+  width: 230px !important;
+  font-size: 15px !important;
+  text-align: left !important;
+  display: block !important;
+}
+
+/* student photo */
+.business-card.student-mode .student-photo-block {
+  display: block !important;
+  left: 100px !important;
+  top: 90px !important;
+  width: 140px !important;
+  height: 150px !important;
+  z-index: 8 !important;
+}
+
+.business-card.student-mode .student-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: white;
+  border: 3px solid white;
+  border-radius: 16px;
+}
+
+/* student name */
+.business-card.student-mode .name-block {
+  left: 25px !important;
+  top: 255px !important;
+  width: 290px !important;
+  font-size: 24px !important;
+  text-align: center !important;
+  display: block !important;
+}
+
+/* student details */
+.business-card.student-mode .student-extra-block {
+  display: block !important;
+  left: 35px !important;
+  top: 305px !important;
+  width: 270px !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  text-align: left !important;
+  z-index: 8 !important;
+}
+
+/* hide business fields */
+.business-card.student-mode .phone-block,
+.business-card.student-mode .email-block,
+.business-card.student-mode .address-block {
+  display: none !important;
+}
+
+/* QR text */
+.business-card.student-mode .url-block {
+  left: 28px !important;
+  bottom: 28px !important;
+  width: 175px !important;
+  font-size: 11px !important;
+  display: block !important;
+}
+
+/* QR */
+.business-card.student-mode .qr-block {
+  right: 22px !important;
+  bottom: 20px !important;
+  width: 82px !important;
+  height: 82px !important;
+}
+
+.business-card.student-mode .qr-frame {
+  width: 82px !important;
+  height: 82px !important;
+  background: #fff;
+  border-radius: 10px;
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.business-card.student-mode #qrPreview,
+.business-card.student-mode #qrPreview canvas,
+.business-card.student-mode #qrPreview img {
+  width: 72px !important;
+  height: 72px !important;
+}
+/* Fix vertical business card URL touching QR */
+.business-card.vertical:not(.student-mode) .url-block {
+  left: 30px !important;
+  bottom: 38px !important;
+  width: 135px !important;
+  font-size: 11px !important;
+  line-height: 1.25 !important;
+}
+
+.business-card.vertical:not(.student-mode) .qr-block {
+  right: 28px !important;
+  bottom: 32px !important;
+  width: 105px !important;
+  height: 105px !important;
+}
+
+.business-card.vertical:not(.student-mode) .qr-frame {
+  width: 105px !important;
+  height: 105px !important;
+  padding: 8px !important;
+}
+
+.business-card.vertical:not(.student-mode) #qrPreview,
+.business-card.vertical:not(.student-mode) #qrPreview canvas,
+.business-card.vertical:not(.student-mode) #qrPreview img {
+  width: 89px !important;
+  height: 89px !important;
+}
+
+.floating-designer-nav {
+  position: fixed;
+  right: 12px;
+  bottom: 12px;
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.floating-nav-btn {
+  min-width: 108px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.2);
+  font-size: 13px;
+}
+
+.floating-nav-btn.back-btn {
+  background: #455a64;
+}
+
+.floating-nav-btn.dashboard-btn {
+  background: #1565c0;
+}
+
+@media (max-width: 600px) {
+  .floating-designer-nav {
+    right: 10px;
+    bottom: 10px;
+    gap: 6px;
+  }
+
+  .floating-nav-btn {
+    min-width: 92px;
+    padding: 9px 10px;
+    font-size: 11px;
+  }
+}
