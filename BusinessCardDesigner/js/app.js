@@ -377,6 +377,36 @@ function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function getDashboardUrl() {
+  const role = (localStorage.getItem("role") || "").toLowerCase();
+
+  if (role === "teacher" || role === "institution") {
+    return "../teacher-dashboard.html";
+  }
+
+  if (role === "student" || role === "parent" || role === "student/parent") {
+    return "../student-dashboard.html";
+  }
+
+  return "../index.html";
+}
+
+function goDesignerBack() {
+  if (window.history.length > 1) {
+    window.history.back();
+    return;
+  }
+
+  window.location.href = getDashboardUrl();
+}
+
+function goDesignerDashboard() {
+  window.location.href = getDashboardUrl();
+}
+
+window.goDesignerBack = goDesignerBack;
+window.goDesignerDashboard = goDesignerDashboard;
+
 function initApp() {
   el("cardLogo").src = appState.logo;
 
