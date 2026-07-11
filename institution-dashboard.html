@@ -257,6 +257,10 @@ background:#5e35b1;
 background:#00897b;
 }
 
+.businessCardBtn{
+background:#1565c0;
+}
+
 .websiteBtn{
 background:#2e7d32;
 }
@@ -903,6 +907,10 @@ Quick Actions
     Website
   </button>
 
+  <button class="businessCardBtn" onclick="openBusinessCardDesigner()">
+    Create Business / I Card
+  </button>
+
   <button class="invoiceBtn" onclick="createInvoice()">
     Create Invoice
   </button>
@@ -1439,6 +1447,44 @@ async function ensureDashboardAuth(actionText = "continue"){
 
 function normalizePhoneDigits(value){
 return String(value || "").replace(/\D/g,"");
+}
+
+function buildBusinessCardAddress(data){
+const lines = [];
+
+function pushUnique(value){
+const clean = String(value || "").trim();
+
+if(!clean){
+return;
+}
+
+if(lines.some(item => item.toLowerCase() === clean.toLowerCase())){
+return;
+}
+
+lines.push(clean);
+}
+
+pushUnique(data?.address);
+
+const areaLine =
+[data?.area,data?.city,data?.town]
+.map(item => String(item || "").trim())
+.filter(Boolean)
+.join(", ");
+
+pushUnique(areaLine);
+
+const statePinLine =
+[data?.state,data?.pinCode]
+.map(item => String(item || "").trim())
+.filter(Boolean)
+.join(" - ");
+
+pushUnique(statePinLine);
+
+return lines.join(", ");
 }
 
 function getPrimaryProfileImage(data){
@@ -2528,6 +2574,57 @@ window.openWebsite = function() {
   window.open(finalUrl,"_blank","noopener");
 };
 
+window.openBusinessCardDesigner = function() {
+  const profileId =
+    currentProfileData.uid ||
+    localStorage.getItem("profileId") ||
+    "";
+
+  const activeRole =
+    currentProfileData.role ||
+    localStorage.getItem("role") ||
+    "teacher";
+
+  if(!profileId){
+    alert("Profile not found");
+    return;
+  }
+
+  const profileUrl =
+    "https://www.gurulink.co.in/profile-view.html?id=" +
+    encodeURIComponent(profileId);
+
+  const finalUrl =
+    normalizeWebsiteUrl(currentProfileData.website || "") ||
+    profileUrl;
+
+  const roleTitle =
+    activeRole === "institution"
+      ? "Institute"
+      : "Teacher / Trainer";
+
+  const payload = {
+    cardType:"business",
+    name:currentProfileData.name || "",
+    title:(currentProfileData.categoryName || currentProfileData.category || roleTitle),
+    phone:currentProfileData.phone || "",
+    email:currentProfileData.email || "",
+    url:finalUrl,
+    address:buildBusinessCardAddress(currentProfileData),
+    logo:getPrimaryProfileImage(currentProfileData),
+    role:activeRole,
+    profileId:profileId,
+    generatedAt:Date.now()
+  };
+
+  localStorage.setItem(
+    "gurulinkBusinessCardPrefill",
+    JSON.stringify(payload)
+  );
+
+  location.href = "BusinessCardDesigner/index.html";
+};
+
 
 window.shareProfile = function () {
 
@@ -2576,3 +2673,4 @@ profileId;
 
 </body>
 </html>
+
