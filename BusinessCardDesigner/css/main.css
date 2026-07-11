@@ -363,6 +363,9 @@ textarea {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
+    position: sticky;
+    top: 8px;
+    z-index: 2400;
   }
 
   .app {
@@ -578,6 +581,7 @@ textarea {
   .mobile-designer-nav {
     gap: 8px;
     margin-bottom: 10px;
+    top: 6px;
   }
 
   .mobile-nav-btn {

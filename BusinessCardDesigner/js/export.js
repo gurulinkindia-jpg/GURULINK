@@ -19,16 +19,75 @@ async function makeCardCanvas() {
   return canvas;
 }
 
-async function downloadPNG() {
-  const canvas = await makeCardCanvas();
+function isMobileDesignerDevice() {
+  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    window.matchMedia("(max-width: 850px)").matches;
+}
+
+async function deliverBlobFile(blob, filename, mimeType, mobileMessage) {
+  const canUseFile =
+    typeof File !== "undefined";
+
+  if (canUseFile && navigator.canShare) {
+    try {
+      const file = new File([blob], filename, { type: mimeType });
+
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: filename,
+          files: [file]
+        });
+        return;
+      }
+    } catch (err) {
+      console.warn("Web Share file fallback skipped", err);
+    }
+  }
+
+  const blobUrl = URL.createObjectURL(blob);
 
   const link = document.createElement("a");
-  link.download = "business-card.png";
-  link.href = canvas.toDataURL("image/png");
-
+  link.href = blobUrl;
+  link.download = filename;
+  link.target = "_blank";
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+
+  if (isMobileDesignerDevice()) {
+    setTimeout(() => {
+      try {
+        window.open(blobUrl, "_blank", "noopener");
+      } catch (err) {
+        console.warn("Open blob fallback failed", err);
+      }
+    }, 250);
+
+    if (mobileMessage) {
+      alert(mobileMessage);
+    }
+  }
+
+  setTimeout(() => {
+    URL.revokeObjectURL(blobUrl);
+  }, 60000);
+}
+
+async function downloadPNG() {
+  const canvas = await makeCardCanvas();
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+
+  if (!blob) {
+    alert("PNG export failed. Please try again.");
+    return;
+  }
+
+  await deliverBlobFile(
+    blob,
+    "business-card.png",
+    "image/png",
+    "If the PNG does not save automatically on mobile, use the opened file to share or save it."
+  );
 }
 
 async function downloadSinglePDF() {
@@ -44,7 +103,14 @@ async function downloadSinglePDF() {
   });
 
   pdf.addImage(img, "PNG", 0, 0, 85.6, 53.98);
-  pdf.save("single-business-card.pdf");
+  const blob = pdf.output("blob");
+
+  await deliverBlobFile(
+    blob,
+    "single-business-card.pdf",
+    "application/pdf",
+    "On mobile, the PDF may open in a new tab. From there you can share, download, or print it."
+  );
 }
 
 async function downloadPrintPDF() {
@@ -67,49 +133,56 @@ async function downloadPrintPDF() {
   const img = canvas.toDataURL("image/png");
   const { jsPDF } = window.jspdf;
   const data = getFormData();
+  let pdf;
+  let fileName;
 
   if (data.sheet === "a3" && data.orientation === "vertical") {
-    const pdf = new jsPDF({
+    pdf = new jsPDF({
       orientation: "portrait",
       unit: "mm",
       format: "a3"
     });
 
     pdf.addImage(img, "PNG", 0, 0, 297, 420);
-    pdf.save("A3-vertical-business-cards.pdf");
-    return;
+    fileName = "A3-vertical-business-cards.pdf";
   }
-
-  if (data.sheet === "a3") {
-    const pdf = new jsPDF({
+  else if (data.sheet === "a3") {
+    pdf = new jsPDF({
       orientation: "landscape",
       unit: "mm",
       format: "a3"
     });
 
     pdf.addImage(img, "PNG", 0, 0, 420, 297);
-    pdf.save("A3-business-cards.pdf");
-    return;
+    fileName = "A3-business-cards.pdf";
   }
-
-  if (data.sheet === "a4" && data.orientation === "vertical") {
-    const pdf = new jsPDF({
+  else if (data.sheet === "a4" && data.orientation === "vertical") {
+    pdf = new jsPDF({
       orientation: "portrait",
       unit: "mm",
       format: "a4"
     });
 
     pdf.addImage(img, "PNG", 0, 0, 210, 297);
-    pdf.save("A4-vertical-business-cards.pdf");
-    return;
+    fileName = "A4-vertical-business-cards.pdf";
+  }
+  else {
+    pdf = new jsPDF({
+      orientation: "landscape",
+      unit: "mm",
+      format: "a4"
+    });
+
+    pdf.addImage(img, "PNG", 0, 0, 297, 210);
+    fileName = "A4-business-cards.pdf";
   }
 
-  const pdf = new jsPDF({
-    orientation: "landscape",
-    unit: "mm",
-    format: "a4"
-  });
+  const blob = pdf.output("blob");
 
-  pdf.addImage(img, "PNG", 0, 0, 297, 210);
-  pdf.save("A4-business-cards.pdf");
+  await deliverBlobFile(
+    blob,
+    fileName,
+    "application/pdf",
+    "On mobile, the print-sheet PDF may open in a new tab. From there you can download, share, or print it."
+  );
 }

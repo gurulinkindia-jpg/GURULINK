@@ -38,8 +38,13 @@ function startDrag(e) {
   const startTop = target.offsetTop;
 
   function move(ev) {
-    const dx = (ev.clientX - startX) / appState.zoom;
-    const dy = (ev.clientY - startY) / appState.zoom;
+    const activeScale =
+      typeof window.getCurrentCanvasScale === "function"
+        ? window.getCurrentCanvasScale()
+        : (appState.zoom || 1);
+
+    const dx = (ev.clientX - startX) / activeScale;
+    const dy = (ev.clientY - startY) / activeScale;
 
     target.style.left = Math.max(0, Math.min(540 - target.offsetWidth, startLeft + dx)) + "px";
     target.style.top = Math.max(0, Math.min(340 - target.offsetHeight, startTop + dy)) + "px";

@@ -26,7 +26,8 @@ const defaultStudentPhoto =
 let appState = {
   logo: defaultLogo,
   studentPhoto: defaultStudentPhoto,
-  zoom: 1
+  zoom: 1,
+  baseZoom: 1
 };
 
 function el(id) {
@@ -261,9 +262,51 @@ function zoomOut() {
   applyZoom();
 }
 
+function getCardDimensions() {
+  const data = getFormData();
+  const isVertical =
+    data.cardType === "student" ||
+    data.orientation === "vertical";
+
+  return isVertical
+    ? { width: 340, height: 540 }
+    : { width: 540, height: 340 };
+}
+
+function computeBaseZoom() {
+  const stage = document.querySelector(".canvas-stage");
+
+  if (!stage) {
+    return 1;
+  }
+
+  const isSmallScreen = window.matchMedia("(max-width: 850px)").matches;
+
+  if (!isSmallScreen) {
+    return 1;
+  }
+
+  const cardSize = getCardDimensions();
+  const availableWidth = Math.max(stage.clientWidth - 18, 120);
+  const availableHeight = Math.max(stage.clientHeight - 18, 120);
+
+  const widthScale = availableWidth / cardSize.width;
+  const heightScale = availableHeight / cardSize.height;
+
+  return Math.max(0.22, Math.min(1, widthScale, heightScale));
+}
+
+function getCurrentCanvasScale() {
+  return (appState.baseZoom || 1) * (appState.zoom || 1);
+}
+
 function applyZoom() {
-  el("cardCanvas").style.transform = `scale(${appState.zoom})`;
-  el("zoomLabel").innerText = Math.round(appState.zoom * 100) + "%";
+  appState.baseZoom = computeBaseZoom();
+
+  const finalZoom = getCurrentCanvasScale();
+
+  el("cardCanvas").style.transform = `scale(${finalZoom})`;
+  el("zoomLabel").innerText = Math.round(finalZoom * 100) + "%";
 }
 
 function saveProject() {
@@ -413,7 +456,11 @@ function applyResponsiveButtonLabels() {
     resetProjectBtn: isMobile ? "Reset" : "🔄 Reset",
     bringForwardBtn: isMobile ? "Front" : "Bring Forward",
     sendBackwardBtn: isMobile ? "Back" : "Send Backward",
-    deleteElementBtn: "Delete"
+    deleteElementBtn: "Delete",
+    downloadPngBtn: isMobile ? "PNG" : "Download PNG",
+    singlePdfBtn: isMobile ? "Card PDF" : "Single Card PDF",
+    sheetPdfBtn: isMobile ? "Sheet PDF" : "Print Sheet PDF",
+    printPreviewBtn: isMobile ? "Print / PDF" : "Print Preview"
   };
 
   Object.keys(labels).forEach(id => {
@@ -426,6 +473,7 @@ function applyResponsiveButtonLabels() {
 
 window.goDesignerBack = goDesignerBack;
 window.goDesignerDashboard = goDesignerDashboard;
+window.getCurrentCanvasScale = getCurrentCanvasScale;
 
 function initApp() {
   el("cardLogo").src = appState.logo;
@@ -445,4 +493,7 @@ function initApp() {
 }
 
 document.addEventListener("DOMContentLoaded", initApp);
-window.addEventListener("resize", applyResponsiveButtonLabels);
+window.addEventListener("resize", function () {
+  applyResponsiveButtonLabels();
+  applyZoom();
+});

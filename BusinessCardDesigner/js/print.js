@@ -88,6 +88,11 @@ if (data.orientation === "vertical") {
 }
 
 async function printSheet() {
+  if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || window.matchMedia("(max-width: 850px)").matches) {
+    await downloadPrintPDF();
+    return;
+  }
+
   await buildPrintSheet();
 
   el("printArea").style.display = "block";
