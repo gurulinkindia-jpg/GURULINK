@@ -24,7 +24,12 @@ function isMobileDesignerDevice() {
     window.matchMedia("(max-width: 850px)").matches;
 }
 
-async function deliverBlobFile(blob, filename, mimeType, mobileMessage) {
+function openBlobInCurrentTab(blob) {
+  const blobUrl = URL.createObjectURL(blob);
+  window.location.href = blobUrl;
+}
+
+async function deliverBlobFile(blob, filename, mimeType) {
   const canUseFile =
     typeof File !== "undefined";
 
@@ -44,6 +49,11 @@ async function deliverBlobFile(blob, filename, mimeType, mobileMessage) {
     }
   }
 
+  if (isMobileDesignerDevice()) {
+    openBlobInCurrentTab(blob);
+    return;
+  }
+
   const blobUrl = URL.createObjectURL(blob);
 
   const link = document.createElement("a");
@@ -53,20 +63,6 @@ async function deliverBlobFile(blob, filename, mimeType, mobileMessage) {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-
-  if (isMobileDesignerDevice()) {
-    setTimeout(() => {
-      try {
-        window.open(blobUrl, "_blank", "noopener");
-      } catch (err) {
-        console.warn("Open blob fallback failed", err);
-      }
-    }, 250);
-
-    if (mobileMessage) {
-      alert(mobileMessage);
-    }
-  }
 
   setTimeout(() => {
     URL.revokeObjectURL(blobUrl);
@@ -82,12 +78,12 @@ async function downloadPNG() {
     return;
   }
 
-  await deliverBlobFile(
-    blob,
-    "business-card.png",
-    "image/png",
-    "If the PNG does not save automatically on mobile, use the opened file to share or save it."
-  );
+  if (isMobileDesignerDevice() && !(navigator.canShare && typeof File !== "undefined")) {
+    window.location.href = canvas.toDataURL("image/png");
+    return;
+  }
+
+  await deliverBlobFile(blob, "business-card.png", "image/png");
 }
 
 async function downloadSinglePDF() {
@@ -105,12 +101,7 @@ async function downloadSinglePDF() {
   pdf.addImage(img, "PNG", 0, 0, 85.6, 53.98);
   const blob = pdf.output("blob");
 
-  await deliverBlobFile(
-    blob,
-    "single-business-card.pdf",
-    "application/pdf",
-    "On mobile, the PDF may open in a new tab. From there you can share, download, or print it."
-  );
+  await deliverBlobFile(blob, "single-business-card.pdf", "application/pdf");
 }
 
 async function downloadPrintPDF() {
@@ -179,10 +170,5 @@ async function downloadPrintPDF() {
 
   const blob = pdf.output("blob");
 
-  await deliverBlobFile(
-    blob,
-    fileName,
-    "application/pdf",
-    "On mobile, the print-sheet PDF may open in a new tab. From there you can download, share, or print it."
-  );
+  await deliverBlobFile(blob, fileName, "application/pdf");
 }
