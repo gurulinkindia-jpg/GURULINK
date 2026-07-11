@@ -539,32 +539,31 @@ textarea {
 
   .topbar {
     margin-bottom: 12px;
-    padding: 10px 12px;
+    padding: 8px 10px;
     border-radius: 16px;
-    gap: 8px;
+    gap: 6px;
   }
 
   .header-left {
-    gap: 8px;
+    gap: 7px;
     align-items: center;
   }
 
   .header-logo {
-    width: 46px;
-    height: 46px;
+    width: 40px;
+    height: 40px;
     border-radius: 10px;
-    padding: 3px;
+    padding: 2px;
   }
 
   .header-left h1 {
-    font-size: 14px;
+    font-size: 12px;
     line-height: 1.15;
+    max-width: 210px;
   }
 
   .header-left p {
-    margin-top: 3px;
-    font-size: 10px;
-    line-height: 1.25;
+    display: none;
   }
 
   .top-actions {

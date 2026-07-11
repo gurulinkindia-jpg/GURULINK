@@ -88,6 +88,21 @@ if (data.orientation === "vertical") {
 }
 
 async function printSheet() {
+  if (
+    typeof window.AndroidPrint !== "undefined" &&
+    window.AndroidPrint &&
+    typeof window.AndroidPrint.printPage === "function"
+  ) {
+    await buildPrintSheet();
+    el("printArea").style.display = "block";
+    await wait(400);
+    window.AndroidPrint.printPage("GURULINK Business Card Sheet");
+    setTimeout(() => {
+      el("printArea").style.display = "";
+    }, 1500);
+    return;
+  }
+
   if (typeof isMobileDesignerDevice === "function" && isMobileDesignerDevice()) {
     await downloadPrintPDF();
     return;
