@@ -79,6 +79,16 @@ Redirecting...
   `;
 }
 
+function withCacheBust(url, value) {
+  const cleanUrl = String(url || "").trim();
+  if (!cleanUrl) {
+    return "";
+  }
+
+  const separator = cleanUrl.includes("?") ? "&" : "?";
+  return `${cleanUrl}${separator}v=${encodeURIComponent(value || Date.now())}`;
+}
+
 /* Dynamic profile sharing page */
 app.get("/profile-view.html", async (req, res) => {
   const id = req.query.id;
@@ -127,6 +137,7 @@ app.get("/profile-view.html", async (req, res) => {
 /* Dynamic advertisement sharing page */
 app.get("/profile-ad.html", async (req, res) => {
   const id = req.query.id;
+  const requestAdts = String(req.query.adts || "").trim();
 
   if (!id) {
     return res.status(404).send("Profile not found");
@@ -140,6 +151,9 @@ app.get("/profile-ad.html", async (req, res) => {
     }
 
     const profile = result.profile;
+    const adts =
+      requestAdts ||
+      String(profile.advertisementCardUpdatedAt || Date.now());
     const roleLabel =
       result.role === "institution"
         ? "Institute Advertisement"
@@ -154,14 +168,19 @@ app.get("/profile-ad.html", async (req, res) => {
       roleLabel
     );
     const image = escapeHtml(
-      profile.advertisementCardImage ||
-      profile.logo ||
-      profile.profilePic ||
-      profile.photo ||
-      "https://guru-link.onrender.com/default.png"
+      withCacheBust(
+        profile.advertisementCardImage ||
+        profile.logo ||
+        profile.profilePic ||
+        profile.photo ||
+        "https://guru-link.onrender.com/default.png",
+        adts
+      )
     );
     const adUrl =
-      `https://guru-link.onrender.com/profile-ad.html?id=${encodeURIComponent(id)}`;
+      `https://guru-link.onrender.com/profile-ad.html?id=${encodeURIComponent(id)}&adts=${encodeURIComponent(adts)}`;
+    const redirectPath =
+      `/profile-ad-client.html?id=${encodeURIComponent(id)}&adts=${encodeURIComponent(adts)}`;
 
     res.send(
       buildShareHtml({
@@ -169,7 +188,7 @@ app.get("/profile-ad.html", async (req, res) => {
         description,
         image,
         url: adUrl,
-        redirectPath: `/profile-ad-client.html?id=${encodeURIComponent(id)}`
+        redirectPath
       })
     );
   } catch (error) {
