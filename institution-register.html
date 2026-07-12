@@ -2638,24 +2638,6 @@ window.openBusinessCardDesigner = function() {
       ? "BusinessCardDesigner/index.html" + designerQuery
       : new URL("BusinessCardDesigner/index.html" + designerQuery, window.location.href).toString();
 
-  const isPhone =
-    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
-    window.matchMedia("(max-width: 850px)").matches;
-
-  const inGuruLinkApp =
-    (navigator.userAgent || "").includes("GuruLinkAndroidApp");
-
-  if (isPhone && inGuruLinkApp) {
-    const chromeIntentUrl =
-      "intent://www.gurulink.co.in/BusinessCardDesigner/index.html" +
-      designerQuery +
-      "&source=appmobile" +
-      "#Intent;scheme=https;package=com.android.chrome;end";
-
-    location.href = chromeIntentUrl;
-    return;
-  }
-
   location.href = designerUrl;
 };
 
