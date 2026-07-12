@@ -507,31 +507,19 @@
               </div>
             </div>
 
-            <div class="row">
-              <div class="field">
-                <label for="fontFamilySelect">Font Style</label>
-                <select id="fontFamilySelect">
-                  <option value="Poppins">Poppins</option>
+          <div class="row">
+            <div class="field">
+              <label for="fontFamilySelect">Font Style</label>
+              <select id="fontFamilySelect">
+                <option value="Poppins">Poppins</option>
                   <option value="Montserrat">Montserrat</option>
                   <option value="Oswald">Oswald</option>
                   <option value="Merriweather">Merriweather</option>
-                  <option value="Playfair Display">Playfair Display</option>
-                  <option value="Bebas Neue">Bebas Neue</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label for="iconStyleSelect">SVG Style</label>
-                <select id="iconStyleSelect">
-                  <option value="none">No SVG</option>
-                  <option value="academic">Academic</option>
-                  <option value="creative">Creative Art</option>
-                  <option value="skill">Professional Skill</option>
-                  <option value="sport">Sport</option>
-                  <option value="fitness">Fitness</option>
-                </select>
-              </div>
+                <option value="Playfair Display">Playfair Display</option>
+                <option value="Bebas Neue">Bebas Neue</option>
+              </select>
             </div>
+          </div>
 
             <div class="row">
               <div class="field">
@@ -764,7 +752,6 @@
       templateSelect:document.getElementById("templateSelect"),
       canvasPresetSelect:document.getElementById("canvasPresetSelect"),
       fontFamilySelect:document.getElementById("fontFamilySelect"),
-      iconStyleSelect:document.getElementById("iconStyleSelect"),
       imageLayoutSelect:document.getElementById("imageLayoutSelect"),
       offerBadgeInput:document.getElementById("offerBadgeInput"),
       imageOneSelect:document.getElementById("imageOneSelect"),
@@ -1430,9 +1417,6 @@
       elements.headingColorInput.value = template.heading;
       elements.accentColorInput.value = template.accent;
       elements.bodyColorInput.value = template.body;
-      if(elements.iconStyleSelect.value === "none"){
-        elements.iconStyleSelect.value = template.defaultIcon || "none";
-      }
     }
 
     function makeDefaultAdData(data){
@@ -1480,7 +1464,7 @@
         template:elements.templateSelect.value,
         canvasPreset:elements.canvasPresetSelect.value,
         fontFamily:elements.fontFamilySelect.value,
-        iconStyle:elements.iconStyleSelect.value,
+        iconStyle:(templates[elements.templateSelect.value] || templates.blue).defaultIcon || "none",
         imageLayout:elements.imageLayoutSelect.value,
         offerBadge:elements.offerBadgeInput.value.trim(),
         imageOne:elements.imageOneSelect.value,
@@ -1516,7 +1500,6 @@
       elements.templateSelect.value = finalData.template || "blue";
       elements.canvasPresetSelect.value = finalData.canvasPreset || "landscape";
       elements.fontFamilySelect.value = finalData.fontFamily || "Poppins";
-      elements.iconStyleSelect.value = finalData.iconStyle || "none";
       elements.imageLayoutSelect.value = finalData.imageLayout || "hero";
       elements.offerBadgeInput.value = finalData.offerBadge || "";
       elements.headlineInput.value = finalData.headline || "";
@@ -2216,7 +2199,6 @@
         elements.templateSelect,
         elements.canvasPresetSelect,
         elements.fontFamilySelect,
-        elements.iconStyleSelect,
         elements.imageLayoutSelect,
         elements.offerBadgeInput,
         elements.imageOneSelect,
