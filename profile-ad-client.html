@@ -77,12 +77,32 @@
       margin-bottom:18px;
     }
 
+    .heroImageWrap{
+      width:100%;
+      max-width:100%;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#dce9f9;
+      aspect-ratio:var(--ad-ratio, 1200/630);
+      overflow:hidden;
+    }
+
+    .heroImageWrap.square{
+      max-width:760px;
+    }
+
+    .heroImageWrap.portrait{
+      max-width:620px;
+    }
+
     .heroImage{
       width:100%;
+      height:100%;
       display:block;
       background:#dce9f9;
-      aspect-ratio:1200/630;
-      object-fit:cover;
+      object-fit:contain;
     }
 
     .heroBody{
@@ -364,6 +384,25 @@
       return selected?.url || profileData?.photo || profileData?.profilePic || profileData?.logo || "";
     }
 
+    function getSavedCanvasPreset(profileData){
+      const preset = String(profileData?.advertisementCardData?.canvasPreset || "landscape").toLowerCase();
+      if(preset === "square" || preset === "portrait"){
+        return preset;
+      }
+      return "landscape";
+    }
+
+    function getSavedCanvasRatio(profileData){
+      const preset = getSavedCanvasPreset(profileData);
+      if(preset === "square"){
+        return "1 / 1";
+      }
+      if(preset === "portrait"){
+        return "1080 / 1350";
+      }
+      return "1200 / 630";
+    }
+
     function normalizeWebsiteUrl(url){
       const value = String(url || "").trim();
       if(!value){
@@ -535,6 +574,8 @@
         data.advertisementCardImage ||
         getPrimaryProfileImage(data) ||
         "https://via.placeholder.com/1200x630?text=GURULINK+Advertisement";
+      const canvasPreset = getSavedCanvasPreset(data);
+      const canvasRatio = getSavedCanvasRatio(data);
 
       const website = normalizeWebsiteUrl(data.website || "");
       const phone = String(data.phone || "").trim();
@@ -544,7 +585,9 @@
       content.className = "";
       content.innerHTML = `
         <section class="heroCard">
-          <img class="heroImage" src="${heroImage}" alt="Advertisement image">
+          <div class="heroImageWrap ${canvasPreset}" style="--ad-ratio:${canvasRatio};">
+            <img class="heroImage" src="${heroImage}" alt="Advertisement image">
+          </div>
           <div class="heroBody">
             <h1>${data.name || "GURULINK Profile"}</h1>
 
