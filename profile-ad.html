@@ -378,16 +378,18 @@
 
       try{
         if(navigator.share){
-          const shareData = {
-            title:"GURULINK Advertisement",
-            text:shareText,
-            url:shareUrl
-          };
-
           const file = await fetchShareFileFromUrl(data.advertisementCardImage || "");
-          if(file){
-            shareData.files = [file];
-          }
+          const shareData = file
+            ? {
+                title:"GURULINK Advertisement",
+                text:shareText + "\n\n" + shareUrl,
+                files:[file]
+              }
+            : {
+                title:"GURULINK Advertisement",
+                text:shareText,
+                url:shareUrl
+              };
 
           await navigator.share(shareData);
           return;
