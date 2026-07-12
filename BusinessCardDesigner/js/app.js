@@ -166,6 +166,11 @@ function updateCard() {
   }
 
   updateQR();
+
+  // Re-fit the preview whenever card mode/orientation/content changes.
+  requestAnimationFrame(() => {
+    applyZoom();
+  });
 }
 
 function bindFormEvents() {
