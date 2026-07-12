@@ -200,16 +200,16 @@ vertical-align:middle;
 
 /* BUTTONS */
 
-/* PC: 7 buttons in one row */
+/* PC: responsive button grid */
 .mainBtns{
   display:grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(auto-fit,minmax(140px,1fr));
   gap:10px;
 }
 
 /* Share button normal width on PC */
 .mainBtns .full{
-  grid-column: span 1;
+  grid-column: span 2;
 }
 
 /* MOBILE: 2-column layout */
@@ -251,6 +251,27 @@ background:#ff9800;
 
 .feeBtn{
 background:#5e35b1;
+}
+
+.timeTableBtn{
+background:#00897b;
+}
+
+.businessCardBtn{
+background:#1565c0;
+}
+
+.adDesignerBtn{
+background:#3949ab;
+}
+
+.adShareBtn{
+background:linear-gradient(135deg,#ff7043,#f4511e);
+font-weight:bold;
+}
+
+.websiteBtn{
+background:#2e7d32;
 }
 
 .logoutBtn{
@@ -426,7 +447,18 @@ border-radius:8px;
 }
 
 .messageBtn{
-background:#6a1b9a;
+background:#1565c0;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+box-shadow:0 2px 6px rgba(21,101,192,.18);
+}
+
+.messageBtn:hover{
+background:#0d47a1;
 }
 
 .teacherChat{
@@ -659,6 +691,100 @@ background:#00695c;
     0 4px 12px rgba(0,0,0,.2);
 }
 
+.adShareOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(4,12,28,.58);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+  padding:18px;
+}
+
+.adShareModal{
+  width:min(480px,100%);
+  background:#fff;
+  border-radius:22px;
+  box-shadow:0 24px 70px rgba(0,0,0,.28);
+  overflow:hidden;
+}
+
+.adShareHead{
+  padding:18px 20px 14px;
+  background:linear-gradient(135deg,#0f4ea7,#1e88e5);
+  color:#fff;
+}
+
+.adShareHead h3{
+  margin:0 0 6px;
+  font-size:22px;
+}
+
+.adShareHead p{
+  margin:0;
+  font-size:13px;
+  line-height:1.5;
+  opacity:.95;
+}
+
+.adShareBody{
+  padding:18px;
+  display:grid;
+  gap:12px;
+}
+
+.adShareGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+
+.adShareAction,
+.adShareFooter button{
+  border:none;
+  border-radius:14px;
+  padding:13px 12px;
+  font-size:14px;
+  font-weight:bold;
+  cursor:pointer;
+  color:#fff;
+}
+
+.adShareAction.whatsapp{ background:#25d366; }
+.adShareAction.facebook{ background:#1877f2; }
+.adShareAction.telegram{ background:#229ed9; }
+.adShareAction.link{ background:#3949ab; }
+.adShareAction.image{ background:#00897b; }
+.adShareAction.public{ background:#ff7043; }
+.adShareAction.native{ background:#6d4c41; }
+
+.adShareNote{
+  background:#f8fbff;
+  border:1px solid #dbe7f4;
+  border-radius:14px;
+  padding:12px 14px;
+  color:#4d647f;
+  font-size:12px;
+  line-height:1.6;
+}
+
+.adShareFooter{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+
+.adShareFooter .closeShareBtn{
+  background:#455a64;
+}
+
+@media(max-width:560px){
+  .adShareGrid{
+    grid-template-columns:1fr;
+  }
+}
+
 
 .bankRow{
   display:flex;
@@ -868,12 +994,28 @@ Quick Actions
     Fee Structure
   </button>
 
+  <button id="timeTableActionBtn" class="timeTableBtn" onclick="openTimeTable()">
+    Show Time Table
+  </button>
+
   <button class="supportBtn" onclick="contactDeveloper()">
      Developer Support
   </button>
 
   <button class="homeBtn" onclick="goHome()">
      Home
+  </button>
+
+  <button id="websiteActionBtn" class="websiteBtn" onclick="openWebsite()">
+    Website
+  </button>
+
+  <button class="businessCardBtn" onclick="openBusinessCardDesigner()">
+    Create Business / I Card
+  </button>
+
+  <button class="adDesignerBtn" onclick="openAdvertisementDesigner()">
+    Create Advertisement
   </button>
 
   <button class="invoiceBtn" onclick="createInvoice()">
@@ -885,10 +1027,12 @@ Quick Actions
   </button>
 
   <button class="shareBtn full" onclick="shareProfile()">
-    Share Business Card
+    Share Profile
   </button>
 
 </div>
+
+<div id="adShareModalRoot"></div>
 
 
 
@@ -1006,7 +1150,8 @@ from
 
 import {
 getAuth,
-signOut
+signOut,
+onAuthStateChanged
 }
 from
 "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
@@ -1043,6 +1188,21 @@ getDatabase(app);
 const auth=
 getAuth(app);
 
+let authReadyResolver = null;
+const authReadyPromise = new Promise(resolve=>{
+  authReadyResolver = resolve;
+});
+
+let dashboardAuthUser = null;
+
+onAuthStateChanged(auth,(user)=>{
+  dashboardAuthUser = user || null;
+  if(authReadyResolver){
+    authReadyResolver(user || null);
+    authReadyResolver = null;
+  }
+});
+
 
 
 
@@ -1062,6 +1222,41 @@ location.href="login.html";
 
 }
 
+function ensureTimeTableButton(){
+  const actionsBox =
+    document.querySelector(".mainBtns");
+
+  if(!actionsBox){
+    return;
+  }
+
+  let btn =
+    document.getElementById("timeTableActionBtn");
+
+  if(!btn){
+    btn = document.createElement("button");
+    btn.id = "timeTableActionBtn";
+    btn.className = "timeTableBtn";
+    btn.type = "button";
+    btn.innerText = "Show Time Table";
+    btn.setAttribute("onclick","openTimeTable()");
+
+    const shareBtn =
+      actionsBox.querySelector(".shareBtn");
+
+    if(shareBtn){
+      actionsBox.insertBefore(btn, shareBtn);
+    }else{
+      actionsBox.appendChild(btn);
+    }
+  }
+
+  btn.style.display = "block";
+  btn.hidden = false;
+}
+
+ensureTimeTableButton();
+
 
 
 
@@ -1073,6 +1268,79 @@ role === "teacher" || role === "teacher_institute"
   : "institutions/" + profileId;
 
 let currentProfileData = {};
+
+function getActiveProfileId(){
+  return String(
+    currentProfileData.uid ||
+    profileId ||
+    localStorage.getItem("profileId") ||
+    ""
+  ).trim();
+}
+
+function isInvoiceFeatureActive(data){
+  const localActive =
+    (localStorage.getItem("invoiceFeatureActive") === "true" && localStorage.getItem("invoiceProfileId") === profileId) ||
+    (sessionStorage.getItem("invoiceFeatureActive") === "true" && sessionStorage.getItem("invoiceProfileId") === profileId);
+
+  return (data && data.invoiceFeatureActive === true) || localActive;
+}
+
+function updateInvoiceButton(data){
+  const btn = document.querySelector(".invoiceBtn");
+
+  if(!btn){
+    return;
+  }
+
+  if(isInvoiceFeatureActive(data)){
+    btn.disabled = false;
+    btn.style.opacity = "1";
+    btn.style.cursor = "pointer";
+    btn.title = "";
+    btn.innerText = "Create Invoice";
+  }else{
+    btn.disabled = false;
+    btn.style.opacity = ".55";
+    btn.style.cursor = "not-allowed";
+    btn.title = "Admin activation required after Rs.1500 payment";
+    btn.innerText = "Activate Invoice Rs.1500";
+  }
+}
+
+function normalizeWebsiteUrl(url){
+  const clean = String(url || "").trim();
+
+  if(!clean){
+    return "";
+  }
+
+  if(/^https?:\/\//i.test(clean)){
+    return clean;
+  }
+
+  return "https://" + clean;
+}
+
+function updateWebsiteButton(data){
+  const btn = document.getElementById("websiteActionBtn");
+
+  if(!btn){
+    return;
+  }
+
+  const finalUrl = normalizeWebsiteUrl(data?.website || "");
+
+  if(finalUrl){
+    btn.style.opacity = "1";
+    btn.style.cursor = "pointer";
+    btn.title = "";
+  }else{
+    btn.style.opacity = ".55";
+    btn.style.cursor = "not-allowed";
+    btn.title = "Add your website in Edit Profile first";
+  }
+}
 
 
 
@@ -1131,6 +1399,8 @@ return;
 
 const d = snap.val();
 currentProfileData = d;
+updateInvoiceButton(d);
+updateWebsiteButton(d);
 /* BANK DETAILS */
 document.getElementById("accountHolderName").innerText =
 d.accountHolderName || "Not Added";
@@ -1236,6 +1506,8 @@ document.getElementById(
 ).style.display=
 "block";
 
+ensureTimeTableButton();
+
 }
 
 loadProfile();
@@ -1260,6 +1532,70 @@ return String(value ?? "")
 .replace(/'/g,"&#039;");
 }
 
+async function ensureDashboardAuth(actionText = "continue"){
+  if(auth.currentUser){
+    dashboardAuthUser = auth.currentUser;
+    return auth.currentUser;
+  }
+
+  const waitedUser = await Promise.race([
+    authReadyPromise,
+    new Promise(resolve=>setTimeout(()=>resolve(auth.currentUser || null),4000))
+  ]);
+
+  const finalUser = waitedUser || auth.currentUser || dashboardAuthUser || null;
+
+  if(finalUser){
+    dashboardAuthUser = finalUser;
+    return finalUser;
+  }
+
+  alert(`Your login session was not found. Please log in again to ${actionText}.`);
+  return null;
+}
+
+function normalizePhoneDigits(value){
+return String(value || "").replace(/\D/g,"");
+}
+
+function buildBusinessCardAddress(data){
+const lines = [];
+
+function pushUnique(value){
+const clean = String(value || "").trim();
+
+if(!clean){
+return;
+}
+
+if(lines.some(item => item.toLowerCase() === clean.toLowerCase())){
+return;
+}
+
+lines.push(clean);
+}
+
+pushUnique(data?.address);
+
+const areaLine =
+[data?.area,data?.city,data?.town]
+.map(item => String(item || "").trim())
+.filter(Boolean)
+.join(", ");
+
+pushUnique(areaLine);
+
+const statePinLine =
+[data?.state,data?.pinCode]
+.map(item => String(item || "").trim())
+.filter(Boolean)
+.join(" - ");
+
+pushUnique(statePinLine);
+
+return lines.join(", ");
+}
+
 function getPrimaryProfileImage(data){
   const images =
     Array.isArray(data?.profileImages)
@@ -1279,6 +1615,8 @@ function getPrimaryProfileImage(data){
 }
 
 function renderEnrollmentMessages(studentId){
+const activeProfileId =
+getActiveProfileId();
 
 const box =
 document.getElementById("chat_" + studentId);
@@ -1288,7 +1626,7 @@ return;
 }
 
 onValue(
-ref(db,`enrollmentChats/${studentId}/${profileId}`),
+ref(db,`enrollmentChats/${studentId}/${activeProfileId}`),
 (snap)=>{
 
 let messages = [];
@@ -1303,7 +1641,7 @@ const msg = child.val();
 const msgTime = Number(msg.time || 0);
 
 if(msgTime && msgTime < expiryTime){
-remove(ref(db,`enrollmentChats/${studentId}/${profileId}/messages/${child.key}`));
+remove(ref(db,`enrollmentChats/${studentId}/${activeProfileId}/messages/${child.key}`));
 return;
 }
 
@@ -1336,8 +1674,11 @@ ${escapeHTML(msg.text || "")}
 }
 
 async function syncEnrollmentDetails(studentId){
+const activeProfileId =
+getActiveProfileId();
+
 await update(
-ref(db, `studentEnrollments/${studentId}/${profileId}`),
+ref(db, `studentEnrollments/${studentId}/${activeProfileId}`),
 {
 website:currentProfileData.website || "",
 showBankDetails:currentProfileData.showBankDetails !== false,
@@ -1350,6 +1691,92 @@ qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.
 updatedAt:Date.now()
 }
 );
+}
+
+async function resolveStudentEnrollmentTarget(leadId, leadPhone = ""){
+  const activeProfileId =
+    getActiveProfileId();
+
+  const leadSnap =
+    await get(ref(db, `profileViews/${activeProfileId}/${leadId}`));
+
+  const leadData =
+    leadSnap.exists()
+      ? (leadSnap.val() || {})
+      : {};
+
+  const directCandidates = [
+    leadData.studentId,
+    leadData.viewerProfileId,
+    leadData.profileId,
+    leadId
+  ]
+  .map(value => String(value || "").trim())
+  .filter(Boolean);
+
+  for(const candidateId of directCandidates){
+    const studentSnap =
+      await get(ref(db, `students/${candidateId}`));
+
+    if(studentSnap.exists()){
+      return {
+        studentId:candidateId,
+        leadData,
+        studentData:studentSnap.val() || {}
+      };
+    }
+  }
+
+  const phoneDigits =
+    normalizePhoneDigits(
+      leadPhone ||
+      leadData.phone ||
+      ""
+    );
+
+  if(phoneDigits){
+    const studentsSnap =
+      await get(ref(db, "students"));
+
+    if(studentsSnap.exists()){
+      let foundId = "";
+      let foundData = {};
+
+      studentsSnap.forEach(child=>{
+        if(foundId){
+          return;
+        }
+
+        const candidate = child.val() || {};
+        const candidatePhones = [
+          candidate.phone,
+          candidate.alternatePhone,
+          candidate.mobile
+        ]
+        .map(normalizePhoneDigits)
+        .filter(Boolean);
+
+        if(candidatePhones.includes(phoneDigits)){
+          foundId = child.key;
+          foundData = candidate;
+        }
+      });
+
+      if(foundId){
+        return {
+          studentId:foundId,
+          leadData,
+          studentData:foundData
+        };
+      }
+    }
+  }
+
+  return {
+    studentId:String(leadData.studentId || leadData.viewerProfileId || leadId || "").trim(),
+    leadData,
+    studentData:{}
+  };
 }
 
 function loadDemoRequests(){
@@ -1438,7 +1865,7 @@ function loadLeads(){
 onValue(
 
 ref(db,
-`profileViews/${profileId}`),
+`profileViews/${getActiveProfileId()}`),
 
 (snapshot)=>{
 
@@ -1464,6 +1891,7 @@ const lead=child.val();
 const status=lead.status || "pending";
 const isAccepted = status === "accepted";
 const leadRole=(lead.viewerRole || "").toLowerCase();
+const resolvedStudentId=String(lead.studentId || lead.viewerProfileId || id || "").trim();
 const hasPhone=lead.phone && lead.phone.toString().trim();
 const cleanPhone=hasPhone ? lead.phone.toString().replace(/\D/g,"") : "";
 const leadType=lead.name || (hasPhone ? "Student" : (leadRole === "institution" ? "Institution" : "Teacher/Institution"));
@@ -1475,11 +1903,11 @@ pending++;
 }
 
 if(isAccepted){
-acceptedStudentIds.push(id);
+acceptedStudentIds.push(resolvedStudentId);
 }
 
 if(status === "enrolled" || status === "accepted"){
-syncEnrollmentDetails(id);
+syncEnrollmentDetails(resolvedStudentId);
 }
 
 html+=`
@@ -1500,7 +1928,7 @@ ${hasPhone ? `
 <button class="whatsappBtn" onclick="contactWhatsApp('${cleanPhone}')">WhatsApp</button>
 <button class="callBtn" onclick="callLead('${cleanPhone}')">Call</button>
 ` : ""}
-<button class="${status === 'enrolled' ? 'pendingBtn' : 'enrollBtn'}" onclick="toggleStatus('${id}', '${status}', '${cleanPhone}')">
+<button class="${status === 'enrolled' ? 'pendingBtn' : 'enrollBtn'}" onclick="toggleStatus('${id}', '${status}', '${cleanPhone}', '${resolvedStudentId}')">
 ${status === 'enrolled' || status === 'accepted' ? 'Mark Pending' : 'Mark Enrolled'}
 </button>
 <button class="deleteBtn" onclick="deleteLead('${id}')">Delete</button>
@@ -1508,14 +1936,14 @@ ${status === 'enrolled' || status === 'accepted' ? 'Mark Pending' : 'Mark Enroll
 ${isAccepted ? `
 <div class="teacherChatHeader">
 <strong>Messages</strong>
-<button class="clearChatBtn" onclick="clearEnrollmentChat('${id}')">Clear Chat</button>
+<button class="clearChatBtn" onclick="clearEnrollmentChat('${resolvedStudentId}')">Clear Chat</button>
 </div>
-<div class="teacherChat" id="chat_${id}">
+<div class="teacherChat" id="chat_${resolvedStudentId}">
 Loading messages...
 </div>
 <div class="messageBox">
-<input id="msg_${id}" placeholder="Message to student">
-<button class="messageBtn" onclick="sendEnrollmentMessage('${id}')">Send</button>
+<input id="msg_${resolvedStudentId}" placeholder="Message to student">
+<button class="messageBtn" onclick="sendEnrollmentMessage('${resolvedStudentId}')">Send</button>
 </div>
 ` : ""}
 </div>
@@ -1570,7 +1998,7 @@ await update(
 
 ref(
 db,
-`profileViews/${profileId}/${leadId}`
+`profileViews/${getActiveProfileId()}/${leadId}`
 ),
 
 {
@@ -1670,7 +2098,7 @@ await remove(
 
 ref(
 db,
-`profileViews/${profileId}/${leadId}`
+`profileViews/${getActiveProfileId()}/${leadId}`
 )
 
 );
@@ -1768,6 +2196,48 @@ window.openFeeStructure = function(){
 
 };
 
+window.openTimeTable = function(){
+  const id =
+    profileId ||
+    localStorage.getItem("profileId") ||
+    localStorage.getItem("teacherId") ||
+    localStorage.getItem("institutionId");
+
+  const type =
+    role === "institution"
+      ? "institution"
+      : "teacher";
+
+  if (!id || id === "null" || id === "undefined") {
+    alert("Profile ID missing. Please login again.");
+    return;
+  }
+
+  localStorage.setItem("profileId", id);
+  localStorage.setItem("role", type);
+  localStorage.setItem("uid", id);
+
+  sessionStorage.setItem("profileId", id);
+  sessionStorage.setItem("role", type);
+  sessionStorage.setItem("uid", id);
+
+  if (type === "teacher") {
+    localStorage.setItem("teacherId", id);
+    sessionStorage.setItem("teacherId", id);
+  } else {
+    localStorage.setItem("institutionId", id);
+    sessionStorage.setItem("institutionId", id);
+  }
+
+  location.href =
+    "teacher-timetable.html?mode=view&id=" +
+    encodeURIComponent(id) +
+    "&role=" +
+    encodeURIComponent(type);
+};
+
+setTimeout(ensureTimeTableButton, 0);
+
 window.createInvoice = function () {
   const id =
     profileId ||
@@ -1785,6 +2255,24 @@ window.createInvoice = function () {
     return;
   }
 
+  if(!isInvoiceFeatureActive(currentProfileData)){
+    localStorage.setItem("invoicePaymentProfileId", id);
+    localStorage.setItem("invoicePaymentRole", type);
+    localStorage.setItem("invoiceProfileId", id);
+    localStorage.setItem("invoiceRole", type);
+    sessionStorage.setItem("invoicePaymentProfileId", id);
+    sessionStorage.setItem("invoicePaymentRole", type);
+    sessionStorage.setItem("invoiceProfileId", id);
+    sessionStorage.setItem("invoiceRole", type);
+
+    location.href =
+      "invoice-payment.html?id=" +
+      encodeURIComponent(id) +
+      "&type=" +
+      encodeURIComponent(type);
+    return;
+  }
+
   localStorage.setItem("invoiceProfileId", id);
   localStorage.setItem("invoiceRole", type);
   sessionStorage.setItem("invoiceProfileId", id);
@@ -1796,7 +2284,6 @@ window.createInvoice = function () {
     "&type=" +
     encodeURIComponent(type);
 };
-
 
 
 
@@ -1931,57 +2418,149 @@ window.contactWhatsApp = function(phone) {
 };
 
 
-window.toggleStatus = async function (leadId, currentStatus, studentPhone = "") {
+window.toggleStatus = async function (leadId, currentStatus, studentPhone = "", knownStudentId = "") {
+  try{
+    const activeUser =
+      await ensureDashboardAuth("mark a student as enrolled");
 
-  const newStatus =
-    currentStatus === "enrolled" || currentStatus === "accepted" ? "pending" : "enrolled";
-
-  await update(
-    ref(db, `profileViews/${profileId}/${leadId}`),
-    {
-      status: newStatus
+    if(!activeUser){
+      return;
     }
-  );
 
-  if(newStatus === "enrolled"){
-    await set(
-      ref(db, `studentEnrollments/${leadId}/${profileId}`),
-      {
-        studentId:leadId,
-        profileId:profileId,
-        profileRole:role === "institution" ? "institution" : "teacher",
-        name:currentProfileData.name || "",
-        phone:currentProfileData.phone || "",
-        alternatePhone:currentProfileData.alternatePhone || "",
-        email:currentProfileData.email || "",
-        website:currentProfileData.website || "",
-        logo:getPrimaryProfileImage(currentProfileData),
-        category:currentProfileData.category || "",
-        showBankDetails:currentProfileData.showBankDetails !== false,
-        accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
-        bankName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.bankName || ""),
-        accountNumber:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountNumber || ""),
-        ifsc:currentProfileData.showBankDetails === false ? "" : (currentProfileData.ifsc || ""),
-        upiId:currentProfileData.showBankDetails === false ? "" : (currentProfileData.upiId || ""),
-        qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.qrImage || ""),
-        status:"pending_student_acceptance",
-        requestedAt:Date.now(),
-        updatedAt:Date.now()
-      }
-    );
-  }
-  else{
-    await update(
-      ref(db, `studentEnrollments/${leadId}/${profileId}`),
-      {
-        status:"pending",
-        updatedAt:Date.now()
-      }
-    );
-  }
+    const activeProfileId =
+      getActiveProfileId();
 
-  if(newStatus === "enrolled"){
-    showEnrollModal(studentPhone);
+    if(!activeProfileId){
+      alert("Profile ID not found. Please log in again.");
+      return;
+    }
+
+    const newStatus =
+      currentStatus === "enrolled" || currentStatus === "accepted"
+        ? "pending"
+        : "enrolled";
+
+    let resolvedTarget = {
+      studentId:String(knownStudentId || "").trim(),
+      leadData:{
+        viewerProfileId:String(knownStudentId || "").trim(),
+        phone:studentPhone || ""
+      },
+      studentData:{}
+    };
+
+    if(!resolvedTarget.studentId){
+      try{
+        resolvedTarget =
+          await resolveStudentEnrollmentTarget(leadId, studentPhone);
+      }
+      catch(err){
+        console.error("resolveStudentEnrollmentTarget failed", err);
+        alert(
+          "Student lookup could not be completed.\n\n" +
+          "The dashboard could not resolve the student profile needed for enrollment.\n\n" +
+          (err && err.message ? err.message : "Permission denied")
+        );
+        return;
+      }
+    }
+
+    const studentId =
+      String(resolvedTarget.studentId || "").trim();
+
+    if(!studentId){
+      alert("Student profile could not be matched. Ask the student to log in again and open your profile once more.");
+      return;
+    }
+
+    if(newStatus === "enrolled"){
+      try{
+        await set(
+          ref(db, `studentEnrollments/${studentId}/${activeProfileId}`),
+          {
+            studentId:studentId,
+            profileId:activeProfileId,
+            viewRecordId:leadId,
+            profileRole:role === "institution" ? "institution" : "teacher",
+            name:currentProfileData.name || "",
+            phone:currentProfileData.phone || "",
+            alternatePhone:currentProfileData.alternatePhone || "",
+            email:currentProfileData.email || "",
+            website:currentProfileData.website || "",
+            logo:getPrimaryProfileImage(currentProfileData),
+            category:currentProfileData.category || "",
+            showBankDetails:currentProfileData.showBankDetails !== false,
+            accountHolderName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountHolderName || ""),
+            bankName:currentProfileData.showBankDetails === false ? "" : (currentProfileData.bankName || ""),
+            accountNumber:currentProfileData.showBankDetails === false ? "" : (currentProfileData.accountNumber || ""),
+            ifsc:currentProfileData.showBankDetails === false ? "" : (currentProfileData.ifsc || ""),
+            upiId:currentProfileData.showBankDetails === false ? "" : (currentProfileData.upiId || ""),
+            qrImage:currentProfileData.showBankDetails === false ? "" : (currentProfileData.qrImage || ""),
+            status:"pending_student_acceptance",
+            requestedAt:Date.now(),
+            updatedAt:Date.now()
+          }
+        );
+      }
+      catch(err){
+        console.error("studentEnrollments write failed", err);
+        alert(
+          "Student enrollment record could not be updated.\n\n" +
+          "Path: studentEnrollments/" + studentId + "/" + activeProfileId + "\n\n" +
+          (err && err.message ? err.message : "Permission denied")
+        );
+        return;
+      }
+    }
+    else{
+      try{
+        await update(
+          ref(db, `studentEnrollments/${studentId}/${activeProfileId}`),
+          {
+            status:"pending",
+            updatedAt:Date.now()
+          }
+        );
+      }
+      catch(err){
+        console.error("studentEnrollments status update failed", err);
+        alert(
+          "Student enrollment status could not be updated.\n\n" +
+          "Path: studentEnrollments/" + studentId + "/" + activeProfileId + "\n\n" +
+          (err && err.message ? err.message : "Permission denied")
+        );
+        return;
+      }
+    }
+
+    try{
+      await update(
+        ref(db, `profileViews/${activeProfileId}/${leadId}`),
+        {
+          status:newStatus,
+          studentId:studentId,
+          viewerProfileId:(resolvedTarget.leadData && resolvedTarget.leadData.viewerProfileId) || studentId,
+          updatedAt:Date.now()
+        }
+      );
+    }
+    catch(err){
+      console.error("profileViews write failed", err);
+      alert(
+        "Student dashboard entry was updated, but teacher enquiry status could not be updated.\n\n" +
+        "Path: profileViews/" + activeProfileId + "/" + leadId + "\n\n" +
+        (err && err.message ? err.message : "Permission denied")
+      );
+      return;
+    }
+
+    if(newStatus === "enrolled"){
+      showEnrollModal(studentPhone || ((resolvedTarget.leadData && resolvedTarget.leadData.phone) || ""));
+    }
+  }
+  catch(err){
+    console.error("Mark enrolled failed", err);
+    alert("Unable to update enrolled status right now.\n\n" + (err && err.message ? err.message : "Unknown error"));
   }
 
 };
@@ -2000,9 +2579,9 @@ return;
 }
 
 await push(
-ref(db, `enrollmentChats/${studentId}/${profileId}/messages`),
+ref(db, `enrollmentChats/${studentId}/${getActiveProfileId()}/messages`),
 {
-senderId:profileId,
+senderId:getActiveProfileId(),
 senderRole:role === "institution" ? "institution" : "teacher",
 senderName:currentProfileData.name || "Teacher / Institution",
 text:text,
@@ -2011,7 +2590,7 @@ time:Date.now()
 );
 
 await update(
-ref(db, `studentEnrollments/${studentId}/${profileId}`),
+ref(db, `studentEnrollments/${studentId}/${getActiveProfileId()}`),
 {
 lastMessage:text,
 lastMessageAt:Date.now(),
@@ -2038,12 +2617,12 @@ if(!confirm("Clear this chat from your side only?")){
 return;
 }
 
-await update(ref(db,`enrollmentChats/${studentId}/${profileId}/clearedFor`),{
-[profileId]:Date.now()
+await update(ref(db,`enrollmentChats/${studentId}/${getActiveProfileId()}/clearedFor`),{
+[getActiveProfileId()]:Date.now()
 });
 
 await update(
-ref(db, `studentEnrollments/${studentId}/${profileId}`),
+ref(db, `studentEnrollments/${studentId}/${getActiveProfileId()}`),
 {
 lastMessageAt:Date.now(),
 unreadForStudent:false
@@ -2092,49 +2671,464 @@ window.goHome = function() {
   location.href = "index.html";
 };
 
+window.openWebsite = function() {
+  const finalUrl =
+    normalizeWebsiteUrl(currentProfileData.website || "");
 
-window.shareProfile = function () {
+  if(!finalUrl){
+    alert("Website not added yet. Please add it in Edit Profile first.");
+    return;
+  }
 
-  const profileId = localStorage.getItem("profileId");
-  const role = localStorage.getItem("role");
+  window.open(finalUrl,"_blank","noopener");
+};
+
+window.openBusinessCardDesigner = function() {
+  const profileId =
+    currentProfileData.uid ||
+    localStorage.getItem("profileId") ||
+    "";
+
+  const activeRole =
+    currentProfileData.role ||
+    localStorage.getItem("role") ||
+    "teacher";
+
+  if(!profileId){
+    alert("Profile not found");
+    return;
+  }
+
+  const profileUrl =
+    "https://www.gurulink.co.in/profile-view.html?id=" +
+    encodeURIComponent(profileId);
+
+  const finalUrl =
+    normalizeWebsiteUrl(currentProfileData.website || "") ||
+    profileUrl;
+
+  const roleTitle =
+    activeRole === "institution"
+      ? "Institute"
+      : "Teacher / Trainer";
+
+  const payload = {
+    cardType:"business",
+    name:currentProfileData.name || "",
+    title:(currentProfileData.categoryName || currentProfileData.category || roleTitle),
+    phone:currentProfileData.phone || "",
+    email:currentProfileData.email || "",
+    url:finalUrl,
+    address:buildBusinessCardAddress(currentProfileData),
+    logo:getPrimaryProfileImage(currentProfileData),
+    role:activeRole,
+    profileId:profileId,
+    generatedAt:Date.now()
+  };
+
+  localStorage.setItem(
+    "gurulinkBusinessCardPrefill",
+    JSON.stringify(payload)
+  );
+
+  const encodedPrefill = btoa(
+    unescape(
+      encodeURIComponent(JSON.stringify(payload))
+    )
+  );
+
+  const isPhone =
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    window.matchMedia("(max-width: 850px)").matches;
+
+  const inGuruLinkApp =
+    (navigator.userAgent || "").includes("GuruLinkAndroidApp");
+
+  if (isPhone && inGuruLinkApp) {
+    const chromeIntentUrl =
+      "intent://www.gurulink.co.in/BusinessCardDesigner/index.html" +
+      "?v=20260711g" +
+      "&source=appmobile" +
+      "&role=" + encodeURIComponent(activeRole) +
+      "&prefill=" + encodeURIComponent(encodedPrefill) +
+      "#Intent;scheme=https;package=com.android.chrome;end";
+
+    location.href = chromeIntentUrl;
+    return;
+  }
+
+  location.href = "BusinessCardDesigner/index.html?v=20260711g";
+};
+
+function getAdvertisementShareUrl(profileId){
+  return "https://www.gurulink.co.in/profile-ad.html?id=" +
+    encodeURIComponent(profileId || "");
+}
+
+function getAdvertisementOnRenderShareUrl(profileId){
+  return "https://guru-link.onrender.com/profile-ad.html?id=" +
+    encodeURIComponent(profileId || "");
+}
+
+function createAdvertisementSharePayload(){
+  const profileId =
+    currentProfileData.uid ||
+    localStorage.getItem("profileId") ||
+    "";
+
+  const activeRole =
+    currentProfileData.role ||
+    localStorage.getItem("role") ||
+    "teacher";
+
+  const advertisementImage =
+    currentProfileData.advertisementCardImage ||
+    "";
+
+  if(!profileId){
+    alert("Profile not found");
+    return null;
+  }
+
+  if(!advertisementImage){
+    alert("Create and save your advertisement first.");
+    return null;
+  }
+
+  const shareUrl =
+    getAdvertisementShareUrl(profileId);
+
+  const socialShareUrl =
+    getAdvertisementOnRenderShareUrl(profileId);
+
+  const roleLabel =
+    activeRole === "institution"
+      ? "Institute"
+      : "Teacher / Trainer";
+
+  const shareText =
+    "Check out this " +
+    roleLabel +
+    " advertisement on GURULINK.";
+
+  const shareMessage =
+    shareText +
+    "\n\nAdvertisement image:\n" +
+    advertisementImage +
+    "\n\nView details:\n" +
+    shareUrl;
+
+  return {
+    profileId,
+    activeRole,
+    roleLabel,
+    advertisementImage,
+    shareUrl,
+    socialShareUrl,
+    shareText,
+    shareMessage
+  };
+}
+
+async function fetchShareFileFromUrl(fileUrl, fileName){
+  if(!fileUrl || !navigator.canShare){
+    return null;
+  }
+
+  try{
+    const response = await fetch(fileUrl, { mode:"cors" });
+
+    if(!response.ok){
+      return null;
+    }
+
+    const blob = await response.blob();
+
+    const file = new File(
+      [blob],
+      fileName,
+      { type: blob.type || "image/png" }
+    );
+
+    if(navigator.canShare({ files:[file] })){
+      return file;
+    }
+  }
+  catch(err){
+    console.log("Advertisement image share file skipped:", err);
+  }
+
+  return null;
+}
+
+async function copyTextToClipboard(text, successMessage){
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      await navigator.clipboard.writeText(text);
+    } else {
+      const tempInput = document.createElement("textarea");
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+    }
+
+    alert(successMessage);
+  }
+  catch(err){
+    console.log("Copy skipped:", err);
+    alert("Could not copy right now.");
+  }
+}
+
+function closeAdvertisementShareModal(){
+  const root = document.getElementById("adShareModalRoot");
+  if(root){
+    root.innerHTML = "";
+  }
+}
+
+function openAdvertisementShareModal(payload){
+  const root = document.getElementById("adShareModalRoot");
+  if(!root || !payload){
+    return;
+  }
+
+  const nativeButton =
+    (navigator.share && !(navigator.userAgent || "").includes("GuruLinkAndroidApp"))
+      ? `<button class="adShareAction native" data-share-action="native">More Apps</button>`
+      : "";
+
+  root.innerHTML = `
+    <div class="adShareOverlay" id="adShareOverlay">
+      <div class="adShareModal" role="dialog" aria-modal="true" aria-label="Share advertisement">
+        <div class="adShareHead">
+          <h3>Share Advertisement</h3>
+          <p>Use the saved advertisement image for Facebook and the public ad page for details.</p>
+        </div>
+
+        <div class="adShareBody">
+          <div class="adShareGrid">
+            <button class="adShareAction whatsapp" data-share-action="whatsapp">WhatsApp</button>
+            <button class="adShareAction facebook" data-share-action="facebook">Facebook</button>
+            <button class="adShareAction telegram" data-share-action="telegram">Telegram</button>
+            <button class="adShareAction public" data-share-action="public">Open Public Ad</button>
+            <button class="adShareAction link" data-share-action="copy-link">Copy Ad Link</button>
+            <button class="adShareAction image" data-share-action="copy-image">Copy Image Link</button>
+            ${nativeButton}
+          </div>
+
+          <div class="adShareNote">
+            Facebook preview uses the advertisement image link here. A true dynamic link preview still needs separate OnRender meta-tag support.
+          </div>
+
+          <div class="adShareFooter">
+            <button class="closeShareBtn" data-share-action="close">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const overlay = document.getElementById("adShareOverlay");
+
+  overlay.addEventListener("click",(event)=>{
+    if(event.target === overlay){
+      closeAdvertisementShareModal();
+    }
+  });
+
+  root.querySelectorAll("[data-share-action]").forEach(button => {
+    button.addEventListener("click", async () => {
+      const action = button.getAttribute("data-share-action");
+
+      if(action === "close"){
+        closeAdvertisementShareModal();
+        return;
+      }
+
+      if(action === "whatsapp"){
+        window.open(
+          "https://wa.me/?text=" + encodeURIComponent(payload.shareMessage),
+          "_blank"
+        );
+        return;
+      }
+
+      if(action === "facebook"){
+        const facebookUrl =
+          "https://www.facebook.com/sharer/sharer.php?u=" +
+          encodeURIComponent(payload.socialShareUrl) +
+          "&quote=" +
+          encodeURIComponent(payload.shareText + " " + payload.shareUrl);
+        window.open(facebookUrl, "_blank");
+        return;
+      }
+
+      if(action === "telegram"){
+        const telegramUrl =
+          "https://t.me/share/url?url=" +
+          encodeURIComponent(payload.shareUrl) +
+          "&text=" +
+          encodeURIComponent(payload.shareText + "\nAdvertisement image: " + payload.advertisementImage);
+        window.open(telegramUrl, "_blank");
+        return;
+      }
+
+      if(action === "public"){
+        window.open(payload.shareUrl, "_blank");
+        return;
+      }
+
+      if(action === "copy-link"){
+        await copyTextToClipboard(payload.shareUrl, "Advertisement page link copied.");
+        return;
+      }
+
+      if(action === "copy-image"){
+        await copyTextToClipboard(payload.advertisementImage, "Advertisement image link copied.");
+        return;
+      }
+
+      if(action === "native" && navigator.share){
+        try{
+          const file =
+            await fetchShareFileFromUrl(
+              payload.advertisementImage,
+              "gurulink-advertisement.png"
+            );
+
+          const shareData = file
+            ? {
+                title:"GURULINK Advertisement",
+                text:payload.shareText + "\n\n" + payload.shareUrl,
+                files:[file]
+              }
+            : {
+                title:"GURULINK Advertisement",
+                text:payload.shareMessage
+              };
+
+          await navigator.share(shareData);
+        }
+        catch(err){
+          console.log("Native ad share skipped:", err);
+        }
+      }
+    });
+  });
+}
+
+window.openAdvertisementDesigner = function(){
+  const profileId =
+    currentProfileData.uid ||
+    localStorage.getItem("profileId") ||
+    "";
+
+  const activeRole =
+    currentProfileData.role ||
+    localStorage.getItem("role") ||
+    "teacher";
+
+  if(!profileId){
+    alert("Profile not found");
+    return;
+  }
+
+  location.href =
+    "advertisement-designer.html?id=" +
+    encodeURIComponent(profileId) +
+    "&role=" +
+    encodeURIComponent(activeRole);
+};
+
+window.shareAdvertisement = async function(){
+  const payload = createAdvertisementSharePayload();
+  if(!payload){
+    return;
+  }
+
+  openAdvertisementShareModal(payload);
+};
+
+
+window.shareProfile = async function () {
+
+  const profileId =
+    currentProfileData.uid ||
+    localStorage.getItem("profileId");
+
+  const role =
+    currentProfileData.role ||
+    localStorage.getItem("role");
 
   if (!profileId || !role) {
     alert("Profile not found");
     return;
   }
-  
-  
-  
-  
+
+  const roleLabel =
+    role === "teacher"
+      ? "Teacher / Trainer"
+      : "Institute";
+
+  const advertisementImage =
+    currentProfileData.advertisementCardImage || "";
+
+  const cacheStamp =
+    currentProfileData.advertisementCardUpdatedAt ||
+    Date.now();
 
   const url =
-"https://guru-link.onrender.com/profile-view.html?id=" +
-profileId;
+    "https://guru-link.onrender.com/profile-view.html?id=" +
+    encodeURIComponent(profileId) +
+    (advertisementImage
+      ? "&adts=" + encodeURIComponent(cacheStamp)
+      : "");
 
   const text =
-    `Check out this ${role === "teacher" ? "Teacher" : "Institute"} on GURULINK:\n\n` +
-    url;
-	
-	
-	
-	
-	
+    `Check out this ${roleLabel} on GURULINK:\n\n${url}`;
+
+  const shareMessage =
+    advertisementImage
+      ? `${text}\n\nAdvertisement image:\n${advertisementImage}`
+      : text;
 
   const whatsappURL =
-    "https://wa.me/?text=" + encodeURIComponent(text);
+    "https://wa.me/?text=" + encodeURIComponent(shareMessage);
 
-  // Mobile native share (best)
   if (navigator.share) {
-    navigator.share({
-      title: "GURULINK Profile",
-      text: text,
-      url: url
-    }).catch(() => {
-      window.open(whatsappURL, "_blank");
-    });
-  } else {
-    window.open(whatsappURL, "_blank");
+    try{
+      const file =
+        advertisementImage
+          ? await fetchShareFileFromUrl(
+              advertisementImage,
+              "gurulink-profile-advertisement.png"
+            )
+          : null;
+
+      const shareData = file
+        ? {
+            title: "GURULINK Profile",
+            text: text,
+            files:[file]
+          }
+        : {
+            title: "GURULINK Profile",
+            text: shareMessage,
+            url: url
+          };
+
+      await navigator.share(shareData);
+      return;
+    }
+    catch(err){
+      console.log("Profile share fallback:", err);
+    }
   }
+
+  window.open(whatsappURL, "_blank");
 };
 </script>
 
