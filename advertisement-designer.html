@@ -94,6 +94,28 @@
       align-content:start;
     }
 
+    .sideRail{
+      max-height:calc(100vh - 24px);
+      overflow-y:auto;
+      padding-right:6px;
+      scrollbar-gutter:stable;
+    }
+
+    .sideRail::-webkit-scrollbar{
+      width:10px;
+    }
+
+    .sideRail::-webkit-scrollbar-thumb{
+      background:#c9d9ef;
+      border-radius:999px;
+      border:2px solid transparent;
+      background-clip:padding-box;
+    }
+
+    .sideRail::-webkit-scrollbar-track{
+      background:transparent;
+    }
+
     .panel{
       background:var(--card);
       border-radius:22px;
@@ -422,6 +444,12 @@
         position:static;
       }
 
+      .sideRail{
+        max-height:none;
+        overflow:visible;
+        padding-right:0;
+      }
+
       .heroTop{
         flex-direction:column;
       }
@@ -496,7 +524,7 @@
     </section>
 
     <div class="layout">
-      <div class="rail leftRail">
+      <div class="rail leftRail sideRail">
         <section class="panel">
           <h2>Layout & Media</h2>
           <p class="panelNote">
@@ -660,7 +688,7 @@
         </section>
       </div>
 
-      <div class="rail rightRail">
+      <div class="rail rightRail sideRail">
         <section class="panel">
           <h2>Text & Style</h2>
           <p class="panelNote">
