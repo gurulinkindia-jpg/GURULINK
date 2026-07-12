@@ -449,6 +449,11 @@
       return { shareUrl, shareText, shareMessage };
     }
 
+    function isMobileShareMode(){
+      return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || "") ||
+        window.matchMedia("(max-width: 760px)").matches;
+    }
+
     window.closeShareChooser = function(){
       shareOverlay.classList.remove("show");
     };
@@ -540,6 +545,10 @@
     }
 
     window.shareAdvertisement = function(){
+      if(isMobileShareMode() && navigator.share){
+        shareViaSystem();
+        return;
+      }
       openShareChooser();
     };
 
