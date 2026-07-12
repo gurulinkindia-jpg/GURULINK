@@ -1129,8 +1129,31 @@
         (activeRole === "institution" ? "Institute" : "Teacher / Trainer") +
         " advertisement on GURULINK.";
 
+      const advertisementImage =
+        savedAdvertisementUrl ||
+        profileData?.advertisementCardImage ||
+        "";
+
+      const shareMessage =
+        shareText +
+        "\n\nAdvertisement image:\n" +
+        advertisementImage +
+        "\n\nView details:\n" +
+        adPageUrl;
+
       if(!profileData?.advertisementCardImage){
         setStatus("Save the advertisement first, then share it.", "error");
+        return;
+      }
+
+      const inGuruLinkApp =
+        (navigator.userAgent || "").includes("GuruLinkAndroidApp");
+
+      if(inGuruLinkApp){
+        window.open(
+          "https://wa.me/?text=" + encodeURIComponent(shareMessage),
+          "_blank"
+        );
         return;
       }
 
@@ -1145,8 +1168,7 @@
               }
             : {
                 title:"GURULINK Advertisement",
-                text:shareText,
-                url:adPageUrl
+                text:shareMessage
               };
 
           await navigator.share(shareData);
@@ -1164,7 +1186,7 @@
       }
 
       window.open(
-        "https://wa.me/?text=" + encodeURIComponent(shareText + "\n\n" + adPageUrl),
+        "https://wa.me/?text=" + encodeURIComponent(shareMessage),
         "_blank"
       );
     }
