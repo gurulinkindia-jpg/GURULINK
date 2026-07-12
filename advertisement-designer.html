@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GURULINK Advertisement Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Merriweather:wght@400;700&family=Montserrat:wght@400;600;700;800&family=Oswald:wght@400;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root{
       --brand-blue:#1565c0;
@@ -116,7 +119,7 @@
     .canvasWrap{
       position:relative;
       width:100%;
-      aspect-ratio:1200/630;
+      aspect-ratio:var(--preview-ratio, 1200 / 630);
       border-radius:18px;
       overflow:hidden;
       background:#0d47a1;
@@ -190,10 +193,46 @@
       resize:vertical;
     }
 
+    .field input[type="color"]{
+      padding:6px;
+      min-height:46px;
+      border-radius:12px;
+      background:#fff;
+    }
+
     .row{
       display:grid;
       grid-template-columns:repeat(2,minmax(0,1fr));
       gap:12px;
+    }
+
+    .tripleRow{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+    }
+
+    .miniHint{
+      margin:-2px 0 2px;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .sectionLabel{
+      margin:4px 0 0;
+      font-size:13px;
+      font-weight:bold;
+      color:#0f4ea7;
+      letter-spacing:.3px;
+      text-transform:uppercase;
+    }
+
+    .rangeValue{
+      font-size:12px;
+      color:var(--muted);
+      text-align:right;
+      margin-top:-2px;
     }
 
     .toggleRow{
@@ -311,6 +350,7 @@
       }
 
       .row,
+      .tripleRow,
       .toggleRow,
       .buttonGrid,
       .metaStrip{
@@ -373,14 +413,93 @@
         </p>
 
         <div class="controls">
-          <div class="field">
-            <label for="templateSelect">Template</label>
-            <select id="templateSelect">
-              <option value="blue">Blue Spotlight</option>
-              <option value="gold">Premium Gold</option>
-              <option value="green">Growth Green</option>
-              <option value="dark">Midnight Promo</option>
-            </select>
+          <div class="row">
+            <div class="field">
+              <label for="templateSelect">Template</label>
+              <select id="templateSelect">
+                <option value="academic">Academic Focus</option>
+                <option value="creative">Creative Arts</option>
+                <option value="skill">Professional Skills</option>
+                <option value="sport">Sports Action</option>
+                <option value="fitness">Fitness Energy</option>
+                <option value="blue">Blue Spotlight</option>
+                <option value="gold">Premium Gold</option>
+                <option value="green">Growth Green</option>
+                <option value="dark">Midnight Promo</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="canvasPresetSelect">Canvas Size</label>
+              <select id="canvasPresetSelect">
+                <option value="landscape">Landscape 1200 x 630</option>
+                <option value="square">Square 1080 x 1080</option>
+                <option value="portrait">Portrait 1080 x 1350</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="fontFamilySelect">Font Style</label>
+              <select id="fontFamilySelect">
+                <option value="Poppins">Poppins</option>
+                <option value="Montserrat">Montserrat</option>
+                <option value="Oswald">Oswald</option>
+                <option value="Merriweather">Merriweather</option>
+                <option value="Playfair Display">Playfair Display</option>
+                <option value="Bebas Neue">Bebas Neue</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="iconStyleSelect">SVG Style</label>
+              <select id="iconStyleSelect">
+                <option value="none">No SVG</option>
+                <option value="academic">Academic</option>
+                <option value="creative">Creative Art</option>
+                <option value="skill">Professional Skill</option>
+                <option value="sport">Sport</option>
+                <option value="fitness">Fitness</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="imageLayoutSelect">Image Layout</label>
+              <select id="imageLayoutSelect">
+                <option value="hero">Hero Image</option>
+                <option value="split">Split Layout</option>
+                <option value="trio">Three Image Layout</option>
+                <option value="poster">Poster Layout</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="offerBadgeInput">Top Badge</label>
+              <input id="offerBadgeInput" type="text" maxlength="28" placeholder="Example: ADMISSIONS OPEN">
+            </div>
+          </div>
+
+          <div class="sectionLabel">Advertisement Images</div>
+          <p class="miniHint">Use your profile image, logo, or gallery images. Up to 3 image slots can be shown inside the ad template.</p>
+
+          <div class="tripleRow">
+            <div class="field">
+              <label for="imageOneSelect">Image 1</label>
+              <select id="imageOneSelect"></select>
+            </div>
+
+            <div class="field">
+              <label for="imageTwoSelect">Image 2</label>
+              <select id="imageTwoSelect"></select>
+            </div>
+
+            <div class="field">
+              <label for="imageThreeSelect">Image 3</label>
+              <select id="imageThreeSelect"></select>
+            </div>
           </div>
 
           <div class="field">
@@ -388,9 +507,16 @@
             <input id="headlineInput" type="text" maxlength="70" placeholder="Enter your main advertisement headline">
           </div>
 
-          <div class="field">
-            <label for="taglineInput">Tagline</label>
-            <input id="taglineInput" type="text" maxlength="90" placeholder="Short supporting line">
+          <div class="row">
+            <div class="field">
+              <label for="taglineInput">Tagline</label>
+              <input id="taglineInput" type="text" maxlength="90" placeholder="Short supporting line">
+            </div>
+
+            <div class="field">
+              <label for="subHighlightInput">Sub Highlight</label>
+              <input id="subHighlightInput" type="text" maxlength="90" placeholder="Example: Class 8-12 | Demo available">
+            </div>
           </div>
 
           <div class="field">
@@ -398,14 +524,60 @@
             <input id="highlightInput" type="text" maxlength="100" placeholder="Example: Classes, training, demo support, admissions open">
           </div>
 
-          <div class="field">
-            <label for="ctaInput">Call-To-Action</label>
-            <input id="ctaInput" type="text" maxlength="40" placeholder="Example: Contact Now">
+          <div class="row">
+            <div class="field">
+              <label for="ctaInput">Call-To-Action</label>
+              <input id="ctaInput" type="text" maxlength="40" placeholder="Example: Contact Now">
+            </div>
+
+            <div class="field">
+              <label for="noteInput">Extra Note</label>
+              <input id="noteInput" type="text" maxlength="90" placeholder="Example: Limited seats | Weekend batch">
+            </div>
           </div>
 
           <div class="field">
             <label for="footerInput">Footer Line</label>
             <textarea id="footerInput" placeholder="Area, website, focus subjects, or another short supporting line"></textarea>
+          </div>
+
+          <div class="sectionLabel">Text Size & Color</div>
+
+          <div class="tripleRow">
+            <div class="field">
+              <label for="headlineSizeInput">Headline Size</label>
+              <input id="headlineSizeInput" type="range" min="40" max="88" step="1" value="62">
+              <div id="headlineSizeValue" class="rangeValue">62 px</div>
+            </div>
+
+            <div class="field">
+              <label for="bodySizeInput">Body Size</label>
+              <input id="bodySizeInput" type="range" min="18" max="40" step="1" value="26">
+              <div id="bodySizeValue" class="rangeValue">26 px</div>
+            </div>
+
+            <div class="field">
+              <label for="ctaSizeInput">CTA Size</label>
+              <input id="ctaSizeInput" type="range" min="18" max="34" step="1" value="23">
+              <div id="ctaSizeValue" class="rangeValue">23 px</div>
+            </div>
+          </div>
+
+          <div class="tripleRow">
+            <div class="field">
+              <label for="headingColorInput">Headline Color</label>
+              <input id="headingColorInput" type="color" value="#ffffff">
+            </div>
+
+            <div class="field">
+              <label for="accentColorInput">Accent Color</label>
+              <input id="accentColorInput" type="color" value="#b3e5fc">
+            </div>
+
+            <div class="field">
+              <label for="bodyColorInput">Body Color</label>
+              <input id="bodyColorInput" type="color" value="#ffffff">
+            </div>
           </div>
 
           <div class="toggleRow">
@@ -470,12 +642,32 @@
     const elements = {
       heroRoleLabel:document.getElementById("heroRoleLabel"),
       heroProfileName:document.getElementById("heroProfileName"),
+      canvasWrap:document.querySelector(".canvasWrap"),
       templateSelect:document.getElementById("templateSelect"),
+      canvasPresetSelect:document.getElementById("canvasPresetSelect"),
+      fontFamilySelect:document.getElementById("fontFamilySelect"),
+      iconStyleSelect:document.getElementById("iconStyleSelect"),
+      imageLayoutSelect:document.getElementById("imageLayoutSelect"),
+      offerBadgeInput:document.getElementById("offerBadgeInput"),
+      imageOneSelect:document.getElementById("imageOneSelect"),
+      imageTwoSelect:document.getElementById("imageTwoSelect"),
+      imageThreeSelect:document.getElementById("imageThreeSelect"),
       headlineInput:document.getElementById("headlineInput"),
       taglineInput:document.getElementById("taglineInput"),
+      subHighlightInput:document.getElementById("subHighlightInput"),
       highlightInput:document.getElementById("highlightInput"),
       ctaInput:document.getElementById("ctaInput"),
+      noteInput:document.getElementById("noteInput"),
       footerInput:document.getElementById("footerInput"),
+      headlineSizeInput:document.getElementById("headlineSizeInput"),
+      bodySizeInput:document.getElementById("bodySizeInput"),
+      ctaSizeInput:document.getElementById("ctaSizeInput"),
+      headlineSizeValue:document.getElementById("headlineSizeValue"),
+      bodySizeValue:document.getElementById("bodySizeValue"),
+      ctaSizeValue:document.getElementById("ctaSizeValue"),
+      headingColorInput:document.getElementById("headingColorInput"),
+      accentColorInput:document.getElementById("accentColorInput"),
+      bodyColorInput:document.getElementById("bodyColorInput"),
       showPhoneToggle:document.getElementById("showPhoneToggle"),
       showWebsiteToggle:document.getElementById("showWebsiteToggle"),
       showLocationToggle:document.getElementById("showLocationToggle"),
@@ -511,16 +703,77 @@
     let savedAdvertisementUrl = "";
 
     const templates = {
+      academic:{
+        label:"Academic Focus",
+        bg:["#102a83","#1d4ed8","#60a5fa"],
+        accent:"#facc15",
+        badge:"#0f1f63",
+        heading:"#ffffff",
+        body:"#eaf3ff",
+        pillBg:"rgba(250,204,21,.22)",
+        pillText:"#fff8d6",
+        footerBg:"rgba(7,24,61,.34)",
+        defaultIcon:"academic"
+      },
+      creative:{
+        label:"Creative Arts",
+        bg:["#7c2d12","#c2410c","#f97316"],
+        accent:"#fef08a",
+        badge:"#7a210d",
+        heading:"#fff7ed",
+        body:"#fff1e6",
+        pillBg:"rgba(255,255,255,.18)",
+        pillText:"#fff7ed",
+        footerBg:"rgba(69,18,7,.34)",
+        defaultIcon:"creative"
+      },
+      skill:{
+        label:"Professional Skills",
+        bg:["#1f2937","#374151","#0f766e"],
+        accent:"#67e8f9",
+        badge:"#111827",
+        heading:"#f9fafb",
+        body:"#e5f7f7",
+        pillBg:"rgba(103,232,249,.18)",
+        pillText:"#ecfeff",
+        footerBg:"rgba(15,23,42,.38)",
+        defaultIcon:"skill"
+      },
+      sport:{
+        label:"Sports Action",
+        bg:["#7f1d1d","#dc2626","#f97316"],
+        accent:"#fde68a",
+        badge:"#7c1313",
+        heading:"#fff7ed",
+        body:"#fff1e6",
+        pillBg:"rgba(255,255,255,.18)",
+        pillText:"#fff7ed",
+        footerBg:"rgba(69,10,10,.34)",
+        defaultIcon:"sport"
+      },
+      fitness:{
+        label:"Fitness Energy",
+        bg:["#14532d","#16a34a","#84cc16"],
+        accent:"#dcfce7",
+        badge:"#14532d",
+        heading:"#f7fee7",
+        body:"#ecfdf5",
+        pillBg:"rgba(255,255,255,.16)",
+        pillText:"#f7fee7",
+        footerBg:"rgba(20,83,45,.34)",
+        defaultIcon:"fitness"
+      },
       blue:{
         label:"Blue Spotlight",
         bg:["#0d47a1","#1976d2","#26a69a"],
         accent:"#b3e5fc",
         badge:"#0b3f91",
         heading:"#ffffff",
-        body:"rgba(255,255,255,.95)",
+        body:"#f8fbff",
         pillBg:"rgba(255,255,255,.18)",
         pillText:"#ffffff",
-        footerBg:"rgba(7,24,61,.28)"
+        footerBg:"rgba(7,24,61,.28)",
+        defaultIcon:"none"
       },
       gold:{
         label:"Premium Gold",
@@ -528,10 +781,11 @@
         accent:"#ffd54f",
         badge:"#4e3606",
         heading:"#fff4cf",
-        body:"rgba(255,244,207,.95)",
+        body:"#fff4cf",
         pillBg:"rgba(255,213,79,.18)",
         pillText:"#fff6db",
-        footerBg:"rgba(0,0,0,.28)"
+        footerBg:"rgba(0,0,0,.28)",
+        defaultIcon:"none"
       },
       green:{
         label:"Growth Green",
@@ -539,10 +793,11 @@
         accent:"#dcfce7",
         badge:"#0a4626",
         heading:"#ffffff",
-        body:"rgba(255,255,255,.95)",
+        body:"#f0fdf4",
         pillBg:"rgba(255,255,255,.16)",
         pillText:"#ffffff",
-        footerBg:"rgba(4,48,22,.24)"
+        footerBg:"rgba(4,48,22,.24)",
+        defaultIcon:"none"
       },
       dark:{
         label:"Midnight Promo",
@@ -550,10 +805,11 @@
         accent:"#93c5fd",
         badge:"#0f172a",
         heading:"#f8fafc",
-        body:"rgba(241,245,249,.92)",
+        body:"#f1f5f9",
         pillBg:"rgba(147,197,253,.16)",
         pillText:"#e0f2fe",
-        footerBg:"rgba(2,6,23,.4)"
+        footerBg:"rgba(2,6,23,.4)",
+        defaultIcon:"none"
       }
     };
 
@@ -757,6 +1013,150 @@
       return /^https?:\/\//i.test(raw) ? raw : "https://" + raw;
     }
 
+    function getCanvasPresetConfig(value){
+      const preset = String(value || "landscape");
+      if(preset === "square"){
+        return { key:"square", width:1080, height:1080, ratio:"1 / 1" };
+      }
+      if(preset === "portrait"){
+        return { key:"portrait", width:1080, height:1350, ratio:"1080 / 1350" };
+      }
+      return { key:"landscape", width:1200, height:630, ratio:"1200 / 630" };
+    }
+
+    function syncCanvasPreset(presetValue){
+      const preset = getCanvasPresetConfig(presetValue);
+      if(elements.adCanvas.width !== preset.width){
+        elements.adCanvas.width = preset.width;
+      }
+      if(elements.adCanvas.height !== preset.height){
+        elements.adCanvas.height = preset.height;
+      }
+      elements.canvasWrap.style.setProperty("--preview-ratio", preset.ratio);
+      return preset;
+    }
+
+    function pickTemplateFromCategory(data){
+      const text = String(data?.categoryName || data?.category || "").toLowerCase();
+      if(text.includes("creative") || text.includes("art")){
+        return "creative";
+      }
+      if(text.includes("skill") || text.includes("professional")){
+        return "skill";
+      }
+      if(text.includes("sport")){
+        return "sport";
+      }
+      if(text.includes("fitness")){
+        return "fitness";
+      }
+      if(text.includes("academic") || text.includes("education") || text.includes("career")){
+        return "academic";
+      }
+      return "blue";
+    }
+
+    function buildAdvertisementImageChoices(data){
+      const choices = [];
+      const seen = new Set();
+
+      const pushChoice = (key, label, url) => {
+        const cleanUrl = String(url || "").trim();
+        if(!cleanUrl || seen.has(cleanUrl)){
+          return;
+        }
+        seen.add(cleanUrl);
+        choices.push({ key, label, url:cleanUrl });
+      };
+
+      const profileImages = normalizeProfileImages(data);
+      profileImages.forEach((item, index) => {
+        pushChoice(
+          "profile-" + index,
+          index === 0 ? "Main Profile Image" : "Profile Image " + (index + 1),
+          item.url
+        );
+      });
+
+      const gallerySource =
+        Array.isArray(data?.galleryImages)
+          ? data.galleryImages
+          : (
+              data?.galleryImages &&
+              typeof data.galleryImages === "object"
+            )
+              ? Object.values(data.galleryImages)
+              : (
+                  Array.isArray(data?.gallery)
+                    ? data.gallery
+                    : (
+                        data?.gallery &&
+                        typeof data.gallery === "object"
+                      )
+                        ? Object.values(data.gallery)
+                        : []
+                );
+
+      gallerySource
+        .map((item, index) => normalizeImageItem(item, index))
+        .filter(Boolean)
+        .forEach((item, index) => {
+          pushChoice("gallery-" + index, "Gallery Image " + (index + 1), item.url);
+        });
+
+      if(!choices.length){
+        pushChoice("fallback", "No Image Available", "");
+      }
+
+      return choices;
+    }
+
+    function populateImageSelect(selectEl, choices, selectedKey){
+      const fallbackKey = choices[0]?.key || "";
+      const finalKey =
+        choices.some(choice => choice.key === selectedKey)
+          ? selectedKey
+          : fallbackKey;
+
+      selectEl.innerHTML = choices.map(choice =>
+        `<option value="${escapeHtml(choice.key)}">${escapeHtml(choice.label)}</option>`
+      ).join("");
+
+      selectEl.value = finalKey;
+    }
+
+    function updateImageSelectors(adData = {}){
+      const choices = buildAdvertisementImageChoices(profileData || {});
+      populateImageSelect(elements.imageOneSelect, choices, adData.imageOne || choices[0]?.key || "");
+      populateImageSelect(elements.imageTwoSelect, choices, adData.imageTwo || choices[1]?.key || choices[0]?.key || "");
+      populateImageSelect(elements.imageThreeSelect, choices, adData.imageThree || choices[2]?.key || choices[0]?.key || "");
+    }
+
+    function resolveSelectedImages(adData){
+      const choiceMap = new Map(buildAdvertisementImageChoices(profileData || {}).map(choice => [choice.key, choice.url]));
+      const keys = [adData.imageOne, adData.imageTwo, adData.imageThree].filter(Boolean);
+      return keys
+        .map(key => choiceMap.get(key) || "")
+        .filter(Boolean)
+        .filter((url, index, array) => array.indexOf(url) === index);
+    }
+
+    function updateRangeLabels(){
+      elements.headlineSizeValue.textContent = String(elements.headlineSizeInput.value || 62) + " px";
+      elements.bodySizeValue.textContent = String(elements.bodySizeInput.value || 26) + " px";
+      elements.ctaSizeValue.textContent = String(elements.ctaSizeInput.value || 23) + " px";
+    }
+
+    function applyTemplatePalette(templateKey){
+      const template = templates[templateKey] || templates.blue;
+      elements.headingColorInput.value = template.heading;
+      elements.accentColorInput.value = template.accent;
+      elements.bodyColorInput.value = template.body;
+      if(elements.iconStyleSelect.value === "none"){
+        elements.iconStyleSelect.value = template.defaultIcon || "none";
+      }
+    }
+
     function makeDefaultAdData(data){
       const subjectList = normalizeList(data?.subjects).slice(0,3);
       const roleTitle = activeRole === "institution" ? "Institute" : "Teacher / Trainer";
@@ -764,14 +1164,33 @@
         subjectList.length
           ? subjectList.join(" | ")
           : (data?.description || "").trim();
+      const chosenTemplate = pickTemplateFromCategory(data);
+      const defaultTemplate = templates[chosenTemplate] || templates.blue;
+      const imageChoices = buildAdvertisementImageChoices(data);
 
       return {
-        template:"blue",
+        template:chosenTemplate,
+        canvasPreset:"landscape",
+        fontFamily:"Poppins",
+        iconStyle:defaultTemplate.defaultIcon || "none",
+        imageLayout:"hero",
+        imageOne:imageChoices[0]?.key || "",
+        imageTwo:imageChoices[1]?.key || imageChoices[0]?.key || "",
+        imageThree:imageChoices[2]?.key || imageChoices[0]?.key || "",
+        offerBadge:activeRole === "institution" ? "GURULINK AD" : "TRAINING AD",
         headline:data?.name || "",
         tagline:data?.categoryName || data?.category || roleTitle,
         highlight:focusLine || "Admissions, classes, training, and learning support available",
+        subHighlight:data?.class || "",
         cta:"Contact Now",
+        note:"",
         footer:getProfileLocation(data) || getProfileWebsite(data) || "Available on GURULINK",
+        headlineSize:62,
+        bodySize:26,
+        ctaSize:23,
+        headingColor:defaultTemplate.heading,
+        accentColor:defaultTemplate.accent,
+        bodyColor:defaultTemplate.body,
         showPhone:true,
         showWebsite:!!getProfileWebsite(data),
         showLocation:!!getProfileLocation(data)
@@ -781,11 +1200,27 @@
     function getEditorData(){
       return {
         template:elements.templateSelect.value,
+        canvasPreset:elements.canvasPresetSelect.value,
+        fontFamily:elements.fontFamilySelect.value,
+        iconStyle:elements.iconStyleSelect.value,
+        imageLayout:elements.imageLayoutSelect.value,
+        offerBadge:elements.offerBadgeInput.value.trim(),
+        imageOne:elements.imageOneSelect.value,
+        imageTwo:elements.imageTwoSelect.value,
+        imageThree:elements.imageThreeSelect.value,
         headline:elements.headlineInput.value.trim(),
         tagline:elements.taglineInput.value.trim(),
+        subHighlight:elements.subHighlightInput.value.trim(),
         highlight:elements.highlightInput.value.trim(),
         cta:elements.ctaInput.value.trim(),
+        note:elements.noteInput.value.trim(),
         footer:elements.footerInput.value.trim(),
+        headlineSize:Number(elements.headlineSizeInput.value || 62),
+        bodySize:Number(elements.bodySizeInput.value || 26),
+        ctaSize:Number(elements.ctaSizeInput.value || 23),
+        headingColor:elements.headingColorInput.value,
+        accentColor:elements.accentColorInput.value,
+        bodyColor:elements.bodyColorInput.value,
         showPhone:elements.showPhoneToggle.checked,
         showWebsite:elements.showWebsiteToggle.checked,
         showLocation:elements.showLocationToggle.checked
@@ -798,15 +1233,31 @@
         ...(adData || {})
       };
 
+      updateImageSelectors(finalData);
       elements.templateSelect.value = finalData.template || "blue";
+      elements.canvasPresetSelect.value = finalData.canvasPreset || "landscape";
+      elements.fontFamilySelect.value = finalData.fontFamily || "Poppins";
+      elements.iconStyleSelect.value = finalData.iconStyle || "none";
+      elements.imageLayoutSelect.value = finalData.imageLayout || "hero";
+      elements.offerBadgeInput.value = finalData.offerBadge || "";
       elements.headlineInput.value = finalData.headline || "";
       elements.taglineInput.value = finalData.tagline || "";
+      elements.subHighlightInput.value = finalData.subHighlight || "";
       elements.highlightInput.value = finalData.highlight || "";
       elements.ctaInput.value = finalData.cta || "";
+      elements.noteInput.value = finalData.note || "";
       elements.footerInput.value = finalData.footer || "";
+      elements.headlineSizeInput.value = String(finalData.headlineSize || 62);
+      elements.bodySizeInput.value = String(finalData.bodySize || 26);
+      elements.ctaSizeInput.value = String(finalData.ctaSize || 23);
+      elements.headingColorInput.value = finalData.headingColor || templates[finalData.template || "blue"]?.heading || "#ffffff";
+      elements.accentColorInput.value = finalData.accentColor || templates[finalData.template || "blue"]?.accent || "#b3e5fc";
+      elements.bodyColorInput.value = finalData.bodyColor || templates[finalData.template || "blue"]?.body || "#ffffff";
       elements.showPhoneToggle.checked = finalData.showPhone !== false;
       elements.showWebsiteToggle.checked = !!finalData.showWebsite;
       elements.showLocationToggle.checked = !!finalData.showLocation;
+      updateRangeLabels();
+      syncCanvasPreset(finalData.canvasPreset || "landscape");
     }
 
     function formatSavedAt(timestamp){
@@ -844,7 +1295,7 @@
     }
 
     function createLinearGradient(context, colors){
-      const gradient = context.createLinearGradient(0, 0, 1200, 630);
+      const gradient = context.createLinearGradient(0, 0, context.canvas.width, context.canvas.height);
       gradient.addColorStop(0, colors[0]);
       gradient.addColorStop(.55, colors[1]);
       gradient.addColorStop(1, colors[2]);
@@ -952,6 +1403,63 @@
       return directImage;
     }
 
+    function buildSvgMarkup(kind, strokeColor, fillColor){
+      const stroke = encodeURIComponent(strokeColor || "#ffffff");
+      const fill = encodeURIComponent(fillColor || "#ffffff");
+      const common = `stroke="${stroke}" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" fill="none"`;
+
+      switch(kind){
+        case "academic":
+          return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path ${common} d="M34 92l94-42 94 42-94 42-94-42Z"/><path ${common} d="M74 112v40c0 21 25 38 54 38s54-17 54-38v-40"/><path ${common} d="M222 92v64"/></svg>`;
+        case "creative":
+          return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path ${common} d="M128 34c50 0 92 36 92 82 0 34-24 58-58 58h-18c-12 0-18 6-18 18 0 12-10 22-22 22-42 0-76-34-76-76 0-58 44-104 100-104Z"/><circle cx="86" cy="92" r="12" fill="${fill}"/><circle cx="124" cy="74" r="12" fill="${fill}"/><circle cx="168" cy="82" r="12" fill="${fill}"/><circle cx="176" cy="122" r="12" fill="${fill}"/></svg>`;
+        case "skill":
+          return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect x="44" y="78" width="168" height="118" rx="18" ${common}/><path ${common} d="M94 78V58h68v20"/><path ${common} d="M96 132h64"/><path ${common} d="M128 102v60"/></svg>`;
+        case "sport":
+          return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><circle cx="128" cy="128" r="92" ${common}/><path ${common} d="M128 36c34 28 52 58 52 92s-18 64-52 92c-34-28-52-58-52-92s18-64 52-92Z"/><path ${common} d="M48 98c24 10 50 14 80 14s56-4 80-14"/><path ${common} d="M48 158c24-10 50-14 80-14s56 4 80 14"/></svg>`;
+        case "fitness":
+          return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path ${common} d="M78 92v72"/><path ${common} d="M98 72v112"/><path ${common} d="M158 72v112"/><path ${common} d="M178 92v72"/><path ${common} d="M98 128h60"/></svg>`;
+        default:
+          return "";
+      }
+    }
+
+    const svgIconCache = new Map();
+
+    async function loadSvgIcon(kind, strokeColor, fillColor){
+      if(!kind || kind === "none"){
+        return null;
+      }
+
+      const cacheKey = [kind, strokeColor, fillColor].join("|");
+      if(svgIconCache.has(cacheKey)){
+        return svgIconCache.get(cacheKey);
+      }
+
+      const svgMarkup = buildSvgMarkup(kind, strokeColor, fillColor);
+      if(!svgMarkup){
+        return null;
+      }
+
+      const svgUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgMarkup);
+      const image = await loadImageElement(svgUrl);
+      if(image){
+        svgIconCache.set(cacheKey, image);
+      }
+      return image;
+    }
+
+    function drawRoundedImage(context, image, x, y, width, height, radius){
+      if(!image){
+        return;
+      }
+      context.save();
+      drawRoundedRect(context, x, y, width, height, radius);
+      context.clip();
+      context.drawImage(image, x, y, width, height);
+      context.restore();
+    }
+
     async function renderPreview(){
       if(!ctx || !profileData){
         return;
@@ -959,114 +1467,255 @@
 
       const version = ++renderVersion;
       const adData = getEditorData();
+      const preset = syncCanvasPreset(adData.canvasPreset);
       const template = templates[adData.template] || templates.blue;
-      const logoUrl = getAdvertisementSourceImage(profileData);
+      const fontFamily = adData.fontFamily || "Poppins";
+      const headingColor = adData.headingColor || template.heading;
+      const accentColor = adData.accentColor || template.accent;
+      const bodyColor = adData.bodyColor || template.body;
+      const selectedImageUrls = resolveSelectedImages(adData).slice(0,3);
 
-      if(!previewImage || previewImage.__src !== logoUrl){
-        releasePreviewImage();
-        const image = await loadImage(logoUrl);
-        if(version !== renderVersion){
-          if(image && image.__objectUrl){
-            URL.revokeObjectURL(image.__objectUrl);
-          }
-          return;
+      if(document.fonts && document.fonts.ready){
+        try{
+          await document.fonts.ready;
         }
-        previewImage = image;
+        catch(err){
+          console.log("Font readiness skipped:", err);
+        }
       }
 
-      ctx.clearRect(0,0,1200,630);
+      const images = (await Promise.all(
+        selectedImageUrls.map(url => loadImage(url))
+      )).filter(Boolean);
+      const iconImage = await loadSvgIcon(
+        adData.iconStyle || template.defaultIcon || "none",
+        accentColor,
+        bodyColor
+      );
+
+      if(version !== renderVersion){
+        return;
+      }
+
+      const canvasWidth = ctx.canvas.width;
+      const canvasHeight = ctx.canvas.height;
+      const sx = canvasWidth / 1200;
+      const sy = canvasHeight / 630;
+      const scale = Math.min(sx, sy);
+
+      ctx.clearRect(0,0,canvasWidth,canvasHeight);
       ctx.fillStyle = createLinearGradient(ctx, template.bg);
-      ctx.fillRect(0,0,1200,630);
+      ctx.fillRect(0,0,canvasWidth,canvasHeight);
 
       ctx.globalAlpha = .12;
       ctx.fillStyle = "#ffffff";
       ctx.beginPath();
-      ctx.arc(1020,120,120,0,Math.PI * 2);
+      ctx.arc(canvasWidth * 0.84,canvasHeight * 0.18,Math.min(canvasWidth, canvasHeight) * 0.18,0,Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(1140,540,150,0,Math.PI * 2);
+      ctx.arc(canvasWidth * 0.94,canvasHeight * 0.84,Math.min(canvasWidth, canvasHeight) * 0.22,0,Math.PI * 2);
       ctx.fill();
       ctx.beginPath();
-      ctx.arc(130,540,115,0,Math.PI * 2);
+      ctx.arc(canvasWidth * 0.12,canvasHeight * 0.84,Math.min(canvasWidth, canvasHeight) * 0.17,0,Math.PI * 2);
       ctx.fill();
       ctx.globalAlpha = 1;
 
-      ctx.fillStyle = template.badge;
-      drawRoundedRect(ctx, 56, 48, 220, 54, 18);
-      ctx.fill();
-      ctx.fillStyle = template.accent;
-      ctx.font = "bold 26px Arial";
-      ctx.fillText("GURULINK AD", 88, 84);
-
-      ctx.fillStyle = template.footerBg;
-      drawRoundedRect(ctx, 48, 470, 1104, 122, 28);
-      ctx.fill();
-
-      if(previewImage){
-        ctx.fillStyle = "rgba(255,255,255,.18)";
-        ctx.beginPath();
-        ctx.arc(936,220,126,0,Math.PI * 2);
-        ctx.fill();
-        drawCircleImage(ctx, previewImage, 820, 104, 232);
-      } else {
-        ctx.fillStyle = "rgba(255,255,255,.14)";
-        ctx.beginPath();
-        ctx.arc(936,220,126,0,Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = "rgba(255,255,255,.86)";
-        ctx.font = "bold 46px Arial";
-        ctx.textAlign = "center";
-        ctx.fillText(activeRole === "institution" ? "INSTITUTE" : "TEACHER", 936, 232);
-        ctx.textAlign = "left";
+      if(iconImage){
+        ctx.save();
+        ctx.globalAlpha = 0.18;
+        ctx.drawImage(
+          iconImage,
+          canvasWidth - (220 * scale),
+          24 * sy,
+          170 * scale,
+          170 * scale
+        );
+        ctx.restore();
       }
 
-      ctx.fillStyle = template.heading;
-      ctx.font = "bold 62px Arial";
+      ctx.fillStyle = template.badge;
+      drawRoundedRect(ctx, 56 * sx, 48 * sy, 220 * sx, 54 * sy, 18 * scale);
+      ctx.fill();
+      ctx.fillStyle = accentColor;
+      ctx.font = `700 ${Math.round(26 * scale)}px ${fontFamily}`;
+      ctx.fillText(adData.offerBadge || "GURULINK AD", 88 * sx, 84 * sy);
+
+      ctx.fillStyle = template.footerBg;
+      drawRoundedRect(ctx, 48 * sx, canvasHeight - (160 * sy), canvasWidth - (96 * sx), 122 * sy, 28 * scale);
+      ctx.fill();
+
+      const drawImageGroupLandscape = () => {
+        if(!images.length){
+          ctx.fillStyle = "rgba(255,255,255,.14)";
+          drawRoundedRect(ctx, canvasWidth - (390 * sx), 92 * sy, 310 * sx, 250 * sy, 34 * scale);
+          ctx.fill();
+          ctx.fillStyle = bodyColor;
+          ctx.font = `700 ${Math.round(40 * scale)}px ${fontFamily}`;
+          ctx.textAlign = "center";
+          ctx.fillText(activeRole === "institution" ? "INSTITUTE" : "TEACHER", canvasWidth - (235 * sx), 230 * sy);
+          ctx.textAlign = "left";
+          return;
+        }
+
+        if(adData.imageLayout === "trio"){
+          drawRoundedImage(ctx, images[0], canvasWidth - (430 * sx), 92 * sy, 340 * sx, 186 * sy, 28 * scale);
+          if(images[1]){
+            drawRoundedImage(ctx, images[1], canvasWidth - (430 * sx), 298 * sy, 160 * sx, 124 * sy, 24 * scale);
+          }
+          if(images[2]){
+            drawRoundedImage(ctx, images[2], canvasWidth - (250 * sx), 298 * sy, 160 * sx, 124 * sy, 24 * scale);
+          }
+          return;
+        }
+
+        if(adData.imageLayout === "split"){
+          drawRoundedImage(ctx, images[0], canvasWidth - (400 * sx), 82 * sy, 300 * sx, 290 * sy, 34 * scale);
+          if(images[1]){
+            drawRoundedImage(ctx, images[1], canvasWidth - (250 * sx), 248 * sy, 170 * sx, 140 * sy, 24 * scale);
+          }
+          return;
+        }
+
+        if(adData.imageLayout === "poster"){
+          drawRoundedImage(ctx, images[0], canvasWidth - (430 * sx), 84 * sy, 340 * sx, 264 * sy, 26 * scale);
+          if(images[1]){
+            drawRoundedImage(ctx, images[1], canvasWidth - (164 * sx), 106 * sy, 58 * sx, 58 * sy, 18 * scale);
+          }
+          if(images[2]){
+            drawRoundedImage(ctx, images[2], canvasWidth - (164 * sx), 178 * sy, 58 * sx, 58 * sy, 18 * scale);
+          }
+          return;
+        }
+
+        ctx.fillStyle = "rgba(255,255,255,.18)";
+        ctx.beginPath();
+        ctx.arc(canvasWidth - (264 * sx), 222 * sy, 132 * scale, 0, Math.PI * 2);
+        ctx.fill();
+        drawCircleImage(ctx, images[0], canvasWidth - (390 * sx), 100 * sy, 246 * scale);
+        if(images[1]){
+          drawRoundedImage(ctx, images[1], canvasWidth - (462 * sx), 314 * sy, 128 * sx, 96 * sy, 22 * scale);
+        }
+        if(images[2]){
+          drawRoundedImage(ctx, images[2], canvasWidth - (316 * sx), 314 * sy, 128 * sx, 96 * sy, 22 * scale);
+        }
+      };
+
+      const drawImageGroupVertical = () => {
+        if(!images.length){
+          ctx.fillStyle = "rgba(255,255,255,.14)";
+          drawRoundedRect(ctx, 72 * sx, 124 * sy, canvasWidth - (144 * sx), canvasHeight * 0.28, 34 * scale);
+          ctx.fill();
+          ctx.fillStyle = bodyColor;
+          ctx.font = `700 ${Math.round(42 * scale)}px ${fontFamily}`;
+          ctx.textAlign = "center";
+          ctx.fillText(activeRole === "institution" ? "INSTITUTE" : "TEACHER", canvasWidth / 2, canvasHeight * 0.3);
+          ctx.textAlign = "left";
+          return;
+        }
+
+        if(adData.imageLayout === "trio" && images.length > 1){
+          const cardY = 118 * sy;
+          const cardGap = 20 * sx;
+          const cardWidth = (canvasWidth - (144 * sx) - (2 * cardGap)) / 3;
+          images.slice(0,3).forEach((image, index) => {
+            drawRoundedImage(ctx, image, (72 * sx) + index * (cardWidth + cardGap), cardY, cardWidth, 210 * sy, 24 * scale);
+          });
+          return;
+        }
+
+        if(adData.imageLayout === "split" && images.length > 1){
+          drawRoundedImage(ctx, images[0], 72 * sx, 118 * sy, (canvasWidth * 0.46), 248 * sy, 26 * scale);
+          drawRoundedImage(ctx, images[1], canvasWidth - (72 * sx) - (canvasWidth * 0.34), 118 * sy, (canvasWidth * 0.34), 248 * sy, 26 * scale);
+          if(images[2]){
+            drawRoundedImage(ctx, images[2], 72 * sx, 384 * sy, canvasWidth - (144 * sx), 118 * sy, 24 * scale);
+          }
+          return;
+        }
+
+        drawRoundedImage(ctx, images[0], 72 * sx, 118 * sy, canvasWidth - (144 * sx), canvasHeight * 0.3, 30 * scale);
+        if(images[1]){
+          drawRoundedImage(ctx, images[1], 72 * sx, (118 * sy) + (canvasHeight * 0.3) + (18 * sy), (canvasWidth - (164 * sx)) / 2, 112 * sy, 22 * scale);
+        }
+        if(images[2]){
+          drawRoundedImage(ctx, images[2], canvasWidth / 2 + (10 * sx), (118 * sy) + (canvasHeight * 0.3) + (18 * sy), (canvasWidth - (164 * sx)) / 2, 112 * sy, 22 * scale);
+        }
+      };
+
+      if(preset.key === "landscape"){
+        drawImageGroupLandscape();
+      } else {
+        drawImageGroupVertical();
+      }
+
+      const textStartY = preset.key === "landscape" ? 180 * sy : canvasHeight * (preset.key === "square" ? 0.54 : 0.47);
+      const textX = 72 * sx;
+      const textWidth = preset.key === "landscape" ? 650 * sx : canvasWidth - (144 * sx);
+
+      ctx.fillStyle = headingColor;
+      ctx.font = `700 ${Math.round((adData.headlineSize || 62) * scale)}px ${fontFamily}`;
       const headlineBottom =
         drawTextBlock(
           ctx,
           adData.headline || (profileData.name || "GURULINK Profile"),
-          72,
-          180,
-          650,
-          72,
-          2,
-          template.heading
+          textX,
+          textStartY,
+          textWidth,
+          Math.round((adData.headlineSize || 62) * 1.16 * scale),
+          preset.key === "portrait" ? 3 : 2,
+          headingColor
         );
 
-      ctx.fillStyle = template.body;
-      ctx.font = "bold 30px Arial";
+      ctx.fillStyle = bodyColor;
+      ctx.font = `700 ${Math.round((adData.bodySize + 4 || 30) * scale)}px ${fontFamily}`;
       const taglineBottom =
         drawTextBlock(
           ctx,
           adData.tagline || "Teacher / Institute",
-          72,
-          headlineBottom + 8,
-          640,
-          38,
+          textX,
+          headlineBottom + (10 * sy),
+          textWidth,
+          Math.round((adData.bodySize + 10) * 1.1 * scale),
           2,
-          template.body
+          bodyColor
         );
 
-      ctx.fillStyle = template.accent;
-      ctx.font = "bold 26px Arial";
-      drawTextBlock(
-        ctx,
-        adData.highlight || "",
-        72,
-        taglineBottom + 18,
-        660,
-        32,
-        3,
-        template.accent
-      );
+      ctx.fillStyle = accentColor;
+      ctx.font = `700 ${Math.round((adData.bodySize || 26) * scale)}px ${fontFamily}`;
+      const highlightBottom =
+        drawTextBlock(
+          ctx,
+          adData.highlight || "",
+          textX,
+          taglineBottom + (16 * sy),
+          textWidth,
+          Math.round((adData.bodySize + 6) * scale),
+          preset.key === "portrait" ? 4 : 3,
+          accentColor
+        );
 
+      if(adData.subHighlight){
+        ctx.fillStyle = bodyColor;
+        ctx.font = `600 ${Math.round((adData.bodySize - 2) * scale)}px ${fontFamily}`;
+        drawTextBlock(
+          ctx,
+          adData.subHighlight,
+          textX,
+          highlightBottom + (14 * sy),
+          textWidth,
+          Math.round((adData.bodySize + 2) * scale),
+          2,
+          bodyColor
+        );
+      }
+
+      const ctaWidth = preset.key === "portrait" ? 300 * sx : 248 * sx;
+      const ctaY = canvasHeight - (108 * sy);
       ctx.fillStyle = template.pillBg;
-      drawRoundedRect(ctx, 72, 520, 248, 42, 20);
+      drawRoundedRect(ctx, 72 * sx, ctaY, ctaWidth, 42 * sy, 20 * scale);
       ctx.fill();
       ctx.fillStyle = template.pillText;
-      ctx.font = "bold 23px Arial";
-      ctx.fillText(adData.cta || "Contact Now", 103, 548);
+      ctx.font = `700 ${Math.round((adData.ctaSize || 23) * scale)}px ${fontFamily}`;
+      ctx.fillText(adData.cta || "Contact Now", 103 * sx, ctaY + (28 * sy));
 
       const footerLines = [];
       if(adData.showPhone && profileData.phone){
@@ -1087,37 +1736,72 @@
       if(adData.footer){
         footerLines.push(adData.footer);
       }
+      if(adData.note){
+        footerLines.push(adData.note);
+      }
 
-      ctx.fillStyle = template.body;
-      ctx.font = "22px Arial";
+      ctx.fillStyle = bodyColor;
+      ctx.font = `500 ${Math.round((adData.bodySize - 4) * scale)}px ${fontFamily}`;
       drawTextBlock(
         ctx,
         footerLines.filter(Boolean).join("   |   "),
-        72,
-        504,
-        1040,
-        30,
-        3,
-        template.body
+        72 * sx,
+        canvasHeight - (126 * sy),
+        canvasWidth - (144 * sx),
+        Math.round((adData.bodySize + 4) * scale),
+        preset.key === "portrait" ? 4 : 3,
+        bodyColor
       );
 
       elements.metaTemplate.textContent = template.label;
     }
 
     function bindPreviewInputs(){
-      [
+      const controls = [
         elements.templateSelect,
+        elements.canvasPresetSelect,
+        elements.fontFamilySelect,
+        elements.iconStyleSelect,
+        elements.imageLayoutSelect,
+        elements.offerBadgeInput,
+        elements.imageOneSelect,
+        elements.imageTwoSelect,
+        elements.imageThreeSelect,
         elements.headlineInput,
         elements.taglineInput,
+        elements.subHighlightInput,
         elements.highlightInput,
         elements.ctaInput,
+        elements.noteInput,
         elements.footerInput,
+        elements.headlineSizeInput,
+        elements.bodySizeInput,
+        elements.ctaSizeInput,
+        elements.headingColorInput,
+        elements.accentColorInput,
+        elements.bodyColorInput,
         elements.showPhoneToggle,
         elements.showWebsiteToggle,
         elements.showLocationToggle
-      ].forEach(control => {
+      ];
+
+      controls.forEach(control => {
         control.addEventListener("input", renderPreview);
         control.addEventListener("change", renderPreview);
+      });
+
+      elements.templateSelect.addEventListener("change", () => {
+        applyTemplatePalette(elements.templateSelect.value);
+        renderPreview();
+      });
+
+      [
+        elements.headlineSizeInput,
+        elements.bodySizeInput,
+        elements.ctaSizeInput
+      ].forEach(control => {
+        control.addEventListener("input", updateRangeLabels);
+        control.addEventListener("change", updateRangeLabels);
       });
     }
 
@@ -1228,7 +1912,7 @@
         const previousPath =
           profileData.advertisementCardStoragePath || "";
 
-        const sourceImageUrl = getAdvertisementSourceImage(profileData);
+        const sourceImageUrl = resolveSelectedImages(getEditorData())[0] || getAdvertisementSourceImage(profileData);
         const updateData = {
           advertisementCardImage:url,
           advertisementCardStoragePath:storagePath,
