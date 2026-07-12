@@ -3,55 +3,50 @@ const fetch = require("node-fetch");
 
 const app = express();
 
-/* Dynamic profile sharing page */
-app.get("/profile-view.html", async (req, res) => {
+const DATABASE_BASE =
+  "https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app";
 
-  const id = req.query.id;
+function escapeHtml(value = "") {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
 
-  if (!id) {
-    return res.status(404).send("Profile not found");
-  }
+async function fetchProfileById(id) {
+  let response = await fetch(
+    `${DATABASE_BASE}/institutions/${id}.json`
+  );
 
-  try {
+  let profile = await response.json();
+  let role = "institution";
 
-    let profile = null;
-
-    /* Check institution */
-    let response = await fetch(
-      `https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app/institutions/${id}.json`
+  if (!profile) {
+    response = await fetch(
+      `${DATABASE_BASE}/teachers/${id}.json`
     );
 
     profile = await response.json();
+    role = "teacher";
+  }
 
-    /* Check teacher if institution not found */
-    if (!profile) {
+  if (!profile) {
+    return null;
+  }
 
-      response = await fetch(
-        `https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app/teachers/${id}.json`
-      );
+  return { profile, role };
+}
 
-      profile = await response.json();
-    }
-
-    if (!profile) {
-      return res.status(404).send("Profile not found");
-    }
-
-    const title =
-      profile.name || "GURULINK";
-
-    const description =
-      profile.description ||
-      "Teacher / Institute Profile";
-
-    const image =
-      profile.logo ||
-      "https://guru-link.onrender.com/default.png";
-
-    const profileUrl =
-      `https://guru-link.onrender.com/profile-view.html?id=${id}`;
-
-    res.send(`
+function buildShareHtml({
+  title,
+  description,
+  image,
+  url,
+  redirectPath
+}) {
+  return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -63,7 +58,7 @@ app.get("/profile-view.html", async (req, res) => {
 <meta property="og:title" content="${title}">
 <meta property="og:description" content="${description}">
 <meta property="og:image" content="${image}">
-<meta property="og:url" content="${profileUrl}">
+<meta property="og:url" content="${url}">
 <meta property="og:type" content="website">
 
 <meta name="twitter:card" content="summary_large_image">
@@ -71,8 +66,7 @@ app.get("/profile-view.html", async (req, res) => {
 <meta name="twitter:description" content="${description}">
 <meta name="twitter:image" content="${image}">
 
-<meta http-equiv="refresh"
-content="0; url=/profile-view-client.html?id=${id}">
+<meta http-equiv="refresh" content="0; url=${redirectPath}">
 
 </head>
 
@@ -82,16 +76,106 @@ Redirecting...
 
 </body>
 </html>
-    `);
+  `;
+}
 
-  } catch (error) {
+/* Dynamic profile sharing page */
+app.get("/profile-view.html", async (req, res) => {
+  const id = req.query.id;
 
-    console.error(error);
-
-    res.status(500).send("Server Error");
-
+  if (!id) {
+    return res.status(404).send("Profile not found");
   }
 
+  try {
+    const result = await fetchProfileById(id);
+
+    if (!result || !result.profile) {
+      return res.status(404).send("Profile not found");
+    }
+
+    const profile = result.profile;
+
+    const title = escapeHtml(profile.name || "GURULINK");
+    const description = escapeHtml(
+      profile.description || "Teacher / Institute Profile"
+    );
+    const image = escapeHtml(
+      profile.logo ||
+      profile.profilePic ||
+      profile.photo ||
+      "https://guru-link.onrender.com/default.png"
+    );
+    const profileUrl =
+      `https://guru-link.onrender.com/profile-view.html?id=${encodeURIComponent(id)}`;
+
+    res.send(
+      buildShareHtml({
+        title,
+        description,
+        image,
+        url: profileUrl,
+        redirectPath: `/profile-view-client.html?id=${encodeURIComponent(id)}`
+      })
+    );
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
+});
+
+/* Dynamic advertisement sharing page */
+app.get("/profile-ad.html", async (req, res) => {
+  const id = req.query.id;
+
+  if (!id) {
+    return res.status(404).send("Profile not found");
+  }
+
+  try {
+    const result = await fetchProfileById(id);
+
+    if (!result || !result.profile) {
+      return res.status(404).send("Profile not found");
+    }
+
+    const profile = result.profile;
+    const roleLabel =
+      result.role === "institution"
+        ? "Institute Advertisement"
+        : "Teacher / Trainer Advertisement";
+
+    const title = escapeHtml(
+      (profile.name || "GURULINK") + " Advertisement"
+    );
+    const description = escapeHtml(
+      (profile.advertisementCardData && profile.advertisementCardData.highlight) ||
+      profile.description ||
+      roleLabel
+    );
+    const image = escapeHtml(
+      profile.advertisementCardImage ||
+      profile.logo ||
+      profile.profilePic ||
+      profile.photo ||
+      "https://guru-link.onrender.com/default.png"
+    );
+    const adUrl =
+      `https://guru-link.onrender.com/profile-ad.html?id=${encodeURIComponent(id)}`;
+
+    res.send(
+      buildShareHtml({
+        title,
+        description,
+        image,
+        url: adUrl,
+        redirectPath: `/profile-ad-client.html?id=${encodeURIComponent(id)}`
+      })
+    );
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server Error");
+  }
 });
 
 /* Serve static files */
@@ -100,9 +184,7 @@ app.use(express.static("."));
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-
   console.log(
     "GURULINK server running on port " + PORT
   );
-
 });
