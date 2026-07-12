@@ -425,8 +425,8 @@
             </label>
           </div>
 
-          <div class="warningBox">
-            Save the advertisement once after editing. That creates a public PNG in Firebase Storage and updates the public ad page for sharing.
+        <div class="warningBox">
+            Save the advertisement once after editing. That creates a public PNG in Firebase Storage and also sets that saved ad as your main public profile image for sharing.
           </div>
 
           <div id="statusBar" class="statusBar"></div>
@@ -622,17 +622,133 @@
       return [];
     }
 
-    function getPrimaryProfileImage(data){
-      const images = Array.isArray(data?.profileImages) ? data.profileImages : [];
-      const normalized = images
-        .map(item => typeof item === "string" ? { url:item } : item)
-        .filter(item => item && item.url);
+    function extractStoragePathFromUrl(url){
+      try{
+        const match = String(url || "").match(/\/o\/([^?]+)/);
+        return match ? decodeURIComponent(match[1]) : "";
+      }
+      catch(err){
+        return "";
+      }
+    }
 
+    function normalizeImageItem(item, fallbackIndex = 0){
+      if(!item){
+        return null;
+      }
+
+      if(typeof item === "string"){
+        const url = item.trim();
+        if(!url){
+          return null;
+        }
+
+        return {
+          url,
+          storagePath:extractStoragePathFromUrl(url),
+          uploadedAt:Date.now() + fallbackIndex
+        };
+      }
+
+      const url = String(item.url || item.src || "").trim();
+      if(!url){
+        return null;
+      }
+
+      return {
+        url,
+        storagePath:String(item.storagePath || extractStoragePathFromUrl(url) || ""),
+        uploadedAt:Number(item.uploadedAt || Date.now() + fallbackIndex)
+      };
+    }
+
+    function normalizeProfileImages(data){
+      const existing =
+        Array.isArray(data?.profileImages)
+          ? data.profileImages
+          : (
+              data?.profileImages &&
+              typeof data.profileImages === "object"
+            )
+              ? Object.values(data.profileImages)
+              : [];
+
+      let items =
+        existing
+          .map((item, index) => normalizeImageItem(item, index))
+          .filter(Boolean);
+
+      if(!items.length){
+        const legacy =
+          [data?.photo, data?.logo, data?.profilePic]
+            .filter(Boolean)
+            .filter((value, index, array) => array.indexOf(value) === index);
+
+        items =
+          legacy
+            .map((url, index) => normalizeImageItem(url, index))
+            .filter(Boolean);
+      }
+
+      return items.sort((a, b) => (a.uploadedAt || 0) - (b.uploadedAt || 0));
+    }
+
+    function isAdvertisementStoragePath(path){
+      return /(^|\/)advertisement-cards\//i.test(String(path || ""));
+    }
+
+    function getPrimaryProfileImage(data){
+      const images = normalizeProfileImages(data);
       const selected =
-        normalized[Number(data?.primaryProfileImage || 0)] ||
-        normalized[0];
+        images[Number(data?.primaryProfileImage || 0)] ||
+        images[0];
 
       return selected?.url || data?.photo || data?.profilePic || data?.logo || "";
+    }
+
+    function getAdvertisementSourceImage(data){
+      const explicit = String(data?.advertisementSourceImage || "").trim();
+      if(explicit){
+        return explicit;
+      }
+
+      const advertisementUrl = String(data?.advertisementCardImage || "").trim();
+      const fallback =
+        normalizeProfileImages(data).find(item =>
+          item.url &&
+          item.url !== advertisementUrl &&
+          !isAdvertisementStoragePath(item.storagePath)
+        );
+
+      return fallback?.url || getPrimaryProfileImage(data);
+    }
+
+    function buildPromotedProfileImages(newImageItem, data){
+      const existingImages = normalizeProfileImages(data);
+      const previousAdUrl = String(data?.advertisementCardImage || "").trim();
+      const sourceImageUrl = String(getAdvertisementSourceImage(data) || "").trim();
+
+      const secondaryImage =
+        existingImages.find(item =>
+          item.url === sourceImageUrl &&
+          item.url !== newImageItem.url
+        ) ||
+        existingImages.find(item =>
+          item.url &&
+          item.url !== newImageItem.url &&
+          item.url !== previousAdUrl &&
+          !isAdvertisementStoragePath(item.storagePath)
+        ) ||
+        existingImages.find(item =>
+          item.url &&
+          item.url !== newImageItem.url &&
+          item.url !== previousAdUrl
+        ) ||
+        null;
+
+      return secondaryImage
+        ? [newImageItem, secondaryImage].slice(0, 2)
+        : [newImageItem];
     }
 
     function getProfileLocation(data){
@@ -774,18 +890,72 @@
       return y + (lines.length * lineHeight);
     }
 
-    function loadImage(src){
+    function releasePreviewImage(){
+      if(previewImage && previewImage.__objectUrl){
+        try{
+          URL.revokeObjectURL(previewImage.__objectUrl);
+        }
+        catch(err){
+          console.log("Preview object URL revoke skipped:", err);
+        }
+      }
+
+      previewImage = null;
+    }
+
+    function loadImageElement(src, objectUrl = ""){
+      return new Promise((resolve) => {
+        const image = new Image();
+        image.crossOrigin = "anonymous";
+        image.onload = () => {
+          image.__src = src;
+          if(objectUrl){
+            image.__objectUrl = objectUrl;
+          }
+          resolve(image);
+        };
+        image.onerror = () => {
+          if(objectUrl){
+            URL.revokeObjectURL(objectUrl);
+          }
+          resolve(null);
+        };
+        image.src = src;
+      });
+    }
+
+    async function loadImage(src){
       if(!src){
         return Promise.resolve(null);
       }
 
-      return new Promise((resolve) => {
-        const image = new Image();
-        image.crossOrigin = "anonymous";
-        image.onload = () => resolve(image);
-        image.onerror = () => resolve(null);
-        image.src = src;
-      });
+      try{
+        const response = await fetch(src, {
+          mode:"cors",
+          cache:"no-store"
+        });
+
+        if(response.ok){
+          const blob = await response.blob();
+          if(blob && blob.size){
+            const objectUrl = URL.createObjectURL(blob);
+            const image = await loadImageElement(objectUrl, objectUrl);
+            if(image){
+              image.__src = src;
+              return image;
+            }
+          }
+        }
+      }
+      catch(err){
+        console.log("Profile image fetch fallback:", err);
+      }
+
+      const directImage = await loadImageElement(src);
+      if(directImage){
+        directImage.__src = src;
+      }
+      return directImage;
     }
 
     async function renderPreview(){
@@ -796,17 +966,18 @@
       const version = ++renderVersion;
       const adData = getEditorData();
       const template = templates[adData.template] || templates.blue;
-      const logoUrl = getPrimaryProfileImage(profileData);
+      const logoUrl = getAdvertisementSourceImage(profileData);
 
       if(!previewImage || previewImage.__src !== logoUrl){
+        releasePreviewImage();
         const image = await loadImage(logoUrl);
         if(version !== renderVersion){
+          if(image && image.__objectUrl){
+            URL.revokeObjectURL(image.__objectUrl);
+          }
           return;
         }
         previewImage = image;
-        if(previewImage){
-          previewImage.__src = logoUrl;
-        }
       }
 
       ctx.clearRect(0,0,1200,630);
@@ -1048,12 +1219,13 @@
         await renderPreview();
 
         const blob = await createPngBlob();
+        const now = Date.now();
         const storageOwnerUid = getStorageOwnerUid();
         const storagePath =
           getStorageRoot() + "/" +
           storageOwnerUid + "/" +
           "advertisement-cards/" +
-          Date.now() + "-profile-ad.png";
+          now + "-profile-ad.png";
 
         const fileRef = storageRef(storage, storagePath);
         await uploadWithTimeout(fileRef, blob);
@@ -1062,11 +1234,24 @@
         const previousPath =
           profileData.advertisementCardStoragePath || "";
 
+        const promotedImage = {
+          url,
+          storagePath,
+          uploadedAt:now
+        };
+
+        const sourceImageUrl = getAdvertisementSourceImage(profileData);
         const updateData = {
           advertisementCardImage:url,
           advertisementCardStoragePath:storagePath,
-          advertisementCardUpdatedAt:Date.now(),
-          advertisementCardData:getEditorData()
+          advertisementCardUpdatedAt:now,
+          advertisementCardData:getEditorData(),
+          advertisementSourceImage:sourceImageUrl,
+          profileImages:buildPromotedProfileImages(promotedImage, profileData),
+          primaryProfileImage:0,
+          logo:url,
+          profilePic:url,
+          photo:url
         };
 
         await update(ref(db, getDbPath()), updateData);
@@ -1078,8 +1263,9 @@
         };
 
         savedAdvertisementUrl = url;
+        localStorage.setItem("profilePhoto", url);
         elements.metaUpdated.textContent = formatSavedAt(profileData.advertisementCardUpdatedAt);
-        setStatus("Advertisement saved successfully.", "success");
+        setStatus("Advertisement saved successfully and set as your public profile image.", "success");
       }
       catch(err){
         console.error(err);
