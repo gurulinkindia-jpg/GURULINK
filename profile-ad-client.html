@@ -456,7 +456,13 @@
     };
 
     function getAdPageUrl(){
-      return WEBSITE_BASE + "profile-ad.html?id=" + encodeURIComponent(currentProfileId);
+      const updatedAt =
+        encodeURIComponent(
+          data?.advertisementCardUpdatedAt ||
+          data?.updatedAt ||
+          Date.now()
+        );
+      return WEBSITE_BASE + "profile-ad.html?id=" + encodeURIComponent(currentProfileId) + "&adts=" + updatedAt;
     }
 
     function getAdSharePayload(){
