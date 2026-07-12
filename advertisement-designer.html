@@ -304,52 +304,6 @@
       margin-top:-2px;
     }
 
-    .selectionCard{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      padding:12px 14px;
-      border-radius:16px;
-      border:1px solid #d5e3f4;
-      background:#f8fbff;
-    }
-
-    .selectionCard strong{
-      color:#0f4ea7;
-      font-size:15px;
-    }
-
-    .selectionCard span{
-      color:var(--muted);
-      font-size:12px;
-      font-weight:bold;
-    }
-
-    .nudgeGrid{
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:10px;
-      align-items:center;
-    }
-
-    .nudgeSpacer{
-      min-height:44px;
-    }
-
-    .nudgeBtn{
-      background:#eef5ff;
-      color:#0d47a1;
-      border:1px solid #cfe0f6;
-      box-shadow:0 6px 14px rgba(21,101,192,.08);
-    }
-
-    .actionsRow{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:10px;
-    }
-
     .toggleRow{
       display:grid;
       grid-template-columns:repeat(3,minmax(0,1fr));
@@ -488,7 +442,6 @@
 
       .row,
       .tripleRow,
-      .actionsRow,
       .toggleRow,
       .buttonGrid,
       .metaStrip{
@@ -497,10 +450,6 @@
 
       .assetCard{
         padding:10px;
-      }
-
-      .nudgeGrid{
-        grid-template-columns:repeat(3,minmax(0,1fr));
       }
     }
   </style>
@@ -629,32 +578,6 @@
           </div>
         </section>
 
-        <section class="panel">
-          <h2>Move Selected Item</h2>
-          <p class="panelNote">
-            Click any text block or image inside the preview, then drag it with your mouse or finger. Use the buttons below for fine adjustment.
-          </p>
-
-          <div class="selectionCard">
-            <strong id="selectedLayerName">Nothing selected</strong>
-            <span id="selectedLayerCoords">X: 0 | Y: 0</span>
-          </div>
-
-          <div class="nudgeGrid">
-            <div class="nudgeSpacer"></div>
-            <button type="button" class="nudgeBtn" data-nudge="up">Up</button>
-            <div class="nudgeSpacer"></div>
-
-            <button type="button" class="nudgeBtn" data-nudge="left">Left</button>
-            <button type="button" class="nudgeBtn" data-nudge="down">Down</button>
-            <button type="button" class="nudgeBtn" data-nudge="right">Right</button>
-          </div>
-
-          <div class="actionsRow">
-            <button id="resetLayerBtn" type="button" class="ghostBtn">Reset Selected</button>
-            <button id="resetAllLayersBtn" type="button" class="ghostBtn">Reset All</button>
-          </div>
-        </section>
       </div>
 
       <div class="rail centerRail">
@@ -869,10 +792,6 @@
       showPhoneToggle:document.getElementById("showPhoneToggle"),
       showWebsiteToggle:document.getElementById("showWebsiteToggle"),
       showLocationToggle:document.getElementById("showLocationToggle"),
-      selectedLayerName:document.getElementById("selectedLayerName"),
-      selectedLayerCoords:document.getElementById("selectedLayerCoords"),
-      resetLayerBtn:document.getElementById("resetLayerBtn"),
-      resetAllLayersBtn:document.getElementById("resetAllLayersBtn"),
       metaTemplate:document.getElementById("metaTemplate"),
       metaUpdated:document.getElementById("metaUpdated"),
       metaPublic:document.getElementById("metaPublic"),
@@ -913,7 +832,6 @@
       imageTwo:{ file:null, previewUrl:"" },
       imageThree:{ file:null, previewUrl:"" }
     };
-    const nudgeButtons = Array.from(document.querySelectorAll("[data-nudge]"));
 
     const templates = {
       academic:{
@@ -1082,7 +1000,6 @@
       }
       currentLayerPositions[key].x = Math.round(x);
       currentLayerPositions[key].y = Math.round(y);
-      syncSelectedLayerInfo();
     }
 
     function resetLayerPosition(key){
@@ -1091,13 +1008,10 @@
 
     function resetAllLayerPositions(){
       currentLayerPositions = createDefaultLayerPositions();
-      syncSelectedLayerInfo();
     }
 
     function syncSelectedLayerInfo(){
-      const position = getLayerPosition(selectedLayerKey);
-      elements.selectedLayerName.textContent = layerLabels[selectedLayerKey] || "Nothing selected";
-      elements.selectedLayerCoords.textContent = "X: " + Math.round(position.x || 0) + " | Y: " + Math.round(position.y || 0);
+      return;
     }
 
     function normalizeRole(value){
@@ -1884,24 +1798,6 @@
       return null;
     }
 
-    function nudgeSelectedLayer(direction){
-      const step = 8;
-      const position = getLayerPosition(selectedLayerKey);
-      if(direction === "up"){
-        setLayerPosition(selectedLayerKey, position.x, position.y - step);
-      }
-      if(direction === "down"){
-        setLayerPosition(selectedLayerKey, position.x, position.y + step);
-      }
-      if(direction === "left"){
-        setLayerPosition(selectedLayerKey, position.x - step, position.y);
-      }
-      if(direction === "right"){
-        setLayerPosition(selectedLayerKey, position.x + step, position.y);
-      }
-      renderPreview();
-    }
-
     function bindCanvasInteraction(){
       elements.adCanvas.addEventListener("pointerdown", (event) => {
         const point = getCanvasPoint(event);
@@ -1911,7 +1807,6 @@
         }
 
         selectedLayerKey = region.key;
-        syncSelectedLayerInfo();
         const basePosition = getLayerPosition(region.key);
         dragState = {
           pointerId:event.pointerId,
@@ -1963,24 +1858,6 @@
           finishDrag(event);
         }
       });
-
-      nudgeButtons.forEach((button) => {
-        button.addEventListener("click", () => {
-          nudgeSelectedLayer(button.dataset.nudge || "");
-        });
-      });
-
-      elements.resetLayerBtn.addEventListener("click", () => {
-        resetLayerPosition(selectedLayerKey);
-        renderPreview();
-      });
-
-      elements.resetAllLayersBtn.addEventListener("click", () => {
-        resetAllLayerPositions();
-        renderPreview();
-      });
-
-      syncSelectedLayerInfo();
     }
 
     async function renderPreview(){
