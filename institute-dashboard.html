@@ -257,6 +257,19 @@ background:#5e35b1;
 background:#00897b;
 }
 
+.businessCardBtn{
+background:#1565c0;
+}
+
+.adDesignerBtn{
+background:#3949ab;
+}
+
+.adShareBtn{
+background:linear-gradient(135deg,#ff7043,#f4511e);
+font-weight:bold;
+}
+
 .websiteBtn{
 background:#2e7d32;
 }
@@ -678,6 +691,100 @@ background:#00695c;
     0 4px 12px rgba(0,0,0,.2);
 }
 
+.adShareOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(4,12,28,.58);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+  padding:18px;
+}
+
+.adShareModal{
+  width:min(480px,100%);
+  background:#fff;
+  border-radius:22px;
+  box-shadow:0 24px 70px rgba(0,0,0,.28);
+  overflow:hidden;
+}
+
+.adShareHead{
+  padding:18px 20px 14px;
+  background:linear-gradient(135deg,#0f4ea7,#1e88e5);
+  color:#fff;
+}
+
+.adShareHead h3{
+  margin:0 0 6px;
+  font-size:22px;
+}
+
+.adShareHead p{
+  margin:0;
+  font-size:13px;
+  line-height:1.5;
+  opacity:.95;
+}
+
+.adShareBody{
+  padding:18px;
+  display:grid;
+  gap:12px;
+}
+
+.adShareGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+
+.adShareAction,
+.adShareFooter button{
+  border:none;
+  border-radius:14px;
+  padding:13px 12px;
+  font-size:14px;
+  font-weight:bold;
+  cursor:pointer;
+  color:#fff;
+}
+
+.adShareAction.whatsapp{ background:#25d366; }
+.adShareAction.facebook{ background:#1877f2; }
+.adShareAction.telegram{ background:#229ed9; }
+.adShareAction.link{ background:#3949ab; }
+.adShareAction.image{ background:#00897b; }
+.adShareAction.public{ background:#ff7043; }
+.adShareAction.native{ background:#6d4c41; }
+
+.adShareNote{
+  background:#f8fbff;
+  border:1px solid #dbe7f4;
+  border-radius:14px;
+  padding:12px 14px;
+  color:#4d647f;
+  font-size:12px;
+  line-height:1.6;
+}
+
+.adShareFooter{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+
+.adShareFooter .closeShareBtn{
+  background:#455a64;
+}
+
+@media(max-width:560px){
+  .adShareGrid{
+    grid-template-columns:1fr;
+  }
+}
+
 
 .bankRow{
   display:flex;
@@ -903,6 +1010,14 @@ Quick Actions
     Website
   </button>
 
+  <button class="businessCardBtn" onclick="openBusinessCardDesigner()">
+    Create Business / I Card
+  </button>
+
+  <button class="adDesignerBtn" onclick="openAdvertisementDesigner()">
+    Create Advertisement
+  </button>
+
   <button class="invoiceBtn" onclick="createInvoice()">
     Create Invoice
   </button>
@@ -912,10 +1027,16 @@ Quick Actions
   </button>
 
   <button class="shareBtn full" onclick="shareProfile()">
-    Share Business Card
+    Share Profile
+  </button>
+
+  <button class="adShareBtn full" onclick="shareAdvertisement()">
+    Share Advertisement
   </button>
 
 </div>
+
+<div id="adShareModalRoot"></div>
 
 
 
@@ -1439,6 +1560,44 @@ async function ensureDashboardAuth(actionText = "continue"){
 
 function normalizePhoneDigits(value){
 return String(value || "").replace(/\D/g,"");
+}
+
+function buildBusinessCardAddress(data){
+const lines = [];
+
+function pushUnique(value){
+const clean = String(value || "").trim();
+
+if(!clean){
+return;
+}
+
+if(lines.some(item => item.toLowerCase() === clean.toLowerCase())){
+return;
+}
+
+lines.push(clean);
+}
+
+pushUnique(data?.address);
+
+const areaLine =
+[data?.area,data?.city,data?.town]
+.map(item => String(item || "").trim())
+.filter(Boolean)
+.join(", ");
+
+pushUnique(areaLine);
+
+const statePinLine =
+[data?.state,data?.pinCode]
+.map(item => String(item || "").trim())
+.filter(Boolean)
+.join(" - ");
+
+pushUnique(statePinLine);
+
+return lines.join(", ");
 }
 
 function getPrimaryProfileImage(data){
@@ -2528,6 +2687,375 @@ window.openWebsite = function() {
   window.open(finalUrl,"_blank","noopener");
 };
 
+window.openBusinessCardDesigner = function() {
+  const profileId =
+    currentProfileData.uid ||
+    localStorage.getItem("profileId") ||
+    "";
+
+  const activeRole =
+    currentProfileData.role ||
+    localStorage.getItem("role") ||
+    "teacher";
+
+  if(!profileId){
+    alert("Profile not found");
+    return;
+  }
+
+  const profileUrl =
+    "https://www.gurulink.co.in/profile-view.html?id=" +
+    encodeURIComponent(profileId);
+
+  const finalUrl =
+    normalizeWebsiteUrl(currentProfileData.website || "") ||
+    profileUrl;
+
+  const roleTitle =
+    activeRole === "institution"
+      ? "Institute"
+      : "Teacher / Trainer";
+
+  const payload = {
+    cardType:"business",
+    name:currentProfileData.name || "",
+    title:(currentProfileData.categoryName || currentProfileData.category || roleTitle),
+    phone:currentProfileData.phone || "",
+    email:currentProfileData.email || "",
+    url:finalUrl,
+    address:buildBusinessCardAddress(currentProfileData),
+    logo:getPrimaryProfileImage(currentProfileData),
+    role:activeRole,
+    profileId:profileId,
+    generatedAt:Date.now()
+  };
+
+  localStorage.setItem(
+    "gurulinkBusinessCardPrefill",
+    JSON.stringify(payload)
+  );
+
+  const encodedPrefill = btoa(
+    unescape(
+      encodeURIComponent(JSON.stringify(payload))
+    )
+  );
+
+  const isPhone =
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    window.matchMedia("(max-width: 850px)").matches;
+
+  const inGuruLinkApp =
+    (navigator.userAgent || "").includes("GuruLinkAndroidApp");
+
+  if (isPhone && inGuruLinkApp) {
+    const chromeIntentUrl =
+      "intent://www.gurulink.co.in/BusinessCardDesigner/index.html" +
+      "?v=20260711g" +
+      "&source=appmobile" +
+      "&role=" + encodeURIComponent(activeRole) +
+      "&prefill=" + encodeURIComponent(encodedPrefill) +
+      "#Intent;scheme=https;package=com.android.chrome;end";
+
+    location.href = chromeIntentUrl;
+    return;
+  }
+
+  location.href = "BusinessCardDesigner/index.html?v=20260711g";
+};
+
+function getAdvertisementShareUrl(profileId){
+  return "https://www.gurulink.co.in/profile-ad.html?id=" +
+    encodeURIComponent(profileId || "");
+}
+
+function getAdvertisementOnRenderShareUrl(profileId){
+  return "https://guru-link.onrender.com/profile-ad.html?id=" +
+    encodeURIComponent(profileId || "");
+}
+
+function createAdvertisementSharePayload(){
+  const profileId =
+    currentProfileData.uid ||
+    localStorage.getItem("profileId") ||
+    "";
+
+  const activeRole =
+    currentProfileData.role ||
+    localStorage.getItem("role") ||
+    "teacher";
+
+  const advertisementImage =
+    currentProfileData.advertisementCardImage ||
+    "";
+
+  if(!profileId){
+    alert("Profile not found");
+    return null;
+  }
+
+  if(!advertisementImage){
+    alert("Create and save your advertisement first.");
+    return null;
+  }
+
+  const shareUrl =
+    getAdvertisementShareUrl(profileId);
+
+  const socialShareUrl =
+    getAdvertisementOnRenderShareUrl(profileId);
+
+  const roleLabel =
+    activeRole === "institution"
+      ? "Institute"
+      : "Teacher / Trainer";
+
+  const shareText =
+    "Check out this " +
+    roleLabel +
+    " advertisement on GURULINK.";
+
+  const shareMessage =
+    shareText +
+    "\n\nAdvertisement image:\n" +
+    advertisementImage +
+    "\n\nView details:\n" +
+    shareUrl;
+
+  return {
+    profileId,
+    activeRole,
+    roleLabel,
+    advertisementImage,
+    shareUrl,
+    socialShareUrl,
+    shareText,
+    shareMessage
+  };
+}
+
+async function fetchShareFileFromUrl(fileUrl, fileName){
+  if(!fileUrl || !navigator.canShare){
+    return null;
+  }
+
+  try{
+    const response = await fetch(fileUrl, { mode:"cors" });
+
+    if(!response.ok){
+      return null;
+    }
+
+    const blob = await response.blob();
+
+    const file = new File(
+      [blob],
+      fileName,
+      { type: blob.type || "image/png" }
+    );
+
+    if(navigator.canShare({ files:[file] })){
+      return file;
+    }
+  }
+  catch(err){
+    console.log("Advertisement image share file skipped:", err);
+  }
+
+  return null;
+}
+
+async function copyTextToClipboard(text, successMessage){
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      await navigator.clipboard.writeText(text);
+    } else {
+      const tempInput = document.createElement("textarea");
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+    }
+
+    alert(successMessage);
+  }
+  catch(err){
+    console.log("Copy skipped:", err);
+    alert("Could not copy right now.");
+  }
+}
+
+function closeAdvertisementShareModal(){
+  const root = document.getElementById("adShareModalRoot");
+  if(root){
+    root.innerHTML = "";
+  }
+}
+
+function openAdvertisementShareModal(payload){
+  const root = document.getElementById("adShareModalRoot");
+  if(!root || !payload){
+    return;
+  }
+
+  const nativeButton =
+    (navigator.share && !(navigator.userAgent || "").includes("GuruLinkAndroidApp"))
+      ? `<button class="adShareAction native" data-share-action="native">More Apps</button>`
+      : "";
+
+  root.innerHTML = `
+    <div class="adShareOverlay" id="adShareOverlay">
+      <div class="adShareModal" role="dialog" aria-modal="true" aria-label="Share advertisement">
+        <div class="adShareHead">
+          <h3>Share Advertisement</h3>
+          <p>Use the saved advertisement image for Facebook and the public ad page for details.</p>
+        </div>
+
+        <div class="adShareBody">
+          <div class="adShareGrid">
+            <button class="adShareAction whatsapp" data-share-action="whatsapp">WhatsApp</button>
+            <button class="adShareAction facebook" data-share-action="facebook">Facebook</button>
+            <button class="adShareAction telegram" data-share-action="telegram">Telegram</button>
+            <button class="adShareAction public" data-share-action="public">Open Public Ad</button>
+            <button class="adShareAction link" data-share-action="copy-link">Copy Ad Link</button>
+            <button class="adShareAction image" data-share-action="copy-image">Copy Image Link</button>
+            ${nativeButton}
+          </div>
+
+          <div class="adShareNote">
+            Facebook preview uses the advertisement image link here. A true dynamic link preview still needs separate OnRender meta-tag support.
+          </div>
+
+          <div class="adShareFooter">
+            <button class="closeShareBtn" data-share-action="close">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const overlay = document.getElementById("adShareOverlay");
+
+  overlay.addEventListener("click",(event)=>{
+    if(event.target === overlay){
+      closeAdvertisementShareModal();
+    }
+  });
+
+  root.querySelectorAll("[data-share-action]").forEach(button => {
+    button.addEventListener("click", async () => {
+      const action = button.getAttribute("data-share-action");
+
+      if(action === "close"){
+        closeAdvertisementShareModal();
+        return;
+      }
+
+      if(action === "whatsapp"){
+        window.open(
+          "https://wa.me/?text=" + encodeURIComponent(payload.shareMessage),
+          "_blank"
+        );
+        return;
+      }
+
+      if(action === "facebook"){
+        const facebookUrl =
+          "https://www.facebook.com/sharer/sharer.php?u=" +
+          encodeURIComponent(payload.socialShareUrl) +
+          "&quote=" +
+          encodeURIComponent(payload.shareText + " " + payload.shareUrl);
+        window.open(facebookUrl, "_blank");
+        return;
+      }
+
+      if(action === "telegram"){
+        const telegramUrl =
+          "https://t.me/share/url?url=" +
+          encodeURIComponent(payload.shareUrl) +
+          "&text=" +
+          encodeURIComponent(payload.shareText + "\nAdvertisement image: " + payload.advertisementImage);
+        window.open(telegramUrl, "_blank");
+        return;
+      }
+
+      if(action === "public"){
+        window.open(payload.shareUrl, "_blank");
+        return;
+      }
+
+      if(action === "copy-link"){
+        await copyTextToClipboard(payload.shareUrl, "Advertisement page link copied.");
+        return;
+      }
+
+      if(action === "copy-image"){
+        await copyTextToClipboard(payload.advertisementImage, "Advertisement image link copied.");
+        return;
+      }
+
+      if(action === "native" && navigator.share){
+        try{
+          const file =
+            await fetchShareFileFromUrl(
+              payload.advertisementImage,
+              "gurulink-advertisement.png"
+            );
+
+          const shareData = file
+            ? {
+                title:"GURULINK Advertisement",
+                text:payload.shareText + "\n\n" + payload.shareUrl,
+                files:[file]
+              }
+            : {
+                title:"GURULINK Advertisement",
+                text:payload.shareMessage
+              };
+
+          await navigator.share(shareData);
+        }
+        catch(err){
+          console.log("Native ad share skipped:", err);
+        }
+      }
+    });
+  });
+}
+
+window.openAdvertisementDesigner = function(){
+  const profileId =
+    currentProfileData.uid ||
+    localStorage.getItem("profileId") ||
+    "";
+
+  const activeRole =
+    currentProfileData.role ||
+    localStorage.getItem("role") ||
+    "teacher";
+
+  if(!profileId){
+    alert("Profile not found");
+    return;
+  }
+
+  location.href =
+    "advertisement-designer.html?id=" +
+    encodeURIComponent(profileId) +
+    "&role=" +
+    encodeURIComponent(activeRole);
+};
+
+window.shareAdvertisement = async function(){
+  const payload = createAdvertisementSharePayload();
+  if(!payload){
+    return;
+  }
+
+  openAdvertisementShareModal(payload);
+};
+
 
 window.shareProfile = function () {
 
@@ -2576,3 +3104,4 @@ profileId;
 
 </body>
 </html>
+
