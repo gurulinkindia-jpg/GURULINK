@@ -2683,7 +2683,10 @@ window.openWebsite = function() {
   window.open(finalUrl,"_blank","noopener");
 };
 
-window.openBusinessCardDesigner = function() {
+
+
+window.openBusinessCardDesigner = function () {
+
   const profileId =
     currentProfileData.uid ||
     localStorage.getItem("profileId") ||
@@ -2694,7 +2697,7 @@ window.openBusinessCardDesigner = function() {
     localStorage.getItem("role") ||
     "teacher";
 
-  if(!profileId){
+  if (!profileId) {
     alert("Profile not found");
     return;
   }
@@ -2713,17 +2716,17 @@ window.openBusinessCardDesigner = function() {
       : "Teacher / Trainer";
 
   const payload = {
-    cardType:"business",
-    name:currentProfileData.name || "",
-    title:(currentProfileData.categoryName || currentProfileData.category || roleTitle),
-    phone:currentProfileData.phone || "",
-    email:currentProfileData.email || "",
-    url:finalUrl,
-    address:buildBusinessCardAddress(currentProfileData),
-    logo:getPrimaryProfileImage(currentProfileData),
-    role:activeRole,
-    profileId:profileId,
-    generatedAt:Date.now()
+    cardType: "business",
+    name: currentProfileData.name || "",
+    title: currentProfileData.categoryName || currentProfileData.category || roleTitle,
+    phone: currentProfileData.phone || "",
+    email: currentProfileData.email || "",
+    url: finalUrl,
+    address: buildBusinessCardAddress(currentProfileData),
+    logo: getPrimaryProfileImage(currentProfileData),
+    role: activeRole,
+    profileId: profileId,
+    generatedAt: Date.now()
   };
 
   localStorage.setItem(
@@ -2731,34 +2734,18 @@ window.openBusinessCardDesigner = function() {
     JSON.stringify(payload)
   );
 
-  const encodedPrefill = btoa(
-    unescape(
-      encodeURIComponent(JSON.stringify(payload))
-    )
+  sessionStorage.setItem(
+    "gurulinkBusinessCardPrefill",
+    JSON.stringify(payload)
   );
 
-  const isPhone =
-    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
-    window.matchMedia("(max-width: 850px)").matches;
-
-  const inGuruLinkApp =
-    (navigator.userAgent || "").includes("GuruLinkAndroidApp");
-
-  if (isPhone && inGuruLinkApp) {
-    const chromeIntentUrl =
-      "intent://www.gurulink.co.in/BusinessCardDesigner/index.html" +
-      "?v=20260711g" +
-      "&source=appmobile" +
-      "&role=" + encodeURIComponent(activeRole) +
-      "&prefill=" + encodeURIComponent(encodedPrefill) +
-      "#Intent;scheme=https;package=com.android.chrome;end";
-
-    location.href = chromeIntentUrl;
-    return;
-  }
-
-  location.href = "BusinessCardDesigner/index.html?v=20260711g";
+  window.location.href =
+    "https://www.gurulink.co.in/BusinessCardDesigner/index.html?v=" +
+    Date.now();
 };
+  
+  
+
 
 function getAdvertisementShareUrl(profileId){
   return "https://www.gurulink.co.in/profile-ad.html?id=" +
