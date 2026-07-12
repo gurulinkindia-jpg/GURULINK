@@ -375,10 +375,28 @@
 
       const shareUrl = getAdPageUrl();
       const shareText = "Check out this profile advertisement on GURULINK.";
+      const advertisementImage = data.advertisementCardImage || "";
+      const shareMessage =
+        shareText +
+        "\n\nAdvertisement image:\n" +
+        advertisementImage +
+        "\n\nView details:\n" +
+        shareUrl;
+
+      const inGuruLinkApp =
+        (navigator.userAgent || "").includes("GuruLinkAndroidApp");
+
+      if(inGuruLinkApp){
+        window.open(
+          "https://wa.me/?text=" + encodeURIComponent(shareMessage),
+          "_blank"
+        );
+        return;
+      }
 
       try{
         if(navigator.share){
-          const file = await fetchShareFileFromUrl(data.advertisementCardImage || "");
+          const file = await fetchShareFileFromUrl(advertisementImage);
           const shareData = file
             ? {
                 title:"GURULINK Advertisement",
@@ -387,8 +405,7 @@
               }
             : {
                 title:"GURULINK Advertisement",
-                text:shareText,
-                url:shareUrl
+                text:shareMessage
               };
 
           await navigator.share(shareData);
@@ -406,7 +423,7 @@
       }
 
       window.open(
-        "https://wa.me/?text=" + encodeURIComponent(shareText + "\n\n" + shareUrl),
+        "https://wa.me/?text=" + encodeURIComponent(shareMessage),
         "_blank"
       );
     };
