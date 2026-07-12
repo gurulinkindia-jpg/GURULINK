@@ -433,7 +433,7 @@
 
           <div class="buttonGrid">
             <button id="saveBtn" class="primaryBtn">Save Advertisement</button>
-            <button id="openPublicBtn" class="successBtn">Open Saved Image</button>
+            <button id="openPublicBtn" class="successBtn">Open Public Ad</button>
             <button id="backBtn" class="footerBtn">Back To Dashboard</button>
           </div>
         </div>
@@ -1259,12 +1259,17 @@
     }
 
     function openPublicAd(){
-      const imageUrl = getSavedAdvertisementUrl();
-      if(!imageUrl){
-        setStatus("Save the advertisement first, then open it.", "error");
+      const publicUrl =
+        "https://guru-link.onrender.com/profile-ad.html?id=" +
+        encodeURIComponent(profileId) +
+        "&adts=" +
+        encodeURIComponent(profileData?.advertisementCardUpdatedAt || Date.now());
+
+      if(!getSavedAdvertisementUrl()){
+        setStatus("Save the advertisement first, then open the public ad page.", "error");
         return;
       }
-      window.open(imageUrl, "_blank");
+      window.open(publicUrl, "_blank");
     }
 
     function goBackToDashboard(){
