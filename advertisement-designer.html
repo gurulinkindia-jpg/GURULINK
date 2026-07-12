@@ -582,12 +582,12 @@
     }
 
     function getStorageOwnerUid(){
-      if(profileData && profileData.storageOwnerUid){
-        return String(profileData.storageOwnerUid);
-      }
-
       if(currentUser && currentUser.uid){
         return currentUser.uid;
+      }
+
+      if(profileData && profileData.storageOwnerUid){
+        return String(profileData.storageOwnerUid);
       }
 
       return profileId;
