@@ -489,16 +489,22 @@
             <div class="field">
               <label for="imageOneSelect">Image 1</label>
               <select id="imageOneSelect"></select>
+              <p class="miniHint">Choose from profile, gallery, or uploaded ad images.</p>
+              <input id="imageOneUpload" type="file" accept="image/*">
             </div>
 
             <div class="field">
               <label for="imageTwoSelect">Image 2</label>
               <select id="imageTwoSelect"></select>
+              <p class="miniHint">Optional second visual for collage layouts.</p>
+              <input id="imageTwoUpload" type="file" accept="image/*">
             </div>
 
             <div class="field">
               <label for="imageThreeSelect">Image 3</label>
               <select id="imageThreeSelect"></select>
+              <p class="miniHint">Optional third visual for richer promotion cards.</p>
+              <input id="imageThreeUpload" type="file" accept="image/*">
             </div>
           </div>
 
@@ -560,6 +566,26 @@
               <label for="ctaSizeInput">CTA Size</label>
               <input id="ctaSizeInput" type="range" min="18" max="34" step="1" value="23">
               <div id="ctaSizeValue" class="rangeValue">23 px</div>
+            </div>
+          </div>
+
+          <div class="tripleRow">
+            <div class="field">
+              <label for="textXOffsetInput">Text Left / Right</label>
+              <input id="textXOffsetInput" type="range" min="-180" max="180" step="1" value="0">
+              <div id="textXOffsetValue" class="rangeValue">0 px</div>
+            </div>
+
+            <div class="field">
+              <label for="textYOffsetInput">Text Up / Down</label>
+              <input id="textYOffsetInput" type="range" min="-180" max="180" step="1" value="0">
+              <div id="textYOffsetValue" class="rangeValue">0 px</div>
+            </div>
+
+            <div class="field">
+              <label for="footerYOffsetInput">Footer Up / Down</label>
+              <input id="footerYOffsetInput" type="range" min="-120" max="120" step="1" value="0">
+              <div id="footerYOffsetValue" class="rangeValue">0 px</div>
             </div>
           </div>
 
@@ -652,6 +678,9 @@
       imageOneSelect:document.getElementById("imageOneSelect"),
       imageTwoSelect:document.getElementById("imageTwoSelect"),
       imageThreeSelect:document.getElementById("imageThreeSelect"),
+      imageOneUpload:document.getElementById("imageOneUpload"),
+      imageTwoUpload:document.getElementById("imageTwoUpload"),
+      imageThreeUpload:document.getElementById("imageThreeUpload"),
       headlineInput:document.getElementById("headlineInput"),
       taglineInput:document.getElementById("taglineInput"),
       subHighlightInput:document.getElementById("subHighlightInput"),
@@ -665,6 +694,12 @@
       headlineSizeValue:document.getElementById("headlineSizeValue"),
       bodySizeValue:document.getElementById("bodySizeValue"),
       ctaSizeValue:document.getElementById("ctaSizeValue"),
+      textXOffsetInput:document.getElementById("textXOffsetInput"),
+      textYOffsetInput:document.getElementById("textYOffsetInput"),
+      footerYOffsetInput:document.getElementById("footerYOffsetInput"),
+      textXOffsetValue:document.getElementById("textXOffsetValue"),
+      textYOffsetValue:document.getElementById("textYOffsetValue"),
+      footerYOffsetValue:document.getElementById("footerYOffsetValue"),
       headingColorInput:document.getElementById("headingColorInput"),
       accentColorInput:document.getElementById("accentColorInput"),
       bodyColorInput:document.getElementById("bodyColorInput"),
@@ -701,6 +736,11 @@
     let renderVersion = 0;
     let previewImage = null;
     let savedAdvertisementUrl = "";
+    const localAdUploads = {
+      imageOne:{ file:null, previewUrl:"" },
+      imageTwo:{ file:null, previewUrl:"" },
+      imageThree:{ file:null, previewUrl:"" }
+    };
 
     const templates = {
       academic:{
@@ -943,6 +983,32 @@
       return items.sort((a, b) => (a.uploadedAt || 0) - (b.uploadedAt || 0));
     }
 
+    function normalizeAdvertisementAssetImages(data){
+      const result = {
+        imageOne:null,
+        imageTwo:null,
+        imageThree:null
+      };
+
+      const raw = data?.advertisementAssetImages;
+      if(!raw){
+        return result;
+      }
+
+      if(Array.isArray(raw)){
+        ["imageOne","imageTwo","imageThree"].forEach((slot, index) => {
+          result[slot] = normalizeImageItem(raw[index], index);
+        });
+        return result;
+      }
+
+      ["imageOne","imageTwo","imageThree"].forEach((slot, index) => {
+        result[slot] = normalizeImageItem(raw[slot], index);
+      });
+
+      return result;
+    }
+
     function isAdvertisementStoragePath(path){
       return /(^|\/)advertisement-cards\//i.test(String(path || ""));
     }
@@ -1059,6 +1125,7 @@
     function buildAdvertisementImageChoices(data){
       const choices = [];
       const seen = new Set();
+      const advertisementAssets = normalizeAdvertisementAssetImages(data);
 
       const pushChoice = (key, label, url) => {
         const cleanUrl = String(url || "").trim();
@@ -1068,6 +1135,13 @@
         seen.add(cleanUrl);
         choices.push({ key, label, url:cleanUrl });
       };
+
+      ["imageOne","imageTwo","imageThree"].forEach((slot, index) => {
+        const item = advertisementAssets[slot];
+        if(item && item.url){
+          pushChoice(slot, "Uploaded Ad Image " + (index + 1), item.url);
+        }
+      });
 
       const profileImages = normalizeProfileImages(data);
       profileImages.forEach((item, index) => {
@@ -1134,17 +1208,60 @@
 
     function resolveSelectedImages(adData){
       const choiceMap = new Map(buildAdvertisementImageChoices(profileData || {}).map(choice => [choice.key, choice.url]));
-      const keys = [adData.imageOne, adData.imageTwo, adData.imageThree].filter(Boolean);
-      return keys
-        .map(key => choiceMap.get(key) || "")
+      const slots = ["imageOne","imageTwo","imageThree"];
+      return slots
+        .map(slot => {
+          const localPreview = localAdUploads[slot]?.previewUrl || "";
+          if(localPreview){
+            return localPreview;
+          }
+          return choiceMap.get(adData[slot]) || "";
+        })
         .filter(Boolean)
         .filter((url, index, array) => array.indexOf(url) === index);
+    }
+
+    function revokeLocalUploadPreview(slot){
+      const currentUrl = localAdUploads[slot]?.previewUrl || "";
+      if(currentUrl && currentUrl.startsWith("blob:")){
+        try{
+          URL.revokeObjectURL(currentUrl);
+        }
+        catch(err){
+          console.log("Ad upload preview revoke skipped:", err);
+        }
+      }
+      localAdUploads[slot].previewUrl = "";
+    }
+
+    function bindImageUploads(){
+      [
+        ["imageOne", elements.imageOneUpload],
+        ["imageTwo", elements.imageTwoUpload],
+        ["imageThree", elements.imageThreeUpload]
+      ].forEach(([slot, input]) => {
+        input.addEventListener("change", () => {
+          const file = input.files && input.files[0] ? input.files[0] : null;
+          localAdUploads[slot].file = file;
+          revokeLocalUploadPreview(slot);
+
+          if(file){
+            localAdUploads[slot].previewUrl = URL.createObjectURL(file);
+            setStatus("Previewing uploaded image for " + slot.replace("image", "Image ") + ".", "");
+          }
+
+          renderPreview();
+        });
+      });
     }
 
     function updateRangeLabels(){
       elements.headlineSizeValue.textContent = String(elements.headlineSizeInput.value || 62) + " px";
       elements.bodySizeValue.textContent = String(elements.bodySizeInput.value || 26) + " px";
       elements.ctaSizeValue.textContent = String(elements.ctaSizeInput.value || 23) + " px";
+      elements.textXOffsetValue.textContent = String(elements.textXOffsetInput.value || 0) + " px";
+      elements.textYOffsetValue.textContent = String(elements.textYOffsetInput.value || 0) + " px";
+      elements.footerYOffsetValue.textContent = String(elements.footerYOffsetInput.value || 0) + " px";
     }
 
     function applyTemplatePalette(templateKey){
@@ -1159,7 +1276,6 @@
 
     function makeDefaultAdData(data){
       const subjectList = normalizeList(data?.subjects).slice(0,3);
-      const roleTitle = activeRole === "institution" ? "Institute" : "Teacher / Trainer";
       const focusLine =
         subjectList.length
           ? subjectList.join(" | ")
@@ -1179,7 +1295,7 @@
         imageThree:imageChoices[2]?.key || imageChoices[0]?.key || "",
         offerBadge:activeRole === "institution" ? "GURULINK AD" : "TRAINING AD",
         headline:data?.name || "",
-        tagline:data?.categoryName || data?.category || roleTitle,
+        tagline:data?.categoryName || data?.category || "",
         highlight:focusLine || "Admissions, classes, training, and learning support available",
         subHighlight:data?.class || "",
         cta:"Contact Now",
@@ -1188,6 +1304,9 @@
         headlineSize:62,
         bodySize:26,
         ctaSize:23,
+        textXOffset:0,
+        textYOffset:0,
+        footerYOffset:0,
         headingColor:defaultTemplate.heading,
         accentColor:defaultTemplate.accent,
         bodyColor:defaultTemplate.body,
@@ -1218,6 +1337,9 @@
         headlineSize:Number(elements.headlineSizeInput.value || 62),
         bodySize:Number(elements.bodySizeInput.value || 26),
         ctaSize:Number(elements.ctaSizeInput.value || 23),
+        textXOffset:Number(elements.textXOffsetInput.value || 0),
+        textYOffset:Number(elements.textYOffsetInput.value || 0),
+        footerYOffset:Number(elements.footerYOffsetInput.value || 0),
         headingColor:elements.headingColorInput.value,
         accentColor:elements.accentColorInput.value,
         bodyColor:elements.bodyColorInput.value,
@@ -1250,6 +1372,9 @@
       elements.headlineSizeInput.value = String(finalData.headlineSize || 62);
       elements.bodySizeInput.value = String(finalData.bodySize || 26);
       elements.ctaSizeInput.value = String(finalData.ctaSize || 23);
+      elements.textXOffsetInput.value = String(finalData.textXOffset || 0);
+      elements.textYOffsetInput.value = String(finalData.textYOffset || 0);
+      elements.footerYOffsetInput.value = String(finalData.footerYOffset || 0);
       elements.headingColorInput.value = finalData.headingColor || templates[finalData.template || "blue"]?.heading || "#ffffff";
       elements.accentColorInput.value = finalData.accentColor || templates[finalData.template || "blue"]?.accent || "#b3e5fc";
       elements.bodyColorInput.value = finalData.bodyColor || templates[finalData.template || "blue"]?.body || "#ffffff";
@@ -1549,11 +1674,12 @@
           ctx.fillStyle = "rgba(255,255,255,.14)";
           drawRoundedRect(ctx, canvasWidth - (390 * sx), 92 * sy, 310 * sx, 250 * sy, 34 * scale);
           ctx.fill();
-          ctx.fillStyle = bodyColor;
-          ctx.font = `700 ${Math.round(40 * scale)}px ${fontFamily}`;
-          ctx.textAlign = "center";
-          ctx.fillText(activeRole === "institution" ? "INSTITUTE" : "TEACHER", canvasWidth - (235 * sx), 230 * sy);
-          ctx.textAlign = "left";
+          if(iconImage){
+            ctx.save();
+            ctx.globalAlpha = 0.85;
+            ctx.drawImage(iconImage, canvasWidth - (308 * sx), 132 * sy, 146 * scale, 146 * scale);
+            ctx.restore();
+          }
           return;
         }
 
@@ -1605,11 +1731,13 @@
           ctx.fillStyle = "rgba(255,255,255,.14)";
           drawRoundedRect(ctx, 72 * sx, 124 * sy, canvasWidth - (144 * sx), canvasHeight * 0.28, 34 * scale);
           ctx.fill();
-          ctx.fillStyle = bodyColor;
-          ctx.font = `700 ${Math.round(42 * scale)}px ${fontFamily}`;
-          ctx.textAlign = "center";
-          ctx.fillText(activeRole === "institution" ? "INSTITUTE" : "TEACHER", canvasWidth / 2, canvasHeight * 0.3);
-          ctx.textAlign = "left";
+          if(iconImage){
+            ctx.save();
+            ctx.globalAlpha = 0.85;
+            const iconSize = 170 * scale;
+            ctx.drawImage(iconImage, (canvasWidth / 2) - (iconSize / 2), (canvasHeight * 0.23) - (iconSize / 2), iconSize, iconSize);
+            ctx.restore();
+          }
           return;
         }
 
@@ -1830,6 +1958,31 @@
       }
     }
 
+    async function uploadAdvertisementAsset(slot, file, now){
+      if(!file){
+        return null;
+      }
+
+      const storageOwnerUid = getStorageOwnerUid();
+      const safeName = String(file.name || "ad-image.png").replace(/[^a-zA-Z0-9._-]/g, "-");
+      const storagePath =
+        getStorageRoot() + "/" +
+        storageOwnerUid + "/" +
+        "advertisement-assets/" +
+        now + "-" + slot + "-" + safeName;
+
+      const fileRef = storageRef(storage, storagePath);
+      await uploadWithTimeout(fileRef, file);
+      const url = await getDownloadURL(fileRef);
+
+      return {
+        url,
+        storagePath,
+        uploadedAt:now,
+        slot
+      };
+    }
+
     async function uploadWithTimeout(fileRef, fileBlob, timeoutMs = 180000){
       const task = uploadBytesResumable(fileRef, fileBlob, {
         contentType:fileBlob.type || "image/png"
@@ -1911,6 +2064,22 @@
 
         const previousPath =
           profileData.advertisementCardStoragePath || "";
+        const previousAssetImages = normalizeAdvertisementAssetImages(profileData);
+        const updatedAssetImages = { ...previousAssetImages };
+        const deleteAssetPaths = [];
+
+        for (const slot of ["imageOne","imageTwo","imageThree"]) {
+          const pendingFile = localAdUploads[slot].file;
+          if(!pendingFile){
+            continue;
+          }
+
+          const uploadedAsset = await uploadAdvertisementAsset(slot, pendingFile, now + (slot === "imageOne" ? 1 : slot === "imageTwo" ? 2 : 3));
+          if(previousAssetImages[slot]?.storagePath){
+            deleteAssetPaths.push(previousAssetImages[slot].storagePath);
+          }
+          updatedAssetImages[slot] = uploadedAsset;
+        }
 
         const sourceImageUrl = resolveSelectedImages(getEditorData())[0] || getAdvertisementSourceImage(profileData);
         const updateData = {
@@ -1918,16 +2087,31 @@
           advertisementCardStoragePath:storagePath,
           advertisementCardUpdatedAt:now,
           advertisementCardData:getEditorData(),
-          advertisementSourceImage:sourceImageUrl
+          advertisementSourceImage:sourceImageUrl,
+          advertisementAssetImages:updatedAssetImages
         };
 
         await update(ref(db, getDbPath()), updateData);
         await deleteStoragePath(previousPath && previousPath !== storagePath ? previousPath : "");
+        for (const path of deleteAssetPaths) {
+          await deleteStoragePath(path);
+        }
 
         profileData = {
           ...profileData,
           ...updateData
         };
+
+        for (const slot of ["imageOne","imageTwo","imageThree"]) {
+          localAdUploads[slot].file = null;
+          revokeLocalUploadPreview(slot);
+          const inputEl = elements[slot + "Upload"];
+          if(inputEl){
+            inputEl.value = "";
+          }
+        }
+
+        updateImageSelectors(updateData.advertisementCardData);
 
         savedAdvertisementUrl = url;
         elements.metaUpdated.textContent = formatSavedAt(profileData.advertisementCardUpdatedAt);
@@ -1992,8 +2176,7 @@
       }
 
       savedAdvertisementUrl = profileData.advertisementCardImage || "";
-      elements.heroRoleLabel.textContent =
-        activeRole === "institution" ? "Institute Advertisement" : "Teacher / Trainer Advertisement";
+      elements.heroRoleLabel.textContent = "Advertisement Designer";
       elements.heroProfileName.textContent = profileData.name || "Profile";
       elements.metaUpdated.textContent = formatSavedAt(profileData.advertisementCardUpdatedAt);
       elements.metaPublic.textContent =
@@ -2002,6 +2185,7 @@
       const savedData = profileData.advertisementCardData || {};
       applyEditorData(savedData);
       bindPreviewInputs();
+      bindImageUploads();
       await renderPreview();
       setStatus(profileData.advertisementCardImage ? "Saved advertisement loaded." : "Ready to create your first advertisement.", profileData.advertisementCardImage ? "success" : "");
     }
