@@ -257,19 +257,6 @@ background:#5e35b1;
 background:#00897b;
 }
 
-.businessCardBtn{
-background:#1565c0;
-}
-
-.adDesignerBtn{
-background:#3949ab;
-}
-
-.adShareBtn{
-background:linear-gradient(135deg,#ff7043,#f4511e);
-font-weight:bold;
-}
-
 .websiteBtn{
 background:#2e7d32;
 }
@@ -916,14 +903,6 @@ Quick Actions
     Website
   </button>
 
-  <button class="businessCardBtn" onclick="openBusinessCardDesigner()">
-    Create Business / I Card
-  </button>
-
-  <button class="adDesignerBtn" onclick="openAdvertisementDesigner()">
-    Create Advertisement
-  </button>
-
   <button class="invoiceBtn" onclick="createInvoice()">
     Create Invoice
   </button>
@@ -933,11 +912,7 @@ Quick Actions
   </button>
 
   <button class="shareBtn full" onclick="shareProfile()">
-    Share Profile
-  </button>
-
-  <button class="adShareBtn full" onclick="shareAdvertisement()">
-    Share Advertisement
+    Share Business Card
   </button>
 
 </div>
@@ -1464,44 +1439,6 @@ async function ensureDashboardAuth(actionText = "continue"){
 
 function normalizePhoneDigits(value){
 return String(value || "").replace(/\D/g,"");
-}
-
-function buildBusinessCardAddress(data){
-const lines = [];
-
-function pushUnique(value){
-const clean = String(value || "").trim();
-
-if(!clean){
-return;
-}
-
-if(lines.some(item => item.toLowerCase() === clean.toLowerCase())){
-return;
-}
-
-lines.push(clean);
-}
-
-pushUnique(data?.address);
-
-const areaLine =
-[data?.area,data?.city,data?.town]
-.map(item => String(item || "").trim())
-.filter(Boolean)
-.join(", ");
-
-pushUnique(areaLine);
-
-const statePinLine =
-[data?.state,data?.pinCode]
-.map(item => String(item || "").trim())
-.filter(Boolean)
-.join(" - ");
-
-pushUnique(statePinLine);
-
-return lines.join(", ");
 }
 
 function getPrimaryProfileImage(data){
@@ -2591,224 +2528,6 @@ window.openWebsite = function() {
   window.open(finalUrl,"_blank","noopener");
 };
 
-window.openBusinessCardDesigner = function() {
-  const profileId =
-    currentProfileData.uid ||
-    localStorage.getItem("profileId") ||
-    "";
-
-  const activeRole =
-    currentProfileData.role ||
-    localStorage.getItem("role") ||
-    "teacher";
-
-  if(!profileId){
-    alert("Profile not found");
-    return;
-  }
-
-  const profileUrl =
-    "https://www.gurulink.co.in/profile-view.html?id=" +
-    encodeURIComponent(profileId);
-
-  const finalUrl =
-    normalizeWebsiteUrl(currentProfileData.website || "") ||
-    profileUrl;
-
-  const roleTitle =
-    activeRole === "institution"
-      ? "Institute"
-      : "Teacher / Trainer";
-
-  const payload = {
-    cardType:"business",
-    name:currentProfileData.name || "",
-    title:(currentProfileData.categoryName || currentProfileData.category || roleTitle),
-    phone:currentProfileData.phone || "",
-    email:currentProfileData.email || "",
-    url:finalUrl,
-    address:buildBusinessCardAddress(currentProfileData),
-    logo:getPrimaryProfileImage(currentProfileData),
-    role:activeRole,
-    profileId:profileId,
-    generatedAt:Date.now()
-  };
-
-  localStorage.setItem(
-    "gurulinkBusinessCardPrefill",
-    JSON.stringify(payload)
-  );
-
-  const encodedPrefill = btoa(
-    unescape(
-      encodeURIComponent(JSON.stringify(payload))
-    )
-  );
-
-  const isPhone =
-    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
-    window.matchMedia("(max-width: 850px)").matches;
-
-  const inGuruLinkApp =
-    (navigator.userAgent || "").includes("GuruLinkAndroidApp");
-
-  if (isPhone && inGuruLinkApp) {
-    const chromeIntentUrl =
-      "intent://www.gurulink.co.in/BusinessCardDesigner/index.html" +
-      "?v=20260711g" +
-      "&source=appmobile" +
-      "&role=" + encodeURIComponent(activeRole) +
-      "&prefill=" + encodeURIComponent(encodedPrefill) +
-      "#Intent;scheme=https;package=com.android.chrome;end";
-
-    location.href = chromeIntentUrl;
-    return;
-  }
-
-  location.href = "BusinessCardDesigner/index.html?v=20260711g";
-};
-
-function getAdvertisementShareUrl(profileId){
-  return "https://www.gurulink.co.in/profile-ad.html?id=" +
-    encodeURIComponent(profileId || "");
-}
-
-async function fetchShareFileFromUrl(fileUrl, fileName){
-  if(!fileUrl || !navigator.canShare){
-    return null;
-  }
-
-  try{
-    const response = await fetch(fileUrl, { mode:"cors" });
-
-    if(!response.ok){
-      return null;
-    }
-
-    const blob = await response.blob();
-
-    const file = new File(
-      [blob],
-      fileName,
-      { type: blob.type || "image/png" }
-    );
-
-    if(navigator.canShare({ files:[file] })){
-      return file;
-    }
-  }
-  catch(err){
-    console.log("Advertisement image share file skipped:", err);
-  }
-
-  return null;
-}
-
-window.openAdvertisementDesigner = function(){
-  const profileId =
-    currentProfileData.uid ||
-    localStorage.getItem("profileId") ||
-    "";
-
-  const activeRole =
-    currentProfileData.role ||
-    localStorage.getItem("role") ||
-    "teacher";
-
-  if(!profileId){
-    alert("Profile not found");
-    return;
-  }
-
-  location.href =
-    "advertisement-designer.html?id=" +
-    encodeURIComponent(profileId) +
-    "&role=" +
-    encodeURIComponent(activeRole);
-};
-
-window.shareAdvertisement = async function(){
-  const profileId =
-    currentProfileData.uid ||
-    localStorage.getItem("profileId") ||
-    "";
-
-  const activeRole =
-    currentProfileData.role ||
-    localStorage.getItem("role") ||
-    "teacher";
-
-  if(!profileId){
-    alert("Profile not found");
-    return;
-  }
-
-  const advertisementImage =
-    currentProfileData.advertisementCardImage ||
-    "";
-
-  if(!advertisementImage){
-    alert("Create and save your advertisement first.");
-    return;
-  }
-
-  const shareUrl =
-    getAdvertisementShareUrl(profileId);
-
-  const shareText =
-    "Check out this " +
-    (activeRole === "institution" ? "Institute" : "Teacher / Trainer") +
-    " advertisement on GURULINK.";
-
-  const shareMessage =
-    shareText +
-    "\n\nAdvertisement image:\n" +
-    advertisementImage +
-    "\n\nView details:\n" +
-    shareUrl;
-
-  const whatsappURL =
-    "https://wa.me/?text=" +
-    encodeURIComponent(shareMessage);
-
-  const inGuruLinkApp =
-    (navigator.userAgent || "").includes("GuruLinkAndroidApp");
-
-  if(inGuruLinkApp){
-    window.open(whatsappURL, "_blank");
-    return;
-  }
-
-  try{
-    if(navigator.share){
-      const file =
-        await fetchShareFileFromUrl(
-          advertisementImage,
-          "gurulink-advertisement.png"
-        );
-
-      const shareData = file
-        ? {
-            title:"GURULINK Advertisement",
-            text:shareText + "\n\n" + shareUrl,
-            files:[file]
-          }
-        : {
-            title:"GURULINK Advertisement",
-            text:shareMessage
-          };
-
-      await navigator.share(shareData);
-      return;
-    }
-  }
-  catch(err){
-    console.log("Advertisement share fallback:", err);
-  }
-
-  window.open(whatsappURL, "_blank");
-};
-
 
 window.shareProfile = function () {
 
@@ -2857,4 +2576,3 @@ profileId;
 
 </body>
 </html>
-
