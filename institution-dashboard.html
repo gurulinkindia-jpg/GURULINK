@@ -933,7 +933,7 @@ Quick Actions
   </button>
 
   <button class="shareBtn full" onclick="shareProfile()">
-    Share Business Card
+    Share Profile
   </button>
 
   <button class="adShareBtn full" onclick="shareAdvertisement()">
@@ -2760,27 +2760,43 @@ window.shareAdvertisement = async function(){
     (activeRole === "institution" ? "Institute" : "Teacher / Trainer") +
     " advertisement on GURULINK.";
 
+  const shareMessage =
+    shareText +
+    "\n\nAdvertisement image:\n" +
+    advertisementImage +
+    "\n\nView details:\n" +
+    shareUrl;
+
   const whatsappURL =
     "https://wa.me/?text=" +
-    encodeURIComponent(shareText + "\n\n" + shareUrl);
+    encodeURIComponent(shareMessage);
+
+  const inGuruLinkApp =
+    (navigator.userAgent || "").includes("GuruLinkAndroidApp");
+
+  if(inGuruLinkApp){
+    window.open(whatsappURL, "_blank");
+    return;
+  }
 
   try{
     if(navigator.share){
-      const shareData = {
-        title:"GURULINK Advertisement",
-        text:shareText,
-        url:shareUrl
-      };
-
       const file =
         await fetchShareFileFromUrl(
           advertisementImage,
           "gurulink-advertisement.png"
         );
 
-      if(file){
-        shareData.files = [file];
-      }
+      const shareData = file
+        ? {
+            title:"GURULINK Advertisement",
+            text:shareText + "\n\n" + shareUrl,
+            files:[file]
+          }
+        : {
+            title:"GURULINK Advertisement",
+            text:shareMessage
+          };
 
       await navigator.share(shareData);
       return;
