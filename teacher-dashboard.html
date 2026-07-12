@@ -2769,6 +2769,11 @@ function getAdvertisementShareUrl(profileId){
     encodeURIComponent(profileId || "");
 }
 
+function getAdvertisementOnRenderShareUrl(profileId){
+  return "https://guru-link.onrender.com/profile-ad.html?id=" +
+    encodeURIComponent(profileId || "");
+}
+
 function createAdvertisementSharePayload(){
   const profileId =
     currentProfileData.uid ||
@@ -2797,6 +2802,9 @@ function createAdvertisementSharePayload(){
   const shareUrl =
     getAdvertisementShareUrl(profileId);
 
+  const socialShareUrl =
+    getAdvertisementOnRenderShareUrl(profileId);
+
   const roleLabel =
     activeRole === "institution"
       ? "Institute"
@@ -2820,6 +2828,7 @@ function createAdvertisementSharePayload(){
     roleLabel,
     advertisementImage,
     shareUrl,
+    socialShareUrl,
     shareText,
     shareMessage
   };
@@ -2954,7 +2963,7 @@ function openAdvertisementShareModal(payload){
       if(action === "facebook"){
         const facebookUrl =
           "https://www.facebook.com/sharer/sharer.php?u=" +
-          encodeURIComponent(payload.advertisementImage) +
+          encodeURIComponent(payload.socialShareUrl) +
           "&quote=" +
           encodeURIComponent(payload.shareText + " " + payload.shareUrl);
         window.open(facebookUrl, "_blank");
