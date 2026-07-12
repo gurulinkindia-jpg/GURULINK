@@ -1136,16 +1136,18 @@
 
       try{
         if(navigator.share){
-          const shareData = {
-            title:"GURULINK Advertisement",
-            text:shareText,
-            url:adPageUrl
-          };
-
           const file = await fetchShareFileFromSavedAd();
-          if(file){
-            shareData.files = [file];
-          }
+          const shareData = file
+            ? {
+                title:"GURULINK Advertisement",
+                text:shareText + "\n\n" + adPageUrl,
+                files:[file]
+              }
+            : {
+                title:"GURULINK Advertisement",
+                text:shareText,
+                url:adPageUrl
+              };
 
           await navigator.share(shareData);
           return;
