@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GURULINK Advertisement Designer</title>
+  <style>
+    :root{
+      --brand-blue:#1565c0;
+      --brand-green:#2e7d32;
+      --brand-dark:#0f172a;
+      --bg:#eef4fb;
+      --card:#ffffff;
+      --text:#183153;
+      --muted:#5f708a;
+      --line:#d6e2f2;
+      --warning:#fff8e1;
+      --warning-border:#f0d88a;
+      --success:#1b8f4d;
+    }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+      margin:0;
+      font-family:Arial,Helvetica,sans-serif;
+      background:linear-gradient(180deg,#eaf2fd 0%,#f8fbff 100%);
+      color:var(--text);
+    }
+
+    .shell{
+      max-width:1260px;
+      margin:0 auto;
+      padding:20px;
+    }
+
+    .hero{
+      background:linear-gradient(135deg,#0d47a1,#1e88e5 55%,#26a69a);
+      color:#fff;
+      border-radius:24px;
+      padding:24px;
+      box-shadow:0 18px 50px rgba(21,101,192,.22);
+      margin-bottom:18px;
+    }
+
+    .heroTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:16px;
+      margin-bottom:12px;
+    }
+
+    .hero h1{
+      margin:0 0 8px;
+      font-size:32px;
+      line-height:1.15;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:760px;
+      color:rgba(255,255,255,.92);
+      line-height:1.6;
+    }
+
+    .heroBadge{
+      min-width:190px;
+      text-align:center;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:18px;
+      padding:12px 14px;
+      font-size:13px;
+      line-height:1.5;
+      backdrop-filter:blur(10px);
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(0,1.2fr) minmax(340px,.8fr);
+      gap:18px;
+      align-items:start;
+    }
+
+    .panel{
+      background:var(--card);
+      border-radius:22px;
+      border:1px solid var(--line);
+      box-shadow:0 10px 28px rgba(15,23,42,.06);
+      padding:20px;
+    }
+
+    .panel h2{
+      margin:0 0 8px;
+      font-size:24px;
+      color:#0f4ea7;
+    }
+
+    .panelNote{
+      margin:0 0 16px;
+      color:var(--muted);
+      line-height:1.6;
+      font-size:14px;
+    }
+
+    .previewFrame{
+      background:#dbe9fb;
+      border-radius:22px;
+      padding:14px;
+      border:1px solid #c6dbf7;
+    }
+
+    .canvasWrap{
+      position:relative;
+      width:100%;
+      aspect-ratio:1200/630;
+      border-radius:18px;
+      overflow:hidden;
+      background:#0d47a1;
+      box-shadow:0 18px 35px rgba(13,71,161,.18);
+    }
+
+    canvas{
+      width:100%;
+      height:100%;
+      display:block;
+      border-radius:18px;
+    }
+
+    .metaStrip{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+    }
+
+    .metaChip{
+      background:#fff;
+      border:1px solid #d7e3f4;
+      border-radius:16px;
+      padding:12px;
+    }
+
+    .metaChip strong{
+      display:block;
+      font-size:18px;
+      color:#0d47a1;
+      margin-bottom:4px;
+    }
+
+    .metaChip span{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.5;
+    }
+
+    .controls{
+      display:grid;
+      gap:14px;
+    }
+
+    .field{
+      display:grid;
+      gap:8px;
+    }
+
+    .field label{
+      font-size:14px;
+      font-weight:bold;
+      color:#173e72;
+    }
+
+    .field input,
+    .field select,
+    .field textarea{
+      width:100%;
+      border:1px solid #cad9ed;
+      border-radius:14px;
+      padding:12px 14px;
+      font:inherit;
+      color:var(--text);
+      background:#fff;
+    }
+
+    .field textarea{
+      min-height:92px;
+      resize:vertical;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+
+    .toggleRow{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+    }
+
+    .toggleCard{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:11px 12px;
+      border:1px solid #d5e3f3;
+      border-radius:14px;
+      background:#f8fbff;
+      font-size:13px;
+      color:#234972;
+    }
+
+    .toggleCard input{
+      margin:0;
+      width:16px;
+      height:16px;
+    }
+
+    .warningBox{
+      background:var(--warning);
+      border:1px solid var(--warning-border);
+      border-radius:14px;
+      padding:12px 14px;
+      color:#7a5a12;
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .buttonGrid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+
+    button{
+      border:none;
+      border-radius:14px;
+      padding:13px 14px;
+      font:inherit;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    .primaryBtn{
+      background:linear-gradient(135deg,#1565c0,#1e88e5);
+      color:#fff;
+      box-shadow:0 10px 24px rgba(21,101,192,.2);
+    }
+
+    .successBtn{
+      background:linear-gradient(135deg,#208b4b,#35a35c);
+      color:#fff;
+    }
+
+    .ghostBtn{
+      background:#eef5ff;
+      color:#0d47a1;
+      border:1px solid #cfe0f6;
+    }
+
+    .footerBtn{
+      background:#2f3d4f;
+      color:#fff;
+    }
+
+    .statusBar{
+      min-height:24px;
+      font-size:14px;
+      font-weight:bold;
+    }
+
+    .statusBar.success{
+      color:var(--success);
+    }
+
+    .statusBar.error{
+      color:#c62828;
+    }
+
+    @media(max-width:980px){
+      .layout{
+        grid-template-columns:1fr;
+      }
+
+      .heroTop{
+        flex-direction:column;
+      }
+    }
+
+    @media(max-width:640px){
+      .shell{
+        padding:14px;
+      }
+
+      .hero{
+        padding:18px;
+        border-radius:18px;
+      }
+
+      .hero h1{
+        font-size:26px;
+      }
+
+      .panel{
+        padding:16px;
+        border-radius:18px;
+      }
+
+      .row,
+      .toggleRow,
+      .buttonGrid,
+      .metaStrip{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <div class="heroTop">
+        <div>
+          <h1>Create Your Advertisement</h1>
+          <p>
+            Design a separate public advertisement image for your teacher or institute profile.
+            This saves a real public image URL in Firebase and links it to a dedicated GURULINK advertisement page.
+          </p>
+        </div>
+        <div class="heroBadge">
+          <strong id="heroRoleLabel">Teacher / Institute</strong><br>
+          <span id="heroProfileName">Loading profile...</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="layout">
+      <section class="panel">
+        <h2>Advertisement Preview</h2>
+        <p class="panelNote">
+          This preview becomes your saved advertisement card image. Use short, strong text so it looks clean on social media.
+        </p>
+
+        <div class="previewFrame">
+          <div class="canvasWrap">
+            <canvas id="adCanvas" width="1200" height="630"></canvas>
+          </div>
+
+          <div class="metaStrip">
+            <div class="metaChip">
+              <strong id="metaTemplate">Blue Spotlight</strong>
+              <span>Selected advertisement template</span>
+            </div>
+            <div class="metaChip">
+              <strong id="metaUpdated">Not saved</strong>
+              <span>Latest advertisement status</span>
+            </div>
+            <div class="metaChip">
+              <strong id="metaPublic">profile-ad.html</strong>
+              <span>Public ad page after saving</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Ad Settings</h2>
+        <p class="panelNote">
+          We start with your profile data, then you can tune the headline, highlight line, and call-to-action.
+        </p>
+
+        <div class="controls">
+          <div class="field">
+            <label for="templateSelect">Template</label>
+            <select id="templateSelect">
+              <option value="blue">Blue Spotlight</option>
+              <option value="gold">Premium Gold</option>
+              <option value="green">Growth Green</option>
+              <option value="dark">Midnight Promo</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="headlineInput">Headline</label>
+            <input id="headlineInput" type="text" maxlength="70" placeholder="Enter your main advertisement headline">
+          </div>
+
+          <div class="field">
+            <label for="taglineInput">Tagline</label>
+            <input id="taglineInput" type="text" maxlength="90" placeholder="Short supporting line">
+          </div>
+
+          <div class="field">
+            <label for="highlightInput">Highlight / Offer</label>
+            <input id="highlightInput" type="text" maxlength="100" placeholder="Example: Classes, training, demo support, admissions open">
+          </div>
+
+          <div class="field">
+            <label for="ctaInput">Call-To-Action</label>
+            <input id="ctaInput" type="text" maxlength="40" placeholder="Example: Contact Now">
+          </div>
+
+          <div class="field">
+            <label for="footerInput">Footer Line</label>
+            <textarea id="footerInput" placeholder="Area, website, focus subjects, or another short supporting line"></textarea>
+          </div>
+
+          <div class="toggleRow">
+            <label class="toggleCard">
+              <input id="showPhoneToggle" type="checkbox">
+              <span>Show phone</span>
+            </label>
+
+            <label class="toggleCard">
+              <input id="showWebsiteToggle" type="checkbox">
+              <span>Show website</span>
+            </label>
+
+            <label class="toggleCard">
+              <input id="showLocationToggle" type="checkbox">
+              <span>Show location</span>
+            </label>
+          </div>
+
+          <div class="warningBox">
+            Save the advertisement once after editing. That creates a public PNG in Firebase Storage and updates the public ad page for sharing.
+          </div>
+
+          <div id="statusBar" class="statusBar"></div>
+
+          <div class="buttonGrid">
+            <button id="saveBtn" class="primaryBtn">Save Advertisement</button>
+            <button id="openPublicBtn" class="successBtn">Open Public Ad</button>
+            <button id="shareBtn" class="ghostBtn">Share Saved Ad</button>
+            <button id="backBtn" class="footerBtn">Back To Dashboard</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+    import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+
+    const firebaseConfig = {
+      apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+      authDomain:"gurulink-59cc7.firebaseapp.com",
+      databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId:"gurulink-59cc7",
+      storageBucket:"gurulink-59cc7.firebasestorage.app",
+      messagingSenderId:"112148672399",
+      appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
+    const storage = getStorage(app);
+
+    const WEBSITE_BASE = "https://www.gurulink.co.in/";
+    const query = new URLSearchParams(location.search);
+    const profileId = query.get("id") || localStorage.getItem("profileId") || "";
+    const requestedRole = normalizeRole(query.get("role") || localStorage.getItem("role") || "teacher");
+
+    const elements = {
+      heroRoleLabel:document.getElementById("heroRoleLabel"),
+      heroProfileName:document.getElementById("heroProfileName"),
+      templateSelect:document.getElementById("templateSelect"),
+      headlineInput:document.getElementById("headlineInput"),
+      taglineInput:document.getElementById("taglineInput"),
+      highlightInput:document.getElementById("highlightInput"),
+      ctaInput:document.getElementById("ctaInput"),
+      footerInput:document.getElementById("footerInput"),
+      showPhoneToggle:document.getElementById("showPhoneToggle"),
+      showWebsiteToggle:document.getElementById("showWebsiteToggle"),
+      showLocationToggle:document.getElementById("showLocationToggle"),
+      metaTemplate:document.getElementById("metaTemplate"),
+      metaUpdated:document.getElementById("metaUpdated"),
+      metaPublic:document.getElementById("metaPublic"),
+      statusBar:document.getElementById("statusBar"),
+      saveBtn:document.getElementById("saveBtn"),
+      openPublicBtn:document.getElementById("openPublicBtn"),
+      shareBtn:document.getElementById("shareBtn"),
+      backBtn:document.getElementById("backBtn"),
+      adCanvas:document.getElementById("adCanvas")
+    };
+
+    const ctx = elements.adCanvas.getContext("2d");
+    let currentUser = null;
+    let authReadyResolver = null;
+    const authReadyPromise = new Promise(resolve => {
+      authReadyResolver = resolve;
+    });
+
+    onAuthStateChanged(auth,(user)=>{
+      currentUser = user || null;
+      if(authReadyResolver){
+        authReadyResolver(user || null);
+        authReadyResolver = null;
+      }
+    });
+
+    let profileData = null;
+    let activeRole = requestedRole;
+    let renderVersion = 0;
+    let previewImage = null;
+    let savedAdvertisementUrl = "";
+
+    const templates = {
+      blue:{
+        label:"Blue Spotlight",
+        bg:["#0d47a1","#1976d2","#26a69a"],
+        accent:"#b3e5fc",
+        badge:"#0b3f91",
+        heading:"#ffffff",
+        body:"rgba(255,255,255,.95)",
+        pillBg:"rgba(255,255,255,.18)",
+        pillText:"#ffffff",
+        footerBg:"rgba(7,24,61,.28)"
+      },
+      gold:{
+        label:"Premium Gold",
+        bg:["#16110b","#3e2d13","#8d6e24"],
+        accent:"#ffd54f",
+        badge:"#4e3606",
+        heading:"#fff4cf",
+        body:"rgba(255,244,207,.95)",
+        pillBg:"rgba(255,213,79,.18)",
+        pillText:"#fff6db",
+        footerBg:"rgba(0,0,0,.28)"
+      },
+      green:{
+        label:"Growth Green",
+        bg:["#0b5d36","#1b8f4d","#68c06e"],
+        accent:"#dcfce7",
+        badge:"#0a4626",
+        heading:"#ffffff",
+        body:"rgba(255,255,255,.95)",
+        pillBg:"rgba(255,255,255,.16)",
+        pillText:"#ffffff",
+        footerBg:"rgba(4,48,22,.24)"
+      },
+      dark:{
+        label:"Midnight Promo",
+        bg:["#111827","#1f2937","#334155"],
+        accent:"#93c5fd",
+        badge:"#0f172a",
+        heading:"#f8fafc",
+        body:"rgba(241,245,249,.92)",
+        pillBg:"rgba(147,197,253,.16)",
+        pillText:"#e0f2fe",
+        footerBg:"rgba(2,6,23,.4)"
+      }
+    };
+
+    function normalizeRole(value){
+      const roleValue = String(value || "").toLowerCase();
+      return roleValue === "institution" ? "institution" : "teacher";
+    }
+
+    function escapeHtml(value){
+      return String(value || "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/\"/g,"&quot;")
+        .replace(/'/g,"&#39;");
+    }
+
+    function getDbPath(roleValue = activeRole){
+      return (roleValue === "institution" ? "institutions/" : "teachers/") + profileId;
+    }
+
+    function getStorageRoot(roleValue = activeRole){
+      return roleValue === "institution" ? "institutions" : "teachers";
+    }
+
+    function getStorageOwnerUid(){
+      if(profileData && profileData.storageOwnerUid){
+        return String(profileData.storageOwnerUid);
+      }
+
+      if(currentUser && currentUser.uid){
+        return currentUser.uid;
+      }
+
+      return profileId;
+    }
+
+    function getAdvertisementPageUrl(){
+      return WEBSITE_BASE + "profile-ad.html?id=" + encodeURIComponent(profileId);
+    }
+
+    function getAdvertisementPagePath(){
+      return "profile-ad.html?id=" + encodeURIComponent(profileId);
+    }
+
+    function setStatus(message, type = ""){
+      elements.statusBar.textContent = message || "";
+      elements.statusBar.className = "statusBar" + (type ? " " + type : "");
+    }
+
+    function normalizeList(value){
+      if(Array.isArray(value)){
+        return value.filter(Boolean).map(item => String(item).trim()).filter(Boolean);
+      }
+
+      if(value && typeof value === "object"){
+        return Object.values(value).filter(Boolean).map(item => String(item).trim()).filter(Boolean);
+      }
+
+      if(typeof value === "string" && value.trim()){
+        return value.split(",").map(item => item.trim()).filter(Boolean);
+      }
+
+      return [];
+    }
+
+    function getPrimaryProfileImage(data){
+      const images = Array.isArray(data?.profileImages) ? data.profileImages : [];
+      const normalized = images
+        .map(item => typeof item === "string" ? { url:item } : item)
+        .filter(item => item && item.url);
+
+      const selected =
+        normalized[Number(data?.primaryProfileImage || 0)] ||
+        normalized[0];
+
+      return selected?.url || data?.photo || data?.profilePic || data?.logo || "";
+    }
+
+    function getProfileLocation(data){
+      return [data?.area, data?.state].filter(Boolean).join(", ");
+    }
+
+    function getProfileWebsite(data){
+      const raw = String(data?.website || "").trim();
+      if(!raw){
+        return "";
+      }
+      return /^https?:\/\//i.test(raw) ? raw : "https://" + raw;
+    }
+
+    function makeDefaultAdData(data){
+      const subjectList = normalizeList(data?.subjects).slice(0,3);
+      const roleTitle = activeRole === "institution" ? "Institute" : "Teacher / Trainer";
+      const focusLine =
+        subjectList.length
+          ? subjectList.join(" | ")
+          : (data?.description || "").trim();
+
+      return {
+        template:"blue",
+        headline:data?.name || "",
+        tagline:data?.categoryName || data?.category || roleTitle,
+        highlight:focusLine || "Admissions, classes, training, and learning support available",
+        cta:"Contact Now",
+        footer:getProfileLocation(data) || getProfileWebsite(data) || "Available on GURULINK",
+        showPhone:true,
+        showWebsite:!!getProfileWebsite(data),
+        showLocation:!!getProfileLocation(data)
+      };
+    }
+
+    function getEditorData(){
+      return {
+        template:elements.templateSelect.value,
+        headline:elements.headlineInput.value.trim(),
+        tagline:elements.taglineInput.value.trim(),
+        highlight:elements.highlightInput.value.trim(),
+        cta:elements.ctaInput.value.trim(),
+        footer:elements.footerInput.value.trim(),
+        showPhone:elements.showPhoneToggle.checked,
+        showWebsite:elements.showWebsiteToggle.checked,
+        showLocation:elements.showLocationToggle.checked
+      };
+    }
+
+    function applyEditorData(adData){
+      const finalData = {
+        ...makeDefaultAdData(profileData || {}),
+        ...(adData || {})
+      };
+
+      elements.templateSelect.value = finalData.template || "blue";
+      elements.headlineInput.value = finalData.headline || "";
+      elements.taglineInput.value = finalData.tagline || "";
+      elements.highlightInput.value = finalData.highlight || "";
+      elements.ctaInput.value = finalData.cta || "";
+      elements.footerInput.value = finalData.footer || "";
+      elements.showPhoneToggle.checked = finalData.showPhone !== false;
+      elements.showWebsiteToggle.checked = !!finalData.showWebsite;
+      elements.showLocationToggle.checked = !!finalData.showLocation;
+    }
+
+    function formatSavedAt(timestamp){
+      if(!timestamp){
+        return "Not saved";
+      }
+
+      try{
+        return new Date(Number(timestamp)).toLocaleString();
+      }
+      catch(err){
+        return "Saved";
+      }
+    }
+
+    function drawRoundedRect(context, x, y, width, height, radius){
+      const r = Math.min(radius, width / 2, height / 2);
+      context.beginPath();
+      context.moveTo(x + r, y);
+      context.arcTo(x + width, y, x + width, y + height, r);
+      context.arcTo(x + width, y + height, x, y + height, r);
+      context.arcTo(x, y + height, x, y, r);
+      context.arcTo(x, y, x + width, y, r);
+      context.closePath();
+    }
+
+    function drawCircleImage(context, image, x, y, size){
+      context.save();
+      context.beginPath();
+      context.arc(x + size / 2, y + size / 2, size / 2, 0, Math.PI * 2);
+      context.closePath();
+      context.clip();
+      context.drawImage(image, x, y, size, size);
+      context.restore();
+    }
+
+    function createLinearGradient(context, colors){
+      const gradient = context.createLinearGradient(0, 0, 1200, 630);
+      gradient.addColorStop(0, colors[0]);
+      gradient.addColorStop(.55, colors[1]);
+      gradient.addColorStop(1, colors[2]);
+      return gradient;
+    }
+
+    function wrapText(context, text, maxWidth){
+      const words = String(text || "").split(/\s+/).filter(Boolean);
+      const lines = [];
+      let current = "";
+
+      words.forEach(word => {
+        const test = current ? current + " " + word : word;
+        if(context.measureText(test).width <= maxWidth){
+          current = test;
+        } else {
+          if(current){
+            lines.push(current);
+          }
+          current = word;
+        }
+      });
+
+      if(current){
+        lines.push(current);
+      }
+
+      return lines.length ? lines : [""];
+    }
+
+    function drawTextBlock(context, text, x, y, maxWidth, lineHeight, maxLines, color){
+      const lines = wrapText(context, text, maxWidth).slice(0, maxLines);
+      context.fillStyle = color;
+      lines.forEach((line, index) => {
+        context.fillText(line, x, y + (index * lineHeight));
+      });
+      return y + (lines.length * lineHeight);
+    }
+
+    function loadImage(src){
+      if(!src){
+        return Promise.resolve(null);
+      }
+
+      return new Promise((resolve) => {
+        const image = new Image();
+        image.crossOrigin = "anonymous";
+        image.onload = () => resolve(image);
+        image.onerror = () => resolve(null);
+        image.src = src;
+      });
+    }
+
+    async function renderPreview(){
+      if(!ctx || !profileData){
+        return;
+      }
+
+      const version = ++renderVersion;
+      const adData = getEditorData();
+      const template = templates[adData.template] || templates.blue;
+      const logoUrl = getPrimaryProfileImage(profileData);
+
+      if(!previewImage || previewImage.__src !== logoUrl){
+        const image = await loadImage(logoUrl);
+        if(version !== renderVersion){
+          return;
+        }
+        previewImage = image;
+        if(previewImage){
+          previewImage.__src = logoUrl;
+        }
+      }
+
+      ctx.clearRect(0,0,1200,630);
+      ctx.fillStyle = createLinearGradient(ctx, template.bg);
+      ctx.fillRect(0,0,1200,630);
+
+      ctx.globalAlpha = .12;
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      ctx.arc(1020,120,120,0,Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(1140,540,150,0,Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(130,540,115,0,Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+
+      ctx.fillStyle = template.badge;
+      drawRoundedRect(ctx, 56, 48, 220, 54, 18);
+      ctx.fill();
+      ctx.fillStyle = template.accent;
+      ctx.font = "bold 26px Arial";
+      ctx.fillText("GURULINK AD", 88, 84);
+
+      ctx.fillStyle = template.footerBg;
+      drawRoundedRect(ctx, 48, 470, 1104, 122, 28);
+      ctx.fill();
+
+      if(previewImage){
+        ctx.fillStyle = "rgba(255,255,255,.18)";
+        ctx.beginPath();
+        ctx.arc(936,220,126,0,Math.PI * 2);
+        ctx.fill();
+        drawCircleImage(ctx, previewImage, 820, 104, 232);
+      } else {
+        ctx.fillStyle = "rgba(255,255,255,.14)";
+        ctx.beginPath();
+        ctx.arc(936,220,126,0,Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = "rgba(255,255,255,.86)";
+        ctx.font = "bold 46px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(activeRole === "institution" ? "INSTITUTE" : "TEACHER", 936, 232);
+        ctx.textAlign = "left";
+      }
+
+      ctx.fillStyle = template.heading;
+      ctx.font = "bold 62px Arial";
+      const headlineBottom =
+        drawTextBlock(
+          ctx,
+          adData.headline || (profileData.name || "GURULINK Profile"),
+          72,
+          180,
+          650,
+          72,
+          2,
+          template.heading
+        );
+
+      ctx.fillStyle = template.body;
+      ctx.font = "bold 30px Arial";
+      const taglineBottom =
+        drawTextBlock(
+          ctx,
+          adData.tagline || "Teacher / Institute",
+          72,
+          headlineBottom + 8,
+          640,
+          38,
+          2,
+          template.body
+        );
+
+      ctx.fillStyle = template.accent;
+      ctx.font = "bold 26px Arial";
+      drawTextBlock(
+        ctx,
+        adData.highlight || "",
+        72,
+        taglineBottom + 18,
+        660,
+        32,
+        3,
+        template.accent
+      );
+
+      ctx.fillStyle = template.pillBg;
+      drawRoundedRect(ctx, 72, 520, 248, 42, 20);
+      ctx.fill();
+      ctx.fillStyle = template.pillText;
+      ctx.font = "bold 23px Arial";
+      ctx.fillText(adData.cta || "Contact Now", 103, 548);
+
+      const footerLines = [];
+      if(adData.showPhone && profileData.phone){
+        footerLines.push("Phone: " + profileData.phone);
+      }
+      if(adData.showWebsite){
+        const website = getProfileWebsite(profileData);
+        if(website){
+          footerLines.push(website.replace(/^https?:\/\//i,""));
+        }
+      }
+      if(adData.showLocation){
+        const location = getProfileLocation(profileData);
+        if(location){
+          footerLines.push(location);
+        }
+      }
+      if(adData.footer){
+        footerLines.push(adData.footer);
+      }
+
+      ctx.fillStyle = template.body;
+      ctx.font = "22px Arial";
+      drawTextBlock(
+        ctx,
+        footerLines.filter(Boolean).join("   |   "),
+        72,
+        504,
+        1040,
+        30,
+        3,
+        template.body
+      );
+
+      elements.metaTemplate.textContent = template.label;
+    }
+
+    function bindPreviewInputs(){
+      [
+        elements.templateSelect,
+        elements.headlineInput,
+        elements.taglineInput,
+        elements.highlightInput,
+        elements.ctaInput,
+        elements.footerInput,
+        elements.showPhoneToggle,
+        elements.showWebsiteToggle,
+        elements.showLocationToggle
+      ].forEach(control => {
+        control.addEventListener("input", renderPreview);
+        control.addEventListener("change", renderPreview);
+      });
+    }
+
+    function createPngBlob(){
+      return new Promise((resolve, reject) => {
+        elements.adCanvas.toBlob((blob) => {
+          if(blob){
+            resolve(blob);
+            return;
+          }
+          reject(new Error("Could not generate advertisement image."));
+        }, "image/png", 1);
+      });
+    }
+
+    async function deleteStoragePath(path){
+      if(!path){
+        return;
+      }
+
+      try{
+        await deleteObject(storageRef(storage, path));
+      }
+      catch(err){
+        console.log("Old advertisement delete skipped:", err);
+      }
+    }
+
+    async function uploadWithTimeout(fileRef, fileBlob, timeoutMs = 180000){
+      const task = uploadBytesResumable(fileRef, fileBlob, {
+        contentType:fileBlob.type || "image/png"
+      });
+
+      return await new Promise((resolve, reject) => {
+        let settled = false;
+
+        const timeoutId = setTimeout(() => {
+          if(settled){
+            return;
+          }
+
+          settled = true;
+
+          try{
+            task.cancel();
+          }
+          catch(cancelErr){
+            console.log("Advertisement upload cancel skipped:", cancelErr);
+          }
+
+          reject(new Error("Advertisement upload took too long. Please try again."));
+        }, timeoutMs);
+
+        task.on("state_changed",
+          () => {},
+          (error) => {
+            if(settled){
+              return;
+            }
+            settled = true;
+            clearTimeout(timeoutId);
+            reject(error);
+          },
+          () => {
+            if(settled){
+              return;
+            }
+            settled = true;
+            clearTimeout(timeoutId);
+            resolve(task.snapshot);
+          }
+        );
+      });
+    }
+
+    async function saveAdvertisement(){
+      if(!profileId){
+        setStatus("Profile ID is missing.", "error");
+        return;
+      }
+
+      await authReadyPromise;
+
+      if(!currentUser){
+        setStatus("Please log in first, then open this page again from your dashboard.", "error");
+        return;
+      }
+
+      try{
+        setStatus("Saving advertisement...", "");
+        elements.saveBtn.disabled = true;
+
+        await renderPreview();
+
+        const blob = await createPngBlob();
+        const storageOwnerUid = getStorageOwnerUid();
+        const storagePath =
+          getStorageRoot() + "/" +
+          storageOwnerUid + "/" +
+          "advertisement-cards/" +
+          Date.now() + "-profile-ad.png";
+
+        const fileRef = storageRef(storage, storagePath);
+        await uploadWithTimeout(fileRef, blob);
+        const url = await getDownloadURL(fileRef);
+
+        const previousPath =
+          profileData.advertisementCardStoragePath || "";
+
+        const updateData = {
+          advertisementCardImage:url,
+          advertisementCardStoragePath:storagePath,
+          advertisementCardUpdatedAt:Date.now(),
+          advertisementCardData:getEditorData()
+        };
+
+        await update(ref(db, getDbPath()), updateData);
+        await deleteStoragePath(previousPath && previousPath !== storagePath ? previousPath : "");
+
+        profileData = {
+          ...profileData,
+          ...updateData
+        };
+
+        savedAdvertisementUrl = url;
+        elements.metaUpdated.textContent = formatSavedAt(profileData.advertisementCardUpdatedAt);
+        setStatus("Advertisement saved successfully.", "success");
+      }
+      catch(err){
+        console.error(err);
+        setStatus("Could not save advertisement: " + (err.message || err), "error");
+      }
+      finally{
+        elements.saveBtn.disabled = false;
+      }
+    }
+
+    async function fetchShareFileFromSavedAd(){
+      const imageUrl =
+        savedAdvertisementUrl ||
+        profileData?.advertisementCardImage ||
+        "";
+
+      if(!imageUrl || !navigator.canShare){
+        return null;
+      }
+
+      try{
+        const response = await fetch(imageUrl, { mode:"cors" });
+        if(!response.ok){
+          return null;
+        }
+
+        const blob = await response.blob();
+        const file = new File([blob], "gurulink-advertisement.png", {
+          type: blob.type || "image/png"
+        });
+
+        if(navigator.canShare({ files:[file] })){
+          return file;
+        }
+      }
+      catch(err){
+        console.log("Ad share file skipped:", err);
+      }
+
+      return null;
+    }
+
+    async function shareSavedAdvertisement(){
+      const adPageUrl = getAdvertisementPageUrl();
+      const shareText =
+        "Check out this " +
+        (activeRole === "institution" ? "Institute" : "Teacher / Trainer") +
+        " advertisement on GURULINK.";
+
+      if(!profileData?.advertisementCardImage){
+        setStatus("Save the advertisement first, then share it.", "error");
+        return;
+      }
+
+      try{
+        if(navigator.share){
+          const shareData = {
+            title:"GURULINK Advertisement",
+            text:shareText,
+            url:adPageUrl
+          };
+
+          const file = await fetchShareFileFromSavedAd();
+          if(file){
+            shareData.files = [file];
+          }
+
+          await navigator.share(shareData);
+          return;
+        }
+      }
+      catch(err){
+        console.log("Advertisement share fallback:", err);
+      }
+
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        await navigator.clipboard.writeText(adPageUrl);
+        setStatus("Public ad link copied. You can now share it anywhere.", "success");
+        return;
+      }
+
+      window.open(
+        "https://wa.me/?text=" + encodeURIComponent(shareText + "\n\n" + adPageUrl),
+        "_blank"
+      );
+    }
+
+    function openPublicAd(){
+      if(!profileId){
+        return;
+      }
+      location.href = getAdvertisementPagePath();
+    }
+
+    function goBackToDashboard(){
+      location.href = "teacher-dashboard.html";
+    }
+
+    async function loadProfile(){
+      if(!profileId){
+        setStatus("Profile ID not found. Open this page from your dashboard.", "error");
+        return;
+      }
+
+      let snap = await get(ref(db, getDbPath(requestedRole)));
+      if(snap.exists()){
+        profileData = snap.val();
+        activeRole = normalizeRole(profileData.role || requestedRole);
+      } else if(requestedRole !== "institution") {
+        const altSnap = await get(ref(db, "institutions/" + profileId));
+        if(altSnap.exists()){
+          profileData = altSnap.val();
+          activeRole = "institution";
+        }
+      }
+
+      if(!profileData && requestedRole !== "teacher"){
+        const altSnap = await get(ref(db, "teachers/" + profileId));
+        if(altSnap.exists()){
+          profileData = altSnap.val();
+          activeRole = "teacher";
+        }
+      }
+
+      if(!profileData){
+        setStatus("Profile not found.", "error");
+        return;
+      }
+
+      savedAdvertisementUrl = profileData.advertisementCardImage || "";
+      elements.heroRoleLabel.textContent =
+        activeRole === "institution" ? "Institute Advertisement" : "Teacher / Trainer Advertisement";
+      elements.heroProfileName.textContent = profileData.name || "Profile";
+      elements.metaUpdated.textContent = formatSavedAt(profileData.advertisementCardUpdatedAt);
+      elements.metaPublic.textContent = "profile-ad.html?id=" + profileId;
+
+      const savedData = profileData.advertisementCardData || {};
+      applyEditorData(savedData);
+      bindPreviewInputs();
+      await renderPreview();
+      setStatus(profileData.advertisementCardImage ? "Saved advertisement loaded." : "Ready to create your first advertisement.", profileData.advertisementCardImage ? "success" : "");
+    }
+
+    elements.saveBtn.addEventListener("click", saveAdvertisement);
+    elements.openPublicBtn.addEventListener("click", openPublicAd);
+    elements.shareBtn.addEventListener("click", shareSavedAdvertisement);
+    elements.backBtn.addEventListener("click", goBackToDashboard);
+
+    loadProfile().catch(err => {
+      console.error(err);
+      setStatus("Could not load profile data.", "error");
+    });
+  </script>
+</body>
+</html>
