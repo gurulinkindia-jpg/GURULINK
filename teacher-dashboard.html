@@ -1686,6 +1686,47 @@ async function resolveStudentEnrollmentTarget(leadId, leadPhone = ""){
     }
   }
 
+  const authCandidates = [
+    leadData.authUid,
+    leadData.viewerId
+  ]
+  .map(value => String(value || "").trim())
+  .filter(Boolean);
+
+  for(const authCandidateId of authCandidates){
+    const userSnap =
+      await get(ref(db, `users/${authCandidateId}`));
+
+    if(!userSnap.exists()){
+      continue;
+    }
+
+    const userData =
+      userSnap.val() || {};
+
+    const mappedProfileId =
+      String(userData.profileId || "").trim();
+
+    const mappedRole =
+      String(userData.role || userData.linkedRole || "").trim().toLowerCase();
+
+    if(
+      mappedProfileId &&
+      (mappedRole === "student" || mappedRole === "parent")
+    ){
+      const studentSnap =
+        await get(ref(db, `students/${mappedProfileId}`));
+
+      if(studentSnap.exists()){
+        return {
+          studentId:mappedProfileId,
+          leadData,
+          studentData:studentSnap.val() || {}
+        };
+      }
+    }
+  }
+
   const phoneDigits =
     normalizePhoneDigits(
       leadPhone ||
@@ -1732,7 +1773,7 @@ async function resolveStudentEnrollmentTarget(leadId, leadPhone = ""){
   }
 
   return {
-    studentId:String(leadData.studentId || leadData.viewerProfileId || leadId || "").trim(),
+    studentId:"",
     leadData,
     studentData:{}
   };
@@ -2428,7 +2469,14 @@ window.toggleStatus = async function (leadId, currentStatus, studentPhone = "", 
       String(resolvedTarget.studentId || "").trim();
 
     if(!studentId){
-      alert("Student profile could not be matched. Ask the student to log in again and open your profile once more.");
+      const leadRole =
+        String((resolvedTarget.leadData && resolvedTarget.leadData.viewerRole) || "").toLowerCase();
+
+      if(leadRole === "teacher" || leadRole === "institution"){
+        alert("This enquiry was opened by a teacher/institution account, not by a student/parent account. Only registered student/parent profiles can be marked as enrolled.");
+      }else{
+        alert("Student profile could not be matched. Ask the student/parent to complete Student registration, then open your profile again before you mark enrolled.");
+      }
       return;
     }
 
