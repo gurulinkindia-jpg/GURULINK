@@ -1221,6 +1221,65 @@ function normalizeWebsiteUrl(url){
   return "https://" + clean;
 }
 
+async function syncCurrentAuthProfileLink(profileData){
+  try{
+    const authUser =
+      auth.currentUser ||
+      dashboardAuthUser ||
+      null;
+
+    const activeProfileId =
+      String(
+        (profileData && profileData.uid) ||
+        profileId ||
+        localStorage.getItem("profileId") ||
+        ""
+      ).trim();
+
+    const activeRole =
+      String(
+        (profileData && profileData.role) ||
+        role ||
+        localStorage.getItem("role") ||
+        ""
+      ).trim().toLowerCase();
+
+    if(!authUser || !activeProfileId || !activeRole){
+      return;
+    }
+
+    const normalizedRole =
+      activeRole === "teacher_institute"
+        ? "teacher"
+        : activeRole;
+
+    await update(ref(db, "users/" + authUser.uid), {
+      uid: authUser.uid,
+      name:
+        (profileData && (profileData.name || profileData.ownerName)) ||
+        localStorage.getItem("name") ||
+        "",
+      email:
+        authUser.email ||
+        (profileData && profileData.email) ||
+        "",
+      phone:
+        String(
+          authUser.phoneNumber ||
+          (profileData && (profileData.phone || profileData.alternatePhone)) ||
+          ""
+        ).replace(/^\+91/, "").replace(/\D/g, ""),
+      role: normalizedRole,
+      linkedRole: normalizedRole,
+      profileId: activeProfileId,
+      updatedAt: Date.now()
+    });
+  }
+  catch(err){
+    console.warn("Dashboard auth/profile relink skipped", err);
+  }
+}
+
 function updateWebsiteButton(data){
   const btn = document.getElementById("websiteActionBtn");
 
@@ -1298,6 +1357,7 @@ return;
 
 const d = snap.val();
 currentProfileData = d;
+await syncCurrentAuthProfileLink(d);
 updateInvoiceButton(d);
 updateWebsiteButton(d);
 /* BANK DETAILS */
@@ -2727,3 +2787,4 @@ profileId;
 
 </body>
 </html>
+
