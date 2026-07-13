@@ -1,680 +1,1837 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GURULINK Advertisement</title>
-  <style>
-    :root{
-      --blue:#1565c0;
-      --green:#2e7d32;
-      --dark:#12233d;
-      --muted:#61738d;
-      --line:#d9e4f1;
-      --bg:#eef4fb;
-      --card:#ffffff;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Profile View - GURULINK</title>
 
-    *{
-      box-sizing:border-box;
-    }
+<style>
 
-    body{
-      margin:0;
-      font-family:Arial,Helvetica,sans-serif;
-      background:linear-gradient(180deg,#edf4fd 0%,#f8fbff 100%);
-      color:var(--dark);
-    }
+body{
+font-family:Arial;
+background:#f5f7ff;
+padding:20px 20px 130px;
+margin:0;
+}
 
-    .page{
-      max-width:1020px;
-      margin:0 auto;
-      padding:18px;
-    }
+.box{
+max-width:900px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
 
-    .topBar{
-      display:flex;
-      justify-content:flex-end;
-      align-items:center;
-      gap:8px;
-      margin-bottom:10px;
-    }
+.header{
+display:flex;
+flex-direction:column;
+gap:12px;
+align-items:flex-start;
+}
 
-    .topActions{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-    }
+.headerTop{
+display:flex;
+gap:12px;
+align-items:center;
+flex-wrap:wrap;
+}
 
-    .topActions button,
-    .actionGrid button{
-      border:none;
-      border-radius:12px;
-      padding:10px 12px;
-      cursor:pointer;
-      color:#fff;
-      font-weight:bold;
-      font:inherit;
-    }
+.headerInfo{
+width:100%;
+}
 
-    .homeBtn{ background:#3949ab; }
-    .shareBtn{ background:linear-gradient(135deg,#ff7043,#f4511e); }
-    .profileBtn{ background:#1565c0; }
-    .callBtn{ background:#2e7d32; }
-    .waBtn{ background:#43a047; }
-    .webBtn{ background:#00897b; }
+.mainPhoto{
+width:120px;
+height:120px;
+border-radius:50%;
+object-fit:cover;
+border:4px solid #1976d2;
+}
 
-    .heroCard,
-    .infoCard{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:22px;
-      box-shadow:0 10px 28px rgba(15,23,42,.06);
-      overflow:hidden;
-    }
+.badge{
+display:inline-block;
+padding:5px 10px;
+background:#1976d2;
+color:white;
+border-radius:20px;
+font-size:12px;
+margin:5px 3px;
+}
 
-    .heroCard{
-      margin-bottom:18px;
-    }
+.actions{
+margin-top:15px;
+display:grid;
+grid-template-columns:repeat(3,minmax(0,1fr));
+gap:8px;
+}
 
-    .heroImageWrap{
-      width:100%;
-      max-width:100%;
-      margin:0 auto;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:#dce9f9;
-      aspect-ratio:var(--ad-ratio, 1200/630);
-      overflow:hidden;
-    }
+.actions a,
+.actions button{
+padding:10px 5px;
+border-radius:10px;
+text-decoration:none;
+color:white;
+font-weight:bold;
+font-size:13px;
+text-align:center;
+display:flex;
+justify-content:center;
+align-items:center;
+margin:0;
+}
+@media(max-width:480px){
 
-    .heroImageWrap.square{
-      max-width:760px;
-    }
+.actions a,
+.actions button{
+font-size:12px;
+padding:10px 3px;
+}
 
-    .heroImageWrap.portrait{
-      max-width:620px;
-    }
+.actions{
+grid-template-columns:repeat(3,minmax(0,1fr));
+}
 
-    .heroImage{
-      width:100%;
-      height:100%;
-      display:block;
-      background:#dce9f9;
-      object-fit:contain;
-    }
+}
 
-    .heroBody{
-      padding:20px;
-      display:grid;
-      gap:14px;
-    }
+.call{background:#4caf50}
+.whatsapp{background:#009688}
+.emailBtn{background:#3949ab}
+.website{background:#1565c0}
+.youtubeBtn{background:#d32f2f}
+.feeToggleBtn{background:#6a1b9a}
 
-    .heroBody h1{
-      margin:0;
-      font-size:32px;
-      line-height:1.2;
-      color:#114da3;
-    }
 
-    .heroMeta{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-    }
 
-    .metaPill{
-      display:inline-flex;
-      align-items:center;
-      padding:9px 12px;
-      border-radius:999px;
-      background:#edf5ff;
-      color:#1c4d87;
-      border:1px solid #d5e4f6;
-      font-size:13px;
-      font-weight:bold;
-    }
+.saveContact{
+background:#ff5722;
+}
 
-    .heroBody p{
-      margin:0;
-      color:var(--muted);
-      line-height:1.7;
-    }
 
-    .actionGrid{
-      display:grid;
-      grid-template-columns:repeat(4,minmax(0,1fr));
-      gap:10px;
-    }
 
-    .infoCard{
-      padding:20px;
-    }
 
-    .infoCard h2{
-      margin:0 0 14px;
-      font-size:24px;
-      color:#114da3;
-    }
 
-    .details{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:12px;
-    }
+.section{
+margin-top:20px;
+padding:15px;
+background:#f9f9ff;
+border-radius:12px;
+}
 
-    .detailItem{
-      border:1px solid #dbe7f4;
-      border-radius:16px;
-      padding:14px;
-      background:#fbfdff;
-    }
+.topRatingCard{
+min-width:130px;
+padding:10px 12px;
+background:white;
+border:1px solid #d9e3f5;
+border-radius:12px;
+box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
 
-    .detailItem strong{
-      display:block;
-      margin-bottom:6px;
-      color:#1b4f8f;
-      font-size:13px;
-      text-transform:uppercase;
-      letter-spacing:.4px;
-    }
+.topRatingText{
+font-size:12px;
+font-weight:bold;
+color:#d32f2f;
+margin-bottom:6px;
+}
 
-    .detailItem span{
-      color:var(--dark);
-      line-height:1.6;
-    }
+.topStars{
+font-size:22px;
+line-height:1;
+color:#fbc02d;
+letter-spacing:1px;
+}
 
-    .message{
-      padding:26px;
-      text-align:center;
-      color:var(--muted);
-    }
+.topMeta{
+display:flex;
+flex-direction:column;
+gap:5px;
+margin-top:8px;
+}
 
-    .shareOverlay{
-      position:fixed;
-      inset:0;
-      background:rgba(15,23,42,.48);
-      display:none;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      z-index:1000;
-    }
+.topMeta .badge{
+margin:0;
+font-size:11px;
+padding:4px 8px;
+text-align:center;
+}
 
-    .shareOverlay.show{
-      display:flex;
-    }
+.infoStack{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
 
-    .shareModal{
-      width:min(420px,100%);
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:22px;
-      box-shadow:0 20px 50px rgba(15,23,42,.22);
-      padding:20px;
-    }
+.infoGrid{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:10px;
+}
 
-    .shareModalTop{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom:8px;
-    }
+.infoBlock{
+padding:12px;
+background:white;
+border:1px solid #d9e3f5;
+border-radius:12px;
+line-height:1.6;
+min-width:0;
+}
 
-    .shareModalTop h3{
-      margin:0;
-      font-size:22px;
-      color:#114da3;
-    }
+.infoBlock.compact{
+display:flex;
+flex-wrap:wrap;
+align-items:baseline;
+gap:6px;
+}
 
-    .shareCloseBtn{
-      background:#eef5ff;
-      color:#1b4f8f;
-      border:1px solid #d5e4f6;
-      border-radius:12px;
-      padding:10px 12px;
-      font-weight:bold;
-      cursor:pointer;
-    }
+.infoTitle{
+font-size:13px;
+font-weight:bold;
+color:#1e3a66;
+margin-bottom:6px;
+}
 
-    .shareModal p{
-      margin:0 0 14px;
-      color:var(--muted);
-      line-height:1.6;
-      font-size:14px;
-    }
+.infoValue{
+font-size:14px;
+line-height:1.6;
+color:#222;
+word-break:break-word;
+}
 
-    .shareChoiceGrid{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:10px;
-    }
+.infoBlock.compact .infoTitle{
+margin-bottom:0;
+white-space:nowrap;
+}
 
-    .shareChoiceBtn{
-      border:none;
-      border-radius:14px;
-      padding:14px 12px;
-      color:#fff;
-      font:inherit;
-      font-weight:bold;
-      cursor:pointer;
-    }
+.infoBlock.compact .infoValue{
+flex:1 1 140px;
+min-width:0;
+}
 
-    .facebookBtn{ background:#1877f2; }
-    .whatsappShareBtn{ background:#25d366; }
-    .copyBtn{ background:#3949ab; }
-    .systemBtn{ background:#ff7043; }
+.infoLines{
+margin-top:6px;
+display:flex;
+flex-direction:column;
+gap:4px;
+}
 
-    @media(max-width:760px){
-      .page{
-        padding:14px;
-      }
+@media(max-width:640px){
+.infoGrid{
+grid-template-columns:1fr;
+}
 
-      .topBar{
-        justify-content:flex-end;
-      }
+.feeGrid{
+grid-template-columns:1fr;
+}
+}
 
-      .topActions,
-      .actionGrid,
-      .details{
-        grid-template-columns:1fr 1fr;
-      }
+.detailsDescription{
+padding:12px;
+background:white;
+border:1px solid #d9e3f5;
+border-radius:12px;
+line-height:1.6;
+word-break:break-word;
+}
 
-      .topActions{
-        display:flex;
-        justify-content:flex-end;
-      }
+.feeSectionBox{
+display:none;
+padding:15px;
+background:#f9f9ff;
+border-radius:12px;
+margin-top:20px;
+}
 
-      .heroBody h1{
-        font-size:26px;
-      }
-    }
+.feeSectionBox.open{
+display:block;
+}
 
-    @media(max-width:520px){
-      .topActions,
-      .actionGrid,
-      .details{
-        grid-template-columns:1fr;
-      }
+.feeSectionBox h3{
+margin:0 0 12px;
+}
 
-      .topActions{
-        display:flex;
-        flex-direction:row;
-        justify-content:flex-end;
-      }
+.feeGrid{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:10px;
+}
 
-      .topActions button{
-        padding:8px 10px;
-        font-size:13px;
-      }
+.feeCard{
+background:white;
+border:1px solid #d9e3f5;
+border-radius:12px;
+padding:12px;
+display:flex;
+flex-direction:column;
+gap:7px;
+min-width:0;
+}
 
-      .shareChoiceGrid{
-        grid-template-columns:1fr;
-      }
-    }
-  </style>
+.feeCardTitle{
+font-size:14px;
+font-weight:bold;
+color:#1e3a66;
+line-height:1.4;
+}
+
+.feeCardAmount{
+font-size:16px;
+font-weight:bold;
+color:#2e7d32;
+line-height:1.4;
+}
+
+.feeCardAmount span{
+font-size:12px;
+font-weight:bold;
+color:#607d8b;
+}
+
+.feeCardMeta{
+font-size:13px;
+line-height:1.5;
+color:#333;
+word-break:break-word;
+}
+
+.feeCardMeta b{
+color:#1e3a66;
+}
+
+.feeSectionNote{
+margin-top:12px;
+padding:12px;
+background:white;
+border:1px solid #d9e3f5;
+border-radius:12px;
+font-size:13px;
+line-height:1.6;
+color:#333;
+word-break:break-word;
+}
+
+.reviewItem{
+padding:12px;
+background:white;
+border-radius:10px;
+margin-top:10px;
+border-left:4px solid #1976d2;
+box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+
+.gallery{
+display:flex;
+overflow-x:auto;
+gap:15px;
+padding:10px 0;
+scroll-behavior:smooth;
+}
+
+.gallery img{
+min-width:280px;
+width:280px;
+height:180px;
+border-radius:15px;
+object-fit:cover;
+box-shadow:0 5px 15px rgba(0,0,0,.15);
+cursor:pointer;
+}
+
+.modeBox{
+padding:10px;
+background:#eef3ff;
+border-radius:10px;
+margin-top:8px;
+}
+
+iframe{
+width:100%;
+height:250px;
+border:0;
+border-radius:10px;
+margin-top:10px;
+}
+
+input,textarea,select{
+width:100%;
+padding:10px;
+border:1px solid #ddd;
+border-radius:10px;
+margin-top:10px;
+box-sizing:border-box;
+}
+
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:10px;
+background:#1976d2;
+color:white;
+font-size:15px;
+cursor:pointer;
+margin-top:10px;
+}
+
+.ratingCard{
+text-align:center;
+background:white;
+padding:20px;
+border-radius:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.bigRating{
+font-size:40px;
+font-weight:bold;
+color:#1976d2;
+}
+
+.starText{
+font-size:24px;
+color:orange;
+}
+
+.reviewForm{
+background:white;
+padding:15px;
+border-radius:15px;
+margin-top:15px;
+box-shadow:0 5px 15px rgba(0,0,0,.08);
+}
+
+.reviewNotice{
+display:none;
+margin:0 0 12px;
+padding:12px;
+border-radius:10px;
+background:#fff8e1;
+border:1px solid #ffe082;
+color:#8a6d3b;
+font-size:13px;
+line-height:1.5;
+}
+
+.reviewForm.disabledReview input,
+.reviewForm.disabledReview select,
+.reviewForm.disabledReview textarea{
+background:#f3f5f7;
+color:#9aa4af;
+cursor:not-allowed;
+}
+
+.reviewForm.disabledReview button{
+background:#b0bec5;
+color:#fff;
+cursor:not-allowed;
+}
+
+.loading{
+text-align:center;
+font-size:20px;
+padding:50px;
+}
+
+/* FLOATING BUTTONS */
+.floatingNav{
+position:fixed;
+right:16px;
+bottom:calc(env(safe-area-inset-bottom, 0px) + 16px);
+display:flex;
+flex-direction:column;
+gap:10px;
+padding:10px;
+background:rgba(255,255,255,.97);
+border:1px solid #d9e3f5;
+border-radius:18px;
+box-shadow:0 10px 25px rgba(0,0,0,.12);
+z-index:9999;
+}
+
+.floatingBtn{
+width:auto;
+min-width:108px;
+height:40px;
+padding:0 14px;
+margin-top:0;
+border-radius:999px;
+display:flex;
+justify-content:center;
+align-items:center;
+color:white;
+font-size:13px;
+line-height:1;
+font-weight:bold;
+text-decoration:none;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+border:none;
+cursor:pointer;
+white-space:nowrap;
+box-sizing:border-box;
+appearance:none;
+-webkit-appearance:none;
+}
+
+.homeBtn{
+background:#1976d2;
+}
+
+.dashboardBtn{
+background:#fb8c00;
+}
+
+.backBtn{
+background:#4caf50;
+}
+
+.shareFab{
+position:fixed;
+right:18px;
+bottom:calc(env(safe-area-inset-bottom, 0px) + 84px);
+width:42px;
+height:42px;
+padding:0;
+margin:0;
+border:none;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#e91e63;
+color:white;
+box-shadow:0 8px 18px rgba(0,0,0,.2);
+cursor:pointer;
+z-index:10000;
+}
+
+.shareFab svg{
+width:18px;
+height:18px;
+display:block;
+}
+
+@media(max-width:768px){
+body{
+padding:12px 12px 150px;
+}
+
+.floatingNav{
+left:12px;
+right:12px;
+bottom:calc(env(safe-area-inset-bottom, 0px) + 40px);
+flex-direction:row;
+gap:8px;
+padding:7px;
+border-radius:16px;
+}
+
+.floatingBtn{
+flex:1 1 0;
+min-width:0;
+height:36px;
+padding:0 6px;
+font-size:11px;
+border-radius:12px;
+}
+
+.shareFab{
+right:16px;
+bottom:calc(env(safe-area-inset-bottom, 0px) + 88px);
+width:38px;
+height:38px;
+}
+
+.shareFab svg{
+width:16px;
+height:16px;
+}
+}
+
+
+.payFee{
+background:#ff9800;
+}
+
+.bankBox{
+display:none;
+margin-top:15px;
+padding:15px;
+background:#fff8e1;
+border-radius:10px;
+border:1px solid #ffd54f;
+}
+
+.bankQr{
+width:120px;
+height:120px;
+object-fit:contain;
+border:1px solid #ddd;
+border-radius:10px;
+margin-top:10px;
+}
+
+.demoBox{
+margin-top:15px;
+padding:15px;
+background:#f3f9ff;
+border:1px solid #bbdefb;
+border-radius:12px;
+}
+
+.demoBox h3{
+margin:0 0 8px;
+color:#1565c0;
+}
+
+.demoBox p{
+font-size:13px;
+line-height:1.5;
+color:#555;
+}
+
+.demoChat{
+background:white;
+border:1px solid #d6e8ff;
+border-radius:12px;
+padding:10px;
+}
+
+.demoChat textarea{
+height:90px;
+resize:vertical;
+}
+
+.demoSubmit{
+background:#6a1b9a;
+}
+
+.demoSuccess{
+display:none;
+margin-top:10px;
+padding:12px;
+background:#e8f5e9;
+border:1px solid #a5d6a7;
+border-radius:10px;
+color:#1b5e20;
+font-weight:bold;
+line-height:1.5;
+}
+</style>
+<link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="shortcut icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+<link rel="apple-touch-icon" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
+
 <body>
-  <div class="page">
-    <div class="topBar">
-      <div class="topActions">
-        <button class="homeBtn" onclick="location.href='index.html'">Home</button>
-        <button class="shareBtn" onclick="shareAdvertisement()">Share Ad</button>
-      </div>
-    </div>
 
-    <div id="content" class="message">Loading advertisement...</div>
-  </div>
+<div class="box" id="profile">
+<div class="loading">Loading Profile...</div>
+</div>
 
-  <div id="shareOverlay" class="shareOverlay">
-    <div class="shareModal">
-      <div class="shareModalTop">
-        <h3>Share Advertisement</h3>
-        <button class="shareCloseBtn" type="button" onclick="closeShareChooser()">Close</button>
-      </div>
-      <p>
-        Share the public advertisement link so Facebook or WhatsApp can load the saved ad image and keep the post clickable.
-      </p>
-      <div class="shareChoiceGrid">
-        <button class="shareChoiceBtn facebookBtn" type="button" onclick="shareViaFacebook()">Facebook</button>
-        <button class="shareChoiceBtn whatsappShareBtn" type="button" onclick="shareViaWhatsApp()">WhatsApp</button>
-        <button class="shareChoiceBtn copyBtn" type="button" onclick="copyAdvertisementLink()">Copy Link</button>
-        <button id="systemShareBtn" class="shareChoiceBtn systemBtn" type="button" onclick="shareViaSystem()">System Share</button>
-      </div>
-    </div>
-  </div>
+<script type="module">
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+import {
+getDatabase,
+ref,
+get,
+child,
+onValue,
+push,
+set
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-    const firebaseConfig = {
-      apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
-      authDomain:"gurulink-59cc7.firebaseapp.com",
-      databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId:"gurulink-59cc7",
-      storageBucket:"gurulink-59cc7.firebasestorage.app",
-      messagingSenderId:"112148672399",
-      appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+import {
+getAuth,
+onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+/* FIREBASE CONFIG */
+const firebaseConfig = {
+apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
+authDomain:"gurulink-59cc7.firebaseapp.com",
+databaseURL:"https://gurulink-59cc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"gurulink-59cc7",
+storageBucket:"gurulink-59cc7.appspot.com",
+messagingSenderId:"112148672399",
+appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const auth = getAuth(app);
+const WEBSITE_BASE = "https://www.gurulink.co.in/";
+
+const profile = document.getElementById("profile");
+const queryProfileId = new URLSearchParams(location.search).get("id");
+let currentProfileId =
+queryProfileId ||
+localStorage.getItem("profileId") ||
+sessionStorage.getItem("profileId") ||
+localStorage.getItem("teacherId") ||
+sessionStorage.getItem("teacherId") ||
+localStorage.getItem("institutionId") ||
+sessionStorage.getItem("institutionId") ||
+"";
+
+let data = null;
+let type = "";
+let reviewAccessState = {
+allowed:false,
+checked:false,
+message:"Only logged-in Student / Parent and Teacher / Institute users can submit reviews.",
+viewerRole:"",
+uid:"",
+phone:"",
+email:""
+};
+
+let authBootstrapPromise = null;
+let linkedReviewRoleCache = "";
+
+function getAuthUser(forceRefresh = false){
+if(!forceRefresh && auth.currentUser){
+return Promise.resolve(auth.currentUser);
+}
+
+if(!forceRefresh && authBootstrapPromise){
+return authBootstrapPromise;
+}
+
+authBootstrapPromise = new Promise((resolve)=>{
+let settled = false;
+let unsubscribe = null;
+const timer = setTimeout(()=>{
+finish(auth.currentUser || null);
+},5000);
+
+const finish = (user)=>{
+if(settled) return;
+settled = true;
+clearTimeout(timer);
+if(typeof unsubscribe === "function"){
+try{ unsubscribe(); }catch(err){}
+}
+resolve(user || null);
+};
+
+unsubscribe = onAuthStateChanged(auth,(user)=>{
+finish(user || auth.currentUser || null);
+});
+});
+
+return authBootstrapPromise;
+}
+
+function getStoredReviewRole(){
+const allowedRoles = ["student","parent","teacher","institution","teacher_institute"];
+const candidates = [
+sessionStorage.getItem("otpRole"),
+localStorage.getItem("otpRole"),
+sessionStorage.getItem("role"),
+localStorage.getItem("role")
+]
+.map(value => String(value || "").trim().toLowerCase())
+.filter(Boolean);
+
+return candidates.find(role => allowedRoles.includes(role)) || "";
+}
+
+async function getLinkedReviewRole(authUid, forceRefresh = false){
+if(!authUid) return "";
+if(linkedReviewRoleCache && !forceRefresh){
+return linkedReviewRoleCache;
+}
+
+try{
+const userSnap = await get(child(ref(db),"users/" + authUid));
+if(!userSnap.exists()){
+return "";
+}
+
+const userData = userSnap.val() || {};
+const resolvedRole = String(
+userData.linkedRole ||
+userData.role ||
+""
+)
+.trim()
+.toLowerCase();
+
+linkedReviewRoleCache = resolvedRole;
+return resolvedRole;
+}
+catch(err){
+console.log("Unable to read linked review role", err);
+return "";
+}
+}
+
+function normalizeReviewPhone(phone){
+const digits = String(phone || "").replace(/\D/g, "");
+if(digits.length === 12 && digits.startsWith("91")){
+return digits.slice(2);
+}
+return digits;
+}
+
+async function resolveReviewAccess(forceRefresh = false){
+if(reviewAccessState.checked && !forceRefresh){
+return reviewAccessState;
+}
+
+const authUser = await getAuthUser(forceRefresh);
+const storedRole = getStoredReviewRole();
+const linkedRole =
+authUser && authUser.uid
+? await getLinkedReviewRole(authUser.uid, forceRefresh)
+: "";
+const viewerRole = linkedRole || storedRole;
+const allowedRoles = ["student","parent","teacher","institution","teacher_institute"];
+const authPhone = normalizeReviewPhone(authUser ? authUser.phoneNumber : "");
+const authEmail = String(authUser && authUser.email ? authUser.email : "")
+.trim()
+.toLowerCase();
+const storedPhone = normalizeReviewPhone(
+localStorage.getItem("phone") ||
+sessionStorage.getItem("phone") ||
+""
+);
+
+let allowed = false;
+let message = "";
+
+if(!allowedRoles.includes(viewerRole)){
+message = "Only logged-in Student / Parent and Teacher / Institute users can submit reviews.";
+}
+else if(!authUser || !authUser.uid){
+message = "Please log in through GURULINK to submit a review.";
+}
+else if(!authPhone && !authEmail){
+message = "Please log in through GURULINK to submit a review.";
+}
+else if(authPhone && !linkedRole && storedPhone && authPhone !== storedPhone){
+message = "Please re-login through your GURULINK account before submitting a review.";
+}
+else{
+allowed = true;
+}
+
+reviewAccessState = {
+allowed,
+checked:true,
+message,
+viewerRole,
+uid:authUser ? authUser.uid : "",
+phone:authPhone,
+email:authEmail
+};
+
+return reviewAccessState;
+}
+
+function setReviewFormState(access){
+const form = document.querySelector(".reviewForm");
+if(!form) return;
+
+const notice = document.getElementById("reviewNotice");
+const controls = [
+"rname",
+"rrating",
+"rtext"
+]
+.map(id => document.getElementById(id))
+.filter(Boolean);
+
+const submitBtn = form.querySelector("button");
+
+form.classList.toggle("disabledReview", !access.allowed);
+
+controls.forEach(control => {
+control.disabled = !access.allowed;
+});
+
+if(submitBtn){
+submitBtn.disabled = !access.allowed;
+submitBtn.textContent = access.allowed ? "Submit Review" : "Login Required";
+}
+
+if(notice){
+notice.style.display = access.allowed ? "none" : "block";
+notice.textContent = access.allowed
+? ""
+: (access.message || "Please log in through GURULINK to submit a review.");
+}
+}
+
+async function applyReviewAccessUI(forceRefresh = false){
+const form = document.querySelector(".reviewForm");
+if(!form) return;
+const access = await resolveReviewAccess(forceRefresh);
+setReviewFormState(access);
+}
+
+onAuthStateChanged(auth,()=>{
+reviewAccessState.checked = false;
+applyReviewAccessUI(true);
+});
+
+/* MARK VIEW */
+async function markView() {
+  const authUser = await getAuthUser();
+
+  const viewerProfileId =
+    localStorage.getItem("profileId") ||
+    localStorage.getItem("studentId") ||
+    localStorage.getItem("teacherId") ||
+    localStorage.getItem("institutionId") ||
+    localStorage.getItem("uid") ||
+    (authUser ? authUser.uid : "");
+
+  const viewerAuthUid =
+    (authUser ? authUser.uid : "") ||
+    localStorage.getItem("uid") ||
+    "";
+
+  const viewedProfileId = currentProfileId;
+  const viewerRole = (localStorage.getItem("role") || "").toLowerCase();
+
+  if (!viewedProfileId) return;
+
+  try {
+    const isRegisteredTeacherOrInstitution =
+      viewerRole === "teacher" ||
+      viewerRole === "institution";
+
+    const isGuestViewer =
+      !viewerProfileId ||
+      viewerRole === "guest";
+
+    const viewId =
+      viewerProfileId ||
+      viewerAuthUid ||
+      "guest_" + Date.now() + "_" + Math.floor(Math.random() * 9999);
+
+    let viewerData = {
+      name:"",
+      email:"",
+      phone:""
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const WEBSITE_BASE = "https://guru-link.onrender.com/";
-    const currentProfileId = new URLSearchParams(location.search).get("id") || "";
-    const content = document.getElementById("content");
-    const shareOverlay = document.getElementById("shareOverlay");
-    const systemShareBtn = document.getElementById("systemShareBtn");
+    if (viewerProfileId || viewerAuthUid) {
+      const paths = [];
 
-    let data = null;
-    let roleType = "";
+      if (viewerRole === "student" || viewerRole === "parent") {
+        paths.push("students/" + viewerProfileId);
+      }
 
-    function getPrimaryProfileImage(profileData){
-      const images = Array.isArray(profileData?.profileImages) ? profileData.profileImages : [];
-      const normalized = images
-        .map(item => typeof item === "string" ? { url:item } : item)
-        .filter(item => item && item.url);
+      if (viewerRole === "teacher") {
+        paths.push("teachers/" + viewerProfileId);
+      }
 
-      const selected =
-        normalized[Number(profileData?.primaryProfileImage || 0)] ||
-        normalized[0];
+      if (viewerRole === "institution") {
+        paths.push("institutions/" + viewerProfileId);
+      }
 
-      return selected?.url || profileData?.photo || profileData?.profilePic || profileData?.logo || "";
+      if(viewerAuthUid){
+        paths.push("users/" + viewerAuthUid);
+      }
+
+      if(viewerProfileId && viewerProfileId !== viewerAuthUid){
+        paths.push("users/" + viewerProfileId);
+        paths.push("students/" + viewerProfileId);
+      }
+
+      for (const path of paths) {
+        if(!path || /\/$/.test(path)){
+          continue;
+        }
+
+        const snap = await get(ref(db, path));
+
+        if (snap.exists()) {
+          viewerData = {
+            ...viewerData,
+            ...snap.val()
+          };
+        }
+      }
     }
 
-    function getSavedCanvasPreset(profileData){
-      const preset = String(profileData?.advertisementCardData?.canvasPreset || "landscape").toLowerCase();
-      if(preset === "square" || preset === "portrait"){
-        return preset;
-      }
-      return "landscape";
-    }
+    const displayName = isRegisteredTeacherOrInstitution
+      ? (viewerRole === "teacher" ? "Teacher" : "Institution")
+      : (
+        isGuestViewer
+          ? "Guest"
+          : (viewerData.name || (viewerRole === "parent" ? "Parent" : "Student"))
+      );
 
-    function getSavedCanvasRatio(profileData){
-      const preset = getSavedCanvasPreset(profileData);
-      if(preset === "square"){
-        return "1 / 1";
-      }
-      if(preset === "portrait"){
-        return "1080 / 1350";
-      }
-      return "1200 / 630";
-    }
-
-    function normalizeWebsiteUrl(url){
-      const value = String(url || "").trim();
-      if(!value){
-        return "";
-      }
-      return /^https?:\/\//i.test(value) ? value : "https://" + value;
-    }
-
-    function formatList(value){
-      if(Array.isArray(value)){
-        return value.filter(Boolean).join(", ");
-      }
-      if(value && typeof value === "object"){
-        return Object.values(value).filter(Boolean).join(", ");
-      }
-      return String(value || "").trim();
-    }
-
-    function getAreaLine(profileData){
-      return [profileData?.area, profileData?.state].filter(Boolean).join(", ");
-    }
-
-    function getDashboardPath(){
-      const viewerRole = String(
-        localStorage.getItem("role") ||
-        sessionStorage.getItem("role") ||
+    const displayPhone = isRegisteredTeacherOrInstitution
+      ? ""
+      : (
+        viewerData.phone ||
+        viewerData.alternatePhone ||
+        (authUser ? authUser.phoneNumber : "") ||
+        localStorage.getItem("phone") ||
         ""
-      ).toLowerCase();
-
-      if(viewerRole === "student" || viewerRole === "parent"){
-        return "student-dashboard.html";
-      }
-
-      if(viewerRole === "teacher" || viewerRole === "institution" || viewerRole === "teacher_institute"){
-        return "teacher-dashboard.html";
-      }
-
-      if(viewerRole === "admin"){
-        return "admin.html";
-      }
-
-      return "index.html";
-    }
-
-    window.goBackSmart = function(){
-      if(history.length > 1){
-        history.back();
-        return;
-      }
-      location.href = getDashboardPath();
-    };
-
-    function getAdPageUrl(){
-      return WEBSITE_BASE + "profile-ad.html?id=" + encodeURIComponent(currentProfileId);
-    }
-
-    function getAdSharePayload(){
-      const shareUrl = getAdPageUrl();
-      const shareText = "Check out this profile advertisement on GURULINK.";
-      const shareMessage = shareText + "\n\n" + shareUrl;
-      return { shareUrl, shareText, shareMessage };
-    }
-
-    function isMobileShareMode(){
-      return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || "") ||
-        window.matchMedia("(max-width: 760px)").matches;
-    }
-
-    window.closeShareChooser = function(){
-      shareOverlay.classList.remove("show");
-    };
-
-    function openShareChooser(){
-      if(!data){
-        return;
-      }
-      shareOverlay.classList.add("show");
-    }
-
-    window.shareViaFacebook = function(){
-      const payload = getAdSharePayload();
-      window.open(
-        "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(payload.shareUrl),
-        "_blank",
-        "noopener"
       );
-    };
 
-    window.shareViaWhatsApp = function(){
-      const payload = getAdSharePayload();
-      window.open(
-        "https://wa.me/?text=" + encodeURIComponent(payload.shareMessage),
-        "_blank",
-        "noopener"
-      );
-    };
-
-    window.copyAdvertisementLink = async function(){
-      const payload = getAdSharePayload();
-      try{
-        if(navigator.clipboard && navigator.clipboard.writeText){
-          await navigator.clipboard.writeText(payload.shareUrl);
-          alert("Advertisement link copied.");
-          return;
-        }
+    await set(
+      ref(db, `profileViews/${viewedProfileId}/${viewId}`),
+      {
+        viewerId:viewId,
+        viewerProfileId:viewerProfileId || "",
+        authUid:viewerAuthUid || "",
+        studentId:(viewerRole === "student" || viewerRole === "parent") ? (viewerProfileId || viewId) : "",
+        viewerRole:viewerRole || "guest",
+        name:displayName,
+        email:viewerData.email || (authUser ? authUser.email : "") || localStorage.getItem("email") || "",
+        phone:displayPhone,
+        time: Date.now()
       }
-      catch(err){
-        console.log("Clipboard copy skipped:", err);
-      }
+    );
 
-      prompt("Copy this advertisement link:", payload.shareUrl);
-    };
+  } catch (err) {
+    console.log("View not saved", err);
+  }
+}
 
-    window.shareViaSystem = async function(){
-      const payload = getAdSharePayload();
-      if(!navigator.share){
-        alert("System share is not available here. Use Facebook, WhatsApp, or Copy Link.");
-        return;
-      }
+/* LOAD PROFILE */
+async function load(){
 
-      try{
-        await navigator.share({
-          title:"GURULINK Advertisement",
-          text:payload.shareText,
-          url:payload.shareUrl
-        });
-      }
-      catch(err){
-        console.log("System share skipped:", err);
-      }
-    };
+if(!currentProfileId){
+profile.innerHTML = "<h2>No ID Found</h2>";
+return;
+}
 
-    async function fetchShareFileFromUrl(url){
-      if(!url || !navigator.canShare){
-        return null;
-      }
+/* SAVE VIEW */
+markView();
 
-      try{
-        const response = await fetch(url, { mode:"cors" });
-        if(!response.ok){
-          return null;
-        }
-        const blob = await response.blob();
-        const file = new File([blob], "gurulink-advertisement.png", {
-          type: blob.type || "image/png"
-        });
+/* TEACHER */
+let snap = await get(child(ref(db),"teachers/"+currentProfileId));
 
-        if(navigator.canShare({ files:[file] })){
-          return file;
-        }
-      }
-      catch(err){
-        console.log("Ad image share file skipped:", err);
-      }
+if(snap.exists()){
+data = snap.val();
+type = "Teacher";
+currentProfileId = data.uid || currentProfileId;
+}
 
-      return null;
-    }
+/* INSTITUTION */
+if(!data){
+let snap2 = await get(child(ref(db),"institutions/"+currentProfileId));
 
-    window.shareAdvertisement = function(){
-      if(isMobileShareMode() && navigator.share){
-        shareViaSystem();
-        return;
-      }
-      openShareChooser();
-    };
+if(snap2.exists()){
+data = snap2.val();
+type = "Institution";
+currentProfileId = data.uid || currentProfileId;
+}
+}
 
-    function renderProfile(){
-      const heroImage =
-        data.advertisementCardImage ||
-        getPrimaryProfileImage(data) ||
-        "https://via.placeholder.com/1200x630?text=GURULINK+Advertisement";
-      const canvasPreset = getSavedCanvasPreset(data);
-      const canvasRatio = getSavedCanvasRatio(data);
+/* NOT FOUND */
+if(!data){
+profile.innerHTML = "<h2>Profile Not Found</h2>";
+return;
+}
 
-      const website = normalizeWebsiteUrl(data.website || "");
-      const phone = String(data.phone || "").trim();
-      const whatsapp = phone ? "https://wa.me/91" + phone.replace(/\D/g,"") : "";
-      const fullProfileUrl = "profile-view.html?id=" + encodeURIComponent(currentProfileId);
+renderProfile();
+loadReviews();
+await applyReviewAccessUI();
+}
 
-      content.className = "";
-      content.innerHTML = `
-        <section class="heroCard">
-          <div class="heroImageWrap ${canvasPreset}" style="--ad-ratio:${canvasRatio};">
-            <img class="heroImage" src="${heroImage}" alt="Advertisement image">
-          </div>
-          <div class="heroBody">
-            <h1>${data.name || "GURULINK Profile"}</h1>
+/* RENDER PROFILE */
+function renderProfile(){
 
-            <div class="heroMeta">
-              <span class="metaPill">${roleType}</span>
-              ${data.categoryName || data.category ? `<span class="metaPill">${data.categoryName || data.category}</span>` : ""}
-              ${getAreaLine(data) ? `<span class="metaPill">${getAreaLine(data)}</span>` : ""}
-            </div>
+const visibility = data.publicVisibility || {};
 
-            <p>${data.description || "Connect on GURULINK for classes, training, admissions, and learning opportunities."}</p>
+function canShow(key){
+return visibility[key] !== false;
+}
 
-            <div class="actionGrid">
-              <button class="profileBtn" onclick="location.href='${fullProfileUrl}'">View Full Profile</button>
-              ${phone ? `<button class="callBtn" onclick="location.href='tel:${phone}'">Call</button>` : ""}
-              ${whatsapp ? `<button class="waBtn" onclick="window.open('${whatsapp}','_blank')">WhatsApp</button>` : ""}
-              ${website ? `<button class="webBtn" onclick="window.open('${website}','_blank')">Website</button>` : ""}
-            </div>
-          </div>
-        </section>
+function showValue(key){
+return canShow(key) && data[key];
+}
 
-        <section class="infoCard">
-          <h2>Profile Summary</h2>
-          <div class="details">
-            <div class="detailItem">
-              <strong>Subjects / Skills</strong>
-              <span>${formatList(data.subjects) || "Not added"}</span>
-            </div>
-            <div class="detailItem">
-              <strong>Teaching Modes</strong>
-              <span>${formatList(data.teachingModes) || "Not added"}</span>
-            </div>
-            <div class="detailItem">
-              <strong>Class / Preparation</strong>
-              <span>${data.class || "Not added"}</span>
-            </div>
-            <div class="detailItem">
-              <strong>Address</strong>
-              <span>${[data.area, data.state, data.pinCode].filter(Boolean).join(", ") || "Not added"}</span>
-            </div>
-          </div>
-        </section>
-      `;
-    }
+function esc(value){
+return String(value ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+}
 
-    async function load(){
-      if(!currentProfileId){
-        content.className = "message";
-        content.textContent = "No profile ID found.";
-        return;
-      }
+function externalUrl(value){
+const text = String(value ?? "").trim();
+if(!text) return "";
+return /^https?:\/\//i.test(text) ? text : `https://${text}`;
+}
 
-      let snap = await get(child(ref(db), "teachers/" + currentProfileId));
-      if(snap.exists()){
-        data = snap.val();
-        roleType = "Teacher / Trainer";
-      }
+function formatExperience(value){
+const text = String(value ?? "").trim();
+if(!text) return "";
+return /year/i.test(text) ? esc(text) : `${esc(text)} years`;
+}
 
-      if(!data){
-        const altSnap = await get(child(ref(db), "institutions/" + currentProfileId));
-        if(altSnap.exists()){
-          data = altSnap.val();
-          roleType = "Institute";
-        }
-      }
+function getCategoryLabel(){
+const raw = String(data.categoryName || data.category || "").trim();
+if(!raw) return "";
+const normalized = raw.toLowerCase();
+if(normalized === "skill") return "Professional Skill";
+if(normalized === "sport") return "Sports & Fitness";
+if(normalized === "creative") return "Arts & Creativity";
+if(normalized === "academic") return "Academic";
+return esc(raw);
+}
 
-      if(!data){
-        content.className = "message";
-        content.textContent = "Advertisement profile not found.";
-        return;
-      }
+function listFromValue(value){
+if(Array.isArray(value)) return value.filter(Boolean);
+if(value && typeof value === "object") return Object.values(value).filter(Boolean);
+return String(value || "").trim() ? [String(value).trim()] : [];
+}
 
-      document.title = (data.name || "GURULINK") + " Advertisement";
-      renderProfile();
-      systemShareBtn.style.display = navigator.share ? "" : "none";
-    }
+const subjects = listFromValue(data.subjects);
+const teachingModes = listFromValue(data.teachingModes);
+const feeStructure =
+  data.feeStructure && typeof data.feeStructure === "object"
+    ? data.feeStructure
+    : {};
+const feeItems = Array.isArray(feeStructure.items)
+  ? feeStructure.items
+      .map((item, index)=>({
+        title:String(item && item.title || "").trim(),
+        amount:String(item && item.amount || "").trim(),
+        unit:String(item && item.unit || "").trim(),
+        appliesTo:String(item && item.appliesTo || "").trim(),
+        note:String(item && item.note || "").trim(),
+        active:item && item.active !== false,
+        sortOrder:Number(item && item.sortOrder || (index + 1))
+      }))
+      .filter(item => item.active && item.title)
+      .sort((a,b)=>a.sortOrder - b.sortOrder)
+  : [];
+const addressLines = [];
+const categoryLabel = canShow("categoryName") ? getCategoryLabel() : "";
+const websiteLink = showValue("website") ? externalUrl(data.website) : "";
+const youtubeRaw =
+  (canShow("youtube") && data.youtube) ||
+  (canShow("youtubeLink") && data.youtubeLink) ||
+  (canShow("youtubeChannel") && data.youtubeChannel) ||
+  (canShow("youtubeUrl") && data.youtubeUrl) ||
+  data.youtubeChanel ||
+  "";
+const youtubeLink = youtubeRaw ? externalUrl(youtubeRaw) : "";
 
-    shareOverlay.addEventListener("click", (event) => {
-      if(event.target === shareOverlay){
-        closeShareChooser();
-      }
-    });
+if(showValue("address")) addressLines.push(`<div><b>State:</b> ${esc(data.address)}</div>`);
+if(showValue("area")) addressLines.push(`<div><b>Area / City or Town:</b> ${esc(data.area)}</div>`);
+if(showValue("pinCode")) addressLines.push(`<div><b>PIN Code:</b> ${esc(data.pinCode)}</div>`);
 
-    load().catch(err => {
-      console.error(err);
-      content.className = "message";
-      content.textContent = "Could not load the advertisement page right now.";
-    });
-  </script>
+const legacyModeLines = [];
+if(showValue("homeFee")) legacyModeLines.push(`Home Tuition - Rs ${esc(data.homeFee)}`);
+if(showValue("groupFee")) legacyModeLines.push(`Group / Team - Rs ${esc(data.groupFee)}`);
+if(showValue("superGroupFee")) legacyModeLines.push(`Super Group - Rs ${esc(data.superGroupFee)}`);
+if(showValue("onlineFee")) legacyModeLines.push(`Online - Rs ${esc(data.onlineFee)}`);
+if(showValue("individualFee")) legacyModeLines.push(`Individual / Personal - Rs ${esc(data.individualFee)}`);
+if(!teachingModes.length && (showValue("otherMode") || showValue("otherModeFee"))){
+legacyModeLines.push(`${esc(data.otherMode || "Other Mode")} ${data.otherModeFee ? "- Rs " + esc(data.otherModeFee) : ""}`);
+}
+const subjectText =
+canShow("subjects") ? (subjects.map(esc).join(", ") || "-") : "";
+const modeText =
+(canShow("teachingModes") && teachingModes.length)
+? teachingModes.map(esc).join(", ")
+: (legacyModeLines.length ? legacyModeLines.join("<br>") : "");
+const classText =
+showValue("class") ? esc(data.class) : "";
+const experienceText =
+showValue("experience") ? formatExperience(data.experience) : "";
+const qualificationText =
+showValue("qualification") ? esc(data.qualification) : "";
+const boardText =
+showValue("board") ? esc(data.board) : "";
+const ownerText =
+showValue("ownerName") ? esc(data.ownerName) : "";
+const establishedText =
+showValue("establishedDate") ? esc(data.establishedDate) : "";
+const hasPublicFeeStructure =
+  feeStructure.visible !== false &&
+  feeItems.length;
+const feeStructureHTML =
+(
+  hasPublicFeeStructure
+)
+? `
+<div class="feeSectionBox" id="feeStructureBox">
+<h3>Fee Structure</h3>
+<div class="feeGrid">
+${feeItems.map(item => `
+<div class="feeCard">
+<div class="feeCardTitle">${esc(item.title)}</div>
+${item.amount ? `<div class="feeCardAmount">Rs ${esc(item.amount)}${item.unit ? ` <span>${esc(item.unit)}</span>` : ""}</div>` : ""}
+${item.appliesTo ? `<div class="feeCardMeta"><b>Applies To:</b> ${esc(item.appliesTo)}</div>` : ""}
+${item.note ? `<div class="feeCardMeta"><b>Note:</b> ${esc(item.note)}</div>` : ""}
+</div>
+`).join("")}
+</div>
+${feeStructure.note ? `<div class="feeSectionNote"><b>General Note:</b> ${esc(feeStructure.note)}</div>` : ""}
+</div>
+`
+: "";
+
+let galleryHTML = "";
+let gallery = Array.isArray(data.galleryImages)
+? data.galleryImages.map(item => typeof item === "string" ? item : item?.url)
+: (data.gallery || []);
+
+if (typeof gallery === "object" && !Array.isArray(gallery)) {
+gallery = Object.values(gallery);
+}
+
+gallery = gallery.filter(img => typeof img === "string" && img.length > 5);
+
+if (canShow("gallery") && gallery.length > 0) {
+galleryHTML = `
+<div class="section">
+<h3>Gallery</h3>
+<div class="gallery">
+${gallery.map(img => `<img src="${esc(img)}" onclick="window.open('${esc(img)}','_blank')">`).join("")}
+</div>
+</div>
+`;
+}
+
+const descriptionHTML =
+showValue("description")
+? `
+<div class="section">
+<h3>Description</h3>
+<div class="detailsDescription">${esc(data.description)}</div>
+</div>
+`
+: "";
+
+let mapHTML = "";
+
+if (canShow("mapUrl") && (data.mapLink || data.mapUrl)) {
+let iframeHTML = "";
+
+if (canShow("mapLink") && data.mapLink) {
+const src = data.mapLink.match(/src="([^"]+)"/)?.[1];
+if (src) {
+iframeHTML = `<iframe src="${esc(src)}" allowfullscreen loading="lazy"></iframe>`;
+}
+}
+
+mapHTML = `
+<div class="section">
+<h3>Google Map</h3>
+${showValue("mapUrl") ? `<a href="${esc(data.mapUrl)}" target="_blank" style="display:inline-block;padding:12px 20px;background:#1976d2;color:white;text-decoration:none;border-radius:10px;font-weight:bold;margin-bottom:10px;">Open Google Maps</a>` : ""}
+${iframeHTML}
+</div>
+`;
+}
+
+const profileImage = getPrimaryProfileImage(data);
+
+profile.innerHTML = `
+<div class="header">
+<div class="headerTop">
+${canShow("logo") ? `<img class="mainPhoto" src="${esc(profileImage)}">` : ""}
+
+<div class="topRatingCard">
+<div class="topRatingText" id="topRatingText">Rating: 0.0 stars</div>
+<div class="topStars" id="topStars">&#9734;&#9734;&#9734;&#9734;&#9734;</div>
+<div class="topMeta">
+<span class="badge">${esc(type)}</span>
+${categoryLabel ? `<span class="badge">${categoryLabel}</span>` : ""}
+</div>
+</div>
+</div>
+
+<div class="headerInfo">
+${canShow("name") ? `<h2>${esc(data.name || "-")}</h2>` : `<h2>GURULINK Profile</h2>`}
+</div>
+</div>
+
+<div class="section">
+<div class="infoStack">
+${subjectText ? `
+<div class="infoBlock">
+<div class="infoTitle">Subjects / Skills / Activities</div>
+<div class="infoValue">${subjectText}</div>
+</div>
+` : ""}
+${modeText ? `
+<div class="infoBlock">
+<div class="infoTitle">Teaching / Training Modes</div>
+<div class="infoValue">${modeText}</div>
+</div>
+` : ""}
+<div class="infoGrid">
+${classText ? `
+<div class="infoBlock compact">
+<div class="infoTitle">Class / Preparation For</div>
+<div class="infoValue">${classText}</div>
+</div>
+` : ""}
+${boardText ? `
+<div class="infoBlock compact">
+<div class="infoTitle">Board / Type of Exam</div>
+<div class="infoValue">${boardText}</div>
+</div>
+` : ""}
+${experienceText ? `
+<div class="infoBlock compact">
+<div class="infoTitle">Experience</div>
+<div class="infoValue">${experienceText}</div>
+</div>
+` : ""}
+${qualificationText ? `
+<div class="infoBlock compact">
+<div class="infoTitle">Qualification</div>
+<div class="infoValue">${qualificationText}</div>
+</div>
+` : ""}
+${ownerText ? `
+<div class="infoBlock compact">
+<div class="infoTitle">Owner / Director</div>
+<div class="infoValue">${ownerText}</div>
+</div>
+` : ""}
+${establishedText ? `
+<div class="infoBlock compact">
+<div class="infoTitle">Established Date</div>
+<div class="infoValue">${establishedText}</div>
+</div>
+` : ""}
+</div>
+${addressLines.length ? `
+<div class="infoBlock">
+<div class="infoTitle">Address</div>
+<div class="infoLines">${addressLines.join("")}</div>
+</div>
+` : ""}
+</div>
+</div>
+
+<div class="actions">
+${showValue("phone") ? `<a class="call" href="tel:${esc(data.phone)}">Call</a>` : ""}
+${showValue("phone") ? `<a class="whatsapp" target="_blank" href="https://wa.me/${esc(data.phone)}">WhatsApp</a>` : ""}
+${showValue("email") ? `<a class="emailBtn" href="mailto:${esc(data.email)}">Email</a>` : ""}
+${showValue("phone") || showValue("email") ? `<button class="saveContact" onclick="saveContact()">Save Contact</button>` : ""}
+${websiteLink ? `<a class="website" target="_blank" href="${esc(websiteLink)}">Website</a>` : ""}
+${youtubeLink ? `<a class="youtubeBtn" target="_blank" href="${esc(youtubeLink)}">YouTube</a>` : ""}
+${hasPublicFeeStructure ? `<button class="feeToggleBtn" type="button" onclick="toggleFeeStructure()">Fee Structure</button>` : ""}
+${(
+data.showBankDetails !== false &&
+(data.qrImage || (data.accountHolderName && data.bankName && data.accountNumber))
+) ? `<button class="payFee" onclick="showPaymentNotice()">Pay Fee</button>` : ""}
+</div>
+
+${feeStructureHTML}
+
+<div class="demoBox">
+<h3>Request Demo Class / Practice</h3>
+<p>Send one short demo class or practice request to this ${esc(type.toLowerCase())}. Your message will be visible to them for 15 days.</p>
+<div class="demoChat" id="demoChatBox">
+<input id="demoName" placeholder="Your Name">
+<input id="demoPhone" placeholder="Phone Number">
+<textarea id="demoMessage" placeholder="Write your demo class request"></textarea>
+<button class="demoSubmit" onclick="submitDemoRequest()">Send Demo Request</button>
+</div>
+<div class="demoSuccess" id="demoSuccessBox">
+Your request has been sent. Soon the teacher/institute will contact you.
+</div>
+</div>
+
+${data.showBankDetails !== false ? `
+<div id="bankBox" class="bankBox">
+<h3>Payment Details</h3>
+${data.accountHolderName ? `<p><b>Account Holder:</b> ${esc(data.accountHolderName)}</p>` : ""}
+${data.bankName ? `<p><b>Bank Name:</b> ${esc(data.bankName)}</p>` : ""}
+${data.accountNumber ? `<p><b>Account Number:</b> ${esc(data.accountNumber)}</p>` : ""}
+${data.ifsc ? `<p><b>IFSC Code:</b> ${esc(data.ifsc)}</p>` : ""}
+${data.upiId ? `<p><b>UPI ID:</b> ${esc(data.upiId)}</p>` : ""}
+${data.qrImage ? `<img src="${esc(data.qrImage)}" class="bankQr" alt="QR Code">` : ""}
+</div>
+` : ""}
+
+${mapHTML}
+${galleryHTML}
+${descriptionHTML}
+
+<div class="section">
+<div class="reviewForm">
+<h3>Write Review</h3>
+<div id="reviewNotice" class="reviewNotice"></div>
+<input id="rname" placeholder="Your Name">
+<select id="rrating">
+<option value="5">5 Stars</option>
+<option value="4">4 Stars</option>
+<option value="3">3 Stars</option>
+<option value="2">2 Stars</option>
+<option value="1">1 Star</option>
+</select>
+<textarea id="rtext" placeholder="Write review"></textarea>
+<button onclick="submitReview()">Submit Review</button>
+</div>
+
+<div id="reviews">No Reviews Yet</div>
+</div>
+`;
+}
+/* REVIEWS */
+function loadReviews(){
+
+onValue(ref(db,`reviews/${type.toLowerCase()}s/${currentProfileId}`),(snap)=>{
+
+let total=0,count=0,html="";
+
+snap.forEach(item=>{
+const d=item.val();
+total+=d.rating;
+count++;
+
+html+=`
+<div class="reviewItem">
+<b>${d.name}</b>
+<div>${"&#9733;".repeat(d.rating)}</div>
+<p>${d.text}</p>
+</div>`;
+});
+
+const avgValue =
+count ? (total/count).toFixed(1) : "0.0";
+
+const roundedStars =
+Math.round(Number(avgValue));
+
+const starLine =
+"&#9733;".repeat(roundedStars) +
+"&#9734;".repeat(5-roundedStars);
+
+const topRatingText =
+document.getElementById("topRatingText");
+
+const topStars =
+document.getElementById("topStars");
+
+if(topRatingText){
+topRatingText.innerText = `Rating: ${avgValue} stars`;
+}
+
+if(topStars){
+topStars.innerHTML = starLine;
+}
+
+document.getElementById("reviews").innerHTML =
+html || "No Reviews Yet";
+
+});
+}
+
+/* SUBMIT REVIEW */
+window.submitReview = async function(){
+
+const access = await resolveReviewAccess(true);
+setReviewFormState(access);
+
+if(!access.allowed){
+alert(access.message || "Please log in through GURULINK to submit a review.");
+return;
+}
+
+const name=document.getElementById("rname").value.trim();
+const rating=Number(document.getElementById("rrating").value);
+const text=document.getElementById("rtext").value.trim();
+const submitBtn =
+document.querySelector(".reviewForm button");
+
+if(!name||!text){
+alert("Fill all fields");
+return;
+}
+
+if(name.length > 80){
+alert("Name is too long. Please keep it within 80 characters.");
+return;
+}
+
+if(text.length > 500){
+alert("Review is too long. Please keep it within 500 characters.");
+return;
+}
+
+if(!rating || rating < 1 || rating > 5){
+alert("Please select a valid star rating.");
+return;
+}
+
+if(submitBtn){
+submitBtn.disabled = true;
+submitBtn.textContent = "Submitting...";
+}
+
+try{
+
+await push(ref(db,`reviews/${type.toLowerCase()}s/${currentProfileId}`),{
+name,
+rating,
+text,
+time:Date.now(),
+reviewerUid:access.uid,
+reviewerPhone:access.phone,
+reviewerEmail:access.email || "",
+reviewerRole:access.viewerRole,
+authVerified:true
+});
+
+alert("Review submitted");
+document.getElementById("rname").value="";
+document.getElementById("rtext").value="";
+document.getElementById("rrating").value="5";
+
+}
+catch(err){
+console.log(err);
+
+const rawMessage =
+String(err && (err.message || err.code) || "").toLowerCase();
+
+if(
+rawMessage.includes("permission_denied") ||
+rawMessage.includes("permission denied")
+){
+alert(
+"Review submission is currently blocked by your Firebase rules.\n\n" +
+"Please update the reviews rule in Firebase Console so authenticated GURULINK OTP users can submit reviews."
+);
+}else{
+alert(err.message || "Unable to submit review. Please try again.");
+}
+}
+finally{
+if(submitBtn){
+submitBtn.disabled = false;
+submitBtn.textContent = "Submit Review";
+}
+}
+};
+window.submitDemoRequest = async function(){
+
+const name =
+document.getElementById("demoName").value.trim();
+
+const phone =
+document.getElementById("demoPhone").value.trim();
+
+const message =
+document.getElementById("demoMessage").value.trim();
+
+if(!name || !phone || !message){
+alert("Please enter name, phone number, and demo request message.");
+return;
+}
+
+const requestKey =
+phone.replace(/\D/g,"");
+
+if(requestKey.length < 6){
+alert("Please enter a valid phone number.");
+return;
+}
+
+try{
+
+await set(ref(db,`demoRequests/${currentProfileId}/${requestKey}`),{
+profileId:currentProfileId,
+profileType:type,
+name:name,
+phone:phone,
+message:message,
+status:"new",
+createdAt:Date.now(),
+expiresAt:Date.now() + (15 * 24 * 60 * 60 * 1000)
+});
+
+document.getElementById("demoChatBox").style.display = "none";
+document.getElementById("demoSuccessBox").style.display = "block";
+
+document.getElementById("demoName").value = "";
+document.getElementById("demoPhone").value = "";
+document.getElementById("demoMessage").value = "";
+
+}
+catch(err){
+console.error(err);
+alert("You have already sent a demo request. Soon the teacher/institute will contact you.");
+document.getElementById("demoChatBox").style.display = "none";
+document.getElementById("demoSuccessBox").style.display = "block";
+}
+
+};
+
+/* START */
+window.showPaymentNotice = function(){
+
+const ok = confirm(
+"IMPORTANT NOTICE\n\n" +
+"Payments are made directly between the sender and receiver.\n\n" +
+"GURULINK does not process or verify payments and is not responsible for failed transactions, wrong transfers, refunds, disputes, or banking/UPI issues.\n\n" +
+"Please verify all payment details before proceeding.\n\n" +
+"Press OK to view payment details."
+);
+
+if(ok){
+toggleBankDetails();
+}
+
+};
+
+window.toggleBankDetails = function(){
+
+const box =
+document.getElementById("bankBox");
+
+if(!box) return;
+
+box.style.display =
+box.style.display === "block"
+? "none"
+: "block";
+
+};
+
+window.toggleFeeStructure = function(){
+
+const box =
+document.getElementById("feeStructureBox");
+
+if(!box) return;
+
+const willOpen =
+!box.classList.contains("open");
+
+box.classList.toggle("open", willOpen);
+
+if(willOpen){
+box.scrollIntoView({
+behavior:"smooth",
+block:"start"
+});
+}
+
+};
+
+
+
+
+
+
+window.saveContact = function(){
+
+const name =
+(data.name || "GURULINK Contact");
+
+const phone =
+(data.phone || "");
+
+const email =
+(data.email || "");
+
+const vcf = `
+BEGIN:VCARD
+VERSION:3.0
+FN:${name}
+TEL:${phone}
+EMAIL:${email}
+END:VCARD
+`;
+
+const blob = new Blob(
+[vcf],
+{type:"text/vcard"}
+);
+
+const url =
+URL.createObjectURL(blob);
+
+const a =
+document.createElement("a");
+
+a.href = url;
+a.download =
+name.replace(/\s+/g,"_") + ".vcf";
+
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+
+URL.revokeObjectURL(url);
+
+};
+
+function getDashboardPath(){
+const viewerRole = String(
+localStorage.getItem("role") ||
+sessionStorage.getItem("role") ||
+""
+).toLowerCase();
+
+if(
+viewerRole === "student" ||
+viewerRole === "parent"
+){
+return "student-dashboard.html";
+}
+
+if(
+viewerRole === "teacher" ||
+viewerRole === "institution" ||
+viewerRole === "teacher_institute"
+){
+return "teacher-dashboard.html";
+}
+
+if(viewerRole === "admin"){
+return "admin.html";
+}
+
+return "otp-login.html";
+}
+
+function getPrimaryProfileImage(data){
+const images =
+Array.isArray(data?.profileImages)
+?
+data.profileImages
+:
+[];
+
+const normalized =
+images
+.map(item=>typeof item === "string" ? {url:item} : item)
+.filter(item=>item && item.url);
+
+const selected =
+normalized[Number(data?.primaryProfileImage || 0)] ||
+normalized[0];
+
+return selected?.url || data?.photo || data?.profilePic || data?.logo || "https://via.placeholder.com/120";
+}
+
+window.goBackSmart = function(){
+if(window.history.length > 1){
+window.history.back();
+return;
+}
+
+const fallback =
+getDashboardPath() === "otp-login.html"
+? "index.html"
+: getDashboardPath();
+
+window.location.href = fallback;
+};
+
+function getShareProfileUrl(){
+if(!currentProfileId){
+return "";
+}
+
+return WEBSITE_BASE + "profile-view.html?id=" + encodeURIComponent(currentProfileId);
+}
+
+window.shareProfile = async function(){
+const shareUrl = getShareProfileUrl();
+
+if(!shareUrl){
+alert("Profile link is not ready yet. Please try again.");
+return;
+}
+
+const profileName =
+data && data.name
+? data.name
+: data && data.ownerName
+  ? data.ownerName
+  : "this profile";
+
+const shareText =
+"Check out " + profileName + " on GURULINK.";
+
+try{
+if(navigator.share){
+await navigator.share({
+title:"GURULINK Profile",
+text:shareText,
+url:shareUrl
+});
+return;
+}
+
+if(navigator.clipboard && navigator.clipboard.writeText){
+await navigator.clipboard.writeText(shareUrl);
+alert("Profile link copied. You can now share it on social media.");
+return;
+}
+
+const tempInput =
+document.createElement("input");
+
+tempInput.value = shareUrl;
+document.body.appendChild(tempInput);
+tempInput.select();
+document.execCommand("copy");
+document.body.removeChild(tempInput);
+
+alert("Profile link copied. You can now share it on social media.");
+}
+catch(err){
+console.log(err);
+
+if(err && err.name === "AbortError"){
+return;
+}
+
+alert("Unable to share right now. Please try again.");
+}
+};
+
+
+
+
+
+
+
+window.addEventListener("load",()=>{
+const dashboardBtn =
+document.getElementById("dashboardBtn");
+
+if(dashboardBtn){
+dashboardBtn.href = getDashboardPath();
+}
+});
+
+load();
+
+</script>
+
+<button
+type="button"
+class="shareFab"
+onclick="shareProfile()"
+aria-label="Share profile"
+title="Share profile">
+<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 8L9 12L15 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="18" cy="6" r="3" fill="currentColor"/>
+<circle cx="6" cy="12" r="3" fill="currentColor"/>
+<circle cx="18" cy="18" r="3" fill="currentColor"/>
+</svg>
+</button>
+
+<div class="floatingNav">
+<a href="index.html" class="floatingBtn homeBtn">Home</a>
+<button type="button" class="floatingBtn backBtn" onclick="goBackSmart()">Back</button>
+<a href="otp-login.html" id="dashboardBtn" class="floatingBtn dashboardBtn">Dashboard</a>
+</div>
+
 </body>
 </html>
