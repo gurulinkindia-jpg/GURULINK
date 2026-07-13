@@ -581,18 +581,61 @@
             </div>
             <div class="canvasHint">Tip: click a text block or image, drag it to a better place, then save once when you are happy.</div>
 
-            <div class="metaStrip">
-              <div class="metaChip">
-                <strong id="metaTemplate">Blue Spotlight</strong>
-                <span>Selected advertisement template</span>
+            <div class="panel inlineControlPanel">
+              <div class="sectionLabel">Text Size & Color</div>
+
+              <div class="tripleRow">
+                <div class="field">
+                  <label for="headlineSizeInput">Headline Size</label>
+                  <input id="headlineSizeInput" type="range" min="40" max="88" step="1" value="62">
+                  <div id="headlineSizeValue" class="rangeValue">62 px</div>
+                </div>
+
+                <div class="field">
+                  <label for="bodySizeInput">Body Size</label>
+                  <input id="bodySizeInput" type="range" min="18" max="40" step="1" value="26">
+                  <div id="bodySizeValue" class="rangeValue">26 px</div>
+                </div>
+
+                <div class="field">
+                  <label for="ctaSizeInput">CTA Size</label>
+                  <input id="ctaSizeInput" type="range" min="18" max="34" step="1" value="23">
+                  <div id="ctaSizeValue" class="rangeValue">23 px</div>
+                </div>
               </div>
-              <div class="metaChip">
-                <strong id="metaUpdated">Not saved</strong>
-                <span>Latest advertisement status</span>
+
+              <div class="tripleRow">
+                <div class="field">
+                  <label for="headingColorInput">Headline Color</label>
+                  <input id="headingColorInput" type="color" value="#ffffff">
+                </div>
+
+                <div class="field">
+                  <label for="accentColorInput">Accent Color</label>
+                  <input id="accentColorInput" type="color" value="#b3e5fc">
+                </div>
+
+                <div class="field">
+                  <label for="bodyColorInput">Body Color</label>
+                  <input id="bodyColorInput" type="color" value="#ffffff">
+                </div>
               </div>
-              <div class="metaChip">
-                <strong id="metaPublic">Advertisement PNG</strong>
-                <span>Saved advertisement image status</span>
+
+              <div class="toggleRow">
+                <label class="toggleCard">
+                  <input id="showPhoneToggle" type="checkbox">
+                  <span>Show phone</span>
+                </label>
+
+                <label class="toggleCard">
+                  <input id="showWebsiteToggle" type="checkbox">
+                  <span>Show website</span>
+                </label>
+
+                <label class="toggleCard">
+                  <input id="showLocationToggle" type="checkbox">
+                  <span>Show location</span>
+                </label>
               </div>
             </div>
           </div>
@@ -644,62 +687,6 @@
             <div class="field">
               <label for="footerInput">Footer Line</label>
               <textarea id="footerInput" placeholder="Area, website, focus subjects, or another short supporting line"></textarea>
-            </div>
-
-            <div class="sectionLabel">Text Size & Color</div>
-
-            <div class="tripleRow">
-              <div class="field">
-                <label for="headlineSizeInput">Headline Size</label>
-                <input id="headlineSizeInput" type="range" min="40" max="88" step="1" value="62">
-                <div id="headlineSizeValue" class="rangeValue">62 px</div>
-              </div>
-
-              <div class="field">
-                <label for="bodySizeInput">Body Size</label>
-                <input id="bodySizeInput" type="range" min="18" max="40" step="1" value="26">
-                <div id="bodySizeValue" class="rangeValue">26 px</div>
-              </div>
-
-              <div class="field">
-                <label for="ctaSizeInput">CTA Size</label>
-                <input id="ctaSizeInput" type="range" min="18" max="34" step="1" value="23">
-                <div id="ctaSizeValue" class="rangeValue">23 px</div>
-              </div>
-            </div>
-
-            <div class="tripleRow">
-              <div class="field">
-                <label for="headingColorInput">Headline Color</label>
-                <input id="headingColorInput" type="color" value="#ffffff">
-              </div>
-
-              <div class="field">
-                <label for="accentColorInput">Accent Color</label>
-                <input id="accentColorInput" type="color" value="#b3e5fc">
-              </div>
-
-              <div class="field">
-                <label for="bodyColorInput">Body Color</label>
-                <input id="bodyColorInput" type="color" value="#ffffff">
-              </div>
-            </div>
-
-            <div class="toggleRow">
-              <label class="toggleCard">
-                <input id="showPhoneToggle" type="checkbox">
-                <span>Show phone</span>
-              </label>
-
-              <label class="toggleCard">
-                <input id="showWebsiteToggle" type="checkbox">
-                <span>Show website</span>
-              </label>
-
-              <label class="toggleCard">
-                <input id="showLocationToggle" type="checkbox">
-                <span>Show location</span>
-              </label>
             </div>
 
             <div class="warningBox">
@@ -779,9 +766,6 @@
       showPhoneToggle:document.getElementById("showPhoneToggle"),
       showWebsiteToggle:document.getElementById("showWebsiteToggle"),
       showLocationToggle:document.getElementById("showLocationToggle"),
-      metaTemplate:document.getElementById("metaTemplate"),
-      metaUpdated:document.getElementById("metaUpdated"),
-      metaPublic:document.getElementById("metaPublic"),
       statusBar:document.getElementById("statusBar"),
       saveBtn:document.getElementById("saveBtn"),
       openPublicBtn:document.getElementById("openPublicBtn"),
@@ -2191,7 +2175,6 @@
       );
 
       drawSelectionOutline(ctx);
-      elements.metaTemplate.textContent = template.label;
     }
 
     function bindPreviewInputs(){
@@ -2423,7 +2406,6 @@
         updateImageSelectors(updateData.advertisementCardData);
 
         savedAdvertisementUrl = url;
-        elements.metaUpdated.textContent = formatSavedAt(profileData.advertisementCardUpdatedAt);
         setStatus("Advertisement saved successfully.", "success");
       }
       catch(err){
@@ -2487,10 +2469,6 @@
       savedAdvertisementUrl = profileData.advertisementCardImage || "";
       elements.heroRoleLabel.textContent = "Advertisement Designer";
       elements.heroProfileName.textContent = profileData.name || "Profile";
-      elements.metaUpdated.textContent = formatSavedAt(profileData.advertisementCardUpdatedAt);
-      elements.metaPublic.textContent =
-        profileData.advertisementCardImage ? "Saved advertisement available" : "Save to create PNG";
-
       const savedData = profileData.advertisementCardData || {};
       applyEditorData(savedData);
       bindPreviewInputs();
