@@ -1221,6 +1221,20 @@ function normalizeWebsiteUrl(url){
   return "https://" + clean;
 }
 
+function promptEmailLoginForEnrollment(errorMessage){
+  const message =
+    "To use Mark Enrolled, please log in once with your registered email and password.\n\n" +
+    "Your OTP login opened the dashboard, but enrollment permission is still blocked for this session.\n\n" +
+    (errorMessage ? errorMessage + "\n\n" : "") +
+    "Press OK to open email login now.";
+
+  if(confirm(message)){
+    location.href =
+      "login.html?return=" +
+      encodeURIComponent("teacher-dashboard.html");
+  }
+}
+
 async function syncCurrentAuthProfileLink(profileData){
   try{
     const authUser =
@@ -2511,11 +2525,20 @@ window.toggleStatus = async function (leadId, currentStatus, studentPhone = "", 
       }
       catch(err){
         console.error("studentEnrollments write failed", err);
-        alert(
-          "Student enrollment record could not be updated.\n\n" +
-          "Path: studentEnrollments/" + studentId + "/" + activeProfileId + "\n\n" +
-          (err && err.message ? err.message : "Permission denied")
-        );
+        const rawMessage =
+          String(err && (err.message || err.code) || "");
+
+        if(/permission[_\s-]*denied/i.test(rawMessage)){
+          promptEmailLoginForEnrollment(
+            "Student enrollment record could not be updated.\nPath: studentEnrollments/" + studentId + "/" + activeProfileId
+          );
+        }else{
+          alert(
+            "Student enrollment record could not be updated.\n\n" +
+            "Path: studentEnrollments/" + studentId + "/" + activeProfileId + "\n\n" +
+            rawMessage
+          );
+        }
         return;
       }
     }
@@ -2531,11 +2554,20 @@ window.toggleStatus = async function (leadId, currentStatus, studentPhone = "", 
       }
       catch(err){
         console.error("studentEnrollments status update failed", err);
-        alert(
-          "Student enrollment status could not be updated.\n\n" +
-          "Path: studentEnrollments/" + studentId + "/" + activeProfileId + "\n\n" +
-          (err && err.message ? err.message : "Permission denied")
-        );
+        const rawMessage =
+          String(err && (err.message || err.code) || "");
+
+        if(/permission[_\s-]*denied/i.test(rawMessage)){
+          promptEmailLoginForEnrollment(
+            "Student enrollment status could not be updated.\nPath: studentEnrollments/" + studentId + "/" + activeProfileId
+          );
+        }else{
+          alert(
+            "Student enrollment status could not be updated.\n\n" +
+            "Path: studentEnrollments/" + studentId + "/" + activeProfileId + "\n\n" +
+            rawMessage
+          );
+        }
         return;
       }
     }
