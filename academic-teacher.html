@@ -1002,21 +1002,83 @@ const originalName = (file && file.name ? file.name : "image").replace(/[^a-zA-Z
 return Date.now() + "-" + Math.random().toString(36).slice(2,8) + "-" + originalName;
 }
 
+async function optimiseImageForUpload(file){
+if(!file || !(file.type || "").startsWith("image/")){
+return file;
+}
+
+const maxBytes = 900 * 1024;
+const maxDimension = 1600;
+
+if(file.size <= maxBytes){
+return file;
+}
+
+return await new Promise((resolve)=>{
+const reader = new FileReader();
+reader.onload = ()=>{
+const img = new Image();
+img.onload = ()=>{
+let width = img.width || maxDimension;
+let height = img.height || maxDimension;
+const scale = Math.min(1, maxDimension / Math.max(width, height));
+width = Math.max(1, Math.round(width * scale));
+height = Math.max(1, Math.round(height * scale));
+
+const canvas = document.createElement("canvas");
+canvas.width = width;
+canvas.height = height;
+const ctx = canvas.getContext("2d");
+if(!ctx){
+resolve(file);
+return;
+}
+
+ctx.drawImage(img, 0, 0, width, height);
+
+const mimeType = file.type === "image/png" ? "image/png" : "image/jpeg";
+const quality = mimeType === "image/png" ? null : 0.82;
+
+canvas.toBlob((blob)=>{
+if(!blob){
+resolve(file);
+return;
+}
+
+const finalType = blob.type || mimeType;
+const extension = finalType === "image/png" ? ".png" : ".jpg";
+const originalBase = (file.name || "image").replace(/\.[^.]+$/,"");
+const rebuilt = new File([blob], originalBase + extension, {
+  type: finalType,
+  lastModified: Date.now()
+});
+resolve(rebuilt.size < file.size ? rebuilt : file);
+}, mimeType, quality);
+};
+img.onerror = ()=>resolve(file);
+img.src = reader.result;
+};
+reader.onerror = ()=>resolve(file);
+reader.readAsDataURL(file);
+});
+}
+
 async function upload(file, folder){
 if(!file){
 return "";
 }
 
-const fileRef = storageRef(storage, folder + "/" + makeStorageFileName(file));
+const preparedFile = await optimiseImageForUpload(file);
+const fileRef = storageRef(storage, folder + "/" + makeStorageFileName(preparedFile));
 
-const uploadTask = uploadBytes(fileRef, file, {
-contentType:file.type || "application/octet-stream"
+const uploadTask = uploadBytes(fileRef, preparedFile, {
+contentType:preparedFile.type || file.type || "application/octet-stream"
 });
 
 const timeoutTask = new Promise((_, reject)=>{
 setTimeout(()=>{
-reject(new Error("Upload timed out. Please try again with smaller images or a stronger internet connection."));
-}, 45000);
+reject(new Error("Upload is taking too long. Please wait a moment and try again."));
+}, 180000);
 });
 
 await Promise.race([uploadTask, timeoutTask]);
