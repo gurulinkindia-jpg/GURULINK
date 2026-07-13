@@ -158,6 +158,8 @@ appId:"1:112148672399:web:f5fe5cd6e5c5ef4382e5fa"
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
+const returnUrl =
+new URLSearchParams(location.search).get("return");
 
 window.loginUser = async function(){
 
@@ -247,6 +249,11 @@ studentData.logo ||
 localStorage.setItem("profilePhoto", profilePhoto);
 
 // 5. REDIRECT (FIXED SEPARATION)
+if(returnUrl){
+window.location.href = returnUrl;
+return;
+}
+
 if(role === "teacher"){
 window.location.href = "teacher-dashboard.html";
 }
