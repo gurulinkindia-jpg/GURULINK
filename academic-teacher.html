@@ -889,7 +889,7 @@ selected.length ? "Selected: " + selected.join(", ") : "No training mode selecte
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -1007,8 +1007,8 @@ if(!file || !(file.type || "").startsWith("image/")){
 return file;
 }
 
-const maxBytes = 900 * 1024;
-const maxDimension = 1600;
+const maxBytes = 450 * 1024;
+const maxDimension = 1280;
 
 if(file.size <= maxBytes){
 return file;
@@ -1037,7 +1037,7 @@ return;
 ctx.drawImage(img, 0, 0, width, height);
 
 const mimeType = file.type === "image/png" ? "image/png" : "image/jpeg";
-const quality = mimeType === "image/png" ? null : 0.82;
+const quality = mimeType === "image/png" ? null : 0.72;
 
 canvas.toBlob((blob)=>{
 if(!blob){
@@ -1071,18 +1071,50 @@ return "";
 const preparedFile = await optimiseImageForUpload(file);
 const fileRef = storageRef(storage, folder + "/" + makeStorageFileName(preparedFile));
 
-const uploadTask = uploadBytes(fileRef, preparedFile, {
+return await new Promise((resolve, reject)=>{
+const task = uploadBytesResumable(fileRef, preparedFile, {
 contentType:preparedFile.type || file.type || "application/octet-stream"
 });
 
-const timeoutTask = new Promise((_, reject)=>{
-setTimeout(()=>{
-reject(new Error("Upload is taking too long. Please wait a moment and try again."));
-}, 180000);
-});
+let stalledTimer = null;
 
-await Promise.race([uploadTask, timeoutTask]);
-return await getDownloadURL(fileRef);
+function resetStalledTimer(){
+if(stalledTimer){
+clearTimeout(stalledTimer);
+}
+stalledTimer = setTimeout(()=>{
+try{
+task.cancel();
+}catch(cancelErr){}
+reject(new Error("Upload is still taking too long. Please try once on a stable network or with a clearer smaller image."));
+}, 480000);
+}
+
+resetStalledTimer();
+
+task.on("state_changed",
+()=>{
+resetStalledTimer();
+},
+(error)=>{
+if(stalledTimer){
+clearTimeout(stalledTimer);
+}
+reject(error);
+},
+async ()=>{
+if(stalledTimer){
+clearTimeout(stalledTimer);
+}
+try{
+const url = await getDownloadURL(task.snapshot.ref);
+resolve(url);
+}catch(err){
+reject(err);
+}
+}
+);
+});
 }
 
 document.getElementById("idType").addEventListener("change",(e)=>{
