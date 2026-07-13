@@ -261,6 +261,10 @@ background:#00897b;
 background:#1565c0;
 }
 
+.adBtn{
+background:#ff7043;
+}
+
 .websiteBtn{
 background:#2e7d32;
 }
@@ -909,6 +913,10 @@ Quick Actions
 
   <button class="businessCardBtn" onclick="openBusinessCardDesigner()">
     Create Business / I Card
+  </button>
+
+  <button class="adBtn" onclick="openAdvertisementDesigner()">
+    Create Advertisement
   </button>
 
   <button class="invoiceBtn" onclick="createInvoice()">
@@ -2641,6 +2649,36 @@ window.openBusinessCardDesigner = function() {
   location.href = designerUrl;
 };
 
+window.openAdvertisementDesigner = function() {
+  const profileId =
+    currentProfileData.uid ||
+    localStorage.getItem("profileId") ||
+    "";
+
+  const activeRole =
+    currentProfileData.role ||
+    localStorage.getItem("role") ||
+    "teacher";
+
+  if(!profileId){
+    alert("Profile not found");
+    return;
+  }
+
+  const adUrl =
+    window.location.protocol === "file:"
+      ? "advertisement-designer.html?id=" + encodeURIComponent(profileId) + "&role=" + encodeURIComponent(activeRole)
+      : new URL(
+          "advertisement-designer.html?id=" +
+          encodeURIComponent(profileId) +
+          "&role=" +
+          encodeURIComponent(activeRole),
+          window.location.href
+        ).toString();
+
+  location.href = adUrl;
+};
+
 
 window.shareProfile = function () {
 
@@ -2689,4 +2727,3 @@ profileId;
 
 </body>
 </html>
-
