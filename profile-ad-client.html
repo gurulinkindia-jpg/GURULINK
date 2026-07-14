@@ -78,6 +78,7 @@
     }
 
     .heroImageWrap{
+      position:relative;
       width:100%;
       max-width:100%;
       margin:0 auto;
@@ -110,6 +111,29 @@
 
     .heroVideo{
       background:#000;
+    }
+
+    .videoContactButton{
+      position:absolute;
+      left:50%;
+      bottom:58px;
+      z-index:3;
+      transform:translateX(-50%);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:150px;
+      padding:12px 24px;
+      border-radius:999px;
+      background:linear-gradient(135deg,#ff7043,#f4511e);
+      color:#fff;
+      text-decoration:none;
+      font-weight:800;
+      box-shadow:0 10px 24px rgba(0,0,0,.3);
+    }
+
+    .videoContactButton:hover{
+      filter:brightness(1.06);
     }
 
     .heroBody{
@@ -342,7 +366,7 @@
         <button class="shareCloseBtn" type="button" onclick="closeShareChooser()">Close</button>
       </div>
       <p>
-        Share the public advertisement link so Facebook or WhatsApp can load the saved ad image and keep the post clickable.
+        On supported phones, System Share sends the saved video with the contact link. Facebook, WhatsApp, and Copy Link share the clickable public ad page.
       </p>
       <div class="shareChoiceGrid">
         <button class="shareChoiceBtn facebookBtn" type="button" onclick="shareViaFacebook()">Facebook</button>
@@ -474,7 +498,10 @@
 
     function getAdSharePayload(){
       const shareUrl = getAdPageUrl();
-      const shareText = "Check out this profile advertisement on GURULINK.";
+      const hasVideo = Boolean(String(data?.advertisementVideoUrl || "").trim());
+      const shareText = hasVideo
+        ? "Watch this GURULINK video advertisement. Contact us using the link below."
+        : "Check out this profile advertisement on GURULINK.";
       const shareMessage = shareText + "\n\n" + shareUrl;
       return { shareUrl, shareText, shareMessage };
     }
@@ -537,6 +564,20 @@
       }
 
       try{
+        const promoVideo = String(data?.advertisementVideoUrl || "").trim();
+        const videoFile = promoVideo
+          ? await fetchShareVideoFileFromUrl(promoVideo)
+          : null;
+
+        if(videoFile){
+          await navigator.share({
+            title:"GURULINK Advertisement",
+            text:payload.shareMessage,
+            files:[videoFile]
+          });
+          return;
+        }
+
         await navigator.share({
           title:"GURULINK Advertisement",
           text:payload.shareText,
@@ -548,7 +589,7 @@
       }
     };
 
-    async function fetchShareFileFromUrl(url){
+    async function fetchShareVideoFileFromUrl(url){
       if(!url || !navigator.canShare){
         return null;
       }
@@ -559,8 +600,9 @@
           return null;
         }
         const blob = await response.blob();
-        const file = new File([blob], "gurulink-advertisement.png", {
-          type: blob.type || "image/png"
+        const isWebm = String(blob.type || "").includes("webm");
+        const file = new File([blob], "gurulink-advertisement." + (isWebm ? "webm" : "mp4"), {
+          type: blob.type || "video/mp4"
         });
 
         if(navigator.canShare({ files:[file] })){
@@ -568,7 +610,7 @@
         }
       }
       catch(err){
-        console.log("Ad image share file skipped:", err);
+        console.log("Ad video share file skipped:", err);
       }
 
       return null;
@@ -595,13 +637,15 @@
       const whatsapp = phone ? "https://wa.me/91" + phone.replace(/\D/g,"") : "";
       const fullProfileUrl = "profile-view.html?id=" + encodeURIComponent(currentProfileId);
       const promoVideo = String(data.advertisementVideoUrl || "").trim();
+      const contactUrl = whatsapp || fullProfileUrl;
 
       content.className = "";
       content.innerHTML = `
         <section class="heroCard">
           <div class="heroImageWrap ${canvasPreset}" style="--ad-ratio:${canvasRatio};">
             ${promoVideo
-              ? `<video class="heroMedia heroVideo" src="${promoVideo}" controls playsinline preload="metadata" aria-label="Advertisement video"></video>`
+              ? `<video class="heroMedia heroVideo" src="${promoVideo}" controls autoplay muted loop playsinline preload="metadata" aria-label="Advertisement video"></video>
+                 <a class="videoContactButton" href="${contactUrl}" ${whatsapp ? `target="_blank" rel="noopener"` : ""}>Contact Us</a>`
               : `<img class="heroMedia heroImage" src="${heroImage}" alt="Advertisement image">`
             }
           </div>
