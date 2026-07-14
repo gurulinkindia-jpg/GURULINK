@@ -2460,6 +2460,163 @@
       };
     }
 
+    function getAdvertisementVideoProxyUrl(){
+      const adts = Math.max(
+        Number(profileData?.advertisementCardUpdatedAt) || 0,
+        Number(profileData?.advertisementVideoUpdatedAt) || 0,
+        Number(profileData?.updatedAt) || 0
+      ) || Date.now();
+
+      return "https://guru-link.onrender.com/advertisement-video?id=" +
+        encodeURIComponent(profileId) +
+        "&adts=" +
+        encodeURIComponent(adts);
+    }
+
+    async function createVideoPosterBlob(sourceUrl){
+      if(!sourceUrl){
+        return null;
+      }
+
+      return await new Promise((resolve, reject) => {
+        const video = document.createElement("video");
+        let settled = false;
+        let capturing = false;
+        const timeoutId = setTimeout(() => finishWithError(new Error("Video poster timed out.")), 25000);
+
+        function cleanup(){
+          clearTimeout(timeoutId);
+          video.pause();
+          video.removeAttribute("src");
+          video.load();
+        }
+
+        function finishWithError(error){
+          if(settled){
+            return;
+          }
+          settled = true;
+          cleanup();
+          reject(error);
+        }
+
+        function captureFrame(){
+          if(settled || capturing || video.readyState < 2){
+            return;
+          }
+          capturing = true;
+
+          try{
+            const canvas = document.createElement("canvas");
+            canvas.width = 1200;
+            canvas.height = 630;
+            const context = canvas.getContext("2d");
+            const videoWidth = Number(video.videoWidth) || 1;
+            const videoHeight = Number(video.videoHeight) || 1;
+            const scale = Math.min(canvas.width / videoWidth, canvas.height / videoHeight);
+            const drawWidth = videoWidth * scale;
+            const drawHeight = videoHeight * scale;
+            const drawX = (canvas.width - drawWidth) / 2;
+            const drawY = (canvas.height - drawHeight) / 2;
+
+            context.fillStyle = "#05070d";
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(video, drawX, drawY, drawWidth, drawHeight);
+
+            const shade = context.createLinearGradient(0, canvas.height * .55, 0, canvas.height);
+            shade.addColorStop(0, "rgba(0,0,0,0)");
+            shade.addColorStop(1, "rgba(0,0,0,.82)");
+            context.fillStyle = shade;
+            context.fillRect(0, 0, canvas.width, canvas.height);
+
+            context.beginPath();
+            context.arc(canvas.width / 2, canvas.height / 2 - 24, 68, 0, Math.PI * 2);
+            context.fillStyle = "rgba(255,255,255,.94)";
+            context.fill();
+            context.beginPath();
+            context.moveTo(canvas.width / 2 - 17, canvas.height / 2 - 61);
+            context.lineTo(canvas.width / 2 - 17, canvas.height / 2 + 13);
+            context.lineTo(canvas.width / 2 + 43, canvas.height / 2 - 24);
+            context.closePath();
+            context.fillStyle = "#ff5a36";
+            context.fill();
+
+            context.textAlign = "center";
+            context.fillStyle = "#ffffff";
+            context.font = "700 42px Arial, sans-serif";
+            context.fillText("Click to watch the video", canvas.width / 2, canvas.height - 72);
+            context.font = "500 24px Arial, sans-serif";
+            context.fillText("Open the GURULINK advertisement and contact this profile", canvas.width / 2, canvas.height - 34);
+
+            canvas.toBlob((blob) => {
+              if(settled){
+                return;
+              }
+              if(!blob){
+                finishWithError(new Error("Could not create video poster."));
+                return;
+              }
+              settled = true;
+              cleanup();
+              resolve(blob);
+            }, "image/png");
+          }
+          catch(error){
+            finishWithError(error);
+          }
+        }
+
+        function prepareFrame(){
+          if(settled || video.readyState < 2){
+            return;
+          }
+          const duration = Number(video.duration) || 0;
+          const targetTime = duration > .2
+            ? Math.min(Math.max(duration * .2, .1), duration - .05)
+            : 0;
+
+          if(targetTime > .01 && Math.abs(video.currentTime - targetTime) > .02){
+            video.addEventListener("seeked", captureFrame, { once:true });
+            video.currentTime = targetTime;
+            return;
+          }
+          captureFrame();
+        }
+
+        video.muted = true;
+        video.playsInline = true;
+        video.preload = "auto";
+        if(/^https?:/i.test(sourceUrl)){
+          video.crossOrigin = "anonymous";
+        }
+        video.addEventListener("loadeddata", prepareFrame);
+        video.addEventListener("error", () => finishWithError(new Error("Could not load video for its preview.")));
+        video.src = sourceUrl;
+        video.load();
+      });
+    }
+
+    async function uploadAdvertisementVideoPoster(blob, now){
+      if(!blob){
+        return null;
+      }
+
+      const storagePath =
+        getStorageRoot() + "/" +
+        getStorageOwnerUid() + "/" +
+        "advertisement-video-posters/" +
+        now + "-video-poster.png";
+      const fileRef = storageRef(storage, storagePath);
+      await uploadWithTimeout(fileRef, blob);
+      const url = await getDownloadURL(fileRef);
+
+      return {
+        url,
+        storagePath,
+        uploadedAt:now
+      };
+    }
+
     async function uploadWithTimeout(fileRef, fileBlob, timeoutMs = 180000){
       const task = uploadBytesResumable(fileRef, fileBlob, {
         contentType:fileBlob.type || "image/png"
@@ -2543,6 +2700,8 @@
           profileData.advertisementCardStoragePath || "";
         const previousVideoPath =
           profileData.advertisementVideoStoragePath || "";
+        const previousVideoPosterPath =
+          profileData.advertisementVideoPosterStoragePath || "";
         const previousAssetImages = normalizeAdvertisementAssetImages(profileData);
         const updatedAssetImages = { ...previousAssetImages };
         const deleteAssetPaths = [];
@@ -2564,6 +2723,19 @@
         if(localVideoUpload.file){
           promoVideoData =
             await uploadAdvertisementVideo(localVideoUpload.file, now + 10);
+        }
+
+        let promoVideoPosterData = null;
+        const activeVideoUrl = promoVideoData?.url || profileData.advertisementVideoUrl || "";
+        if(activeVideoUrl && (localVideoUpload.file || !profileData.advertisementVideoPosterImage)){
+          try{
+            const posterSourceUrl = localVideoUpload.previewUrl || getAdvertisementVideoProxyUrl();
+            const posterBlob = await createVideoPosterBlob(posterSourceUrl);
+            promoVideoPosterData = await uploadAdvertisementVideoPoster(posterBlob, now + 11);
+          }
+          catch(error){
+            console.log("Video poster creation skipped:", error);
+          }
         }
 
         const sourceImageUrl = resolveSelectedImages(getEditorData())[0]?.url || getAdvertisementSourceImage(profileData);
@@ -2591,7 +2763,10 @@
           advertisementVideoUpdatedAt:promoVideoData?.uploadedAt || profileData.advertisementVideoUpdatedAt || 0,
           advertisementVideoWidth:currentVideoWidth,
           advertisementVideoHeight:currentVideoHeight,
-          advertisementVideoMimeType:promoVideoData?.mimeType || profileData.advertisementVideoMimeType || "video/mp4"
+          advertisementVideoMimeType:promoVideoData?.mimeType || profileData.advertisementVideoMimeType || "video/mp4",
+          advertisementVideoPosterImage:promoVideoPosterData?.url || profileData.advertisementVideoPosterImage || "",
+          advertisementVideoPosterStoragePath:promoVideoPosterData?.storagePath || profileData.advertisementVideoPosterStoragePath || "",
+          advertisementVideoPosterUpdatedAt:promoVideoPosterData?.uploadedAt || profileData.advertisementVideoPosterUpdatedAt || 0
         };
 
         await update(ref(db, getDbPath()), updateData);
@@ -2602,6 +2777,13 @@
           previousVideoPath !== promoVideoData.storagePath
         ){
           await deleteStoragePath(previousVideoPath);
+        }
+        if(
+          promoVideoPosterData &&
+          previousVideoPosterPath &&
+          previousVideoPosterPath !== promoVideoPosterData.storagePath
+        ){
+          await deleteStoragePath(previousVideoPosterPath);
         }
         for (const path of deleteAssetPaths) {
           await deleteStoragePath(path);
