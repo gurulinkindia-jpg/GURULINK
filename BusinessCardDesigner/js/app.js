@@ -42,27 +42,6 @@ function isExternalAppLaunch() {
   return getQueryValue("source") === "appmobile";
 }
 
-function continueDesignerInExternalBrowser() {
-  if (!/GuruLinkAndroidApp/i.test(navigator.userAgent || "")) {
-    return false;
-  }
-
-  const browserRedirectUrl = new URL(
-    "https://guru-link.onrender.com/open-business-card-in-browser"
-  );
-  const role = getQueryValue("role") || localStorage.getItem("role") || "teacher";
-  const prefill = getQueryValue("prefill");
-
-  browserRedirectUrl.searchParams.set("role", role);
-  browserRedirectUrl.searchParams.set("source", "appmobile");
-  if (prefill) {
-    browserRedirectUrl.searchParams.set("prefill", prefill);
-  }
-
-  window.location.replace(browserRedirectUrl.toString());
-  return true;
-}
-
 function getLaunchRole() {
   return (getQueryValue("role") || localStorage.getItem("role") || "").toLowerCase();
 }
@@ -634,12 +613,6 @@ window.goDesignerDashboard = goDesignerDashboard;
 window.getCurrentCanvasScale = getCurrentCanvasScale;
 
 function initApp() {
-  // PNG file sharing must run in the phone browser, outside the app's
-  // profile-link Share override.
-  if (continueDesignerInExternalBrowser()) {
-    return;
-  }
-
   configureDesignerNavigationLinks();
   el("cardLogo").src = appState.logo;
 
