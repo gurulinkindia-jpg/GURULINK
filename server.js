@@ -45,15 +45,24 @@ function buildShareHtml({
   image,
   video = "",
   videoType = "video/mp4",
+  videoWidth = 0,
+  videoHeight = 0,
   url,
   redirectPath
 }) {
+  const normalizedVideoWidth = Math.max(0, Math.round(Number(videoWidth) || 0));
+  const normalizedVideoHeight = Math.max(0, Math.round(Number(videoHeight) || 0));
+  const videoSizeMeta = normalizedVideoWidth && normalizedVideoHeight
+    ? `
+<meta property="og:video:width" content="${normalizedVideoWidth}">
+<meta property="og:video:height" content="${normalizedVideoHeight}">`
+    : "";
   const videoMeta = video
     ? `
 <meta property="og:video" content="${video}">
 <meta property="og:video:url" content="${video}">
 <meta property="og:video:secure_url" content="${video}">
-<meta property="og:video:type" content="${videoType}">`
+<meta property="og:video:type" content="${videoType}">${videoSizeMeta}`
     : "";
 
   return `
@@ -101,6 +110,11 @@ function withCacheBust(url, value) {
 }
 
 function inferVideoMimeType(profile) {
+  const savedMimeType = String(profile.advertisementVideoMimeType || "").trim();
+  if (savedMimeType.startsWith("video/")) {
+    return savedMimeType;
+  }
+
   const source = String(
     profile.advertisementVideoStoragePath ||
     profile.advertisementVideoUrl ||
@@ -118,6 +132,10 @@ function inferVideoMimeType(profile) {
   }
 
   return "video/mp4";
+}
+
+function buildAdvertisementVideoUrl(id, adts) {
+  return `https://guru-link.onrender.com/advertisement-video?id=${encodeURIComponent(id)}&adts=${encodeURIComponent(adts)}`;
 }
 
 /* Dynamic profile sharing page */
@@ -166,6 +184,53 @@ app.get("/profile-view.html", async (req, res) => {
 });
 
 /* Dynamic advertisement sharing page */
+app.get("/advertisement-video", async (req, res) => {
+  const id = req.query.id;
+
+  if (!id) {
+    return res.status(404).send("Advertisement video not found");
+  }
+
+  try {
+    const result = await fetchProfileById(id);
+    const videoUrl = String(
+      result && result.profile && result.profile.advertisementVideoUrl || ""
+    ).trim();
+
+    if (!videoUrl) {
+      return res.status(404).send("Advertisement video not found");
+    }
+
+    const requestHeaders = {};
+    if (req.headers && req.headers.range) {
+      requestHeaders.Range = req.headers.range;
+    }
+
+    const videoResponse = await fetch(videoUrl, { headers: requestHeaders });
+    if (!videoResponse.ok && videoResponse.status !== 206) {
+      return res.status(videoResponse.status || 502).send("Advertisement video unavailable");
+    }
+
+    res.status(videoResponse.status);
+    for (const headerName of ["content-type", "content-length", "content-range", "accept-ranges"]) {
+      const headerValue = videoResponse.headers.get(headerName);
+      if (headerValue) {
+        res.setHeader(headerName, headerValue);
+      }
+    }
+    res.setHeader("Cache-Control", "public, max-age=86400, immutable");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Content-Disposition", "inline; filename=gurulink-advertisement.mp4");
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    videoResponse.body.pipe(res);
+  } catch (error) {
+    console.error(error);
+    if (!res.headersSent) {
+      res.status(500).send("Server Error");
+    }
+  }
+});
+
 app.get("/profile-ad.html", async (req, res) => {
   const id = req.query.id;
   const requestAdts = String(req.query.adts || "").trim();
@@ -213,10 +278,12 @@ app.get("/profile-ad.html", async (req, res) => {
         adts
       )
     );
-    const video = escapeHtml(
-      withCacheBust(profile.advertisementVideoUrl, adts)
-    );
+    const video = profile.advertisementVideoUrl
+      ? escapeHtml(buildAdvertisementVideoUrl(id, adts))
+      : "";
     const videoType = escapeHtml(inferVideoMimeType(profile));
+    const videoWidth = Number(profile.advertisementVideoWidth) || 0;
+    const videoHeight = Number(profile.advertisementVideoHeight) || 0;
     const adUrl =
       `https://guru-link.onrender.com/profile-ad.html?id=${encodeURIComponent(id)}&adts=${encodeURIComponent(adts)}`;
     const redirectPath =
@@ -229,6 +296,8 @@ app.get("/profile-ad.html", async (req, res) => {
         image,
         video,
         videoType,
+        videoWidth,
+        videoHeight,
         url: escapeHtml(adUrl),
         redirectPath
       })
