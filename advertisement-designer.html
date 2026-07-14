@@ -172,6 +172,49 @@
       cursor:grabbing;
     }
 
+    .canvasWrap.videoMode canvas{
+      visibility:hidden;
+      pointer-events:none;
+    }
+
+    .videoPreviewStage{
+      position:absolute;
+      inset:0;
+      display:none;
+      background:#000;
+      border-radius:18px;
+      overflow:hidden;
+    }
+
+    .videoPreviewStage.show{
+      display:block;
+    }
+
+    .videoPreviewStage video{
+      width:100%;
+      height:100%;
+      display:block;
+      object-fit:contain;
+      background:#000;
+    }
+
+    .videoPreviewContact{
+      position:absolute;
+      left:50%;
+      bottom:58px;
+      z-index:2;
+      transform:translateX(-50%);
+      border:none;
+      border-radius:999px;
+      padding:11px 24px;
+      background:linear-gradient(135deg,#ff7043,#f4511e);
+      color:#fff;
+      font:inherit;
+      font-weight:800;
+      box-shadow:0 10px 24px rgba(0,0,0,.3);
+      pointer-events:none;
+    }
+
     .canvasHint{
       margin:12px 0 0;
       padding:10px 12px;
@@ -565,9 +608,8 @@
 
               <div class="assetCard">
                 <strong>Promo Video</strong>
-                <p class="miniHint">Optional short advertisement video. This will appear on the public ad page, not inside the PNG image.</p>
+                <p class="miniHint">Optional short advertisement video. When selected, it replaces the PNG template on the public ad page.</p>
                 <input id="promoVideoUpload" type="file" accept="video/*">
-                <video id="promoVideoPreview" controls playsinline style="width:100%;display:none;border-radius:12px;background:#000;max-height:220px;"></video>
               </div>
             </div>
           </div>
@@ -579,14 +621,18 @@
         <section class="panel previewPanel">
           <h2>Advertisement Preview</h2>
           <p class="panelNote">
-            The template stays in the middle so you can see changes clearly on both PC and mobile.
+            The PNG template is shown until you select a promo video. The video then replaces it in this preview and on the public ad page.
           </p>
 
           <div class="previewFrame">
             <div class="canvasWrap">
               <canvas id="adCanvas" width="1200" height="630"></canvas>
+              <div id="videoPreviewStage" class="videoPreviewStage" aria-hidden="true">
+                <video id="promoVideoPreview" controls autoplay muted loop playsinline preload="metadata"></video>
+                <button class="videoPreviewContact" type="button" aria-disabled="true">Contact Us</button>
+              </div>
             </div>
-            <div class="canvasHint">Tip: click a text block or image, drag it to a better place, then save once when you are happy.</div>
+            <div id="canvasHint" class="canvasHint">Tip: click a text block or image, drag it to a better place, then save once when you are happy.</div>
 
             <div class="panel inlineControlPanel">
               <div class="sectionLabel">Text Size & Color</div>
@@ -756,6 +802,8 @@
       imageThreeUpload:document.getElementById("imageThreeUpload"),
       promoVideoUpload:document.getElementById("promoVideoUpload"),
       promoVideoPreview:document.getElementById("promoVideoPreview"),
+      videoPreviewStage:document.getElementById("videoPreviewStage"),
+      canvasHint:document.getElementById("canvasHint"),
       headlineInput:document.getElementById("headlineInput"),
       taglineInput:document.getElementById("taglineInput"),
       subHighlightInput:document.getElementById("subHighlightInput"),
@@ -1397,7 +1445,20 @@
         elements.promoVideoPreview.pause();
         elements.promoVideoPreview.removeAttribute("src");
         elements.promoVideoPreview.load();
-        elements.promoVideoPreview.style.display = "none";
+      }
+      setVideoPreviewMode(false);
+    }
+
+    function setVideoPreviewMode(active){
+      elements.canvasWrap.classList.toggle("videoMode", active);
+      if(elements.videoPreviewStage){
+        elements.videoPreviewStage.classList.toggle("show", active);
+        elements.videoPreviewStage.setAttribute("aria-hidden", active ? "false" : "true");
+      }
+      if(elements.canvasHint){
+        elements.canvasHint.textContent = active
+          ? "Video preview is active. On the public ad page it replaces the PNG and includes a Contact Us button."
+          : "Tip: click a text block or image, drag it to a better place, then save once when you are happy.";
       }
     }
 
@@ -1410,7 +1471,12 @@
         return;
       }
       elements.promoVideoPreview.src = url;
-      elements.promoVideoPreview.style.display = "block";
+      elements.promoVideoPreview.muted = true;
+      setVideoPreviewMode(true);
+      const playPromise = elements.promoVideoPreview.play();
+      if(playPromise && typeof playPromise.catch === "function"){
+        playPromise.catch(() => {});
+      }
     }
 
     function bindImageUploads(){
