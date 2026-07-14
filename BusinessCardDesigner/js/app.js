@@ -553,6 +553,7 @@ function applyResponsiveButtonLabels() {
     bringForwardBtn: isMobile ? "Front" : "Bring Forward",
     sendBackwardBtn: isMobile ? "Back" : "Send Backward",
     deleteElementBtn: "Delete",
+    sharePngBtn: isMobile ? "Share Card PNG" : "Share Card PNG",
     downloadPngBtn: isMobile ? "PNG" : "Download PNG",
     singlePdfBtn: isMobile ? "Card PDF" : "Single Card PDF",
     sheetPdfBtn: isMobile ? "Sheet PDF" : "Print Sheet PDF",
