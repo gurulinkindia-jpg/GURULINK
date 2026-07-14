@@ -188,25 +188,92 @@ function getSheetCaptureScale() {
   return isMobileDesignerDevice() ? 1.4 : 2;
 }
 
+function waitForExportImage(image, timeoutMs = 10000) {
+  if (image.complete && image.naturalWidth > 0) {
+    return typeof image.decode === "function"
+      ? image.decode().catch(() => {})
+      : Promise.resolve();
+  }
+
+  return new Promise(resolve => {
+    const done = () => {
+      clearTimeout(timer);
+      image.removeEventListener("load", done);
+      image.removeEventListener("error", done);
+      resolve();
+    };
+    const timer = setTimeout(done, timeoutMs);
+    image.addEventListener("load", done, { once: true });
+    image.addEventListener("error", done, { once: true });
+  });
+}
+
+async function inlineRemoteCardImages(card) {
+  const replacements = [];
+  const images = Array.from(card.querySelectorAll("img"));
+
+  for (const image of images) {
+    await waitForExportImage(image);
+    const source = image.currentSrc || image.src || "";
+
+    if (!/^https:\/\//i.test(source)) {
+      continue;
+    }
+
+    try {
+      const response = await fetch(source, {
+        mode: "cors",
+        credentials: "omit",
+        cache: "force-cache"
+      });
+
+      if (!response.ok) {
+        throw new Error("Image request failed: " + response.status);
+      }
+
+      const blob = await response.blob();
+      if (!String(blob.type || "").toLowerCase().startsWith("image/")) {
+        throw new Error("Export image response is not an image");
+      }
+
+      const dataUrl = await blobToDataUrl(blob);
+      replacements.push({ image, source });
+      image.src = dataUrl;
+      await waitForExportImage(image);
+    } catch (err) {
+      console.warn("Unable to inline a card image for export", err);
+    }
+  }
+
+  return () => {
+    replacements.forEach(item => {
+      item.image.src = item.source;
+    });
+  };
+}
+
 async function makeCardCanvas() {
   updateCard();
-  await wait(500);
+  await wait(250);
 
   const card = el("cardCanvas");
+  const restoreImages = await inlineRemoteCardImages(card);
   const oldTransform = card.style.transform;
 
   card.style.transform = "scale(1)";
 
-  const canvas = await html2canvas(card, {
-    scale: getCardCaptureScale(),
-    backgroundColor: null,
-    useCORS: true,
-    allowTaint: true
-  });
-
-  card.style.transform = oldTransform;
-
-  return canvas;
+  try {
+    return await html2canvas(card, {
+      scale: getCardCaptureScale(),
+      backgroundColor: null,
+      useCORS: true,
+      allowTaint: false,
+      imageTimeout: 15000
+    });
+  } finally {
+    card.style.transform = oldTransform;
+    restoreImages();
+  }
 }
 
 function isMobileDesignerDevice() {
