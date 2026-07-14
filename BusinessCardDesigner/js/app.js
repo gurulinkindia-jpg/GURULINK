@@ -530,9 +530,14 @@ function getDashboardUrl() {
         ? "student-dashboard.html"
         : "teacher-dashboard.html";
 
+    const dashboardUrl = "https://www.gurulink.co.in/" + dashboardPath;
+
     return "intent://www.gurulink.co.in/" +
       dashboardPath +
-      "#Intent;scheme=https;package=com.gurulinkindia.gurulink;end";
+      "#Intent;scheme=https;" +
+      "package=com.gurulinkindia.gurulink;" +
+      "component=com.gurulinkindia.gurulink/.MainActivity;" +
+      "S.browser_fallback_url=" + encodeURIComponent(dashboardUrl) + ";end";
   }
 
   if (role === "teacher" || role === "institution") {
@@ -546,22 +551,41 @@ function getDashboardUrl() {
   return "../index.html";
 }
 
-function goDesignerBack() {
+function configureDesignerNavigationLinks() {
+  const dashboardUrl = getDashboardUrl();
+
+  document.querySelectorAll("[data-designer-back], [data-designer-dashboard]")
+    .forEach(link => {
+      link.href = dashboardUrl;
+    });
+}
+
+function goDesignerBack(event) {
   if (isExternalAppLaunch()) {
-    window.location.href = getDashboardUrl();
-    return;
+    // Let the real anchor navigation preserve Chrome's user gesture.
+    return true;
   }
+
+  if (event) event.preventDefault();
 
   if (window.history.length > 1) {
     window.history.back();
-    return;
+    return false;
   }
 
   window.location.href = getDashboardUrl();
+  return false;
 }
 
-function goDesignerDashboard() {
+function goDesignerDashboard(event) {
+  if (isExternalAppLaunch()) {
+    // Let the real anchor navigation preserve Chrome's user gesture.
+    return true;
+  }
+
+  if (event) event.preventDefault();
   window.location.href = getDashboardUrl();
+  return false;
 }
 
 function applyResponsiveButtonLabels() {
@@ -616,6 +640,7 @@ function initApp() {
     return;
   }
 
+  configureDesignerNavigationLinks();
   el("cardLogo").src = appState.logo;
 
   if (el("studentPhoto")) {
