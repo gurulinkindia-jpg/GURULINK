@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Montserrat:wght@400;600;800&family=Playfair+Display:wght@500;700&family=Roboto:wght@400;700&family=Oswald:wght@400;600&display=swap" rel="stylesheet">
 
   <!-- CSS -->
-  <link rel="stylesheet" href="css/main.css?v=20260714r">
+  <link rel="stylesheet" href="css/main.css?v=20260714w">
   <link rel="stylesheet" href="css/editor.css?v=20260711g">
   <link rel="stylesheet" href="css/templates.css?v=20260711g">
   <link rel="stylesheet" href="css/print.css?v=20260711g">
@@ -58,12 +58,12 @@
 </header>
 
 <div class="mobile-designer-nav">
-  <button type="button" class="mobile-nav-btn back-btn" onclick="goDesignerBack()">
+  <a href="../teacher-dashboard.html" data-designer-back class="mobile-nav-btn back-btn" onclick="return goDesignerBack(event)">
     Back
-  </button>
-  <button type="button" class="mobile-nav-btn dashboard-btn" onclick="goDesignerDashboard()">
+  </a>
+  <a href="../teacher-dashboard.html" data-designer-dashboard class="mobile-nav-btn dashboard-btn" onclick="return goDesignerDashboard(event)">
     Dashboard
-  </button>
+  </a>
 </div>
 
 <main class="app">
@@ -312,12 +312,12 @@
 </main>
 
 <div class="floating-designer-nav">
-  <button type="button" class="floating-nav-btn back-btn" onclick="goDesignerBack()">
+  <a href="../teacher-dashboard.html" data-designer-back class="floating-nav-btn back-btn" onclick="return goDesignerBack(event)">
     Back
-  </button>
-  <button type="button" class="floating-nav-btn dashboard-btn" onclick="goDesignerDashboard()">
+  </a>
+  <a href="../teacher-dashboard.html" data-designer-dashboard class="floating-nav-btn dashboard-btn" onclick="return goDesignerDashboard(event)">
     Dashboard
-  </button>
+  </a>
 </div>
 
 <div id="mobileExportModal" class="mobile-export-modal">
@@ -342,7 +342,7 @@
 <script src="js/editor.js?v=20260711g"></script>
 <script src="js/export.js?v=20260714u"></script>
 <script src="js/print.js?v=20260714q"></script>
-<script src="js/app.js?v=20260714v"></script>
+<script src="js/app.js?v=20260714w"></script>
 
 </body>
 </html>
