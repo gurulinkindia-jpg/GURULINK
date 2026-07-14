@@ -43,9 +43,19 @@ function buildShareHtml({
   title,
   description,
   image,
+  video = "",
+  videoType = "video/mp4",
   url,
   redirectPath
 }) {
+  const videoMeta = video
+    ? `
+<meta property="og:video" content="${video}">
+<meta property="og:video:url" content="${video}">
+<meta property="og:video:secure_url" content="${video}">
+<meta property="og:video:type" content="${videoType}">`
+    : "";
+
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -59,7 +69,8 @@ function buildShareHtml({
 <meta property="og:description" content="${description}">
 <meta property="og:image" content="${image}">
 <meta property="og:url" content="${url}">
-<meta property="og:type" content="website">
+<meta property="og:type" content="${video ? "video.other" : "website"}">
+${videoMeta}
 
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${title}">
@@ -87,6 +98,26 @@ function withCacheBust(url, value) {
 
   const separator = cleanUrl.includes("?") ? "&" : "?";
   return `${cleanUrl}${separator}v=${encodeURIComponent(value || Date.now())}`;
+}
+
+function inferVideoMimeType(profile) {
+  const source = String(
+    profile.advertisementVideoStoragePath ||
+    profile.advertisementVideoUrl ||
+    ""
+  ).toLowerCase();
+
+  if (source.includes(".webm")) {
+    return "video/webm";
+  }
+  if (source.includes(".mov")) {
+    return "video/quicktime";
+  }
+  if (source.includes(".ogv") || source.includes(".ogg")) {
+    return "video/ogg";
+  }
+
+  return "video/mp4";
 }
 
 /* Dynamic profile sharing page */
@@ -151,9 +182,14 @@ app.get("/profile-ad.html", async (req, res) => {
     }
 
     const profile = result.profile;
+    const latestAdvertisementUpdate = Math.max(
+      Number(profile.advertisementCardUpdatedAt) || 0,
+      Number(profile.advertisementVideoUpdatedAt) || 0,
+      Number(profile.updatedAt) || 0
+    );
     const adts =
       requestAdts ||
-      String(profile.advertisementCardUpdatedAt || Date.now());
+      String(latestAdvertisementUpdate || Date.now());
     const roleLabel =
       result.role === "institution"
         ? "Institute Advertisement"
@@ -177,6 +213,10 @@ app.get("/profile-ad.html", async (req, res) => {
         adts
       )
     );
+    const video = escapeHtml(
+      withCacheBust(profile.advertisementVideoUrl, adts)
+    );
+    const videoType = escapeHtml(inferVideoMimeType(profile));
     const adUrl =
       `https://guru-link.onrender.com/profile-ad.html?id=${encodeURIComponent(id)}&adts=${encodeURIComponent(adts)}`;
     const redirectPath =
@@ -187,7 +227,9 @@ app.get("/profile-ad.html", async (req, res) => {
         title,
         description,
         image,
-        url: adUrl,
+        video,
+        videoType,
+        url: escapeHtml(adUrl),
         redirectPath
       })
     );
