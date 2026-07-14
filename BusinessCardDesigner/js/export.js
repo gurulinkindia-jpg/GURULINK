@@ -246,6 +246,41 @@ async function downloadPNG() {
   await deliverBlobFile(blob, "business-card.png", "image/png");
 }
 
+async function shareCardPNG() {
+  const shareButton = document.getElementById("sharePngBtn");
+  const originalLabel = shareButton ? shareButton.textContent : "Share Card PNG";
+
+  if (shareButton) {
+    shareButton.disabled = true;
+    shareButton.textContent = "Preparing PNG...";
+  }
+
+  try {
+    const canvas = await makeCardCanvas();
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+
+    if (!blob) {
+      throw new Error("PNG generation failed");
+    }
+
+    await prepareMobileExport(
+      blob,
+      "gurulink-business-card.png",
+      "image/png",
+      "Business Card PNG Ready",
+      "Tap Share to send this card through WhatsApp, Facebook, Instagram, or another app."
+    );
+  } catch (err) {
+    console.error("Business card PNG sharing failed", err);
+    alert("Unable to prepare the business card PNG. Please try again.");
+  } finally {
+    if (shareButton) {
+      shareButton.disabled = false;
+      shareButton.textContent = originalLabel;
+    }
+  }
+}
+
 async function downloadSinglePDF() {
   const canvas = await makeCardCanvas();
   const img = canvas.toDataURL("image/png");
@@ -346,3 +381,4 @@ window.closePreparedExport = closePreparedExport;
 window.sharePreparedExport = sharePreparedExport;
 window.openPreparedExport = openPreparedExport;
 window.downloadPreparedExport = downloadPreparedExport;
+window.shareCardPNG = shareCardPNG;
