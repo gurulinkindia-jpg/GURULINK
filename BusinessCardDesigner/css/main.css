@@ -2,9 +2,17 @@
   box-sizing: border-box;
 }
 
+html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   padding: 16px;
+  width: 100%;
+  max-width: 100%;
   background: #eef4ff;
   color: #1f2937;
   font-family: "Poppins", Arial, sans-serif;
@@ -65,6 +73,8 @@ button:hover {
 
 .app {
   max-width: 1500px;
+  min-width: 0;
+  width: 100%;
   margin: auto;
   display: grid;
   grid-template-columns: 330px 1fr 300px;
@@ -75,9 +85,13 @@ button:hover {
 .right-panel,
 .editor-area {
   min-height: 500px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .panel {
+  min-width: 0;
+  max-width: 100%;
   background: white;
   padding: 16px;
   border-radius: 18px;
@@ -103,6 +117,8 @@ input,
 textarea,
 select {
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
   padding: 10px 11px;
   border: 1px solid #cbd5e1;
   border-radius: 10px;
@@ -113,6 +129,11 @@ select {
 textarea {
   min-height: 72px;
   resize: vertical;
+}
+
+input[type="file"] {
+  display: block;
+  overflow: hidden;
 }
 
 .editor-area {
@@ -143,6 +164,9 @@ textarea {
 }
 
 .canvas-stage {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
   min-height: 470px;
   background:
     linear-gradient(45deg, #f1f5f9 25%, transparent 25%),
@@ -371,12 +395,18 @@ textarea {
   .app {
     grid-template-columns: 1fr;
     gap: 12px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .sidebar,
   .right-panel,
   .editor-area {
     min-height: auto;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .right-panel {
@@ -385,6 +415,9 @@ textarea {
 
   .panel,
   .editor-area {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
     padding: 14px;
     border-radius: 16px;
   }
@@ -445,18 +478,22 @@ textarea {
   }
 
   .canvas-stage {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
     min-height: 285px;
     padding: 10px 6px;
     border-radius: 14px;
+    overflow: hidden;
   }
 
   .business-card {
-    transform: scale(0.54);
+    flex: 0 0 auto;
   }
 
   .business-card.vertical,
   .business-card.student-mode {
-    transform: scale(0.45);
+    flex: 0 0 auto;
   }
 
   .card-size-note {
@@ -533,7 +570,7 @@ textarea {
 
 @media (max-width: 600px) {
   body {
-    padding: 8px;
+    padding: 6px;
     padding-bottom: 92px;
   }
 
@@ -595,7 +632,7 @@ textarea {
 
   .panel,
   .editor-area {
-    padding: 12px;
+    padding: 10px;
     border-radius: 14px;
   }
 
@@ -617,9 +654,22 @@ textarea {
   input,
   textarea,
   select {
-    font-size: 12px;
-    padding: 8px 9px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    font-size: 16px;
+    padding: 10px 11px;
     border-radius: 8px;
+  }
+
+  input[type="file"] {
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  input[type="color"] {
+    min-height: 44px;
+    padding: 5px;
   }
 
   textarea {
@@ -645,18 +695,18 @@ textarea {
   }
 
   .canvas-stage {
-    min-height: 205px;
-    padding: 6px 2px;
+    min-height: 220px;
+    padding: 8px 4px;
     border-radius: 12px;
   }
 
   .business-card {
-    transform: scale(0.39);
+    flex: 0 0 auto;
   }
 
   .business-card.vertical,
   .business-card.student-mode {
-    transform: scale(0.34);
+    flex: 0 0 auto;
   }
 
   .card-size-note {
@@ -688,7 +738,10 @@ textarea {
 
   .panel,
   .editor-area {
-    padding: 10px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 9px;
   }
 
   .panel h2 {
@@ -705,16 +758,20 @@ textarea {
   }
 
   .canvas-stage {
-    min-height: 188px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    min-height: 210px;
+    overflow: hidden;
   }
 
   .business-card {
-    transform: scale(0.35);
+    flex: 0 0 auto;
   }
 
   .business-card.vertical,
   .business-card.student-mode {
-    transform: scale(0.3);
+    flex: 0 0 auto;
   }
 
   .mobile-nav-btn {
