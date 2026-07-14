@@ -154,6 +154,23 @@ app.get("/open-in-browser", (req, res) => {
   res.redirect(302, target.toString());
 });
 
+/* Opens the Business/I Card designer in the phone's external browser. */
+app.get("/open-business-card-in-browser", (req, res) => {
+  const role = req.query.role === "institution" ? "institution" : "teacher";
+  const prefill = String(req.query.prefill || "").trim();
+  const target = new URL(
+    "https://www.gurulink.co.in/BusinessCardDesigner/index.html"
+  );
+
+  target.searchParams.set("v", "20260712a");
+  target.searchParams.set("role", role);
+  if (prefill) {
+    target.searchParams.set("prefill", prefill);
+  }
+  res.setHeader("Cache-Control", "no-store");
+  res.redirect(302, target.toString());
+});
+
 /* Dynamic profile sharing page */
 app.get("/profile-view.html", async (req, res) => {
   const id = req.query.id;
