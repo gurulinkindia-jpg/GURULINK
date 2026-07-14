@@ -158,14 +158,18 @@ app.get("/open-in-browser", (req, res) => {
 app.get("/open-business-card-in-browser", (req, res) => {
   const role = req.query.role === "institution" ? "institution" : "teacher";
   const prefill = String(req.query.prefill || "").trim();
+  const source = req.query.source === "appmobile" ? "appmobile" : "";
   const target = new URL(
     "https://www.gurulink.co.in/BusinessCardDesigner/index.html"
   );
 
-  target.searchParams.set("v", "20260714u");
+  target.searchParams.set("v", "20260714v");
   target.searchParams.set("role", role);
   if (prefill) {
     target.searchParams.set("prefill", prefill);
+  }
+  if (source) {
+    target.searchParams.set("source", source);
   }
   res.setHeader("Cache-Control", "no-store");
   res.redirect(302, target.toString());
