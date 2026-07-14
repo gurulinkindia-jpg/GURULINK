@@ -2600,11 +2600,16 @@
     }
 
     function openPublicAd(){
+      const latestAdvertisementUpdate = Math.max(
+        Number(profileData?.advertisementCardUpdatedAt) || 0,
+        Number(profileData?.advertisementVideoUpdatedAt) || 0,
+        Number(profileData?.updatedAt) || 0
+      ) || Date.now();
       const publicUrl =
         "https://guru-link.onrender.com/profile-ad.html?id=" +
         encodeURIComponent(profileId) +
         "&adts=" +
-        encodeURIComponent(profileData?.advertisementCardUpdatedAt || Date.now());
+        encodeURIComponent(latestAdvertisementUpdate);
 
       if(!getSavedAdvertisementUrl()){
         setStatus("Save the advertisement first, then open the public ad page.", "error");
