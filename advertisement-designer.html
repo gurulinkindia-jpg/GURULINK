@@ -3,23 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GURULINK Advertisement Designer</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Merriweather:wght@400;700&family=Montserrat:wght@400;600;700;800&family=Oswald:wght@400;600;700&family=Playfair+Display:wght@600;700&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <title>GURULINK Advertisement</title>
   <style>
     :root{
-      --brand-blue:#1565c0;
-      --brand-green:#2e7d32;
-      --brand-dark:#0f172a;
+      --blue:#1565c0;
+      --green:#2e7d32;
+      --dark:#12233d;
+      --muted:#61738d;
+      --line:#d9e4f1;
       --bg:#eef4fb;
       --card:#ffffff;
-      --text:#183153;
-      --muted:#5f708a;
-      --line:#d6e2f2;
-      --warning:#fff8e1;
-      --warning-border:#f0d88a;
-      --success:#1b8f4d;
     }
 
     *{
@@ -29,741 +22,364 @@
     body{
       margin:0;
       font-family:Arial,Helvetica,sans-serif;
-      background:linear-gradient(180deg,#eaf2fd 0%,#f8fbff 100%);
-      color:var(--text);
+      background:linear-gradient(180deg,#edf4fd 0%,#f8fbff 100%);
+      color:var(--dark);
     }
 
-    .shell{
-      max-width:1260px;
+    .page{
+      max-width:1020px;
       margin:0 auto;
-      padding:20px;
+      padding:18px;
     }
 
-    .hero{
-      background:linear-gradient(135deg,#0d47a1,#1e88e5 55%,#26a69a);
+    .topBar{
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      gap:8px;
+      margin-bottom:10px;
+    }
+
+    .topActions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .topActions button,
+    .actionGrid button{
+      border:none;
+      border-radius:12px;
+      padding:10px 12px;
+      cursor:pointer;
       color:#fff;
-      border-radius:24px;
-      padding:24px;
-      box-shadow:0 18px 50px rgba(21,101,192,.22);
+      font-weight:bold;
+      font:inherit;
+    }
+
+    .homeBtn{ background:#3949ab; }
+    .shareBtn{ background:linear-gradient(135deg,#ff7043,#f4511e); }
+    .profileBtn{ background:#1565c0; }
+    .callBtn{ background:#2e7d32; }
+    .waBtn{ background:#43a047; }
+    .webBtn{ background:#00897b; }
+
+    .heroCard,
+    .infoCard{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:22px;
+      box-shadow:0 10px 28px rgba(15,23,42,.06);
+      overflow:hidden;
+    }
+
+    .heroCard{
       margin-bottom:18px;
     }
 
-    .heroTop{
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:16px;
-      margin-bottom:12px;
-    }
-
-    .hero h1{
-      margin:0 0 8px;
-      font-size:32px;
-      line-height:1.15;
-    }
-
-    .hero p{
-      margin:0;
-      max-width:760px;
-      color:rgba(255,255,255,.92);
-      line-height:1.6;
-    }
-
-    .heroBadge{
-      min-width:190px;
-      text-align:center;
-      background:rgba(255,255,255,.14);
-      border:1px solid rgba(255,255,255,.18);
-      border-radius:18px;
-      padding:12px 14px;
-      font-size:13px;
-      line-height:1.5;
-      backdrop-filter:blur(10px);
-    }
-
-    .layout{
-      display:grid;
-      grid-template-columns:minmax(270px,.78fr) minmax(0,1.16fr) minmax(300px,.88fr);
-      gap:18px;
-      align-items:start;
-    }
-
-    .rail{
-      display:grid;
-      gap:18px;
-      align-content:start;
-    }
-
-    .sideRail{
-      max-height:calc(100vh - 24px);
-      overflow-y:auto;
-      padding-right:6px;
-      scrollbar-gutter:stable;
-    }
-
-    .sideRail::-webkit-scrollbar{
-      width:10px;
-    }
-
-    .sideRail::-webkit-scrollbar-thumb{
-      background:#c9d9ef;
-      border-radius:999px;
-      border:2px solid transparent;
-      background-clip:padding-box;
-    }
-
-    .sideRail::-webkit-scrollbar-track{
-      background:transparent;
-    }
-
-    .panel{
-      background:var(--card);
-      border-radius:22px;
-      border:1px solid var(--line);
-      box-shadow:0 10px 28px rgba(15,23,42,.06);
-      padding:20px;
-    }
-
-    .panel h2{
-      margin:0 0 8px;
-      font-size:24px;
-      color:#0f4ea7;
-    }
-
-    .panelNote{
-      margin:0 0 16px;
-      color:var(--muted);
-      line-height:1.6;
-      font-size:14px;
-    }
-
-    .previewFrame{
-      background:#dbe9fb;
-      border-radius:22px;
-      padding:14px;
-      border:1px solid #c6dbf7;
-    }
-
-    .previewPanel{
-      position:sticky;
-      top:16px;
-    }
-
-    .canvasWrap{
+    .heroImageWrap{
       position:relative;
       width:100%;
-      aspect-ratio:var(--preview-ratio, 1200 / 630);
-      border-radius:18px;
-      overflow:hidden;
-      background:#0d47a1;
-      box-shadow:0 18px 35px rgba(13,71,161,.18);
-    }
-
-    canvas{
-      width:100%;
-      height:100%;
-      display:block;
-      border-radius:18px;
-      cursor:grab;
-      touch-action:none;
-    }
-
-    canvas.dragging{
-      cursor:grabbing;
-    }
-
-    .canvasWrap.videoMode canvas{
-      visibility:hidden;
-      pointer-events:none;
-    }
-
-    .videoPreviewStage{
-      position:absolute;
-      inset:0;
-      display:none;
-      background:#000;
-      border-radius:18px;
+      max-width:100%;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#dce9f9;
+      aspect-ratio:var(--ad-ratio, 1200/630);
       overflow:hidden;
     }
 
-    .videoPreviewStage.show{
-      display:block;
+    .heroImageWrap.square{
+      max-width:760px;
     }
 
-    .videoPreviewStage video{
+    .heroImageWrap.portrait{
+      max-width:620px;
+    }
+
+    .heroMedia{
       width:100%;
       height:100%;
       display:block;
       object-fit:contain;
+    }
+
+    .heroImage{
+      background:#dce9f9;
+    }
+
+    .heroVideo{
       background:#000;
     }
 
-    .videoPreviewContact{
+    .videoContactButton{
       position:absolute;
       left:50%;
       bottom:58px;
-      z-index:2;
+      z-index:3;
       transform:translateX(-50%);
-      border:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:150px;
+      padding:12px 24px;
       border-radius:999px;
-      padding:11px 24px;
       background:linear-gradient(135deg,#ff7043,#f4511e);
       color:#fff;
-      font:inherit;
+      text-decoration:none;
       font-weight:800;
       box-shadow:0 10px 24px rgba(0,0,0,.3);
-      pointer-events:none;
     }
 
-    .canvasHint{
-      margin:12px 0 0;
-      padding:10px 12px;
-      border-radius:14px;
-      background:#f4f8ff;
-      border:1px solid #d5e3f4;
-      color:#34537b;
-      font-size:13px;
-      line-height:1.55;
+    .videoContactButton:hover{
+      filter:brightness(1.06);
     }
 
-    .metaStrip{
-      margin-top:14px;
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:10px;
-    }
-
-    .metaChip{
-      background:#fff;
-      border:1px solid #d7e3f4;
-      border-radius:16px;
-      padding:12px;
-    }
-
-    .metaChip strong{
-      display:block;
-      font-size:18px;
-      color:#0d47a1;
-      margin-bottom:4px;
-    }
-
-    .metaChip span{
-      font-size:12px;
-      color:var(--muted);
-      line-height:1.5;
-    }
-
-    .controls{
+    .heroBody{
+      padding:20px;
       display:grid;
       gap:14px;
     }
 
-    .field{
-      display:grid;
-      gap:8px;
+    .heroBody h1{
+      margin:0;
+      font-size:32px;
+      line-height:1.2;
+      color:#114da3;
     }
 
-    .field label{
-      font-size:14px;
-      font-weight:bold;
-      color:#173e72;
-    }
-
-    .field input,
-    .field select,
-    .field textarea{
-      width:100%;
-      border:1px solid #cad9ed;
-      border-radius:14px;
-      padding:12px 14px;
-      font:inherit;
-      color:var(--text);
-      background:#fff;
-    }
-
-    .field textarea{
-      min-height:92px;
-      resize:vertical;
-    }
-
-    .field input[type="color"]{
-      padding:6px;
-      min-height:46px;
-      border-radius:12px;
-      background:#fff;
-    }
-
-    .row{
-      display:grid;
-      grid-template-columns:repeat(2,minmax(0,1fr));
-      gap:12px;
-    }
-
-    .tripleRow{
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:12px;
-    }
-
-    .assetGrid{
-      display:grid;
-      gap:12px;
-    }
-
-    .assetCard{
-      border:1px solid #d5e3f4;
-      border-radius:16px;
-      padding:12px;
-      background:#f8fbff;
-      display:grid;
-      gap:8px;
-    }
-
-    .assetCard strong{
-      color:#0f4ea7;
-      font-size:14px;
-    }
-
-    .miniHint{
-      margin:-2px 0 2px;
-      font-size:12px;
-      color:var(--muted);
-      line-height:1.5;
-    }
-
-    .sectionLabel{
-      margin:4px 0 0;
-      font-size:13px;
-      font-weight:bold;
-      color:#0f4ea7;
-      letter-spacing:.3px;
-      text-transform:uppercase;
-    }
-
-    .rangeValue{
-      font-size:12px;
-      color:var(--muted);
-      text-align:right;
-      margin-top:-2px;
-    }
-
-    .toggleRow{
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
+    .heroMeta{
+      display:flex;
+      flex-wrap:wrap;
       gap:10px;
     }
 
-    .toggleCard{
-      display:flex;
+    .metaPill{
+      display:inline-flex;
       align-items:center;
-      gap:8px;
-      padding:11px 12px;
-      border:1px solid #d5e3f3;
-      border-radius:14px;
-      background:#f8fbff;
+      padding:9px 12px;
+      border-radius:999px;
+      background:#edf5ff;
+      color:#1c4d87;
+      border:1px solid #d5e4f6;
       font-size:13px;
-      color:#234972;
+      font-weight:bold;
     }
 
-    .toggleCard input{
+    .heroBody p{
       margin:0;
-      width:16px;
-      height:16px;
+      color:var(--muted);
+      line-height:1.7;
     }
 
-    .warningBox{
-      background:var(--warning);
-      border:1px solid var(--warning-border);
-      border-radius:14px;
-      padding:12px 14px;
-      color:#7a5a12;
-      font-size:13px;
-      line-height:1.6;
+    .actionGrid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:10px;
     }
 
-    .buttonGrid{
+    .infoCard{
+      padding:20px;
+    }
+
+    .infoCard h2{
+      margin:0 0 14px;
+      font-size:24px;
+      color:#114da3;
+    }
+
+    .details{
       display:grid;
       grid-template-columns:repeat(2,minmax(0,1fr));
       gap:12px;
     }
 
-    button{
+    .detailItem{
+      border:1px solid #dbe7f4;
+      border-radius:16px;
+      padding:14px;
+      background:#fbfdff;
+    }
+
+    .detailItem strong{
+      display:block;
+      margin-bottom:6px;
+      color:#1b4f8f;
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:.4px;
+    }
+
+    .detailItem span{
+      color:var(--dark);
+      line-height:1.6;
+    }
+
+    .message{
+      padding:26px;
+      text-align:center;
+      color:var(--muted);
+    }
+
+    .shareOverlay{
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,.48);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:1000;
+    }
+
+    .shareOverlay.show{
+      display:flex;
+    }
+
+    .shareModal{
+      width:min(420px,100%);
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:22px;
+      box-shadow:0 20px 50px rgba(15,23,42,.22);
+      padding:20px;
+    }
+
+    .shareModalTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:8px;
+    }
+
+    .shareModalTop h3{
+      margin:0;
+      font-size:22px;
+      color:#114da3;
+    }
+
+    .shareCloseBtn{
+      background:#eef5ff;
+      color:#1b4f8f;
+      border:1px solid #d5e4f6;
+      border-radius:12px;
+      padding:10px 12px;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    .shareModal p{
+      margin:0 0 14px;
+      color:var(--muted);
+      line-height:1.6;
+      font-size:14px;
+    }
+
+    .shareChoiceGrid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+    }
+
+    .shareChoiceBtn{
       border:none;
       border-radius:14px;
-      padding:13px 14px;
+      padding:14px 12px;
+      color:#fff;
       font:inherit;
       font-weight:bold;
       cursor:pointer;
     }
 
-    .primaryBtn{
-      background:linear-gradient(135deg,#1565c0,#1e88e5);
-      color:#fff;
-      box-shadow:0 10px 24px rgba(21,101,192,.2);
-    }
+    .facebookBtn{ background:#1877f2; }
+    .whatsappShareBtn{ background:#25d366; }
+    .copyBtn{ background:#3949ab; }
+    .systemBtn{ background:#ff7043; }
 
-    .successBtn{
-      background:linear-gradient(135deg,#208b4b,#35a35c);
-      color:#fff;
-    }
-
-    .ghostBtn{
-      background:#eef5ff;
-      color:#0d47a1;
-      border:1px solid #cfe0f6;
-    }
-
-    .footerBtn{
-      background:#2f3d4f;
-      color:#fff;
-    }
-
-    .statusBar{
-      min-height:24px;
-      font-size:14px;
-      font-weight:bold;
-    }
-
-    .statusBar.success{
-      color:var(--success);
-    }
-
-    .statusBar.error{
-      color:#c62828;
-    }
-
-    @media(max-width:980px){
-      .layout{
-        grid-template-columns:1fr;
-      }
-
-      .previewPanel{
-        position:static;
-      }
-
-      .sideRail{
-        max-height:none;
-        overflow:visible;
-        padding-right:0;
-      }
-
-      .heroTop{
-        flex-direction:column;
-      }
-
-      .leftRail{
-        order:2;
-      }
-
-      .centerRail{
-        order:1;
-      }
-
-      .rightRail{
-        order:3;
-      }
-    }
-
-    @media(max-width:640px){
-      .shell{
+    @media(max-width:760px){
+      .page{
         padding:14px;
       }
 
-      .hero{
-        padding:18px;
-        border-radius:18px;
+      .topBar{
+        justify-content:flex-end;
       }
 
-      .hero h1{
+      .topActions,
+      .actionGrid,
+      .details{
+        grid-template-columns:1fr 1fr;
+      }
+
+      .topActions{
+        display:flex;
+        justify-content:flex-end;
+      }
+
+      .heroBody h1{
         font-size:26px;
       }
+    }
 
-      .panel{
-        padding:16px;
-        border-radius:18px;
-      }
-
-      .row,
-      .tripleRow,
-      .toggleRow,
-      .buttonGrid,
-      .metaStrip{
+    @media(max-width:520px){
+      .topActions,
+      .actionGrid,
+      .details{
         grid-template-columns:1fr;
       }
 
-      .assetCard{
-        padding:10px;
+      .topActions{
+        display:flex;
+        flex-direction:row;
+        justify-content:flex-end;
+      }
+
+      .topActions button{
+        padding:8px 10px;
+        font-size:13px;
+      }
+
+      .shareChoiceGrid{
+        grid-template-columns:1fr;
       }
     }
   </style>
 </head>
 <body>
-  <div class="shell">
-    <section class="hero">
-      <div class="heroTop">
-        <div>
-          <h1>Create Your Advertisement</h1>
-          <p>
-            Design a separate public advertisement image for your teacher or institute profile.
-            This saves a real public image URL in Firebase and links it to a dedicated GURULINK advertisement page.
-          </p>
-        </div>
-        <div class="heroBadge">
-          <strong id="heroRoleLabel">Teacher / Institute</strong><br>
-          <span id="heroProfileName">Loading profile...</span>
-        </div>
+  <div class="page">
+    <div class="topBar">
+      <div class="topActions">
+        <button class="homeBtn" onclick="location.href='index.html'">Home</button>
+        <button class="shareBtn" onclick="shareAdvertisement()">Share Ad</button>
       </div>
-    </section>
+    </div>
 
-    <div class="layout">
-      <div class="rail leftRail sideRail">
-        <section class="panel">
-          <h2>Layout & Media</h2>
-          <p class="panelNote">
-            Pick the ad style here, then choose up to three images for the template.
-          </p>
+    <div id="content" class="message">Loading advertisement...</div>
+  </div>
 
-          <div class="controls">
-            <div class="row">
-              <div class="field">
-                <label for="templateSelect">Template</label>
-                <select id="templateSelect">
-                  <option value="academic">Academic Focus</option>
-                  <option value="creative">Creative Arts</option>
-                  <option value="skill">Professional Skills</option>
-                  <option value="sport">Sports Action</option>
-                  <option value="fitness">Fitness Energy</option>
-                  <option value="blue">Blue Spotlight</option>
-                  <option value="gold">Premium Gold</option>
-                  <option value="green">Growth Green</option>
-                  <option value="dark">Midnight Promo</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label for="canvasPresetSelect">Canvas Size</label>
-                <select id="canvasPresetSelect">
-                  <option value="landscape">Landscape 1200 x 630</option>
-                  <option value="square">Square 1080 x 1080</option>
-                  <option value="portrait">Portrait 1080 x 1350</option>
-                </select>
-              </div>
-            </div>
-
-          <div class="row">
-            <div class="field">
-              <label for="fontFamilySelect">Font Style</label>
-              <select id="fontFamilySelect">
-                <option value="Poppins">Poppins</option>
-                  <option value="Montserrat">Montserrat</option>
-                  <option value="Oswald">Oswald</option>
-                  <option value="Merriweather">Merriweather</option>
-                <option value="Playfair Display">Playfair Display</option>
-                <option value="Bebas Neue">Bebas Neue</option>
-              </select>
-            </div>
-          </div>
-
-            <div class="row">
-              <div class="field">
-                <label for="imageLayoutSelect">Image Layout</label>
-                <select id="imageLayoutSelect">
-                  <option value="hero">Hero Image</option>
-                  <option value="split">Split Layout</option>
-                  <option value="trio">Three Image Layout</option>
-                  <option value="poster">Poster Layout</option>
-                </select>
-              </div>
-
-              <div class="field">
-                <label for="offerBadgeInput">Top Badge</label>
-                <input id="offerBadgeInput" type="text" maxlength="28" placeholder="Example: ADMISSIONS OPEN">
-              </div>
-            </div>
-
-            <div class="sectionLabel">Advertisement Images</div>
-            <p class="miniHint">Each slot can use profile, gallery, or uploaded ad images. All three slots can appear inside the template.</p>
-
-            <div class="assetGrid">
-              <div class="assetCard">
-                <strong>Image 1</strong>
-                <select id="imageOneSelect"></select>
-                <p class="miniHint">Primary image for the ad.</p>
-                <input id="imageOneUpload" type="file" accept="image/*">
-              </div>
-
-              <div class="assetCard">
-                <strong>Image 2</strong>
-                <select id="imageTwoSelect"></select>
-                <p class="miniHint">Second visual for split or collage layouts.</p>
-                <input id="imageTwoUpload" type="file" accept="image/*">
-              </div>
-
-              <div class="assetCard">
-                <strong>Image 3</strong>
-                <select id="imageThreeSelect"></select>
-                <p class="miniHint">Third visual for richer layouts.</p>
-                <input id="imageThreeUpload" type="file" accept="image/*">
-              </div>
-
-              <div class="assetCard">
-                <strong>Promo Video</strong>
-                <p class="miniHint">Optional short advertisement video. When selected, it replaces the PNG template on the public ad page.</p>
-                <input id="promoVideoUpload" type="file" accept="video/*">
-              </div>
-            </div>
-          </div>
-        </section>
-
+  <div id="shareOverlay" class="shareOverlay">
+    <div class="shareModal">
+      <div class="shareModalTop">
+        <h3>Share Advertisement</h3>
+        <button class="shareCloseBtn" type="button" onclick="closeShareChooser()">Close</button>
       </div>
-
-      <div class="rail centerRail">
-        <section class="panel previewPanel">
-          <h2>Advertisement Preview</h2>
-          <p class="panelNote">
-            The PNG template is shown until you select a promo video. The video then replaces it in this preview and on the public ad page.
-          </p>
-
-          <div class="previewFrame">
-            <div class="canvasWrap">
-              <canvas id="adCanvas" width="1200" height="630"></canvas>
-              <div id="videoPreviewStage" class="videoPreviewStage" aria-hidden="true">
-                <video id="promoVideoPreview" controls autoplay muted loop playsinline preload="metadata"></video>
-                <button class="videoPreviewContact" type="button" aria-disabled="true">Contact Us</button>
-              </div>
-            </div>
-            <div id="canvasHint" class="canvasHint">Tip: click a text block or image, drag it to a better place, then save once when you are happy.</div>
-
-            <div class="panel inlineControlPanel">
-              <div class="sectionLabel">Text Size & Color</div>
-
-              <div class="tripleRow">
-                <div class="field">
-                  <label for="headlineSizeInput">Headline Size</label>
-                  <input id="headlineSizeInput" type="range" min="40" max="88" step="1" value="62">
-                  <div id="headlineSizeValue" class="rangeValue">62 px</div>
-                </div>
-
-                <div class="field">
-                  <label for="bodySizeInput">Body Size</label>
-                  <input id="bodySizeInput" type="range" min="18" max="40" step="1" value="26">
-                  <div id="bodySizeValue" class="rangeValue">26 px</div>
-                </div>
-
-                <div class="field">
-                  <label for="ctaSizeInput">CTA Size</label>
-                  <input id="ctaSizeInput" type="range" min="18" max="34" step="1" value="23">
-                  <div id="ctaSizeValue" class="rangeValue">23 px</div>
-                </div>
-              </div>
-
-              <div class="tripleRow">
-                <div class="field">
-                  <label for="headingColorInput">Headline Color</label>
-                  <input id="headingColorInput" type="color" value="#ffffff">
-                </div>
-
-                <div class="field">
-                  <label for="accentColorInput">Accent Color</label>
-                  <input id="accentColorInput" type="color" value="#b3e5fc">
-                </div>
-
-                <div class="field">
-                  <label for="bodyColorInput">Body Color</label>
-                  <input id="bodyColorInput" type="color" value="#ffffff">
-                </div>
-              </div>
-
-              <div class="toggleRow">
-                <label class="toggleCard">
-                  <input id="showPhoneToggle" type="checkbox">
-                  <span>Show phone</span>
-                </label>
-
-                <label class="toggleCard">
-                  <input id="showWebsiteToggle" type="checkbox">
-                  <span>Show website</span>
-                </label>
-
-                <label class="toggleCard">
-                  <input id="showLocationToggle" type="checkbox">
-                  <span>Show location</span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <div class="rail rightRail sideRail">
-        <section class="panel">
-          <h2>Text & Style</h2>
-          <p class="panelNote">
-            Edit your headline, offer, colors, and button text here. The preview updates live.
-          </p>
-
-          <div class="controls">
-            <div class="field">
-              <label for="headlineInput">Headline</label>
-              <input id="headlineInput" type="text" maxlength="70" placeholder="Enter your main advertisement headline">
-            </div>
-
-            <div class="row">
-              <div class="field">
-                <label for="taglineInput">Tagline</label>
-                <input id="taglineInput" type="text" maxlength="90" placeholder="Short supporting line">
-              </div>
-
-              <div class="field">
-                <label for="subHighlightInput">Sub Highlight</label>
-                <input id="subHighlightInput" type="text" maxlength="90" placeholder="Example: Class 8-12 | Demo available">
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="highlightInput">Highlight / Offer</label>
-              <input id="highlightInput" type="text" maxlength="100" placeholder="Example: Classes, training, demo support, admissions open">
-            </div>
-
-            <div class="row">
-              <div class="field">
-                <label for="ctaInput">Call-To-Action</label>
-                <input id="ctaInput" type="text" maxlength="40" placeholder="Example: Contact Now">
-              </div>
-
-              <div class="field">
-                <label for="noteInput">Extra Note</label>
-                <input id="noteInput" type="text" maxlength="90" placeholder="Example: Limited seats | Weekend batch">
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="footerInput">Footer Line</label>
-              <textarea id="footerInput" placeholder="Area, website, focus subjects, or another short supporting line"></textarea>
-            </div>
-
-            <div class="warningBox">
-              Save once after editing. That updates your separate advertisement PNG in Firebase Storage for public promotion.
-            </div>
-
-            <div id="statusBar" class="statusBar"></div>
-
-            <div class="buttonGrid">
-              <button id="saveBtn" class="primaryBtn">Save Advertisement</button>
-              <button id="openPublicBtn" class="successBtn">Open Public Ad</button>
-              <button id="backBtn" class="footerBtn">Back To Dashboard</button>
-            </div>
-          </div>
-        </section>
+      <p>
+        Facebook shares a clickable video preview card. When someone clicks the preview, it opens this GURULINK advertisement page where the video plays and the Contact Us button is available.
+      </p>
+      <div class="shareChoiceGrid">
+        <button class="shareChoiceBtn facebookBtn" type="button" onclick="shareViaFacebook()">Facebook</button>
+        <button class="shareChoiceBtn whatsappShareBtn" type="button" onclick="shareViaWhatsApp()">WhatsApp</button>
+        <button class="shareChoiceBtn copyBtn" type="button" onclick="copyAdvertisementLink()">Copy Link</button>
+        <button id="systemShareBtn" class="shareChoiceBtn systemBtn" type="button" onclick="shareViaSystem()">System Share</button>
       </div>
     </div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-    import { getStorage, ref as storageRef, uploadBytesResumable, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-storage.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -777,2126 +393,364 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    const auth = getAuth(app);
-    const storage = getStorage(app);
+    const WEBSITE_BASE = "https://guru-link.onrender.com/";
+    const currentProfileId = new URLSearchParams(location.search).get("id") || "";
+    const content = document.getElementById("content");
+    const shareOverlay = document.getElementById("shareOverlay");
+    const systemShareBtn = document.getElementById("systemShareBtn");
 
-    const WEBSITE_BASE = "https://www.gurulink.co.in/";
-    const query = new URLSearchParams(location.search);
-    const profileId = query.get("id") || localStorage.getItem("profileId") || "";
-    const requestedRole = normalizeRole(query.get("role") || localStorage.getItem("role") || "teacher");
+    let data = null;
+    let roleType = "";
 
-    const elements = {
-      heroRoleLabel:document.getElementById("heroRoleLabel"),
-      heroProfileName:document.getElementById("heroProfileName"),
-      canvasWrap:document.querySelector(".canvasWrap"),
-      templateSelect:document.getElementById("templateSelect"),
-      canvasPresetSelect:document.getElementById("canvasPresetSelect"),
-      fontFamilySelect:document.getElementById("fontFamilySelect"),
-      imageLayoutSelect:document.getElementById("imageLayoutSelect"),
-      offerBadgeInput:document.getElementById("offerBadgeInput"),
-      imageOneSelect:document.getElementById("imageOneSelect"),
-      imageTwoSelect:document.getElementById("imageTwoSelect"),
-      imageThreeSelect:document.getElementById("imageThreeSelect"),
-      imageOneUpload:document.getElementById("imageOneUpload"),
-      imageTwoUpload:document.getElementById("imageTwoUpload"),
-      imageThreeUpload:document.getElementById("imageThreeUpload"),
-      promoVideoUpload:document.getElementById("promoVideoUpload"),
-      promoVideoPreview:document.getElementById("promoVideoPreview"),
-      videoPreviewStage:document.getElementById("videoPreviewStage"),
-      canvasHint:document.getElementById("canvasHint"),
-      headlineInput:document.getElementById("headlineInput"),
-      taglineInput:document.getElementById("taglineInput"),
-      subHighlightInput:document.getElementById("subHighlightInput"),
-      highlightInput:document.getElementById("highlightInput"),
-      ctaInput:document.getElementById("ctaInput"),
-      noteInput:document.getElementById("noteInput"),
-      footerInput:document.getElementById("footerInput"),
-      headlineSizeInput:document.getElementById("headlineSizeInput"),
-      bodySizeInput:document.getElementById("bodySizeInput"),
-      ctaSizeInput:document.getElementById("ctaSizeInput"),
-      headlineSizeValue:document.getElementById("headlineSizeValue"),
-      bodySizeValue:document.getElementById("bodySizeValue"),
-      ctaSizeValue:document.getElementById("ctaSizeValue"),
-      headingColorInput:document.getElementById("headingColorInput"),
-      accentColorInput:document.getElementById("accentColorInput"),
-      bodyColorInput:document.getElementById("bodyColorInput"),
-      showPhoneToggle:document.getElementById("showPhoneToggle"),
-      showWebsiteToggle:document.getElementById("showWebsiteToggle"),
-      showLocationToggle:document.getElementById("showLocationToggle"),
-      statusBar:document.getElementById("statusBar"),
-      saveBtn:document.getElementById("saveBtn"),
-      openPublicBtn:document.getElementById("openPublicBtn"),
-      backBtn:document.getElementById("backBtn"),
-      adCanvas:document.getElementById("adCanvas")
-    };
+    function getPrimaryProfileImage(profileData){
+      const images = Array.isArray(profileData?.profileImages) ? profileData.profileImages : [];
+      const normalized = images
+        .map(item => typeof item === "string" ? { url:item } : item)
+        .filter(item => item && item.url);
 
-    const ctx = elements.adCanvas.getContext("2d");
-    let currentUser = null;
-    let authReadyResolver = null;
-    const authReadyPromise = new Promise(resolve => {
-      authReadyResolver = resolve;
-    });
-
-    onAuthStateChanged(auth,(user)=>{
-      currentUser = user || null;
-      if(authReadyResolver){
-        authReadyResolver(user || null);
-        authReadyResolver = null;
-      }
-    });
-
-    let profileData = null;
-    let activeRole = requestedRole;
-    let renderVersion = 0;
-    let previewImage = null;
-    let savedAdvertisementUrl = "";
-    let interactiveRegions = [];
-    let selectedLayerKey = "text";
-    let dragState = null;
-    let currentLayerPositions = createDefaultLayerPositions();
-    const imageCache = new Map();
-    const localAdUploads = {
-      imageOne:{ file:null, previewUrl:"" },
-      imageTwo:{ file:null, previewUrl:"" },
-      imageThree:{ file:null, previewUrl:"" }
-    };
-    const localVideoUpload = {
-      file:null,
-      previewUrl:"",
-      width:0,
-      height:0,
-      mimeType:""
-    };
-
-    const templates = {
-      academic:{
-        label:"Academic Focus",
-        bg:["#102a83","#1d4ed8","#60a5fa"],
-        accent:"#facc15",
-        badge:"#0f1f63",
-        heading:"#ffffff",
-        body:"#eaf3ff",
-        pillBg:"rgba(250,204,21,.22)",
-        pillText:"#fff8d6",
-        footerBg:"rgba(7,24,61,.34)",
-        defaultIcon:"academic"
-      },
-      creative:{
-        label:"Creative Arts",
-        bg:["#7c2d12","#c2410c","#f97316"],
-        accent:"#fef08a",
-        badge:"#7a210d",
-        heading:"#fff7ed",
-        body:"#fff1e6",
-        pillBg:"rgba(255,255,255,.18)",
-        pillText:"#fff7ed",
-        footerBg:"rgba(69,18,7,.34)",
-        defaultIcon:"creative"
-      },
-      skill:{
-        label:"Professional Skills",
-        bg:["#1f2937","#374151","#0f766e"],
-        accent:"#67e8f9",
-        badge:"#111827",
-        heading:"#f9fafb",
-        body:"#e5f7f7",
-        pillBg:"rgba(103,232,249,.18)",
-        pillText:"#ecfeff",
-        footerBg:"rgba(15,23,42,.38)",
-        defaultIcon:"skill"
-      },
-      sport:{
-        label:"Sports Action",
-        bg:["#7f1d1d","#dc2626","#f97316"],
-        accent:"#fde68a",
-        badge:"#7c1313",
-        heading:"#fff7ed",
-        body:"#fff1e6",
-        pillBg:"rgba(255,255,255,.18)",
-        pillText:"#fff7ed",
-        footerBg:"rgba(69,10,10,.34)",
-        defaultIcon:"sport"
-      },
-      fitness:{
-        label:"Fitness Energy",
-        bg:["#14532d","#16a34a","#84cc16"],
-        accent:"#dcfce7",
-        badge:"#14532d",
-        heading:"#f7fee7",
-        body:"#ecfdf5",
-        pillBg:"rgba(255,255,255,.16)",
-        pillText:"#f7fee7",
-        footerBg:"rgba(20,83,45,.34)",
-        defaultIcon:"fitness"
-      },
-      blue:{
-        label:"Blue Spotlight",
-        bg:["#0d47a1","#1976d2","#26a69a"],
-        accent:"#b3e5fc",
-        badge:"#0b3f91",
-        heading:"#ffffff",
-        body:"#f8fbff",
-        pillBg:"rgba(255,255,255,.18)",
-        pillText:"#ffffff",
-        footerBg:"rgba(7,24,61,.28)",
-        defaultIcon:"none"
-      },
-      gold:{
-        label:"Premium Gold",
-        bg:["#16110b","#3e2d13","#8d6e24"],
-        accent:"#ffd54f",
-        badge:"#4e3606",
-        heading:"#fff4cf",
-        body:"#fff4cf",
-        pillBg:"rgba(255,213,79,.18)",
-        pillText:"#fff6db",
-        footerBg:"rgba(0,0,0,.28)",
-        defaultIcon:"none"
-      },
-      green:{
-        label:"Growth Green",
-        bg:["#0b5d36","#1b8f4d","#68c06e"],
-        accent:"#dcfce7",
-        badge:"#0a4626",
-        heading:"#ffffff",
-        body:"#f0fdf4",
-        pillBg:"rgba(255,255,255,.16)",
-        pillText:"#ffffff",
-        footerBg:"rgba(4,48,22,.24)",
-        defaultIcon:"none"
-      },
-      dark:{
-        label:"Midnight Promo",
-        bg:["#111827","#1f2937","#334155"],
-        accent:"#93c5fd",
-        badge:"#0f172a",
-        heading:"#f8fafc",
-        body:"#f1f5f9",
-        pillBg:"rgba(147,197,253,.16)",
-        pillText:"#e0f2fe",
-        footerBg:"rgba(2,6,23,.4)",
-        defaultIcon:"none"
-      }
-    };
-
-    const layerLabels = {
-      badge:"Top badge",
-      text:"Headline block",
-      cta:"Call-to-action",
-      footer:"Footer block",
-      imageOne:"Image 1",
-      imageTwo:"Image 2",
-      imageThree:"Image 3",
-      icon:"SVG icon"
-    };
-
-    function createDefaultLayerPositions(){
-      return {
-        badge:{ x:0, y:0 },
-        text:{ x:0, y:0 },
-        cta:{ x:0, y:0 },
-        footer:{ x:0, y:0 },
-        imageOne:{ x:0, y:0 },
-        imageTwo:{ x:0, y:0 },
-        imageThree:{ x:0, y:0 },
-        icon:{ x:0, y:0 }
-      };
-    }
-
-    function cloneLayerPositions(value){
-      return JSON.parse(JSON.stringify(value || createDefaultLayerPositions()));
-    }
-
-    function mergeLayerPositions(value){
-      const merged = createDefaultLayerPositions();
-      if(!value || typeof value !== "object"){
-        return merged;
-      }
-
-      Object.keys(merged).forEach((key) => {
-        const entry = value[key];
-        if(entry && typeof entry === "object"){
-          merged[key] = {
-            x:Number(entry.x || 0),
-            y:Number(entry.y || 0)
-          };
-        }
-      });
-      return merged;
-    }
-
-    function getLayerPosition(key){
-      return currentLayerPositions[key] || { x:0, y:0 };
-    }
-
-    function setLayerPosition(key, x, y){
-      if(!currentLayerPositions[key]){
-        currentLayerPositions[key] = { x:0, y:0 };
-      }
-      currentLayerPositions[key].x = Math.round(x);
-      currentLayerPositions[key].y = Math.round(y);
-    }
-
-    function resetLayerPosition(key){
-      setLayerPosition(key, 0, 0);
-    }
-
-    function resetAllLayerPositions(){
-      currentLayerPositions = createDefaultLayerPositions();
-    }
-
-    function syncSelectedLayerInfo(){
-      return;
-    }
-
-    function normalizeRole(value){
-      const roleValue = String(value || "").toLowerCase();
-      return roleValue === "institution" ? "institution" : "teacher";
-    }
-
-    function escapeHtml(value){
-      return String(value || "")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/\"/g,"&quot;")
-        .replace(/'/g,"&#39;");
-    }
-
-    function getDbPath(roleValue = activeRole){
-      return (roleValue === "institution" ? "institutions/" : "teachers/") + profileId;
-    }
-
-    function getStorageRoot(roleValue = activeRole){
-      return roleValue === "institution" ? "institutions" : "teachers";
-    }
-
-    function getStorageOwnerUid(){
-      if(currentUser && currentUser.uid){
-        return currentUser.uid;
-      }
-
-      if(profileData && profileData.storageOwnerUid){
-        return String(profileData.storageOwnerUid);
-      }
-
-      return profileId;
-    }
-
-    function getSavedAdvertisementUrl(){
-      return savedAdvertisementUrl || profileData?.advertisementCardImage || "";
-    }
-
-    function setStatus(message, type = ""){
-      elements.statusBar.textContent = message || "";
-      elements.statusBar.className = "statusBar" + (type ? " " + type : "");
-    }
-
-    function normalizeList(value){
-      if(Array.isArray(value)){
-        return value.filter(Boolean).map(item => String(item).trim()).filter(Boolean);
-      }
-
-      if(value && typeof value === "object"){
-        return Object.values(value).filter(Boolean).map(item => String(item).trim()).filter(Boolean);
-      }
-
-      if(typeof value === "string" && value.trim()){
-        return value.split(",").map(item => item.trim()).filter(Boolean);
-      }
-
-      return [];
-    }
-
-    function extractStoragePathFromUrl(url){
-      try{
-        const match = String(url || "").match(/\/o\/([^?]+)/);
-        return match ? decodeURIComponent(match[1]) : "";
-      }
-      catch(err){
-        return "";
-      }
-    }
-
-    function normalizeImageItem(item, fallbackIndex = 0){
-      if(!item){
-        return null;
-      }
-
-      if(typeof item === "string"){
-        const url = item.trim();
-        if(!url){
-          return null;
-        }
-
-        return {
-          url,
-          storagePath:extractStoragePathFromUrl(url),
-          uploadedAt:Date.now() + fallbackIndex
-        };
-      }
-
-      const url = String(item.url || item.src || "").trim();
-      if(!url){
-        return null;
-      }
-
-      return {
-        url,
-        storagePath:String(item.storagePath || extractStoragePathFromUrl(url) || ""),
-        uploadedAt:Number(item.uploadedAt || Date.now() + fallbackIndex)
-      };
-    }
-
-    function normalizeProfileImages(data){
-      const existing =
-        Array.isArray(data?.profileImages)
-          ? data.profileImages
-          : (
-              data?.profileImages &&
-              typeof data.profileImages === "object"
-            )
-              ? Object.values(data.profileImages)
-              : [];
-
-      let items =
-        existing
-          .map((item, index) => normalizeImageItem(item, index))
-          .filter(Boolean);
-
-      if(!items.length){
-        const legacy =
-          [data?.photo, data?.logo, data?.profilePic]
-            .filter(Boolean)
-            .filter((value, index, array) => array.indexOf(value) === index);
-
-        items =
-          legacy
-            .map((url, index) => normalizeImageItem(url, index))
-            .filter(Boolean);
-      }
-
-      return items.sort((a, b) => (a.uploadedAt || 0) - (b.uploadedAt || 0));
-    }
-
-    function normalizeAdvertisementAssetImages(data){
-      const result = {
-        imageOne:null,
-        imageTwo:null,
-        imageThree:null
-      };
-
-      const raw = data?.advertisementAssetImages;
-      if(!raw){
-        return result;
-      }
-
-      if(Array.isArray(raw)){
-        ["imageOne","imageTwo","imageThree"].forEach((slot, index) => {
-          result[slot] = normalizeImageItem(raw[index], index);
-        });
-        return result;
-      }
-
-      ["imageOne","imageTwo","imageThree"].forEach((slot, index) => {
-        result[slot] = normalizeImageItem(raw[slot], index);
-      });
-
-      return result;
-    }
-
-    function isAdvertisementStoragePath(path){
-      return /(^|\/)advertisement-cards\//i.test(String(path || ""));
-    }
-
-    function getPrimaryProfileImage(data){
-      const images = normalizeProfileImages(data);
       const selected =
-        images[Number(data?.primaryProfileImage || 0)] ||
-        images[0];
+        normalized[Number(profileData?.primaryProfileImage || 0)] ||
+        normalized[0];
 
-      return selected?.url || data?.photo || data?.profilePic || data?.logo || "";
+      return selected?.url || profileData?.photo || profileData?.profilePic || profileData?.logo || "";
     }
 
-    function getAdvertisementSourceImage(data){
-      const explicit = String(data?.advertisementSourceImage || "").trim();
-      if(explicit){
-        return explicit;
+    function getSavedCanvasPreset(profileData){
+      const preset = String(profileData?.advertisementCardData?.canvasPreset || "landscape").toLowerCase();
+      if(preset === "square" || preset === "portrait"){
+        return preset;
       }
-
-      const advertisementUrl = String(data?.advertisementCardImage || "").trim();
-      const fallback =
-        normalizeProfileImages(data).find(item =>
-          item.url &&
-          item.url !== advertisementUrl &&
-          !isAdvertisementStoragePath(item.storagePath)
-        );
-
-      return fallback?.url || getPrimaryProfileImage(data);
+      return "landscape";
     }
 
-    function buildPromotedProfileImages(newImageItem, data){
-      const existingImages = normalizeProfileImages(data);
-      const previousAdUrl = String(data?.advertisementCardImage || "").trim();
-      const sourceImageUrl = String(getAdvertisementSourceImage(data) || "").trim();
-
-      const secondaryImage =
-        existingImages.find(item =>
-          item.url === sourceImageUrl &&
-          item.url !== newImageItem.url
-        ) ||
-        existingImages.find(item =>
-          item.url &&
-          item.url !== newImageItem.url &&
-          item.url !== previousAdUrl &&
-          !isAdvertisementStoragePath(item.storagePath)
-        ) ||
-        existingImages.find(item =>
-          item.url &&
-          item.url !== newImageItem.url &&
-          item.url !== previousAdUrl
-        ) ||
-        null;
-
-      return secondaryImage
-        ? [newImageItem, secondaryImage].slice(0, 2)
-        : [newImageItem];
-    }
-
-    function getProfileLocation(data){
-      return [data?.area, data?.state].filter(Boolean).join(", ");
-    }
-
-    function getProfileWebsite(data){
-      const raw = String(data?.website || "").trim();
-      if(!raw){
-        return "";
-      }
-      return /^https?:\/\//i.test(raw) ? raw : "https://" + raw;
-    }
-
-    function getCanvasPresetConfig(value){
-      const preset = String(value || "landscape");
+    function getSavedCanvasRatio(profileData){
+      const preset = getSavedCanvasPreset(profileData);
       if(preset === "square"){
-        return { key:"square", width:1080, height:1080, ratio:"1 / 1" };
+        return "1 / 1";
       }
       if(preset === "portrait"){
-        return { key:"portrait", width:1080, height:1350, ratio:"1080 / 1350" };
+        return "1080 / 1350";
       }
-      return { key:"landscape", width:1200, height:630, ratio:"1200 / 630" };
+      return "1200 / 630";
     }
 
-    function syncCanvasPreset(presetValue){
-      const preset = getCanvasPresetConfig(presetValue);
-      if(elements.adCanvas.width !== preset.width){
-        elements.adCanvas.width = preset.width;
+    function normalizeWebsiteUrl(url){
+      const value = String(url || "").trim();
+      if(!value){
+        return "";
       }
-      if(elements.adCanvas.height !== preset.height){
-        elements.adCanvas.height = preset.height;
-      }
-      elements.canvasWrap.style.setProperty("--preview-ratio", preset.ratio);
-      return preset;
+      return /^https?:\/\//i.test(value) ? value : "https://" + value;
     }
 
-    function pickTemplateFromCategory(data){
-      const text = String(data?.categoryName || data?.category || "").toLowerCase();
-      if(text.includes("creative") || text.includes("art")){
-        return "creative";
+    function formatList(value){
+      if(Array.isArray(value)){
+        return value.filter(Boolean).join(", ");
       }
-      if(text.includes("skill") || text.includes("professional")){
-        return "skill";
+      if(value && typeof value === "object"){
+        return Object.values(value).filter(Boolean).join(", ");
       }
-      if(text.includes("sport")){
-        return "sport";
-      }
-      if(text.includes("fitness")){
-        return "fitness";
-      }
-      if(text.includes("academic") || text.includes("education") || text.includes("career")){
-        return "academic";
-      }
-      return "blue";
+      return String(value || "").trim();
     }
 
-    function buildAdvertisementImageChoices(data){
-      const choices = [];
-      const seen = new Set();
-      const advertisementAssets = normalizeAdvertisementAssetImages(data);
+    function getAreaLine(profileData){
+      return [profileData?.area, profileData?.state].filter(Boolean).join(", ");
+    }
 
-      const pushChoice = (key, label, url) => {
-        const cleanUrl = String(url || "").trim();
-        if(!cleanUrl || seen.has(cleanUrl)){
-          return;
-        }
-        seen.add(cleanUrl);
-        choices.push({ key, label, url:cleanUrl });
-      };
+    function getDashboardPath(){
+      const viewerRole = String(
+        localStorage.getItem("role") ||
+        sessionStorage.getItem("role") ||
+        ""
+      ).toLowerCase();
 
-      ["imageOne","imageTwo","imageThree"].forEach((slot, index) => {
-        const item = advertisementAssets[slot];
-        if(item && item.url){
-          pushChoice(slot, "Uploaded Ad Image " + (index + 1), item.url);
-        }
-      });
-
-      const profileImages = normalizeProfileImages(data);
-      profileImages.forEach((item, index) => {
-        pushChoice(
-          "profile-" + index,
-          index === 0 ? "Main Profile Image" : "Profile Image " + (index + 1),
-          item.url
-        );
-      });
-
-      const gallerySource =
-        Array.isArray(data?.galleryImages)
-          ? data.galleryImages
-          : (
-              data?.galleryImages &&
-              typeof data.galleryImages === "object"
-            )
-              ? Object.values(data.galleryImages)
-              : (
-                  Array.isArray(data?.gallery)
-                    ? data.gallery
-                    : (
-                        data?.gallery &&
-                        typeof data.gallery === "object"
-                      )
-                        ? Object.values(data.gallery)
-                        : []
-                );
-
-      gallerySource
-        .map((item, index) => normalizeImageItem(item, index))
-        .filter(Boolean)
-        .forEach((item, index) => {
-          pushChoice("gallery-" + index, "Gallery Image " + (index + 1), item.url);
-        });
-
-      if(!choices.length){
-        pushChoice("fallback", "No Image Available", "");
+      if(viewerRole === "student" || viewerRole === "parent"){
+        return "student-dashboard.html";
       }
 
-      return choices;
-    }
-
-    function populateImageSelect(selectEl, choices, selectedKey){
-      const fallbackKey = choices[0]?.key || "";
-      const finalKey =
-        choices.some(choice => choice.key === selectedKey)
-          ? selectedKey
-          : fallbackKey;
-
-      selectEl.innerHTML = choices.map(choice =>
-        `<option value="${escapeHtml(choice.key)}">${escapeHtml(choice.label)}</option>`
-      ).join("");
-
-      selectEl.value = finalKey;
-    }
-
-    function updateImageSelectors(adData = {}){
-      const choices = buildAdvertisementImageChoices(profileData || {});
-      populateImageSelect(elements.imageOneSelect, choices, adData.imageOne || choices[0]?.key || "");
-      populateImageSelect(elements.imageTwoSelect, choices, adData.imageTwo || choices[1]?.key || choices[0]?.key || "");
-      populateImageSelect(elements.imageThreeSelect, choices, adData.imageThree || choices[2]?.key || choices[0]?.key || "");
-    }
-
-    function resolveSelectedImages(adData){
-      const choiceMap = new Map(buildAdvertisementImageChoices(profileData || {}).map(choice => [choice.key, choice.url]));
-      const slots = ["imageOne","imageTwo","imageThree"];
-      return slots
-        .map(slot => {
-          const localPreview = localAdUploads[slot]?.previewUrl || "";
-          if(localPreview){
-            return {
-              slot,
-              url:localPreview
-            };
-          }
-          const url = choiceMap.get(adData[slot]) || "";
-          return url ? { slot, url } : null;
-        })
-        .filter(Boolean);
-    }
-
-    function revokeLocalUploadPreview(slot){
-      const currentUrl = localAdUploads[slot]?.previewUrl || "";
-      if(currentUrl && currentUrl.startsWith("blob:")){
-        try{
-          URL.revokeObjectURL(currentUrl);
-        }
-        catch(err){
-          console.log("Ad upload preview revoke skipped:", err);
-        }
+      if(viewerRole === "teacher" || viewerRole === "institution" || viewerRole === "teacher_institute"){
+        return "teacher-dashboard.html";
       }
-      localAdUploads[slot].previewUrl = "";
+
+      if(viewerRole === "admin"){
+        return "admin.html";
+      }
+
+      return "index.html";
     }
 
-    function revokeLocalVideoPreview(){
-      const currentUrl = localVideoUpload.previewUrl || "";
-      if(currentUrl && currentUrl.startsWith("blob:")){
-        try{
-          URL.revokeObjectURL(currentUrl);
-        }
-        catch(err){
-          console.log("Video preview revoke skipped:", err);
-        }
-      }
-      localVideoUpload.previewUrl = "";
-      if(elements.promoVideoPreview){
-        elements.promoVideoPreview.pause();
-        elements.promoVideoPreview.removeAttribute("src");
-        elements.promoVideoPreview.load();
-      }
-      setVideoPreviewMode(false);
-    }
-
-    function setVideoPreviewMode(active){
-      elements.canvasWrap.classList.toggle("videoMode", active);
-      if(elements.videoPreviewStage){
-        elements.videoPreviewStage.classList.toggle("show", active);
-        elements.videoPreviewStage.setAttribute("aria-hidden", active ? "false" : "true");
-      }
-      if(elements.canvasHint){
-        elements.canvasHint.textContent = active
-          ? "Video preview is active. On the public ad page it replaces the PNG and includes a Contact Us button."
-          : "Tip: click a text block or image, drag it to a better place, then save once when you are happy.";
-      }
-    }
-
-    function showPromoVideoPreview(url){
-      if(!elements.promoVideoPreview){
+    window.goBackSmart = function(){
+      if(history.length > 1){
+        history.back();
         return;
       }
-      if(!url){
-        revokeLocalVideoPreview();
-        return;
-      }
-      elements.promoVideoPreview.src = url;
-      elements.promoVideoPreview.muted = true;
-      elements.promoVideoPreview.onloadedmetadata = () => {
-        const width = Math.round(Number(elements.promoVideoPreview.videoWidth) || 0);
-        const height = Math.round(Number(elements.promoVideoPreview.videoHeight) || 0);
-        if(localVideoUpload.file && url === localVideoUpload.previewUrl){
-          localVideoUpload.width = width;
-          localVideoUpload.height = height;
-          localVideoUpload.mimeType = localVideoUpload.file.type || "video/mp4";
-        }
-      };
-      setVideoPreviewMode(true);
-      const playPromise = elements.promoVideoPreview.play();
-      if(playPromise && typeof playPromise.catch === "function"){
-        playPromise.catch(() => {});
-      }
-    }
+      location.href = getDashboardPath();
+    };
 
-    function bindImageUploads(){
-      [
-        ["imageOne", elements.imageOneUpload],
-        ["imageTwo", elements.imageTwoUpload],
-        ["imageThree", elements.imageThreeUpload]
-      ].forEach(([slot, input]) => {
-        input.addEventListener("change", () => {
-          const file = input.files && input.files[0] ? input.files[0] : null;
-          localAdUploads[slot].file = file;
-          revokeLocalUploadPreview(slot);
-
-          if(file){
-            localAdUploads[slot].previewUrl = URL.createObjectURL(file);
-            setStatus("Previewing uploaded image for " + slot.replace("image", "Image ") + ".", "");
-          }
-
-          renderPreview();
-        });
-      });
-    }
-
-    function bindVideoUpload(){
-      if(!elements.promoVideoUpload){
-        return;
-      }
-
-      elements.promoVideoUpload.addEventListener("change", () => {
-        const file =
-          elements.promoVideoUpload.files && elements.promoVideoUpload.files[0]
-            ? elements.promoVideoUpload.files[0]
-            : null;
-
-        localVideoUpload.file = file;
-        revokeLocalVideoPreview();
-        localVideoUpload.width = 0;
-        localVideoUpload.height = 0;
-        localVideoUpload.mimeType = file?.type || "";
-
-        if(file){
-          localVideoUpload.previewUrl = URL.createObjectURL(file);
-          showPromoVideoPreview(localVideoUpload.previewUrl);
-          setStatus("Previewing uploaded promo video.", "");
-          return;
-        }
-
-        showPromoVideoPreview(profileData?.advertisementVideoUrl || "");
-      });
-    }
-
-    function updateRangeLabels(){
-      elements.headlineSizeValue.textContent = String(elements.headlineSizeInput.value || 62) + " px";
-      elements.bodySizeValue.textContent = String(elements.bodySizeInput.value || 26) + " px";
-      elements.ctaSizeValue.textContent = String(elements.ctaSizeInput.value || 23) + " px";
-    }
-
-    function applyTemplatePalette(templateKey){
-      const template = templates[templateKey] || templates.blue;
-      elements.headingColorInput.value = template.heading;
-      elements.accentColorInput.value = template.accent;
-      elements.bodyColorInput.value = template.body;
-    }
-
-    function makeDefaultAdData(data){
-      const subjectList = normalizeList(data?.subjects).slice(0,3);
-      const focusLine =
-        subjectList.length
-          ? subjectList.join(" | ")
-          : (data?.description || "").trim();
-      const chosenTemplate = pickTemplateFromCategory(data);
-      const defaultTemplate = templates[chosenTemplate] || templates.blue;
-      const imageChoices = buildAdvertisementImageChoices(data);
-
-      return {
-        template:chosenTemplate,
-        canvasPreset:"landscape",
-        fontFamily:"Poppins",
-        iconStyle:defaultTemplate.defaultIcon || "none",
-        imageLayout:"hero",
-        imageOne:imageChoices[0]?.key || "",
-        imageTwo:imageChoices[1]?.key || imageChoices[0]?.key || "",
-        imageThree:imageChoices[2]?.key || imageChoices[0]?.key || "",
-        offerBadge:activeRole === "institution" ? "GURULINK AD" : "TRAINING AD",
-        headline:data?.name || "",
-        tagline:data?.categoryName || data?.category || "",
-        highlight:focusLine || "Admissions, classes, training, and learning support available",
-        subHighlight:data?.class || "",
-        cta:"Contact Now",
-        note:"",
-        footer:getProfileLocation(data) || getProfileWebsite(data) || "Available on GURULINK",
-        headlineSize:62,
-        bodySize:26,
-        ctaSize:23,
-        layerPositions:createDefaultLayerPositions(),
-        headingColor:defaultTemplate.heading,
-        accentColor:defaultTemplate.accent,
-        bodyColor:defaultTemplate.body,
-        showPhone:true,
-        showWebsite:!!getProfileWebsite(data),
-        showLocation:!!getProfileLocation(data)
-      };
-    }
-
-    function getEditorData(){
-      return {
-        template:elements.templateSelect.value,
-        canvasPreset:elements.canvasPresetSelect.value,
-        fontFamily:elements.fontFamilySelect.value,
-        iconStyle:(templates[elements.templateSelect.value] || templates.blue).defaultIcon || "none",
-        imageLayout:elements.imageLayoutSelect.value,
-        offerBadge:elements.offerBadgeInput.value.trim(),
-        imageOne:elements.imageOneSelect.value,
-        imageTwo:elements.imageTwoSelect.value,
-        imageThree:elements.imageThreeSelect.value,
-        headline:elements.headlineInput.value.trim(),
-        tagline:elements.taglineInput.value.trim(),
-        subHighlight:elements.subHighlightInput.value.trim(),
-        highlight:elements.highlightInput.value.trim(),
-        cta:elements.ctaInput.value.trim(),
-        note:elements.noteInput.value.trim(),
-        footer:elements.footerInput.value.trim(),
-        headlineSize:Number(elements.headlineSizeInput.value || 62),
-        bodySize:Number(elements.bodySizeInput.value || 26),
-        ctaSize:Number(elements.ctaSizeInput.value || 23),
-        layerPositions:cloneLayerPositions(currentLayerPositions),
-        headingColor:elements.headingColorInput.value,
-        accentColor:elements.accentColorInput.value,
-        bodyColor:elements.bodyColorInput.value,
-        showPhone:elements.showPhoneToggle.checked,
-        showWebsite:elements.showWebsiteToggle.checked,
-        showLocation:elements.showLocationToggle.checked
-      };
-    }
-
-    function applyEditorData(adData){
-      const finalData = {
-        ...makeDefaultAdData(profileData || {}),
-        ...(adData || {})
-      };
-
-      updateImageSelectors(finalData);
-      elements.templateSelect.value = finalData.template || "blue";
-      elements.canvasPresetSelect.value = finalData.canvasPreset || "landscape";
-      elements.fontFamilySelect.value = finalData.fontFamily || "Poppins";
-      elements.imageLayoutSelect.value = finalData.imageLayout || "hero";
-      elements.offerBadgeInput.value = finalData.offerBadge || "";
-      elements.headlineInput.value = finalData.headline || "";
-      elements.taglineInput.value = finalData.tagline || "";
-      elements.subHighlightInput.value = finalData.subHighlight || "";
-      elements.highlightInput.value = finalData.highlight || "";
-      elements.ctaInput.value = finalData.cta || "";
-      elements.noteInput.value = finalData.note || "";
-      elements.footerInput.value = finalData.footer || "";
-      elements.headlineSizeInput.value = String(finalData.headlineSize || 62);
-      elements.bodySizeInput.value = String(finalData.bodySize || 26);
-      elements.ctaSizeInput.value = String(finalData.ctaSize || 23);
-      elements.headingColorInput.value = finalData.headingColor || templates[finalData.template || "blue"]?.heading || "#ffffff";
-      elements.accentColorInput.value = finalData.accentColor || templates[finalData.template || "blue"]?.accent || "#b3e5fc";
-      elements.bodyColorInput.value = finalData.bodyColor || templates[finalData.template || "blue"]?.body || "#ffffff";
-      elements.showPhoneToggle.checked = finalData.showPhone !== false;
-      elements.showWebsiteToggle.checked = !!finalData.showWebsite;
-      elements.showLocationToggle.checked = !!finalData.showLocation;
-      currentLayerPositions = mergeLayerPositions(finalData.layerPositions);
-      updateRangeLabels();
-      syncSelectedLayerInfo();
-      syncCanvasPreset(finalData.canvasPreset || "landscape");
-    }
-
-    function formatSavedAt(timestamp){
-      if(!timestamp){
-        return "Not saved";
-      }
-
-      try{
-        return new Date(Number(timestamp)).toLocaleString();
-      }
-      catch(err){
-        return "Saved";
-      }
-    }
-
-    function drawRoundedRect(context, x, y, width, height, radius){
-      const r = Math.min(radius, width / 2, height / 2);
-      context.beginPath();
-      context.moveTo(x + r, y);
-      context.arcTo(x + width, y, x + width, y + height, r);
-      context.arcTo(x + width, y + height, x, y + height, r);
-      context.arcTo(x, y + height, x, y, r);
-      context.arcTo(x, y, x + width, y, r);
-      context.closePath();
-    }
-
-    function drawCircleImage(context, image, x, y, size){
-      context.save();
-      context.beginPath();
-      context.arc(x + size / 2, y + size / 2, size / 2, 0, Math.PI * 2);
-      context.closePath();
-      context.clip();
-      context.drawImage(image, x, y, size, size);
-      context.restore();
-    }
-
-    function createLinearGradient(context, colors){
-      const gradient = context.createLinearGradient(0, 0, context.canvas.width, context.canvas.height);
-      gradient.addColorStop(0, colors[0]);
-      gradient.addColorStop(.55, colors[1]);
-      gradient.addColorStop(1, colors[2]);
-      return gradient;
-    }
-
-    function wrapText(context, text, maxWidth){
-      const words = String(text || "").split(/\s+/).filter(Boolean);
-      const lines = [];
-      let current = "";
-
-      words.forEach(word => {
-        const test = current ? current + " " + word : word;
-        if(context.measureText(test).width <= maxWidth){
-          current = test;
-        } else {
-          if(current){
-            lines.push(current);
-          }
-          current = word;
-        }
-      });
-
-      if(current){
-        lines.push(current);
-      }
-
-      return lines.length ? lines : [""];
-    }
-
-    function drawTextBlock(context, text, x, y, maxWidth, lineHeight, maxLines, color){
-      const lines = wrapText(context, text, maxWidth).slice(0, maxLines);
-      context.fillStyle = color;
-      lines.forEach((line, index) => {
-        context.fillText(line, x, y + (index * lineHeight));
-      });
-      return y + (lines.length * lineHeight);
-    }
-
-    function releasePreviewImage(){
-      if(previewImage && previewImage.__objectUrl){
-        try{
-          URL.revokeObjectURL(previewImage.__objectUrl);
-        }
-        catch(err){
-          console.log("Preview object URL revoke skipped:", err);
-        }
-      }
-
-      previewImage = null;
-    }
-
-    function loadImageElement(src, objectUrl = ""){
-      return new Promise((resolve) => {
-        const image = new Image();
-        image.crossOrigin = "anonymous";
-        image.onload = () => {
-          image.__src = src;
-          if(objectUrl){
-            image.__objectUrl = objectUrl;
-          }
-          resolve(image);
-        };
-        image.onerror = () => {
-          if(objectUrl){
-            URL.revokeObjectURL(objectUrl);
-          }
-          resolve(null);
-        };
-        image.src = src;
-      });
-    }
-
-    async function loadImage(src){
-      if(!src){
-        return Promise.resolve(null);
-      }
-
-      if(imageCache.has(src)){
-        return imageCache.get(src);
-      }
-
-      const loader = (async () => {
-        try{
-          const response = await fetch(src, {
-            mode:"cors",
-            cache:"force-cache"
-          });
-
-          if(response.ok){
-            const blob = await response.blob();
-            if(blob && blob.size){
-              const objectUrl = URL.createObjectURL(blob);
-              const image = await loadImageElement(objectUrl, objectUrl);
-              if(image){
-                image.__src = src;
-                return image;
-              }
-            }
-          }
-        }
-        catch(err){
-          console.log("Profile image fetch fallback:", err);
-        }
-
-        const directImage = await loadImageElement(src);
-        if(directImage){
-          directImage.__src = src;
-        }
-        return directImage;
-      })();
-
-      imageCache.set(src, loader);
-      return loader;
-    }
-
-    function buildSvgMarkup(kind, strokeColor, fillColor){
-      const stroke = encodeURIComponent(strokeColor || "#ffffff");
-      const fill = encodeURIComponent(fillColor || "#ffffff");
-      const common = `stroke="${stroke}" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" fill="none"`;
-
-      switch(kind){
-        case "academic":
-          return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path ${common} d="M34 92l94-42 94 42-94 42-94-42Z"/><path ${common} d="M74 112v40c0 21 25 38 54 38s54-17 54-38v-40"/><path ${common} d="M222 92v64"/></svg>`;
-        case "creative":
-          return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path ${common} d="M128 34c50 0 92 36 92 82 0 34-24 58-58 58h-18c-12 0-18 6-18 18 0 12-10 22-22 22-42 0-76-34-76-76 0-58 44-104 100-104Z"/><circle cx="86" cy="92" r="12" fill="${fill}"/><circle cx="124" cy="74" r="12" fill="${fill}"/><circle cx="168" cy="82" r="12" fill="${fill}"/><circle cx="176" cy="122" r="12" fill="${fill}"/></svg>`;
-        case "skill":
-          return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect x="44" y="78" width="168" height="118" rx="18" ${common}/><path ${common} d="M94 78V58h68v20"/><path ${common} d="M96 132h64"/><path ${common} d="M128 102v60"/></svg>`;
-        case "sport":
-          return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><circle cx="128" cy="128" r="92" ${common}/><path ${common} d="M128 36c34 28 52 58 52 92s-18 64-52 92c-34-28-52-58-52-92s18-64 52-92Z"/><path ${common} d="M48 98c24 10 50 14 80 14s56-4 80-14"/><path ${common} d="M48 158c24-10 50-14 80-14s56 4 80 14"/></svg>`;
-        case "fitness":
-          return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path ${common} d="M78 92v72"/><path ${common} d="M98 72v112"/><path ${common} d="M158 72v112"/><path ${common} d="M178 92v72"/><path ${common} d="M98 128h60"/></svg>`;
-        default:
-          return "";
-      }
-    }
-
-    const svgIconCache = new Map();
-
-    async function loadSvgIcon(kind, strokeColor, fillColor){
-      if(!kind || kind === "none"){
-        return null;
-      }
-
-      const cacheKey = [kind, strokeColor, fillColor].join("|");
-      if(svgIconCache.has(cacheKey)){
-        return svgIconCache.get(cacheKey);
-      }
-
-      const svgMarkup = buildSvgMarkup(kind, strokeColor, fillColor);
-      if(!svgMarkup){
-        return null;
-      }
-
-      const svgUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgMarkup);
-      const image = await loadImageElement(svgUrl);
-      if(image){
-        svgIconCache.set(cacheKey, image);
-      }
-      return image;
-    }
-
-    function drawRoundedImage(context, image, x, y, width, height, radius){
-      if(!image){
-        return;
-      }
-      context.save();
-      drawRoundedRect(context, x, y, width, height, radius);
-      context.clip();
-      context.drawImage(image, x, y, width, height);
-      context.restore();
-    }
-
-    function registerInteractiveRegion(key, x, y, width, height){
-      interactiveRegions.push({
-        key,
-        x,
-        y,
-        width,
-        height
-      });
-    }
-
-    function drawSelectionOutline(context){
-      const region = interactiveRegions.find(item => item.key === selectedLayerKey);
-      if(!region){
-        return;
-      }
-
-      context.save();
-      context.strokeStyle = "#ffffff";
-      context.lineWidth = 3;
-      context.setLineDash([10, 8]);
-      drawRoundedRect(context, region.x - 6, region.y - 6, region.width + 12, region.height + 12, 16);
-      context.stroke();
-      context.restore();
-    }
-
-    function getCanvasPoint(event){
-      const rect = elements.adCanvas.getBoundingClientRect();
-      return {
-        x:((event.clientX - rect.left) / rect.width) * elements.adCanvas.width,
-        y:((event.clientY - rect.top) / rect.height) * elements.adCanvas.height
-      };
-    }
-
-    function findInteractiveRegion(x, y){
-      for(let index = interactiveRegions.length - 1; index >= 0; index -= 1){
-        const region = interactiveRegions[index];
-        if(
-          x >= region.x &&
-          x <= region.x + region.width &&
-          y >= region.y &&
-          y <= region.y + region.height
-        ){
-          return region;
-        }
-      }
-      return null;
-    }
-
-    function bindCanvasInteraction(){
-      elements.adCanvas.addEventListener("pointerdown", (event) => {
-        const point = getCanvasPoint(event);
-        const region = findInteractiveRegion(point.x, point.y);
-        if(!region){
-          return;
-        }
-
-        selectedLayerKey = region.key;
-        const basePosition = getLayerPosition(region.key);
-        dragState = {
-          pointerId:event.pointerId,
-          key:region.key,
-          startX:point.x,
-          startY:point.y,
-          baseX:basePosition.x,
-          baseY:basePosition.y
-        };
-        elements.adCanvas.classList.add("dragging");
-        elements.adCanvas.setPointerCapture(event.pointerId);
-        renderPreview();
-      });
-
-      elements.adCanvas.addEventListener("pointermove", (event) => {
-        const point = getCanvasPoint(event);
-
-        if(dragState){
-          const deltaX = point.x - dragState.startX;
-          const deltaY = point.y - dragState.startY;
-          setLayerPosition(dragState.key, dragState.baseX + deltaX, dragState.baseY + deltaY);
-          renderPreview();
-          return;
-        }
-
-        const region = findInteractiveRegion(point.x, point.y);
-        elements.adCanvas.style.cursor = region ? "grab" : "default";
-      });
-
-      const finishDrag = (event) => {
-        if(!dragState){
-          return;
-        }
-        try{
-          elements.adCanvas.releasePointerCapture(event.pointerId);
-        }
-        catch(err){
-          console.log("Pointer release skipped:", err);
-        }
-        dragState = null;
-        elements.adCanvas.classList.remove("dragging");
-        elements.adCanvas.style.cursor = "grab";
-      };
-
-      elements.adCanvas.addEventListener("pointerup", finishDrag);
-      elements.adCanvas.addEventListener("pointercancel", finishDrag);
-      elements.adCanvas.addEventListener("pointerleave", (event) => {
-        if(dragState){
-          finishDrag(event);
-        }
-      });
-    }
-
-    async function renderPreview(){
-      if(!ctx || !profileData){
-        return;
-      }
-
-      const version = ++renderVersion;
-      const adData = getEditorData();
-      const preset = syncCanvasPreset(adData.canvasPreset);
-      const template = templates[adData.template] || templates.blue;
-      const fontFamily = adData.fontFamily || "Poppins";
-      const headingColor = adData.headingColor || template.heading;
-      const accentColor = adData.accentColor || template.accent;
-      const bodyColor = adData.bodyColor || template.body;
-      const selectedImages = resolveSelectedImages(adData).slice(0,3);
-
-      if(document.fonts && document.fonts.ready){
-        try{
-          await document.fonts.ready;
-        }
-        catch(err){
-          console.log("Font readiness skipped:", err);
-        }
-      }
-
-      const imageAssets = (await Promise.all(
-        selectedImages.map(async (item) => ({
-          ...item,
-          image:await loadImage(item.url)
-        }))
-      )).filter(item => item.image);
-
-      const iconImage = await loadSvgIcon(
-        adData.iconStyle || template.defaultIcon || "none",
-        accentColor,
-        bodyColor
+    function getAdPageUrl(){
+      const updatedAt = encodeURIComponent(
+        Math.max(
+          Number(data?.advertisementCardUpdatedAt) || 0,
+          Number(data?.advertisementVideoUpdatedAt) || 0,
+          Number(data?.updatedAt) || 0
+        ) || Date.now()
       );
-
-      if(version !== renderVersion){
-        return;
-      }
-
-      const canvasWidth = ctx.canvas.width;
-      const canvasHeight = ctx.canvas.height;
-      const sx = canvasWidth / 1200;
-      const sy = canvasHeight / 630;
-      const scale = Math.min(sx, sy);
-      interactiveRegions = [];
-
-      const applyLayerOffset = (key, x, y) => {
-        const position = getLayerPosition(key);
-        return {
-          x:x + (position.x || 0),
-          y:y + (position.y || 0)
-        };
-      };
-
-      const drawAsset = (asset, x, y, width, height, radius) => {
-        if(!asset || !asset.image){
-          return null;
-        }
-        const point = applyLayerOffset(asset.slot, x, y);
-        drawRoundedImage(ctx, asset.image, point.x, point.y, width, height, radius);
-        registerInteractiveRegion(asset.slot, point.x, point.y, width, height);
-        return point;
-      };
-
-      ctx.clearRect(0,0,canvasWidth,canvasHeight);
-      ctx.fillStyle = createLinearGradient(ctx, template.bg);
-      ctx.fillRect(0,0,canvasWidth,canvasHeight);
-
-      ctx.globalAlpha = .12;
-      ctx.fillStyle = "#ffffff";
-      ctx.beginPath();
-      ctx.arc(canvasWidth * 0.84,canvasHeight * 0.18,Math.min(canvasWidth, canvasHeight) * 0.18,0,Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(canvasWidth * 0.94,canvasHeight * 0.84,Math.min(canvasWidth, canvasHeight) * 0.22,0,Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(canvasWidth * 0.12,canvasHeight * 0.84,Math.min(canvasWidth, canvasHeight) * 0.17,0,Math.PI * 2);
-      ctx.fill();
-      ctx.globalAlpha = 1;
-
-      if(iconImage){
-        const iconBox = applyLayerOffset("icon", canvasWidth - (220 * scale), 24 * sy);
-        ctx.save();
-        ctx.globalAlpha = 0.18;
-        ctx.drawImage(iconImage, iconBox.x, iconBox.y, 170 * scale, 170 * scale);
-        ctx.restore();
-      }
-
-      const footerBox = applyLayerOffset("footer", 48 * sx, canvasHeight - (160 * sy));
-      ctx.fillStyle = template.footerBg;
-      drawRoundedRect(ctx, footerBox.x, footerBox.y, canvasWidth - (96 * sx), 122 * sy, 28 * scale);
-      ctx.fill();
-      registerInteractiveRegion("footer", footerBox.x, footerBox.y, canvasWidth - (96 * sx), 122 * sy);
-
-      const badgeBox = applyLayerOffset("badge", 56 * sx, 48 * sy);
-      ctx.fillStyle = template.badge;
-      drawRoundedRect(ctx, badgeBox.x, badgeBox.y, 220 * sx, 54 * sy, 18 * scale);
-      ctx.fill();
-      registerInteractiveRegion("badge", badgeBox.x, badgeBox.y, 220 * sx, 54 * sy);
-      ctx.fillStyle = accentColor;
-      ctx.font = `700 ${Math.round(26 * scale)}px ${fontFamily}`;
-      ctx.fillText(adData.offerBadge || "GURULINK AD", badgeBox.x + (32 * sx), badgeBox.y + (36 * sy));
-
-      const drawImageGroupLandscape = () => {
-        if(!imageAssets.length){
-          ctx.fillStyle = "rgba(255,255,255,.14)";
-          drawRoundedRect(ctx, canvasWidth - (390 * sx), 92 * sy, 310 * sx, 250 * sy, 34 * scale);
-          ctx.fill();
-          if(iconImage){
-            ctx.save();
-            ctx.globalAlpha = 0.85;
-            ctx.drawImage(iconImage, canvasWidth - (308 * sx), 132 * sy, 146 * scale, 146 * scale);
-            ctx.restore();
-          }
-          return;
-        }
-
-        if(adData.imageLayout === "trio"){
-          drawAsset(imageAssets[0], canvasWidth - (430 * sx), 92 * sy, 340 * sx, 186 * sy, 28 * scale);
-          if(imageAssets[1]){
-            drawAsset(imageAssets[1], canvasWidth - (430 * sx), 298 * sy, 160 * sx, 124 * sy, 24 * scale);
-          }
-          if(imageAssets[2]){
-            drawAsset(imageAssets[2], canvasWidth - (250 * sx), 298 * sy, 160 * sx, 124 * sy, 24 * scale);
-          }
-          return;
-        }
-
-        if(adData.imageLayout === "split"){
-          drawAsset(imageAssets[0], canvasWidth - (432 * sx), 84 * sy, 238 * sx, 304 * sy, 30 * scale);
-          if(imageAssets[1]){
-            drawAsset(imageAssets[1], canvasWidth - (178 * sx), 84 * sy, 104 * sx, 144 * sy, 22 * scale);
-          }
-          if(imageAssets[2]){
-            drawAsset(imageAssets[2], canvasWidth - (178 * sx), 244 * sy, 104 * sx, 144 * sy, 22 * scale);
-          }
-          return;
-        }
-
-        if(adData.imageLayout === "poster"){
-          drawAsset(imageAssets[0], canvasWidth - (430 * sx), 84 * sy, 340 * sx, 264 * sy, 26 * scale);
-          if(imageAssets[1]){
-            drawAsset(imageAssets[1], canvasWidth - (164 * sx), 106 * sy, 58 * sx, 58 * sy, 18 * scale);
-          }
-          if(imageAssets[2]){
-            drawAsset(imageAssets[2], canvasWidth - (164 * sx), 178 * sy, 58 * sx, 58 * sy, 18 * scale);
-          }
-          return;
-        }
-
-        ctx.fillStyle = "rgba(255,255,255,.18)";
-        ctx.beginPath();
-        ctx.arc(canvasWidth - (264 * sx), 222 * sy, 132 * scale, 0, Math.PI * 2);
-        ctx.fill();
-
-        if(imageAssets[0]){
-          const heroPoint = applyLayerOffset(imageAssets[0].slot, canvasWidth - (390 * sx), 100 * sy);
-          drawCircleImage(ctx, imageAssets[0].image, heroPoint.x, heroPoint.y, 246 * scale);
-          registerInteractiveRegion(imageAssets[0].slot, heroPoint.x, heroPoint.y, 246 * scale, 246 * scale);
-        }
-        if(imageAssets[1]){
-          drawAsset(imageAssets[1], canvasWidth - (462 * sx), 314 * sy, 128 * sx, 96 * sy, 22 * scale);
-        }
-        if(imageAssets[2]){
-          drawAsset(imageAssets[2], canvasWidth - (316 * sx), 314 * sy, 128 * sx, 96 * sy, 22 * scale);
-        }
-      };
-
-      const drawImageGroupVertical = () => {
-        if(!imageAssets.length){
-          ctx.fillStyle = "rgba(255,255,255,.14)";
-          drawRoundedRect(ctx, 72 * sx, 124 * sy, canvasWidth - (144 * sx), canvasHeight * 0.28, 34 * scale);
-          ctx.fill();
-          if(iconImage){
-            ctx.save();
-            ctx.globalAlpha = 0.85;
-            const iconSize = 170 * scale;
-            ctx.drawImage(iconImage, (canvasWidth / 2) - (iconSize / 2), (canvasHeight * 0.23) - (iconSize / 2), iconSize, iconSize);
-            ctx.restore();
-          }
-          return;
-        }
-
-        if(adData.imageLayout === "trio" && imageAssets.length > 1){
-          const cardY = 118 * sy;
-          const cardGap = 20 * sx;
-          const cardWidth = (canvasWidth - (144 * sx) - (2 * cardGap)) / 3;
-          imageAssets.slice(0,3).forEach((asset, index) => {
-            drawAsset(asset, (72 * sx) + index * (cardWidth + cardGap), cardY, cardWidth, 210 * sy, 24 * scale);
-          });
-          return;
-        }
-
-        if(adData.imageLayout === "split" && imageAssets.length > 1){
-          drawAsset(imageAssets[0], 72 * sx, 118 * sy, (canvasWidth * 0.46), 248 * sy, 26 * scale);
-          drawAsset(imageAssets[1], canvasWidth - (72 * sx) - (canvasWidth * 0.34), 118 * sy, (canvasWidth * 0.34), 248 * sy, 26 * scale);
-          if(imageAssets[2]){
-            drawAsset(imageAssets[2], 72 * sx, 384 * sy, canvasWidth - (144 * sx), 118 * sy, 24 * scale);
-          }
-          return;
-        }
-
-        drawAsset(imageAssets[0], 72 * sx, 118 * sy, canvasWidth - (144 * sx), canvasHeight * 0.3, 30 * scale);
-        if(imageAssets[1]){
-          drawAsset(imageAssets[1], 72 * sx, (118 * sy) + (canvasHeight * 0.3) + (18 * sy), (canvasWidth - (164 * sx)) / 2, 112 * sy, 22 * scale);
-        }
-        if(imageAssets[2]){
-          drawAsset(imageAssets[2], canvasWidth / 2 + (10 * sx), (118 * sy) + (canvasHeight * 0.3) + (18 * sy), (canvasWidth - (164 * sx)) / 2, 112 * sy, 22 * scale);
-        }
-      };
-
-      if(preset.key === "landscape"){
-        drawImageGroupLandscape();
-      } else {
-        drawImageGroupVertical();
-      }
-
-      const textAnchor = applyLayerOffset(
-        "text",
-        72 * sx,
-        preset.key === "landscape" ? 180 * sy : canvasHeight * (preset.key === "square" ? 0.54 : 0.47)
-      );
-      const textWidth = preset.key === "landscape" ? 650 * sx : canvasWidth - (144 * sx);
-
-      ctx.fillStyle = headingColor;
-      ctx.font = `700 ${Math.round((adData.headlineSize || 62) * scale)}px ${fontFamily}`;
-      const headlineBottom =
-        drawTextBlock(
-          ctx,
-          adData.headline || (profileData.name || "GURULINK Profile"),
-          textAnchor.x,
-          textAnchor.y,
-          textWidth,
-          Math.round((adData.headlineSize || 62) * 1.16 * scale),
-          preset.key === "portrait" ? 3 : 2,
-          headingColor
-        );
-
-      let textCursor = headlineBottom;
-
-      if(adData.tagline){
-        ctx.fillStyle = bodyColor;
-        ctx.font = `700 ${Math.round((adData.bodySize + 4 || 30) * scale)}px ${fontFamily}`;
-        textCursor =
-          drawTextBlock(
-            ctx,
-            adData.tagline,
-            textAnchor.x,
-            textCursor + (10 * sy),
-            textWidth,
-            Math.round((adData.bodySize + 10) * 1.1 * scale),
-            2,
-            bodyColor
-          );
-      }
-
-      let highlightBottom = textCursor;
-      if(adData.highlight){
-        ctx.fillStyle = accentColor;
-        ctx.font = `700 ${Math.round((adData.bodySize || 26) * scale)}px ${fontFamily}`;
-        highlightBottom =
-          drawTextBlock(
-            ctx,
-            adData.highlight,
-            textAnchor.x,
-            textCursor + (16 * sy),
-            textWidth,
-            Math.round((adData.bodySize + 6) * scale),
-            preset.key === "portrait" ? 4 : 3,
-            accentColor
-          );
-      }
-
-      let textBlockBottom = highlightBottom;
-      if(adData.subHighlight){
-        ctx.fillStyle = bodyColor;
-        ctx.font = `600 ${Math.round((adData.bodySize - 2) * scale)}px ${fontFamily}`;
-        textBlockBottom =
-          drawTextBlock(
-            ctx,
-            adData.subHighlight,
-            textAnchor.x,
-            highlightBottom + (14 * sy),
-            textWidth,
-            Math.round((adData.bodySize + 2) * scale),
-            2,
-            bodyColor
-          );
-      }
-
-      registerInteractiveRegion(
-        "text",
-        textAnchor.x - (12 * sx),
-        textAnchor.y - (40 * sy),
-        textWidth + (24 * sx),
-        Math.max((textBlockBottom - textAnchor.y) + (22 * sy), 132 * sy)
-      );
-
-      const ctaWidth = preset.key === "portrait" ? 300 * sx : 248 * sx;
-      const ctaBox = applyLayerOffset("cta", 72 * sx, canvasHeight - (108 * sy));
-      ctx.fillStyle = template.pillBg;
-      drawRoundedRect(ctx, ctaBox.x, ctaBox.y, ctaWidth, 42 * sy, 20 * scale);
-      ctx.fill();
-      registerInteractiveRegion("cta", ctaBox.x, ctaBox.y, ctaWidth, 42 * sy);
-      ctx.fillStyle = template.pillText;
-      ctx.font = `700 ${Math.round((adData.ctaSize || 23) * scale)}px ${fontFamily}`;
-      ctx.fillText(adData.cta || "Contact Now", ctaBox.x + (31 * sx), ctaBox.y + (28 * sy));
-
-      const footerLines = [];
-      if(adData.showPhone && profileData.phone){
-        footerLines.push("Phone: " + profileData.phone);
-      }
-      if(adData.showWebsite){
-        const website = getProfileWebsite(profileData);
-        if(website){
-          footerLines.push(website.replace(/^https?:\/\//i,""));
-        }
-      }
-      if(adData.showLocation){
-        const location = getProfileLocation(profileData);
-        if(location){
-          footerLines.push(location);
-        }
-      }
-      if(adData.footer){
-        footerLines.push(adData.footer);
-      }
-      if(adData.note){
-        footerLines.push(adData.note);
-      }
-
-      ctx.fillStyle = bodyColor;
-      ctx.font = `500 ${Math.round((adData.bodySize - 4) * scale)}px ${fontFamily}`;
-      drawTextBlock(
-        ctx,
-        footerLines.filter(Boolean).join("   |   "),
-        footerBox.x + (24 * sx),
-        footerBox.y + (34 * sy),
-        canvasWidth - (144 * sx),
-        Math.round((adData.bodySize + 4) * scale),
-        preset.key === "portrait" ? 4 : 3,
-        bodyColor
-      );
-
-      drawSelectionOutline(ctx);
-    }
-
-    function bindPreviewInputs(){
-      const controls = [
-        elements.templateSelect,
-        elements.canvasPresetSelect,
-        elements.fontFamilySelect,
-        elements.imageLayoutSelect,
-        elements.offerBadgeInput,
-        elements.imageOneSelect,
-        elements.imageTwoSelect,
-        elements.imageThreeSelect,
-        elements.headlineInput,
-        elements.taglineInput,
-        elements.subHighlightInput,
-        elements.highlightInput,
-        elements.ctaInput,
-        elements.noteInput,
-        elements.footerInput,
-        elements.headlineSizeInput,
-        elements.bodySizeInput,
-        elements.ctaSizeInput,
-        elements.headingColorInput,
-        elements.accentColorInput,
-        elements.bodyColorInput,
-        elements.showPhoneToggle,
-        elements.showWebsiteToggle,
-        elements.showLocationToggle
-      ];
-
-      controls.forEach(control => {
-        control.addEventListener("input", renderPreview);
-        control.addEventListener("change", renderPreview);
-      });
-
-      elements.templateSelect.addEventListener("change", () => {
-        applyTemplatePalette(elements.templateSelect.value);
-        renderPreview();
-      });
-
-      [
-        elements.headlineSizeInput,
-        elements.bodySizeInput,
-        elements.ctaSizeInput
-      ].forEach(control => {
-        control.addEventListener("input", updateRangeLabels);
-        control.addEventListener("change", updateRangeLabels);
-      });
-    }
-
-    function createPngBlob(){
-      return new Promise((resolve, reject) => {
-        elements.adCanvas.toBlob((blob) => {
-          if(blob){
-            resolve(blob);
-            return;
-          }
-          reject(new Error("Could not generate advertisement image."));
-        }, "image/png", 1);
-      });
-    }
-
-    async function deleteStoragePath(path){
-      if(!path){
-        return;
-      }
-
-      try{
-        await deleteObject(storageRef(storage, path));
-      }
-      catch(err){
-        console.log("Old advertisement delete skipped:", err);
-      }
-    }
-
-    async function uploadAdvertisementAsset(slot, file, now){
-      if(!file){
-        return null;
-      }
-
-      const storageOwnerUid = getStorageOwnerUid();
-      const safeName = String(file.name || "ad-image.png").replace(/[^a-zA-Z0-9._-]/g, "-");
-      const storagePath =
-        getStorageRoot() + "/" +
-        storageOwnerUid + "/" +
-        "advertisement-assets/" +
-        now + "-" + slot + "-" + safeName;
-
-      const fileRef = storageRef(storage, storagePath);
-      await uploadWithTimeout(fileRef, file);
-      const url = await getDownloadURL(fileRef);
-
-      return {
-        url,
-        storagePath,
-        uploadedAt:now,
-        slot
-      };
-    }
-
-    async function uploadAdvertisementVideo(file, now){
-      if(!file){
-        return null;
-      }
-
-      const storageOwnerUid = getStorageOwnerUid();
-      const safeName = String(file.name || "promo-video.mp4").replace(/[^a-zA-Z0-9._-]/g, "-");
-      const storagePath =
-        getStorageRoot() + "/" +
-        storageOwnerUid + "/" +
-        "advertisement-videos/" +
-        now + "-" + safeName;
-
-      const fileRef = storageRef(storage, storagePath);
-      await uploadWithTimeout(fileRef, file, 300000);
-      const url = await getDownloadURL(fileRef);
-
-      return {
-        url,
-        storagePath,
-        uploadedAt:now,
-        width:Math.round(
-          Number(localVideoUpload.width) ||
-          Number(elements.promoVideoPreview?.videoWidth) ||
-          0
-        ),
-        height:Math.round(
-          Number(localVideoUpload.height) ||
-          Number(elements.promoVideoPreview?.videoHeight) ||
-          0
-        ),
-        mimeType:file.type || localVideoUpload.mimeType || "video/mp4"
-      };
+      return WEBSITE_BASE + "profile-ad.html?id=" + encodeURIComponent(currentProfileId) + "&adts=" + updatedAt;
     }
 
     function getAdvertisementVideoProxyUrl(){
-      const adts = Math.max(
-        Number(profileData?.advertisementCardUpdatedAt) || 0,
-        Number(profileData?.advertisementVideoUpdatedAt) || 0,
-        Number(profileData?.updatedAt) || 0
-      ) || Date.now();
-
-      return "https://guru-link.onrender.com/advertisement-video?id=" +
-        encodeURIComponent(profileId) +
-        "&adts=" +
-        encodeURIComponent(adts);
+      const adUrl = new URL(getAdPageUrl());
+      adUrl.pathname = adUrl.pathname.replace(/profile-ad\.html$/, "advertisement-video");
+      return adUrl.toString();
     }
 
-    async function createVideoPosterBlob(sourceUrl){
-      if(!sourceUrl){
-        return null;
-      }
-
-      return await new Promise((resolve, reject) => {
-        const video = document.createElement("video");
-        let settled = false;
-        let capturing = false;
-        const timeoutId = setTimeout(() => finishWithError(new Error("Video poster timed out.")), 25000);
-
-        function cleanup(){
-          clearTimeout(timeoutId);
-          video.pause();
-          video.removeAttribute("src");
-          video.load();
-        }
-
-        function finishWithError(error){
-          if(settled){
-            return;
-          }
-          settled = true;
-          cleanup();
-          reject(error);
-        }
-
-        function captureFrame(){
-          if(settled || capturing || video.readyState < 2){
-            return;
-          }
-          capturing = true;
-
-          try{
-            const canvas = document.createElement("canvas");
-            canvas.width = 1200;
-            canvas.height = 630;
-            const context = canvas.getContext("2d");
-            const videoWidth = Number(video.videoWidth) || 1;
-            const videoHeight = Number(video.videoHeight) || 1;
-            const scale = Math.min(canvas.width / videoWidth, canvas.height / videoHeight);
-            const drawWidth = videoWidth * scale;
-            const drawHeight = videoHeight * scale;
-            const drawX = (canvas.width - drawWidth) / 2;
-            const drawY = (canvas.height - drawHeight) / 2;
-
-            context.fillStyle = "#05070d";
-            context.fillRect(0, 0, canvas.width, canvas.height);
-            context.drawImage(video, drawX, drawY, drawWidth, drawHeight);
-
-            const shade = context.createLinearGradient(0, canvas.height * .55, 0, canvas.height);
-            shade.addColorStop(0, "rgba(0,0,0,0)");
-            shade.addColorStop(1, "rgba(0,0,0,.82)");
-            context.fillStyle = shade;
-            context.fillRect(0, 0, canvas.width, canvas.height);
-
-            context.beginPath();
-            context.arc(canvas.width / 2, canvas.height / 2 - 24, 68, 0, Math.PI * 2);
-            context.fillStyle = "rgba(255,255,255,.94)";
-            context.fill();
-            context.beginPath();
-            context.moveTo(canvas.width / 2 - 17, canvas.height / 2 - 61);
-            context.lineTo(canvas.width / 2 - 17, canvas.height / 2 + 13);
-            context.lineTo(canvas.width / 2 + 43, canvas.height / 2 - 24);
-            context.closePath();
-            context.fillStyle = "#ff5a36";
-            context.fill();
-
-            context.textAlign = "center";
-            context.fillStyle = "#ffffff";
-            context.font = "700 42px Arial, sans-serif";
-            context.fillText("Click to watch the video", canvas.width / 2, canvas.height - 72);
-            context.font = "500 24px Arial, sans-serif";
-            context.fillText("Open the GURULINK advertisement and contact this profile", canvas.width / 2, canvas.height - 34);
-
-            canvas.toBlob((blob) => {
-              if(settled){
-                return;
-              }
-              if(!blob){
-                finishWithError(new Error("Could not create video poster."));
-                return;
-              }
-              settled = true;
-              cleanup();
-              resolve(blob);
-            }, "image/png");
-          }
-          catch(error){
-            finishWithError(error);
-          }
-        }
-
-        function prepareFrame(){
-          if(settled || video.readyState < 2){
-            return;
-          }
-          const duration = Number(video.duration) || 0;
-          const targetTime = duration > .2
-            ? Math.min(Math.max(duration * .2, .1), duration - .05)
-            : 0;
-
-          if(targetTime > .01 && Math.abs(video.currentTime - targetTime) > .02){
-            video.addEventListener("seeked", captureFrame, { once:true });
-            video.currentTime = targetTime;
-            return;
-          }
-          captureFrame();
-        }
-
-        video.muted = true;
-        video.playsInline = true;
-        video.preload = "auto";
-        if(/^https?:/i.test(sourceUrl)){
-          video.crossOrigin = "anonymous";
-        }
-        video.addEventListener("loadeddata", prepareFrame);
-        video.addEventListener("error", () => finishWithError(new Error("Could not load video for its preview.")));
-        video.src = sourceUrl;
-        video.load();
-      });
+    function getAdSharePayload(){
+      const shareUrl = getAdPageUrl();
+      const hasVideo = Boolean(String(data?.advertisementVideoUrl || "").trim());
+      const shareText = hasVideo
+        ? "Watch this GURULINK video advertisement. Contact us using the link below."
+        : "Check out this profile advertisement on GURULINK.";
+      const shareMessage = shareText + "\n\n" + shareUrl;
+      return { shareUrl, shareText, shareMessage };
     }
 
-    async function uploadAdvertisementVideoPoster(blob, now){
-      if(!blob){
-        return null;
-      }
-
-      const storagePath =
-        getStorageRoot() + "/" +
-        getStorageOwnerUid() + "/" +
-        "advertisement-video-posters/" +
-        now + "-video-poster.png";
-      const fileRef = storageRef(storage, storagePath);
-      await uploadWithTimeout(fileRef, blob);
-      const url = await getDownloadURL(fileRef);
-
-      return {
-        url,
-        storagePath,
-        uploadedAt:now
-      };
+    function isMobileShareMode(){
+      return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || "") ||
+        window.matchMedia("(max-width: 760px)").matches;
     }
 
-    async function uploadWithTimeout(fileRef, fileBlob, timeoutMs = 180000){
-      const task = uploadBytesResumable(fileRef, fileBlob, {
-        contentType:fileBlob.type || "image/png"
-      });
+    window.closeShareChooser = function(){
+      shareOverlay.classList.remove("show");
+    };
 
-      return await new Promise((resolve, reject) => {
-        let settled = false;
-
-        const timeoutId = setTimeout(() => {
-          if(settled){
-            return;
-          }
-
-          settled = true;
-
-          try{
-            task.cancel();
-          }
-          catch(cancelErr){
-            console.log("Advertisement upload cancel skipped:", cancelErr);
-          }
-
-          reject(new Error("Advertisement upload took too long. Please try again."));
-        }, timeoutMs);
-
-        task.on("state_changed",
-          () => {},
-          (error) => {
-            if(settled){
-              return;
-            }
-            settled = true;
-            clearTimeout(timeoutId);
-            reject(error);
-          },
-          () => {
-            if(settled){
-              return;
-            }
-            settled = true;
-            clearTimeout(timeoutId);
-            resolve(task.snapshot);
-          }
-        );
-      });
-    }
-
-    async function saveAdvertisement(){
-      if(!profileId){
-        setStatus("Profile ID is missing.", "error");
+    function openShareChooser(){
+      if(!data){
         return;
       }
+      shareOverlay.classList.add("show");
+    }
 
-      await authReadyPromise;
+    window.shareViaFacebook = function(){
+      const payload = getAdSharePayload();
+      window.open(
+        "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(payload.shareUrl),
+        "_blank",
+        "noopener"
+      );
+    };
 
-      if(!currentUser){
-        setStatus("Please log in first, then open this page again from your dashboard.", "error");
+    window.shareViaWhatsApp = function(){
+      const payload = getAdSharePayload();
+      window.open(
+        "https://wa.me/?text=" + encodeURIComponent(payload.shareMessage),
+        "_blank",
+        "noopener"
+      );
+    };
+
+    window.copyAdvertisementLink = async function(){
+      const payload = getAdSharePayload();
+      try{
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          await navigator.clipboard.writeText(payload.shareUrl);
+          alert("Advertisement link copied.");
+          return;
+        }
+      }
+      catch(err){
+        console.log("Clipboard copy skipped:", err);
+      }
+
+      prompt("Copy this advertisement link:", payload.shareUrl);
+    };
+
+    window.shareViaSystem = async function(){
+      const payload = getAdSharePayload();
+      if(!navigator.share){
+        alert("System share is not available here. Use Facebook, WhatsApp, or Copy Link.");
         return;
       }
 
       try{
-        setStatus("Saving advertisement...", "");
-        elements.saveBtn.disabled = true;
+        const promoVideo = String(data?.advertisementVideoUrl || "").trim();
+        const videoFile = promoVideo
+          ? await fetchShareVideoFileFromUrl(promoVideo)
+          : null;
 
-        await renderPreview();
-
-        const blob = await createPngBlob();
-        const now = Date.now();
-        const storageOwnerUid = getStorageOwnerUid();
-        const storagePath =
-          getStorageRoot() + "/" +
-          storageOwnerUid + "/" +
-          "advertisement-cards/" +
-          now + "-profile-ad.png";
-
-        const fileRef = storageRef(storage, storagePath);
-        await uploadWithTimeout(fileRef, blob);
-        const url = await getDownloadURL(fileRef);
-
-        const previousPath =
-          profileData.advertisementCardStoragePath || "";
-        const previousVideoPath =
-          profileData.advertisementVideoStoragePath || "";
-        const previousVideoPosterPath =
-          profileData.advertisementVideoPosterStoragePath || "";
-        const previousAssetImages = normalizeAdvertisementAssetImages(profileData);
-        const updatedAssetImages = { ...previousAssetImages };
-        const deleteAssetPaths = [];
-
-        for (const slot of ["imageOne","imageTwo","imageThree"]) {
-          const pendingFile = localAdUploads[slot].file;
-          if(!pendingFile){
-            continue;
-          }
-
-          const uploadedAsset = await uploadAdvertisementAsset(slot, pendingFile, now + (slot === "imageOne" ? 1 : slot === "imageTwo" ? 2 : 3));
-          if(previousAssetImages[slot]?.storagePath){
-            deleteAssetPaths.push(previousAssetImages[slot].storagePath);
-          }
-          updatedAssetImages[slot] = uploadedAsset;
+        if(videoFile){
+          await navigator.share({
+            title:"GURULINK Advertisement",
+            text:payload.shareMessage,
+            files:[videoFile]
+          });
+          return;
         }
 
-        let promoVideoData = null;
-        if(localVideoUpload.file){
-          promoVideoData =
-            await uploadAdvertisementVideo(localVideoUpload.file, now + 10);
-        }
-
-        let promoVideoPosterData = null;
-        const activeVideoUrl = promoVideoData?.url || profileData.advertisementVideoUrl || "";
-        if(activeVideoUrl && (localVideoUpload.file || !profileData.advertisementVideoPosterImage)){
-          try{
-            const posterSourceUrl = localVideoUpload.previewUrl || getAdvertisementVideoProxyUrl();
-            const posterBlob = await createVideoPosterBlob(posterSourceUrl);
-            promoVideoPosterData = await uploadAdvertisementVideoPoster(posterBlob, now + 11);
-          }
-          catch(error){
-            console.log("Video poster creation skipped:", error);
-          }
-        }
-
-        const sourceImageUrl = resolveSelectedImages(getEditorData())[0]?.url || getAdvertisementSourceImage(profileData);
-        const currentVideoWidth = Math.round(
-          Number(promoVideoData?.width) ||
-          Number(elements.promoVideoPreview?.videoWidth) ||
-          Number(profileData.advertisementVideoWidth) ||
-          0
-        );
-        const currentVideoHeight = Math.round(
-          Number(promoVideoData?.height) ||
-          Number(elements.promoVideoPreview?.videoHeight) ||
-          Number(profileData.advertisementVideoHeight) ||
-          0
-        );
-        const updateData = {
-          advertisementCardImage:url,
-          advertisementCardStoragePath:storagePath,
-          advertisementCardUpdatedAt:now,
-          advertisementCardData:getEditorData(),
-          advertisementSourceImage:sourceImageUrl,
-          advertisementAssetImages:updatedAssetImages,
-          advertisementVideoUrl:promoVideoData?.url || profileData.advertisementVideoUrl || "",
-          advertisementVideoStoragePath:promoVideoData?.storagePath || profileData.advertisementVideoStoragePath || "",
-          advertisementVideoUpdatedAt:promoVideoData?.uploadedAt || profileData.advertisementVideoUpdatedAt || 0,
-          advertisementVideoWidth:currentVideoWidth,
-          advertisementVideoHeight:currentVideoHeight,
-          advertisementVideoMimeType:promoVideoData?.mimeType || profileData.advertisementVideoMimeType || "video/mp4",
-          advertisementVideoPosterImage:promoVideoPosterData?.url || profileData.advertisementVideoPosterImage || "",
-          advertisementVideoPosterStoragePath:promoVideoPosterData?.storagePath || profileData.advertisementVideoPosterStoragePath || "",
-          advertisementVideoPosterUpdatedAt:promoVideoPosterData?.uploadedAt || profileData.advertisementVideoPosterUpdatedAt || 0
-        };
-
-        await update(ref(db, getDbPath()), updateData);
-        await deleteStoragePath(previousPath && previousPath !== storagePath ? previousPath : "");
-        if(
-          promoVideoData &&
-          previousVideoPath &&
-          previousVideoPath !== promoVideoData.storagePath
-        ){
-          await deleteStoragePath(previousVideoPath);
-        }
-        if(
-          promoVideoPosterData &&
-          previousVideoPosterPath &&
-          previousVideoPosterPath !== promoVideoPosterData.storagePath
-        ){
-          await deleteStoragePath(previousVideoPosterPath);
-        }
-        for (const path of deleteAssetPaths) {
-          await deleteStoragePath(path);
-        }
-
-        profileData = {
-          ...profileData,
-          ...updateData
-        };
-
-        for (const slot of ["imageOne","imageTwo","imageThree"]) {
-          localAdUploads[slot].file = null;
-          revokeLocalUploadPreview(slot);
-          const inputEl = elements[slot + "Upload"];
-          if(inputEl){
-            inputEl.value = "";
-          }
-        }
-
-        updateImageSelectors(updateData.advertisementCardData);
-
-        savedAdvertisementUrl = url;
-        localVideoUpload.file = null;
-        if(elements.promoVideoUpload){
-          elements.promoVideoUpload.value = "";
-        }
-        showPromoVideoPreview(updateData.advertisementVideoUrl || "");
-        setStatus("Advertisement saved successfully.", "success");
+        await navigator.share({
+          title:"GURULINK Advertisement",
+          text:payload.shareText,
+          url:payload.shareUrl
+        });
       }
       catch(err){
-        console.error(err);
-        setStatus("Could not save advertisement: " + (err.message || err), "error");
+        console.log("System share skipped:", err);
       }
-      finally{
-        elements.saveBtn.disabled = false;
+    };
+
+    async function fetchShareVideoFileFromUrl(url){
+      if(!url || !navigator.canShare){
+        return null;
       }
+
+      try{
+        const file = await fetchAdvertisementVideoFile(url);
+
+        if(file && navigator.canShare({ files:[file] })){
+          return file;
+        }
+      }
+      catch(err){
+        console.log("Ad video share file skipped:", err);
+      }
+
+      return null;
     }
 
-    function openPublicAd(){
-      const latestAdvertisementUpdate = Math.max(
-        Number(profileData?.advertisementCardUpdatedAt) || 0,
-        Number(profileData?.advertisementVideoUpdatedAt) || 0,
-        Number(profileData?.updatedAt) || 0
-      ) || Date.now();
-      const publicUrl =
-        "https://guru-link.onrender.com/profile-ad.html?id=" +
-        encodeURIComponent(profileId) +
-        "&adts=" +
-        encodeURIComponent(latestAdvertisementUpdate);
+    async function fetchAdvertisementVideoFile(url){
+      if(!url){
+        return null;
+      }
 
-      if(!getSavedAdvertisementUrl()){
-        setStatus("Save the advertisement first, then open the public ad page.", "error");
+      const response = await fetch(getAdvertisementVideoProxyUrl(), { mode:"cors" });
+      if(!response.ok){
+        return null;
+      }
+
+      const blob = await response.blob();
+      const isWebm = String(blob.type || "").includes("webm");
+      return new File([blob], "gurulink-advertisement." + (isWebm ? "webm" : "mp4"), {
+        type:blob.type || "video/mp4"
+      });
+    }
+
+    window.shareAdvertisement = function(){
+      if(isMobileShareMode() && navigator.share){
+        shareViaSystem();
         return;
       }
-      window.open(publicUrl, "_blank");
+      openShareChooser();
+    };
+
+    function renderProfile(){
+      const heroImage =
+        data.advertisementCardImage ||
+        getPrimaryProfileImage(data) ||
+        "https://via.placeholder.com/1200x630?text=GURULINK+Advertisement";
+      const canvasPreset = getSavedCanvasPreset(data);
+      const canvasRatio = getSavedCanvasRatio(data);
+
+      const website = normalizeWebsiteUrl(data.website || "");
+      const phone = String(data.phone || "").trim();
+      const whatsapp = phone ? "https://wa.me/91" + phone.replace(/\D/g,"") : "";
+      const fullProfileUrl = "profile-view.html?id=" + encodeURIComponent(currentProfileId);
+      const promoVideo = String(data.advertisementVideoUrl || "").trim();
+      const contactUrl = whatsapp || fullProfileUrl;
+
+      content.className = "";
+      content.innerHTML = `
+        <section class="heroCard">
+          <div class="heroImageWrap ${canvasPreset}" style="--ad-ratio:${canvasRatio};">
+            ${promoVideo
+              ? `<video class="heroMedia heroVideo" src="${promoVideo}" controls autoplay muted loop playsinline preload="metadata" aria-label="Advertisement video"></video>
+                 <a class="videoContactButton" href="${contactUrl}" ${whatsapp ? `target="_blank" rel="noopener"` : ""}>Contact Us</a>`
+              : `<img class="heroMedia heroImage" src="${heroImage}" alt="Advertisement image">`
+            }
+          </div>
+          <div class="heroBody">
+            <h1>${data.name || "GURULINK Profile"}</h1>
+
+            <div class="heroMeta">
+              <span class="metaPill">${roleType}</span>
+              ${data.categoryName || data.category ? `<span class="metaPill">${data.categoryName || data.category}</span>` : ""}
+              ${getAreaLine(data) ? `<span class="metaPill">${getAreaLine(data)}</span>` : ""}
+            </div>
+
+            <p>${data.description || "Connect on GURULINK for classes, training, admissions, and learning opportunities."}</p>
+
+            <div class="actionGrid">
+              <button class="profileBtn" onclick="location.href='${fullProfileUrl}'">View Full Profile</button>
+              ${phone ? `<button class="callBtn" onclick="location.href='tel:${phone}'">Call</button>` : ""}
+              ${whatsapp ? `<button class="waBtn" onclick="window.open('${whatsapp}','_blank')">WhatsApp</button>` : ""}
+              ${website ? `<button class="webBtn" onclick="window.open('${website}','_blank')">Website</button>` : ""}
+            </div>
+          </div>
+        </section>
+
+        <section class="infoCard">
+          <h2>Profile Summary</h2>
+          <div class="details">
+            <div class="detailItem">
+              <strong>Subjects / Skills</strong>
+              <span>${formatList(data.subjects) || "Not added"}</span>
+            </div>
+            <div class="detailItem">
+              <strong>Teaching Modes</strong>
+              <span>${formatList(data.teachingModes) || "Not added"}</span>
+            </div>
+            <div class="detailItem">
+              <strong>Class / Preparation</strong>
+              <span>${data.class || "Not added"}</span>
+            </div>
+            <div class="detailItem">
+              <strong>Address</strong>
+              <span>${[data.area, data.state, data.pinCode].filter(Boolean).join(", ") || "Not added"}</span>
+            </div>
+          </div>
+        </section>
+      `;
     }
 
-    function goBackToDashboard(){
-      location.href = "teacher-dashboard.html";
-    }
-
-    async function loadProfile(){
-      if(!profileId){
-        setStatus("Profile ID not found. Open this page from your dashboard.", "error");
+    async function load(){
+      if(!currentProfileId){
+        content.className = "message";
+        content.textContent = "No profile ID found.";
         return;
       }
 
-      let snap = await get(ref(db, getDbPath(requestedRole)));
+      let snap = await get(child(ref(db), "teachers/" + currentProfileId));
       if(snap.exists()){
-        profileData = snap.val();
-        activeRole = normalizeRole(profileData.role || requestedRole);
-      } else if(requestedRole !== "institution") {
-        const altSnap = await get(ref(db, "institutions/" + profileId));
+        data = snap.val();
+        roleType = "Teacher / Trainer";
+      }
+
+      if(!data){
+        const altSnap = await get(child(ref(db), "institutions/" + currentProfileId));
         if(altSnap.exists()){
-          profileData = altSnap.val();
-          activeRole = "institution";
+          data = altSnap.val();
+          roleType = "Institute";
         }
       }
 
-      if(!profileData && requestedRole !== "teacher"){
-        const altSnap = await get(ref(db, "teachers/" + profileId));
-        if(altSnap.exists()){
-          profileData = altSnap.val();
-          activeRole = "teacher";
-        }
-      }
-
-      if(!profileData){
-        setStatus("Profile not found.", "error");
+      if(!data){
+        content.className = "message";
+        content.textContent = "Advertisement profile not found.";
         return;
       }
 
-      savedAdvertisementUrl = profileData.advertisementCardImage || "";
-      elements.heroRoleLabel.textContent = "Advertisement Designer";
-      elements.heroProfileName.textContent = profileData.name || "Profile";
-      const savedData = profileData.advertisementCardData || {};
-      applyEditorData(savedData);
-      bindPreviewInputs();
-      bindImageUploads();
-      bindVideoUpload();
-      bindCanvasInteraction();
-      showPromoVideoPreview(profileData.advertisementVideoUrl || "");
-      await renderPreview();
-      setStatus(profileData.advertisementCardImage ? "Saved advertisement loaded." : "Ready to create your first advertisement.", profileData.advertisementCardImage ? "success" : "");
+      document.title = (data.name || "GURULINK") + " Advertisement";
+      renderProfile();
+      systemShareBtn.style.display = navigator.share ? "" : "none";
     }
 
-    elements.saveBtn.addEventListener("click", saveAdvertisement);
-    elements.openPublicBtn.addEventListener("click", openPublicAd);
-    elements.backBtn.addEventListener("click", goBackToDashboard);
+    shareOverlay.addEventListener("click", (event) => {
+      if(event.target === shareOverlay){
+        closeShareChooser();
+      }
+    });
 
-    loadProfile().catch(err => {
+    load().catch(err => {
       console.error(err);
-      setStatus("Could not load profile data.", "error");
+      content.className = "message";
+      content.textContent = "Could not load the advertisement page right now.";
     });
   </script>
 </body>
