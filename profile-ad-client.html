@@ -487,12 +487,13 @@
     };
 
     function getAdPageUrl(){
-      const updatedAt =
-        encodeURIComponent(
-          data?.advertisementCardUpdatedAt ||
-          data?.updatedAt ||
-          Date.now()
-        );
+      const updatedAt = encodeURIComponent(
+        Math.max(
+          Number(data?.advertisementCardUpdatedAt) || 0,
+          Number(data?.advertisementVideoUpdatedAt) || 0,
+          Number(data?.updatedAt) || 0
+        ) || Date.now()
+      );
       return WEBSITE_BASE + "profile-ad.html?id=" + encodeURIComponent(currentProfileId) + "&adts=" + updatedAt;
     }
 
