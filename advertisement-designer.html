@@ -1515,8 +1515,9 @@
       return await new Promise((resolve, reject) => {
         const video = document.createElement("video");
         const objectUrl = URL.createObjectURL(file);
-        const timeoutId = setTimeout(() => finish(new Error("Could not read the video duration.")), 15000);
+        const timeoutId = setTimeout(() => finish(new Error("Could not read the video duration on this phone. Try MP4 format or choose the video from Gallery/Files.")), 45000);
         let settled = false;
+        let infiniteDurationRecoveryStarted = false;
 
         function cleanup(){
           clearTimeout(timeoutId);
@@ -1538,24 +1539,49 @@
           resolve(metadata);
         }
 
-        video.preload = "metadata";
-        video.muted = true;
-        video.addEventListener("loadedmetadata", () => {
-          const duration = Number(video.duration);
-          if(!Number.isFinite(duration) || duration <= 0){
-            finish(new Error("Could not read the video duration."));
+        function tryToFinishMetadata(){
+          if(settled){
             return;
           }
-          finish(null, {
-            duration,
-            width:Math.round(Number(video.videoWidth) || 0),
-            height:Math.round(Number(video.videoHeight) || 0),
-            mimeType:file.type || "video/mp4"
-          });
-        }, { once:true });
+          const duration = Number(video.duration);
+          if(Number.isFinite(duration) && duration > 0){
+            finish(null, {
+              duration,
+              width:Math.round(Number(video.videoWidth) || 0),
+              height:Math.round(Number(video.videoHeight) || 0),
+              mimeType:file.type || "video/mp4"
+            });
+            return;
+          }
+
+          if(!infiniteDurationRecoveryStarted && video.readyState >= 1){
+            infiniteDurationRecoveryStarted = true;
+            try{
+              video.currentTime = Number.MAX_SAFE_INTEGER;
+            }
+            catch(error){
+              console.log("Mobile video duration recovery skipped:", error);
+            }
+          }
+        }
+
+        video.preload = "metadata";
+        video.muted = true;
+        video.playsInline = true;
+        video.setAttribute("playsinline", "");
+        video.setAttribute("webkit-playsinline", "");
+        video.addEventListener("loadedmetadata", tryToFinishMetadata);
+        video.addEventListener("durationchange", tryToFinishMetadata);
+        video.addEventListener("loadeddata", tryToFinishMetadata);
+        video.addEventListener("timeupdate", tryToFinishMetadata);
+        video.addEventListener("canplay", tryToFinishMetadata);
         video.addEventListener("error", () => finish(new Error("Could not read this video file.")), { once:true });
         video.src = objectUrl;
         video.load();
+        const playPromise = video.play();
+        if(playPromise && typeof playPromise.catch === "function"){
+          playPromise.catch(() => {});
+        }
       });
     }
 
@@ -2602,7 +2628,14 @@
         now + "-" + safeName;
 
       const fileRef = storageRef(storage, storagePath);
-      await uploadWithTimeout(fileRef, file, 300000);
+      await uploadWithTimeout(fileRef, file, 900000, (snapshot) => {
+        const totalBytes = Number(snapshot.totalBytes) || Number(file.size) || 0;
+        const bytesTransferred = Number(snapshot.bytesTransferred) || 0;
+        const percent = totalBytes
+          ? Math.min(100, Math.round((bytesTransferred / totalBytes) * 100))
+          : 0;
+        setStatus("Uploading video from this device: " + percent + "%", "");
+      });
       const url = await getDownloadURL(fileRef);
 
       return {
@@ -2780,7 +2813,7 @@
       };
     }
 
-    async function uploadWithTimeout(fileRef, fileBlob, timeoutMs = 180000){
+    async function uploadWithTimeout(fileRef, fileBlob, timeoutMs = 180000, onProgress = null){
       const task = uploadBytesResumable(fileRef, fileBlob, {
         contentType:fileBlob.type || "image/png"
       });
@@ -2806,7 +2839,11 @@
         }, timeoutMs);
 
         task.on("state_changed",
-          () => {},
+          (snapshot) => {
+            if(typeof onProgress === "function"){
+              onProgress(snapshot);
+            }
+          },
           (error) => {
             if(settled){
               return;
