@@ -261,6 +261,23 @@ background:#00897b;
 background:#1565c0;
 }
 
+.businessCardBrowserNotice{
+grid-column:1 / -1;
+padding:11px 13px;
+border:1px solid #f0b429;
+border-radius:10px;
+background:#fff8df;
+color:#704d00;
+font-size:13px;
+line-height:1.5;
+}
+
+.businessCardBrowserNotice a{
+color:#075fce;
+font-weight:800;
+text-decoration:underline;
+}
+
 .adBtn{
 background:#ff7043;
 }
@@ -915,6 +932,11 @@ Quick Actions
     Create Business / I Card
   </button>
 
+  <div id="businessCardBrowserNotice" class="businessCardBrowserNotice" hidden>
+    Business/I Card creation works only in a browser in this version of the mobile app.
+    Tap <a id="businessCardBrowserLink" href="https://www.gurulink.co.in/">www.gurulink.co.in</a> to use this feature.
+  </div>
+
   <button class="adBtn" onclick="openAdvertisementDesigner()">
     Create Advertisement
   </button>
@@ -1219,6 +1241,20 @@ function normalizeWebsiteUrl(url){
   }
 
   return "https://" + clean;
+}
+
+function promptEmailLoginForEnrollment(errorMessage){
+  const message =
+    "To use Mark Enrolled, please log in once with your registered email and password.\n\n" +
+    "Your OTP login opened the dashboard, but enrollment permission is still blocked for this session.\n\n" +
+    (errorMessage ? errorMessage + "\n\n" : "") +
+    "Press OK to open email login now.";
+
+  if(confirm(message)){
+    location.href =
+      "login.html?return=" +
+      encodeURIComponent("teacher-dashboard.html");
+  }
 }
 
 async function syncCurrentAuthProfileLink(profileData){
@@ -2511,11 +2547,20 @@ window.toggleStatus = async function (leadId, currentStatus, studentPhone = "", 
       }
       catch(err){
         console.error("studentEnrollments write failed", err);
-        alert(
-          "Student enrollment record could not be updated.\n\n" +
-          "Path: studentEnrollments/" + studentId + "/" + activeProfileId + "\n\n" +
-          (err && err.message ? err.message : "Permission denied")
-        );
+        const rawMessage =
+          String(err && (err.message || err.code) || "");
+
+        if(/permission[_\s-]*denied/i.test(rawMessage)){
+          promptEmailLoginForEnrollment(
+            "Student enrollment record could not be updated.\nPath: studentEnrollments/" + studentId + "/" + activeProfileId
+          );
+        }else{
+          alert(
+            "Student enrollment record could not be updated.\n\n" +
+            "Path: studentEnrollments/" + studentId + "/" + activeProfileId + "\n\n" +
+            rawMessage
+          );
+        }
         return;
       }
     }
@@ -2531,11 +2576,20 @@ window.toggleStatus = async function (leadId, currentStatus, studentPhone = "", 
       }
       catch(err){
         console.error("studentEnrollments status update failed", err);
-        alert(
-          "Student enrollment status could not be updated.\n\n" +
-          "Path: studentEnrollments/" + studentId + "/" + activeProfileId + "\n\n" +
-          (err && err.message ? err.message : "Permission denied")
-        );
+        const rawMessage =
+          String(err && (err.message || err.code) || "");
+
+        if(/permission[_\s-]*denied/i.test(rawMessage)){
+          promptEmailLoginForEnrollment(
+            "Student enrollment status could not be updated.\nPath: studentEnrollments/" + studentId + "/" + activeProfileId
+          );
+        }else{
+          alert(
+            "Student enrollment status could not be updated.\n\n" +
+            "Path: studentEnrollments/" + studentId + "/" + activeProfileId + "\n\n" +
+            rawMessage
+          );
+        }
         return;
       }
     }
@@ -2710,10 +2764,6 @@ window.openBusinessCardDesigner = function() {
     "https://www.gurulink.co.in/profile-view.html?id=" +
     encodeURIComponent(profileId);
 
-  const finalUrl =
-    normalizeWebsiteUrl(currentProfileData.website || "") ||
-    profileUrl;
-
   const roleTitle =
     activeRole === "institution"
       ? "Institute"
@@ -2725,7 +2775,8 @@ window.openBusinessCardDesigner = function() {
     title:(currentProfileData.categoryName || currentProfileData.category || roleTitle),
     phone:currentProfileData.phone || "",
     email:currentProfileData.email || "",
-    url:finalUrl,
+    // The business-card QR must always open this GURULINK public profile.
+    url:profileUrl,
     address:buildBusinessCardAddress(currentProfileData),
     logo:getPrimaryProfileImage(currentProfileData),
     role:activeRole,
@@ -2745,9 +2796,29 @@ window.openBusinessCardDesigner = function() {
   );
 
   const designerQuery =
-    "?v=20260712a" +
+    "?v=20260714y" +
     "&role=" + encodeURIComponent(activeRole) +
     "&prefill=" + encodeURIComponent(encodedPrefill);
+
+  if(/GuruLinkAndroidApp/i.test(navigator.userAgent || "")){
+    const browserRedirectUrl = new URL(
+      "https://guru-link.onrender.com/open-business-card-in-browser"
+    );
+    browserRedirectUrl.searchParams.set("role", activeRole);
+    browserRedirectUrl.searchParams.set("prefill", encodedPrefill);
+    browserRedirectUrl.searchParams.set("source", "appmobile");
+
+    const browserNotice = document.getElementById("businessCardBrowserNotice");
+    const browserLink = document.getElementById("businessCardBrowserLink");
+    if(browserLink){
+      browserLink.href = browserRedirectUrl.toString();
+    }
+    if(browserNotice){
+      browserNotice.hidden = false;
+      browserNotice.scrollIntoView({ behavior:"smooth", block:"nearest" });
+    }
+    return;
+  }
 
   const designerUrl =
     window.location.protocol === "file:"
