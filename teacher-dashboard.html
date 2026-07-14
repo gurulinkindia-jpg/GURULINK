@@ -2796,7 +2796,7 @@ window.openBusinessCardDesigner = function() {
   );
 
   const designerQuery =
-    "?v=20260714u" +
+    "?v=20260714v" +
     "&role=" + encodeURIComponent(activeRole) +
     "&prefill=" + encodeURIComponent(encodedPrefill);
 
@@ -2806,6 +2806,7 @@ window.openBusinessCardDesigner = function() {
     );
     browserRedirectUrl.searchParams.set("role", activeRole);
     browserRedirectUrl.searchParams.set("prefill", encodedPrefill);
+    browserRedirectUrl.searchParams.set("source", "appmobile");
 
     const browserNotice = document.getElementById("businessCardBrowserNotice");
     const browserLink = document.getElementById("businessCardBrowserLink");
