@@ -321,13 +321,20 @@ function computeBaseZoom() {
   }
 
   const cardSize = getCardDimensions();
-  const availableWidth = Math.max(stage.clientWidth - 18, 120);
-  const availableHeight = Math.max(stage.clientHeight - 18, 120);
+  const viewportWidth = Math.max(
+    document.documentElement.clientWidth || 0,
+    window.innerWidth || 0
+  );
+  const viewportAllowance = Math.max(viewportWidth - 28, 120);
+  const measuredStageWidth = stage.clientWidth || viewportAllowance;
+  const availableWidth = Math.max(
+    Math.min(measuredStageWidth, viewportAllowance) - 18,
+    120
+  );
 
   const widthScale = availableWidth / cardSize.width;
-  const heightScale = availableHeight / cardSize.height;
 
-  return Math.max(0.22, Math.min(1, widthScale, heightScale));
+  return Math.max(0.22, Math.min(1, widthScale));
 }
 
 function getCurrentCanvasScale() {
@@ -338,9 +345,21 @@ function applyZoom() {
   appState.baseZoom = computeBaseZoom();
 
   const finalZoom = getCurrentCanvasScale();
+  const card = el("cardCanvas");
+  const stage = document.querySelector(".canvas-stage");
 
-  el("cardCanvas").style.transform = `scale(${finalZoom})`;
+  card.style.transform = `scale(${finalZoom})`;
   el("zoomLabel").innerText = Math.round(finalZoom * 100) + "%";
+
+  if (stage && window.matchMedia("(max-width: 850px)").matches) {
+    const cardSize = getCardDimensions();
+    const fittedHeight = Math.ceil(cardSize.height * finalZoom) + 24;
+    stage.style.height = fittedHeight + "px";
+    stage.style.minHeight = fittedHeight + "px";
+  } else if (stage) {
+    stage.style.height = "";
+    stage.style.minHeight = "";
+  }
 }
 
 function saveProject() {
