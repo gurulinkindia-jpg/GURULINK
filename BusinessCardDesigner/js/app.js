@@ -42,6 +42,26 @@ function isExternalAppLaunch() {
   return getQueryValue("source") === "appmobile";
 }
 
+function continueDesignerInExternalBrowser() {
+  if (!/GuruLinkAndroidApp/i.test(navigator.userAgent || "")) {
+    return false;
+  }
+
+  const browserRedirectUrl = new URL(
+    "https://guru-link.onrender.com/open-business-card-in-browser"
+  );
+  const role = getQueryValue("role") || localStorage.getItem("role") || "teacher";
+  const prefill = getQueryValue("prefill");
+
+  browserRedirectUrl.searchParams.set("role", role);
+  if (prefill) {
+    browserRedirectUrl.searchParams.set("prefill", prefill);
+  }
+
+  window.location.replace(browserRedirectUrl.toString());
+  return true;
+}
+
 function getLaunchRole() {
   return (getQueryValue("role") || localStorage.getItem("role") || "").toLowerCase();
 }
@@ -545,6 +565,7 @@ function goDesignerDashboard() {
 
 function applyResponsiveButtonLabels() {
   const isMobile = window.matchMedia("(max-width: 600px)").matches;
+  const isGuruLinkApp = /GuruLinkAndroidApp/i.test(navigator.userAgent || "");
 
   const labels = {
     saveProjectBtn: isMobile ? "Save" : "💾 Save",
@@ -553,7 +574,8 @@ function applyResponsiveButtonLabels() {
     bringForwardBtn: isMobile ? "Front" : "Bring Forward",
     sendBackwardBtn: isMobile ? "Back" : "Send Backward",
     deleteElementBtn: "Delete",
-    sharePngBtn: isMobile ? "Share Card PNG" : "Share Card PNG",
+    // "Send" avoids the Android wrapper's generic Share Profile interceptor.
+    sharePngBtn: (isMobile || isGuruLinkApp) ? "Send Card PNG" : "Share Card PNG",
     downloadPngBtn: isMobile ? "PNG" : "Download PNG",
     singlePdfBtn: isMobile ? "Card PDF" : "Single Card PDF",
     sheetPdfBtn: isMobile ? "Sheet PDF" : "Print Sheet PDF",
@@ -587,6 +609,12 @@ window.goDesignerDashboard = goDesignerDashboard;
 window.getCurrentCanvasScale = getCurrentCanvasScale;
 
 function initApp() {
+  // PNG file sharing must run in the phone browser, outside the app's
+  // profile-link Share override.
+  if (continueDesignerInExternalBrowser()) {
+    return;
+  }
+
   el("cardLogo").src = appState.logo;
 
   if (el("studentPhoto")) {
