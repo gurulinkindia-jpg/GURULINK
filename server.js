@@ -138,6 +138,22 @@ function buildAdvertisementVideoUrl(id, adts) {
   return `https://guru-link.onrender.com/advertisement-video?id=${encodeURIComponent(id)}&adts=${encodeURIComponent(adts)}`;
 }
 
+/* Opens the advertisement designer in the phone's external browser. */
+app.get("/open-in-browser", (req, res) => {
+  const id = String(req.query.id || "").trim();
+  const role = req.query.role === "institution" ? "institution" : "teacher";
+  const target = new URL(
+    "https://www.gurulink.co.in/advertisement-designer.html"
+  );
+
+  if (id) {
+    target.searchParams.set("id", id);
+  }
+  target.searchParams.set("role", role);
+  res.setHeader("Cache-Control", "no-store");
+  res.redirect(302, target.toString());
+});
+
 /* Dynamic profile sharing page */
 app.get("/profile-view.html", async (req, res) => {
   const id = req.query.id;
