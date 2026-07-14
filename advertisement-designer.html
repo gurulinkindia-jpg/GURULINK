@@ -562,6 +562,13 @@
                 <p class="miniHint">Third visual for richer layouts.</p>
                 <input id="imageThreeUpload" type="file" accept="image/*">
               </div>
+
+              <div class="assetCard">
+                <strong>Promo Video</strong>
+                <p class="miniHint">Optional short advertisement video. This will appear on the public ad page, not inside the PNG image.</p>
+                <input id="promoVideoUpload" type="file" accept="video/*">
+                <video id="promoVideoPreview" controls playsinline style="width:100%;display:none;border-radius:12px;background:#000;max-height:220px;"></video>
+              </div>
             </div>
           </div>
         </section>
@@ -747,6 +754,8 @@
       imageOneUpload:document.getElementById("imageOneUpload"),
       imageTwoUpload:document.getElementById("imageTwoUpload"),
       imageThreeUpload:document.getElementById("imageThreeUpload"),
+      promoVideoUpload:document.getElementById("promoVideoUpload"),
+      promoVideoPreview:document.getElementById("promoVideoPreview"),
       headlineInput:document.getElementById("headlineInput"),
       taglineInput:document.getElementById("taglineInput"),
       subHighlightInput:document.getElementById("subHighlightInput"),
@@ -802,6 +811,10 @@
       imageOne:{ file:null, previewUrl:"" },
       imageTwo:{ file:null, previewUrl:"" },
       imageThree:{ file:null, previewUrl:"" }
+    };
+    const localVideoUpload = {
+      file:null,
+      previewUrl:""
     };
 
     const templates = {
@@ -1369,6 +1382,37 @@
       localAdUploads[slot].previewUrl = "";
     }
 
+    function revokeLocalVideoPreview(){
+      const currentUrl = localVideoUpload.previewUrl || "";
+      if(currentUrl && currentUrl.startsWith("blob:")){
+        try{
+          URL.revokeObjectURL(currentUrl);
+        }
+        catch(err){
+          console.log("Video preview revoke skipped:", err);
+        }
+      }
+      localVideoUpload.previewUrl = "";
+      if(elements.promoVideoPreview){
+        elements.promoVideoPreview.pause();
+        elements.promoVideoPreview.removeAttribute("src");
+        elements.promoVideoPreview.load();
+        elements.promoVideoPreview.style.display = "none";
+      }
+    }
+
+    function showPromoVideoPreview(url){
+      if(!elements.promoVideoPreview){
+        return;
+      }
+      if(!url){
+        revokeLocalVideoPreview();
+        return;
+      }
+      elements.promoVideoPreview.src = url;
+      elements.promoVideoPreview.style.display = "block";
+    }
+
     function bindImageUploads(){
       [
         ["imageOne", elements.imageOneUpload],
@@ -1387,6 +1431,31 @@
 
           renderPreview();
         });
+      });
+    }
+
+    function bindVideoUpload(){
+      if(!elements.promoVideoUpload){
+        return;
+      }
+
+      elements.promoVideoUpload.addEventListener("change", () => {
+        const file =
+          elements.promoVideoUpload.files && elements.promoVideoUpload.files[0]
+            ? elements.promoVideoUpload.files[0]
+            : null;
+
+        localVideoUpload.file = file;
+        revokeLocalVideoPreview();
+
+        if(file){
+          localVideoUpload.previewUrl = URL.createObjectURL(file);
+          showPromoVideoPreview(localVideoUpload.previewUrl);
+          setStatus("Previewing uploaded promo video.", "");
+          return;
+        }
+
+        showPromoVideoPreview(profileData?.advertisementVideoUrl || "");
       });
     }
 
@@ -2275,6 +2344,30 @@
       };
     }
 
+    async function uploadAdvertisementVideo(file, now){
+      if(!file){
+        return null;
+      }
+
+      const storageOwnerUid = getStorageOwnerUid();
+      const safeName = String(file.name || "promo-video.mp4").replace(/[^a-zA-Z0-9._-]/g, "-");
+      const storagePath =
+        getStorageRoot() + "/" +
+        storageOwnerUid + "/" +
+        "advertisement-videos/" +
+        now + "-" + safeName;
+
+      const fileRef = storageRef(storage, storagePath);
+      await uploadWithTimeout(fileRef, file, 300000);
+      const url = await getDownloadURL(fileRef);
+
+      return {
+        url,
+        storagePath,
+        uploadedAt:now
+      };
+    }
+
     async function uploadWithTimeout(fileRef, fileBlob, timeoutMs = 180000){
       const task = uploadBytesResumable(fileRef, fileBlob, {
         contentType:fileBlob.type || "image/png"
@@ -2356,6 +2449,8 @@
 
         const previousPath =
           profileData.advertisementCardStoragePath || "";
+        const previousVideoPath =
+          profileData.advertisementVideoStoragePath || "";
         const previousAssetImages = normalizeAdvertisementAssetImages(profileData);
         const updatedAssetImages = { ...previousAssetImages };
         const deleteAssetPaths = [];
@@ -2373,6 +2468,12 @@
           updatedAssetImages[slot] = uploadedAsset;
         }
 
+        let promoVideoData = null;
+        if(localVideoUpload.file){
+          promoVideoData =
+            await uploadAdvertisementVideo(localVideoUpload.file, now + 10);
+        }
+
         const sourceImageUrl = resolveSelectedImages(getEditorData())[0]?.url || getAdvertisementSourceImage(profileData);
         const updateData = {
           advertisementCardImage:url,
@@ -2380,11 +2481,21 @@
           advertisementCardUpdatedAt:now,
           advertisementCardData:getEditorData(),
           advertisementSourceImage:sourceImageUrl,
-          advertisementAssetImages:updatedAssetImages
+          advertisementAssetImages:updatedAssetImages,
+          advertisementVideoUrl:promoVideoData?.url || profileData.advertisementVideoUrl || "",
+          advertisementVideoStoragePath:promoVideoData?.storagePath || profileData.advertisementVideoStoragePath || "",
+          advertisementVideoUpdatedAt:promoVideoData?.uploadedAt || profileData.advertisementVideoUpdatedAt || 0
         };
 
         await update(ref(db, getDbPath()), updateData);
         await deleteStoragePath(previousPath && previousPath !== storagePath ? previousPath : "");
+        if(
+          promoVideoData &&
+          previousVideoPath &&
+          previousVideoPath !== promoVideoData.storagePath
+        ){
+          await deleteStoragePath(previousVideoPath);
+        }
         for (const path of deleteAssetPaths) {
           await deleteStoragePath(path);
         }
@@ -2406,6 +2517,11 @@
         updateImageSelectors(updateData.advertisementCardData);
 
         savedAdvertisementUrl = url;
+        localVideoUpload.file = null;
+        if(elements.promoVideoUpload){
+          elements.promoVideoUpload.value = "";
+        }
+        showPromoVideoPreview(updateData.advertisementVideoUrl || "");
         setStatus("Advertisement saved successfully.", "success");
       }
       catch(err){
@@ -2473,7 +2589,9 @@
       applyEditorData(savedData);
       bindPreviewInputs();
       bindImageUploads();
+      bindVideoUpload();
       bindCanvasInteraction();
+      showPromoVideoPreview(profileData.advertisementVideoUrl || "");
       await renderPreview();
       setStatus(profileData.advertisementCardImage ? "Saved advertisement loaded." : "Ready to create your first advertisement.", profileData.advertisementCardImage ? "success" : "");
     }
