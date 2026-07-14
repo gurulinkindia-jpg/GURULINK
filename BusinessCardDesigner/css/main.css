@@ -400,6 +400,19 @@ input[type="file"] {
     max-width: 100%;
   }
 
+  /* Keep the live card visible before the Template controls on mobile. */
+  .editor-area {
+    order: 1;
+  }
+
+  .sidebar {
+    order: 2;
+  }
+
+  .right-panel {
+    order: 3;
+  }
+
   .sidebar,
   .right-panel,
   .editor-area {
