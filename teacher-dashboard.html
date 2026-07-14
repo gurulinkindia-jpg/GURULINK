@@ -2764,10 +2764,6 @@ window.openBusinessCardDesigner = function() {
     "https://www.gurulink.co.in/profile-view.html?id=" +
     encodeURIComponent(profileId);
 
-  const finalUrl =
-    normalizeWebsiteUrl(currentProfileData.website || "") ||
-    profileUrl;
-
   const roleTitle =
     activeRole === "institution"
       ? "Institute"
@@ -2779,7 +2775,8 @@ window.openBusinessCardDesigner = function() {
     title:(currentProfileData.categoryName || currentProfileData.category || roleTitle),
     phone:currentProfileData.phone || "",
     email:currentProfileData.email || "",
-    url:finalUrl,
+    // The business-card QR must always open this GURULINK public profile.
+    url:profileUrl,
     address:buildBusinessCardAddress(currentProfileData),
     logo:getPrimaryProfileImage(currentProfileData),
     role:activeRole,
@@ -2799,7 +2796,7 @@ window.openBusinessCardDesigner = function() {
   );
 
   const designerQuery =
-    "?v=20260712a" +
+    "?v=20260714r" +
     "&role=" + encodeURIComponent(activeRole) +
     "&prefill=" + encodeURIComponent(encodedPrefill);
 
