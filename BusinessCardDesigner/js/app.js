@@ -63,9 +63,8 @@ function decodePrefillParam() {
   }
 }
 
-function getAutomaticProfileUrl(profile = {}) {
-  const role = String(profile.role || getLaunchRole() || "").toLowerCase();
-  const profileId = String(
+function getPrefillProfileId(profile = {}) {
+  return String(
     profile.profileId ||
     getQueryValue("id") ||
     localStorage.getItem("profileId") ||
@@ -73,6 +72,11 @@ function getAutomaticProfileUrl(profile = {}) {
     localStorage.getItem("institutionId") ||
     ""
   ).trim();
+}
+
+function getAutomaticProfileUrl(profile = {}) {
+  const role = String(profile.role || getLaunchRole() || "").toLowerCase();
+  const profileId = getPrefillProfileId(profile);
 
   if (
     profileId &&
@@ -83,6 +87,32 @@ function getAutomaticProfileUrl(profile = {}) {
   }
 
   return String(profile.url || "").trim();
+}
+
+function getAutomaticProfileImageUrl(profile = {}) {
+  const originalImage = String(
+    profile.logo ||
+    profile.profilePic ||
+    profile.profilePhoto ||
+    profile.photo ||
+    profile.image ||
+    ""
+  ).trim();
+  const profileId = getPrefillProfileId(profile);
+
+  if (!originalImage || !profileId || !/^https:\/\//i.test(originalImage)) {
+    return originalImage;
+  }
+
+  const proxyUrl = new URL(
+    "https://guru-link.onrender.com/business-card-profile-image"
+  );
+  proxyUrl.searchParams.set("id", profileId);
+  proxyUrl.searchParams.set(
+    "v",
+    String(profile.updatedAt || profile.generatedAt || Date.now())
+  );
+  return proxyUrl.toString();
 }
 
 function getFormData() {
@@ -471,9 +501,11 @@ function loadGurulinkPrefill() {
     if (automaticProfileUrl && el("qrType")) el("qrType").value = "url";
     if (el("addressInput")) el("addressInput").value = profile.address || "";
 
-    if (profile.logo) {
-      appState.logo = profile.logo;
+    const automaticProfileImage = getAutomaticProfileImageUrl(profile);
+    if (automaticProfileImage) {
+      appState.logo = automaticProfileImage;
       if (el("cardLogo")) {
+        el("cardLogo").crossOrigin = "anonymous";
         el("cardLogo").src = appState.logo;
       }
     }
