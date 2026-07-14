@@ -143,29 +143,6 @@
       background:#000;
     }
 
-    .videoContactButton{
-      position:absolute;
-      left:50%;
-      bottom:58px;
-      z-index:3;
-      transform:translateX(-50%);
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-width:150px;
-      padding:12px 24px;
-      border-radius:999px;
-      background:linear-gradient(135deg,#ff7043,#f4511e);
-      color:#fff;
-      text-decoration:none;
-      font-weight:800;
-      box-shadow:0 10px 24px rgba(0,0,0,.3);
-    }
-
-    .videoContactButton:hover{
-      filter:brightness(1.06);
-    }
-
     .heroBody{
       padding:20px;
       display:grid;
@@ -396,7 +373,7 @@
         <button class="shareCloseBtn" type="button" onclick="closeShareChooser()">Close</button>
       </div>
       <p>
-        Facebook shares the saved advertisement template as a clickable preview. When someone clicks it, this public page opens with the template, video, profile details, and Contact Us options.
+        Facebook shares the saved advertisement template as a clickable preview. When someone clicks it, this public page opens with the template, video, profile details, and contact options.
       </p>
       <div class="shareChoiceGrid">
         <button class="shareChoiceBtn facebookBtn" type="button" onclick="shareViaFacebook()">Facebook</button>
@@ -679,7 +656,6 @@
       const whatsapp = phone ? "https://wa.me/91" + phone.replace(/\D/g,"") : "";
       const fullProfileUrl = "profile-view.html?id=" + encodeURIComponent(currentProfileId);
       const promoVideo = String(data.advertisementVideoUrl || "").trim();
-      const contactUrl = whatsapp || fullProfileUrl;
 
       content.className = "";
       content.innerHTML = `
@@ -712,7 +688,6 @@
             <h2>Advertisement Video</h2>
             <div class="videoStage">
               <video class="publicVideo" src="${promoVideo}" controls autoplay muted loop playsinline preload="metadata" aria-label="Advertisement video"></video>
-              <a class="videoContactButton" href="${contactUrl}" ${whatsapp ? `target="_blank" rel="noopener"` : ""}>Contact Us</a>
             </div>
           </section>
         ` : ""}
