@@ -862,7 +862,10 @@
     };
     const localVideoUpload = {
       file:null,
-      previewUrl:""
+      previewUrl:"",
+      width:0,
+      height:0,
+      mimeType:""
     };
 
     const templates = {
@@ -1472,6 +1475,15 @@
       }
       elements.promoVideoPreview.src = url;
       elements.promoVideoPreview.muted = true;
+      elements.promoVideoPreview.onloadedmetadata = () => {
+        const width = Math.round(Number(elements.promoVideoPreview.videoWidth) || 0);
+        const height = Math.round(Number(elements.promoVideoPreview.videoHeight) || 0);
+        if(localVideoUpload.file && url === localVideoUpload.previewUrl){
+          localVideoUpload.width = width;
+          localVideoUpload.height = height;
+          localVideoUpload.mimeType = localVideoUpload.file.type || "video/mp4";
+        }
+      };
       setVideoPreviewMode(true);
       const playPromise = elements.promoVideoPreview.play();
       if(playPromise && typeof playPromise.catch === "function"){
@@ -1513,6 +1525,9 @@
 
         localVideoUpload.file = file;
         revokeLocalVideoPreview();
+        localVideoUpload.width = 0;
+        localVideoUpload.height = 0;
+        localVideoUpload.mimeType = file?.type || "";
 
         if(file){
           localVideoUpload.previewUrl = URL.createObjectURL(file);
@@ -2430,7 +2445,18 @@
       return {
         url,
         storagePath,
-        uploadedAt:now
+        uploadedAt:now,
+        width:Math.round(
+          Number(localVideoUpload.width) ||
+          Number(elements.promoVideoPreview?.videoWidth) ||
+          0
+        ),
+        height:Math.round(
+          Number(localVideoUpload.height) ||
+          Number(elements.promoVideoPreview?.videoHeight) ||
+          0
+        ),
+        mimeType:file.type || localVideoUpload.mimeType || "video/mp4"
       };
     }
 
@@ -2541,6 +2567,18 @@
         }
 
         const sourceImageUrl = resolveSelectedImages(getEditorData())[0]?.url || getAdvertisementSourceImage(profileData);
+        const currentVideoWidth = Math.round(
+          Number(promoVideoData?.width) ||
+          Number(elements.promoVideoPreview?.videoWidth) ||
+          Number(profileData.advertisementVideoWidth) ||
+          0
+        );
+        const currentVideoHeight = Math.round(
+          Number(promoVideoData?.height) ||
+          Number(elements.promoVideoPreview?.videoHeight) ||
+          Number(profileData.advertisementVideoHeight) ||
+          0
+        );
         const updateData = {
           advertisementCardImage:url,
           advertisementCardStoragePath:storagePath,
@@ -2550,7 +2588,10 @@
           advertisementAssetImages:updatedAssetImages,
           advertisementVideoUrl:promoVideoData?.url || profileData.advertisementVideoUrl || "",
           advertisementVideoStoragePath:promoVideoData?.storagePath || profileData.advertisementVideoStoragePath || "",
-          advertisementVideoUpdatedAt:promoVideoData?.uploadedAt || profileData.advertisementVideoUpdatedAt || 0
+          advertisementVideoUpdatedAt:promoVideoData?.uploadedAt || profileData.advertisementVideoUpdatedAt || 0,
+          advertisementVideoWidth:currentVideoWidth,
+          advertisementVideoHeight:currentVideoHeight,
+          advertisementVideoMimeType:promoVideoData?.mimeType || profileData.advertisementVideoMimeType || "video/mp4"
         };
 
         await update(ref(db, getDbPath()), updateData);
