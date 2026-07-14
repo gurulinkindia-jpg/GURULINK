@@ -404,6 +404,22 @@
       cursor:not-allowed;
     }
 
+    .appVideoBrowserNotice{
+      border:1px solid #f0b429;
+      border-radius:12px;
+      padding:10px 12px;
+      background:#fff8df;
+      color:#704d00;
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    .appVideoBrowserNotice a{
+      color:#075fce;
+      font-weight:800;
+      text-decoration:underline;
+    }
+
     .footerBtn{
       background:#2f3d4f;
       color:#fff;
@@ -601,6 +617,10 @@
                 <strong>Promo Video</strong>
                 <p class="miniHint">Optional advertisement video, maximum 90 seconds. The public page shows it below the template. Saving a new video automatically deletes the previous one.</p>
                 <input id="promoVideoUpload" type="file" accept="video/*">
+                <div id="appVideoBrowserNotice" class="appVideoBrowserNotice" hidden>
+                  Video upload works only in a browser in this version of the mobile app.
+                  Tap <a id="appVideoBrowserLink" href="https://www.gurulink.co.in/">www.gurulink.co.in</a> to use this feature.
+                </div>
                 <button id="removeVideoBtn" class="dangerBtn" type="button">Remove Video</button>
               </div>
             </div>
@@ -775,6 +795,7 @@
     const query = new URLSearchParams(location.search);
     const profileId = query.get("id") || localStorage.getItem("profileId") || "";
     const requestedRole = normalizeRole(query.get("role") || localStorage.getItem("role") || "teacher");
+    const IS_GURULINK_ANDROID_APP = /GuruLinkAndroidApp/i.test(navigator.userAgent || "");
 
     const elements = {
       heroRoleLabel:document.getElementById("heroRoleLabel"),
@@ -792,6 +813,8 @@
       imageTwoUpload:document.getElementById("imageTwoUpload"),
       imageThreeUpload:document.getElementById("imageThreeUpload"),
       promoVideoUpload:document.getElementById("promoVideoUpload"),
+      appVideoBrowserNotice:document.getElementById("appVideoBrowserNotice"),
+      appVideoBrowserLink:document.getElementById("appVideoBrowserLink"),
       removeVideoBtn:document.getElementById("removeVideoBtn"),
       promoVideoPreview:document.getElementById("promoVideoPreview"),
       videoPreviewStage:document.getElementById("videoPreviewStage"),
@@ -1587,6 +1610,27 @@
 
     function bindVideoUpload(){
       if(!elements.promoVideoUpload){
+        return;
+      }
+
+      if(IS_GURULINK_ANDROID_APP){
+        const browserRedirectUrl = new URL("https://guru-link.onrender.com/open-in-browser");
+        if(profileId){
+          browserRedirectUrl.searchParams.set("id", profileId);
+        }
+        browserRedirectUrl.searchParams.set("role", activeRole || requestedRole);
+        if(elements.appVideoBrowserLink){
+          elements.appVideoBrowserLink.href = browserRedirectUrl.toString();
+        }
+
+        elements.promoVideoUpload.addEventListener("click", event => {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          if(elements.appVideoBrowserNotice){
+            elements.appVideoBrowserNotice.hidden = false;
+          }
+          setStatus("Video upload works only in a browser in this mobile app version. Tap www.gurulink.co.in below.", "error");
+        }, true);
         return;
       }
 
