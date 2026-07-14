@@ -63,6 +63,28 @@ function decodePrefillParam() {
   }
 }
 
+function getAutomaticProfileUrl(profile = {}) {
+  const role = String(profile.role || getLaunchRole() || "").toLowerCase();
+  const profileId = String(
+    profile.profileId ||
+    getQueryValue("id") ||
+    localStorage.getItem("profileId") ||
+    localStorage.getItem("teacherId") ||
+    localStorage.getItem("institutionId") ||
+    ""
+  ).trim();
+
+  if (
+    profileId &&
+    (role === "teacher" || role === "institution" || role === "teacher_institute")
+  ) {
+    return "https://www.gurulink.co.in/profile-view.html?id=" +
+      encodeURIComponent(profileId);
+  }
+
+  return String(profile.url || "").trim();
+}
+
 function getFormData() {
   return {
     cardType: el("cardTypeSelect") ? el("cardTypeSelect").value : "business",
@@ -444,7 +466,9 @@ function loadGurulinkPrefill() {
     if (el("titleInput")) el("titleInput").value = profile.title || "";
     if (el("phoneInput")) el("phoneInput").value = profile.phone || "";
     if (el("emailInput")) el("emailInput").value = profile.email || "";
-    if (el("urlInput")) el("urlInput").value = profile.url || "";
+    const automaticProfileUrl = getAutomaticProfileUrl(profile);
+    if (el("urlInput")) el("urlInput").value = automaticProfileUrl;
+    if (automaticProfileUrl && el("qrType")) el("qrType").value = "url";
     if (el("addressInput")) el("addressInput").value = profile.address || "";
 
     if (profile.logo) {
