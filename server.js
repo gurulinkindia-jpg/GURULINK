@@ -162,7 +162,7 @@ app.get("/open-business-card-in-browser", (req, res) => {
     "https://www.gurulink.co.in/BusinessCardDesigner/index.html"
   );
 
-  target.searchParams.set("v", "20260714r");
+  target.searchParams.set("v", "20260714s");
   target.searchParams.set("role", role);
   if (prefill) {
     target.searchParams.set("prefill", prefill);
