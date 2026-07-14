@@ -260,10 +260,8 @@ app.get("/profile-ad.html", async (req, res) => {
         ? "Institute Advertisement"
         : "Teacher / Trainer Advertisement";
 
-    const hasVideo = Boolean(String(profile.advertisementVideoUrl || "").trim());
     const title = escapeHtml(
-      (profile.name || "GURULINK") +
-      (hasVideo ? " Video Advertisement" : " Advertisement")
+      (profile.name || "GURULINK") + " Advertisement"
     );
     const description = escapeHtml(
       (profile.advertisementCardData && profile.advertisementCardData.highlight) ||
@@ -272,7 +270,6 @@ app.get("/profile-ad.html", async (req, res) => {
     );
     const image = escapeHtml(
       withCacheBust(
-        (hasVideo && profile.advertisementVideoPosterImage) ||
         profile.advertisementCardImage ||
         profile.logo ||
         profile.profilePic ||
