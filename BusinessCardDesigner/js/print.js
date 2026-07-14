@@ -53,27 +53,25 @@ function createPrintCard(index) {
   return wrap;
 }
 
-async function buildPrintSheet() {
+function populatePrintSheet() {
   updateCard();
 
   const data = getFormData();
   const sheet = el("printSheet");
- let count;
+  let count;
 
-if (data.orientation === "vertical") {
-  count = data.sheet === "a3" ? 16 : 9;
-} else {
-  count = data.sheet === "a3" ? 20 : 9;
-}
+  if (data.orientation === "vertical") {
+    count = data.sheet === "a3" ? 16 : 9;
+  } else {
+    count = data.sheet === "a3" ? 20 : 9;
+  }
 
   sheet.innerHTML = "";
- sheet.className = "print-sheet " + data.sheet + (data.orientation === "vertical" ? " vertical-print" : "");
+  sheet.className = "print-sheet " + data.sheet + (data.orientation === "vertical" ? " vertical-print" : "");
 
   for (let i = 1; i <= count; i++) {
     sheet.appendChild(createPrintCard(i));
   }
-
-  await wait(400);
 
   for (let i = 1; i <= count; i++) {
     new QRCode(el("printQr" + i), {
@@ -87,37 +85,42 @@ if (data.orientation === "vertical") {
   }
 }
 
-async function printSheet() {
+async function buildPrintSheet() {
+  populatePrintSheet();
+  await wait(120);
+}
+
+function printSheet() {
+  populatePrintSheet();
+
+  const printArea = el("printArea");
+  const printTitle = "GURULINK Business Card Sheet";
+  let printAreaReset = false;
+
+  printArea.style.display = "block";
+  document.title = printTitle;
+
+  const resetPrintArea = () => {
+    if (printAreaReset) return;
+    printAreaReset = true;
+    printArea.style.display = "";
+  };
+
+  window.addEventListener("afterprint", resetPrintArea, { once:true });
+
   if (
     typeof window.AndroidPrint !== "undefined" &&
     window.AndroidPrint &&
     typeof window.AndroidPrint.printPage === "function"
   ) {
-    await buildPrintSheet();
-    el("printArea").style.display = "block";
-    await wait(400);
-    window.AndroidPrint.printPage("GURULINK Business Card Sheet");
-    setTimeout(() => {
-      el("printArea").style.display = "";
-    }, 1500);
+    window.AndroidPrint.printPage(printTitle);
+    setTimeout(resetPrintArea, 3000);
     return;
   }
 
-  await buildPrintSheet();
-
-  el("printArea").style.display = "block";
-
-  await wait(400);
-
-  document.body.offsetHeight;
-
-  requestAnimationFrame(() => {
-    window.print();
-  });
-
-  setTimeout(() => {
-    el("printArea").style.display = "";
-  }, 1000);
+  window.focus();
+  window.print();
+  setTimeout(resetPrintArea, 5000);
 }
 
 function safe(text) {
