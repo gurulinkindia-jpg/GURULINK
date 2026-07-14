@@ -264,7 +264,7 @@ async function downloadSinglePDF() {
   await deliverBlobFile(blob, "single-business-card.pdf", "application/pdf");
 }
 
-async function downloadPrintPDF() {
+async function downloadPrintPDF(previewWindow = null) {
   await buildPrintSheet();
 
   el("printArea").style.display = "block";
@@ -329,6 +329,15 @@ async function downloadPrintPDF() {
   }
 
   const blob = pdf.output("blob");
+
+  if (previewWindow && !previewWindow.closed) {
+    const previewUrl = URL.createObjectURL(blob);
+    previewWindow.location.replace(previewUrl);
+    setTimeout(() => {
+      URL.revokeObjectURL(previewUrl);
+    }, 300000);
+    return;
+  }
 
   await deliverBlobFile(blob, fileName, "application/pdf");
 }
