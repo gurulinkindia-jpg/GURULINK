@@ -366,10 +366,10 @@
         <button class="shareCloseBtn" type="button" onclick="closeShareChooser()">Close</button>
       </div>
       <p>
-        On supported phones, System Share sends the saved video with the contact link. Facebook, WhatsApp, and Copy Link share the clickable public ad page.
+        Facebook link sharing can show a thumbnail instead of playing the video. Facebook Video sends the actual MP4 on supported phones; on a computer it downloads the MP4, copies the contact link, and opens Facebook for upload.
       </p>
       <div class="shareChoiceGrid">
-        <button class="shareChoiceBtn facebookBtn" type="button" onclick="shareViaFacebook()">Facebook</button>
+        <button class="shareChoiceBtn facebookBtn" type="button" onclick="shareViaFacebook()">Facebook Video</button>
         <button class="shareChoiceBtn whatsappShareBtn" type="button" onclick="shareViaWhatsApp()">WhatsApp</button>
         <button class="shareChoiceBtn copyBtn" type="button" onclick="copyAdvertisementLink()">Copy Link</button>
         <button id="systemShareBtn" class="shareChoiceBtn systemBtn" type="button" onclick="shareViaSystem()">System Share</button>
@@ -497,6 +497,12 @@
       return WEBSITE_BASE + "profile-ad.html?id=" + encodeURIComponent(currentProfileId) + "&adts=" + updatedAt;
     }
 
+    function getAdvertisementVideoProxyUrl(){
+      const adUrl = new URL(getAdPageUrl());
+      adUrl.pathname = adUrl.pathname.replace(/profile-ad\.html$/, "advertisement-video");
+      return adUrl.toString();
+    }
+
     function getAdSharePayload(){
       const shareUrl = getAdPageUrl();
       const hasVideo = Boolean(String(data?.advertisementVideoUrl || "").trim());
@@ -523,8 +529,57 @@
       shareOverlay.classList.add("show");
     }
 
-    window.shareViaFacebook = function(){
+    window.shareViaFacebook = async function(){
       const payload = getAdSharePayload();
+      const promoVideo = String(data?.advertisementVideoUrl || "").trim();
+
+      if(promoVideo && isMobileShareMode() && navigator.share){
+        await window.shareViaSystem();
+        return;
+      }
+
+      if(promoVideo){
+        const facebookWindow = window.open("about:blank", "_blank");
+        try{
+          const videoFile = await fetchAdvertisementVideoFile(promoVideo);
+          if(!videoFile){
+            throw new Error("Video download failed");
+          }
+
+          const downloadUrl = URL.createObjectURL(videoFile);
+          const downloadLink = document.createElement("a");
+          downloadLink.href = downloadUrl;
+          downloadLink.download = videoFile.name;
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          downloadLink.remove();
+          setTimeout(() => URL.revokeObjectURL(downloadUrl), 30000);
+
+          try{
+            if(navigator.clipboard?.writeText){
+              await navigator.clipboard.writeText(payload.shareUrl);
+            }
+          }
+          catch(err){
+            console.log("Facebook contact link copy skipped:", err);
+          }
+
+          if(facebookWindow){
+            facebookWindow.location.href = "https://www.facebook.com/";
+          }
+          alert("The advertisement video was downloaded and its contact link was copied. In Facebook choose Photo/video, select gurulink-advertisement.mp4, and paste the link into the post text.");
+          return;
+        }
+        catch(err){
+          console.log("Facebook video preparation skipped:", err);
+          if(facebookWindow){
+            facebookWindow.close();
+          }
+          alert("The video could not be prepared automatically. Use System Share on a phone, or download the video and upload it directly to Facebook.");
+          return;
+        }
+      }
+
       window.open(
         "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(payload.shareUrl),
         "_blank",
@@ -596,17 +651,9 @@
       }
 
       try{
-        const response = await fetch(url, { mode:"cors" });
-        if(!response.ok){
-          return null;
-        }
-        const blob = await response.blob();
-        const isWebm = String(blob.type || "").includes("webm");
-        const file = new File([blob], "gurulink-advertisement." + (isWebm ? "webm" : "mp4"), {
-          type: blob.type || "video/mp4"
-        });
+        const file = await fetchAdvertisementVideoFile(url);
 
-        if(navigator.canShare({ files:[file] })){
+        if(file && navigator.canShare({ files:[file] })){
           return file;
         }
       }
@@ -615,6 +662,23 @@
       }
 
       return null;
+    }
+
+    async function fetchAdvertisementVideoFile(url){
+      if(!url){
+        return null;
+      }
+
+      const response = await fetch(getAdvertisementVideoProxyUrl(), { mode:"cors" });
+      if(!response.ok){
+        return null;
+      }
+
+      const blob = await response.blob();
+      const isWebm = String(blob.type || "").includes("webm");
+      return new File([blob], "gurulink-advertisement." + (isWebm ? "webm" : "mp4"), {
+        type:blob.type || "video/mp4"
+      });
     }
 
     window.shareAdvertisement = function(){
