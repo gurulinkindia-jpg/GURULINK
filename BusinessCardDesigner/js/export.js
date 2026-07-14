@@ -1,5 +1,12 @@
 let preparedExport = null;
 
+// Keep the browser's real file-sharing function before the GURULINK Android
+// wrapper installs its profile-link sharing override after the page loads.
+const nativeNavigatorShare =
+  typeof navigator.share === "function"
+    ? navigator.share.bind(navigator)
+    : null;
+
 function hasAndroidExportBridge() {
   return !!(
     window.AndroidExport &&
@@ -93,7 +100,7 @@ async function sharePreparedExport() {
     return;
   }
 
-  if (typeof File === "undefined" || !navigator.canShare) {
+  if (typeof File === "undefined" || !navigator.canShare || !nativeNavigatorShare) {
     openPreparedExport();
     return;
   }
@@ -110,7 +117,7 @@ async function sharePreparedExport() {
       return;
     }
 
-    await navigator.share({
+    await nativeNavigatorShare({
       title: preparedExport.filename,
       files: [file]
     });
