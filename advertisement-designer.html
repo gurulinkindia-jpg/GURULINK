@@ -195,23 +195,6 @@
       background:#000;
     }
 
-    .videoPreviewContact{
-      position:absolute;
-      left:50%;
-      bottom:58px;
-      z-index:2;
-      transform:translateX(-50%);
-      border:none;
-      border-radius:999px;
-      padding:11px 24px;
-      background:linear-gradient(135deg,#ff7043,#f4511e);
-      color:#fff;
-      font:inherit;
-      font-weight:800;
-      box-shadow:0 10px 24px rgba(0,0,0,.3);
-      pointer-events:none;
-    }
-
     .canvasHint{
       margin:12px 0 0;
       padding:10px 12px;
@@ -616,7 +599,7 @@
 
               <div class="assetCard">
                 <strong>Promo Video</strong>
-                <p class="miniHint">Optional short advertisement video. The public page shows it below the template. Facebook always shows the clickable template.</p>
+                <p class="miniHint">Optional advertisement video, maximum 90 seconds. The public page shows it below the template. Saving a new video automatically deletes the previous one.</p>
                 <input id="promoVideoUpload" type="file" accept="video/*">
                 <button id="removeVideoBtn" class="dangerBtn" type="button">Remove Video</button>
               </div>
@@ -639,7 +622,6 @@
             </div>
             <div id="videoPreviewStage" class="videoPreviewStage" aria-hidden="true">
               <video id="promoVideoPreview" controls autoplay muted loop playsinline preload="metadata"></video>
-              <button class="videoPreviewContact" type="button" aria-disabled="true">Contact Us</button>
             </div>
             <div id="canvasHint" class="canvasHint">Tip: click a text block or image, drag it to a better place, then save once when you are happy.</div>
 
@@ -875,8 +857,11 @@
       previewUrl:"",
       width:0,
       height:0,
-      mimeType:""
+      mimeType:"",
+      duration:0
     };
+    const MAX_VIDEO_DURATION_SECONDS = 90;
+    let videoSelectionVersion = 0;
 
     const templates = {
       academic:{
@@ -1469,7 +1454,7 @@
       }
       if(elements.canvasHint){
         elements.canvasHint.textContent = active
-          ? "Video preview is active. On the public page it appears below the saved PNG template and includes a Contact Us button."
+          ? "Video preview is active. On the public page it appears below the saved PNG template."
           : "Tip: click a text block or image, drag it to a better place, then save once when you are happy.";
       }
     }
@@ -1491,6 +1476,7 @@
           localVideoUpload.width = width;
           localVideoUpload.height = height;
           localVideoUpload.mimeType = localVideoUpload.file.type || "video/mp4";
+          localVideoUpload.duration = Number(elements.promoVideoPreview.duration) || 0;
         }
       };
       setVideoPreviewMode(true);
@@ -1521,27 +1507,112 @@
       });
     }
 
+    async function readVideoFileMetadata(file){
+      if(!file){
+        throw new Error("No video file selected.");
+      }
+
+      return await new Promise((resolve, reject) => {
+        const video = document.createElement("video");
+        const objectUrl = URL.createObjectURL(file);
+        const timeoutId = setTimeout(() => finish(new Error("Could not read the video duration.")), 15000);
+        let settled = false;
+
+        function cleanup(){
+          clearTimeout(timeoutId);
+          video.removeAttribute("src");
+          video.load();
+          URL.revokeObjectURL(objectUrl);
+        }
+
+        function finish(error, metadata){
+          if(settled){
+            return;
+          }
+          settled = true;
+          cleanup();
+          if(error){
+            reject(error);
+            return;
+          }
+          resolve(metadata);
+        }
+
+        video.preload = "metadata";
+        video.muted = true;
+        video.addEventListener("loadedmetadata", () => {
+          const duration = Number(video.duration);
+          if(!Number.isFinite(duration) || duration <= 0){
+            finish(new Error("Could not read the video duration."));
+            return;
+          }
+          finish(null, {
+            duration,
+            width:Math.round(Number(video.videoWidth) || 0),
+            height:Math.round(Number(video.videoHeight) || 0),
+            mimeType:file.type || "video/mp4"
+          });
+        }, { once:true });
+        video.addEventListener("error", () => finish(new Error("Could not read this video file.")), { once:true });
+        video.src = objectUrl;
+        video.load();
+      });
+    }
+
     function bindVideoUpload(){
       if(!elements.promoVideoUpload){
         return;
       }
 
-      elements.promoVideoUpload.addEventListener("change", () => {
+      elements.promoVideoUpload.addEventListener("change", async () => {
+        const selectionVersion = ++videoSelectionVersion;
         const file =
           elements.promoVideoUpload.files && elements.promoVideoUpload.files[0]
             ? elements.promoVideoUpload.files[0]
             : null;
 
-        localVideoUpload.file = file;
         revokeLocalVideoPreview();
+        localVideoUpload.file = null;
         localVideoUpload.width = 0;
         localVideoUpload.height = 0;
-        localVideoUpload.mimeType = file?.type || "";
+        localVideoUpload.mimeType = "";
+        localVideoUpload.duration = 0;
 
         if(file){
+          setStatus("Checking video length...", "");
+          try{
+            const metadata = await readVideoFileMetadata(file);
+            if(selectionVersion !== videoSelectionVersion){
+              return;
+            }
+            if(metadata.duration > MAX_VIDEO_DURATION_SECONDS + .05){
+              elements.promoVideoUpload.value = "";
+              showPromoVideoPreview(profileData?.advertisementVideoUrl || "");
+              setStatus("Video is too long. Please choose a video of 90 seconds or less.", "error");
+              updateRemoveVideoButton();
+              return;
+            }
+
+            localVideoUpload.file = file;
+            localVideoUpload.width = metadata.width;
+            localVideoUpload.height = metadata.height;
+            localVideoUpload.mimeType = metadata.mimeType;
+            localVideoUpload.duration = metadata.duration;
+          }
+          catch(error){
+            if(selectionVersion !== videoSelectionVersion){
+              return;
+            }
+            elements.promoVideoUpload.value = "";
+            showPromoVideoPreview(profileData?.advertisementVideoUrl || "");
+            setStatus(error.message || "Could not read this video file.", "error");
+            updateRemoveVideoButton();
+            return;
+          }
+
           localVideoUpload.previewUrl = URL.createObjectURL(file);
           showPromoVideoPreview(localVideoUpload.previewUrl);
-          setStatus("Previewing uploaded promo video.", "");
+          setStatus("Previewing promo video (" + Math.ceil(localVideoUpload.duration) + " seconds).", "");
           updateRemoveVideoButton();
           return;
         }
@@ -1602,7 +1673,7 @@
         if(hasSavedVideo){
           await update(ref(db, getDbPath()), clearedVideoData);
         }
-        await deleteStoragePath(videoPath);
+        await deleteStoragePath(videoPath, true);
         await deleteStoragePath(posterPath);
 
         profileData = {
@@ -1613,6 +1684,7 @@
         localVideoUpload.width = 0;
         localVideoUpload.height = 0;
         localVideoUpload.mimeType = "";
+        localVideoUpload.duration = 0;
         if(elements.promoVideoUpload){
           elements.promoVideoUpload.value = "";
         }
@@ -2475,7 +2547,7 @@
       });
     }
 
-    async function deleteStoragePath(path){
+    async function deleteStoragePath(path, required = false){
       if(!path){
         return;
       }
@@ -2484,6 +2556,9 @@
         await deleteObject(storageRef(storage, path));
       }
       catch(err){
+        if(required && err?.code !== "storage/object-not-found"){
+          throw err;
+        }
         console.log("Old advertisement delete skipped:", err);
       }
     }
@@ -2769,6 +2844,17 @@
         setStatus("Saving advertisement...", "");
         elements.saveBtn.disabled = true;
 
+        if(localVideoUpload.file){
+          const videoMetadata = await readVideoFileMetadata(localVideoUpload.file);
+          if(videoMetadata.duration > MAX_VIDEO_DURATION_SECONDS + .05){
+            throw new Error("Video is too long. Please choose a video of 90 seconds or less.");
+          }
+          localVideoUpload.width = videoMetadata.width;
+          localVideoUpload.height = videoMetadata.height;
+          localVideoUpload.mimeType = videoMetadata.mimeType;
+          localVideoUpload.duration = videoMetadata.duration;
+        }
+
         await renderPreview();
 
         const blob = await createPngBlob();
@@ -2853,7 +2939,7 @@
           previousVideoPath &&
           previousVideoPath !== promoVideoData.storagePath
         ){
-          await deleteStoragePath(previousVideoPath);
+          await deleteStoragePath(previousVideoPath, true);
         }
         await deleteStoragePath(previousVideoPosterPath);
         for (const path of deleteAssetPaths) {
@@ -2878,6 +2964,7 @@
 
         savedAdvertisementUrl = url;
         localVideoUpload.file = null;
+        localVideoUpload.duration = 0;
         if(elements.promoVideoUpload){
           elements.promoVideoUpload.value = "";
         }
