@@ -260,8 +260,10 @@ app.get("/profile-ad.html", async (req, res) => {
         ? "Institute Advertisement"
         : "Teacher / Trainer Advertisement";
 
+    const hasVideo = Boolean(String(profile.advertisementVideoUrl || "").trim());
     const title = escapeHtml(
-      (profile.name || "GURULINK") + " Advertisement"
+      (profile.name || "GURULINK") +
+      (hasVideo ? " Video Advertisement" : " Advertisement")
     );
     const description = escapeHtml(
       (profile.advertisementCardData && profile.advertisementCardData.highlight) ||
@@ -270,6 +272,7 @@ app.get("/profile-ad.html", async (req, res) => {
     );
     const image = escapeHtml(
       withCacheBust(
+        (hasVideo && profile.advertisementVideoPosterImage) ||
         profile.advertisementCardImage ||
         profile.logo ||
         profile.profilePic ||
@@ -278,12 +281,6 @@ app.get("/profile-ad.html", async (req, res) => {
         adts
       )
     );
-    const video = profile.advertisementVideoUrl
-      ? escapeHtml(buildAdvertisementVideoUrl(id, adts))
-      : "";
-    const videoType = escapeHtml(inferVideoMimeType(profile));
-    const videoWidth = Number(profile.advertisementVideoWidth) || 0;
-    const videoHeight = Number(profile.advertisementVideoHeight) || 0;
     const adUrl =
       `https://guru-link.onrender.com/profile-ad.html?id=${encodeURIComponent(id)}&adts=${encodeURIComponent(adts)}`;
     const redirectPath =
@@ -294,10 +291,6 @@ app.get("/profile-ad.html", async (req, res) => {
         title,
         description,
         image,
-        video,
-        videoType,
-        videoWidth,
-        videoHeight,
         url: escapeHtml(adUrl),
         redirectPath
       })
