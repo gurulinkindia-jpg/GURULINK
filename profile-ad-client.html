@@ -65,6 +65,7 @@
     .webBtn{ background:#00897b; }
 
     .heroCard,
+    .videoCard,
     .infoCard{
       background:var(--card);
       border:1px solid var(--line);
@@ -75,6 +76,35 @@
 
     .heroCard{
       margin-bottom:18px;
+    }
+
+    .videoCard{
+      margin-bottom:18px;
+      padding:18px;
+    }
+
+    .videoCard h2{
+      margin:0 0 14px;
+      color:#114da3;
+      font-size:24px;
+    }
+
+    .videoStage{
+      position:relative;
+      width:min(100%,620px);
+      margin:0 auto;
+      background:#000;
+      border-radius:16px;
+      overflow:hidden;
+    }
+
+    .publicVideo{
+      width:100%;
+      height:auto;
+      max-height:760px;
+      display:block;
+      object-fit:contain;
+      background:#000;
     }
 
     .heroImageWrap{
@@ -366,7 +396,7 @@
         <button class="shareCloseBtn" type="button" onclick="closeShareChooser()">Close</button>
       </div>
       <p>
-        Facebook shares a clickable video preview card. When someone clicks the preview, it opens this GURULINK advertisement page where the video plays and the Contact Us button is available.
+        Facebook shares the saved advertisement template as a clickable preview. When someone clicks it, this public page opens with the template, video, profile details, and Contact Us options.
       </p>
       <div class="shareChoiceGrid">
         <button class="shareChoiceBtn facebookBtn" type="button" onclick="shareViaFacebook()">Facebook</button>
@@ -633,10 +663,6 @@
     }
 
     window.shareAdvertisement = function(){
-      if(isMobileShareMode() && navigator.share){
-        shareViaSystem();
-        return;
-      }
       openShareChooser();
     };
 
@@ -659,11 +685,7 @@
       content.innerHTML = `
         <section class="heroCard">
           <div class="heroImageWrap ${canvasPreset}" style="--ad-ratio:${canvasRatio};">
-            ${promoVideo
-              ? `<video class="heroMedia heroVideo" src="${promoVideo}" controls autoplay muted loop playsinline preload="metadata" aria-label="Advertisement video"></video>
-                 <a class="videoContactButton" href="${contactUrl}" ${whatsapp ? `target="_blank" rel="noopener"` : ""}>Contact Us</a>`
-              : `<img class="heroMedia heroImage" src="${heroImage}" alt="Advertisement image">`
-            }
+            <img class="heroMedia heroImage" src="${heroImage}" alt="Advertisement template">
           </div>
           <div class="heroBody">
             <h1>${data.name || "GURULINK Profile"}</h1>
@@ -684,6 +706,16 @@
             </div>
           </div>
         </section>
+
+        ${promoVideo ? `
+          <section class="videoCard">
+            <h2>Advertisement Video</h2>
+            <div class="videoStage">
+              <video class="publicVideo" src="${promoVideo}" controls autoplay muted loop playsinline preload="metadata" aria-label="Advertisement video"></video>
+              <a class="videoContactButton" href="${contactUrl}" ${whatsapp ? `target="_blank" rel="noopener"` : ""}>Contact Us</a>
+            </div>
+          </section>
+        ` : ""}
 
         <section class="infoCard">
           <h2>Profile Summary</h2>
