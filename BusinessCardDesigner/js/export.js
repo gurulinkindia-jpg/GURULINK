@@ -53,7 +53,7 @@ function showPreparedExport(title, text) {
   }
 
   titleEl.textContent = title || "Export Ready";
-  textEl.textContent = text || "Choose what you want to do with this file.";
+  textEl.textContent = text || "Tap Share to send this file.";
 
   if (shareBtn) {
     const canUseAndroidShare = hasAndroidExportBridge();
@@ -221,7 +221,7 @@ async function deliverBlobFile(blob, filename, mimeType) {
       filename,
       mimeType,
       "Export Ready",
-      "Tap Share, Open, or Download for your exported file."
+      "Tap Share to send your exported file."
     );
     return;
   }
