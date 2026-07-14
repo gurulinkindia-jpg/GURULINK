@@ -818,6 +818,7 @@ oninput="searchSite()">
 <div class="stats">
 <div class="stat"><h2 id="teacherCount">0</h2><p>Teachers</p></div>
 <div class="stat"><h2 id="instCount">0</h2><p>Institutes</p></div>
+<div class="stat"><h2 id="studentCount">0</h2><p>Students</p></div>
 <div class="stat"><h2>100+</h2><p>Subjects</p></div>
 <div class="stat"><h2>24x7</h2><p>Access</p></div>
 </div>
@@ -996,8 +997,41 @@ DEFAULT_HEADER_PHOTO;
 }
 }
 
+async function loadStudentCount(authUser){
+const countElement = document.getElementById("studentCount");
+
+if(!countElement || !authUser){
+return;
+}
+
+try{
+const idToken = await authUser.getIdToken();
+
+// Request only student record keys for the total. Student names, email
+// addresses, phone numbers, and other profile details are never downloaded.
+const studentResponse = await fetch(
+`${firebaseConfig.databaseURL}/students.json?shallow=true&auth=${encodeURIComponent(idToken)}`
+);
+
+if(!studentResponse.ok){
+throw new Error("Unable to load the student count");
+}
+
+const studentKeys = await studentResponse.json();
+const studentCount = studentKeys && typeof studentKeys === "object"
+? Object.keys(studentKeys).length
+: 0;
+
+countElement.textContent = studentCount;
+console.log("Students =", studentCount);
+}catch(studentCountError){
+console.warn("Student count unavailable", studentCountError);
+}
+}
+
 onAuthStateChanged(auth,(user)=>{
 loadHeaderProfilePhoto(user);
+loadStudentCount(user);
 });
 
 
