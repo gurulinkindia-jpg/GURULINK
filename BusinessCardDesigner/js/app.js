@@ -54,6 +54,7 @@ function continueDesignerInExternalBrowser() {
   const prefill = getQueryValue("prefill");
 
   browserRedirectUrl.searchParams.set("role", role);
+  browserRedirectUrl.searchParams.set("source", "appmobile");
   if (prefill) {
     browserRedirectUrl.searchParams.set("prefill", prefill);
   }
