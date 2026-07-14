@@ -91,14 +91,79 @@ async function buildPrintSheet() {
 }
 
 function printSheet() {
-  populatePrintSheet();
-
   const printArea = el("printArea");
   const printTitle = "GURULINK Business Card Sheet";
+  document.title = printTitle;
+
+  if (
+    typeof window.AndroidPrint !== "undefined" &&
+    window.AndroidPrint &&
+    typeof window.AndroidPrint.printPage === "function"
+  ) {
+    populatePrintSheet();
+    printArea.style.display = "block";
+    window.AndroidPrint.printPage(printTitle);
+    setTimeout(() => {
+      printArea.style.display = "";
+    }, 3000);
+    return;
+  }
+
+  const isMobile =
+    typeof isMobileDesignerDevice === "function" &&
+    isMobileDesignerDevice();
+
+  if (isMobile && typeof downloadPrintPDF === "function") {
+    const printButton = el("printPreviewBtn");
+    const originalButtonText = printButton ? printButton.textContent : "Print / PDF";
+    const previewWindow = window.open("", "_blank");
+
+    if (previewWindow) {
+      previewWindow.document.open();
+      previewWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>Preparing Business Card PDF</title>
+          <style>
+            body{margin:0;min-height:100vh;display:grid;place-items:center;background:#eef4ff;font-family:Arial,sans-serif;color:#0d47a1;text-align:center;padding:24px}
+            strong{display:block;font-size:20px;margin-bottom:8px}
+            span{color:#475569;font-size:14px}
+          </style>
+        </head>
+        <body><div><strong>Preparing your PDF...</strong><span>Please wait. The print-ready card sheet will open here.</span></div></body>
+        </html>
+      `);
+      previewWindow.document.close();
+    }
+
+    if (printButton) {
+      printButton.disabled = true;
+      printButton.textContent = "Preparing PDF...";
+    }
+
+    downloadPrintPDF(previewWindow)
+      .catch(error => {
+        console.error("Mobile print PDF failed", error);
+        if (previewWindow && !previewWindow.closed) {
+          previewWindow.close();
+        }
+        alert("Could not prepare the print PDF. Please try again.");
+      })
+      .finally(() => {
+        if (printButton) {
+          printButton.disabled = false;
+          printButton.textContent = originalButtonText;
+        }
+      });
+    return;
+  }
+
+  populatePrintSheet();
   let printAreaReset = false;
 
   printArea.style.display = "block";
-  document.title = printTitle;
 
   const resetPrintArea = () => {
     if (printAreaReset) return;
@@ -107,16 +172,6 @@ function printSheet() {
   };
 
   window.addEventListener("afterprint", resetPrintArea, { once:true });
-
-  if (
-    typeof window.AndroidPrint !== "undefined" &&
-    window.AndroidPrint &&
-    typeof window.AndroidPrint.printPage === "function"
-  ) {
-    window.AndroidPrint.printPage(printTitle);
-    setTimeout(resetPrintArea, 3000);
-    return;
-  }
 
   window.focus();
   window.print();
