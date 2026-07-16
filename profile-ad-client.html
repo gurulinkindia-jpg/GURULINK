@@ -304,6 +304,13 @@
     .whatsappShareBtn{ background:#25d366; }
     .copyBtn{ background:#3949ab; }
     .systemBtn{ background:#ff7043; }
+    .mobileShareHint{
+      display:none;
+      margin:12px 0 0;
+      color:var(--muted);
+      line-height:1.5;
+      font-size:13px;
+    }
 
     @media(max-width:760px){
       .page{
@@ -351,6 +358,10 @@
       .shareChoiceGrid{
         grid-template-columns:1fr;
       }
+
+      .mobileShareHint{
+        display:block;
+      }
     }
   </style>
 </head>
@@ -376,11 +387,12 @@
         Facebook shares the saved advertisement template as a clickable preview. When someone clicks it, this public page opens with the template, video, profile details, and contact options.
       </p>
       <div class="shareChoiceGrid">
-        <button class="shareChoiceBtn facebookBtn" type="button" onclick="shareViaFacebook()">Facebook</button>
+        <button id="facebookShareBtn" class="shareChoiceBtn facebookBtn" type="button" onclick="shareViaFacebook()">Facebook</button>
         <button class="shareChoiceBtn whatsappShareBtn" type="button" onclick="shareViaWhatsApp()">WhatsApp</button>
         <button class="shareChoiceBtn copyBtn" type="button" onclick="copyAdvertisementLink()">Copy Link</button>
         <button id="systemShareBtn" class="shareChoiceBtn systemBtn" type="button" onclick="shareViaSystem()">System Share</button>
       </div>
+      <p id="mobileShareHint" class="mobileShareHint">On mobile, use System Share for Facebook and other apps.</p>
     </div>
   </div>
 
@@ -405,6 +417,8 @@
     const content = document.getElementById("content");
     const shareOverlay = document.getElementById("shareOverlay");
     const systemShareBtn = document.getElementById("systemShareBtn");
+    const facebookShareBtn = document.getElementById("facebookShareBtn");
+    const mobileShareHint = document.getElementById("mobileShareHint");
 
     let data = null;
     let roleType = "";
@@ -812,6 +826,22 @@
       document.title = (data.name || "GURULINK") + " Advertisement";
       renderProfile();
       systemShareBtn.style.display = navigator.share ? "" : "none";
+      if(isMobileShareMode()){
+        if(facebookShareBtn){
+          facebookShareBtn.style.display = "none";
+        }
+        if(mobileShareHint){
+          mobileShareHint.style.display = "block";
+        }
+      }
+      else{
+        if(facebookShareBtn){
+          facebookShareBtn.style.display = "";
+        }
+        if(mobileShareHint){
+          mobileShareHint.style.display = "none";
+        }
+      }
     }
 
     shareOverlay.addEventListener("click", (event) => {
