@@ -547,6 +547,11 @@
 
     window.shareViaWhatsApp = function(){
       const payload = getAdSharePayload();
+      if(isMobileShareMode() && navigator.share){
+        shareSavedImageToSystem(payload, true);
+        return;
+      }
+
       window.open(
         "https://wa.me/?text=" + encodeURIComponent(payload.shareMessage),
         "_blank",
@@ -603,6 +608,39 @@
       }
     };
 
+    async function shareSavedImageToSystem(payload, whatsappFallback){
+      try{
+        const imageFile = await fetchAdvertisementImageShareFile();
+
+        if(imageFile && navigator.canShare && navigator.canShare({ files:[imageFile] })){
+          await navigator.share({
+            title:"GURULINK Advertisement",
+            text:payload.shareMessage,
+            files:[imageFile]
+          });
+          return;
+        }
+      }
+      catch(err){
+        console.log("Ad image share file skipped:", err);
+      }
+
+      if(whatsappFallback){
+        window.open(
+          "https://wa.me/?text=" + encodeURIComponent(payload.shareMessage),
+          "_blank",
+          "noopener"
+        );
+        return;
+      }
+
+      await navigator.share({
+        title:"GURULINK Advertisement",
+        text:payload.shareText,
+        url:payload.shareUrl
+      });
+    }
+
     async function fetchShareVideoFileFromUrl(url){
       if(!url || !navigator.canShare){
         return null;
@@ -620,6 +658,26 @@
       }
 
       return null;
+    }
+
+    async function fetchAdvertisementImageShareFile(){
+      const imageUrl = String(data?.advertisementCardImage || "").trim();
+      if(!imageUrl || !navigator.canShare){
+        return null;
+      }
+
+      const response = await fetch(imageUrl, { mode:"cors" });
+      if(!response.ok){
+        return null;
+      }
+
+      const blob = await response.blob();
+      const mimeType = String(blob.type || "").trim() || "image/png";
+      const extension = mimeType.includes("jpeg") ? "jpg" : mimeType.includes("webp") ? "webp" : "png";
+
+      return new File([blob], "gurulink-advertisement." + extension, {
+        type:mimeType
+      });
     }
 
     async function fetchAdvertisementVideoFile(url){
