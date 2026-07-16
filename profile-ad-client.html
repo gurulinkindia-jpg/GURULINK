@@ -538,8 +538,18 @@
 
     window.shareViaFacebook = function(){
       const payload = getAdSharePayload();
+      const facebookShareUrl =
+        "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(payload.shareUrl);
+      const mobileFacebookShareUrl =
+        "https://m.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(payload.shareUrl);
+
+      if(isMobileShareMode()){
+        window.location.href = mobileFacebookShareUrl;
+        return;
+      }
+
       window.open(
-        "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(payload.shareUrl),
+        facebookShareUrl,
         "_blank",
         "noopener"
       );
