@@ -540,11 +540,9 @@
       const payload = getAdSharePayload();
       const facebookShareUrl =
         "https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(payload.shareUrl);
-      const mobileFacebookShareUrl =
-        "https://m.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(payload.shareUrl);
 
       if(isMobileShareMode()){
-        window.location.href = mobileFacebookShareUrl;
+        window.location.href = facebookShareUrl;
         return;
       }
 
