@@ -29,6 +29,28 @@ z-index:1000;
 .logo{font-size:28px;font-weight:bold}
 .header-right{display:flex;align-items:center;gap:10px}
 .dashboardBtn{background:#fff;color:#1565c0;text-decoration:none;padding:10px 16px;border-radius:8px;font-weight:bold}
+.headerExternalBtn{
+min-height:40px;
+max-width:180px;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+gap:6px;
+padding:8px 12px;
+border-radius:10px;
+background:linear-gradient(135deg,#00c853,#2ee6a6);
+color:#073b2a;
+text-decoration:none;
+font-size:13px;
+font-weight:bold;
+box-shadow:0 4px 12px rgba(0,200,83,.28);
+border:1px solid rgba(255,255,255,.45);
+flex-shrink:0;
+}
+.headerExternalBtn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,200,83,.34)}
+.headerExternalBtn[hidden]{display:none!important}
+.headerExternalIcon{font-size:17px;line-height:1}
+.headerExternalLabel{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .profile{position:relative}
 .profile-btn{width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;font-size:20px}
 .dropdown{display:none;position:absolute;right:0;top:50px;background:#fff;min-width:220px;border-radius:10px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.15)}
@@ -244,14 +266,43 @@ color:#4caf50;   /* Green */
 }
 @media (max-width: 768px){
 
+header{
+padding-right:10px;
+padding-left:10px;
+gap:6px;
+}
+
 .header-right{
 gap:5px;
+min-width:0;
 }
 
 .dashboardBtn{
-padding:6px 10px;
-font-size:12px;
+padding:6px 8px;
+font-size:11.5px;
 border-radius:6px;
+}
+
+.headerExternalBtn{
+width:38px;
+height:38px;
+min-height:38px;
+padding:0;
+border-radius:11px;
+}
+
+.headerExternalLabel{
+display:none;
+}
+
+.profile-btn{
+width:40px;
+height:40px;
+}
+
+.logoImg{
+width:44px;
+height:44px;
 }
 
 }
@@ -652,6 +703,17 @@ class="logoImg">
 
 </div>
 <div class="header-right">
+<a
+id="registeredExternalBtn"
+class="headerExternalBtn"
+href="#"
+target="_blank"
+rel="noopener noreferrer"
+aria-label="Open external link"
+hidden>
+<span class="headerExternalIcon" aria-hidden="true">↗</span>
+<span id="registeredExternalBtnLabel" class="headerExternalLabel">Open</span>
+</a>
 <a href="register.html" class="dashboardBtn registerBtn">
  <span class="desktopText">Register as Teacher / Institute</span>
 <span class="mobileText">Register</span>
@@ -862,6 +924,111 @@ const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getDatabase(app);
 const DEFAULT_HEADER_PHOTO = "https://i.ibb.co/4pDNDk1/user.png";
+const REGISTERED_HEADER_BUTTON_PATH =
+"siteSettings/registeredHeaderButton";
+const REGISTERED_HEADER_ROLES = new Set([
+"student",
+"parent",
+"student/parent",
+"teacher",
+"institution",
+"teacher_institute",
+"teacher/institute"
+]);
+
+function hideRegisteredHeaderButton(){
+const button = document.getElementById("registeredExternalBtn");
+if(!button) return;
+button.hidden = true;
+button.removeAttribute("href");
+}
+
+function normalizeHomeRole(value){
+return String(value || "").trim().toLowerCase();
+}
+
+function isRegisteredHeaderRole(value){
+return REGISTERED_HEADER_ROLES.has(normalizeHomeRole(value));
+}
+
+function getSafeExternalHeaderUrl(value){
+try{
+const parsed = new URL(String(value || "").trim());
+return parsed.protocol === "https:" ? parsed.toString() : "";
+}catch(_error){
+return "";
+}
+}
+
+async function resolveRegisteredHomeRole(authUser){
+const savedRole = normalizeHomeRole(localStorage.getItem("role"));
+
+if(savedRole === "guest" || savedRole === "admin"){
+return savedRole;
+}
+
+if(isRegisteredHeaderRole(savedRole)){
+return savedRole;
+}
+
+if(!authUser){
+return "";
+}
+
+try{
+const userSnap = await get(ref(db,"users/" + authUser.uid));
+if(!userSnap.exists()) return "";
+const userData = userSnap.val() || {};
+const databaseRole =
+normalizeHomeRole(userData.role || userData.linkedRole || userData.accountType);
+return isRegisteredHeaderRole(databaseRole) ? databaseRole : "";
+}catch(error){
+console.warn("Registered user role check failed",error);
+return "";
+}
+}
+
+async function loadRegisteredHeaderButton(authUser){
+hideRegisteredHeaderButton();
+if(!authUser) return;
+
+const requestedUid = authUser.uid;
+const registeredRole = await resolveRegisteredHomeRole(authUser);
+
+if(!isRegisteredHeaderRole(registeredRole)){
+return;
+}
+
+try{
+const settingSnap = await get(ref(db,REGISTERED_HEADER_BUTTON_PATH));
+
+if(!auth.currentUser || auth.currentUser.uid !== requestedUid){
+return;
+}
+
+if(!settingSnap.exists()) return;
+const setting = settingSnap.val() || {};
+const safeUrl = getSafeExternalHeaderUrl(setting.url);
+
+if(setting.enabled !== true || !safeUrl){
+return;
+}
+
+const button = document.getElementById("registeredExternalBtn");
+const labelElement = document.getElementById("registeredExternalBtnLabel");
+if(!button || !labelElement) return;
+
+const label = String(setting.label || "Open").trim().slice(0,18) || "Open";
+button.href = safeUrl;
+button.title = label;
+button.setAttribute("aria-label","Open " + label);
+labelElement.textContent = label;
+button.hidden = false;
+}catch(error){
+console.warn("Registered header button load failed",error);
+hideRegisteredHeaderButton();
+}
+}
 
 if(
 localStorage.getItem("role") === "guest" ||
@@ -1032,6 +1199,7 @@ console.warn("Student count unavailable", studentCountError);
 onAuthStateChanged(auth,(user)=>{
 loadHeaderProfilePhoto(user);
 loadStudentCount(user);
+loadRegisteredHeaderButton(user);
 });
 
 
