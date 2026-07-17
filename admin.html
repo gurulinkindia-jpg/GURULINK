@@ -77,116 +77,6 @@ background:#c62828;
 background:#6d4c41;
 }
 
-.headerLinkAdminPanel{
-width:calc(100% - 20px);
-max-width:1580px;
-margin:10px auto 0;
-padding:12px;
-background:#fff;
-border:1px solid #cfe0f3;
-border-left:5px solid #0f766e;
-border-radius:14px;
-box-shadow:0 4px 14px rgba(0,0,0,.07);
-}
-
-.headerLinkAdminPanel h3{
-margin:0 0 5px;
-font-size:17px;
-color:#0f3d56;
-}
-
-.headerLinkAdminPanel p{
-margin:0;
-font-size:12px;
-line-height:1.45;
-color:#52606d;
-}
-
-.headerLinkFormGrid{
-display:grid;
-grid-template-columns:minmax(150px,220px) minmax(260px,1fr) auto;
-gap:10px;
-align-items:end;
-margin-top:10px;
-}
-
-.headerLinkField{
-display:flex;
-flex-direction:column;
-gap:5px;
-font-size:12px;
-font-weight:bold;
-color:#243b53;
-}
-
-.headerLinkField input{
-width:100%;
-height:40px;
-padding:8px 10px;
-border:1px solid #bcccdc;
-border-radius:8px;
-font:inherit;
-font-weight:normal;
-background:#fff;
-color:#102a43;
-outline:none;
-}
-
-.headerLinkField input:focus{
-border-color:#1565c0;
-box-shadow:0 0 0 3px rgba(21,101,192,.12);
-}
-
-.headerLinkToggle{
-min-height:40px;
-display:flex;
-align-items:center;
-gap:7px;
-padding:9px 11px;
-border:1px solid #cfe0f3;
-border-radius:8px;
-background:#f4f9ff;
-font-size:12px;
-font-weight:bold;
-color:#0f3d56;
-cursor:pointer;
-}
-
-.headerLinkToggle input{
-width:18px;
-height:18px;
-margin:0;
-accent-color:#0f766e;
-}
-
-.headerLinkActions{
-display:flex;
-align-items:center;
-flex-wrap:wrap;
-gap:7px;
-margin-top:10px;
-}
-
-.headerLinkSaveBtn{
-background:#0f766e;
-font-size:12px;
-padding:9px 13px;
-}
-
-.headerLinkRemoveBtn{
-background:#c62828;
-font-size:12px;
-padding:9px 13px;
-}
-
-#adminExternalLinkStatus{
-font-weight:bold;
-color:#52606d;
-}
-
-#adminExternalLinkStatus.success{color:#2e7d32;}
-#adminExternalLinkStatus.error{color:#c62828;}
-
 .stats{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(105px,1fr));
@@ -347,6 +237,72 @@ padding:8px;
 border-radius:10px;
 background:rgba(15,23,42,.04);
 border:1px solid #d9e2ec;
+}
+
+.profileHeaderLinkTools{
+margin:10px 0 8px;
+padding:9px;
+border-radius:10px;
+background:#eefbf6;
+border:1px solid #a7e4cf;
+}
+
+.profileHeaderLinkTitle{
+font-size:12px;
+font-weight:bold;
+color:#0f5f4d;
+margin-bottom:7px;
+}
+
+.profileHeaderLinkField{
+display:block;
+font-size:11px;
+font-weight:bold;
+color:#243b53;
+margin:6px 0;
+}
+
+.profileHeaderLinkInput{
+display:block;
+width:100%;
+margin-top:4px;
+padding:7px 8px;
+border:1px solid #b8d8ce;
+border-radius:7px;
+background:#fff;
+color:#102a43;
+font-size:11px;
+outline:none;
+}
+
+.profileHeaderLinkInput:focus{
+border-color:#0f766e;
+box-shadow:0 0 0 2px rgba(15,118,110,.12);
+}
+
+.profileHeaderLinkToggle{
+display:flex;
+align-items:center;
+gap:6px;
+margin:7px 0;
+font-size:11px;
+font-weight:bold;
+color:#0f5f4d;
+}
+
+.profileHeaderLinkToggle input{
+width:17px;
+height:17px;
+margin:0;
+accent-color:#0f766e;
+}
+
+.saveHeaderLink{
+background:#0f766e;
+}
+
+.removeHeaderLink{
+background:#c62828;
 }
 
 .publicRow{
@@ -527,25 +483,6 @@ font-size:10px;
 padding:6px;
 }
 
-.headerLinkAdminPanel{
-width:calc(100% - 16px);
-padding:11px;
-}
-
-.headerLinkFormGrid{
-grid-template-columns:1fr;
-gap:9px;
-}
-
-.headerLinkToggle{
-width:100%;
-}
-
-.headerLinkActions button{
-flex:1;
-min-height:38px;
-font-size:11px;
-}
 }
 </style>
 <link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
@@ -627,34 +564,6 @@ Helpdesk Tickets:
 </div>
 
 </div> <!-- topbar end -->
-
-<section class="headerLinkAdminPanel" aria-labelledby="registeredHeaderButtonHeading">
-<h3 id="registeredHeaderButtonHeading">Registered User Header Button</h3>
-<p>Add one secure external link for registered students, teachers and institutes. If it is disabled or removed, the homepage button stays hidden.</p>
-
-<div class="headerLinkFormGrid">
-<label class="headerLinkField">
-<span>Button name</span>
-<input id="adminExternalLinkLabel" type="text" maxlength="18" placeholder="Example: Learning Portal">
-</label>
-
-<label class="headerLinkField">
-<span>External HTTPS link</span>
-<input id="adminExternalLinkUrl" type="url" inputmode="url" placeholder="https://example.com/">
-</label>
-
-<label class="headerLinkToggle">
-<input id="adminExternalLinkEnabled" type="checkbox">
-<span>Show to registered users</span>
-</label>
-</div>
-
-<div class="headerLinkActions">
-<button type="button" class="headerLinkSaveBtn" onclick="saveRegisteredHeaderButton()">Save Header Button</button>
-<button type="button" class="headerLinkRemoveBtn" onclick="removeRegisteredHeaderButton()">Remove Button</button>
-<p id="adminExternalLinkStatus" role="status" aria-live="polite">No setting loaded yet.</p>
-</div>
-</section>
 
 <div class="stats">
 
@@ -829,16 +738,6 @@ document.getElementById("invoicePayments").innerHTML = "";
 
 }
 
-const REGISTERED_HEADER_BUTTON_PATH =
-"siteSettings/registeredHeaderButton";
-
-function setExternalLinkAdminStatus(message,type=""){
-const status = document.getElementById("adminExternalLinkStatus");
-if(!status) return;
-status.textContent = message;
-status.className = type;
-}
-
 function normalizeAdminExternalUrl(value){
 const cleanValue = String(value || "").trim();
 if(!cleanValue){
@@ -859,46 +758,86 @@ throw new Error("For security, the external link must start with https://");
 return parsed.toString();
 }
 
-function loadRegisteredHeaderButtonSettings(){
-onValue(
-ref(db,REGISTERED_HEADER_BUTTON_PATH),
-snap=>{
-const data = snap.exists() ? (snap.val() || {}) : {};
-const labelInput = document.getElementById("adminExternalLinkLabel");
-const urlInput = document.getElementById("adminExternalLinkUrl");
-const enabledInput = document.getElementById("adminExternalLinkEnabled");
-
-if(labelInput) labelInput.value = String(data.label || "");
-if(urlInput) urlInput.value = String(data.url || "");
-if(enabledInput) enabledInput.checked = data.enabled === true;
-
-setExternalLinkAdminStatus(
-snap.exists()
-? (data.enabled === true ? "Header button is active." : "Header button is saved but disabled.")
-: "No header button has been added."
-);
-},
-error=>{
-console.error("Header button setting load failed",error);
-setExternalLinkAdminStatus("Unable to load the header button setting.","error");
-}
-);
+function escapeAdminAttribute(value){
+return String(value || "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;");
 }
 
-window.saveRegisteredHeaderButton = async function(){
-const user = auth.currentUser;
-if(!user){
-setExternalLinkAdminStatus("Please login as admin again.","error");
+function profileHeaderButtonTools(profile,type){
+const setting = profileHeaderButtons[profile.id] || {};
+const label = escapeAdminAttribute(setting.label || "");
+const url = escapeAdminAttribute(setting.url || "");
+const enabled = setting.enabled === true;
+
+return `
+<div class="profileHeaderLinkTools">
+<div class="profileHeaderLinkTitle">Homepage Header Button</div>
+
+<label class="profileHeaderLinkField">
+Button name
+<input
+type="text"
+maxlength="18"
+class="profileHeaderLinkInput"
+id="headerLinkLabel_${type}_${profile.id}"
+value="${label}"
+placeholder="Example: My Website">
+</label>
+
+<label class="profileHeaderLinkField">
+External HTTPS link
+<input
+type="url"
+inputmode="url"
+class="profileHeaderLinkInput"
+id="headerLinkUrl_${type}_${profile.id}"
+value="${url}"
+placeholder="https://example.com/">
+</label>
+
+<label class="profileHeaderLinkToggle">
+<input
+type="checkbox"
+id="headerLinkEnabled_${type}_${profile.id}"
+${enabled ? "checked" : ""}>
+Show this button for this user
+</label>
+
+<button
+class="saveHeaderLink"
+onclick="saveProfileHeaderButton('${type}','${profile.id}')">
+Save Header Button
+</button>
+
+<button
+class="removeHeaderLink"
+onclick="removeProfileHeaderButton('${type}','${profile.id}')">
+Remove Header Button
+</button>
+</div>
+`;
+}
+
+function validHeaderProfileType(type){
+return type === "teacher" || type === "institution" || type === "student";
+}
+
+window.saveProfileHeaderButton = async function(type,id){
+if(!auth.currentUser || !validHeaderProfileType(type)){
+alert("Admin access or profile type is invalid.");
 return;
 }
 
-const labelInput = document.getElementById("adminExternalLinkLabel");
-const urlInput = document.getElementById("adminExternalLinkUrl");
-const enabledInput = document.getElementById("adminExternalLinkEnabled");
+const labelInput = document.getElementById(`headerLinkLabel_${type}_${id}`);
+const urlInput = document.getElementById(`headerLinkUrl_${type}_${id}`);
+const enabledInput = document.getElementById(`headerLinkEnabled_${type}_${id}`);
 const label = String(labelInput ? labelInput.value : "").trim();
 
 if(!label){
-setExternalLinkAdminStatus("Please enter a button name.","error");
+alert("Please enter a button name.");
 return;
 }
 
@@ -906,51 +845,52 @@ let url;
 try{
 url = normalizeAdminExternalUrl(urlInput ? urlInput.value : "");
 }catch(error){
-setExternalLinkAdminStatus(error.message,"error");
+alert(error.message);
 return;
 }
 
-setExternalLinkAdminStatus("Saving...");
-
 try{
-await update(ref(db,REGISTERED_HEADER_BUTTON_PATH),{
+await update(
+ref(db,`profileHeaderButtons/${id}`),
+{
+profileType:type,
 label:label.slice(0,18),
 url,
 enabled:!!(enabledInput && enabledInput.checked),
 updatedAt:Date.now(),
-updatedBy:user.uid
-});
-setExternalLinkAdminStatus("Header button saved successfully.","success");
+updatedBy:auth.currentUser.uid
+}
+);
+alert("Header button saved for this profile.");
 }catch(error){
-console.error("Header button save failed",error);
-setExternalLinkAdminStatus("Unable to save. Check the Firebase rules.","error");
+console.error("Profile header button save failed",error);
+alert("Unable to save this profile's header button.");
 }
 };
 
-window.removeRegisteredHeaderButton = async function(){
-if(!auth.currentUser){
-setExternalLinkAdminStatus("Please login as admin again.","error");
+window.removeProfileHeaderButton = async function(type,id){
+if(!auth.currentUser || !validHeaderProfileType(type)){
+alert("Admin access or profile type is invalid.");
 return;
 }
 
-if(!confirm("Remove the registered-user header button?")){
+if(!confirm("Remove the header button from this profile?")){
 return;
 }
-
-setExternalLinkAdminStatus("Removing...");
 
 try{
-await remove(ref(db,REGISTERED_HEADER_BUTTON_PATH));
-setExternalLinkAdminStatus("Header button removed.","success");
+await remove(ref(db,`profileHeaderButtons/${id}`));
+alert("Header button removed from this profile.");
 }catch(error){
-console.error("Header button removal failed",error);
-setExternalLinkAdminStatus("Unable to remove. Check the Firebase rules.","error");
+console.error("Profile header button removal failed",error);
+alert("Unable to remove this profile's header button.");
 }
 };
 
 let teachers=[];
 let inst=[];
 let students=[];
+let profileHeaderButtons={};
 let payments=[];
 let renewPayments=[];
 let invoicePayments=[];
@@ -1752,6 +1692,8 @@ Save Public Settings
 
 </div>
 
+${profileHeaderButtonTools(d,type)}
+
 <button
 class="approve"
 onclick="setInvoiceFeature('${type}','${d.id}',true)">
@@ -2430,6 +2372,8 @@ ${d.address || d.area || d.pinCode ? `${d.address || ""}${d.area ? " / " + d.are
 
 <br>
 
+${profileHeaderButtonTools(d,"student")}
+
 <button
 class="delete"
 onclick="delStudent('${d.id}')">
@@ -2547,7 +2491,16 @@ loadStudents();
 
 loadPayments();
 
-loadRegisteredHeaderButtonSettings();
+onValue(
+ref(db,"profileHeaderButtons"),
+snap=>{
+profileHeaderButtons = snap.exists() ? (snap.val() || {}) : {};
+if(typeof window.renderAll === "function") window.renderAll();
+},
+error=>{
+console.error("Profile header buttons load failed",error);
+}
+);
 
 onValue(
   ref(db,"tickets"),
