@@ -178,10 +178,10 @@ app.get("/open-business-card-in-browser", (req, res) => {
   const prefill = String(req.query.prefill || "").trim();
   const source = req.query.source === "appmobile" ? "appmobile" : "";
   const target = new URL(
-    "https://www.gurulink.co.in/BusinessCardDesigner/index.html"
+    "https://guru-link.onrender.com/BusinessCardDesigner/index.html"
   );
 
-  target.searchParams.set("v", "20260717b");
+  target.searchParams.set("v", "20260717c");
   target.searchParams.set("role", role);
   if (prefill) {
     target.searchParams.set("prefill", prefill);
