@@ -924,8 +924,6 @@ const app=initializeApp(firebaseConfig);
 const auth=getAuth(app);
 const db=getDatabase(app);
 const DEFAULT_HEADER_PHOTO = "https://i.ibb.co/4pDNDk1/user.png";
-const REGISTERED_HEADER_BUTTON_PATH =
-"siteSettings/registeredHeaderButton";
 const REGISTERED_HEADER_ROLES = new Set([
 "student",
 "parent",
@@ -960,32 +958,66 @@ return "";
 }
 }
 
-async function resolveRegisteredHomeRole(authUser){
-const savedRole = normalizeHomeRole(localStorage.getItem("role"));
+function headerButtonTypeMatchesRole(profileType,role){
+const type = normalizeHomeRole(profileType);
+const normalizedRole = normalizeHomeRole(role);
 
-if(savedRole === "guest" || savedRole === "admin"){
-return savedRole;
+if(normalizedRole === "student" || normalizedRole === "parent" || normalizedRole === "student/parent"){
+return type === "student";
 }
 
-if(isRegisteredHeaderRole(savedRole)){
-return savedRole;
+if(normalizedRole === "teacher") return type === "teacher";
+if(normalizedRole === "institution") return type === "institution";
+if(normalizedRole === "teacher_institute" || normalizedRole === "teacher/institute"){
+return type === "teacher" || type === "institution";
 }
 
-if(!authUser){
-return "";
+return false;
 }
 
+async function resolveRegisteredHomeProfile(authUser){
+let role = normalizeHomeRole(localStorage.getItem("role"));
+let profileId = String(
+localStorage.getItem("profileId") ||
+localStorage.getItem("teacherId") ||
+localStorage.getItem("institutionId") ||
+localStorage.getItem("studentId") ||
+localStorage.getItem("uid") ||
+(authUser ? authUser.uid : "") ||
+""
+).trim();
+
+if(role === "guest" || role === "admin" || !authUser){
+return null;
+}
+
+const roleNeedsLookup =
+!isRegisteredHeaderRole(role) ||
+role === "teacher_institute" ||
+role === "teacher/institute";
+
+if(roleNeedsLookup || !profileId){
 try{
 const userSnap = await get(ref(db,"users/" + authUser.uid));
-if(!userSnap.exists()) return "";
+if(userSnap.exists()){
 const userData = userSnap.val() || {};
-const databaseRole =
-normalizeHomeRole(userData.role || userData.linkedRole || userData.accountType);
-return isRegisteredHeaderRole(databaseRole) ? databaseRole : "";
-}catch(error){
-console.warn("Registered user role check failed",error);
-return "";
+const databaseRole = normalizeHomeRole(
+userData.linkedRole || userData.role || userData.accountType
+);
+const databaseProfileId = String(
+userData.profileId || userData.linkedProfileId || userData.uid || ""
+).trim();
+
+if(isRegisteredHeaderRole(databaseRole)) role = databaseRole;
+if(databaseProfileId) profileId = databaseProfileId;
 }
+}catch(error){
+console.warn("Registered profile lookup failed",error);
+}
+}
+
+if(!profileId || !isRegisteredHeaderRole(role)) return null;
+return { role,profileId };
 }
 
 async function loadRegisteredHeaderButton(authUser){
@@ -993,14 +1025,16 @@ hideRegisteredHeaderButton();
 if(!authUser) return;
 
 const requestedUid = authUser.uid;
-const registeredRole = await resolveRegisteredHomeRole(authUser);
+const registeredProfile = await resolveRegisteredHomeProfile(authUser);
 
-if(!isRegisteredHeaderRole(registeredRole)){
+if(!registeredProfile){
 return;
 }
 
 try{
-const settingSnap = await get(ref(db,REGISTERED_HEADER_BUTTON_PATH));
+const settingSnap = await get(
+ref(db,"profileHeaderButtons/" + registeredProfile.profileId)
+);
 
 if(!auth.currentUser || auth.currentUser.uid !== requestedUid){
 return;
@@ -1010,7 +1044,11 @@ if(!settingSnap.exists()) return;
 const setting = settingSnap.val() || {};
 const safeUrl = getSafeExternalHeaderUrl(setting.url);
 
-if(setting.enabled !== true || !safeUrl){
+if(
+setting.enabled !== true ||
+!safeUrl ||
+!headerButtonTypeMatchesRole(setting.profileType,registeredProfile.role)
+){
 return;
 }
 
