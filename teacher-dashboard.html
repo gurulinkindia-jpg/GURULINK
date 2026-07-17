@@ -934,7 +934,7 @@ Quick Actions
 
   <div id="businessCardBrowserNotice" class="businessCardBrowserNotice" hidden>
     Business/I Card creation works only in a browser in this version of the mobile app.
-    Tap <a id="businessCardBrowserLink" href="https://www.gurulink.co.in/">www.gurulink.co.in</a> to use this feature.
+    Tap <a id="businessCardBrowserLink" href="https://guru-link.onrender.com/BusinessCardDesigner/index.html">Open Business Card Designer in browser</a> to use this feature.
   </div>
 
   <button class="adBtn" onclick="openAdvertisementDesigner()">
@@ -2796,22 +2796,26 @@ window.openBusinessCardDesigner = function() {
   );
 
   const designerQuery =
-    "?v=20260717b" +
+    "?v=20260717c" +
     "&role=" + encodeURIComponent(activeRole) +
     "&prefill=" + encodeURIComponent(encodedPrefill);
 
   if(/GuruLinkAndroidApp/i.test(navigator.userAgent || "")){
-    const browserRedirectUrl = new URL(
-      "https://guru-link.onrender.com/open-business-card-in-browser"
+    // Use the Render static address directly. Unlike www.gurulink.co.in, this
+    // host is not an App Link in the current APK, so Chrome will not hand the
+    // designer straight back to the GURULINK WebView.
+    const browserDesignerUrl = new URL(
+      "https://guru-link.onrender.com/BusinessCardDesigner/index.html"
     );
-    browserRedirectUrl.searchParams.set("role", activeRole);
-    browserRedirectUrl.searchParams.set("prefill", encodedPrefill);
-    browserRedirectUrl.searchParams.set("source", "appmobile");
+    browserDesignerUrl.searchParams.set("v", "20260717c");
+    browserDesignerUrl.searchParams.set("role", activeRole);
+    browserDesignerUrl.searchParams.set("prefill", encodedPrefill);
+    browserDesignerUrl.searchParams.set("source", "appmobile");
 
     const browserNotice = document.getElementById("businessCardBrowserNotice");
     const browserLink = document.getElementById("businessCardBrowserLink");
     if(browserLink){
-      browserLink.href = browserRedirectUrl.toString();
+      browserLink.href = browserDesignerUrl.toString();
     }
     if(browserNotice){
       browserNotice.hidden = false;
