@@ -188,6 +188,9 @@ border-radius:14px;
 }
 }
 </style>
+
+<link rel="stylesheet" href="gurulink-theme.css?v=2">
+<script src="gurulink-theme.js?v=2"></script>
 </head>
 
 <body>
@@ -223,8 +226,8 @@ Use an active email and password. These details will be used for your student lo
 <label for="password">Password</label>
 <input id="password" type="password" placeholder="Create password" minlength="6" required>
 
-<label for="className">Class</label>
-<input id="className" type="text" placeholder="Example: Class 8, Class 10, JEE, NEET" required>
+<label for="className">Class / Category</label>
+<input id="className" type="text" placeholder="Example: Class 10, Football, Dance, Web Design" required>
 
 <button type="submit" id="saveBtn">Save</button>
 </form>
@@ -232,8 +235,8 @@ Use an active email and password. These details will be used for your student lo
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 const firebaseConfig = {
 apiKey:"AIzaSyBK0QmU6y1wDlZkna2ciE-tf-P8pZAjhBk",
@@ -252,6 +255,88 @@ const auth = getAuth(app);
 const form = document.getElementById("studentForm");
 const saveBtn = document.getElementById("saveBtn");
 
+async function createOrResumeStudent(email,password){
+try{
+return await createUserWithEmailAndPassword(auth,email,password);
+}
+catch(err){
+if(err.code !== "auth/email-already-in-use"){
+throw err;
+}
+
+try{
+const userCred = await signInWithEmailAndPassword(auth,email,password);
+const uid = userCred.user.uid;
+const userSnap = await get(ref(db,"users/" + uid));
+const studentSnap = await get(ref(db,"students/" + uid));
+const existingUser = userSnap.exists() ? (userSnap.val() || {}) : {};
+const existingStudent = studentSnap.exists() ? (studentSnap.val() || {}) : {};
+const existingRole = String(existingStudent.role || existingUser.role || "").trim().toLowerCase();
+
+if(existingRole && existingRole !== "student"){
+const roleErr = new Error("This email is already linked with a different GURULINK account type.");
+roleErr.code = "registration/different-role";
+throw roleErr;
+}
+
+return userCred;
+}
+catch(signInErr){
+if(signInErr.code === "registration/different-role"){
+throw signInErr;
+}
+
+if(
+signInErr.code === "auth/invalid-credential" ||
+signInErr.code === "auth/wrong-password" ||
+signInErr.code === "auth/invalid-login-credentials"
+){
+const passwordErr = new Error("This email already exists. Use the same password that was used earlier to continue the incomplete registration, or login instead.");
+passwordErr.code = "registration/password-mismatch";
+throw passwordErr;
+}
+
+throw signInErr;
+}
+}
+}
+
+async function ensureEmailVerification(user,email,submitBtn){
+if(!user){
+const authErr = new Error("Unable to verify email because the registration session was lost.");
+authErr.code = "registration/no-auth-user";
+throw authErr;
+}
+
+await user.reload();
+if(user.emailVerified){
+return true;
+}
+
+const verifyKey = "emailVerificationSent:" + email;
+const lastSentAt = Number(sessionStorage.getItem(verifyKey) || 0);
+const shouldSendNewMail = !lastSentAt || (Date.now() - lastSentAt > 60000);
+
+if(shouldSendNewMail){
+submitBtn.innerText = "Sending verification email...";
+await sendEmailVerification(user);
+sessionStorage.setItem(verifyKey, String(Date.now()));
+alert("A verification email has been sent to " + email + ". Please open your email, verify it, then return here and submit again or press OK to check now.");
+}
+else{
+alert("A verification email was already sent to " + email + ". Please verify it first, then press OK to check now.");
+}
+
+submitBtn.innerText = "Checking email verification...";
+await user.reload();
+if(user.emailVerified){
+return true;
+}
+
+const verifyErr = new Error("Email verification is required before continuing. Please verify your email first, then submit again.");
+verifyErr.code = "registration/email-not-verified";
+throw verifyErr;
+}
 form.addEventListener("submit", async (e)=>{
 e.preventDefault();
 
@@ -262,16 +347,24 @@ const name = document.getElementById("name").value.trim();
 const email = document.getElementById("email").value.trim().toLowerCase();
 const password = document.getElementById("password").value;
 const className = document.getElementById("className").value.trim();
+const phone =
+localStorage.getItem("phone") ||
+sessionStorage.getItem("phone") ||
+"";
 
 try{
-const userCred = await createUserWithEmailAndPassword(auth,email,password);
+const userCred = await createOrResumeStudent(email,password);
 const uid = userCred.user.uid;
+await ensureEmailVerification(userCred.user,email,saveBtn);
+await auth.currentUser.getIdToken(true);
 
 const data = {
 uid,
 name,
 email,
+emailVerified:true,
 class:className,
+phone,
 role:"student",
 createdAt:Date.now()
 };
@@ -283,6 +376,7 @@ uid,
 name,
 email,
 role:"student",
+emailVerified:true,
 profileId:uid,
 createdAt:Date.now()
 });
@@ -293,12 +387,21 @@ localStorage.setItem("studentId",uid);
 localStorage.setItem("role","student");
 localStorage.setItem("email",email);
 localStorage.setItem("name",name);
+localStorage.setItem("phone",phone);
 
 window.location.href = "student-dashboard.html";
 }
 catch(err){
-if(err.code === "auth/email-already-in-use"){
-alert("This email already exists. Please login instead.");
+if(err.code === "registration/password-mismatch"){
+alert("This email already exists. Use the same password that was used earlier to continue the incomplete registration, or login instead.");
+}
+else if(err.code === "registration/different-role"){
+alert("This email is already linked with a different GURULINK account type. Please login with that account or use another email.");
+}
+else if(err.code === "registration/email-not-verified"){
+}
+else if(err.code === "auth/email-already-in-use"){
+alert("This email already exists. Use the same password to continue the incomplete registration, or login instead.");
 }
 else if(err.code === "auth/weak-password"){
 alert("Password must be minimum 6 characters.");
@@ -315,3 +418,5 @@ saveBtn.innerText = "Save";
 
 </body>
 </html>
+
+
