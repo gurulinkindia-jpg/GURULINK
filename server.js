@@ -15,6 +15,24 @@ function escapeHtml(value = "") {
     .replace(/'/g, "&#39;");
 }
 
+const BUSINESS_CARD_IMAGE_HOSTS = new Set([
+  "firebasestorage.googleapis.com",
+  "storage.googleapis.com",
+  "i.ibb.co"
+]);
+
+function getProfileImageUrl(profile = {}) {
+  profile = profile || {};
+  return String(
+    profile.logo ||
+    profile.profilePic ||
+    profile.profilePhoto ||
+    profile.photo ||
+    profile.image ||
+    ""
+  ).trim();
+}
+
 async function fetchProfileById(id) {
   let response = await fetch(
     `${DATABASE_BASE}/institutions/${id}.json`
@@ -152,6 +170,77 @@ app.get("/open-in-browser", (req, res) => {
   target.searchParams.set("role", role);
   res.setHeader("Cache-Control", "no-store");
   res.redirect(302, target.toString());
+});
+
+/* Opens the Business/I Card designer in the phone's external browser. */
+app.get("/open-business-card-in-browser", (req, res) => {
+  const role = req.query.role === "institution" ? "institution" : "teacher";
+  const prefill = String(req.query.prefill || "").trim();
+  const source = req.query.source === "appmobile" ? "appmobile" : "";
+  const target = new URL(
+    "https://www.gurulink.co.in/BusinessCardDesigner/index.html"
+  );
+
+  target.searchParams.set("v", "20260714aa");
+  target.searchParams.set("role", role);
+  if (prefill) {
+    target.searchParams.set("prefill", prefill);
+  }
+  if (source) {
+    target.searchParams.set("source", source);
+  }
+  res.setHeader("Cache-Control", "no-store");
+  res.redirect(302, target.toString());
+});
+
+/* Supplies a CORS-safe profile image for business-card PNG generation. */
+app.get("/business-card-profile-image", async (req, res) => {
+  const id = String(req.query.id || "").trim();
+
+  if (!id) {
+    return res.status(400).send("Profile ID is required");
+  }
+
+  try {
+    const result = await fetchProfileById(id);
+    const imageUrl = getProfileImageUrl(result && result.profile);
+
+    if (!imageUrl) {
+      return res.status(404).send("Profile image not found");
+    }
+
+    const parsedImageUrl = new URL(imageUrl);
+    if (
+      parsedImageUrl.protocol !== "https:" ||
+      !BUSINESS_CARD_IMAGE_HOSTS.has(parsedImageUrl.hostname.toLowerCase())
+    ) {
+      return res.status(400).send("Unsupported profile image host");
+    }
+
+    const imageResponse = await fetch(parsedImageUrl.toString());
+    const contentType = String(imageResponse.headers.get("content-type") || "");
+
+    if (!imageResponse.ok || !contentType.toLowerCase().startsWith("image/")) {
+      return res.status(imageResponse.status || 502).send("Profile image unavailable");
+    }
+
+    res.status(200);
+    res.setHeader("Content-Type", contentType);
+    const contentLength = imageResponse.headers.get("content-length");
+    if (contentLength) {
+      res.setHeader("Content-Length", contentLength);
+    }
+    res.setHeader("Cache-Control", "public, max-age=3600");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    imageResponse.body.pipe(res);
+  } catch (error) {
+    console.error("Business card profile image failed", error);
+    if (!res.headersSent) {
+      res.status(500).send("Profile image unavailable");
+    }
+  }
 });
 
 /* Dynamic profile sharing page */
