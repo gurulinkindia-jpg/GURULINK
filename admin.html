@@ -892,6 +892,18 @@ function matchesReviewDate(item, timeValue){
   return `${yyyy}-${mm}-${dd}` === selectedDate;
 }
 
+function dedupeByKey(list, makeKey){
+  const seen = new Set();
+  return list.filter(item=>{
+    const key = makeKey(item);
+    if(seen.has(key)){
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
+}
+
 function pendingLeadCard(item){
   const roleLabel =
     item.viewerRole === "parent" ? "Parent"
@@ -994,7 +1006,7 @@ const q = document.getElementById("search").value.toLowerCase();
 const sectionFilter = getSelectedReviewType();
 
 document.getElementById("pendingProfileViews").innerHTML =
-pendingLeadReviews
+dedupeByKey(pendingLeadReviews, item=>`${item.targetProfileId || ""}__${item.viewerId || ""}`)
 .filter(item=>{
   if(sectionFilter === "archive") return false;
   if(!q) return true;
@@ -1012,7 +1024,7 @@ pendingLeadReviews
 .join("");
 
 document.getElementById("approvedProfileViews").innerHTML =
-approvedLeadReviews
+dedupeByKey(approvedLeadReviews, item=>`${item.targetProfileId || ""}__${item.viewerId || ""}`)
 .filter(item=>{
   if(sectionFilter === "pending") return false;
   if(!q) return true;
@@ -1038,7 +1050,7 @@ const q = document.getElementById("search").value.toLowerCase();
 const sectionFilter = getSelectedReviewType();
 
 document.getElementById("pendingAdminDemoRequests").innerHTML =
-pendingDemoReviews
+dedupeByKey(pendingDemoReviews, item=>`${item.targetProfileId || ""}__${item.requestId || ""}`)
 .filter(item=>{
   if(sectionFilter === "archive") return false;
   if(!q) return true;
@@ -1055,7 +1067,7 @@ pendingDemoReviews
 .join("");
 
 document.getElementById("approvedAdminDemoRequests").innerHTML =
-approvedDemoReviews
+dedupeByKey(approvedDemoReviews, item=>`${item.targetProfileId || ""}__${item.requestId || ""}`)
 .filter(item=>{
   if(sectionFilter === "pending") return false;
   if(!q) return true;
