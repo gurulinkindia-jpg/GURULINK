@@ -842,31 +842,7 @@ function pendingDemoCard(item){
   `;
 }
 
-function loadPendingProfileViews(){
-
-onValue(
-ref(db,"profileViews"),
-snap=>{
-
-pendingLeadReviews = [];
-
-if(snap.exists()){
-  snap.forEach(targetSnap=>{
-    const targetProfileId = targetSnap.key;
-    targetSnap.forEach(leadSnap=>{
-      const lead = leadSnap.val() || {};
-      if(lead.approvedByAdmin === true){
-        return;
-      }
-      pendingLeadReviews.push({
-        ...lead,
-        viewerId: leadSnap.key,
-        targetProfileId: lead.targetProfileId || targetProfileId
-      });
-    });
-  });
-}
-
+function renderPendingLeadReviews(){
 document.getElementById("pendingLeadCount").innerText =
   pendingLeadReviews.length;
 
@@ -887,36 +863,9 @@ pendingLeadReviews
 .sort((a,b)=>(Number(b.time || b.submittedAt || 0) - Number(a.time || a.submittedAt || 0)))
 .map(item=>pendingLeadCard(item))
 .join("");
-
-});
-
 }
 
-function loadPendingDemoRequests(){
-
-onValue(
-ref(db,"demoRequests"),
-snap=>{
-
-pendingDemoReviews = [];
-
-if(snap.exists()){
-  snap.forEach(targetSnap=>{
-    const targetProfileId = targetSnap.key;
-    targetSnap.forEach(requestSnap=>{
-      const request = requestSnap.val() || {};
-      if(request.approvedByAdmin === true){
-        return;
-      }
-      pendingDemoReviews.push({
-        ...request,
-        requestId: requestSnap.key,
-        targetProfileId: request.targetProfileId || targetProfileId
-      });
-    });
-  });
-}
-
+function renderPendingDemoReviews(){
 document.getElementById("pendingDemoCount").innerText =
   pendingDemoReviews.length;
 
@@ -936,9 +885,86 @@ pendingDemoReviews
 .sort((a,b)=>(Number(b.createdAt || 0) - Number(a.createdAt || 0)))
 .map(item=>pendingDemoCard(item))
 .join("");
+}
 
-});
+async function loadPendingProfileViews(){
+  const profileIds = [...teachers, ...inst]
+    .map(item => String(item.id || item.uid || "").trim())
+    .filter(Boolean);
 
+  pendingLeadReviews = [];
+
+  if(!profileIds.length){
+    renderPendingLeadReviews();
+    return;
+  }
+
+  await Promise.all(
+    profileIds.map(async (targetProfileId)=>{
+      try{
+        const snap = await get(ref(db, `profileViews/${targetProfileId}`));
+        if(!snap.exists()){
+          return;
+        }
+
+        snap.forEach(leadSnap=>{
+          const lead = leadSnap.val() || {};
+          if(lead.approvedByAdmin === true){
+            return;
+          }
+          pendingLeadReviews.push({
+            ...lead,
+            viewerId: leadSnap.key,
+            targetProfileId: lead.targetProfileId || targetProfileId
+          });
+        });
+      }catch(err){
+        console.error("Unable to load pending profile views for", targetProfileId, err);
+      }
+    })
+  );
+
+  renderPendingLeadReviews();
+}
+
+async function loadPendingDemoRequests(){
+  const profileIds = [...teachers, ...inst]
+    .map(item => String(item.id || item.uid || "").trim())
+    .filter(Boolean);
+
+  pendingDemoReviews = [];
+
+  if(!profileIds.length){
+    renderPendingDemoReviews();
+    return;
+  }
+
+  await Promise.all(
+    profileIds.map(async (targetProfileId)=>{
+      try{
+        const snap = await get(ref(db, `demoRequests/${targetProfileId}`));
+        if(!snap.exists()){
+          return;
+        }
+
+        snap.forEach(requestSnap=>{
+          const request = requestSnap.val() || {};
+          if(request.approvedByAdmin === true){
+            return;
+          }
+          pendingDemoReviews.push({
+            ...request,
+            requestId: requestSnap.key,
+            targetProfileId: request.targetProfileId || targetProfileId
+          });
+        });
+      }catch(err){
+        console.error("Unable to load pending demo requests for", targetProfileId, err);
+      }
+    })
+  );
+
+  renderPendingDemoReviews();
 }
 
 window.approvePendingLead = async function(targetProfileId,leadId){
@@ -1269,6 +1295,8 @@ document
 ).innerHTML = html;
 
 updateStats();
+loadPendingProfileViews();
+loadPendingDemoRequests();
 
 });
 
@@ -1309,6 +1337,8 @@ document
 ).innerHTML = html;
 
 updateStats();
+loadPendingProfileViews();
+loadPendingDemoRequests();
 
 });
 
