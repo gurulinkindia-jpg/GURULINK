@@ -147,6 +147,7 @@ color:white;
 .studentPanel h3{background:#7b1fa2;}
 .paymentPanel h3{background:#f57c00;}
 .leadReviewPanel h3{background:#d97706;}
+.archivePanel h3{background:#475569;}
 .renewPanelTitle{background:#8e24aa !important;}
 
 .list{
@@ -364,6 +365,49 @@ background:#6d4c41;
 
 .jumpProfile{
 background:#0f766e;
+}
+
+.filterBar{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+align-items:end;
+margin:0 0 12px;
+padding:10px;
+background:#ffffff;
+border:1px solid #d9e2ec;
+border-radius:12px;
+box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+
+.filterField{
+display:flex;
+flex-direction:column;
+gap:4px;
+min-width:170px;
+}
+
+.filterField label{
+font-size:12px;
+font-weight:bold;
+color:#334155;
+}
+
+.filterField input,
+.filterField select{
+padding:9px 10px;
+border:1px solid #cbd5e1;
+border-radius:8px;
+background:#fff;
+font-size:12px;
+}
+
+.filterBtn{
+background:#1565c0;
+}
+
+.filterBtn.secondary{
+background:#64748b;
 }
 
 .linkPayment{
@@ -602,6 +646,25 @@ Demo Review
 
 <div class="container">
 
+<div class="panel" style="grid-column:1/-1;">
+<div class="filterBar">
+  <div class="filterField">
+    <label for="reviewDateFilter">Date Wise Filter</label>
+    <input type="date" id="reviewDateFilter">
+  </div>
+  <div class="filterField">
+    <label for="reviewTypeFilter">Section</label>
+    <select id="reviewTypeFilter">
+      <option value="all">All</option>
+      <option value="pending">Pending Only</option>
+      <option value="archive">Archive Only</option>
+    </select>
+  </div>
+  <button class="filterBtn" onclick="applyReviewFilters()">Apply Filter</button>
+  <button class="filterBtn secondary" onclick="clearReviewFilters()">Clear Filter</button>
+</div>
+</div>
+
 <div class="panel leadReviewPanel">
 
 <h3>Pending Student Enquiries</h3>
@@ -615,6 +678,22 @@ Demo Review
 <h3 style="background:#0f766e;">Pending Demo Requests</h3>
 
 <div id="pendingAdminDemoRequests" class="list"></div>
+
+</div>
+
+<div class="panel archivePanel">
+
+<h3>Approved Student Enquiries Archive</h3>
+
+<div id="approvedProfileViews" class="list"></div>
+
+</div>
+
+<div class="panel archivePanel">
+
+<h3>Approved Demo Requests Archive</h3>
+
+<div id="approvedAdminDemoRequests" class="list"></div>
 
 </div>
 
@@ -750,6 +829,8 @@ let renewPayments=[];
 let invoicePayments=[];
 let pendingLeadReviews=[];
 let pendingDemoReviews=[];
+let approvedLeadReviews=[];
+let approvedDemoReviews=[];
 
 const paymentTotals = {
   registration:0,
@@ -789,6 +870,26 @@ function formatLeadTime(value){
   }catch(err){
     return "-";
   }
+}
+
+function getSelectedReviewDate(){
+  return (document.getElementById("reviewDateFilter")?.value || "").trim();
+}
+
+function getSelectedReviewType(){
+  return (document.getElementById("reviewTypeFilter")?.value || "all").trim();
+}
+
+function matchesReviewDate(item, timeValue){
+  const selectedDate = getSelectedReviewDate();
+  if(!selectedDate) return true;
+  const stamp = Number(timeValue || 0);
+  if(!stamp) return false;
+  const d = new Date(stamp);
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2,"0");
+  const dd = String(d.getDate()).padStart(2,"0");
+  return `${yyyy}-${mm}-${dd}` === selectedDate;
 }
 
 function pendingLeadCard(item){
@@ -855,15 +956,47 @@ function pendingDemoCard(item){
   `;
 }
 
+function approvedLeadCard(item){
+  return `
+  <div class="card pendingLeadCard">
+    <h3>${item.name || "Unknown Viewer"}</h3>
+    <p><b>For Profile ID:</b> ${item.targetProfileId || "-"}</p>
+    <p><b>Viewed:</b> ${formatLeadTime(item.time || item.submittedAt)}</p>
+    <p><b>Approved:</b> ${formatLeadTime(item.approvedAt)}</p>
+    <p><b>Status:</b> ${item.status || "pending"}</p>
+    <div class="paymentActionRow">
+      <button class="leadDelete" onclick="deleteApprovedLead('${item.targetProfileId}','${item.viewerId}')">Delete</button>
+    </div>
+  </div>
+  `;
+}
+
+function approvedDemoCard(item){
+  return `
+  <div class="card pendingDemoCard">
+    <h3>${item.name || "Unknown Requester"}</h3>
+    <p><b>For Profile ID:</b> ${item.targetProfileId || "-"}</p>
+    <p><b>Requested:</b> ${formatLeadTime(item.createdAt)}</p>
+    <p><b>Approved:</b> ${formatLeadTime(item.approvedAt)}</p>
+    <p><b>Message:</b> ${item.message || "-"}</p>
+    <div class="paymentActionRow">
+      <button class="leadDelete" onclick="deleteApprovedDemoRequest('${item.targetProfileId}','${item.requestId}')">Delete</button>
+    </div>
+  </div>
+  `;
+}
+
 function renderPendingLeadReviews(){
 document.getElementById("pendingLeadCount").innerText =
   pendingLeadReviews.length;
 
 const q = document.getElementById("search").value.toLowerCase();
+const sectionFilter = getSelectedReviewType();
 
 document.getElementById("pendingProfileViews").innerHTML =
 pendingLeadReviews
 .filter(item=>{
+  if(sectionFilter === "archive") return false;
   if(!q) return true;
   return (
     (item.name || "").toLowerCase().includes(q) ||
@@ -873,8 +1006,27 @@ pendingLeadReviews
     (item.targetProfileId || "").toLowerCase().includes(q)
   );
 })
+.filter(item=>matchesReviewDate(item, item.time || item.submittedAt))
 .sort((a,b)=>(Number(b.time || b.submittedAt || 0) - Number(a.time || a.submittedAt || 0)))
 .map(item=>pendingLeadCard(item))
+.join("");
+
+document.getElementById("approvedProfileViews").innerHTML =
+approvedLeadReviews
+.filter(item=>{
+  if(sectionFilter === "pending") return false;
+  if(!q) return true;
+  return (
+    (item.name || "").toLowerCase().includes(q) ||
+    (item.email || "").toLowerCase().includes(q) ||
+    (item.phone || "").toLowerCase().includes(q) ||
+    (item.viewerRole || "").toLowerCase().includes(q) ||
+    (item.targetProfileId || "").toLowerCase().includes(q)
+  );
+})
+.filter(item=>matchesReviewDate(item, item.approvedAt || item.time || item.submittedAt))
+.sort((a,b)=>(Number(b.approvedAt || b.time || b.submittedAt || 0) - Number(a.approvedAt || a.time || a.submittedAt || 0)))
+.map(item=>approvedLeadCard(item))
 .join("");
 }
 
@@ -883,10 +1035,12 @@ document.getElementById("pendingDemoCount").innerText =
   pendingDemoReviews.length;
 
 const q = document.getElementById("search").value.toLowerCase();
+const sectionFilter = getSelectedReviewType();
 
 document.getElementById("pendingAdminDemoRequests").innerHTML =
 pendingDemoReviews
 .filter(item=>{
+  if(sectionFilter === "archive") return false;
   if(!q) return true;
   return (
     (item.name || "").toLowerCase().includes(q) ||
@@ -895,8 +1049,26 @@ pendingDemoReviews
     (item.targetProfileId || "").toLowerCase().includes(q)
   );
 })
+.filter(item=>matchesReviewDate(item, item.createdAt))
 .sort((a,b)=>(Number(b.createdAt || 0) - Number(a.createdAt || 0)))
 .map(item=>pendingDemoCard(item))
+.join("");
+
+document.getElementById("approvedAdminDemoRequests").innerHTML =
+approvedDemoReviews
+.filter(item=>{
+  if(sectionFilter === "pending") return false;
+  if(!q) return true;
+  return (
+    (item.name || "").toLowerCase().includes(q) ||
+    (item.phone || "").toLowerCase().includes(q) ||
+    (item.message || "").toLowerCase().includes(q) ||
+    (item.targetProfileId || "").toLowerCase().includes(q)
+  );
+})
+.filter(item=>matchesReviewDate(item, item.approvedAt || item.createdAt))
+.sort((a,b)=>(Number(b.approvedAt || b.createdAt || 0) - Number(a.approvedAt || a.createdAt || 0)))
+.map(item=>approvedDemoCard(item))
 .join("");
 }
 
@@ -906,6 +1078,7 @@ async function loadPendingProfileViews(){
     .filter(Boolean);
 
   pendingLeadReviews = [];
+  approvedLeadReviews = [];
 
   if(!profileIds.length){
     renderPendingLeadReviews();
@@ -923,6 +1096,11 @@ async function loadPendingProfileViews(){
         snap.forEach(leadSnap=>{
           const lead = leadSnap.val() || {};
           if(lead.approvedByAdmin === true){
+            approvedLeadReviews.push({
+              ...lead,
+              viewerId: leadSnap.key,
+              targetProfileId: lead.targetProfileId || targetProfileId
+            });
             return;
           }
           pendingLeadReviews.push({
@@ -946,6 +1124,7 @@ async function loadPendingDemoRequests(){
     .filter(Boolean);
 
   pendingDemoReviews = [];
+  approvedDemoReviews = [];
 
   if(!profileIds.length){
     renderPendingDemoReviews();
@@ -963,6 +1142,11 @@ async function loadPendingDemoRequests(){
         snap.forEach(requestSnap=>{
           const request = requestSnap.val() || {};
           if(request.approvedByAdmin === true){
+            approvedDemoReviews.push({
+              ...request,
+              requestId: requestSnap.key,
+              targetProfileId: request.targetProfileId || targetProfileId
+            });
             return;
           }
           pendingDemoReviews.push({
@@ -1010,6 +1194,20 @@ window.approvePendingLead = async function(targetProfileId,leadId){
     console.error(err);
     alert("Could not approve this enquiry right now.");
   }
+};
+
+window.applyReviewFilters = function(){
+  renderPendingLeadReviews();
+  renderPendingDemoReviews();
+};
+
+window.clearReviewFilters = function(){
+  const dateInput = document.getElementById("reviewDateFilter");
+  const typeInput = document.getElementById("reviewTypeFilter");
+  if(dateInput) dateInput.value = "";
+  if(typeInput) typeInput.value = "all";
+  renderPendingLeadReviews();
+  renderPendingDemoReviews();
 };
 
 window.rejectPendingLead = async function(targetProfileId,leadId){
@@ -1095,6 +1293,50 @@ window.deletePendingDemoRequest = async function(targetProfileId,requestId){
   }catch(err){
     console.error(err);
     alert("Could not delete this demo request right now.");
+  }
+};
+
+window.deleteApprovedLead = async function(targetProfileId,leadId){
+  try{
+    const leadPath = `profileViews/${targetProfileId}/${leadId}`;
+    const snap = await get(ref(db, leadPath));
+
+    if(!snap.exists()){
+      alert("This approved enquiry is no longer available.");
+      return;
+    }
+
+    const lead = snap.val() || {};
+    if(String(lead.status || "").toLowerCase() === "enrolled"){
+      alert("This enquiry is already enrolled, so it cannot be deleted normally.");
+      return;
+    }
+
+    if(!confirm("Delete this approved enquiry from archive?")){
+      return;
+    }
+
+    await remove(ref(db, leadPath));
+    alert("Approved enquiry deleted.");
+    loadPendingProfileViews();
+  }catch(err){
+    console.error(err);
+    alert("Could not delete this approved enquiry right now.");
+  }
+};
+
+window.deleteApprovedDemoRequest = async function(targetProfileId,requestId){
+  try{
+    if(!confirm("Delete this approved demo request from archive?")){
+      return;
+    }
+
+    await remove(ref(db, `demoRequests/${targetProfileId}/${requestId}`));
+    alert("Approved demo request deleted.");
+    loadPendingDemoRequests();
+  }catch(err){
+    console.error(err);
+    alert("Could not delete this approved demo request right now.");
   }
 };
 
