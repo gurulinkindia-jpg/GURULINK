@@ -1561,17 +1561,26 @@ return;
 }
 
 try{
-
-await set(ref(db,`demoRequests/${currentProfileId}/${requestKey}`),{
+const now = Date.now();
+const payload = {
 profileId:currentProfileId,
 profileType:type,
+targetProfileId:currentProfileId,
+targetType:type,
 name:name,
 phone:phone,
 message:message,
 status:"new",
-createdAt:Date.now(),
-expiresAt:Date.now() + (15 * 24 * 60 * 60 * 1000)
-});
+createdAt:now,
+expiresAt:now + (15 * 24 * 60 * 60 * 1000)
+};
+
+const targetPath =
+data.useAdminContact === true
+? `pendingAdminDemoRequests/${currentProfileId}/${requestKey}`
+: `demoRequests/${currentProfileId}/${requestKey}`;
+
+await set(ref(db,targetPath),payload);
 
 document.getElementById("demoChatBox").style.display = "none";
 document.getElementById("demoSuccessBox").style.display = "block";
