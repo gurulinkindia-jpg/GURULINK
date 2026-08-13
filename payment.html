@@ -375,6 +375,7 @@ font-size:14px;
 <div class="planAmount">Rs. 50</div>
 <ul class="planFeatures">
 <li>Public profile activation</li>
+<li>Call and WhatsApp show admin contact: 9706380357</li>
 <li>Rating and review based organic visibility</li>
 <li>Business card and social media sharing active</li>
 <li>Demo class form and student enquiries active</li>
@@ -384,21 +385,22 @@ font-size:14px;
 </td>
 <td>
 <div class="planName">Priority Public Plan</div>
-<div class="planAmount">Rs. 51 to Rs. 1799</div>
+<div class="planAmount">Rs. 5000</div>
 <ul class="planFeatures">
 <li>All features of the Rs. 50 plan</li>
+<li>Profile shows teacher / institute own call and WhatsApp number</li>
 <li>Eligible for priority and sponsored card visibility</li>
 <li>Top placement controlled from admin panel</li>
 <li>Better promotional visibility</li>
-<li>Public profile remains fully active</li>
 <li>Invoice inactive</li>
 </ul>
 </td>
 <td>
 <div class="planName">Full Access Plan</div>
-<div class="planAmount">Rs. 1800 to Rs. 2000</div>
+<div class="planAmount">Rs. 7000</div>
 <ul class="planFeatures">
 <li>All features active</li>
+<li>Profile shows teacher / institute own call and WhatsApp number</li>
 <li>Priority and premium visibility active</li>
 <li>Full profile tools and public controls active</li>
 <li>Business card, enquiry, timetable and fee structure active</li>
@@ -418,20 +420,14 @@ font-size:14px;
 <div class="planOptionInline" data-inline-for="basic"></div>
 </div>
 <div class="planOption" data-plan="priority" role="button" tabindex="0">
-<div class="planOptionMain">Priority Public Plan<small>Enter any amount from Rs. 51 to Rs. 1799.</small></div>
+<div class="planOptionMain">Priority Public Plan<small>Fixed amount Rs. 5000 only.</small></div>
 <div class="planOptionInline" data-inline-for="priority"></div>
 </div>
 <div class="planOption" data-plan="full" role="button" tabindex="0">
-<div class="planOptionMain">Full Access Plan<small>Enter any amount from Rs. 1800 to Rs. 2000.</small></div>
+<div class="planOptionMain">Full Access Plan<small>Fixed amount Rs. 7000 only.</small></div>
 <div class="planOptionInline" data-inline-for="full"></div>
 </div>
 </div>
-</div>
-
-<div id="customAmountWrap" class="amountInputWrap">
-<label for="customAmountInput" id="customAmountLabel" class="amountInputLabel">Enter plan amount</label>
-<p id="customAmountNote" class="amountInputNote"></p>
-<input id="customAmountInput" class="amountInput" type="number" inputmode="numeric" min="0" step="1" placeholder="Enter amount">
 </div>
 
 <div class="payBtnWrap">
@@ -510,27 +506,14 @@ const REGISTRATION_DISCOUNT_AMOUNT = type === "institution" ? 2 : 1;
 const priceExpression = type === "institution" ? "399 x 2" : "399 x 1";
 const planConfig = {
   basic: { label: "Basic Public Plan", amount: 50, rangeLabel: "Rs. 50", requiresInput: false, min: 50, max: 50 },
-  priority: { label: "Priority Public Plan", amount: 51, rangeLabel: "Rs. 51 to Rs. 1799", requiresInput: true, min: 51, max: 1799 },
-  full: { label: "Full Access Plan", amount: 1800, rangeLabel: "Rs. 1800 to Rs. 2000", requiresInput: true, min: 1800, max: 2000 }
+  priority: { label: "Priority Public Plan", amount: 5000, rangeLabel: "Rs. 5000", requiresInput: false, min: 5000, max: 5000 },
+  full: { label: "Full Access Plan", amount: 7000, rangeLabel: "Rs. 7000", requiresInput: false, min: 7000, max: 7000 }
 };
-
-const customAmountWrap = document.getElementById("customAmountWrap");
-const customAmountInput = document.getElementById("customAmountInput");
-const customAmountLabel = document.getElementById("customAmountLabel");
-const customAmountNote = document.getElementById("customAmountNote");
 
 let selectedPlan = cleanValue(
   localStorage.getItem("selectedRegistrationPlan") ||
   sessionStorage.getItem("selectedRegistrationPlan")
 );
-
-const storedSelectedPlanAmount = cleanValue(
-  localStorage.getItem("selectedRegistrationPlanAmount") ||
-  sessionStorage.getItem("selectedRegistrationPlanAmount")
-);
-if (storedSelectedPlanAmount) {
-  customAmountInput.value = storedSelectedPlanAmount;
-}
 
 function updatePlanSelectionUI() {
   document.querySelectorAll(".planOption").forEach(btn => {
@@ -542,50 +525,7 @@ function getSelectedPlanAmount() {
   if (!selectedPlan || !planConfig[selectedPlan]) return null;
 
   const config = planConfig[selectedPlan];
-  if (!config.requiresInput) {
-    return config.amount;
-  }
-
-  const rawValue = cleanValue(customAmountInput.value);
-  if (!rawValue) return null;
-
-  const numericValue = Number(rawValue);
-  if (!Number.isFinite(numericValue)) return null;
-  return Math.round(numericValue);
-}
-
-function updateCustomAmountUI() {
-  const config = selectedPlan ? planConfig[selectedPlan] : null;
-  const currentSlot = selectedPlan
-    ? document.querySelector('.planOptionInline[data-inline-for="' + selectedPlan + '"]')
-    : null;
-
-  document.querySelectorAll(".planOptionInline").forEach(slot => {
-    if (slot !== currentSlot) {
-      slot.innerHTML = "";
-    }
-  });
-
-  if (!config || !config.requiresInput) {
-    customAmountWrap.classList.remove("show");
-    customAmountInput.value = "";
-    customAmountInput.min = "0";
-    customAmountInput.max = "0";
-    customAmountInput.placeholder = "Enter amount";
-    return;
-  }
-
-  if (currentSlot) {
-    currentSlot.innerHTML = "";
-    currentSlot.appendChild(customAmountWrap);
-  }
-
-  customAmountWrap.classList.add("show");
-  customAmountLabel.innerText = config.label + " Amount";
-  customAmountNote.innerText = "Enter any amount from Rs. " + config.min + " to Rs. " + config.max + ".";
-  customAmountInput.min = String(config.min);
-  customAmountInput.max = String(config.max);
-  customAmountInput.placeholder = "Enter amount between Rs. " + config.min + " and Rs. " + config.max;
+  return config.amount;
 }
 
 function updateFeeText() {
@@ -599,15 +539,7 @@ function updateFeeText() {
   }
 
   const config = planConfig[selectedPlan];
-  const chosenAmount = getSelectedPlanAmount();
-
-  if (config.requiresInput) {
-    document.getElementById("planStatus").innerText = chosenAmount
-      ? "Selected Plan: " + config.label + " (Rs. " + chosenAmount + ")"
-      : "Selected Plan: " + config.label + " - Enter amount between Rs. " + config.min + " and Rs. " + config.max + ".";
-  } else {
-    document.getElementById("planStatus").innerText = "Selected Plan: " + config.label + " (Rs. " + config.amount + ")";
-  }
+  document.getElementById("planStatus").innerText = "Selected Plan: " + config.label + " (Rs. " + config.amount + ")";
 }
 
 function savePaymentData() {
@@ -695,7 +627,6 @@ document.querySelectorAll(".planOption").forEach(btn => {
   btn.addEventListener("click", function () {
     selectedPlan = this.dataset.plan || "";
     updatePlanSelectionUI();
-    updateCustomAmountUI();
     updateFeeText();
   });
 
@@ -704,26 +635,12 @@ document.querySelectorAll(".planOption").forEach(btn => {
       event.preventDefault();
       selectedPlan = this.dataset.plan || "";
       updatePlanSelectionUI();
-      updateCustomAmountUI();
       updateFeeText();
     }
   });
 });
 
-customAmountWrap.addEventListener("click", event => {
-  event.stopPropagation();
-});
-
-customAmountInput.addEventListener("click", event => {
-  event.stopPropagation();
-});
-
-customAmountInput.addEventListener("input", () => {
-  updateFeeText();
-});
-
 updatePlanSelectionUI();
-updateCustomAmountUI();
 updateFeeText();
 
 document.getElementById("payBtn").onclick = async function () {
@@ -734,18 +651,6 @@ document.getElementById("payBtn").onclick = async function () {
 
   const config = planConfig[selectedPlan];
   const chosenAmount = getSelectedPlanAmount();
-  if (config.requiresInput) {
-    if (chosenAmount == null) {
-      alert("Please enter your payment amount before continuing.");
-      customAmountInput.focus();
-      return;
-    }
-    if (chosenAmount < config.min || chosenAmount > config.max) {
-      alert("Please enter an amount between Rs. " + config.min + " and Rs. " + config.max + ".");
-      customAmountInput.focus();
-      return;
-    }
-  }
 
   try {
     const btn = document.getElementById("payBtn");
