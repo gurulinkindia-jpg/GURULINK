@@ -146,6 +146,7 @@ color:white;
 .institutionPanel h3{background:#00897b;}
 .studentPanel h3{background:#7b1fa2;}
 .paymentPanel h3{background:#f57c00;}
+.leadReviewPanel h3{background:#d97706;}
 .renewPanelTitle{background:#8e24aa !important;}
 
 .list{
@@ -239,72 +240,6 @@ background:rgba(15,23,42,.04);
 border:1px solid #d9e2ec;
 }
 
-.profileHeaderLinkTools{
-margin:10px 0 8px;
-padding:9px;
-border-radius:10px;
-background:#eefbf6;
-border:1px solid #a7e4cf;
-}
-
-.profileHeaderLinkTitle{
-font-size:12px;
-font-weight:bold;
-color:#0f5f4d;
-margin-bottom:7px;
-}
-
-.profileHeaderLinkField{
-display:block;
-font-size:11px;
-font-weight:bold;
-color:#243b53;
-margin:6px 0;
-}
-
-.profileHeaderLinkInput{
-display:block;
-width:100%;
-margin-top:4px;
-padding:7px 8px;
-border:1px solid #b8d8ce;
-border-radius:7px;
-background:#fff;
-color:#102a43;
-font-size:11px;
-outline:none;
-}
-
-.profileHeaderLinkInput:focus{
-border-color:#0f766e;
-box-shadow:0 0 0 2px rgba(15,118,110,.12);
-}
-
-.profileHeaderLinkToggle{
-display:flex;
-align-items:center;
-gap:6px;
-margin:7px 0;
-font-size:11px;
-font-weight:bold;
-color:#0f5f4d;
-}
-
-.profileHeaderLinkToggle input{
-width:17px;
-height:17px;
-margin:0;
-accent-color:#0f766e;
-}
-
-.saveHeaderLink{
-background:#0f766e;
-}
-
-.removeHeaderLink{
-background:#c62828;
-}
-
 .publicRow{
 display:flex;
 align-items:center;
@@ -381,6 +316,34 @@ display:flex;
 flex-wrap:wrap;
 gap:4px;
 margin-top:8px;
+}
+
+.pendingLeadCard{
+background:linear-gradient(135deg,#fff8eb 0%,#ffffff 100%);
+border-left:5px solid #d97706;
+}
+
+.pendingLeadMeta{
+display:flex;
+flex-wrap:wrap;
+gap:4px;
+margin:4px 0 8px;
+}
+
+.leadApprove{
+background:#2e7d32;
+}
+
+.leadReject{
+background:#c62828;
+}
+
+.leadOpenProfile{
+background:#1565c0;
+}
+
+.leadTarget{
+background:#6d4c41;
 }
 
 .jumpProfile{
@@ -482,7 +445,6 @@ button{
 font-size:10px;
 padding:6px;
 }
-
 }
 </style>
 <link rel="icon" type="image/png" href="https://i.ibb.co/0RT0BQKq/GURULINK-Logo-1.png">
@@ -610,9 +572,22 @@ Revenue Rs.
 Helpdesk
 <div id="ticketCount">0</div>
 </div>
+
+<div class="stat" style="border-top-color:#d97706;background:#fff8eb;">
+Lead Review
+<div id="pendingLeadCount">0</div>
+</div>
 </div>
 
 <div class="container">
+
+<div class="panel leadReviewPanel">
+
+<h3>Pending Student Enquiries</h3>
+
+<div id="pendingProfileViews" class="list"></div>
+
+</div>
 
 <div class="panel teacherPanel">
 
@@ -738,162 +713,13 @@ document.getElementById("invoicePayments").innerHTML = "";
 
 }
 
-function normalizeAdminExternalUrl(value){
-const cleanValue = String(value || "").trim();
-if(!cleanValue){
-throw new Error("Please enter an external HTTPS link.");
-}
-
-let parsed;
-try{
-parsed = new URL(cleanValue);
-}catch(_error){
-throw new Error("Please enter a valid external link.");
-}
-
-if(parsed.protocol !== "https:"){
-throw new Error("For security, the external link must start with https://");
-}
-
-return parsed.toString();
-}
-
-function escapeAdminAttribute(value){
-return String(value || "")
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;");
-}
-
-function profileHeaderButtonTools(profile,type){
-const setting = profileHeaderButtons[profile.id] || {};
-const label = escapeAdminAttribute(setting.label || "");
-const url = escapeAdminAttribute(setting.url || "");
-const enabled = setting.enabled === true;
-
-return `
-<div class="profileHeaderLinkTools">
-<div class="profileHeaderLinkTitle">Homepage Header Button</div>
-
-<label class="profileHeaderLinkField">
-Button name
-<input
-type="text"
-maxlength="18"
-class="profileHeaderLinkInput"
-id="headerLinkLabel_${type}_${profile.id}"
-value="${label}"
-placeholder="Example: My Website">
-</label>
-
-<label class="profileHeaderLinkField">
-External HTTPS link
-<input
-type="url"
-inputmode="url"
-class="profileHeaderLinkInput"
-id="headerLinkUrl_${type}_${profile.id}"
-value="${url}"
-placeholder="https://example.com/">
-</label>
-
-<label class="profileHeaderLinkToggle">
-<input
-type="checkbox"
-id="headerLinkEnabled_${type}_${profile.id}"
-${enabled ? "checked" : ""}>
-Show this button for this user
-</label>
-
-<button
-class="saveHeaderLink"
-onclick="saveProfileHeaderButton('${type}','${profile.id}')">
-Save Header Button
-</button>
-
-<button
-class="removeHeaderLink"
-onclick="removeProfileHeaderButton('${type}','${profile.id}')">
-Remove Header Button
-</button>
-</div>
-`;
-}
-
-function validHeaderProfileType(type){
-return type === "teacher" || type === "institution" || type === "student";
-}
-
-window.saveProfileHeaderButton = async function(type,id){
-if(!auth.currentUser || !validHeaderProfileType(type)){
-alert("Admin access or profile type is invalid.");
-return;
-}
-
-const labelInput = document.getElementById(`headerLinkLabel_${type}_${id}`);
-const urlInput = document.getElementById(`headerLinkUrl_${type}_${id}`);
-const enabledInput = document.getElementById(`headerLinkEnabled_${type}_${id}`);
-const label = String(labelInput ? labelInput.value : "").trim();
-
-if(!label){
-alert("Please enter a button name.");
-return;
-}
-
-let url;
-try{
-url = normalizeAdminExternalUrl(urlInput ? urlInput.value : "");
-}catch(error){
-alert(error.message);
-return;
-}
-
-try{
-await update(
-ref(db,`profileHeaderButtons/${id}`),
-{
-profileType:type,
-label:label.slice(0,18),
-url,
-enabled:!!(enabledInput && enabledInput.checked),
-updatedAt:Date.now(),
-updatedBy:auth.currentUser.uid
-}
-);
-alert("Header button saved for this profile.");
-}catch(error){
-console.error("Profile header button save failed",error);
-alert("Unable to save this profile's header button.");
-}
-};
-
-window.removeProfileHeaderButton = async function(type,id){
-if(!auth.currentUser || !validHeaderProfileType(type)){
-alert("Admin access or profile type is invalid.");
-return;
-}
-
-if(!confirm("Remove the header button from this profile?")){
-return;
-}
-
-try{
-await remove(ref(db,`profileHeaderButtons/${id}`));
-alert("Header button removed from this profile.");
-}catch(error){
-console.error("Profile header button removal failed",error);
-alert("Unable to remove this profile's header button.");
-}
-};
-
 let teachers=[];
 let inst=[];
 let students=[];
-let profileHeaderButtons={};
 let payments=[];
 let renewPayments=[];
 let invoicePayments=[];
+let pendingLeadReviews=[];
 
 const paymentTotals = {
   registration:0,
@@ -925,6 +751,146 @@ function paymentRoleClass(type){
     ? "paymentRoleInstitution"
     : "paymentRoleTeacher";
 }
+
+function formatLeadTime(value){
+  if(!value) return "-";
+  try{
+    return new Date(Number(value)).toLocaleString();
+  }catch(err){
+    return "-";
+  }
+}
+
+function pendingLeadCard(item){
+  const roleLabel =
+    item.viewerRole === "parent" ? "Parent"
+    : item.viewerRole === "student" ? "Student"
+    : item.viewerRole === "teacher" ? "Teacher"
+    : item.viewerRole === "institution" ? "Institution"
+    : "Guest";
+
+  const targetLabel =
+    normalizeProfileType(item.targetType) === "institution"
+      ? "Institute"
+      : "Teacher";
+
+  return `
+  <div class="card pendingLeadCard" id="pendingLeadCard_${item.targetProfileId}_${item.viewerId}">
+    <h3>${item.name || "Unknown Viewer"}</h3>
+    <div class="pendingLeadMeta">
+      <span class="badge">${roleLabel}</span>
+      <span class="badge">${targetLabel} Lead</span>
+      ${item.studentId ? `<span class="badge">student id: ${item.studentId}</span>` : ""}
+    </div>
+    <p><b>Email:</b> ${item.email || "-"}</p>
+    <p><b>Phone:</b> ${item.phone || "-"}</p>
+    <p><b>For Profile ID:</b> ${item.targetProfileId || "-"}</p>
+    <p><b>Viewed:</b> ${formatLeadTime(item.time || item.submittedAt)}</p>
+    <div class="paymentActionRow">
+      <button class="leadOpenProfile" onclick="window.open('profile-view.html?id=${item.targetProfileId}','_blank')">Open Profile</button>
+      <button class="leadTarget" onclick="scrollToProfileCard('${normalizeProfileType(item.targetType)}','${item.targetProfileId}')">Go To ${targetLabel}</button>
+      <button class="leadApprove" onclick="approvePendingLead('${item.targetProfileId}','${item.viewerId}')">Approve</button>
+      <button class="leadReject" onclick="rejectPendingLead('${item.targetProfileId}','${item.viewerId}')">Reject</button>
+    </div>
+  </div>
+  `;
+}
+
+function loadPendingProfileViews(){
+
+onValue(
+ref(db,"pendingProfileViews"),
+snap=>{
+
+pendingLeadReviews = [];
+
+if(snap.exists()){
+  snap.forEach(targetSnap=>{
+    const targetProfileId = targetSnap.key;
+    targetSnap.forEach(leadSnap=>{
+      const lead = leadSnap.val() || {};
+      pendingLeadReviews.push({
+        ...lead,
+        viewerId: leadSnap.key,
+        targetProfileId: lead.targetProfileId || targetProfileId
+      });
+    });
+  });
+}
+
+document.getElementById("pendingLeadCount").innerText =
+  pendingLeadReviews.length;
+
+const q = document.getElementById("search").value.toLowerCase();
+
+document.getElementById("pendingProfileViews").innerHTML =
+pendingLeadReviews
+.filter(item=>{
+  if(!q) return true;
+  return (
+    (item.name || "").toLowerCase().includes(q) ||
+    (item.email || "").toLowerCase().includes(q) ||
+    (item.phone || "").toLowerCase().includes(q) ||
+    (item.viewerRole || "").toLowerCase().includes(q) ||
+    (item.targetProfileId || "").toLowerCase().includes(q)
+  );
+})
+.sort((a,b)=>(Number(b.time || b.submittedAt || 0) - Number(a.time || a.submittedAt || 0)))
+.map(item=>pendingLeadCard(item))
+.join("");
+
+});
+
+}
+
+window.approvePendingLead = async function(targetProfileId,leadId){
+  try{
+    const pendingPath = `pendingProfileViews/${targetProfileId}/${leadId}`;
+    const approvedPath = `profileViews/${targetProfileId}/${leadId}`;
+    const snap = await get(ref(db, pendingPath));
+
+    if(!snap.exists()){
+      alert("This enquiry is no longer available.");
+      return;
+    }
+
+    const lead = snap.val() || {};
+    const now = Date.now();
+
+    await update(
+      ref(db, approvedPath),
+      {
+        ...lead,
+        viewerId: leadId,
+        targetProfileId,
+        status: lead.status === "enrolled" ? "enrolled" : "pending",
+        approvedByAdmin: true,
+        approvedAt: now
+      }
+    );
+
+    await remove(ref(db, pendingPath));
+
+    alert("Enquiry approved. It will now appear in the teacher/institute dashboard.");
+  }catch(err){
+    console.error(err);
+    alert("Could not approve this enquiry right now.");
+  }
+};
+
+window.rejectPendingLead = async function(targetProfileId,leadId){
+  if(!confirm("Reject this enquiry?")){
+    return;
+  }
+
+  try{
+    await remove(ref(db, `pendingProfileViews/${targetProfileId}/${leadId}`));
+    alert("Enquiry rejected.");
+  }catch(err){
+    console.error(err);
+    alert("Could not reject this enquiry right now.");
+  }
+};
 
 function findLatestPaymentForProfile(list, profileId){
   return list
@@ -1692,8 +1658,6 @@ Save Public Settings
 
 </div>
 
-${profileHeaderButtonTools(d,type)}
-
 <button
 class="approve"
 onclick="setInvoiceFeature('${type}','${d.id}',true)">
@@ -2256,6 +2220,16 @@ students
 .map(d=>studentCard(d))
 .join("");
 
+document
+.getElementById(
+"pendingProfileViews"
+).innerHTML =
+
+pendingLeadReviews
+.filter(match)
+.map(item=>pendingLeadCard(item))
+.join("");
+
 };
 
 /* =========================
@@ -2281,6 +2255,12 @@ document
 "stCount"
 ).innerText =
 students.length;
+
+document
+.getElementById(
+"pendingLeadCount"
+).innerText =
+pendingLeadReviews.length;
 
 const all = [
 
@@ -2371,8 +2351,6 @@ ${d.address || d.area || d.pinCode ? `${d.address || ""}${d.area ? " / " + d.are
 </p>
 
 <br>
-
-${profileHeaderButtonTools(d,"student")}
 
 <button
 class="delete"
@@ -2491,16 +2469,7 @@ loadStudents();
 
 loadPayments();
 
-onValue(
-ref(db,"profileHeaderButtons"),
-snap=>{
-profileHeaderButtons = snap.exists() ? (snap.val() || {}) : {};
-if(typeof window.renderAll === "function") window.renderAll();
-},
-error=>{
-console.error("Profile header buttons load failed",error);
-}
-);
+loadPendingProfileViews();
 
 onValue(
   ref(db,"tickets"),
