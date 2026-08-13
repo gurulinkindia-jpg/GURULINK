@@ -261,8 +261,8 @@ async function resolvePaymentContext() {
 
 const planAmountMap = {
   basic: 50,
-  priority: 51,
-  full: 1800
+  priority: 5000,
+  full: 7000
 };
 
 const amountMap = {
@@ -372,7 +372,9 @@ async function savePayment() {
       registrationBaseAmount: pendingBaseAmount || 399,
       registrationPromoAmount: amount,
       registrationDiscountAmount: pendingRegistrationDiscountAmount || amountMap[finalType] || 0,
-      registrationPriceExpression: pendingPriceExpression || ""
+      registrationPriceExpression: pendingPriceExpression || "",
+      useAdminContact: amount === 50,
+      invoiceFeatureActive: amount >= 7000
     });
 
     await cleanupPending(finalType);
