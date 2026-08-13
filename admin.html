@@ -845,7 +845,7 @@ function pendingDemoCard(item){
 function loadPendingProfileViews(){
 
 onValue(
-ref(db,"pendingProfileViews"),
+ref(db,"profileViews"),
 snap=>{
 
 pendingLeadReviews = [];
@@ -855,6 +855,9 @@ if(snap.exists()){
     const targetProfileId = targetSnap.key;
     targetSnap.forEach(leadSnap=>{
       const lead = leadSnap.val() || {};
+      if(lead.approvedByAdmin === true){
+        return;
+      }
       pendingLeadReviews.push({
         ...lead,
         viewerId: leadSnap.key,
@@ -892,7 +895,7 @@ pendingLeadReviews
 function loadPendingDemoRequests(){
 
 onValue(
-ref(db,"pendingAdminDemoRequests"),
+ref(db,"demoRequests"),
 snap=>{
 
 pendingDemoReviews = [];
@@ -902,6 +905,9 @@ if(snap.exists()){
     const targetProfileId = targetSnap.key;
     targetSnap.forEach(requestSnap=>{
       const request = requestSnap.val() || {};
+      if(request.approvedByAdmin === true){
+        return;
+      }
       pendingDemoReviews.push({
         ...request,
         requestId: requestSnap.key,
@@ -937,9 +943,8 @@ pendingDemoReviews
 
 window.approvePendingLead = async function(targetProfileId,leadId){
   try{
-    const pendingPath = `pendingProfileViews/${targetProfileId}/${leadId}`;
     const approvedPath = `profileViews/${targetProfileId}/${leadId}`;
-    const snap = await get(ref(db, pendingPath));
+    const snap = await get(ref(db, approvedPath));
 
     if(!snap.exists()){
       alert("This enquiry is no longer available.");
@@ -961,8 +966,6 @@ window.approvePendingLead = async function(targetProfileId,leadId){
       }
     );
 
-    await remove(ref(db, pendingPath));
-
     alert("Enquiry approved. It will now appear in the teacher/institute dashboard.");
   }catch(err){
     console.error(err);
@@ -976,7 +979,7 @@ window.rejectPendingLead = async function(targetProfileId,leadId){
   }
 
   try{
-    await remove(ref(db, `pendingProfileViews/${targetProfileId}/${leadId}`));
+    await remove(ref(db, `profileViews/${targetProfileId}/${leadId}`));
     alert("Enquiry rejected.");
   }catch(err){
     console.error(err);
@@ -986,9 +989,8 @@ window.rejectPendingLead = async function(targetProfileId,leadId){
 
 window.approvePendingDemoRequest = async function(targetProfileId,requestId){
   try{
-    const pendingPath = `pendingAdminDemoRequests/${targetProfileId}/${requestId}`;
     const approvedPath = `demoRequests/${targetProfileId}/${requestId}`;
-    const snap = await get(ref(db, pendingPath));
+    const snap = await get(ref(db, approvedPath));
 
     if(!snap.exists()){
       alert("This demo request is no longer available.");
@@ -1008,8 +1010,6 @@ window.approvePendingDemoRequest = async function(targetProfileId,requestId){
       }
     );
 
-    await remove(ref(db, pendingPath));
-
     alert("Demo request approved. It will now appear in the teacher/institute dashboard.");
   }catch(err){
     console.error(err);
@@ -1023,7 +1023,7 @@ window.rejectPendingDemoRequest = async function(targetProfileId,requestId){
   }
 
   try{
-    await remove(ref(db, `pendingAdminDemoRequests/${targetProfileId}/${requestId}`));
+    await remove(ref(db, `demoRequests/${targetProfileId}/${requestId}`));
     alert("Demo request rejected.");
   }catch(err){
     console.error(err);
