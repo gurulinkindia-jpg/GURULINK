@@ -810,6 +810,7 @@ function pendingLeadCard(item){
       <button class="leadTarget" onclick="scrollToProfileCard('${normalizeProfileType(item.targetType)}','${item.targetProfileId}')">Go To ${targetLabel}</button>
       <button class="leadApprove" onclick="approvePendingLead('${item.targetProfileId}','${item.viewerId}')">Approve</button>
       <button class="leadReject" onclick="rejectPendingLead('${item.targetProfileId}','${item.viewerId}')">Reject</button>
+      <button class="leadDelete" onclick="deletePendingLead('${item.targetProfileId}','${item.viewerId}')">Delete</button>
     </div>
   </div>
   `;
@@ -837,6 +838,7 @@ function pendingDemoCard(item){
       <button class="leadTarget" onclick="scrollToProfileCard('${normalizeProfileType(item.targetType)}','${item.targetProfileId}')">Go To ${targetLabel}</button>
       <button class="leadApprove" onclick="approvePendingDemoRequest('${item.targetProfileId}','${item.requestId}')">Approve</button>
       <button class="leadReject" onclick="rejectPendingDemoRequest('${item.targetProfileId}','${item.requestId}')">Reject</button>
+      <button class="leadDelete" onclick="deletePendingDemoRequest('${item.targetProfileId}','${item.requestId}')">Delete</button>
     </div>
   </div>
   `;
@@ -1013,6 +1015,20 @@ window.rejectPendingLead = async function(targetProfileId,leadId){
   }
 };
 
+window.deletePendingLead = async function(targetProfileId,leadId){
+  if(!confirm("Delete this enquiry permanently?")){
+    return;
+  }
+
+  try{
+    await remove(ref(db, `profileViews/${targetProfileId}/${leadId}`));
+    alert("Enquiry deleted.");
+  }catch(err){
+    console.error(err);
+    alert("Could not delete this enquiry right now.");
+  }
+};
+
 window.approvePendingDemoRequest = async function(targetProfileId,requestId){
   try{
     const approvedPath = `demoRequests/${targetProfileId}/${requestId}`;
@@ -1054,6 +1070,20 @@ window.rejectPendingDemoRequest = async function(targetProfileId,requestId){
   }catch(err){
     console.error(err);
     alert("Could not reject this demo request right now.");
+  }
+};
+
+window.deletePendingDemoRequest = async function(targetProfileId,requestId){
+  if(!confirm("Delete this demo request permanently?")){
+    return;
+  }
+
+  try{
+    await remove(ref(db, `demoRequests/${targetProfileId}/${requestId}`));
+    alert("Demo request deleted.");
+  }catch(err){
+    console.error(err);
+    alert("Could not delete this demo request right now.");
   }
 };
 
