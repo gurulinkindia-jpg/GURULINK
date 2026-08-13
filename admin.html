@@ -167,6 +167,52 @@ font-size:12px;
 overflow:hidden;
 }
 
+.accordionCard{
+padding:0;
+overflow:hidden;
+}
+
+.accordionHeader{
+width:100%;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+padding:12px 14px;
+border:none;
+background:transparent;
+cursor:pointer;
+font-size:15px;
+font-weight:bold;
+color:#0f172a;
+text-align:left;
+}
+
+.accordionHeader span{
+pointer-events:none;
+}
+
+.accordionChevron{
+font-size:18px;
+font-weight:bold;
+color:#475569;
+transition:transform .2s ease;
+}
+
+.accordionCard.open .accordionChevron{
+transform:rotate(45deg);
+}
+
+.accordionBody{
+display:none;
+padding:0 10px 10px;
+border-top:1px solid #e5e7eb;
+}
+
+.accordionCard.open .accordionBody{
+display:block;
+}
+
 .teacherCard{border-left-color:#1565c0;background:#f8fbff;}
 .institutionCard{border-left-color:#00897b;background:#f7fffc;}
 .studentCard{border-left-color:#7b1fa2;background:#fcf5ff;}
@@ -921,8 +967,12 @@ function pendingLeadCard(item){
       : "Teacher";
 
   return `
-  <div class="card pendingLeadCard" id="pendingLeadCard_${item.targetProfileId}_${item.viewerId}">
-    <h3>${item.name || "Unknown Viewer"}</h3>
+  <div class="card pendingLeadCard accordionCard" id="pendingLeadCard_${item.targetProfileId}_${item.viewerId}">
+    <button class="accordionHeader" onclick="toggleAdminAccordion(this)">
+      <span>${item.name || "Unknown Viewer"}</span>
+      <span class="accordionChevron">+</span>
+    </button>
+    <div class="accordionBody">
     <div class="pendingLeadMeta">
       <span class="badge">${roleLabel}</span>
       <span class="badge">${targetLabel} Lead</span>
@@ -939,6 +989,7 @@ function pendingLeadCard(item){
       <button class="leadReject" onclick="rejectPendingLead('${item.targetProfileId}','${item.viewerId}')">Reject</button>
       <button class="leadDelete" onclick="deletePendingLead('${item.targetProfileId}','${item.viewerId}')">Delete</button>
     </div>
+    </div>
   </div>
   `;
 }
@@ -950,8 +1001,12 @@ function pendingDemoCard(item){
       : "Teacher";
 
   return `
-  <div class="card pendingDemoCard" id="pendingDemoCard_${item.targetProfileId}_${item.requestId}">
-    <h3>${item.name || "Unknown Requester"}</h3>
+  <div class="card pendingDemoCard accordionCard" id="pendingDemoCard_${item.targetProfileId}_${item.requestId}">
+    <button class="accordionHeader" onclick="toggleAdminAccordion(this)">
+      <span>${item.name || "Unknown Requester"}</span>
+      <span class="accordionChevron">+</span>
+    </button>
+    <div class="accordionBody">
     <div class="pendingLeadMeta">
       <span class="badge">Demo Request</span>
       <span class="badge">${targetLabel}</span>
@@ -967,14 +1022,19 @@ function pendingDemoCard(item){
       <button class="leadReject" onclick="rejectPendingDemoRequest('${item.targetProfileId}','${item.requestId}')">Reject</button>
       <button class="leadDelete" onclick="deletePendingDemoRequest('${item.targetProfileId}','${item.requestId}')">Delete</button>
     </div>
+    </div>
   </div>
   `;
 }
 
 function approvedLeadCard(item){
   return `
-  <div class="card pendingLeadCard">
-    <h3>${item.name || "Unknown Viewer"}</h3>
+  <div class="card pendingLeadCard accordionCard">
+    <button class="accordionHeader" onclick="toggleAdminAccordion(this)">
+      <span>${item.name || "Unknown Viewer"}</span>
+      <span class="accordionChevron">+</span>
+    </button>
+    <div class="accordionBody">
     <p><b>For Profile ID:</b> ${item.targetProfileId || "-"}</p>
     <p><b>Viewed:</b> ${formatLeadTime(item.time || item.submittedAt)}</p>
     <p><b>Approved:</b> ${formatLeadTime(item.approvedAt)}</p>
@@ -982,20 +1042,26 @@ function approvedLeadCard(item){
     <div class="paymentActionRow">
       <button class="leadDelete" onclick="deleteApprovedLead('${item.targetProfileId}','${item.viewerId}')">Delete</button>
     </div>
+    </div>
   </div>
   `;
 }
 
 function approvedDemoCard(item){
   return `
-  <div class="card pendingDemoCard">
-    <h3>${item.name || "Unknown Requester"}</h3>
+  <div class="card pendingDemoCard accordionCard">
+    <button class="accordionHeader" onclick="toggleAdminAccordion(this)">
+      <span>${item.name || "Unknown Requester"}</span>
+      <span class="accordionChevron">+</span>
+    </button>
+    <div class="accordionBody">
     <p><b>For Profile ID:</b> ${item.targetProfileId || "-"}</p>
     <p><b>Requested:</b> ${formatLeadTime(item.createdAt)}</p>
     <p><b>Approved:</b> ${formatLeadTime(item.approvedAt)}</p>
     <p><b>Message:</b> ${item.message || "-"}</p>
     <div class="paymentActionRow">
       <button class="leadDelete" onclick="deleteApprovedDemoRequest('${item.targetProfileId}','${item.requestId}')">Delete</button>
+    </div>
     </div>
   </div>
   `;
@@ -2000,11 +2066,14 @@ findLatestPaymentForProfile(renewPayments, d.id);
 
 return `
 
-<div id="profileCard_${type}_${d.id}" class="card ${type === "teacher" ? "teacherCard" : "institutionCard"}">
+<div id="profileCard_${type}_${d.id}" class="card accordionCard ${type === "teacher" ? "teacherCard" : "institutionCard"}">
 
-<h3>
-${d.name || "-"}
-</h3>
+<button class="accordionHeader" onclick="toggleAdminAccordion(this)">
+<span>${d.name || "-"}</span>
+<span class="accordionChevron">+</span>
+</button>
+
+<div class="accordionBody">
 
 <span class="badge">
 ${d.status || "pending"}
@@ -2219,6 +2288,8 @@ onclick="editProfile('${type}','${d.id}')">
 Edit
 
 </button>
+
+</div>
 
 </div>
 
@@ -2822,11 +2893,14 @@ function studentCard(d){
 
 return `
 
-<div class="card studentCard">
+<div class="card studentCard accordionCard">
 
-<h3>
-${d.name || "-"}
-</h3>
+<button class="accordionHeader" onclick="toggleAdminAccordion(this)">
+<span>${d.name || "-"}</span>
+<span class="accordionChevron">+</span>
+</button>
+
+<div class="accordionBody">
 
 <span class="badge">
 student
@@ -2873,6 +2947,8 @@ onclick="editProfile('student','${d.id}')">
 Edit
 
 </button>
+
+</div>
 
 </div>
 
@@ -2929,6 +3005,12 @@ localStorage.clear();
 try{
 await signOut(auth);
 }
+
+window.toggleAdminAccordion = function(button){
+  const card = button.closest(".accordionCard");
+  if(!card) return;
+  card.classList.toggle("open");
+};
 catch(err){
 console.log(err);
 }
