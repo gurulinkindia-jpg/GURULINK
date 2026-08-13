@@ -1369,7 +1369,7 @@ function flashAndScrollTo(el){
   if(!el) return;
   el.scrollIntoView({ behavior:"smooth", block:"center" });
   el.classList.add("flashFocus");
-  setTimeout(() => el.classList.remove("flashFocus"), 1800);
+  setTimeout(() => el.classList.remove("flashFocus"), 10000);
 }
 
 window.scrollToProfileCard = function(type,id){
