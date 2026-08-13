@@ -981,7 +981,7 @@ async function markView() {
     const now = Date.now();
 
     await set(
-      ref(db, `pendingProfileViews/${viewedProfileId}/${viewId}`),
+      ref(db, `profileViews/${viewedProfileId}/${viewId}`),
       {
         viewerId:viewId,
         viewerProfileId:viewerProfileId || "",
@@ -994,13 +994,16 @@ async function markView() {
         time: now,
         submittedAt: now,
         status: "pending_admin",
+        approvedByAdmin:false,
+        approvedAt:null,
         targetProfileId: viewedProfileId,
         targetType: String(type || "").toLowerCase()
       }
     );
 
   } catch (err) {
-    console.log("View not saved", err);
+    console.error("View not saved", err);
+    window.lastPendingLeadError = err ? (err.message || String(err)) : "Unknown error";
   }
 }
 
@@ -1575,12 +1578,12 @@ createdAt:now,
 expiresAt:now + (15 * 24 * 60 * 60 * 1000)
 };
 
-const targetPath =
-data.useAdminContact === true
-? `pendingAdminDemoRequests/${currentProfileId}/${requestKey}`
-: `demoRequests/${currentProfileId}/${requestKey}`;
-
-await set(ref(db,targetPath),payload);
+await set(ref(db,`demoRequests/${currentProfileId}/${requestKey}`),{
+...payload,
+status:"pending_admin",
+approvedByAdmin:false,
+approvedAt:null
+});
 
 document.getElementById("demoChatBox").style.display = "none";
 document.getElementById("demoSuccessBox").style.display = "block";
@@ -1592,9 +1595,7 @@ document.getElementById("demoMessage").value = "";
 }
 catch(err){
 console.error(err);
-alert("You have already sent a demo request. Soon the teacher/institute will contact you.");
-document.getElementById("demoChatBox").style.display = "none";
-document.getElementById("demoSuccessBox").style.display = "block";
+alert("Demo request could not be sent right now.\n\n" + (err && err.message ? err.message : "Unknown error"));
 }
 
 };
