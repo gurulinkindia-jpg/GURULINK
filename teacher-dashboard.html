@@ -1839,6 +1839,9 @@ const nowTime = Date.now();
 snapshot.forEach(child=>{
 const request = child.val() || {};
 const requestId = child.key;
+if(request.approvedByAdmin !== true){
+return;
+}
 const expiresAt =
 Number(request.expiresAt || 0);
 
@@ -1919,11 +1922,14 @@ let enrolled=0;
 let acceptedStudentIds=[];
 
 snapshot.forEach((child)=>{
+const id=child.key;
+const lead=child.val();
+if(lead.approvedByAdmin !== true){
+return;
+}
 
 total++;
 
-const id=child.key;
-const lead=child.val();
 const status=lead.status || "pending";
 const isAccepted = status === "accepted";
 const leadRole=(lead.viewerRole || "").toLowerCase();
