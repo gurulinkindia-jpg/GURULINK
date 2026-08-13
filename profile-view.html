@@ -1059,6 +1059,23 @@ function showValue(key){
 return canShow(key) && data[key];
 }
 
+const adminContactEnabled =
+data.useAdminContact === true;
+
+const adminContactNumber =
+"9706380357";
+
+const publicPhoneNumber =
+adminContactEnabled
+?
+adminContactNumber
+:
+String(data.phone || "").trim();
+
+const publicWhatsAppNumber =
+String(publicPhoneNumber || "")
+.replace(/\D/g,"");
+
 function esc(value){
 return String(value ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
 }
@@ -1317,10 +1334,10 @@ ${addressLines.length ? `
 </div>
 
 <div class="actions">
-${showValue("phone") ? `<a class="call" href="tel:${esc(data.phone)}">Call</a>` : ""}
-${showValue("phone") ? `<a class="whatsapp" target="_blank" href="https://wa.me/${esc(data.phone)}">WhatsApp</a>` : ""}
+${showValue("phone") && publicPhoneNumber ? `<a class="call" href="tel:${esc(publicPhoneNumber)}">Call</a>` : ""}
+${showValue("phone") && publicWhatsAppNumber ? `<a class="whatsapp" target="_blank" href="https://wa.me/${esc(publicWhatsAppNumber)}">WhatsApp</a>` : ""}
 ${showValue("email") ? `<a class="emailBtn" href="mailto:${esc(data.email)}">Email</a>` : ""}
-${showValue("phone") || showValue("email") ? `<button class="saveContact" onclick="saveContact()">Save Contact</button>` : ""}
+${(showValue("phone") && publicPhoneNumber) || showValue("email") ? `<button class="saveContact" onclick="saveContact()">Save Contact</button>` : ""}
 ${websiteLink ? `<a class="website" target="_blank" href="${esc(websiteLink)}">Website</a>` : ""}
 ${youtubeLink ? `<a class="youtubeBtn" target="_blank" href="${esc(youtubeLink)}">YouTube</a>` : ""}
 ${hasPublicFeeStructure ? `<button class="feeToggleBtn" type="button" onclick="toggleFeeStructure()">Fee Structure</button>` : ""}
@@ -1636,7 +1653,7 @@ const name =
 (data.name || "GURULINK Contact");
 
 const phone =
-(data.phone || "");
+(publicPhoneNumber || "");
 
 const email =
 (data.email || "");
