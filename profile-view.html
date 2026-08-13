@@ -978,8 +978,10 @@ async function markView() {
         ""
       );
 
+    const now = Date.now();
+
     await set(
-      ref(db, `profileViews/${viewedProfileId}/${viewId}`),
+      ref(db, `pendingProfileViews/${viewedProfileId}/${viewId}`),
       {
         viewerId:viewId,
         viewerProfileId:viewerProfileId || "",
@@ -989,7 +991,11 @@ async function markView() {
         name:displayName,
         email:viewerData.email || (authUser ? authUser.email : "") || localStorage.getItem("email") || "",
         phone:displayPhone,
-        time: Date.now()
+        time: now,
+        submittedAt: now,
+        status: "pending_admin",
+        targetProfileId: viewedProfileId,
+        targetType: String(type || "").toLowerCase()
       }
     );
 
