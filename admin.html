@@ -864,6 +864,31 @@ if(snap.exists()){
   });
 }
 
+document.getElementById("pendingLeadCount").innerText =
+  pendingLeadReviews.length;
+
+const q = document.getElementById("search").value.toLowerCase();
+
+document.getElementById("pendingProfileViews").innerHTML =
+pendingLeadReviews
+.filter(item=>{
+  if(!q) return true;
+  return (
+    (item.name || "").toLowerCase().includes(q) ||
+    (item.email || "").toLowerCase().includes(q) ||
+    (item.phone || "").toLowerCase().includes(q) ||
+    (item.viewerRole || "").toLowerCase().includes(q) ||
+    (item.targetProfileId || "").toLowerCase().includes(q)
+  );
+})
+.sort((a,b)=>(Number(b.time || b.submittedAt || 0) - Number(a.time || a.submittedAt || 0)))
+.map(item=>pendingLeadCard(item))
+.join("");
+
+});
+
+}
+
 function loadPendingDemoRequests(){
 
 onValue(
@@ -904,31 +929,6 @@ pendingDemoReviews
 })
 .sort((a,b)=>(Number(b.createdAt || 0) - Number(a.createdAt || 0)))
 .map(item=>pendingDemoCard(item))
-.join("");
-
-});
-
-}
-
-document.getElementById("pendingLeadCount").innerText =
-  pendingLeadReviews.length;
-
-const q = document.getElementById("search").value.toLowerCase();
-
-document.getElementById("pendingProfileViews").innerHTML =
-pendingLeadReviews
-.filter(item=>{
-  if(!q) return true;
-  return (
-    (item.name || "").toLowerCase().includes(q) ||
-    (item.email || "").toLowerCase().includes(q) ||
-    (item.phone || "").toLowerCase().includes(q) ||
-    (item.viewerRole || "").toLowerCase().includes(q) ||
-    (item.targetProfileId || "").toLowerCase().includes(q)
-  );
-})
-.sort((a,b)=>(Number(b.time || b.submittedAt || 0) - Number(a.time || a.submittedAt || 0)))
-.map(item=>pendingLeadCard(item))
 .join("");
 
 });
