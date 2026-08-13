@@ -1028,7 +1028,12 @@ document.getElementById(
 `publicRank_${type}_${id}`
 );
 
-if(!visibleEl || !rankEl){
+const useAdminContactEl =
+document.getElementById(
+`useAdminContact_${type}_${id}`
+);
+
+if(!visibleEl || !rankEl || !useAdminContactEl){
 alert("Public controls not found.");
 return;
 }
@@ -1068,7 +1073,9 @@ rankValue === null
 ?
 null
 :
-rankValue
+rankValue,
+useAdminContact:
+!!useAdminContactEl.checked
 }
 );
 
@@ -1642,6 +1649,22 @@ class="publicRankInput"
 id="publicRank_${type}_${d.id}"
 value="${rank === null ? "" : rank}"
 placeholder="1 = top">
+</div>
+
+<div class="publicRow">
+<label
+for="useAdminContact_${type}_${d.id}">
+Use admin phone / WhatsApp
+</label>
+
+<input
+type="checkbox"
+id="useAdminContact_${type}_${d.id}"
+${d.useAdminContact === true ? "checked" : ""}>
+</div>
+
+<div style="font-size:11px;line-height:1.4;color:#475569;">
+If enabled, public Call and WhatsApp buttons will use admin number 9706380357 instead of the teacher / institute number.
 </div>
 
 <div style="font-size:11px;line-height:1.4;color:#475569;">
