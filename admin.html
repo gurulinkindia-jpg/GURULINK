@@ -963,7 +963,7 @@ function dedupeByKey(list, makeKey){
 function compactCardMarkup(cardId, title, bodyHtml, extraClass = ""){
   return `
   <div id="${cardId}" class="card compactCard ${extraClass}">
-    <button type="button" class="compactCardHeader" onclick="toggleCompactCard('${cardId}')">
+    <button type="button" class="compactCardHeader" onclick="window.toggleCompactCard('${cardId}')">
       <span class="compactCardHeaderTitle">${title || "-"}</span>
       <span class="compactCardChevron">+</span>
     </button>
@@ -974,11 +974,11 @@ function compactCardMarkup(cardId, title, bodyHtml, extraClass = ""){
   `;
 }
 
-function toggleCompactCard(cardId){
+window.toggleCompactCard = function(cardId){
   const node = document.getElementById(cardId);
   if(!node) return;
   node.classList.toggle("open");
-}
+};
 
 function pendingLeadCard(item){
   const roleLabel =
