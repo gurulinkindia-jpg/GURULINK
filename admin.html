@@ -118,10 +118,10 @@ color:#0f172a;
 
 .container{
 width:95%;
-max-width:1600px;
+max-width:1800px;
 margin:10px auto;
 display:grid;
-grid-template-columns:1fr 1fr 1fr;
+grid-template-columns:repeat(2,minmax(0,1fr));
 gap:12px;
 align-items:start;
 }
@@ -132,6 +132,11 @@ border:1px solid #d9e2ec;
 border-radius:14px;
 padding:10px;
 box-shadow:0 4px 14px rgba(0,0,0,.06);
+min-width:0;
+}
+
+.fullWidthPanel{
+grid-column:1 / -1;
 }
 
 .panel h3{
@@ -497,6 +502,10 @@ color:red;
 grid-template-columns:1fr;
 }
 
+.fullWidthPanel{
+grid-column:auto;
+}
+
 .list{
 grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
 }
@@ -753,7 +762,7 @@ Demo Review
 
 </div>
 
-<div class="panel teacherPanel">
+<div class="panel teacherPanel fullWidthPanel">
 
 <h3>Teachers</h3>
 
@@ -761,7 +770,7 @@ Demo Review
 
 </div>
 
-<div class="panel institutionPanel">
+<div class="panel institutionPanel fullWidthPanel">
 
 <h3>Institutions</h3>
 
@@ -769,7 +778,7 @@ Demo Review
 
 </div>
 
-<div class="panel studentPanel">
+<div class="panel studentPanel fullWidthPanel">
 
 <h3>Students</h3>
 
@@ -777,7 +786,7 @@ Demo Review
 
 </div>
 
-<div class="panel paymentPanel">
+<div class="panel paymentPanel fullWidthPanel">
 
 <h3>Registration Payments</h3>
 
