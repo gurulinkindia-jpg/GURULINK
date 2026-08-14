@@ -1769,8 +1769,7 @@ Number(
 d.amount || 0
 );
 
-html += `
-compactCardMarkup(
+html += compactCardMarkup(
 `registrationPaymentCard_${c.key}`,
 d.name || "-",
 `
@@ -1860,8 +1859,7 @@ Number(
 d.amount || 0
 );
 
-html += `
-compactCardMarkup(
+html += compactCardMarkup(
 `renewalPaymentCard_${c.key}`,
 d.name || "-",
 `
