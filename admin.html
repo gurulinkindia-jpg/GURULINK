@@ -167,51 +167,58 @@ font-size:12px;
 overflow:hidden;
 }
 
-.accordionCard{
+.compactCard{
 padding:0;
 overflow:hidden;
 }
 
-.accordionHeader{
+.compactCardHeader{
 width:100%;
 display:flex;
 align-items:center;
 justify-content:space-between;
 gap:10px;
 padding:12px 14px;
+margin:0;
 border:none;
+border-radius:0;
 background:transparent;
-cursor:pointer;
+color:#0f172a;
 font-size:15px;
 font-weight:bold;
-color:#0f172a;
+cursor:pointer;
 text-align:left;
 }
 
-.accordionHeader span{
-pointer-events:none;
+.compactCardHeaderTitle{
+display:block;
+flex:1;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
 }
 
-.accordionChevron{
+.compactCardChevron{
 font-size:18px;
-font-weight:bold;
+line-height:1;
 color:#475569;
 transition:transform .2s ease;
 }
 
-.accordionCard.open .accordionChevron{
-transform:rotate(45deg);
-}
-
-.accordionBody{
+.compactCardBody{
 display:none;
 padding:0 10px 10px;
 border-top:1px solid #e5e7eb;
 }
 
-.accordionCard.open .accordionBody{
+.compactCard.open .compactCardBody{
 display:block;
 }
+
+.compactCard.open .compactCardChevron{
+transform:rotate(45deg);
+}
+
 
 .teacherCard{border-left-color:#1565c0;background:#f8fbff;}
 .institutionCard{border-left-color:#00897b;background:#f7fffc;}
@@ -953,6 +960,26 @@ function dedupeByKey(list, makeKey){
   });
 }
 
+function compactCardMarkup(cardId, title, bodyHtml, extraClass = ""){
+  return `
+  <div id="${cardId}" class="card compactCard ${extraClass}">
+    <button type="button" class="compactCardHeader" onclick="toggleCompactCard('${cardId}')">
+      <span class="compactCardHeaderTitle">${title || "-"}</span>
+      <span class="compactCardChevron">+</span>
+    </button>
+    <div class="compactCardBody">
+      ${bodyHtml}
+    </div>
+  </div>
+  `;
+}
+
+function toggleCompactCard(cardId){
+  const node = document.getElementById(cardId);
+  if(!node) return;
+  node.classList.toggle("open");
+}
+
 function pendingLeadCard(item){
   const roleLabel =
     item.viewerRole === "parent" ? "Parent"
@@ -966,13 +993,10 @@ function pendingLeadCard(item){
       ? "Institute"
       : "Teacher";
 
-  return `
-  <div class="card pendingLeadCard accordionCard" id="pendingLeadCard_${item.targetProfileId}_${item.viewerId}">
-    <button class="accordionHeader" onclick="toggleAdminAccordion(this)">
-      <span>${item.name || "Unknown Viewer"}</span>
-      <span class="accordionChevron">+</span>
-    </button>
-    <div class="accordionBody">
+  return compactCardMarkup(
+  `pendingLeadCard_${item.targetProfileId}_${item.viewerId}`,
+  item.name || "Unknown Viewer",
+  `
     <div class="pendingLeadMeta">
       <span class="badge">${roleLabel}</span>
       <span class="badge">${targetLabel} Lead</span>
@@ -989,9 +1013,9 @@ function pendingLeadCard(item){
       <button class="leadReject" onclick="rejectPendingLead('${item.targetProfileId}','${item.viewerId}')">Reject</button>
       <button class="leadDelete" onclick="deletePendingLead('${item.targetProfileId}','${item.viewerId}')">Delete</button>
     </div>
-    </div>
-  </div>
-  `;
+  `,
+  "pendingLeadCard"
+  );
 }
 
 function pendingDemoCard(item){
@@ -1000,13 +1024,10 @@ function pendingDemoCard(item){
       ? "Institute"
       : "Teacher";
 
-  return `
-  <div class="card pendingDemoCard accordionCard" id="pendingDemoCard_${item.targetProfileId}_${item.requestId}">
-    <button class="accordionHeader" onclick="toggleAdminAccordion(this)">
-      <span>${item.name || "Unknown Requester"}</span>
-      <span class="accordionChevron">+</span>
-    </button>
-    <div class="accordionBody">
+  return compactCardMarkup(
+  `pendingDemoCard_${item.targetProfileId}_${item.requestId}`,
+  item.name || "Unknown Requester",
+  `
     <div class="pendingLeadMeta">
       <span class="badge">Demo Request</span>
       <span class="badge">${targetLabel}</span>
@@ -1022,19 +1043,16 @@ function pendingDemoCard(item){
       <button class="leadReject" onclick="rejectPendingDemoRequest('${item.targetProfileId}','${item.requestId}')">Reject</button>
       <button class="leadDelete" onclick="deletePendingDemoRequest('${item.targetProfileId}','${item.requestId}')">Delete</button>
     </div>
-    </div>
-  </div>
-  `;
+  `,
+  "pendingDemoCard"
+  );
 }
 
 function approvedLeadCard(item){
-  return `
-  <div class="card pendingLeadCard accordionCard">
-    <button class="accordionHeader" onclick="toggleAdminAccordion(this)">
-      <span>${item.name || "Unknown Viewer"}</span>
-      <span class="accordionChevron">+</span>
-    </button>
-    <div class="accordionBody">
+  return compactCardMarkup(
+  `approvedLeadCard_${item.targetProfileId}_${item.viewerId}`,
+  item.name || "Unknown Viewer",
+  `
     <p><b>For Profile ID:</b> ${item.targetProfileId || "-"}</p>
     <p><b>Viewed:</b> ${formatLeadTime(item.time || item.submittedAt)}</p>
     <p><b>Approved:</b> ${formatLeadTime(item.approvedAt)}</p>
@@ -1042,19 +1060,16 @@ function approvedLeadCard(item){
     <div class="paymentActionRow">
       <button class="leadDelete" onclick="deleteApprovedLead('${item.targetProfileId}','${item.viewerId}')">Delete</button>
     </div>
-    </div>
-  </div>
-  `;
+  `,
+  "pendingLeadCard"
+  );
 }
 
 function approvedDemoCard(item){
-  return `
-  <div class="card pendingDemoCard accordionCard">
-    <button class="accordionHeader" onclick="toggleAdminAccordion(this)">
-      <span>${item.name || "Unknown Requester"}</span>
-      <span class="accordionChevron">+</span>
-    </button>
-    <div class="accordionBody">
+  return compactCardMarkup(
+  `approvedDemoCard_${item.targetProfileId}_${item.requestId}`,
+  item.name || "Unknown Requester",
+  `
     <p><b>For Profile ID:</b> ${item.targetProfileId || "-"}</p>
     <p><b>Requested:</b> ${formatLeadTime(item.createdAt)}</p>
     <p><b>Approved:</b> ${formatLeadTime(item.approvedAt)}</p>
@@ -1062,9 +1077,9 @@ function approvedDemoCard(item){
     <div class="paymentActionRow">
       <button class="leadDelete" onclick="deleteApprovedDemoRequest('${item.targetProfileId}','${item.requestId}')">Delete</button>
     </div>
-    </div>
-  </div>
-  `;
+  `,
+  "pendingDemoCard"
+  );
 }
 
 function renderPendingLeadReviews(){
@@ -1755,63 +1770,36 @@ d.amount || 0
 );
 
 html += `
-
-<div id="registrationPaymentCard_${c.key}" class="card paymentCard registrationPaymentCard ${paymentType === "institution" ? "paymentInstitutionCard" : "paymentTeacherCard"}">
-
-<h4>
-${d.name || "-"}
-</h4>
-
+compactCardMarkup(
+`registrationPaymentCard_${c.key}`,
+d.name || "-",
+`
 <span class="paymentRoleBadge ${paymentRoleClass(paymentType)}">
 ${paymentRoleLabel(paymentType)}
 </span>
 
-<p>
-<b>Registration</b>
-</p>
-
-<p>
-<b>Email:</b>
-${d.email || "-"}
-</p>
-
-<p>
-<b>Phone:</b>
-${d.phone || "-"}
-</p>
-
-<p>
-<b>Amount:</b>
-Rs. ${d.amount || 0}
-</p>
-
-<p>
-<b>Status:</b>
-${d.status || "paid"}
-</p>
+<p><b>Registration</b></p>
+<p><b>Email:</b> ${d.email || "-"}</p>
+<p><b>Phone:</b> ${d.phone || "-"}</p>
+<p><b>Amount:</b> Rs. ${d.amount || 0}</p>
+<p><b>Status:</b> ${d.status || "paid"}</p>
 
 <div class="paymentActionRow">
 <button
 class="jumpProfile"
 onclick="scrollToProfileCard('${paymentType}','${linkedProfileId}')">
-
 See Profile Card
-
 </button>
 
 <button
 class="delete"
 onclick="delPay('${c.key}')">
-
 Delete
-
 </button>
-
 </div>
-
-</div>
-
-`;
+`,
+`paymentCard registrationPaymentCard ${paymentType === "institution" ? "paymentInstitutionCard" : "paymentTeacherCard"}`
+);
 
 });
 
@@ -1873,40 +1861,19 @@ d.amount || 0
 );
 
 html += `
-
-<div id="renewalPaymentCard_${c.key}" class="card paymentCard renewalPaymentCard ${paymentType === "institution" ? "paymentInstitutionCard" : "paymentTeacherCard"}">
-
-<h4>
-${d.name || "-"}
-</h4>
-
+compactCardMarkup(
+`renewalPaymentCard_${c.key}`,
+d.name || "-",
+`
 <span class="paymentRoleBadge ${paymentRoleClass(paymentType)}">
 ${paymentRoleLabel(paymentType)}
 </span>
 
-<p>
-<b>Renewal</b>
-</p>
-
-<p>
-<b>Email:</b>
-${d.email || "-"}
-</p>
-
-<p>
-<b>Phone:</b>
-${d.phone || "-"}
-</p>
-
-<p>
-<b>Amount:</b>
-Rs. ${d.amount || 0}
-</p>
-
-<p>
-<b>Status:</b>
-${d.status || "paid"}
-</p>
+<p><b>Renewal</b></p>
+<p><b>Email:</b> ${d.email || "-"}</p>
+<p><b>Phone:</b> ${d.phone || "-"}</p>
+<p><b>Amount:</b> Rs. ${d.amount || 0}</p>
+<p><b>Status:</b> ${d.status || "paid"}</p>
 
 <div class="paymentActionRow">
 <button
@@ -1930,12 +1897,10 @@ class="delete"
 onclick="delRenewPay('${c.key}')">
 Delete
 </button>
-
 </div>
-
-</div>
-
-`;
+`,
+`paymentCard renewalPaymentCard ${paymentType === "institution" ? "paymentInstitutionCard" : "paymentTeacherCard"}`
+);
 
 });
 
@@ -1977,33 +1942,15 @@ Number(
 d.amount || 0
 );
 
-html += `
-
-<div class="card paymentCard invoicePaymentCard">
-
-<h4>
-${d.name || "-"}
-</h4>
-
-<p>
-<b>Invoice Feature</b>
-</p>
-
-<p>
-${d.phone || "-"}
-</p>
-
-<p>
-Rs. ${d.amount || 0}
-</p>
-
-<p>
-${d.status || "paid"}
-</p>
-
-<p>
-${d.date || ""}
-</p>
+html += compactCardMarkup(
+`invoicePaymentCard_${c.key}`,
+d.name || "-",
+`
+<p><b>Invoice Feature</b></p>
+<p>${d.phone || "-"}</p>
+<p>Rs. ${d.amount || 0}</p>
+<p>${d.status || "paid"}</p>
+<p>${d.date || ""}</p>
 
 <button
 class="approve"
@@ -2020,10 +1967,9 @@ class="delete"
 onclick="delInvoicePay('${c.key}')">
 Delete
 </button>
-
-</div>
-
-`;
+`,
+"paymentCard invoicePaymentCard"
+);
 
 });
 
@@ -2064,17 +2010,10 @@ findLatestPaymentForProfile(payments, d.id);
 const renewalPayment =
 findLatestPaymentForProfile(renewPayments, d.id);
 
-return `
-
-<div id="profileCard_${type}_${d.id}" class="card accordionCard ${type === "teacher" ? "teacherCard" : "institutionCard"}">
-
-<button class="accordionHeader" onclick="toggleAdminAccordion(this)">
-<span>${d.name || "-"}</span>
-<span class="accordionChevron">+</span>
-</button>
-
-<div class="accordionBody">
-
+return compactCardMarkup(
+`profileCard_${type}_${d.id}`,
+d.name || "-",
+`
 <span class="badge">
 ${d.status || "pending"}
 </span>
@@ -2085,45 +2024,14 @@ ${d.category || "-"}
 
 <br><br>
 
-<p>
-<b>Email:</b>
-${d.email || "-"}
-</p>
-
-<p>
-<b>Phone:</b>
-${d.phone || "-"}
-</p>
-
-<p>
-<b>Role:</b>
-${d.role || "-"}
-</p>
-
-<p>
-<b>Payment:</b>
-${d.paymentStatus || "unpaid"}
-</p>
-
-<p>
-<b>Days Left:</b>
-${rem}
-</p>
-
-<p>
-<b>Public:</b>
-${isPublic ? "Visible" : "Hidden"}
-</p>
-
-<p>
-<b>Public Rank:</b>
-${rank === null ? "-" : rank}
-</p>
-
-<p>
-<b>Invoice Feature:</b>
-${d.invoiceFeatureActive ? "Active (Rs.1500 paid)" : "Not Active"}
-</p>
+<p><b>Email:</b> ${d.email || "-"}</p>
+<p><b>Phone:</b> ${d.phone || "-"}</p>
+<p><b>Role:</b> ${d.role || "-"}</p>
+<p><b>Payment:</b> ${d.paymentStatus || "unpaid"}</p>
+<p><b>Days Left:</b> ${rem}</p>
+<p><b>Public:</b> ${isPublic ? "Visible" : "Hidden"}</p>
+<p><b>Public Rank:</b> ${rank === null ? "-" : rank}</p>
+<p><b>Invoice Feature:</b> ${d.invoiceFeatureActive ? "Active (Rs.1500 paid)" : "Not Active"}</p>
 
 ${exp
 ?
@@ -2134,9 +2042,7 @@ style="
 background:red;
 color:white;
 ">
-
 EXPIRED
-
 </span>
 `
 :
@@ -2289,11 +2195,9 @@ Edit
 
 </button>
 
-</div>
-
-</div>
-
-`;
+`,
+type === "teacher" ? "teacherCard" : "institutionCard"
+);
 
 }
 
@@ -2891,17 +2795,10 @@ count("creative");
 
 function studentCard(d){
 
-return `
-
-<div class="card studentCard accordionCard">
-
-<button class="accordionHeader" onclick="toggleAdminAccordion(this)">
-<span>${d.name || "-"}</span>
-<span class="accordionChevron">+</span>
-</button>
-
-<div class="accordionBody">
-
+return compactCardMarkup(
+`studentCard_${d.id}`,
+d.name || "-",
+`
 <span class="badge">
 student
 </span>
@@ -2910,49 +2807,27 @@ ${d.class ? `<span class="badge">${d.class}</span>` : ""}
 
 <br><br>
 
-<p>
-<b>Email:</b>
-${d.email || "-"}
-</p>
-
-<p>
-<b>Phone:</b>
-${d.phone || "-"}
-</p>
-
-<p>
-<b>Parent:</b>
-${d.parentName || "-"}
-</p>
-
-<p>
-<b>Address:</b>
-${d.address || d.area || d.pinCode ? `${d.address || ""}${d.area ? " / " + d.area : ""}${d.pinCode ? " - " + d.pinCode : ""}`.trim() : "-"}
-</p>
+<p><b>Email:</b> ${d.email || "-"}</p>
+<p><b>Phone:</b> ${d.phone || "-"}</p>
+<p><b>Parent:</b> ${d.parentName || "-"}</p>
+<p><b>Address:</b> ${d.address || d.area || d.pinCode ? `${d.address || ""}${d.area ? " / " + d.area : ""}${d.pinCode ? " - " + d.pinCode : ""}`.trim() : "-"}</p>
 
 <br>
 
 <button
 class="delete"
 onclick="delStudent('${d.id}')">
-
 Delete
-
 </button>
 
 <button
 class="edit"
 onclick="editProfile('student','${d.id}')">
-
 Edit
-
 </button>
-
-</div>
-
-</div>
-
-`;
+`,
+"studentCard"
+);
 
 }
 
@@ -3006,11 +2881,6 @@ try{
 await signOut(auth);
 }
 
-window.toggleAdminAccordion = function(button){
-  const card = button.closest(".accordionCard");
-  if(!card) return;
-  card.classList.toggle("open");
-};
 catch(err){
 console.log(err);
 }
