@@ -1098,16 +1098,6 @@ window.toggleCompactCard = function(cardId){
   node.classList.toggle("open");
 };
 
-document.addEventListener("click",(event)=>{
-  const header = event.target.closest(".compactCardHeader");
-  if(!header) return;
-  event.preventDefault();
-  const card = header.closest(".compactCard");
-  if(card?.id){
-    window.toggleCompactCard(card.id);
-  }
-});
-
 function pendingLeadCard(item){
   const roleLabel =
     item.viewerRole === "parent" ? "Parent"
