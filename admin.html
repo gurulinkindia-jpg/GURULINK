@@ -195,6 +195,10 @@ cursor:pointer;
 text-align:left;
 }
 
+.compactCard{
+cursor:pointer;
+}
+
 .compactCardHeaderTitle{
 display:block;
 flex:1;
@@ -468,6 +472,27 @@ background:#1565c0;
 background:#64748b;
 }
 
+.sectionFilterBar{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+align-items:end;
+margin:0 0 10px;
+padding:8px;
+background:#ffffff;
+border:1px solid #d9e2ec;
+border-radius:10px;
+}
+
+.sectionFilterBar input{
+padding:8px 10px;
+border:1px solid #cbd5e1;
+border-radius:8px;
+background:#fff;
+font-size:12px;
+min-width:150px;
+}
+
 .linkPayment{
 background:#ef6c00;
 }
@@ -734,6 +759,11 @@ Demo Review
 
 <h3>Pending Student Enquiries</h3>
 
+<div class="sectionFilterBar">
+  <input id="pendingLeadTextFilter" placeholder="Filter name / email / phone" oninput="renderPendingLeadReviews()">
+  <input id="pendingLeadDateFilter" type="date" oninput="renderPendingLeadReviews()">
+</div>
+
 <div id="pendingProfileViews" class="list"></div>
 
 </div>
@@ -741,6 +771,11 @@ Demo Review
 <div class="panel leadReviewPanel">
 
 <h3>Approved Student Enquiries Archive</h3>
+
+<div class="sectionFilterBar">
+  <input id="approvedLeadTextFilter" placeholder="Filter name / email / phone" oninput="renderPendingLeadReviews()">
+  <input id="approvedLeadDateFilter" type="date" oninput="renderPendingLeadReviews()">
+</div>
 
 <div id="approvedProfileViews" class="list"></div>
 
@@ -750,6 +785,11 @@ Demo Review
 
 <h3 style="background:#0f766e;">Pending Demo Requests</h3>
 
+<div class="sectionFilterBar">
+  <input id="pendingDemoTextFilter" placeholder="Filter name / phone / message" oninput="renderPendingDemoReviews()">
+  <input id="pendingDemoDateFilter" type="date" oninput="renderPendingDemoReviews()">
+</div>
+
 <div id="pendingAdminDemoRequests" class="list"></div>
 
 </div>
@@ -757,6 +797,11 @@ Demo Review
 <div class="panel archivePanel">
 
 <h3>Approved Demo Requests Archive</h3>
+
+<div class="sectionFilterBar">
+  <input id="approvedDemoTextFilter" placeholder="Filter name / phone / message" oninput="renderPendingDemoReviews()">
+  <input id="approvedDemoDateFilter" type="date" oninput="renderPendingDemoReviews()">
+</div>
 
 <div id="approvedAdminDemoRequests" class="list"></div>
 
@@ -766,6 +811,11 @@ Demo Review
 
 <h3>Teachers</h3>
 
+<div class="sectionFilterBar">
+  <input id="teachersTextFilter" placeholder="Filter name / email / phone" oninput="renderTeachers()">
+  <input id="teachersDateFilter" type="date" oninput="renderTeachers()">
+</div>
+
 <div id="teachers" class="list"></div>
 
 </div>
@@ -773,6 +823,11 @@ Demo Review
 <div class="panel institutionPanel fullWidthPanel">
 
 <h3>Institutions</h3>
+
+<div class="sectionFilterBar">
+  <input id="institutionsTextFilter" placeholder="Filter name / email / phone" oninput="renderInstitutions()">
+  <input id="institutionsDateFilter" type="date" oninput="renderInstitutions()">
+</div>
 
 <div id="institutions" class="list"></div>
 
@@ -782,6 +837,11 @@ Demo Review
 
 <h3>Students</h3>
 
+<div class="sectionFilterBar">
+  <input id="studentsTextFilter" placeholder="Filter name / email / phone" oninput="renderStudents()">
+  <input id="studentsDateFilter" type="date" oninput="renderStudents()">
+</div>
+
 <div id="students" class="list"></div>
 
 </div>
@@ -790,17 +850,32 @@ Demo Review
 
 <h3>Registration Payments</h3>
 
+<div class="sectionFilterBar">
+  <input id="registrationPaymentsTextFilter" placeholder="Filter name / email / phone" oninput="renderPayments()">
+  <input id="registrationPaymentsDateFilter" type="date" oninput="renderPayments()">
+</div>
+
 <div id="payments" class="list"></div>
 
 <h3 class="renewPanelTitle" style="margin-top:20px;">
 Renewal Payments
 </h3>
 
+<div class="sectionFilterBar">
+  <input id="renewPaymentsTextFilter" placeholder="Filter name / email / phone" oninput="renderRenewPayments()">
+  <input id="renewPaymentsDateFilter" type="date" oninput="renderRenewPayments()">
+</div>
+
 <div id="renewPayments" class="list"></div>
 
 <h3 class="invoicePanelTitle" style="margin-top:20px;background:#1565c0;">
 Invoice Feature Payments
 </h3>
+
+<div class="sectionFilterBar">
+  <input id="invoicePaymentsTextFilter" placeholder="Filter name / phone" oninput="renderInvoicePayments()">
+  <input id="invoicePaymentsDateFilter" type="date" oninput="renderInvoicePayments()">
+</div>
 
 <div id="invoicePayments" class="list"></div>
 
@@ -957,6 +1032,40 @@ function matchesReviewDate(item, timeValue){
   return `${yyyy}-${mm}-${dd}` === selectedDate;
 }
 
+function getSectionTextFilter(id){
+  return (document.getElementById(id)?.value || "").trim().toLowerCase();
+}
+
+function matchesDateValue(selectedDate, value){
+  if(!selectedDate) return true;
+  const stamp = Number(value || 0);
+  if(stamp){
+    const d = new Date(stamp);
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2,"0");
+    const dd = String(d.getDate()).padStart(2,"0");
+    return `${yyyy}-${mm}-${dd}` === selectedDate;
+  }
+  const raw = String(value || "").trim();
+  if(!raw) return false;
+  if(/^\d{4}-\d{2}-\d{2}/.test(raw)){
+    return raw.slice(0,10) === selectedDate;
+  }
+  return false;
+}
+
+function newestStamp(item){
+  return Number(
+    item.updatedAt ||
+    item.createdAt ||
+    item.approvedAt ||
+    item.time ||
+    item.submittedAt ||
+    item.date ||
+    0
+  ) || 0;
+}
+
 function dedupeByKey(list, makeKey){
   const seen = new Set();
   return list.filter(item=>{
@@ -988,6 +1097,16 @@ window.toggleCompactCard = function(cardId){
   if(!node) return;
   node.classList.toggle("open");
 };
+
+document.addEventListener("click",(event)=>{
+  const header = event.target.closest(".compactCardHeader");
+  if(!header) return;
+  event.preventDefault();
+  const card = header.closest(".compactCard");
+  if(card?.id){
+    window.toggleCompactCard(card.id);
+  }
+});
 
 function pendingLeadCard(item){
   const roleLabel =
@@ -1097,21 +1216,33 @@ document.getElementById("pendingLeadCount").innerText =
 
 const q = document.getElementById("search").value.toLowerCase();
 const sectionFilter = getSelectedReviewType();
+const pendingText = getSectionTextFilter("pendingLeadTextFilter");
+const pendingDate = document.getElementById("pendingLeadDateFilter")?.value || "";
+const approvedText = getSectionTextFilter("approvedLeadTextFilter");
+const approvedDate = document.getElementById("approvedLeadDateFilter")?.value || "";
 
 document.getElementById("pendingProfileViews").innerHTML =
 dedupeByKey(pendingLeadReviews, item=>`${item.targetProfileId || ""}__${item.viewerId || ""}`)
 .filter(item=>{
   if(sectionFilter === "archive") return false;
-  if(!q) return true;
-  return (
+  const globalOk = !q || (
     (item.name || "").toLowerCase().includes(q) ||
     (item.email || "").toLowerCase().includes(q) ||
     (item.phone || "").toLowerCase().includes(q) ||
     (item.viewerRole || "").toLowerCase().includes(q) ||
     (item.targetProfileId || "").toLowerCase().includes(q)
   );
+  const localOk = !pendingText || (
+    (item.name || "").toLowerCase().includes(pendingText) ||
+    (item.email || "").toLowerCase().includes(pendingText) ||
+    (item.phone || "").toLowerCase().includes(pendingText) ||
+    (item.viewerRole || "").toLowerCase().includes(pendingText) ||
+    (item.targetProfileId || "").toLowerCase().includes(pendingText)
+  );
+  return globalOk && localOk;
 })
 .filter(item=>matchesReviewDate(item, item.time || item.submittedAt))
+.filter(item=>matchesDateValue(pendingDate, item.time || item.submittedAt))
 .sort((a,b)=>(Number(b.time || b.submittedAt || 0) - Number(a.time || a.submittedAt || 0)))
 .map(item=>pendingLeadCard(item))
 .join("");
@@ -1120,16 +1251,24 @@ document.getElementById("approvedProfileViews").innerHTML =
 dedupeByKey(approvedLeadReviews, item=>`${item.targetProfileId || ""}__${item.viewerId || ""}`)
 .filter(item=>{
   if(sectionFilter === "pending") return false;
-  if(!q) return true;
-  return (
+  const globalOk = !q || (
     (item.name || "").toLowerCase().includes(q) ||
     (item.email || "").toLowerCase().includes(q) ||
     (item.phone || "").toLowerCase().includes(q) ||
     (item.viewerRole || "").toLowerCase().includes(q) ||
     (item.targetProfileId || "").toLowerCase().includes(q)
   );
+  const localOk = !approvedText || (
+    (item.name || "").toLowerCase().includes(approvedText) ||
+    (item.email || "").toLowerCase().includes(approvedText) ||
+    (item.phone || "").toLowerCase().includes(approvedText) ||
+    (item.viewerRole || "").toLowerCase().includes(approvedText) ||
+    (item.targetProfileId || "").toLowerCase().includes(approvedText)
+  );
+  return globalOk && localOk;
 })
 .filter(item=>matchesReviewDate(item, item.approvedAt || item.time || item.submittedAt))
+.filter(item=>matchesDateValue(approvedDate, item.approvedAt || item.time || item.submittedAt))
 .sort((a,b)=>(Number(b.approvedAt || b.time || b.submittedAt || 0) - Number(a.approvedAt || a.time || a.submittedAt || 0)))
 .map(item=>approvedLeadCard(item))
 .join("");
@@ -1141,20 +1280,31 @@ document.getElementById("pendingDemoCount").innerText =
 
 const q = document.getElementById("search").value.toLowerCase();
 const sectionFilter = getSelectedReviewType();
+const pendingText = getSectionTextFilter("pendingDemoTextFilter");
+const pendingDate = document.getElementById("pendingDemoDateFilter")?.value || "";
+const approvedText = getSectionTextFilter("approvedDemoTextFilter");
+const approvedDate = document.getElementById("approvedDemoDateFilter")?.value || "";
 
 document.getElementById("pendingAdminDemoRequests").innerHTML =
 dedupeByKey(pendingDemoReviews, item=>`${item.targetProfileId || ""}__${item.requestId || ""}`)
 .filter(item=>{
   if(sectionFilter === "archive") return false;
-  if(!q) return true;
-  return (
+  const globalOk = !q || (
     (item.name || "").toLowerCase().includes(q) ||
     (item.phone || "").toLowerCase().includes(q) ||
     (item.message || "").toLowerCase().includes(q) ||
     (item.targetProfileId || "").toLowerCase().includes(q)
   );
+  const localOk = !pendingText || (
+    (item.name || "").toLowerCase().includes(pendingText) ||
+    (item.phone || "").toLowerCase().includes(pendingText) ||
+    (item.message || "").toLowerCase().includes(pendingText) ||
+    (item.targetProfileId || "").toLowerCase().includes(pendingText)
+  );
+  return globalOk && localOk;
 })
 .filter(item=>matchesReviewDate(item, item.createdAt))
+.filter(item=>matchesDateValue(pendingDate, item.createdAt))
 .sort((a,b)=>(Number(b.createdAt || 0) - Number(a.createdAt || 0)))
 .map(item=>pendingDemoCard(item))
 .join("");
@@ -1163,15 +1313,22 @@ document.getElementById("approvedAdminDemoRequests").innerHTML =
 dedupeByKey(approvedDemoReviews, item=>`${item.targetProfileId || ""}__${item.requestId || ""}`)
 .filter(item=>{
   if(sectionFilter === "pending") return false;
-  if(!q) return true;
-  return (
+  const globalOk = !q || (
     (item.name || "").toLowerCase().includes(q) ||
     (item.phone || "").toLowerCase().includes(q) ||
     (item.message || "").toLowerCase().includes(q) ||
     (item.targetProfileId || "").toLowerCase().includes(q)
   );
+  const localOk = !approvedText || (
+    (item.name || "").toLowerCase().includes(approvedText) ||
+    (item.phone || "").toLowerCase().includes(approvedText) ||
+    (item.message || "").toLowerCase().includes(approvedText) ||
+    (item.targetProfileId || "").toLowerCase().includes(approvedText)
+  );
+  return globalOk && localOk;
 })
 .filter(item=>matchesReviewDate(item, item.approvedAt || item.createdAt))
+.filter(item=>matchesDateValue(approvedDate, item.approvedAt || item.createdAt))
 .sort((a,b)=>(Number(b.approvedAt || b.createdAt || 0) - Number(a.approvedAt || a.createdAt || 0)))
 .map(item=>approvedDemoCard(item))
 .join("");
@@ -1523,50 +1680,209 @@ null;
 }
 
 function sortAdminProfiles(list){
-
 return [...list].sort((a,b)=>{
-
-const aHidden =
-isProfilePublic(a) ? 0 : 1;
-
-const bHidden =
-isProfilePublic(b) ? 0 : 1;
-
-if(aHidden !== bHidden){
-return aHidden - bHidden;
-}
-
-const aRank =
-publicRankValue(a);
-
-const bRank =
-publicRankValue(b);
-
-if(
-aRank !== null ||
-bRank !== null
-){
-if(aRank === null) return 1;
-if(bRank === null) return -1;
-if(aRank !== bRank) return aRank - bRank;
-}
-
-const aApproved =
-Number(a.approvedAt || 0);
-
-const bApproved =
-Number(b.approvedAt || 0);
-
-if(bApproved !== aApproved){
-return bApproved - aApproved;
-}
-
-return (a.name || "")
-.localeCompare(b.name || "");
-
+  const stampDiff = newestStamp(b) - newestStamp(a);
+  if(stampDiff !== 0) return stampDiff;
+  return (a.name || "").localeCompare(b.name || "");
 });
 
 }
+
+function profileMatchesGlobalSearch(item,q){
+  if(!q) return true;
+  return (
+    (item.name || "").toLowerCase().includes(q) ||
+    (item.email || "").toLowerCase().includes(q) ||
+    (item.phone || "").toLowerCase().includes(q) ||
+    (item.class || "").toLowerCase().includes(q) ||
+    (item.parentName || "").toLowerCase().includes(q)
+  );
+}
+
+function profileMatchesSectionText(item,text){
+  if(!text) return true;
+  return (
+    (item.name || "").toLowerCase().includes(text) ||
+    (item.email || "").toLowerCase().includes(text) ||
+    (item.phone || "").toLowerCase().includes(text) ||
+    (item.class || "").toLowerCase().includes(text) ||
+    (item.parentName || "").toLowerCase().includes(text)
+  );
+}
+
+window.renderTeachers = function(){
+  const q = (document.getElementById("search")?.value || "").trim().toLowerCase();
+  const text = getSectionTextFilter("teachersTextFilter");
+  const date = document.getElementById("teachersDateFilter")?.value || "";
+  document.getElementById("teachers").innerHTML =
+    sortAdminProfiles(
+      teachers
+        .filter(item=>profileMatchesGlobalSearch(item,q))
+        .filter(item=>profileMatchesSectionText(item,text))
+        .filter(item=>matchesDateValue(date, newestStamp(item)))
+    )
+    .map(d=>card(d,"teacher"))
+    .join("");
+};
+
+window.renderInstitutions = function(){
+  const q = (document.getElementById("search")?.value || "").trim().toLowerCase();
+  const text = getSectionTextFilter("institutionsTextFilter");
+  const date = document.getElementById("institutionsDateFilter")?.value || "";
+  document.getElementById("institutions").innerHTML =
+    sortAdminProfiles(
+      inst
+        .filter(item=>profileMatchesGlobalSearch(item,q))
+        .filter(item=>profileMatchesSectionText(item,text))
+        .filter(item=>matchesDateValue(date, newestStamp(item)))
+    )
+    .map(d=>card(d,"institution"))
+    .join("");
+};
+
+window.renderStudents = function(){
+  const q = (document.getElementById("search")?.value || "").trim().toLowerCase();
+  const text = getSectionTextFilter("studentsTextFilter");
+  const date = document.getElementById("studentsDateFilter")?.value || "";
+  document.getElementById("students").innerHTML =
+    [...students]
+      .filter(item=>profileMatchesGlobalSearch(item,q))
+      .filter(item=>profileMatchesSectionText(item,text))
+      .filter(item=>matchesDateValue(date, newestStamp(item)))
+      .sort((a,b)=>newestStamp(b) - newestStamp(a))
+      .map(d=>studentCard(d))
+      .join("");
+};
+
+window.renderPayments = function(){
+  const q = (document.getElementById("search")?.value || "").trim().toLowerCase();
+  const text = getSectionTextFilter("registrationPaymentsTextFilter");
+  const date = document.getElementById("registrationPaymentsDateFilter")?.value || "";
+  document.getElementById("payments").innerHTML =
+    [...payments]
+      .filter(item=>profileMatchesGlobalSearch(item,q))
+      .filter(item=>profileMatchesSectionText(item,text))
+      .filter(item=>matchesDateValue(date, newestStamp(item)))
+      .sort((a,b)=>newestStamp(b) - newestStamp(a))
+      .map(item=>compactCardMarkup(
+        `registrationPaymentCard_${item._key}`,
+        item.name || "-",
+        `
+<span class="paymentRoleBadge ${paymentRoleClass(item._type)}">
+${paymentRoleLabel(item._type)}
+</span>
+
+<p><b>Registration</b></p>
+<p><b>Email:</b> ${item.email || "-"}</p>
+<p><b>Phone:</b> ${item.phone || "-"}</p>
+<p><b>Amount:</b> Rs. ${item.amount || 0}</p>
+<p><b>Status:</b> ${item.status || "paid"}</p>
+
+<div class="paymentActionRow">
+<button
+class="jumpProfile"
+onclick="scrollToProfileCard('${item._type}','${item._profileId}')">
+See Profile Card
+</button>
+
+<button
+class="delete"
+onclick="delPay('${item._key}')">
+Delete
+</button>
+</div>
+        `,
+        `paymentCard registrationPaymentCard ${item._type === "institution" ? "paymentInstitutionCard" : "paymentTeacherCard"}`
+      ))
+      .join("");
+};
+
+window.renderRenewPayments = function(){
+  const q = (document.getElementById("search")?.value || "").trim().toLowerCase();
+  const text = getSectionTextFilter("renewPaymentsTextFilter");
+  const date = document.getElementById("renewPaymentsDateFilter")?.value || "";
+  document.getElementById("renewPayments").innerHTML =
+    [...renewPayments]
+      .filter(item=>profileMatchesGlobalSearch(item,q))
+      .filter(item=>profileMatchesSectionText(item,text))
+      .filter(item=>matchesDateValue(date, newestStamp(item)))
+      .sort((a,b)=>newestStamp(b) - newestStamp(a))
+      .map(item=>compactCardMarkup(
+        `renewalPaymentCard_${item._key}`,
+        item.name || "-",
+        `
+<span class="paymentRoleBadge ${paymentRoleClass(item._type)}">
+${paymentRoleLabel(item._type)}
+</span>
+
+<p><b>Renewal</b></p>
+<p><b>Email:</b> ${item.email || "-"}</p>
+<p><b>Phone:</b> ${item.phone || "-"}</p>
+<p><b>Amount:</b> Rs. ${item.amount || 0}</p>
+<p><b>Status:</b> ${item.status || "paid"}</p>
+
+<div class="paymentActionRow">
+<button
+class="jumpProfile"
+onclick="scrollToProfileCard('${item._type}','${item._profileId}')">
+See Profile Card
+</button>
+
+<button
+class="renew"
+onclick="approveRenewalFromPayment('${item._key}','${item._profileId}','${item._type}')">
+Approve Renewal
+</button>
+
+<button
+class="delete"
+onclick="delRenewPay('${item._key}')">
+Delete
+</button>
+</div>
+        `,
+        `paymentCard renewalPaymentCard ${item._type === "institution" ? "paymentInstitutionCard" : "paymentTeacherCard"}`
+      ))
+      .join("");
+};
+
+window.renderInvoicePayments = function(){
+  const q = (document.getElementById("search")?.value || "").trim().toLowerCase();
+  const text = getSectionTextFilter("invoicePaymentsTextFilter");
+  const date = document.getElementById("invoicePaymentsDateFilter")?.value || "";
+  document.getElementById("invoicePayments").innerHTML =
+    [...invoicePayments]
+      .filter(item=>profileMatchesGlobalSearch(item,q))
+      .filter(item=>profileMatchesSectionText(item,text))
+      .filter(item=>matchesDateValue(date, newestStamp(item)))
+      .sort((a,b)=>newestStamp(b) - newestStamp(a))
+      .map(item=>compactCardMarkup(
+        `invoicePaymentCard_${item._key}`,
+        item.name || "-",
+        `
+<p><b>Invoice Feature</b></p>
+<p><b>Email:</b> ${item.email || "-"}</p>
+<p><b>Phone:</b> ${item.phone || "-"}</p>
+<p><b>Amount:</b> Rs. ${item.amount || 0}</p>
+<p><b>Status:</b> ${item.status || "paid"}</p>
+<p><b>Date:</b> ${item.date || "-"}</p>
+
+<button
+class="approve"
+onclick="approveInvoiceFeatureFromPayment('${item._key}','${item.profileId}','${item.type}')">
+Activate Invoice
+</button>
+
+<button
+class="delete"
+onclick="delInvoicePay('${item._key}')">
+Delete
+</button>
+        `,
+        "paymentCard invoicePaymentCard"
+      ))
+      .join("");
+};
 
 window.savePublicSettings =
 async function(type,id){
@@ -1672,15 +1988,7 @@ teachers.push(d);
 
 });
 
-html =
-sortAdminProfiles(teachers)
-.map(d=>card(d,"teacher"))
-.join("");
-
-document
-.getElementById(
-"teachers"
-).innerHTML = html;
+window.renderTeachers();
 
 updateStats();
 loadPendingProfileViews();
@@ -1714,15 +2022,7 @@ inst.push(d);
 
 });
 
-html =
-sortAdminProfiles(inst)
-.map(d=>card(d,"institution"))
-.join("");
-
-document
-.getElementById(
-"institutions"
-).innerHTML = html;
+window.renderInstitutions();
 
 updateStats();
 loadPendingProfileViews();
@@ -1778,47 +2078,11 @@ Number(
 d.amount || 0
 );
 
-html += compactCardMarkup(
-`registrationPaymentCard_${c.key}`,
-d.name || "-",
-`
-<span class="paymentRoleBadge ${paymentRoleClass(paymentType)}">
-${paymentRoleLabel(paymentType)}
-</span>
-
-<p><b>Registration</b></p>
-<p><b>Email:</b> ${d.email || "-"}</p>
-<p><b>Phone:</b> ${d.phone || "-"}</p>
-<p><b>Amount:</b> Rs. ${d.amount || 0}</p>
-<p><b>Status:</b> ${d.status || "paid"}</p>
-
-<div class="paymentActionRow">
-<button
-class="jumpProfile"
-onclick="scrollToProfileCard('${paymentType}','${linkedProfileId}')">
-See Profile Card
-</button>
-
-<button
-class="delete"
-onclick="delPay('${c.key}')">
-Delete
-</button>
-</div>
-`,
-`paymentCard registrationPaymentCard ${paymentType === "institution" ? "paymentInstitutionCard" : "paymentTeacherCard"}`
-);
-
 });
-
-document
-.getElementById(
-"payments"
-).innerHTML = html;
 
 paymentTotals.registration = total;
 updatePaymentTotal();
-if(typeof window.renderAll === 'function') window.renderAll();
+window.renderPayments();
 
 });
 
@@ -1868,57 +2132,11 @@ Number(
 d.amount || 0
 );
 
-html += compactCardMarkup(
-`renewalPaymentCard_${c.key}`,
-d.name || "-",
-`
-<span class="paymentRoleBadge ${paymentRoleClass(paymentType)}">
-${paymentRoleLabel(paymentType)}
-</span>
-
-<p><b>Renewal</b></p>
-<p><b>Email:</b> ${d.email || "-"}</p>
-<p><b>Phone:</b> ${d.phone || "-"}</p>
-<p><b>Amount:</b> Rs. ${d.amount || 0}</p>
-<p><b>Status:</b> ${d.status || "paid"}</p>
-
-<div class="paymentActionRow">
-<button
-class="jumpProfile"
-onclick="scrollToProfileCard('${paymentType}','${linkedProfileId}')">
-See Profile Card
-</button>
-
-<button
-class="renew"
-onclick="approveRenewalFromPayment(
-'${c.key}',
-'${linkedProfileId}',
-'${paymentType}'
-)">
-Approve Renewal
-</button>
-
-<button
-class="delete"
-onclick="delRenewPay('${c.key}')">
-Delete
-</button>
-</div>
-`,
-`paymentCard renewalPaymentCard ${paymentType === "institution" ? "paymentInstitutionCard" : "paymentTeacherCard"}`
-);
-
 });
-
-document
-.getElementById(
-"renewPayments"
-).innerHTML = html;
 
 paymentTotals.renewal = totalRenew;
 updatePaymentTotal();
-if(typeof window.renderAll === 'function') window.renderAll();
+window.renderRenewPayments();
 
 });
 
@@ -1942,51 +2160,21 @@ snap.forEach(c=>{
 
 const d=c.val();
 
-invoicePayments.push(d);
+invoicePayments.push({
+...d,
+_key:c.key
+});
 
 totalInvoice +=
 Number(
 d.amount || 0
 );
 
-html += compactCardMarkup(
-`invoicePaymentCard_${c.key}`,
-d.name || "-",
-`
-<p><b>Invoice Feature</b></p>
-<p>${d.phone || "-"}</p>
-<p>Rs. ${d.amount || 0}</p>
-<p>${d.status || "paid"}</p>
-<p>${d.date || ""}</p>
-
-<button
-class="approve"
-onclick="approveInvoiceFeatureFromPayment(
-'${c.key}',
-'${d.profileId}',
-'${d.type}'
-)">
-Activate Invoice
-</button>
-
-<button
-class="delete"
-onclick="delInvoicePay('${c.key}')">
-Delete
-</button>
-`,
-"paymentCard invoicePaymentCard"
-);
-
 });
-
-document
-.getElementById(
-"invoicePayments"
-).innerHTML = html;
 
 paymentTotals.invoice = totalInvoice;
 updatePaymentTotal();
+window.renderInvoicePayments();
 
 });
 /* =========================
@@ -2607,111 +2795,15 @@ async function(paymentId, profileId, type){
    SEARCH
 ========================= */
 
-window.renderAll =
-function(){
-
-const q =
-
-document
-.getElementById(
-"search"
-)
-.value
-.toLowerCase();
-
-function match(x){
-
-return (
-
-(x.name || "")
-.toLowerCase()
-.includes(q)
-
-||
-
-(x.email || "")
-.toLowerCase()
-.includes(q)
-
-||
-
-(x.phone || "")
-.toLowerCase()
-.includes(q)
-
-||
-
-(x.class || "")
-.toLowerCase()
-.includes(q)
-
-||
-
-(x.parentName || "")
-.toLowerCase()
-.includes(q)
-
-);
-
-}
-
-document
-.getElementById(
-"teachers"
-)
-.innerHTML =
-
-sortAdminProfiles(
-teachers
-.filter(match)
-)
-.map(d=>card(d,"teacher"))
-.join("");
-
-document
-.getElementById(
-"institutions"
-)
-.innerHTML =
-
-sortAdminProfiles(
-inst
-.filter(match)
-)
-.map(d=>card(d,"institution"))
-.join("");
-
-document
-.getElementById(
-"students"
-)
-.innerHTML =
-
-students
-.filter(match)
-.map(d=>studentCard(d))
-.join("");
-
-document
-.getElementById(
-"pendingProfileViews"
-).innerHTML =
-
-pendingLeadReviews
-.filter(match)
-.map(item=>pendingLeadCard(item))
-.join("");
-
-document
-.getElementById(
-"pendingAdminDemoRequests"
-).innerHTML =
-
-pendingDemoReviews
-.filter(item=>match(item))
-.map(item=>pendingDemoCard(item))
-.join("");
-
+window.renderAll = function(){
+  window.renderTeachers();
+  window.renderInstitutions();
+  window.renderStudents();
+  window.renderPayments();
+  window.renderRenewPayments();
+  window.renderInvoicePayments();
+  renderPendingLeadReviews();
+  renderPendingDemoReviews();
 };
 
 /* =========================
@@ -2850,8 +2942,6 @@ snap=>{
 
 students=[];
 
-let html="";
-
 snap.forEach(c=>{
 
 let d=c.val();
@@ -2860,14 +2950,9 @@ d.id=c.key;
 
 students.push(d);
 
-html += studentCard(d);
-
 });
 
-document
-.getElementById(
-"students"
-).innerHTML = html;
+window.renderStudents();
 
 updateStats();
 
