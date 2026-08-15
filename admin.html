@@ -2211,7 +2211,6 @@ ${d.category || "-"}
 
 <p><b>Email:</b> ${d.email || "-"}</p>
 <p><b>Phone:</b> ${d.phone || "-"}</p>
-<p><b>Website:</b> ${d.website || "-"}</p>
 <p><b>Role:</b> ${d.role || "-"}</p>
 <p><b>Payment:</b> ${d.paymentStatus || "unpaid"}</p>
 <p><b>Days Left:</b> ${rem}</p>
@@ -2248,30 +2247,6 @@ this.src='https://via.placeholder.com/100'
 ">
 
 <br>
-
-<div class="publicTools" style="margin-bottom:10px;">
-
-<div class="publicRow">
-<label
-for="website_${type}_${d.id}">
-Website Link
-</label>
-
-<input
-type="url"
-id="website_${type}_${d.id}"
-class="publicRankInput"
-value="${d.website || ""}"
-placeholder="https://example.com">
-</div>
-
-<button
-class="savePublic"
-onclick="saveWebsiteLink('${type}','${d.id}')">
-Save Website
-</button>
-
-</div>
 
 <div class="publicTools">
 
@@ -2715,49 +2690,7 @@ async function(paymentId, profileId, type){
   }
   catch(err){
     alert("Unable to activate invoice feature: " + (err.message || err));
-}
-
-};
-
-window.saveWebsiteLink =
-async function(type,id){
-
-const inputId =
-type === "student"
-?
-`website_student_${id}`
-:
-`website_${type}_${id}`;
-
-const websiteEl =
-document.getElementById(inputId);
-
-if(!websiteEl){
-alert("Website input not found.");
-return;
-}
-
-const website =
-websiteEl.value.trim();
-
-try{
-
-await update(
-ref(db,`${type}s/${id}`),
-{
-website: website || ""
-}
-);
-
-alert("Website link saved.");
-
-}
-catch(err){
-
-console.log(err);
-alert("Unable to save website link.");
-
-}
+  }
 
 };
 /* =========================
@@ -2965,35 +2898,10 @@ ${d.class ? `<span class="badge">${d.class}</span>` : ""}
 
 <p><b>Email:</b> ${d.email || "-"}</p>
 <p><b>Phone:</b> ${d.phone || "-"}</p>
-<p><b>Website:</b> ${d.website || "-"}</p>
 <p><b>Parent:</b> ${d.parentName || "-"}</p>
 <p><b>Address:</b> ${d.address || d.area || d.pinCode ? `${d.address || ""}${d.area ? " / " + d.area : ""}${d.pinCode ? " - " + d.pinCode : ""}`.trim() : "-"}</p>
 
 <br>
-
-<div class="publicTools" style="margin-bottom:10px;">
-
-<div class="publicRow">
-<label
-for="website_student_${d.id}">
-Website Link
-</label>
-
-<input
-type="url"
-id="website_student_${d.id}"
-class="publicRankInput"
-value="${d.website || ""}"
-placeholder="https://example.com">
-</div>
-
-<button
-class="savePublic"
-onclick="saveWebsiteLink('student','${d.id}')">
-Save Website
-</button>
-
-</div>
 
 <button
 class="delete"
