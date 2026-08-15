@@ -964,6 +964,7 @@ document.getElementById("invoicePayments").innerHTML = "";
 let teachers=[];
 let inst=[];
 let students=[];
+let profileHeaderButtons={};
 let payments=[];
 let renewPayments=[];
 let invoicePayments=[];
@@ -1076,6 +1077,97 @@ function dedupeByKey(list, makeKey){
     seen.add(key);
     return true;
   });
+}
+
+function normalizeAdminExternalUrl(value){
+  const cleanValue = String(value || "").trim();
+  if(!cleanValue){
+    throw new Error("Please enter an external HTTPS link.");
+  }
+
+  let parsed;
+  try{
+    parsed = new URL(cleanValue);
+  }catch(_error){
+    throw new Error("Please enter a valid external link.");
+  }
+
+  if(parsed.protocol !== "https:"){
+    throw new Error("For security, the external link must start with https://");
+  }
+
+  return parsed.toString();
+}
+
+function escapeAdminAttribute(value){
+  return String(value || "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;");
+}
+
+function validHeaderProfileType(type){
+  return type === "teacher" || type === "institution" || type === "student";
+}
+
+function profileHeaderButtonTools(profile,type){
+  const setting = profileHeaderButtons[profile.id] || {};
+  const label = escapeAdminAttribute(setting.label || "");
+  const url = escapeAdminAttribute(setting.url || "");
+  const enabled = setting.enabled === true;
+
+  return `
+  <div class="publicTools" style="margin-bottom:10px;background:#eefbf6;border-color:#a7e4cf;">
+    <div style="font-size:12px;font-weight:bold;color:#0f5f4d;margin-bottom:7px;">
+      Homepage Header Button
+    </div>
+
+    <div class="publicRow" style="align-items:flex-start;flex-direction:column;">
+      <label for="headerLinkLabel_${type}_${profile.id}">Button name</label>
+      <input
+      type="text"
+      maxlength="18"
+      class="publicRankInput"
+      style="width:100%;"
+      id="headerLinkLabel_${type}_${profile.id}"
+      value="${label}"
+      placeholder="Example: My Website">
+    </div>
+
+    <div class="publicRow" style="align-items:flex-start;flex-direction:column;">
+      <label for="headerLinkUrl_${type}_${profile.id}">External HTTPS link</label>
+      <input
+      type="url"
+      inputmode="url"
+      class="publicRankInput"
+      style="width:100%;"
+      id="headerLinkUrl_${type}_${profile.id}"
+      value="${url}"
+      placeholder="https://example.com/">
+    </div>
+
+    <div class="publicRow">
+      <label for="headerLinkEnabled_${type}_${profile.id}">Show this button for this user</label>
+      <input
+      type="checkbox"
+      id="headerLinkEnabled_${type}_${profile.id}"
+      ${enabled ? "checked" : ""}>
+    </div>
+
+    <button
+    class="savePublic"
+    onclick="saveProfileHeaderButton('${type}','${profile.id}')">
+    Save Header Button
+    </button>
+
+    <button
+    class="reject"
+    onclick="removeProfileHeaderButton('${type}','${profile.id}')">
+    Remove Header Button
+    </button>
+  </div>
+  `;
 }
 
 function compactCardMarkup(cardId, title, bodyHtml, extraClass = ""){
@@ -2211,6 +2303,7 @@ ${d.category || "-"}
 
 <p><b>Email:</b> ${d.email || "-"}</p>
 <p><b>Phone:</b> ${d.phone || "-"}</p>
+<p><b>Website:</b> ${d.website || "-"}</p>
 <p><b>Role:</b> ${d.role || "-"}</p>
 <p><b>Payment:</b> ${d.paymentStatus || "unpaid"}</p>
 <p><b>Days Left:</b> ${rem}</p>
@@ -2247,6 +2340,32 @@ this.src='https://via.placeholder.com/100'
 ">
 
 <br>
+
+${profileHeaderButtonTools(d,type)}
+
+<div class="publicTools" style="margin-bottom:10px;">
+
+<div class="publicRow">
+<label
+for="website_${type}_${d.id}">
+Website Link
+</label>
+
+<input
+type="url"
+id="website_${type}_${d.id}"
+class="publicRankInput"
+value="${d.website || ""}"
+placeholder="https://example.com">
+</div>
+
+<button
+class="savePublic"
+onclick="saveWebsiteLink('${type}','${d.id}')">
+Save Website
+</button>
+
+</div>
 
 <div class="publicTools">
 
@@ -2690,9 +2809,117 @@ async function(paymentId, profileId, type){
   }
   catch(err){
     alert("Unable to activate invoice feature: " + (err.message || err));
-  }
+}
 
 };
+
+window.saveWebsiteLink =
+async function(type,id){
+
+const inputId =
+type === "student"
+?
+`website_student_${id}`
+:
+`website_${type}_${id}`;
+
+const websiteEl =
+document.getElementById(inputId);
+
+if(!websiteEl){
+alert("Website input not found.");
+return;
+}
+
+const website =
+websiteEl.value.trim();
+
+try{
+
+await update(
+ref(db,`${type}s/${id}`),
+{
+website: website || ""
+}
+);
+
+alert("Website link saved.");
+
+}
+catch(err){
+
+console.log(err);
+alert("Unable to save website link.");
+
+}
+
+};
+
+window.saveProfileHeaderButton = async function(type,id){
+if(!auth.currentUser || !validHeaderProfileType(type)){
+alert("Admin access or profile type is invalid.");
+return;
+}
+
+const labelInput = document.getElementById(`headerLinkLabel_${type}_${id}`);
+const urlInput = document.getElementById(`headerLinkUrl_${type}_${id}`);
+const enabledInput = document.getElementById(`headerLinkEnabled_${type}_${id}`);
+const label = String(labelInput ? labelInput.value : "").trim();
+
+if(!label){
+alert("Please enter a button name.");
+return;
+}
+
+let url;
+try{
+url = normalizeAdminExternalUrl(urlInput ? urlInput.value : "");
+}
+catch(error){
+alert(error.message);
+return;
+}
+
+try{
+await update(
+ref(db,`profileHeaderButtons/${id}`),
+{
+profileType:type,
+label:label.slice(0,18),
+url,
+enabled:!!(enabledInput && enabledInput.checked),
+updatedAt:Date.now(),
+updatedBy:auth.currentUser.uid
+}
+);
+alert("Header button saved for this profile.");
+}
+catch(error){
+console.error("Profile header button save failed",error);
+alert("Unable to save this profile's header button.");
+}
+};
+
+window.removeProfileHeaderButton = async function(type,id){
+if(!auth.currentUser || !validHeaderProfileType(type)){
+alert("Admin access or profile type is invalid.");
+return;
+}
+
+if(!confirm("Remove the header button from this profile?")){
+return;
+}
+
+try{
+await remove(ref(db,`profileHeaderButtons/${id}`));
+alert("Header button removed from this profile.");
+}
+catch(error){
+console.error("Profile header button removal failed",error);
+alert("Unable to remove this profile's header button.");
+}
+};
+
 /* =========================
    APPROVE RENEWAL PAYMENT
 ========================= */
@@ -2898,10 +3125,37 @@ ${d.class ? `<span class="badge">${d.class}</span>` : ""}
 
 <p><b>Email:</b> ${d.email || "-"}</p>
 <p><b>Phone:</b> ${d.phone || "-"}</p>
+<p><b>Website:</b> ${d.website || "-"}</p>
 <p><b>Parent:</b> ${d.parentName || "-"}</p>
 <p><b>Address:</b> ${d.address || d.area || d.pinCode ? `${d.address || ""}${d.area ? " / " + d.area : ""}${d.pinCode ? " - " + d.pinCode : ""}`.trim() : "-"}</p>
 
 <br>
+
+${profileHeaderButtonTools(d,"student")}
+
+<div class="publicTools" style="margin-bottom:10px;">
+
+<div class="publicRow">
+<label
+for="website_student_${d.id}">
+Website Link
+</label>
+
+<input
+type="url"
+id="website_student_${d.id}"
+class="publicRankInput"
+value="${d.website || ""}"
+placeholder="https://example.com">
+</div>
+
+<button
+class="savePublic"
+onclick="saveWebsiteLink('student','${d.id}')">
+Save Website
+</button>
+
+</div>
 
 <button
 class="delete"
@@ -3012,6 +3266,17 @@ loadPayments();
 loadPendingProfileViews();
 
 loadPendingDemoRequests();
+
+onValue(
+ref(db,"profileHeaderButtons"),
+snap=>{
+profileHeaderButtons = snap.exists() ? (snap.val() || {}) : {};
+if(typeof window.renderAll === "function") window.renderAll();
+},
+error=>{
+console.error("Profile header buttons load failed",error);
+}
+);
 
 onValue(
   ref(db,"tickets"),
